@@ -1,0 +1,5 @@
+Upgrade del programma
+
+
+1) spezzettati i vari programmi in più subroutines.
+2) introdotti i test in junit.

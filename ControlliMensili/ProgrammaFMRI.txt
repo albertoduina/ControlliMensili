@@ -1,0 +1,47 @@
+
+
++--------------------------+
+|  TABELLA DELLA VERITA'   |
+|  width = columns = x     |
+|  height = rows = y       |
++--------------------------+
+
+2.000 immagini
+2.000 posizioni
+
+posizione
+tempo
+
+
+A) immagine di media pixel a pixel
+B) immagine di deviazione standard pixel a pixel
+C) immagine rapporto media/DS pixel a pixel
+D) immagine differenza della media immagini dispari meno media immagini pari pixel a pixel
+
+sullo stack disegnare roi circolare 20 x 20
+operatore seleziona la posizione da elaborare
+ricavare per ogni immagine la media nella roi
+fare il grafico dell'andamento delle medie in funzione del tempo (numero del frame)
+
+fare il fit con polinomiale del 2 ordine (utilizzando frame number e non tempo)
+fare il plot delle varie curve
+calcolare i seguenti indici:
+drift = (max - min (della curva blu del fit)) / media (della curva blu del fit)
+rms o get sum residual squares sotto radice oppure:
+rms = radice ((sommatoria(segnale - fit )^2)/numero punti)
+percent fluctuation = rms/media(della curva blu del fit)
+ 
+plot di weisskoff
+roi quadrata centrata dove era centrata la rotonda con lato da 2 crescente fino a 20
+calcolare ogni volta la DS dei valori medi 
+plot semilogaritmico della DS in funzione del lato della ROI
+
+l'altro plot (curva teorica vedi lorella)
+
+
+rdc (valore x in cui la curva teorica assume il valore finale della curva misurata (corrispond 20x20))  
+
+
+ 
+ 
+

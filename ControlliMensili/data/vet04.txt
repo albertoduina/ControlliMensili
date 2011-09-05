@@ -1,0 +1,15 @@
+.\test2\BTMA_01testP6
+.\test2\BTMA_15testP6
+.\test2\BTMA_04testP6
+.\test2\BTMA_12testP6
+.\test2\BTMA_08testP6
+.\test2\BTMA_14testP6
+.\test2\BTMA_06testP6
+.\test2\BTMA_05testP6
+.\test2\BTMA_02testP6
+.\test2\BTMA_13testP6
+.\test2\BTMA_09testP6
+.\test2\BTMA_10testP6
+.\test2\BTMA_03testP6
+.\test2\BTMA_07testP6
+.\test2\BTMA_11testP6

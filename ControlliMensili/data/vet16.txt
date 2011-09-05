@@ -1,0 +1,11 @@
+BUSA_, 2, 2, xxx, p3rmn_
+BUSS_, 2, 2, xxx, p3rmn_
+BUSC_, 2, 2, xxx, p3rmn_
+BDSA_, 1, 1, xxx, p8rmn_
+BDMA_, 1, 3, xxx, p8rmn_
+BTLX_, 0, 0, xxx, none_
+BT2A_, 1, 1, xxx, p6rmn_
+BT5A_, 1, 1, xxx, p6rmn_
+BTMA_, 15, 15, xxx, p6rmn_
+BRKA_, 1, 1, xxx, p4rmn_
+HT2A_, 1, 1, xxx, p6rmn_

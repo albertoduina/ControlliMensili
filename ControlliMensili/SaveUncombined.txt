@@ -1,0 +1,14 @@
+01/12/2009
+Modifica sequenze mediante Save uncombined
+
+A Gardone abbiamo fatto un primo esperimento con save uncombined. La prima difficaoltà è sui codici da assegnare: 
+dobbiamo provvedere un nuovo set di codici in modo da identificare univocamente le nuove sequenze che utilizzano
+il save uncombined.
+Altra cosa che si è evidenziata: nonostante il plugin Sequenze sia stato modificato in modo da tenere in 
+considerazione anche il codice della bobina, ottengo un messaggio, con relativo log, per un eccessivo 
+numero di immagini prodotte. Qui possono esserci 2 cause diverse: 
+1) non viene considerato il codice della bobina quando si va poi a vedere quante immagini sono state acquisite
+2) abbiamo forse acquisito un numero eccessivo di immagini
+3) bisogna assolutamente mettere giù le sequenze di acquisizione e salvarle, in modo che poi possano essere
+trasferite su tutte le macchine
+ 

@@ -1,0 +1,19 @@
+Aknowledgements
+
+Wayne Rasband: ImageJ source code (everywhere)
+
+Karl Schmidt:  MRI Analysis Calculator and MRI Analysis Pack (p2rmn_, SimplexBasedRegressor, SimplexOptimizer, Vertex)
+ 
+Anthony Padua & Daniel Barboriak:  QueryDicomHeader (UtilAyv)
+
+Terry Wu:  Modified ContrastAdjuster (UtilAyv)
+
+Réal Gagnon: ExtractFromJar (UtilAyv)
+
+javaalmanac.com: DeleteDir & CreateDir (UtilAyv)
+
+Knuth: The Art Of Computer Programming, StandardDeviation  (UtilAyv)
+
+and all  the people on the ImageJ mailing list
+
+

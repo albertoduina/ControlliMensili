@@ -1,0 +1,269 @@
+// Contiene le regole utilizzate da Sequenze per compilare il file
+// ayv.txt che verrà poi usato per chiamare il plug-in adatto
+// ad elaborare una determinata immagine
+// CODICE__________COMMENTO________________DA PASSARE_TOTALI_____PLUGIN
+// MACCHINE SIEMENS SYMPHONY + AVANTO
+// BODY											
+BUSA_	/* Uniformità Assiale Body________*/	2	2	p3rmn_
+BUSS_	/* Uniformità Sagittale Body______*/	2	2	p3rmn_
+BUSC_	/* Uniformità Coronale Body_______*/	2	2	p3rmn_
+BDSA_	/* DGP Single Body________________*/	1	1	p8rmn_
+BDMA_	/* DGP Multi Body_________________*/	1	3	p8rmn_
+BTLX_	/* Localizer Thickness Body_______*/	0	0	none_
+BT2A_	/* Thickness 2mm Sing.Body________*/	1	1	p6rmn_
+BT5A_	/* Thickness 5mm Sing.Body________*/	1	1	p6rmn_
+BTMA_	/* Thickness 2mm Multi Body_______*/	15	15	p6rmn_
+BRKA_	/* Risoluzione 1024 Body__________*/	1	1	p4rmn_
+BR5A_	/* Risoluzione 512 Body___________*/	1	1	p4rmn_
+BR2A_	/* Risoluzione 256 Body___________*/	1	1	p4rmn_					
+// HEAD											
+HUSA_	/* Uniformità Assiale Head________*/	2	2	p3rmn_
+HUSS_	/* Uniformità Sagittale Head______*/	2	2	p3rmn_
+HUSC_	/* Uniformità Coronale Head_______*/	2	2	p3rmn_
+HDSA_	/* DGP Single Head________________*/	1	1	p8rmn_
+HDMA_	/* DGP Multi Head_________________*/	1	3	p8rmn_
+HTLX_	/* Localizer Thickness Head_______*/	0	0	none_
+HT2A_	/* Thickness 2mm Sing.Head________*/	1	1	p6rmn_
+HT5A_	/* Thickness 5mm Sing.Head________*/	1	1	p6rmn_
+HTMA_	/* Thickness 2mm Multi Head_______*/	15	15	p6rmn_
+HWLX_	/* Localizer Warp Head____________*/	0	0	none_
+HWSA_	/* Warp Assiale Head______________*/	1	1	p7rmn_
+HRKA_	/* Risoluzione 1024 Head__________*/	1	1	p4rmn_
+HR5A_	/* Risoluzione 512 Head___________*/	1	1	p4rmn_
+HR2A_	/* Risoluzione 256 Head___________*/	1	1	p4rmn_
+// SPINE SIMPHONY						
+S1FA_	/* Flash SPINE S1_________________*/	4	4	p5rmn_
+S1SA_	/* SpinEcho SPINE S1______________*/	4	4	p5rmn_
+S2FA_	/* Flash SPINE S2_________________*/	4	4	p5rmn_
+S2SA_	/* SpinEcho SPINE S2______________*/	4	4	p5rmn_
+S3FA_	/* Flash SPINE S3_________________*/	4	4	p5rmn_
+S3SA_	/* SpinEcho SPINE S3______________*/	4	4	p5rmn_
+S4FA_	/* Flash SPINE S4_________________*/	4	4	p5rmn_
+S4SA_	/* SpinEcho SPINE S4______________*/	4	4	p5rmn_
+S5FA_	/* Flash SPINE S5_________________*/	4	4	p5rmn_
+S5SA_	/* SpinEcho SPINE S5______________*/	4	4	p5rmn_
+S6FA_	/* Flash SPINE S6_________________*/	4	4	p5rmn_
+S6SA_	/* SpinEcho SPINE S6______________*/	4	4	p5rmn_
+// BODY ARRAY SIMPHONY						
+B1FS_	/* Flash BODY ARRAY B1____________*/	4	4	p5rmn_
+B1SS_	/* SpinEcho BODY ARRAY B1_________*/	4	4	p5rmn_
+B2FS_	/* Flash BODY ARRAY B2____________*/	4	4	p5rmn_
+B2SS_	/* SpinEcho BODY ARRAY B2_________*/	4	4	p5rmn_
+// ROVATO
+B1FE_	/* Flash BODY ARRAY EXT B1________*/	4	4	p5rmn_
+B1SE_	/* SpinEcho BODY ARRAY EXT B1_____*/	4	4	p5rmn_
+B2FE_	/* Flash BODY ARRAY EXT B2________*/	4	4	p5rmn_
+B2SE_	/* SpinEcho BODY ARRAY EXT B2_____*/	4	4	p5rmn_
+B3FE_	/* Flash BODY ARRAY EXT B3________*/	4	4	p5rmn_
+B3SE_	/* SpinEcho BODY ARRAY EXT B3_____*/	4	4	p5rmn_
+B4FE_	/* Flash BODY ARRAY EXT B4________*/	4	4	p5rmn_
+B4SE_	/* SpinEcho BODY ARRAY EXT B4_____*/	4	4	p5rmn_
+// BODY ARRAY AVANTO						
+B1FA_	/* Flash BODY ARRAY B1____________*/	4	4	p5rmn_
+B1SA_	/* SpinEcho BODY ARRAY B1_________*/	4	4	p5rmn_
+B2FA_	/* Flash BODY ARRAY B2____________*/	4	4	p5rmn_
+B2SA_	/* SpinEcho BODY ARRAY B2_________*/	4	4	p5rmn_
+B1FB_	/* Flash BODY ARRAY B1____________*/	4	4	p5rmn_
+B1SB_	/* SpinEcho BODY ARRAY B1_________*/	4	4	p5rmn_
+B2FB_	/* Flash BODY ARRAY B2____________*/	4	4	p5rmn_
+B2SB_	/* SpinEcho BODY ARRAY B2_________*/	4	4	p5rmn_
+// BODY ARRAY 16ch MANERBIO
+R1FA_	/* Flash BODY ARRAY 16CH B1_______*/	4	0	p5rmn_
+R1SA_	/* SpinEcho BODY ARRAY 16CH B1____*/	4	0	p5rmn_
+R2FA_	/* Flash BODY ARRAY 16CH B2_______*/	4	0	p5rmn_
+R2SA_	/* SpinEcho BODY ARRAY 16CH B2____*/	4	0	p5rmn_
+// SPINE AVANTO						
+S1FS_	/* Flash SPINE S1_________________*/	4	4	p5rmn_
+S1SS_	/* SpinEcho SPINE S1______________*/	4	4	p5rmn_
+S2FS_	/* Flash SPINE S2_________________*/	4	4	p5rmn_
+S2SS_	/* SpinEcho SPINE S2______________*/	4	4	p5rmn_
+S3FS_	/* Flash SPINE S3_________________*/	4	4	p5rmn_
+S3SS_	/* SpinEcho SPINE S3______________*/	4	4	p5rmn_
+S4FS_	/* Flash SPINE S4_________________*/	4	4	p5rmn_
+S4SS_	/* SpinEcho SPINE S4______________*/	4	4	p5rmn_
+S5FS_	/* Flash SPINE S5_________________*/	4	4	p5rmn_
+S5SS_	/* SpinEcho SPINE S5______________*/	4	4	p5rmn_
+S6FS_	/* Flash SPINE S6_________________*/	4	4	p5rmn_
+S6SS_	/* SpinEcho SPINE S6______________*/	4	4	p5rmn_
+S7FS_	/* Flash SPINE S7_________________*/	4	4	p5rmn_
+S7SS_	/* SpinEcho SPINE S7______________*/	4	4	p5rmn_
+S8FS_	/* Flash SPINE S8_________________*/	4	4	p5rmn_
+S8SS_	/* SpinEcho SPINE S8______________*/	4	4	p5rmn_
+// BREAST 						
+BL1S_	/* Flash BREAST LEFT______________*/	4	4	p5rmn_
+BL1F_	/* Flash BREAST LEFT______________*/	4	4	p5rmn_
+BR1S_	/* SpinEcho BREAST RIGHT__________*/	4	4	p5rmn_
+BR1F_	/* SpinEcho BREAST RIGHT__________*/	4	4	p5rmn_
+// NECK ARRAY SIMPHONY					
+N1FS_	/* Flash NECK ARRAY N1____________*/	4	4	p5rmn_
+N1SS_	/* SpinEcho NECK ARRAY N1_________*/	4	4	p5rmn_
+N2FS_	/* Flash NECK ARRAY N2____________*/	4	4	p5rmn_
+N2SS_	/* SpinEcho NECK ARRAY N2_________*/	4	4	p5rmn_
+// ROVATO
+N1FE_	/* Flash NECK ARRAY N1____________*/	4	4	p5rmn_
+N1SE_	/* SpinEcho NECK ARRAY N1_________*/	4	4	p5rmn_
+N2FE_	/* Flash NECK ARRAY N2____________*/	4	4	p5rmn_
+N2SE_	/* SpinEcho NECK ARRAY N2_________*/	4	4	p5rmn_
+// NECK MATRIX AVANTO					
+N1FA_	/* Flash NECK ARRAY B1____________*/	4	4	p5rmn_
+N1SA_	/* SpinEcho NECK ARRAY B1_________*/	4	4	p5rmn_
+N2FA_	/* Flash NECK ARRAY B2____________*/	4	4	p5rmn_
+N2SA_	/* SpinEcho NECK ARRAY B2_________*/	4	4	p5rmn_
+// LOOP AND FLEXIBLE						
+LLFS_	/* Flash LARGE LOOP_______________*/	4	4	p3rmn_
+LLSS_	/* SpinEcho LARGE LOOP____________*/	4	4	p3rmn_
+SLFS_	/* Flash SMALL LOOP_______________*/	4	4	p5rmn_
+SLSS_	/* SpinEcho SMALL LOOP____________*/	4	4	p5rmn_
+LFFS_	/* Flash LARGE FLEXIBLE___________*/	4	4	p3rmn_
+LFSS_	/* SpinEcho LARGE FLEXIBLE________*/	4	4	p3rmn_
+SFFS_	/* Flash SMALL FLEXIBLE___________*/	4	4	p3rmn_
+SFSS_	/* SpinEcho SMALL FLEXIBLE________*/	4	4	p3rmn_
+// MATRIX PERIPHERIC ANGIO AVANTO						
+PR1F_	/* Flash PERIF ARRAY PR1__________*/	4	4	p3rmn_
+PR1S_	/* SpinEcho PERIF ARRAY PR1_______*/	4	4	p3rmn_
+PL1F_	/* Flash PERIF ARRAY PL1__________*/	4	4	p3rmn_
+PL1S_	/* SpinEcho PERIF ARRAY PL1_______*/	4	4	p3rmn_
+PR2F_	/* Flash PERIF ARRAY PR2__________*/	4	4	p3rmn_
+PR2S_	/* SpinEcho PERIF ARRAY PR2_______*/	4	4	p3rmn_
+PL2F_	/* Flash PERIF ARRAY PL2__________*/	4	4	p3rmn_
+PL2S_	/* SpinEcho PERIF ARRAY PL2_______*/	4	4	p3rmn_
+PR3F_	/* Flash PERIF ARRAY PR3__________*/	4	4	p3rmn_
+PR3S_	/* SpinEcho PERIF ARRAY PR3_______*/	4	4	p3rmn_
+PL3F_	/* Flash PERIF ARRAY PL3__________*/	4	4	p3rmn_
+PL3S_	/* SpinEcho PERIF ARRAY PL3_______*/	4	4	p3rmn_
+PR4F_	/* Flash PERIF ARRAY PR4__________*/	4	4	p3rmn_
+PR4S_	/* SpinEcho PERIF ARRAY PR4_______*/	4	4	p3rmn_
+PL4F_	/* Flash PERIF ARRAY PL4__________*/	4	4	p3rmn_
+PL4S_	/* SpinEcho PERIF ARRAY PL4_______*/	4	4	p3rmn_
+// EXTREMITY COIL
+EX1F_	/* Flash EXTREMITY COIL___________*/	4	4	p3rmn_
+EX1S_	/* SpinEcho EXTREMITY COIL________*/	4	4	p3rmn_
+// SHOULDER COIL
+SHLF_	/* Flash SHOULDER COIL____________*/	4	4	p3rmn_
+SHLS_	/* SpinEcho SHOULDER COIL_________*/	4	4	p3rmn_
+SHSF_	/* Flash SHOULDER COIL____________*/	4	4	p3rmn_
+SHSS_	/* SpinEcho SHOULDER COIL_________*/	4	4	p3rmn_
+// T2 AND T1						
+T2MA_	/* T2 multi SpinEcho Body_________*/	20	20	p2rmn_
+B2K0_	/* T1 ir 2000 Body________________*/	18	1	p2rmn_
+B1K8_	/* T1 ir 1800 Body________________*/	18	1	p2rmn_
+B1K6_	/* T1 ir 1600 Body________________*/	18	1	p2rmn_
+B1K4_	/* T1 ir 1400 Body________________*/	18	1	p2rmn_
+B1K2_	/* T1 ir 1200 Body________________*/	18	1	p2rmn_
+B1K0_	/* T1 ir 1000 Body________________*/	18	1	p2rmn_
+B090_	/* T1 ir 900 Body_________________*/	18	1	p2rmn_
+B080_	/* T1 ir 800 Body_________________*/	18	1	p2rmn_
+B070_	/* T1 ir 700 Body_________________*/	18	1	p2rmn_
+B060_	/* T1 ir 600 Body_________________*/	18	1	p2rmn_
+B050_	/* T1 ir 500 Body_________________*/	18	1	p2rmn_
+B040_	/* T1 ir 400 Body_________________*/	18	1	p2rmn_
+B030_	/* T1 ir 300 Body_________________*/	18	1	p2rmn_
+B020_	/* T1 ir 200 Body_________________*/	18	1	p2rmn_
+B010_	/* T1 ir 100 Body_________________*/	18	1	p2rmn_
+B008_	/* T1 ir 80 Body__________________*/	18	1	p2rmn_
+B005_	/* T1 ir 50 Body__________________*/	18	1	p2rmn_
+B003_	/* T1 ir 30 Body__________________*/	18	1	p2rmn_
+C080_	/* T1 ir 800 Body_________________*/	1	0	p9rmn_
+T2M1_	/* T2 multi SpinEcho Body_________*/	1	0	p9rmn_
+T2M2_	/* T2 multi SpinEcho Body_________*/	1	0	p9rmn_
+T2M3_	/* T2 multi SpinEcho Body_________*/	1	0	p9rmn_
+// GIORNALIERI						
+D1BC_	/* Daily Body_____________________*/	4	0	p3rmn_
+D2HC_	/* Daily Head_____________________*/	4	0	p3rmn_
+D3S1_	/* Daily SPINE S1_________________*/	4	0	p5rmn_
+D4S5_	/* Daily SPINE S5_________________*/	4	0	p5rmn_
+D5N1_	/* Daily NECK ARRAY N1____________*/	4	0	p5rmn_
+D5N2_	/* Daily NECK ARRAY N2____________*/	4	0	p5rmn_
+D3B1_	/* Daily BODY ARRAY B1____________*/	4	0	p5rmn_
+D3B2_	/* Daily BODY ARRAY B2____________*/	4	0	p5rmn_
+D4LF_	/* Daily LARGE FLEXIBLE___________*/	4	0	p3rmn_
+D5SF_	/* Daily SMALL FLEXIBLE___________*/	4	0	p3rmn_
+// ESINE GE 						
+BUSA2	/* Uniformità Assiale Body________*/	2	2	p3rmn_
+BUSS2	/* Uniformità Sagittale Body______*/	2	2	p3rmn_
+BUSC2	/* Uniformità Coronale Body_______*/	2	2	p3rmn_
+BDSA2	/* DGP Single Body________________*/	1	1	p8rmn_
+BDMA2	/* DGP Multi Body_________________*/	1	3	p8rmn_
+BWSA2	/* Warp Assiale Body______________*/	1	1	p7rmn_
+HUSA2	/* Uniformità Assiale Head________*/	2	2	p3rmn_
+HUSS2	/* Uniformità Sagittale Head______*/	2	2	p3rmn_
+HUSC2	/* Uniformità Coronale Head_______*/	2	2	p3rmn_
+HT2A2	/* Thickness 2mm Sing.Head________*/	1	1	p6rmn_
+HT5A2	/* Thickness 5mm Sing.Head________*/	1	1	p6rmn_
+HTMA2	/* Thickness 2mm Multi Head_______*/	10	10	p6rmn_
+HDSA2	/* DGP Single Head________________*/	1	1	p8rmn_
+HDMA2	/* DGP Multi Head_________________*/	1	3	p8rmn_
+HWSA2	/* Warp Assiale Head______________*/	1	1	p7rmn_
+HR5A2	/* Risoluzione 512 Head___________*/	1	1	p4rmn_
+HR2A2	/* Risoluzione 256 Head___________*/	1	1	p4rmn_
+SHFA2	/* Shoulder_______________________*/	2	2	p3rmn_
+OBSA2	/* Open Body______________________*/	2	2	p3rmn_
+NVSN2	/* NeurovascularArray Neck________*/	2	2	p3rmn_
+NVSH2	/* NeurovascularArray Sag.Head____*/	2	2	p3rmn_
+NVCH2	/* NeurovascularArray Cor.Head____*/	2	2	p3rmn_
+NVAH2	/* NeurovascularArray Ass.Head____*/	2	2	p3rmn_
+9GSA2	/* 9 inch General Purpose_________*/	2	2	p3rmn_
+LKSA2	/* Large Knee_____________________*/	2	2	p3rmn_
+SKSA2	/* Small Knee_____________________*/	2	2	p3rmn_
+FOSA2	/* Foot___________________________*/	4	4	p5rmn_
+WRSA2	/* Wrist__________________________*/	4	4	p5rmn_
+CVSA2	/* Spine  Cervical________________*/	4	4	p5rmn_
+CTSA2	/* Spine  Thoracic________________*/	4	4	p5rmn_
+CLSA2	/* Spine  Lumbar__________________*/	4	4	p5rmn_
+T2MA2	/* T2 multi SpinEcho Head_________*/	4	4	p2rmn_
+HT1A2	/* Head SE pesata T1 _____________*/	1	1	p9rmn_
+T2M12	/* T2 multi SpinEcho Head_________*/	1	0	p9rmn_
+T2M22	/* T2 multi SpinEcho Head_________*/	1	0	p9rmn_
+T2M32	/* T2 multi SpinEcho Head_________*/	1	0	p9rmn_
+// DESENZANO APERTO
+HUSA3	/* Uniformità Assiale Head________*/	2	2	p3rmn_
+HUSS3	/* Uniformità Sagittale Head______*/	2	2	p3rmn_
+HUSC3	/* Uniformità Coronale Head_______*/	2	2	p3rmn_
+HDSA3	/* DGP Single Head________________*/	1	1	p8rmn_
+HDMA3	/* DGP Multi Head_________________*/	1	3	p8rmn_
+HT2A3	/* Thickness 2mm Sing.Head________*/	1	1	p6rmn_
+HT5A3	/* Thickness 5mm Sing.Head________*/	1	1	p6rmn_
+HTMA3	/* Thickness 2mm Multi Head_______*/	15	15	p6rmn_
+HWSA3	/* Warp Assiale Head______________*/	1	1	p7rmn_
+HRKA3	/* Risoluzione 1024 Head__________*/	1	1	p4rmn_
+HR5A3	/* Risoluzione 512 Head___________*/	1	1	p4rmn_
+HR2A3	/* Risoluzione 256 Head___________*/	1	1	p4rmn_
+T2MA3	/* T2 multi SpinEcho Head_________*/	4	4	p2rmn_
+B1K03	/* T1 ir 1000 Head________________*/	4	1	p2rmn_
+B0503	/* T1 ir 500 Head_________________*/	4	1	p2rmn_
+B0203	/* T1 ir 200 Head_________________*/	4	1	p2rmn_
+B0023	/* T1 ir 20 Head__________________*/	4	1	p2rmn_
+T1AA3	/* T1 per CNR_____________________*/	1	1	p9rmn_
+T2M13	/* T2 multi SpinEcho Head_________*/	1	0	p9rmn_
+T2M23	/* T2 multi SpinEcho Head_________*/	1	0	p9rmn_
+T2M33	/* T2 multi SpinEcho Head_________*/	1	0	p9rmn_
+
+     
+// DESENZANO ECHELON
+BUSA3	/* Uniformità Assiale Body________*/	2	2	p3rmn_
+BUSS3	/* Uniformità Sagittale Body______*/	2	2	p3rmn_
+BUSC3	/* Uniformità Coronale Body_______*/	2	2	p3rmn_
+BDSA3	/* DGP Single Body________________*/	1	1	p8rmn_
+BDMA3	/* DGP Multi Body_________________*/	1	3	p8rmn_
+BT2A3	/* Thickness 2mm Sing.Body________*/	1	1	p6rmn_
+BT5A3	/* Thickness 5mm Sing.Body________*/	1	1	p6rmn_
+BTMA3	/* Thickness 2mm Multi Body_______*/	15	15	p6rmn_
+BRKA3	/* Risoluzione 1024 Body__________*/	1	1	p4rmn_
+BR5A3	/* Risoluzione 512 Body___________*/	1	1	p4rmn_
+BR2A3	/* Risoluzione 256 Body___________*/	1	1	p4rmn_					
+RHCA3	/* Rapid Head Coil________________*/    2	2	p3rmn_
+RKCA3	/* Rapid Knee Coil________________*/	2	2	p3rmn_
+IBCL3	/* Breast Coil Left_______________*/	2	2	p3rmn_
+IBCR3	/* Breast Coil Right______________*/	2	2	p3rmn_
+MPCC3	/* Multipurpose coil A____________*/	2	2	p3rmn_
+MPCD3	/* Multipurpose coil B____________*/	2	2	p3rmn_
+NVCN3	/* Neurovascular Coil NeuroVasc___*/	2	2	p3rmn_
+NVCH3	/* Neurovascular Coil Head________*/	2	2	p3rmn_
+RWCA3	/* Wrist__________________________*/	2	2	p3rmn_
+RBCA3	/* Torso__________________________*/	2	2	p3rmn_
+CTLC3	/* CervicalToracicLumbar Cerv_____*/	2	2	p3rmn_
+CTLT3	/* CervicalToracicLumbar Torac____*/	2	2	p5rmn_
+CTL13	/* CervicalToracicLumbar Lumb1____*/	2	2	p5rmn_
+CTL23	/* CervicalToracicLumbar Lumb2____*/	2	2	p5rmn_
+
+	
