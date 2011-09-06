@@ -76,3 +76,15 @@ INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argome
 INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p6rmn_ argomento= #4#5#6#7
 3-set-2011 23.24.09 contMensili.Sequenze_ callPluginsFromSequenceTable
 INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p6rmn_ argomento= #8
+6-set-2011 20.00.23 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+6-set-2011 20.00.23 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p6rmn_ argomento= #4#5#6#7
+6-set-2011 20.00.23 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p6rmn_ argomento= #8
+6-set-2011 20.04.31 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+6-set-2011 20.04.31 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p6rmn_ argomento= #4#5#6#7
+6-set-2011 20.04.31 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p6rmn_ argomento= #8
