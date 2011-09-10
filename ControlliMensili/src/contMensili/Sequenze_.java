@@ -66,8 +66,6 @@ public class Sequenze_ implements PlugIn {
 
 	public void run(String arg) {
 
-		boolean ok1 = checkJar("iw2ayv.jar");
-		boolean ok2 = checkJar("Excel_Writer.jar");
 		// inizializziamo l'eventuale logger file MyFileLog.txt
 		// ricordimaci che vengono loggati tutti i messaggi
 		// File fl = new File("MyFileLog.txt");
@@ -77,11 +75,13 @@ public class Sequenze_ implements PlugIn {
 		// MyFileLogger.logger.warning("Sequenze"+ MyFileLogger.here("aaaa"));
 		MyFileLogger.logger.info("-----INIZIO Sequenze----");
 
-		if (!ok1) {
-			IJ.log("JAR file iw2ayv.jar not found");
+		if (this.getClass().getResource("/iw2ayv.jar") == null) {
+			IJ.error("ATTENZIONE, manca il file iw2ayv.jar");
+			return;
 		}
-		if (!ok2) {
-			IJ.log("JAR file Excel_Writer.jar not found");
+		if (this.getClass().getResource("/Excel_Writer.jar") == null) {
+			IJ.error("ATTENZIONE, manca il file Excel_Writer.jar");
+			return;
 		}
 
 		String startingDir = Prefs.get(MyConst.PREFERENCES_1,
@@ -115,6 +115,11 @@ public class Sequenze_ implements PlugIn {
 		boolean self1 = gd.getNextBoolean();
 
 		if (self1) {
+			if (!new InputOutput().checkJar(MyConst.TEST_FILE)) {
+				UtilAyv.noTest2();
+				return;
+			}
+
 			// IJ.runPlugIn("contMensili.p2rmn_", "-1");
 			IJ.runPlugIn("contMensili.p3rmn_", "-1");
 			IJ.runPlugIn("contMensili.p4rmn_", "-1");
@@ -790,8 +795,6 @@ public class Sequenze_ implements PlugIn {
 			if (numeroImaRichieste == 0)
 				continue;
 			String codiceBobinaRichiesto = TableCode.getCoil(tableCode6, j1);
-			
-			
 
 			for (int j2 = 0; j2 < tableSequenze6.length; j2++) {
 				new TableSequence();
@@ -803,7 +806,7 @@ public class Sequenze_ implements PlugIn {
 					break;
 				if (compareAcqReq(codiceImaAcquisite, codiceImaRichieste,
 						codiceBobinaAcquisito, codiceBobinaRichiesto)) {
-	//				MyLog.here("codiceAcquisito="+codiceBobinaAcquisito+" codiceRichiesto="+codiceBobinaRichiesto);
+					// MyLog.here("codiceAcquisito="+codiceBobinaAcquisito+" codiceRichiesto="+codiceBobinaRichiesto);
 					numeroImaAcquisite++;
 
 				}

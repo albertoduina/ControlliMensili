@@ -158,7 +158,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
 		if (vetRiga[0] == -1) {
+			
 			IJ.log("selfTestSilent.p3rmn_");
+
 			selfTestSilent();
 			return 0;
 		}
