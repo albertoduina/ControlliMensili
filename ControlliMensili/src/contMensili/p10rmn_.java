@@ -11,6 +11,7 @@ import ij.gui.OvalRoi;
 import ij.gui.Overlay;
 import ij.gui.Plot;
 import ij.gui.PlotWindow;
+import ij.gui.PolygonRoi;
 import ij.gui.Roi;
 import ij.gui.WaitForUserDialog;
 import ij.io.FileSaver;
@@ -27,6 +28,7 @@ import ij.util.Tools;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -112,14 +114,20 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		MyFileLogger.logger.info("p10rmn_>>> fileDir = " + fileDir);
 
-		String path1 = "C:/Users/alberto/Repository/git/ControlliMensili/ControlliMensili/test2/0001";
-		String path2 = "C:/Users/alberto/Repository/git/ControlliMensili/ControlliMensili/test2/HUSA_001testP3";
-		String autoArgs = "0";
-		boolean autoCalled = false;
-		boolean step = false;
-		boolean verbose = true;
-		boolean test = true;
-		prepUnifor(path1, path2, autoArgs, autoCalled, step, verbose, test);
+		String startingDir = "C:/Dati/Test2/";
+		File[] files = new File(startingDir).listFiles();
+		String path1 = null;
+		for (int i1 = 0; i1 < files.length; i1++) {
+			path1 = files[i1].getAbsolutePath();
+			String path2 = "C:/Users/alberto/Repository/git/ControlliMensili/ControlliMensili/test2/HUSA_001testP3";
+			String autoArgs = "0";
+			boolean autoCalled = false;
+			boolean step = false;
+			boolean verbose = true;
+			boolean test = true;
+			prepUnifor(path1, path2, autoArgs, autoCalled, step, verbose, test);
+		}
+
 		return;
 	}
 
@@ -258,7 +266,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		int height = imp0.getHeight();
 		int width = imp0.getWidth();
 
-		int diaFantoccio = 220;
+		int diaFantoccio = 260;
 
 		int[] roiData = readPreferences(width, height, diaFantoccio);
 
@@ -286,326 +294,169 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 
+		// do {
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		ImagePlus imp2 = UtilAyv.openImageNoDisplay(path2, true);
+
+		double dimPixel = ReadDicom
+				.readDouble(ReadDicom.readSubstring(ReadDicom
+						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
+						1));
+
+		IJ.log("dimPixel= " + dimPixel);
+
+		// qui come prima cosa faccio posizionare la ROI
+		int width = imp1.getWidth();
+		int height = imp1.getHeight();
+
+		int sqX = roiData[0];
+		int sqY = roiData[1];
+		int diamRoi1 = 200;
+
+		imp1.setRoi(new OvalRoi(sqX, sqY, diamRoi1, diamRoi1));
+		imp1.updateAndDraw();
+		new WaitForUserDialog("Posizionare la ROI e premere OK").show();
+
+		IJ.run("Add Selection...", "");
+
+		// Rectangle boundRec = imp1.getProcessor().getRoi().getBounds();
+		Rectangle boundRec = imp1.getProcessor().getRoi();
+
+		IJ.log("boundRec.x=" + boundRec.x);
+		IJ.log("boundRec.y=" + boundRec.y);
+		IJ.log("boundRec.width=" + boundRec.width);
+		IJ.log("boundRec.height=" + boundRec.height);
+		IJ.log("boundRec.getCenterX=" + boundRec.getCenterX());
+		IJ.log("boundRec.getCenterY=" + boundRec.getCenterY());
+
+		int x1 = boundRec.x + boundRec.width / 2;
+		int y1 = boundRec.y + boundRec.height / 2;
+		diamRoi1 = boundRec.width;
+
+		IJ.log("Il centro cerchio è x=" + x1 + " y=" + y1);
+
+		// ImageCanvas ic1 = imp1.getCanvas();
+		// Overlay over1 = new Overlay();
+		imp1.setRoi(new OvalRoi(x1 - 4, y1 - 4, 8, 8));
+		Roi roi1 = imp1.getRoi();
+		if (roi1 == null)
+			IJ.log("roi1==null");
+		IJ.log("roi1=" + roi1);
+		IJ.run("Add Selection...", "");
+
+		// Overlay over1 = new Overlay(roi1);
+		// imp1.setHideOverlay(true);
+
+		// over1.setFillColor(Color.red);
+		imp1.killRoi();
+
+		// ic1.repaint();
+
+		ImageProcessor ip1 = imp1.getProcessor();
+
+		// --------------------------------
+		// PASSO 1
+		//
+		// disegno MROI su imp1
+		// --------------------------------
+
+		// qui inizio a fare prove per il posizionamento automatico. Il
+		// centro della ROI predeterminata lo conosco già, ora si tratta
+		// di determinare il punto di MAXIMA
+
+		double tolerance = 300.0;
+		double threshold = 0.0;
+		int outputType = MaximumFinder.LIST;
+		boolean excludeOnEdges = false;
+		boolean isEDM = false;
+
+		MaximumFinder maxFinder = new MaximumFinder();
+
+		double[] rx = null;
+		double[] ry = null;
+		ResultsTable rt1 = ResultsTable.getResultsTable();
 		do {
-			ImagePlus imp1 = UtilAyv.openImageNormal(path1);
-			ImagePlus imp2 = UtilAyv.openImageNoDisplay(path2, true);
+			rt1.reset();
+			maxFinder.findMaxima(ip1, tolerance, threshold, outputType,
+					excludeOnEdges, isEDM);
+			rx = rt1.getColumnAsDoubles(0);
+			ry = rt1.getColumnAsDoubles(1);
+			tolerance += 10.0;
+		} while (rx.length > 1);
 
-			double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
-					ReadDicom.readDicomParameter(imp1,
-							MyConst.DICOM_PIXEL_SPACING), 1));
+		IJ.log("tolerance=" + tolerance);
+		imp1.setRoi(new OvalRoi((int) rx[0] - 4, (int) ry[0] - 4, 8, 8));
+		IJ.run("Overlay Options...", "stroke=yellow width=1 fill=none");
 
-			// qui come prima cosa faccio posizionare la ROI
-			int width = imp1.getWidth();
-			int height = imp1.getHeight();
+		new WaitForUserDialog("MODIFICA e premere  OK").show();
+		Rectangle boundRec2 = imp1.getProcessor().getRoi();
+		int x2 = boundRec2.x + boundRec2.width / 2;
+		int y2 = boundRec2.y + boundRec2.height / 2;
+		rx[0] = x2;
+		ry[0] = y2;
 
-			int sqX = roiData[0];
-			int sqY = roiData[1];
-			int diamRoi1 = roiData[2];
+		IJ.run("Add Selection...", "");
 
-			imp1.setRoi(new OvalRoi(sqX, sqY, diamRoi1, diamRoi1));
-			imp1.updateAndDraw();
-			new WaitForUserDialog("Posizionare la ROI e premere OK").show();
+		// over1.add(imp1.getRoi());
+		imp1.killRoi();
+		IJ.log("Il maxima trovato è x= " + rx[0] * dimPixel + " y= " + ry[0]
+				* dimPixel);
 
-			// Rectangle boundRec = imp1.getProcessor().getRoi().getBounds();
-			Rectangle boundRec = imp1.getProcessor().getRoi();
+		double aux1 = 0;
+		aux1 = (double) x1 * dimPixel;
 
-			IJ.log("boundRec.x=" + boundRec.x);
-			IJ.log("boundRec.y=" + boundRec.y);
-			IJ.log("boundRec.width=" + boundRec.width);
-			IJ.log("boundRec.height=" + boundRec.height);
-			IJ.log("boundRec.getCenterX=" + boundRec.getCenterX());
-			IJ.log("boundRec.getCenterY=" + boundRec.getCenterY());
+		int xStartReflineScreen = (int) aux1;
+		double ax1 = aux1;
+		aux1 = (double) y1 * dimPixel;
+		int yStartReflineScreen = (int) aux1;
+		double ay1 = aux1;
 
-			int x1 = boundRec.x + boundRec.width / 2;
-			int y1 = boundRec.y + boundRec.height / 2;
-			diamRoi1 = boundRec.width;
+		IJ.log("Il centro cerchio SCREEN è x= " + xStartReflineScreen + " y= "
+				+ yStartReflineScreen);
+		aux1 = rx[0] * dimPixel;
+		int xEndReflineScreen = (int) aux1;
+		double bx1 = aux1;
 
-			IJ.log("Il centro cerchio è x=" + x1 + " y=" + y1);
+		aux1 = ry[0] * dimPixel;
+		int yEndReflineScreen = (int) aux1;
+		double by1 = aux1;
 
-			ImageCanvas ic1 = imp1.getCanvas();
-			Overlay over1 = new Overlay();
-			imp1.setRoi(new OvalRoi(x1 + 4, y1 + 4, 8, 8));
-			Roi roi1 = imp1.getRoi();
-			if (roi1 == null)
-				IJ.log("roi1==null");
-			IJ.log("roi1=" + roi1);
-			over1.addElement(roi1);
-			over1.setFillColor(Color.red);
-			imp1.killRoi();
+		IJ.log("Il maxima trovato SCREEN  è x= " + xEndReflineScreen + " y= "
+				+ yEndReflineScreen);
 
-			ic1.repaint();
+		imp1.setRoi(new Line(x1, y1, (int) rx[0], (int) ry[0]));
+		IJ.run("Add Selection...", "");
 
-			ImageProcessor ip1 = imp1.getProcessor();
+		imp1.updateAndDraw();
+		new WaitForUserDialog("Verificare direzione e premere  OK").show();
 
-			// --------------------------------
-			// PASSO 1
-			//
-			// disegno MROI su imp1
-			// --------------------------------
+		int lato = 20;
+		double diff = (double) lato * Math.sqrt(2) / 2.0;
 
-			// qui inizio a fare prove per il posizionamento automatico. Il
-			// centro della ROI predeterminata lo conosco già, ora si tratta
-			// di determinare il punto di MAXIMA
+		double prof = 20;
 
-			double tolerance = 300.0;
-			double threshold = 0.0;
-			int outputType = MaximumFinder.LIST;
-			boolean excludeOnEdges = false;
-			boolean isEDM = false;
+		// ========================================================00
 
-			MaximumFinder maxFinder = new MaximumFinder();
+		double[] out1 = interpola(bx1, by1, ax1, ay1, prof);
 
-			double[] rx = null;
-			double[] ry = null;
-			ResultsTable rt1 = ResultsTable.getResultsTable();
-			do {
-				rt1.reset();
-				maxFinder.findMaxima(ip1, tolerance, threshold, outputType,
-						excludeOnEdges, isEDM);
-				rx = rt1.getColumnAsDoubles(0);
-				ry = rt1.getColumnAsDoubles(1);
-				tolerance += 10.0;
-			} while (rx.length > 1);
+		double cx = out1[0];
+		double cy = out1[1];
 
-			IJ.log("tolerance=" + tolerance);
-			imp1.setRoi(new OvalRoi((int) rx[0] + 4, (int) ry[0] + 4, 8, 8));
-			over1.add(imp1.getRoi());
-			imp1.killRoi();
-			IJ.log("Il maxima trovato è x=" + rx[0] * dimPixel + " y=" + ry[0]
-					* dimPixel);
+		IJ.log("interpola restituisce  cx= " + cx + "  cy= " + cy);
 
-			double aux1 = 0;
-			aux1 = (double) x1 * dimPixel;
+		double ax = cx / dimPixel;
+		double ay = cy / dimPixel;
 
-			int xStartReflineScreen = (int) aux1;
-			aux1 = (double) y1 * dimPixel;
-			int yStartReflineScreen = (int) aux1;
+		IJ.log("imposto la ROI   ax= " + ax + "  ay= " + ay);
 
-			IJ.log("Il centro cerchio SCREEN è x=" + xStartReflineScreen
-					+ " y=" + yStartReflineScreen);
-			aux1 = rx[0] * dimPixel;
-			int xEndReflineScreen = (int) aux1;
+		// imp1.setRoi((int) ax, (int) ay, 30, 30);
 
-			aux1 = ry[0] * dimPixel;
-			int yEndReflineScreen = (int) aux1;
+		imp1.setRoi(new OvalRoi((int) ax - 4, (int) ay - 4, 8, 8));
 
-			IJ.log("Il maxima trovato SCREEN  è x=" + xEndReflineScreen + " y="
-					+ yEndReflineScreen);
+		IJ.run("Add Selection...", "");
 
-			imp1.setRoi(new Line(x1, y1, (int) rx[0], (int) ry[0]));
-			imp1.updateAndDraw();
-			new WaitForUserDialog("Verificare direzione e premere  OK").show();
-
-			double prof = 30;
-
-			double[] out1 = interpola((double) x1, (double) y1, rx[0], ry[0],
-					prof);
-			
-			
-			double ax= out1[0]*dimPixel;
-			double ay= out1[1]*dimPixel;
-			
-
-			imp1.setRoi((int) ax, (int) ay, 30, 30);
-			imp1.updateAndDraw();
-			new WaitForUserDialog("Verificare ROI e premere  OK").show();
-
-			// rt1.show("Results");
-			// IJ.log("pippero="+pippero);
-
-			// int[][] result1 = find255(bp1);
-			// MyLog.logMatrix(result1, "result1");
-
-			// IJ.run(imp1, "Find Maxima...",
-			// "noise=10 output=[Point Selection]");
-			new WaitForUserDialog("004 Do something, then click OK.").show();
-
-			int posX = ReadDicom.readInt(Prefs.get("prefer.p10rmnPosX",
-					Integer.toString(height / 2)));
-			if ((posX < 10) || (posX > (height - 10)))
-				posX = height / 2;
-			int posY = ReadDicom.readInt(Prefs.get("prefer.p10rmnPosY",
-					Integer.toString(width / 2)));
-			if ((posY < 10) || (posY > (width - 10)))
-				posY = width / 2;
-			// UtilAyv.autoAdjust(imp1, ip1);
-			if (imp1.isVisible())
-				UtilAyv.backgroundEnhancement(0, 0, 10, imp1);
-			int userSelection1 = 0;
-			do {
-				// imp1.setRoi(posX, posY, sqNEA, sqNEA);
-				// imp1.updateAndDraw();
-				// userSelection1 = menuPositionMroi();
-			} while (userSelection1 == 1);
-			//
-			// rilettura posizione user-defined
-			//
-			// new WaitForUserDialog("Do something, then click OK.").show();
-
-			ip1 = imp1.getProcessor();
-			Rectangle boundingRectangle1 = ip1.getRoi();
-
-			// writeStoredRoiData(boundingRectangle);
-			int diamRoi2 = (int) (boundingRectangle1.width * MyConst.P10_AREA);
-
-			int xRoi2 = boundingRectangle1.x
-					+ ((boundingRectangle1.width - diamRoi2) / 2);
-			int yRoi2 = boundingRectangle1.y
-					+ ((boundingRectangle1.height - diamRoi2) / 2);
-
-			imp1.setRoi(new OvalRoi(xRoi2, yRoi2, diamRoi2, diamRoi2));
-
-			imp1.getWindow().toFront();
-			sqX = boundingRectangle1.x;
-			sqY = boundingRectangle1.y;
-
-			// Prefs.set("prefer.p10rmnPosX",
-			// Integer.toString(boundingRectangle.x));
-			// Prefs.set("prefer.p10rmnPosY",
-			// Integer.toString(boundingRectangle.y));
-
-			new WaitForUserDialog("STOP, then click OK.").show();
-
-			/**
-			 * // // posiziono la ROI 7x7 all'interno di MROI // int gap =
-			 * (sqNEA - MyConst.P5_MROI_7X7_PIXEL) / 2; imp1.setRoi(sqX + gap,
-			 * sqY + gap, MyConst.P5_MROI_7X7_PIXEL, MyConst.P5_MROI_7X7_PIXEL);
-			 * imp1.updateAndDraw(); ImageStatistics stat1 =
-			 * imp1.getStatistics(); double signal1 = stat1.mean;
-			 * 
-			 * int xFondo = MyConst.P5_X_ROI_BACKGROUND; int yFondo =
-			 * MyConst.P5_Y_ROI_BACKGROUND; if (test) yFondo = yFondo + 40; if
-			 * (step) msgMroi(); // // disegno RoiFondo su imp1 //
-			 * ImageStatistics statFondo = UtilAyv.backCalc(xFondo, yFondo,
-			 * MyConst.P5_DIAM_ROI_BACKGROUND, imp1, step, false, test);
-			 * 
-			 * // // disegno MROI su imaDiff //
-			 * 
-			 * imaDiff.resetDisplayRange(); imaDiff.setRoi(sqX + gap, sqY + gap,
-			 * MyConst.P5_MROI_7X7_PIXEL, MyConst.P5_MROI_7X7_PIXEL);
-			 * imaDiff.updateAndDraw(); ImageStatistics statImaDiff =
-			 * imaDiff.getStatistics(); imaDiff.updateAndDraw(); if
-			 * (imaDiff.isVisible()) imaDiff.getWindow().toFront();
-			 * 
-			 * if (step) msgMroi(); // // calcolo P su imaDiff // double
-			 * prelimImageNoiseEstimate_MROI = statImaDiff.stdDev /
-			 * Math.sqrt(2);
-			 * 
-			 * if (step) { msgNea(prelimImageNoiseEstimate_MROI); } // // loop
-			 * di calcolo NEA su imp1 // imp1.setRoi(sqX, sqY, sqNEA, sqNEA);
-			 * imp1.updateAndDraw(); if (imp1.isVisible())
-			 * imp1.getWindow().toFront(); // // qui, se il numero dei pixel <
-			 * 121 dovrò incrementare sqR2 e // ripetere il loop // double
-			 * checkPixels = MyConst.P5_CHECK_PIXEL_MULTIPLICATOR
-			 * prelimImageNoiseEstimate_MROI; int area11x11 =
-			 * MyConst.P5_NEA_11X11_PIXEL MyConst.P5_NEA_11X11_PIXEL; int
-			 * enlarge = 0; int pixx = 0;
-			 * 
-			 * do { pixx = countPix(imp1, sqX - enlarge, sqY - enlarge, sqNEA,
-			 * checkPixels);
-			 * 
-			 * imp1.setRoi(sqX - enlarge, sqY - enlarge, sqNEA, sqNEA);
-			 * imp1.updateAndDraw(); // imp1.getWindow().toFront(); if (step)
-			 * msgDisplayNEA();
-			 * 
-			 * if (pixx < area11x11) { sqNEA = sqNEA + 2; // accrescimento area
-			 * enlarge = enlarge + 1; } if (step) { msgEnlargeRoi(sqNEA); }
-			 * 
-			 * // verifico che quando cresce il lato del quadrato non si esca //
-			 * dall'immagine
-			 * 
-			 * if ((sqX + sqNEA - enlarge) >= width || (sqX - enlarge) <= 0) {
-			 * msgNot121(); return null; } if ((sqY + sqNEA - enlarge) >= height
-			 * || (sqY - enlarge) <= 0) { msgNot121(); return null; } if (step
-			 * && pixx >= area11x11) msgSqr2OK(pixx);
-			 * 
-			 * } while (pixx < area11x11);
-			 * 
-			 * imp1.setRoi(sqX - enlarge, sqY - enlarge, sqNEA, sqNEA);
-			 * imp1.updateAndDraw(); if (imp1.isVisible())
-			 * imp1.getWindow().toFront(); // // calcolo SD su imaDiff quando i
-			 * corrispondenti pixel // di imp1 passano il test // double[] out1
-			 * = devStandardNema(imp1, imaDiff, sqX - enlarge, sqY - enlarge,
-			 * sqNEA, checkPixels); if (step) msgDisplayMean4(out1[0], out1[1]);
-			 * // // calcolo SNR finale // double snr = signal1 / (out1[1] /
-			 * Math.sqrt(2)); if (step) msgSnr(snr);
-			 * 
-			 * // // calcolo simulata // int[][] classiSimulata =
-			 * generaSimulata(sqX + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL,
-			 * imp1, step, verbose, test); // // calcolo posizione fwhm a metà
-			 * della MROI // if (imp1.isVisible()) imp1.getWindow().toFront();
-			 * // // 28feb05 qui dò la possibilità di modificare la posizione su
-			 * cui // verrà calcolato l'FWHM // int xStartProfile = 0; int
-			 * yStartProfile = 0; int xEndProfile = 0; int yEndProfile = 0;
-			 * 
-			 * if (test) { if (verticalProfile) { xStartProfile = sqX + gap +
-			 * MyConst.P5_MROI_7X7_PIXEL / 2; yStartProfile = 1; xEndProfile =
-			 * xStartProfile; yEndProfile = height; } else { xStartProfile = 1;
-			 * yStartProfile = sqY + gap + MyConst.P5_MROI_7X7_PIXEL / 2;
-			 * xEndProfile = width; yEndProfile = yStartProfile; } } else { Line
-			 * line = selectProfilePosition(sqX + gap, sqY + gap,
-			 * MyConst.P5_MROI_7X7_PIXEL, imp1);
-			 * 
-			 * xStartProfile = line.x1; yStartProfile = line.y1; xEndProfile =
-			 * line.x2; yEndProfile = line.y2;
-			 * 
-			 * }
-			 * 
-			 * double[] outFwhm2 = analyzeProfile(imp1, xStartProfile,
-			 * yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
-			 * 
-			 * // // Salvataggio dei risultati nella ResultsTable
-			 * 
-			 * // String[][] tabCodici = new InputOutput().readFile1( //
-			 * MyConst.CODE_FILE, MyConst.TOKENS4);
-			 * 
-			 * String[][] tabCodici = TableCode.loadTable(MyConst.CODE_FILE);
-			 * 
-			 * // String[] info1 = //
-			 * ReportStandardInfo.getSimpleStandardInfo(path[0], // imp1,
-			 * tabCodici, VERSION, autoCalled);
-			 * 
-			 * // // rt = ReportStandardInfo.putSimpleStandardInfoRT(info1); int
-			 * col = 2; String t1 = "TESTO          "; rt.setHeading(++col,
-			 * "roi_x"); rt.setHeading(++col, "roi_y"); rt.setHeading(++col,
-			 * "roi_b"); rt.setHeading(++col, "roi_h");
-			 * 
-			 * rt.addLabel(t1, simulataName); rt.incrementCounter();
-			 * 
-			 * rt.addLabel(t1, "Segnale"); rt.addValue(2, signal1);
-			 * rt.addValue(3, sqX); rt.addValue(4, sqY); rt.addValue(5, sqNEA);
-			 * rt.addValue(6, sqNEA);
-			 * 
-			 * rt.incrementCounter(); rt.addLabel(t1, "Rumore_Fondo");
-			 * rt.addValue(2, statFondo.mean); rt.addValue(3, statFondo.roiX);
-			 * rt.addValue(4, statFondo.roiY); rt.addValue(5,
-			 * statFondo.roiWidth); rt.addValue(6, statFondo.roiHeight);
-			 * 
-			 * rt.incrementCounter(); rt.addLabel(t1, "SnR"); rt.addValue(2,
-			 * snr); rt.addValue(3, sqX); rt.addValue(4, sqY); rt.addValue(5,
-			 * sqNEA); rt.addValue(6, sqNEA);
-			 * 
-			 * rt.incrementCounter(); rt.addLabel(t1, "FWHM"); rt.addValue(2,
-			 * outFwhm2[0]); rt.addValue(3, xStartProfile); rt.addValue(4,
-			 * yStartProfile); rt.addValue(5, xEndProfile); rt.addValue(6,
-			 * yEndProfile);
-			 * 
-			 * String[] levelString = { "+20%", "+10%", "-10%", "-10%", "-30%",
-			 * "-40%", "-50%", "-60%", "-70%", "-80%", "-90%", "fondo" };
-			 * 
-			 * for (int i1 = 0; i1 < classiSimulata.length; i1++) {
-			 * rt.incrementCounter(); rt.addLabel(t1, ("Classe" +
-			 * classiSimulata[i1][0]) + "_" + levelString[i1]); rt.addValue(2,
-			 * classiSimulata[i1][1]); } if (verbose && !test)
-			 * rt.show("Results");
-			 * 
-			 * if (autoCalled && !test) { accetta = Msg.accettaMenu(); } else {
-			 * if (!test) { accetta = Msg.msgStandalone(); } else { accetta =
-			 * test; }
-			 * 
-			 * }
-			 */
-		} while (!accetta);
+		imp1.updateAndDraw();
+		new WaitForUserDialog("Verificare ROI e premere  OK").show();
 		return rt;
 
 	}
@@ -1591,26 +1442,87 @@ public class p10rmn_ implements PlugIn, Measurements {
 		return userSelection1;
 	}
 
+	public static double angoloRad(double ax, double ay, double bx, double by) {
+		//
+		// cambio di segno il sin per tenere conto del fatto che lìorigine delle
+		// coordinate è in alto a sinistra, anzichè in basso
+		//
+		double dx = ax - bx;
+		double dy = by - ay;
+
+		double alf1 = Math.atan2(dy, dx);
+
+		IJ.log("angolo= " + IJ.d2s(Math.toDegrees(alf1)) + " gradi");
+
+		return alf1;
+
+	}
+
 	public static double[] interpola(double ax, double ay, double bx,
 			double by, double prof) {
-
-		double alf1 = Math.atan((ay - by) / (ax - bx));
+		//
+		// con ax, ay indico le coordinate del punto sul cerchio con bx, by
+		// indico le coordinate del centro
+		//
 		IJ.log("-------- interpola --------");
-		IJ.log("angolo= " + Math.toDegrees(alf1) + "  sin= " + Math.sin(alf1));
-		IJ.log("angolo= " + Math.toDegrees(alf1) + "  cos= " + Math.cos(alf1));
-		double deltaX = prof / Math.cos(alf1);
-		double deltaY = prof / Math.sin(alf1);
-		IJ.log("deltaX=" + deltaX);
-		IJ.log("deltaY=" + deltaY);
-		double cx = ax + deltaX;
-		double cy = ay + deltaY;
-		IJ.log("cx=" + cx);
-		IJ.log("cy=" + cy);
+
+		double ang1 = angoloRad(ax, ay, bx, by);
+
+		IJ.log("Math.sin(ang1)= " + Math.sin(ang1) + " Math.cos(ang1)= "
+				+ Math.cos(ang1));
+
+		double prof2 = prof * (Math.cos(ang1));
+
+		IJ.log("prof= " + IJ.d2s(prof) + " prof2= " + IJ.d2s(prof2));
+
+		double cx = 0;
+		double cy = 0;
+		IJ.log("proiezioneX= " + prof * (Math.cos(ang1)));
+		IJ.log("proiezioneY= " + prof * (Math.sin(ang1)));
+
+		cx = ax - prof * (Math.cos(ang1));
+		cy = ay + prof * (Math.sin(ang1));
+	
+		
+		
+		// if ((Math.sin(ang1) >= 0) && (Math.cos(ang1) >= 0)) {
+		// // primo quadrante
+		// IJ.log("primo quadrante");
+		//
+		// cx = ax - prof * (Math.cos(ang1));
+		// cy = ay + prof * (Math.sin(ang1));
+		// }
+		//
+		// if ((Math.sin(ang1) >= 0) && (Math.cos(ang1) < 0)) {
+		// // secondo quadrante
+		//
+		// IJ.log("secondo quadrante");
+		// cx = ax + prof * (Math.cos(ang1));
+		// cy = ay - prof * (Math.sin(ang1));
+		// }
+		//
+		// if ((Math.sin(ang1) < 0) && (Math.cos(ang1) < 0)) {
+		// // terzo quadrante
+		// IJ.log("terzo quadrante");
+		// cx = ax + prof * (Math.cos(ang1));
+		// cy = ay + prof * (Math.sin(ang1));
+		// }
+		//
+		// if ((Math.sin(ang1) < 0) && (Math.cos(ang1) >= 0)) {
+		// // quarto quadrante
+		// IJ.log("quarto quadrante");
+		// cx = ax - prof * (Math.cos(ang1));
+		// cy = ay + prof * (Math.sin(ang1));
+		// }
+
+		// double cy = ay * ((bx - cx) / (bx - ax)) + by * ((cx - ax) / (bx -
+		// ax));
+
+		IJ.log("cx= " + IJ.d2s(cx) + " cy= " + IJ.d2s(cy));
 		double[] out = new double[2];
 		out[0] = cx;
 		out[1] = cy;
 		IJ.log("-----------------------------");
 		return out;
 	}
-
 } // p5rmn_
