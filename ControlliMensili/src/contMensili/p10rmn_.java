@@ -30,6 +30,7 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import utils.AboutBox;
@@ -40,6 +41,7 @@ import utils.Msg;
 import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyLog;
+import utils.MyPlot;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
@@ -87,6 +89,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 	private static String fileDir = "";
 
 	private static String simulataName = "";
+	private static boolean pulse = false;
+	private static boolean previous = false;
+	private static boolean init1 = true;
 
 	// private boolean profiVert = false;
 	/**
@@ -309,6 +314,188 @@ public class p10rmn_ implements PlugIn, Measurements {
 		int width = imp1.getWidth();
 		int height = imp1.getHeight();
 
+		// =================================================================================
+
+		IJ.run(imp1, "Smooth", "");
+		IJ.run(imp1, "Find Edges", "");
+
+		// --- diagonale 1
+		imp1.setRoi(new Line(width, height, 0, 0));
+		imp1.updateAndDraw();
+		Roi roi11 = imp1.getRoi();
+		double[] profi1 = ((Line) roi11).getPixels(); // profilo non mediato
+
+		Plot plot = MyPlot.basePlot(profi1, "Diagonale 1", Color.red);
+		plot.show();
+
+		double[] profi2 = smooth3(profi1, 10);
+
+		// considero i primi e gli ultimi 20 pixels uguali al fondo (a patto che
+		// non valgano
+		// 0)
+
+		double sum1 = 0;
+		for (int i1 = 0; i1 < 20; i1++) {
+			sum1 += profi2[i1];
+		}
+
+		for (int i1 = profi2.length - 20; i1 < profi2.length; i1++) {
+			sum1 += profi2[i1];
+		}
+
+		double fondo = sum1 / 40.;
+		// double threshold1 = fondo * 3.;
+
+		double[] aux11 = Tools.getMinMax(profi2);
+		double yMax = aux11[1];
+		double half = (aux11[1] - aux11[0]) / 2. + aux11[0];
+		int indexMax = -1;
+
+		// cerco l'indice del massimo
+
+		for (int i1 = 0; i1 < profi2.length; i1++) {
+			if (profi2[i1] == yMax)
+				indexMax = i1;
+		}
+
+		double xMax = (double) indexMax;
+
+		// ora conosco il max, conosco il fondo, posso calcolare quale è il
+		// valore a metà altezza
+		double yHalf = half;
+
+		// Ora cerco il punto superiore ed il punto inferiore, a sx del max
+
+		double yLow = yMax;
+		double yHigh = yMax;
+		double xLow = 0;
+		double xHigh = 0;
+
+		int indexLow1 = indexMax;
+
+		do {
+			indexLow1 -= 1;
+			yLow = profi2[indexLow1];
+		} while (yLow > yHalf);
+
+		// ne consegue che
+		xLow = (double) indexLow1;
+
+		xHigh = xLow + 1.;
+		yHigh = profi2[(int) xHigh];
+
+		// interpolazione lineare
+
+		double xHalf = linearInterpolation(yLow, xLow, yHigh, xHigh, yHalf);
+
+		double[] xPoints = new double[6];
+		double[] yPoints = new double[6];
+		xPoints[0] = xLow;
+		yPoints[0] = yLow;
+		xPoints[1] = xHalf;
+		yPoints[1] = yHalf;
+		xPoints[2] = xHigh;
+		yPoints[2] = yHigh;
+
+		// =============================================
+		// Ora cerco il punto superiore ed il punto inferiore, a sx del max
+
+		double yLow2 = yMax;
+		double yHigh2 = yMax;
+		double xLow2 = 0;
+		double xHigh2 = 0;
+
+		int indexLow2 = indexMax;
+
+		do {
+			indexLow2 += 1;
+			yLow2 = profi2[indexLow2];
+		} while (yLow2 > yHalf);
+
+		// ne consegue che
+		xLow2 = (double) indexLow2;
+
+		xHigh2 = xLow2 - 1.;
+		yHigh2 = profi2[(int) xHigh2];
+
+		// interpolazione lineare
+
+		double xHalf2 = linearInterpolation(yLow2, xLow2, yHigh2, xHigh2, yHalf);
+
+		xPoints[3] = xLow2;
+		yPoints[3] = yLow2;
+		xPoints[4] = xHalf2;
+		yPoints[4] = yHalf;
+		xPoints[5] = xHigh2;
+		yPoints[5] = yHigh2;
+
+		double[] xLine = new double[2];
+		double[] yLine = new double[2];
+		xLine[0] = 0;
+		xLine[1] = profi2.length;
+		yLine[0] = half;
+		yLine[1] = half;
+
+		IJ.log("xMax= " + xMax + " yMax= " + yMax);
+		IJ.log("xHalf= " + xHalf2 + " yHalf2= " + yHalf);
+		IJ.log("xLow2= " + xLow2 + " yLow2= " + yLow2);
+		IJ.log("xHigh2= " + xHalf2 + " yHigh2= " + yHigh2);
+		//
+		// MyLog.logVector(xPoints, "xPoints");
+		// MyLog.logVector(yPoints, "yPoints");
+
+		Plot plot2 = MyPlot.basePlot(profi2, "Diagonale 1 con smooth",
+				Color.green);
+		plot2.draw();
+		plot2.setColor(Color.blue);
+		plot2.addPoints(xLine, yLine, PlotWindow.LINE);
+
+		plot2.draw();
+		plot2.setColor(Color.red);
+		plot2.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
+		plot2.show();
+
+		double fwhm = xHalf2 - xHalf;
+		IJ.log("fwhm= " + fwhm);
+		double xCircle1 = xHalf + fwhm / 2;
+		IJ.log("xCircle1= " + xCircle1);
+
+		new WaitForUserDialog("Verificare grafico FWHM  e premere  OK").show();
+
+		double[] profi3 = createErf(profi2, true);
+		MyLog.logVector(profi3, "profi3");
+
+		Plot plot3 = MyPlot.basePlot(profi3, "Diagonale 1 ERF", Color.blue);
+		plot3.show();
+
+		new WaitForUserDialog("Verificare diagonale 1 e premere  OK").show();
+
+		imp1.setRoi(new Line(0, height, width, 0));
+		imp1.updateAndDraw();
+		Roi roi12 = imp1.getRoi();
+
+		double[] profi12 = ((Line) roi12).getPixels(); // profilo non mediato
+
+		Plot plot12 = MyPlot.basePlot(profi12, "Diagonale 2", Color.red);
+		plot12.show();
+
+		double[] profi22 = smooth3(profi12, 10);
+
+		Plot plot22 = MyPlot.basePlot(profi22, "Diagonale 2 con smooth",
+				Color.green);
+		plot22.show();
+
+		double[] profi33 = createErf(profi22, true);
+
+		MyLog.logVector(profi33, "profi33");
+
+		Plot plot33 = MyPlot.basePlot(profi33, "Diagonale 2 ERF", Color.blue);
+		plot33.show();
+
+		new WaitForUserDialog("Verificare linea 3 e premere  OK").show();
+
+		// ============================================================
+
 		int sqX = roiData[0];
 		int sqY = roiData[1];
 		int diamRoi1 = 200;
@@ -451,7 +638,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		// imp1.setRoi((int) ax, (int) ay, 30, 30);
 
-		imp1.setRoi(new OvalRoi((int) ax - 4, (int) ay - 4, 8, 8));
+		imp1.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 
 		IJ.run("Add Selection...", "");
 
@@ -1482,41 +1669,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		cx = ax - prof * (Math.cos(ang1));
 		cy = ay + prof * (Math.sin(ang1));
-	
-		
-		
-		// if ((Math.sin(ang1) >= 0) && (Math.cos(ang1) >= 0)) {
-		// // primo quadrante
-		// IJ.log("primo quadrante");
-		//
-		// cx = ax - prof * (Math.cos(ang1));
-		// cy = ay + prof * (Math.sin(ang1));
-		// }
-		//
-		// if ((Math.sin(ang1) >= 0) && (Math.cos(ang1) < 0)) {
-		// // secondo quadrante
-		//
-		// IJ.log("secondo quadrante");
-		// cx = ax + prof * (Math.cos(ang1));
-		// cy = ay - prof * (Math.sin(ang1));
-		// }
-		//
-		// if ((Math.sin(ang1) < 0) && (Math.cos(ang1) < 0)) {
-		// // terzo quadrante
-		// IJ.log("terzo quadrante");
-		// cx = ax + prof * (Math.cos(ang1));
-		// cy = ay + prof * (Math.sin(ang1));
-		// }
-		//
-		// if ((Math.sin(ang1) < 0) && (Math.cos(ang1) >= 0)) {
-		// // quarto quadrante
-		// IJ.log("quarto quadrante");
-		// cx = ax - prof * (Math.cos(ang1));
-		// cy = ay + prof * (Math.sin(ang1));
-		// }
-
-		// double cy = ay * ((bx - cx) / (bx - ax)) + by * ((cx - ax) / (bx -
-		// ax));
 
 		IJ.log("cx= " + IJ.d2s(cx) + " cy= " + IJ.d2s(cy));
 		double[] out = new double[2];
@@ -1525,4 +1677,174 @@ public class p10rmn_ implements PlugIn, Measurements {
 		IJ.log("-----------------------------");
 		return out;
 	}
+
+	/***
+	 * Effettua lo smooth su 3 pixels di un profilo
+	 * 
+	 * @param profile1
+	 *            profilo
+	 * @param loops
+	 *            numerompassaggi
+	 * @return
+	 */
+	public static double[] smooth3(double[] profile1, int loops) {
+
+		int len1 = profile1.length;
+		for (int i1 = 0; i1 < loops; i1++) {
+			for (int j1 = 1; j1 < len1 - 1; j1++)
+				profile1[j1] = (profile1[j1 - 1] + profile1[j1] + profile1[j1 + 1]) / 3;
+		}
+		return profile1;
+
+	}
+
+	/**
+	 * calcolo ERF
+	 * 
+	 * @param profile1
+	 *            profilo da elaborare
+	 * @param invert
+	 *            true se da invertire
+	 * @return profilo con ERF
+	 */
+	public static double[] createErf(double[] profile1, boolean invert) {
+
+		int len1 = profile1.length;
+
+		double[] erf = new double[len1];
+		if (invert) {
+			for (int j1 = 0; j1 < len1 - 1; j1++)
+				erf[j1] = (profile1[j1] - profile1[j1 + 1]) * (-1);
+
+		} else {
+			for (int j1 = 0; j1 < len1 - 1; j1++)
+				erf[j1] = (profile1[j1] - profile1[j1 + 1]);
+		}
+		erf[len1 - 1] = erf[len1 - 2];
+		return (erf);
+	} // createErf
+
+	// public Plot basePlot(double[] profile, String title) {
+	// int len1 = profile.length;
+	// double[] xcoord1 = new double[len1];
+	// for (int j = 0; j < len1; j++)
+	// xcoord1[j] = j;
+	// Plot plot = new Plot(title, "pixel", "valore", xcoord1, profile);
+	// plot.setColor(Color.red);
+	// return plot;
+	// }
+
+	public static double linearInterpolation(double x0, double y0, double x1,
+			double y1, double x2) {
+
+		double y2 = y0 + ((x2 - x0) * y1 - (x2 - x0) * y0) / (x1 - x0);
+
+		return y2;
+	}
+
+	/***
+	 * Copied from http://billauer.co.il/peakdet.htm Peak Detection using MATLAB
+	 * Author: Eli Billauer
+	 * 
+	 * @param vety
+	 * @param delta
+	 * @return
+	 */
+	public static ArrayList<ArrayList<Double>> peakDet(double[][] profile,
+			double delta) {
+
+		double max = Double.MIN_VALUE;
+		double min = Double.MAX_VALUE;
+		ArrayList<ArrayList<Double>> matout = new ArrayList<ArrayList<Double>>();
+
+		ArrayList<Double> maxtabx = new ArrayList<Double>();
+		ArrayList<Double> maxtaby = new ArrayList<Double>();
+		ArrayList<Double> mintabx = new ArrayList<Double>();
+		ArrayList<Double> mintaby = new ArrayList<Double>();
+
+		double[] vetx = new double[profile.length];
+		double[] vety = new double[profile.length];
+
+		for (int i1 = 0; i1 < profile.length; i1++) {
+			vetx[i1] = profile[i1][0];
+			vety[i1] = profile[i1][1];
+		}
+
+		// MyLog.logVector(vetx, "vetx");
+		// MyLog.logVector(vety, "vety");
+
+		double maxpos = -1.0;
+		double minpos = -1.0;
+		boolean lookformax = true;
+
+		for (int i1 = 0; i1 < vety.length; i1++) {
+			double valy = vety[i1];
+			if (valy > max) {
+				max = valy;
+				maxpos = vetx[i1];
+			}
+			if (valy < min) {
+				min = valy;
+				minpos = vetx[i1];
+			}
+			stateChange(lookformax);
+
+			if (lookformax) {
+				if (valy < max - delta) {
+					maxtabx.add((Double) maxpos);
+					maxtaby.add((Double) max);
+					min = valy;
+					minpos = vetx[i1];
+					lookformax = false;
+					// if (pulse) {
+					// IJ.log("i1= " + i1 + " lookformax down maxpos= "
+					// + maxpos + " max= " + max);
+					// MyLog.logArrayList(maxtabx, "maxtabx");
+					// MyLog.logArrayList(maxtaby, "maxtaby");
+					// }
+				}
+			} else {
+				if (valy > min + delta) {
+					mintabx.add((Double) minpos);
+					mintaby.add((Double) min);
+					max = valy;
+					maxpos = vetx[i1];
+					lookformax = true;
+					// if (pulse) {
+					// IJ.log("i1= " + i1 + " lookformax up minpos= " + minpos
+					// + " min= " + min);
+					// }
+				}
+			}
+
+		}
+		// MyLog.logArrayList(mintabx, "############## mintabx #############");
+		// MyLog.logArrayList(mintaby, "############## mintaby #############");
+		// MyLog.logArrayList(maxtabx, "############## maxtabx #############");
+		// MyLog.logArrayList(maxtaby, "############## maxtaby #############");
+		// matout.ensureCapacity(6);
+		matout.add(mintabx);
+		matout.add(mintaby);
+		matout.add(maxtabx);
+		matout.add(maxtaby);
+
+		// MyLog.logArrayListTable(matout, "matOut");
+
+		return matout;
+	}
+
+	public static void stateChange(boolean input) {
+		pulse = false;
+		if ((input != previous) && !init1)
+			pulse = true;
+		init1 = false;
+		return;
+
+	}
+
+	public static Double toDouble(double in) {
+		Double out = new Double(in);
+		return out;
+	}
+
 } // p5rmn_
