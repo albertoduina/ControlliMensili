@@ -11,6 +11,7 @@ import ij.gui.OvalRoi;
 import ij.gui.Overlay;
 import ij.gui.Plot;
 import ij.gui.PlotWindow;
+import ij.gui.PointRoi;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
 import ij.gui.WaitForUserDialog;
@@ -319,180 +320,47 @@ public class p10rmn_ implements PlugIn, Measurements {
 		IJ.run(imp1, "Smooth", "");
 		IJ.run(imp1, "Find Edges", "");
 
-		// --- diagonale 1
-		imp1.setRoi(new Line(width, height, 0, 0));
+		// --- bisettrice orizzontale
+
+		imp1.setRoi(new Line(0, height / 2, width, height / 2));
 		imp1.updateAndDraw();
-		Roi roi11 = imp1.getRoi();
-		double[] profi1 = ((Line) roi11).getPixels(); // profilo non mediato
+		double[][] peaks1 = profileAnalyzer(imp1, dimPixel);
 
-		Plot plot = MyPlot.basePlot(profi1, "Diagonale 1", Color.red);
-		plot.show();
+		// --- bisettrice verticale
 
-		double[] profi2 = smooth3(profi1, 10);
-
-		// considero i primi e gli ultimi 20 pixels uguali al fondo (a patto che
-		// non valgano
-		// 0)
-
-		double sum1 = 0;
-		for (int i1 = 0; i1 < 20; i1++) {
-			sum1 += profi2[i1];
-		}
-
-		for (int i1 = profi2.length - 20; i1 < profi2.length; i1++) {
-			sum1 += profi2[i1];
-		}
-
-		double fondo = sum1 / 40.;
-		// double threshold1 = fondo * 3.;
-
-		double[] aux11 = Tools.getMinMax(profi2);
-		double yMax = aux11[1];
-		double half = (aux11[1] - aux11[0]) / 2. + aux11[0];
-		int indexMax = -1;
-
-		// cerco l'indice del massimo
-
-		for (int i1 = 0; i1 < profi2.length; i1++) {
-			if (profi2[i1] == yMax)
-				indexMax = i1;
-		}
-
-		double xMax = (double) indexMax;
-
-		// ora conosco il max, conosco il fondo, posso calcolare quale è il
-		// valore a metà altezza
-		double yHalf = half;
-
-		// Ora cerco il punto superiore ed il punto inferiore, a sx del max
-
-		double yLow = yMax;
-		double yHigh = yMax;
-		double xLow = 0;
-		double xHigh = 0;
-
-		int indexLow1 = indexMax;
-
-		do {
-			indexLow1 -= 1;
-			yLow = profi2[indexLow1];
-		} while (yLow > yHalf);
-
-		// ne consegue che
-		xLow = (double) indexLow1;
-
-		xHigh = xLow + 1.;
-		yHigh = profi2[(int) xHigh];
-
-		// interpolazione lineare
-
-		double xHalf = linearInterpolation(yLow, xLow, yHigh, xHigh, yHalf);
-
-		double[] xPoints = new double[6];
-		double[] yPoints = new double[6];
-		xPoints[0] = xLow;
-		yPoints[0] = yLow;
-		xPoints[1] = xHalf;
-		yPoints[1] = yHalf;
-		xPoints[2] = xHigh;
-		yPoints[2] = yHigh;
-
-		// =============================================
-		// Ora cerco il punto superiore ed il punto inferiore, a sx del max
-
-		double yLow2 = yMax;
-		double yHigh2 = yMax;
-		double xLow2 = 0;
-		double xHigh2 = 0;
-
-		int indexLow2 = indexMax;
-
-		do {
-			indexLow2 += 1;
-			yLow2 = profi2[indexLow2];
-		} while (yLow2 > yHalf);
-
-		// ne consegue che
-		xLow2 = (double) indexLow2;
-
-		xHigh2 = xLow2 - 1.;
-		yHigh2 = profi2[(int) xHigh2];
-
-		// interpolazione lineare
-
-		double xHalf2 = linearInterpolation(yLow2, xLow2, yHigh2, xHigh2, yHalf);
-
-		xPoints[3] = xLow2;
-		yPoints[3] = yLow2;
-		xPoints[4] = xHalf2;
-		yPoints[4] = yHalf;
-		xPoints[5] = xHigh2;
-		yPoints[5] = yHigh2;
-
-		double[] xLine = new double[2];
-		double[] yLine = new double[2];
-		xLine[0] = 0;
-		xLine[1] = profi2.length;
-		yLine[0] = half;
-		yLine[1] = half;
-
-		IJ.log("xMax= " + xMax + " yMax= " + yMax);
-		IJ.log("xHalf= " + xHalf2 + " yHalf2= " + yHalf);
-		IJ.log("xLow2= " + xLow2 + " yLow2= " + yLow2);
-		IJ.log("xHigh2= " + xHalf2 + " yHigh2= " + yHigh2);
-		//
-		// MyLog.logVector(xPoints, "xPoints");
-		// MyLog.logVector(yPoints, "yPoints");
-
-		Plot plot2 = MyPlot.basePlot(profi2, "Diagonale 1 con smooth",
-				Color.green);
-		plot2.draw();
-		plot2.setColor(Color.blue);
-		plot2.addPoints(xLine, yLine, PlotWindow.LINE);
-
-		plot2.draw();
-		plot2.setColor(Color.red);
-		plot2.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
-		plot2.show();
-
-		double fwhm = xHalf2 - xHalf;
-		IJ.log("fwhm= " + fwhm);
-		double xCircle1 = xHalf + fwhm / 2;
-		IJ.log("xCircle1= " + xCircle1);
-
-		new WaitForUserDialog("Verificare grafico FWHM  e premere  OK").show();
-
-		double[] profi3 = createErf(profi2, true);
-		MyLog.logVector(profi3, "profi3");
-
-		Plot plot3 = MyPlot.basePlot(profi3, "Diagonale 1 ERF", Color.blue);
-		plot3.show();
-
-		new WaitForUserDialog("Verificare diagonale 1 e premere  OK").show();
-
-		imp1.setRoi(new Line(0, height, width, 0));
+		imp1.setRoi(new Line(width / 2, 0, width / 2, height));
 		imp1.updateAndDraw();
-		Roi roi12 = imp1.getRoi();
+		double[][] peaks2 = profileAnalyzer(imp1, dimPixel);
 
-		double[] profi12 = ((Line) roi12).getPixels(); // profilo non mediato
+		int len1 = peaks1[2].length;
+		int len2 = peaks2[2].length;
+		IJ.log("peaks1= " + len1 + " peaks2= " + len2);
+		int len3 = len1 + len2;
+		int[] xPoints3 = new int[len3];
+		int[] yPoints3 = new int[len3];
+		int j1 = -1;
+		for (int i1 = 0; i1 < len1; i1++) {
+			j1++;
+			xPoints3[j1] = (int) (peaks1[2][i1] * dimPixel);
+			yPoints3[j1] = (int) (peaks1[3][i1] * dimPixel);
+		}
+		for (int i1 = 0; i1 < len2; i1++) {
+			j1++;
+			xPoints3[j1] = (int) (peaks1[3][i1] * dimPixel);
+			yPoints3[j1] = (int) (peaks1[2][i1] * dimPixel);
+		}
 
-		Plot plot12 = MyPlot.basePlot(profi12, "Diagonale 2", Color.red);
-		plot12.show();
+		MyLog.logVector(xPoints3, "xPoints3");
+		MyLog.logVector(yPoints3, "yPoints3");
+		IJ.log("lenPoints= " + xPoints3.length);
 
-		double[] profi22 = smooth3(profi12, 10);
+		imp1.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
+		imp1.updateAndDraw();
+		new WaitForUserDialog("Verificare punti e premere  OK").show();
 
-		Plot plot22 = MyPlot.basePlot(profi22, "Diagonale 2 con smooth",
-				Color.green);
-		plot22.show();
+		IJ.run("Fit Circle", "");
 
-		double[] profi33 = createErf(profi22, true);
-
-		MyLog.logVector(profi33, "profi33");
-
-		Plot plot33 = MyPlot.basePlot(profi33, "Diagonale 2 ERF", Color.blue);
-		plot33.show();
-
-		new WaitForUserDialog("Verificare linea 3 e premere  OK").show();
+		new WaitForUserDialog("Verificare cerchio e premere  OK").show();
 
 		// ============================================================
 
@@ -1847,4 +1715,53 @@ public class p10rmn_ implements PlugIn, Measurements {
 		return out;
 	}
 
+	/***
+	 * Riceve una ImagePlus con impostata una Line, restituisce le coordinate
+	 * dei 2 picchi
+	 * 
+	 * @param imp1
+	 * @param dimPixel
+	 * @return
+	 */
+	public static double[][] profileAnalyzer(ImagePlus imp1, double dimPixel) {
+		Roi roi11 = imp1.getRoi();
+		double[] profi1 = ((Line) roi11).getPixels();
+		double[] profi2y = smooth3(profi1, 10);
+		double[] profi2x = new double[profi2y.length];
+		double xval = 0.;
+		for (int i1 = 0; i1 < profi2y.length; i1++) {
+			profi2x[i1] = xval;
+			xval += dimPixel;
+		}
+
+		Plot plot2 = MyPlot.basePlot(profi2x, profi2y, "PROFILO", Color.green);
+		plot2.show();
+		new WaitForUserDialog("001 premere  OK").show();
+
+		double[][] profi3 = new double[profi2y.length][2];
+		for (int i1 = 0; i1 < profi2y.length; i1++) {
+			profi3[i1][0] = profi2x[i1];
+			profi3[i1][1] = profi2y[i1];
+		}
+		ArrayList<ArrayList<Double>> matOut = peakDet(profi3, 100.);
+		double[][] peaks1 = new InputOutput()
+				.fromArrayListToDoubleTable(matOut);
+		MyLog.logMatrix(peaks1, "peaks1");
+
+		double[] xPoints = new double[peaks1[2].length];
+		double[] yPoints = new double[peaks1[2].length];
+		for (int i1 = 0; i1 < peaks1[2].length; i1++) {
+			xPoints[i1] = peaks1[2][i1];
+			yPoints[i1] = peaks1[3][i1];
+
+		}
+
+		plot2.setColor(Color.red);
+		plot2.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
+		plot2.show();
+
+		new WaitForUserDialog("002 premere  OK").show();
+
+		return peaks1;
+	}
 } // p5rmn_

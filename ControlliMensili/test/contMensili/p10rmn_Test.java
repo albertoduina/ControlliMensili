@@ -1,5 +1,6 @@
 package contMensili;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
@@ -174,14 +175,22 @@ public class p10rmn_Test {
 				.readDoubleMatrixFromFile((new InputOutput()
 						.findResource("/duePicchi.txt")));
 		MyLog.logMatrix(profile1, "profile1aaa");
-		
-		
-		double delta = 30.0;
-		ArrayList<ArrayList<Double>> matOut = new p10rmn_().peakDet(profile1,
-				delta);
+		double delta = 100.0;
+		new p10rmn_();
+		ArrayList<ArrayList<Double>> matOut = p10rmn_.peakDet(profile1, delta);
 		double[][] out = new InputOutput().fromArrayListToDoubleTable(matOut);
 		MyLog.logMatrix(out, "out");
-
-
+		double expected = 155.2734375;
+		assertEquals(expected, out[0][0], 1e-12);
+		expected = 3.583803177;
+		assertEquals(expected, out[1][0], 1e-12);
+		expected = 45.703125;
+		assertEquals(expected, out[2][0], 1e-12);
+		expected = 163.4765625;
+		assertEquals(expected, out[2][1], 1e-12);
+		expected = 1990.840209961;
+		assertEquals(expected, out[3][0], 1e-12);
+		expected = 399.587341309;
+		assertEquals(expected, out[3][1], 1e-12);
 	}
 }
