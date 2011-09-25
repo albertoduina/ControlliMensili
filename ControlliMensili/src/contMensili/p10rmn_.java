@@ -19,6 +19,7 @@ import ij.io.FileSaver;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
+import ij.plugin.Selection;
 import ij.plugin.filter.MaximumFinder;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
@@ -28,6 +29,7 @@ import ij.util.Tools;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
@@ -319,60 +321,98 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		IJ.run(imp1, "Smooth", "");
 		IJ.run(imp1, "Find Edges", "");
+		Overlay over1 = new Overlay();
 
-		// --- bisettrice orizzontale
+		boolean profiles = false;
+		// IJ.log("BISETTRICE ORIZZONTALE");
 
 		imp1.setRoi(new Line(0, height / 2, width, height / 2));
 		imp1.updateAndDraw();
-		double[][] peaks1 = profileAnalyzer(imp1, dimPixel);
+		over1.addElement(imp1.getRoi());
+		double[][] peaks1 = profileAnalyzer(imp1, dimPixel, profiles);
 
-		// --- bisettrice verticale
-
+		// IJ.log("BISETTRICE VERTICALE");
 		imp1.setRoi(new Line(width / 2, 0, width / 2, height));
 		imp1.updateAndDraw();
-		double[][] peaks2 = profileAnalyzer(imp1, dimPixel);
+		over1.addElement(imp1.getRoi());
+		double[][] peaks2 = profileAnalyzer(imp1, dimPixel, profiles);
 
-		int len1 = peaks1[2].length;
-		int len2 = peaks2[2].length;
-		IJ.log("peaks1= " + len1 + " peaks2= " + len2);
-		int len3 = len1 + len2;
+		// IJ.log("DIAGONALE 1");
+		imp1.setRoi(new Line(0, 0, width, height));
+		imp1.updateAndDraw();
+		over1.addElement(imp1.getRoi());
+		double[][] peaks3 = profileAnalyzer(imp1, dimPixel, profiles);
+
+		// IJ.log("DIAGONALE 2");
+		imp1.setRoi(new Line(0, width, height, 0));
+		imp1.updateAndDraw();
+		over1.addElement(imp1.getRoi());
+		double[][] peaks4 = profileAnalyzer(imp1, dimPixel, profiles);
+
+		int len3 = peaks1[2].length + peaks2[2].length + peaks3[2].length
+				+ peaks4[2].length;
 		int[] xPoints3 = new int[len3];
 		int[] yPoints3 = new int[len3];
 		int j1 = -1;
-		for (int i1 = 0; i1 < len1; i1++) {
+		for (int i1 = 0; i1 < peaks1[2].length; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks1[2][i1] * dimPixel);
-			yPoints3[j1] = (int) (peaks1[3][i1] * dimPixel);
+			xPoints3[j1] = (int) (peaks1[2][i1] / dimPixel);
+			yPoints3[j1] = (int) ((double) (height / 2));
 		}
-		for (int i1 = 0; i1 < len2; i1++) {
+		for (int i1 = 0; i1 < peaks2[2].length; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks1[3][i1] * dimPixel);
-			yPoints3[j1] = (int) (peaks1[2][i1] * dimPixel);
+			xPoints3[j1] = (int) ((double) (width / 2));
+			yPoints3[j1] = (int) (peaks2[2][i1] / dimPixel);
+		}
+		for (int i1 = 0; i1 < peaks3[2].length; i1++) {
+			j1++;
+			xPoints3[j1] = (int) (peaks3[2][i1] / dimPixel * Math.sin(Math
+					.toRadians(45 + 90)));
+			yPoints3[j1] = (int) (peaks3[2][i1] / dimPixel * Math.sin(Math
+					.toRadians(45 + 90)));
+		}
+		for (int i1 = 0; i1 < peaks4[2].length; i1++) {
+			j1++;
+			xPoints3[j1] = (int) ((peaks4[2][i1] / (dimPixel * Math.sqrt(2))));
+			yPoints3[j1] = (int) ((double) height - peaks4[2][i1]
+					/ (dimPixel * Math.sqrt(2)));
 		}
 
 		MyLog.logVector(xPoints3, "xPoints3");
 		MyLog.logVector(yPoints3, "yPoints3");
-		IJ.log("lenPoints= " + xPoints3.length);
+		IJ.log("dimPixel= " + dimPixel);
+		// new WaitForUserDialog("Verificare dati e premere  OK").show();
 
-		imp1.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
-		imp1.updateAndDraw();
-		new WaitForUserDialog("Verificare punti e premere  OK").show();
+		// TODO verifica di avere trovato almeno 3 punti, altrimenti obbligare
+		// alla selezione manuale del cerchio
 
-		IJ.run("Fit Circle", "");
+		if (xPoints3.length >= 3) {
+			imp1.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
+			imp1.updateAndDraw();
+			over1.addElement(imp1.getRoi());
+			over1.setStrokeColor(Color.red);
+			imp1.setOverlay(over1);
+			fitCircle(imp1);
+			over1.addElement(imp1.getRoi());
+			over1.setStrokeColor(Color.green);
+			new WaitForUserDialog("Modificare eventualmente la ROI e premere OK").show();
+			
+			
+		} else {
+			imp1.setRoi(new OvalRoi(width / 2, height / 2, 100, 100));
 
-		new WaitForUserDialog("Verificare cerchio e premere  OK").show();
+			new WaitForUserDialog(
+					"Non si riescono a determinare le coordinate di almeno 3 punti del cerchio,\n posizionare a mano una ROI circolare di diametro uguale \nal fantoccio e premere  OK")
+					.show();
+
+		}
+
+		// new WaitForUserDialog("Verificare cerchio e premere  OK").show();
 
 		// ============================================================
 
-		int sqX = roiData[0];
-		int sqY = roiData[1];
-		int diamRoi1 = 200;
-
-		imp1.setRoi(new OvalRoi(sqX, sqY, diamRoi1, diamRoi1));
-		imp1.updateAndDraw();
-		new WaitForUserDialog("Posizionare la ROI e premere OK").show();
-
-		IJ.run("Add Selection...", "");
+		// IJ.log("001");
+		// IJ.run("Add Selection...", "");
 
 		// Rectangle boundRec = imp1.getProcessor().getRoi().getBounds();
 		Rectangle boundRec = imp1.getProcessor().getRoi();
@@ -386,18 +426,18 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		int x1 = boundRec.x + boundRec.width / 2;
 		int y1 = boundRec.y + boundRec.height / 2;
-		diamRoi1 = boundRec.width;
+		int diamRoi1 = boundRec.width;
 
 		IJ.log("Il centro cerchio è x=" + x1 + " y=" + y1);
 
 		// ImageCanvas ic1 = imp1.getCanvas();
-		// Overlay over1 = new Overlay();
 		imp1.setRoi(new OvalRoi(x1 - 4, y1 - 4, 8, 8));
 		Roi roi1 = imp1.getRoi();
 		if (roi1 == null)
 			IJ.log("roi1==null");
 		IJ.log("roi1=" + roi1);
-		IJ.run("Add Selection...", "");
+		over1.addElement(imp1.getRoi());
+		// IJ.run("Add Selection...", "");
 
 		// Overlay over1 = new Overlay(roi1);
 		// imp1.setHideOverlay(true);
@@ -441,16 +481,22 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		IJ.log("tolerance=" + tolerance);
 		imp1.setRoi(new OvalRoi((int) rx[0] - 4, (int) ry[0] - 4, 8, 8));
-		IJ.run("Overlay Options...", "stroke=yellow width=1 fill=none");
+		Roi roi2 = imp1.getRoi();
+		over1.addElement(roi2);
 
-		new WaitForUserDialog("MODIFICA e premere  OK").show();
+		// IJ.run("Overlay Options...", "stroke=yellow width=1 fill=none");
+
+		// new WaitForUserDialog("MODIFICA e premere  OK").show();
 		Rectangle boundRec2 = imp1.getProcessor().getRoi();
 		int x2 = boundRec2.x + boundRec2.width / 2;
 		int y2 = boundRec2.y + boundRec2.height / 2;
 		rx[0] = x2;
 		ry[0] = y2;
+		Roi roi3 = imp1.getRoi();
+		over1.addElement(roi3);
 
-		IJ.run("Add Selection...", "");
+		// IJ.log("003");
+		// IJ.run("Add Selection...", "");
 
 		// over1.add(imp1.getRoi());
 		imp1.killRoi();
@@ -480,10 +526,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 				+ yEndReflineScreen);
 
 		imp1.setRoi(new Line(x1, y1, (int) rx[0], (int) ry[0]));
-		IJ.run("Add Selection...", "");
+		Roi roi5 = imp1.getRoi();
+		over1.addElement(roi5);
+
+		// IJ.log("004");
+		// IJ.run("Add Selection...", "");
 
 		imp1.updateAndDraw();
-		new WaitForUserDialog("Verificare direzione e premere  OK").show();
+		// new WaitForUserDialog("Verificare direzione e premere  OK").show();
 
 		int lato = 20;
 		double diff = (double) lato * Math.sqrt(2) / 2.0;
@@ -508,10 +558,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		imp1.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 
-		IJ.run("Add Selection...", "");
+		Roi roi12 = imp1.getRoi();
+		over1.addElement(roi12);
 
 		imp1.updateAndDraw();
-		new WaitForUserDialog("Verificare ROI e premere  OK").show();
+		new WaitForUserDialog("Premere  OK per immagine successiva ").show();
 		return rt;
 
 	}
@@ -1723,7 +1774,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * @param dimPixel
 	 * @return
 	 */
-	public static double[][] profileAnalyzer(ImagePlus imp1, double dimPixel) {
+	public static double[][] profileAnalyzer(ImagePlus imp1, double dimPixel,
+			boolean profiles) {
 		Roi roi11 = imp1.getRoi();
 		double[] profi1 = ((Line) roi11).getPixels();
 		double[] profi2y = smooth3(profi1, 10);
@@ -1734,10 +1786,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			xval += dimPixel;
 		}
 
-		Plot plot2 = MyPlot.basePlot(profi2x, profi2y, "PROFILO", Color.green);
-		plot2.show();
-		new WaitForUserDialog("001 premere  OK").show();
-
 		double[][] profi3 = new double[profi2y.length][2];
 		for (int i1 = 0; i1 < profi2y.length; i1++) {
 			profi3[i1][0] = profi2x[i1];
@@ -1746,7 +1794,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		ArrayList<ArrayList<Double>> matOut = peakDet(profi3, 100.);
 		double[][] peaks1 = new InputOutput()
 				.fromArrayListToDoubleTable(matOut);
-		MyLog.logMatrix(peaks1, "peaks1");
+		// MyLog.logMatrix(peaks1, "peaks1");
 
 		double[] xPoints = new double[peaks1[2].length];
 		double[] yPoints = new double[peaks1[2].length];
@@ -1756,12 +1804,161 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		}
 
-		plot2.setColor(Color.red);
-		plot2.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
-		plot2.show();
+		if (profiles) {
+			Plot plot2 = MyPlot.basePlot(profi2x, profi2y, "PROFILO",
+					Color.green);
+			plot2.draw();
+			plot2.setColor(Color.red);
+			plot2.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
+			plot2.show();
 
-		new WaitForUserDialog("002 premere  OK").show();
+			new WaitForUserDialog("002 premere  OK").show();
+		}
 
 		return peaks1;
 	}
+
+	/***
+	 * Questo è il fitCircle preso da ImageJ (ij.plugins.Selection.java
+	 * 
+	 * if selection is closed shape, create a circle with the same area and
+	 * centroid, otherwise use<br>
+	 * the Pratt method to fit a circle to the points that define the line or
+	 * multi-point selection.<br>
+	 * Reference: Pratt V., Direct least-squares fitting of algebraic surfaces",
+	 * Computer Graphics, Vol. 21, pages 145-152 (1987).<br>
+	 * Original code: Nikolai Chernov's MATLAB script for Newton-based Pratt
+	 * fit.<br>
+	 * (http://www.math.uab.edu/~chernov/cl/MATLABcircle.html)<br>
+	 * Java version:
+	 * https://github.com/mdoube/BoneJ/blob/master/src/org/doube/geometry
+	 * /FitCircle.java<br>
+	 * 
+	 * @authors Nikolai Chernov, Michael Doube, Ved Sharma
+	 */
+	public static void fitCircle(ImagePlus imp) {
+		Roi roi = imp.getRoi();
+		if (roi == null) {
+			IJ.error("Fit Circle", "Selection required");
+			return;
+		}
+
+		if (roi.isArea()) { // create circle with the same area and centroid
+			ImageProcessor ip = imp.getProcessor();
+			ip.setRoi(roi);
+			ImageStatistics stats = ImageStatistics.getStatistics(ip,
+					Measurements.AREA + Measurements.CENTROID, null);
+			double r = Math.sqrt(stats.pixelCount / Math.PI);
+			imp.killRoi();
+			int d = (int) Math.round(2.0 * r);
+			IJ.makeOval((int) Math.round(stats.xCentroid - r),
+					(int) Math.round(stats.yCentroid - r), d, d);
+			return;
+		}
+
+		Polygon poly = roi.getPolygon();
+		int n = poly.npoints;
+		int[] x = poly.xpoints;
+		int[] y = poly.ypoints;
+		if (n < 3) {
+			IJ.error("Fit Circle",
+					"At least 3 points are required to fit a circle.");
+			return;
+		}
+
+		// calculate point centroid
+		double sumx = 0, sumy = 0;
+		for (int i = 0; i < n; i++) {
+			sumx = sumx + poly.xpoints[i];
+			sumy = sumy + poly.ypoints[i];
+		}
+		double meanx = sumx / n;
+		double meany = sumy / n;
+
+		// calculate moments
+		double[] X = new double[n], Y = new double[n];
+		double Mxx = 0, Myy = 0, Mxy = 0, Mxz = 0, Myz = 0, Mzz = 0;
+		for (int i = 0; i < n; i++) {
+			X[i] = x[i] - meanx;
+			Y[i] = y[i] - meany;
+			double Zi = X[i] * X[i] + Y[i] * Y[i];
+			Mxy = Mxy + X[i] * Y[i];
+			Mxx = Mxx + X[i] * X[i];
+			Myy = Myy + Y[i] * Y[i];
+			Mxz = Mxz + X[i] * Zi;
+			Myz = Myz + Y[i] * Zi;
+			Mzz = Mzz + Zi * Zi;
+		}
+		Mxx = Mxx / n;
+		Myy = Myy / n;
+		Mxy = Mxy / n;
+		Mxz = Mxz / n;
+		Myz = Myz / n;
+		Mzz = Mzz / n;
+
+		// calculate the coefficients of the characteristic polynomial
+		double Mz = Mxx + Myy;
+		double Cov_xy = Mxx * Myy - Mxy * Mxy;
+		double Mxz2 = Mxz * Mxz;
+		double Myz2 = Myz * Myz;
+		double A2 = 4 * Cov_xy - 3 * Mz * Mz - Mzz;
+		double A1 = Mzz * Mz + 4 * Cov_xy * Mz - Mxz2 - Myz2 - Mz * Mz * Mz;
+		double A0 = Mxz2 * Myy + Myz2 * Mxx - Mzz * Cov_xy - 2 * Mxz * Myz
+				* Mxy + Mz * Mz * Cov_xy;
+		double A22 = A2 + A2;
+		double epsilon = 1e-12;
+		double ynew = 1e+20;
+		int IterMax = 20;
+		double xnew = 0;
+		int iterations = 0;
+
+		// Newton's method starting at x=0
+		for (int iter = 1; iter <= IterMax; iter++) {
+			iterations = iter;
+			double yold = ynew;
+			ynew = A0 + xnew * (A1 + xnew * (A2 + 4. * xnew * xnew));
+			if (Math.abs(ynew) > Math.abs(yold)) {
+				if (IJ.debugMode)
+					IJ.log("Fit Circle: wrong direction: |ynew| > |yold|");
+				xnew = 0;
+				break;
+			}
+			double Dy = A1 + xnew * (A22 + 16 * xnew * xnew);
+			double xold = xnew;
+			xnew = xold - ynew / Dy;
+			if (Math.abs((xnew - xold) / xnew) < epsilon)
+				break;
+			if (iter >= IterMax) {
+				if (IJ.debugMode)
+					IJ.log("Fit Circle: will not converge");
+				xnew = 0;
+			}
+			if (xnew < 0) {
+				if (IJ.debugMode)
+					IJ.log("Fit Circle: negative root:  x = " + xnew);
+				xnew = 0;
+			}
+		}
+		if (IJ.debugMode)
+			IJ.log("Fit Circle: n=" + n + ", xnew=" + IJ.d2s(xnew, 2)
+					+ ", iterations=" + iterations);
+
+		// calculate the circle parameters
+		double DET = xnew * xnew - xnew * Mz + Cov_xy;
+		double CenterX = (Mxz * (Myy - xnew) - Myz * Mxy) / (2 * DET);
+		double CenterY = (Myz * (Mxx - xnew) - Mxz * Mxy) / (2 * DET);
+		double radius = Math.sqrt(CenterX * CenterX + CenterY * CenterY + Mz
+				+ 2 * xnew);
+		if (Double.isNaN(radius)) {
+			IJ.error("Fit Circle", "Points are collinear.");
+			return;
+		}
+		CenterX = CenterX + meanx;
+		CenterY = CenterY + meany;
+		imp.killRoi();
+		IJ.makeOval((int) Math.round(CenterX - radius),
+				(int) Math.round(CenterY - radius),
+				(int) Math.round(2 * radius), (int) Math.round(2 * radius));
+	}
+
 } // p5rmn_
