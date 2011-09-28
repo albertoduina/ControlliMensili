@@ -173,13 +173,27 @@ public class p10rmn_Test {
 	public final void testPeakDet() {
 		double[][] profile1 = InputOutput
 				.readDoubleMatrixFromFile((new InputOutput()
-						.findResource("/duePicchi.txt")));
-		MyLog.logMatrix(profile1, "profile1aaa");
+						.findResource("/BADProfile.txt")));
+		MyLog.logMatrix(profile1, "profile1");
 		double delta = 100.0;
 		new p10rmn_();
 		ArrayList<ArrayList<Double>> matOut = p10rmn_.peakDet(profile1, delta);
 		double[][] out = new InputOutput().fromArrayListToDoubleTable(matOut);
 		MyLog.logMatrix(out, "out");
+
+		double[] vetx = new double[profile1.length];
+		double[] vety = new double[profile1.length];
+
+		for (int j = 0; j < profile1.length; j++)
+			vetx[j] = profile1[j][0];
+		for (int j = 0; j < profile1.length; j++)
+			vety[j] = profile1[j][1];
+
+		Plot plot2 = MyPlot.basePlot(vetx, vety, "P R O F I L O", Color.blue);
+		plot2.show();
+		// new WaitForUserDialog("Do something, then click OK.").show();
+		IJ.wait(1000);
+
 		double expected = 155.2734375;
 		assertEquals(expected, out[0][0], 1e-12);
 		expected = 3.583803177;
