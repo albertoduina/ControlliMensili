@@ -207,4 +207,23 @@ public class p10rmn_Test {
 		expected = 399.587341309;
 		assertEquals(expected, out[3][1], 1e-12);
 	}
+
+	@Test
+	public final void testLiangBarsky() {
+
+		double edgeLeft = 0.;
+		double edgeRight = 255.;
+		double edgeBottom = 0.;
+		double edgeTop = 255.;
+		double x0src = 20.;
+		double y0src = -30.;
+		double x1src = 200.;
+		double y1src = 290.;
+
+		double[] out = p10rmn_.liangBarsky(edgeLeft, edgeRight, edgeBottom,
+				edgeTop, x0src, y0src, x1src, y1src);
+
+		MyLog.logVector(out, "out");
+	}
+
 }

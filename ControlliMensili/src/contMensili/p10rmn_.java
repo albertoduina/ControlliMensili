@@ -98,15 +98,17 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	// private boolean profiVert = false;
 	/**
-	 * @ TODO : vedere se possibile fare il profilo inclinato @ TODO : il modo
-	 * di funzionamento che ho pensato è di trovare il punto sulla circonferenza
-	 * utilizzando Find Maxima, con una noise tolerance di almeno 100 si
-	 * potrebbe fare una routine che parte da un valore basso e lo modifica fino
-	 * a che si ottiene un singolo punto. Resta il problema di definire il
-	 * centro del fantoccio. L'approccio più sempilce potrebbe essere di fare
-	 * posizionare una roi circolare grande quanto il fantoccio (dal FOV,
-	 * matrice sigla della misura dovrei essere in grado di scegliere il
-	 * diametro giusto per il fantoccio. Una volta definito il punto sul
+	 * @ TODO : vedere se possibile fare il profilo inclinato
+	 * 
+	 * 
+	 * @ TODO : il modo di funzionamento che ho pensato è di trovare il punto
+	 * sulla circonferenza utilizzando Find Maxima, con una noise tolerance di
+	 * almeno 100 si potrebbe fare una routine che parte da un valore basso e lo
+	 * modifica fino a che si ottiene un singolo punto. Resta il problema di
+	 * definire il centro del fantoccio. L'approccio più sempilce potrebbe
+	 * essere di fare posizionare una roi circolare grande quanto il fantoccio
+	 * (dal FOV, matrice sigla della misura dovrei essere in grado di scegliere
+	 * il diametro giusto per il fantoccio. Una volta definito il punto sul
 	 * perimetro ed il centro del cerchio, possiamo posizionare in maniera
 	 * ripetitiva la nostra ROI? Lo scopriremo solo unendo i punti dall'1 al
 	 * 10000000000.
@@ -296,270 +298,490 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 
-		// do {
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		ImagePlus imp2 = UtilAyv.openImageNoDisplay(path2, true);
-
-		double dimPixel = ReadDicom
-				.readDouble(ReadDicom.readSubstring(ReadDicom
-						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
-						1));
-
-		int width = imp1.getWidth();
-		int height = imp1.getHeight();
-
-		// =================================================================================
-
-		IJ.run(imp1, "Smooth", "");
-		IJ.run(imp1, "Find Edges", "");
-
-		Overlay over1 = new Overlay();
-
-		boolean profiles = false;
-
-		double[][] peaks1 = new double[4][1];
-		double[][] peaks2 = new double[4][1];
-		double[][] peaks3 = new double[4][1];
-		double[][] peaks4 = new double[4][1];
-
-		// IJ.log("BISETTRICE ORIZZONTALE");
-
-		imp1.setRoi(new Line(0, height / 2, width, height / 2));
-		imp1.updateAndDraw();
-		// over1.addElement(imp1.getRoi());
-
-		peaks1 = profileAnalyzer(imp1, dimPixel, profiles);
-
-		// IJ.log("BISETTRICE VERTICALE");
-		imp1.setRoi(new Line(width / 2, 0, width / 2, height));
-		imp1.updateAndDraw();
-		// over1.addElement(imp1.getRoi());
-		peaks2 = profileAnalyzer(imp1, dimPixel, profiles);
-
-		// IJ.log("DIAGONALE 1");
-		imp1.setRoi(new Line(0, 0, width, height));
-		imp1.updateAndDraw();
-		// over1.addElement(imp1.getRoi());
-		peaks3 = profileAnalyzer(imp1, dimPixel, profiles);
-
-		// IJ.log("DIAGONALE 2");
-		imp1.setRoi(new Line(0, width, height, 0));
-		imp1.updateAndDraw();
-		// over1.addElement(imp1.getRoi());
-		peaks4 = profileAnalyzer(imp1, dimPixel, profiles);
-
-		int len3 = peaks1[2].length + peaks2[2].length + peaks3[2].length
-				+ peaks4[2].length;
-
-		int[] xPoints3 = new int[len3];
-		int[] yPoints3 = new int[len3];
-		int j1 = -1;
-		for (int i1 = 0; i1 < peaks1[2].length; i1++) {
-			j1++;
-			xPoints3[j1] = (int) (peaks1[2][i1] / dimPixel);
-			yPoints3[j1] = (int) ((double) (height / 2));
-		}
-		for (int i1 = 0; i1 < peaks2[2].length; i1++) {
-			j1++;
-			xPoints3[j1] = (int) ((double) (width / 2));
-			yPoints3[j1] = (int) (peaks2[2][i1] / dimPixel);
-		}
-		for (int i1 = 0; i1 < peaks3[2].length; i1++) {
-			j1++;
-			xPoints3[j1] = (int) (peaks3[2][i1] / dimPixel * Math.sin(Math
-					.toRadians(45 + 90)));
-			yPoints3[j1] = (int) (peaks3[2][i1] / dimPixel * Math.sin(Math
-					.toRadians(45 + 90)));
-		}
-		for (int i1 = 0; i1 < peaks4[2].length; i1++) {
-			j1++;
-			xPoints3[j1] = (int) ((peaks4[2][i1] / (dimPixel * Math.sqrt(2))));
-			yPoints3[j1] = (int) ((double) height - peaks4[2][i1]
-					/ (dimPixel * Math.sqrt(2)));
-		}
-
-		// MyLog.logVector(xPoints3, "xPoints3");
-		// MyLog.logVector(yPoints3, "yPoints3");
-		// IJ.log("dimPixel= " + dimPixel);
-		// new WaitForUserDialog("Verificare dati e premere  OK").show();
-
-		// TODO verifica di avere trovato almeno 3 punti, altrimenti obbligare
-		// alla selezione manuale del cerchio
-
-		if (xPoints3.length >= 3) {
-			imp1.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
-			imp1.updateAndDraw();
-			over1.addElement(imp1.getRoi());
-			over1.setStrokeColor(Color.red);
-			imp1.setOverlay(over1);
-			fitCircle(imp1);
-			over1.addElement(imp1.getRoi());
-			over1.setStrokeColor(Color.green);
-			// TODO modifica tolto interattività
-			// new WaitForUserDialog(
-			// "Modificare eventualmente la ROI e premere OK").show();
-
-		} else {
-			imp1.setRoi(new OvalRoi(width / 2, height / 2, 100, 100));
-
-			new WaitForUserDialog(
-					"Non si riescono a determinare le coordinate di almeno 3 punti del cerchio,\n posizionare a mano una ROI circolare di diametro uguale \nal fantoccio e premere  OK")
-					.show();
-
-		}
-
-		// new WaitForUserDialog("Verificare cerchio e premere  OK").show();
-
-		// ============================================================
-
-		// IJ.log("001");
-		// IJ.run("Add Selection...", "");
-
-		// Rectangle boundRec = imp1.getProcessor().getRoi().getBounds();
-		Rectangle boundRec = imp1.getProcessor().getRoi();
-
-		// IJ.log("boundRec.x=" + boundRec.x);
-		// IJ.log("boundRec.y=" + boundRec.y);
-		// IJ.log("boundRec.width=" + boundRec.width);
-		// IJ.log("boundRec.height=" + boundRec.height);
-		// IJ.log("boundRec.getCenterX=" + boundRec.getCenterX());
-		// IJ.log("boundRec.getCenterY=" + boundRec.getCenterY());
-
-		int x1 = boundRec.x + boundRec.width / 2;
-		int y1 = boundRec.y + boundRec.height / 2;
-		int diamRoi1 = boundRec.width;
-
-//		IJ.log("Il centro cerchio è x=" + x1 + " y=" + y1);
-
-		// ImageCanvas ic1 = imp1.getCanvas();
-		imp1.setRoi(new OvalRoi(x1 - 4, y1 - 4, 8, 8));
-		Roi roi1 = imp1.getRoi();
-		if (roi1 == null)
-			IJ.log("roi1==null");
-//		IJ.log("roi1=" + roi1);
-		over1.addElement(imp1.getRoi());
-		// IJ.run("Add Selection...", "");
-
-		// Overlay over1 = new Overlay(roi1);
-		// imp1.setHideOverlay(true);
-
-		// over1.setFillColor(Color.red);
-		imp1.killRoi();
-
-		// ic1.repaint();
-
-		ImageProcessor ip1 = imp1.getProcessor();
-
-		// --------------------------------
-		// PASSO 1
-		//
-		// disegno MROI su imp1
-		// --------------------------------
-
-		// qui inizio a fare prove per il posizionamento automatico. Il
-		// centro della ROI predeterminata lo conosco già, ora si tratta
-		// di determinare il punto di MAXIMA
-
-		double tolerance = 350.0;
-		double threshold = 0.0;
-		int outputType = MaximumFinder.LIST;
-		boolean excludeOnEdges = false;
-		boolean isEDM = false;
-
-		MaximumFinder maxFinder = new MaximumFinder();
-
-		double[] rx = null;
-		double[] ry = null;
-		ResultsTable rt1 = ResultsTable.getResultsTable();
-
-		PointRoi pr1 = null;
-		int nPunti = 0;
-
 		do {
-			rt1.reset();
-			maxFinder.findMaxima(ip1, tolerance, threshold, outputType,
-					excludeOnEdges, isEDM);
-			rx = rt1.getColumnAsDoubles(0);
-			ry = rt1.getColumnAsDoubles(1);
-			tolerance += 10.0;
-			nPunti = rx.length;
-		} while (nPunti > 1);
+			//
+			// ================================================================================
+			// Inizio calcoli geometrici
+			// ================================================================================
+			//
+			ImagePlus imp11 = UtilAyv.openImageMaximized(path1);
 
-		IJ.log("tolerance=" + tolerance);
-		imp1.setRoi(new OvalRoi((int) rx[0] - 4, (int) ry[0] - 4, 8, 8));
-		Roi roi2 = imp1.getRoi();
-		over1.addElement(roi2);
-		Rectangle boundRec2 = imp1.getProcessor().getRoi();
-		int x2 = boundRec2.x + boundRec2.width / 2;
-		int y2 = boundRec2.y + boundRec2.height / 2;
-		rx[0] = x2;
-		ry[0] = y2;
-		Roi roi3 = imp1.getRoi();
-		over1.addElement(roi3);
-		imp1.killRoi();
-		IJ.log("Il maxima trovato è x= " + rx[0] * dimPixel + " y= " + ry[0]
-				* dimPixel);
+			double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
+					ReadDicom.readDicomParameter(imp11,
+							MyConst.DICOM_PIXEL_SPACING), 1));
 
-		double aux1 = 0;
-		aux1 = (double) x1 * dimPixel;
+			int width = imp11.getWidth();
+			int height = imp11.getHeight();
+			//
+			// -------------------------------------------------
+			// Determinazione del cerchio
+			// -------------------------------------------------
+			//
+			IJ.run(imp11, "Smooth", "");
+			IJ.run(imp11, "Find Edges", "");
+			Overlay over1 = new Overlay();
+			boolean profiles = false;
+			double[][] peaks1 = new double[4][1];
+			double[][] peaks2 = new double[4][1];
+			double[][] peaks3 = new double[4][1];
+			double[][] peaks4 = new double[4][1];
 
-		int xStartReflineScreen = (int) aux1;
-		double ax1 = aux1;
-		aux1 = (double) y1 * dimPixel;
-		int yStartReflineScreen = (int) aux1;
-		double ay1 = aux1;
+			// IJ.log("BISETTRICE ORIZZONTALE");
+			imp11.setRoi(new Line(0, height / 2, width, height / 2));
+			imp11.updateAndDraw();
+			// over1.addElement(imp1.getRoi());
+			peaks1 = profileAnalyzer(imp11, dimPixel, profiles);
 
-		IJ.log("Il centro cerchio SCREEN è x= " + xStartReflineScreen + " y= "
-				+ yStartReflineScreen);
-		aux1 = rx[0] * dimPixel;
-		int xEndReflineScreen = (int) aux1;
-		double bx1 = aux1;
+			// IJ.log("BISETTRICE VERTICALE");
+			imp11.setRoi(new Line(width / 2, 0, width / 2, height));
+			imp11.updateAndDraw();
+			// over1.addElement(imp1.getRoi());
+			peaks2 = profileAnalyzer(imp11, dimPixel, profiles);
 
-		aux1 = ry[0] * dimPixel;
-		int yEndReflineScreen = (int) aux1;
-		double by1 = aux1;
+			// IJ.log("DIAGONALE 1");
+			imp11.setRoi(new Line(0, 0, width, height));
+			imp11.updateAndDraw();
+			// over1.addElement(imp1.getRoi());
+			peaks3 = profileAnalyzer(imp11, dimPixel, profiles);
 
-		IJ.log("Il maxima trovato SCREEN  è x= " + xEndReflineScreen + " y= "
-				+ yEndReflineScreen);
+			// IJ.log("DIAGONALE 2");
+			imp11.setRoi(new Line(0, width, height, 0));
+			imp11.updateAndDraw();
+			// over1.addElement(imp1.getRoi());
+			peaks4 = profileAnalyzer(imp11, dimPixel, profiles);
 
-		imp1.setRoi(new Line(x1, y1, (int) rx[0], (int) ry[0]));
-		Roi roi5 = imp1.getRoi();
-		over1.addElement(roi5);
+			int len3 = peaks1[2].length + peaks2[2].length + peaks3[2].length
+					+ peaks4[2].length;
 
-		// IJ.log("004");
-		// IJ.run("Add Selection...", "");
+			int[] xPoints3 = new int[len3];
+			int[] yPoints3 = new int[len3];
+			int j1 = -1;
+			for (int i1 = 0; i1 < peaks1[2].length; i1++) {
+				j1++;
+				xPoints3[j1] = (int) (peaks1[2][i1] / dimPixel);
+				yPoints3[j1] = (int) ((double) (height / 2));
+			}
+			for (int i1 = 0; i1 < peaks2[2].length; i1++) {
+				j1++;
+				xPoints3[j1] = (int) ((double) (width / 2));
+				yPoints3[j1] = (int) (peaks2[2][i1] / dimPixel);
+			}
+			for (int i1 = 0; i1 < peaks3[2].length; i1++) {
+				j1++;
+				xPoints3[j1] = (int) (peaks3[2][i1] / dimPixel * Math.sin(Math
+						.toRadians(45 + 90)));
+				yPoints3[j1] = (int) (peaks3[2][i1] / dimPixel * Math.sin(Math
+						.toRadians(45 + 90)));
+			}
+			for (int i1 = 0; i1 < peaks4[2].length; i1++) {
+				j1++;
+				xPoints3[j1] = (int) ((peaks4[2][i1] / (dimPixel * Math.sqrt(2))));
+				yPoints3[j1] = (int) ((double) height - peaks4[2][i1]
+						/ (dimPixel * Math.sqrt(2)));
+			}
+			// ----------------------------------------------------------------------
+			// Verifica di avere trovato almeno 3 punti, altrimenti chiede la
+			// selezione manuale del cerchio
+			// -------------------------------------------------------------------
+			if (xPoints3.length >= 3) {
+				imp11.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
+				imp11.updateAndDraw();
+				over1.addElement(imp11.getRoi());
+				over1.setStrokeColor(Color.red);
+				imp11.setOverlay(over1);
+				imp11.updateAndDraw();
+				// new WaitForUserDialog("ok").show();
+				fitCircle(imp11);
+				over1.addElement(imp11.getRoi());
+				over1.setStrokeColor(Color.green);
+			} else {
+				imp11.setRoi(new OvalRoi(width / 2, height / 2, 100, 100));
+				new WaitForUserDialog(
+						"Non si riescono a determinare le coordinate di almeno 3 punti del cerchio,\n posizionare a mano una ROI circolare di diametro uguale \nal fantoccio e premere  OK")
+						.show();
+			}
+			Rectangle boundRec = imp11.getProcessor().getRoi();
+			int x1 = boundRec.x + boundRec.width / 2;
+			int y1 = boundRec.y + boundRec.height / 2;
+			// int diamRoi1 = boundRec.width;
+			// IJ.log("Il centro cerchio è x=" + x1 + " y=" + y1);
+			//
+			// ----------------------------------------------------------
+			// disegno la ROI del centro, a solo scopo dimostrativo !
+			// ----------------------------------------------------------
+			//
+			imp11.setRoi(new OvalRoi(x1 - 4, y1 - 4, 8, 8));
+			Roi roi1 = imp11.getRoi();
+			if (roi1 == null)
+				IJ.log("roi1==null");
+			over1.addElement(imp11.getRoi());
+			imp11.killRoi();
+			ImageProcessor ip11 = imp11.getProcessor();
+			//
+			// -------------------------------------------------
+			// Determinazione del punto di MAXIMA
+			// -------------------------------------------------
+			//
+			double tolerance = 350.0;
+			double threshold = 0.0;
+			int outputType = MaximumFinder.LIST;
+			boolean excludeOnEdges = false;
+			boolean isEDM = false;
 
-		imp1.updateAndDraw();
-		// new WaitForUserDialog("Verificare direzione e premere  OK").show();
+			MaximumFinder maxFinder = new MaximumFinder();
 
-		int lato = 20;
-		double diff = (double) lato * Math.sqrt(2) / 2.0;
+			double[] rx = null;
+			double[] ry = null;
+			ResultsTable rt1 = ResultsTable.getResultsTable();
+			// PointRoi pr1 = null;
+			int nPunti = 0;
 
-		double prof = 20;
+			do {
+				rt1.reset();
+				maxFinder.findMaxima(ip11, tolerance, threshold, outputType,
+						excludeOnEdges, isEDM);
+				rx = rt1.getColumnAsDoubles(0);
+				ry = rt1.getColumnAsDoubles(1);
+				tolerance += 10.0;
+				nPunti = rx.length;
+			} while (nPunti > 1);
+			// IJ.log("tolerance=" + tolerance);
+			//
+			// ----------------------------------------------------------
+			// disegno la ROI del maxima, a solo scopo dimostrativo !
+			// ----------------------------------------------------------
+			//
+			imp11.setRoi(new OvalRoi((int) rx[0] - 4, (int) ry[0] - 4, 8, 8));
+			Roi roi2 = imp11.getRoi();
+			over1.addElement(roi2);
+			Rectangle boundRec2 = imp11.getProcessor().getRoi();
+			int x2 = boundRec2.x + boundRec2.width / 2;
+			int y2 = boundRec2.y + boundRec2.height / 2;
+			rx[0] = x2;
+			ry[0] = y2;
+			Roi roi3 = imp11.getRoi();
+			over1.addElement(roi3);
+			imp11.killRoi();
+			//
+			// -----------------------------------------------------------
+			// Calcolo delle effettive coordinate del segmento
+			// centro-circonferenza
+			// ----------------------------------------------------------
+			//
+			double xStartRefLine = (double) x1 * dimPixel;
+			double yStartRefLine = (double) y1 * dimPixel;
+			double xEndRefLine = rx[0] * dimPixel;
+			double yEndRefLine = ry[0] * dimPixel;
+			imp11.setRoi(new Line(x1, y1, (int) rx[0], (int) ry[0]));
+			Roi roi5 = imp11.getRoi();
+			over1.addElement(roi5);
+			imp11.updateAndDraw();
+			double prof = 20;
+			//
+			// -----------------------------------------------------------
+			// Calcolo coordinate centro della MROI
+			// ----------------------------------------------------------
+			//
+			double[] out1 = interpola(xEndRefLine, yEndRefLine, xStartRefLine,
+					yStartRefLine, prof);
+			double ax = out1[0] / dimPixel;
+			double ay = out1[1] / dimPixel;
+			imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
+			Roi roi12 = imp11.getRoi();
+			over1.addElement(roi12);
+			imp11.updateAndDraw();
+			new WaitForUserDialog("001 Premere  OK").show();
 
-		// ========================================================00
+			// ============================================================================
+			// Fine calcoli geometrici
+			// Inizio calcoli Uniformità
+			// ============================================================================
 
-		double[] out1 = interpola(bx1, by1, ax1, ay1, prof);
+			ImagePlus imp1 = null;
+			ImagePlus imp2 = null;
+			if (verbose) {
+				imp1 = UtilAyv.openImageMaximized(path1);
+				imp2 = UtilAyv.openImageNoDisplay(path2, true);
+			} else {
+				imp1 = UtilAyv.openImageNoDisplay(path1, true);
+				imp2 = UtilAyv.openImageNoDisplay(path2, true);
+			}
+			ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
+			if (verbose) {
+				// UtilAyv.showImageMaximized(imaDiff);
+				// imp1.getWindow().toFront();
+			}
 
-		double cx = out1[0];
-		double cy = out1[1];
+			int sqNEA = MyConst.P5_NEA_11X11_PIXEL;
+			ImageProcessor ip1 = imp1.getProcessor();
+			// disegno MROI già predeterminata
+			int sqX = (int) ax;
+			int sqY = (int) ay;
 
-		// IJ.log("interpola restituisce  cx= " + cx + "  cy= " + cy);
+			imp1.setRoi(sqX - sqNEA / 2, sqY - sqNEA / 2, sqNEA, sqNEA);
+			imp1.updateAndDraw();
+			new WaitForUserDialog("MROI 11 x 11 Premere  OK").show();
 
-		double ax = cx / dimPixel;
-		double ay = cy / dimPixel;
+			//
+			// posiziono la ROI 7x7 all'interno di MROI
+			//
 
-		IJ.log("imposto la ROI   ax= " + ax + "  ay= " + ay);
+			int sq7 = MyConst.P5_MROI_7X7_PIXEL;
+			int gap = (sqNEA - MyConst.P5_MROI_7X7_PIXEL) / 2;
+			imp1.setRoi(sqX - sq7 / 2, sqY - sq7 / 2, sq7, sq7);
+			imp1.updateAndDraw();
 
-		// imp1.setRoi((int) ax, (int) ay, 30, 30);
+			new WaitForUserDialog("MROI 7 x 7 Premere  OK").show();
 
-		imp1.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
+			ImageStatistics stat1 = imp1.getStatistics();
+			double signal1 = stat1.mean;
 
-		Roi roi12 = imp1.getRoi();
-		over1.addElement(roi12);
+			int xFondo = MyConst.P5_X_ROI_BACKGROUND;
+			int yFondo = MyConst.P5_Y_ROI_BACKGROUND;
+			if (test)
+				yFondo = yFondo + 40;
+			if (step)
+				msgMroi();
+			//
+			// disegno RoiFondo su imp1
+			//
+			ImageStatistics statFondo = UtilAyv.backCalc(xFondo, yFondo,
+					MyConst.P5_DIAM_ROI_BACKGROUND, imp1, step, false, test);
 
-		imp1.updateAndDraw();
-		new WaitForUserDialog("Premere  OK per immagine successiva ").show();
+			//
+			// disegno MROI su imaDiff
+			//
+
+			imaDiff.resetDisplayRange();
+			imaDiff.setRoi(sqX + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL,
+					MyConst.P5_MROI_7X7_PIXEL);
+			imaDiff.updateAndDraw();
+			ImageStatistics statImaDiff = imaDiff.getStatistics();
+			imaDiff.updateAndDraw();
+			if (imaDiff.isVisible())
+				imaDiff.getWindow().toFront();
+
+			if (step)
+				msgMroi();
+
+			new WaitForUserDialog("004 Premere  OK").show();
+
+			//
+			// calcolo P su imaDiff
+			//
+			double prelimImageNoiseEstimate_MROI = statImaDiff.stdDev
+					/ Math.sqrt(2);
+
+			if (step) {
+				msgNea(prelimImageNoiseEstimate_MROI);
+			}
+			//
+			// loop di calcolo NEA su imp1
+			//
+			imp1.setRoi(sqX, sqY, sqNEA, sqNEA);
+			imp1.updateAndDraw();
+			if (imp1.isVisible())
+				imp1.getWindow().toFront();
+			//
+			// qui, se il numero dei pixel < 121 dovrò incrementare sqR2 e
+			// ripetere il loop
+			//
+
+			new WaitForUserDialog("005 Premere  OK").show();
+
+			double checkPixels = MyConst.P5_CHECK_PIXEL_MULTIPLICATOR
+					* prelimImageNoiseEstimate_MROI;
+			int area11x11 = MyConst.P5_NEA_11X11_PIXEL
+					* MyConst.P5_NEA_11X11_PIXEL;
+			int enlarge = 0;
+			int pixx = 0;
+
+			do {
+				pixx = countPix(imp1, sqX - enlarge, sqY - enlarge, sqNEA,
+						checkPixels);
+
+				imp1.setRoi(sqX - enlarge, sqY - enlarge, sqNEA, sqNEA);
+				imp1.updateAndDraw();
+				// imp1.getWindow().toFront();
+				if (step)
+					msgDisplayNEA();
+
+				if (pixx < area11x11) {
+					sqNEA = sqNEA + 2; // accrescimento area
+					enlarge = enlarge + 1;
+				}
+				if (step) {
+					msgEnlargeRoi(sqNEA);
+				}
+
+				new WaitForUserDialog("006 Premere  OK").show();
+
+				// verifico che quando cresce il lato del quadrato non si esca
+				// dall'immagine
+
+				if ((sqX + sqNEA - enlarge) >= width || (sqX - enlarge) <= 0) {
+					msgNot121();
+					return null;
+				}
+				if ((sqY + sqNEA - enlarge) >= height || (sqY - enlarge) <= 0) {
+					msgNot121();
+					return null;
+				}
+				if (step && pixx >= area11x11)
+					msgSqr2OK(pixx);
+
+			} while (pixx < area11x11);
+
+			new WaitForUserDialog("006 Premere  OK").show();
+			imp1.setRoi(sqX - enlarge, sqY - enlarge, sqNEA, sqNEA);
+			imp1.updateAndDraw();
+			if (imp1.isVisible())
+				imp1.getWindow().toFront();
+			//
+			// calcolo SD su imaDiff quando i corrispondenti pixel
+			// di imp1 passano il test
+			//
+			new WaitForUserDialog("007 Premere  OK").show();
+			double[] out11 = devStandardNema(imp1, imaDiff, sqX - enlarge, sqY
+					- enlarge, sqNEA, checkPixels);
+			if (step)
+				msgDisplayMean4(out11[0], out11[1]);
+			//
+			// calcolo SNR finale
+			//
+			double snr = signal1 / (out11[1] / Math.sqrt(2));
+			if (step)
+				msgSnr(snr);
+			new WaitForUserDialog("008 Premere  OK").show();
+
+			//
+			// calcolo simulata
+			//
+			int[][] classiSimulata = generaSimulata(sqX + gap, sqY + gap,
+					MyConst.P5_MROI_7X7_PIXEL, imp1, step, verbose, test);
+			//
+			// calcolo posizione fwhm a metà della MROI
+			//
+			if (imp1.isVisible())
+				imp1.getWindow().toFront();
+			//
+			// ----------------------------------------------------------
+			// Calcolo FWHM
+			// la direzione su cui verrà preso il profilo è quella Maxima-centro
+			// cerchio, la lunghezza segmento .......
+			// -----------------------------------------------------------
+			//
+			int xStartProfile = 0;
+			int yStartProfile = 0;
+			int xEndProfile = 0;
+			int yEndProfile = 0;
+
+			if (test) {
+				if (verticalProfile) {
+					xStartProfile = sqX + gap + MyConst.P5_MROI_7X7_PIXEL / 2;
+					yStartProfile = 1;
+					xEndProfile = xStartProfile;
+					yEndProfile = height;
+				} else {
+					xStartProfile = 1;
+					yStartProfile = sqY + gap + MyConst.P5_MROI_7X7_PIXEL / 2;
+					xEndProfile = width;
+					yEndProfile = yStartProfile;
+				}
+			} else {
+				Line line = selectProfilePosition(sqX + gap, sqY + gap,
+						MyConst.P5_MROI_7X7_PIXEL, imp1);
+
+				xStartProfile = line.x1;
+				yStartProfile = line.y1;
+				xEndProfile = line.x2;
+				yEndProfile = line.y2;
+
+			}
+
+			imp1.setRoi(new Line(x1, y1, (int) rx[0], (int) ry[0]));
+
+			double[] outFwhm2 = analyzeProfile(imp1, xStartProfile,
+					yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
+
+			//
+			// Salvataggio dei risultati nella ResultsTable
+
+			// String[][] tabCodici = new InputOutput().readFile1(
+			// MyConst.CODE_FILE, MyConst.TOKENS4);
+
+			String[][] tabCodici = TableCode.loadTable(MyConst.CODE_FILE);
+
+			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
+					imp1, tabCodici, VERSION, autoCalled);
+
+			//
+			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+			int col = 2;
+			String t1 = "TESTO          ";
+			rt.setHeading(++col, "roi_x");
+			rt.setHeading(++col, "roi_y");
+			rt.setHeading(++col, "roi_b");
+			rt.setHeading(++col, "roi_h");
+
+			rt.addLabel(t1, simulataName);
+			rt.incrementCounter();
+
+			rt.addLabel(t1, "Segnale");
+			rt.addValue(2, signal1);
+			rt.addValue(3, sqX);
+			rt.addValue(4, sqY);
+			rt.addValue(5, sqNEA);
+			rt.addValue(6, sqNEA);
+
+			rt.incrementCounter();
+			rt.addLabel(t1, "Rumore_Fondo");
+			rt.addValue(2, statFondo.mean);
+			rt.addValue(3, statFondo.roiX);
+			rt.addValue(4, statFondo.roiY);
+			rt.addValue(5, statFondo.roiWidth);
+			rt.addValue(6, statFondo.roiHeight);
+
+			rt.incrementCounter();
+			rt.addLabel(t1, "SnR");
+			rt.addValue(2, snr);
+			rt.addValue(3, sqX);
+			rt.addValue(4, sqY);
+			rt.addValue(5, sqNEA);
+			rt.addValue(6, sqNEA);
+
+			rt.incrementCounter();
+			rt.addLabel(t1, "FWHM");
+			rt.addValue(2, outFwhm2[0]);
+			rt.addValue(3, xStartProfile);
+			rt.addValue(4, yStartProfile);
+			rt.addValue(5, xEndProfile);
+			rt.addValue(6, yEndProfile);
+
+			String[] levelString = { "+20%", "+10%", "-10%", "-10%", "-30%",
+					"-40%", "-50%", "-60%", "-70%", "-80%", "-90%", "fondo" };
+
+			for (int i1 = 0; i1 < classiSimulata.length; i1++) {
+				rt.incrementCounter();
+				rt.addLabel(t1, ("Classe" + classiSimulata[i1][0]) + "_"
+						+ levelString[i1]);
+				rt.addValue(2, classiSimulata[i1][1]);
+			}
+			if (verbose && !test)
+				rt.show("Results");
+
+			if (autoCalled && !test) {
+				accetta = Msg.accettaMenu();
+			} else {
+				if (!test) {
+					accetta = Msg.msgStandalone();
+				} else {
+					accetta = test;
+				}
+
+			}
+		} while (!accetta);
+
 		return rt;
 
 	}
@@ -1945,4 +2167,92 @@ public class p10rmn_ implements PlugIn, Measurements {
 				(int) Math.round(2 * radius), (int) Math.round(2 * radius));
 	}
 
-} // p5rmn_
+	/***
+	 * Liang-Barsky function by Daniel White
+	 * http://www.skytopia.com/project/articles/compsci/clipping.html .This
+	 * function inputs 8 numbers, and outputs 4 new numbers (plus a boolean
+	 * value to say whether the clipped line is drawn at all). //
+	 * 
+	 * @param edgeLeft
+	 *            lato sinistro, coordinata minima x = 0
+	 * @param edgeRight
+	 *            lato destro, coordinata max x = width
+	 * @param edgeBottom
+	 *            lato inferiore, coordinata max y = height
+	 * @param edgeTop
+	 *            lato superiore, coordinata minima y = 0
+	 * @param x0src
+	 *            punto iniziale segmento
+	 * @param y0src
+	 *            punto iniziale segmento
+	 * @param x1src
+	 *            punto finale segmento
+	 * @param y1src
+	 *            punto finale segmento
+	 * @return
+	 */
+	public static double[] liangBarsky(double edgeLeft, double edgeRight,
+			double edgeBottom, double edgeTop, double x0src, double y0src,
+			double x1src, double y1src) {
+
+		double t0 = 0.0;
+		double t1 = 1.0;
+		double xdelta = x1src - x0src;
+		double ydelta = y1src - y0src;
+		double p = 0;
+		double q = 0;
+		double r = 0;
+		double[] clips = new double[4];
+
+		for (int edge = 0; edge < 4; edge++) { // Traverse through left, right,
+												// bottom, top edges.
+			if (edge == 0) {
+				p = -xdelta;
+				q = -(edgeLeft - x0src);
+			}
+			if (edge == 1) {
+				p = xdelta;
+				q = (edgeRight - x0src);
+			}
+			if (edge == 2) {
+				p = -ydelta;
+				q = -(edgeBottom - y0src);
+			}
+			if (edge == 3) {
+				p = ydelta;
+				q = (edgeTop - y0src);
+			}
+			r = q / p;
+			if (p == 0 && q < 0) {
+				IJ.log("null 001");
+				return null; // Don't draw line at all. (parallel line outside)
+			}
+			if (p < 0) {
+				if (r > t1) {
+					IJ.log("null 002");
+					return null; // Don't draw line at all.
+				} else if (r > t0)
+					t0 = r; // Line is clipped!
+			} else if (p > 0) {
+				if (r < t0) {
+					IJ.log("null 003");
+					return null; // Don't draw line at all.
+				} else if (r < t1)
+					t1 = r; // Line is clipped!
+			}
+		}
+
+		double x0clip = x0src + t0 * xdelta;
+		double y0clip = y0src + t0 * ydelta;
+		double x1clip = x0src + t1 * xdelta;
+		double y1clip = y0src + t1 * ydelta;
+
+		clips[0] = x0clip;
+		clips[1] = y0clip;
+		clips[2] = x1clip;
+		clips[3] = y1clip;
+
+		return clips; // (clipped) line is drawn
+	}
+
+}
