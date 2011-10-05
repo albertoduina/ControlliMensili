@@ -7,7 +7,6 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import ij.IJ;
-import ij.ImagePlus;
 import ij.gui.Plot;
 import ij.gui.WaitForUserDialog;
 import ij.measure.ResultsTable;
@@ -34,66 +33,21 @@ public class p10rmn_Test {
 	}
 
 	@Test
-	public final void testMainUniforTestSiemens() {
-
-		String[] list = { "S1SA_01testP5", "S1SA_02testP5", "S1SA_03testP5" };
-		String[] path = new InputOutput().findListTestImages2(
-				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
-
-		String autoArgs = "0";
-		boolean autoCalled = false;
-		boolean step = false;
-		boolean verbose = true;
-		boolean test = true;
-		double[] vetReference = new p5rmn_().referenceSiemens();
-		boolean verticalProfile = true;
-		int sqX = MyConst.P5_X_ROI_TESTSIEMENS;
-		int sqY = MyConst.P5_Y_ROI_TESTSIEMENS;
-
-		ResultsTable rt1 = p5rmn_.mainUnifor(path, sqX, sqY, autoArgs,
-				verticalProfile, autoCalled, step, verbose, test);
-
-		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-				MyConst.P5_vetName);
-		assertTrue(ok);
-	}
-
-	@Test
-	public final void testMainUnifor() {
-		String path1 = "./Test2/0001";
-		String path2 = "./Test2/HUSA_002testP3";
-		String autoArgs = "0";
-		boolean autoCalled = false;
-		boolean step = false;
-		boolean verbose = true;
-		boolean test = true;
-		p10rmn_.prepUnifor(path1, path2, autoArgs, autoCalled, step, verbose,
-				test);
-		new WaitForUserDialog("Do something, then click OK.").show();
-		// IJ.wait(500);
-	}
-
-	@Test
 	public final void testMainUniforTestGe() {
 
-		String[] list = { "CTSA2_01testP5", "CTSA2_02testP5", "CTSA2_03testP5" };
-		String[] path = new InputOutput().findListTestImages2(
-				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
+		String home1 = new p10rmn_().findTestImages();
+		String path1 = home1 + "A001_testP10";
+		String path2 = home1 + "A002_testP10";
 
 		String autoArgs = "0";
 		boolean autoCalled = false;
 		boolean step = false;
 		boolean verbose = true;
 		boolean test = true;
-		boolean verticalProfile = false;
 		double[] vetReference = new p5rmn_().referenceGe();
-		int sqX = MyConst.P5_X_ROI_TESTGE;
-		int sqY = MyConst.P5_Y_ROI_TESTGE;
 
-		ResultsTable rt1 = p5rmn_.mainUnifor(path, sqX, sqY, autoArgs,
-				verticalProfile, autoCalled, step, verbose, test);
+		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs,
+				autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 
@@ -104,18 +58,48 @@ public class p10rmn_Test {
 	}
 
 	@Test
-	public final void testMainUniforTestSilent() {
-		new p5rmn_().selfTestSilent();
+	public final void testMainUniforTestSiemens() {
+
+		String home1 = new p10rmn_().findTestImages();
+		String path1 = home1 + "A001_testP10";
+		String path2 = home1 + "A002_testP10";
+
+		String autoArgs = "0";
+		boolean autoCalled = false;
+		boolean step = false;
+		boolean verbose = true;
+		boolean test = true;
+		double[] vetReference = new p5rmn_().referenceSiemens();
+
+		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs,
+				autoCalled, step, verbose, test);
+
+		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
+				MyConst.P5_vetName);
+		// ButtonMessages.ModelessMsg("", "CONTINUA");
+		assertTrue(ok);
 	}
 
 	@Test
-	public final void testOverlayGrid() {
-
-		ImagePlus imp1 = UtilAyv.openImageMaximized(".\\Test2\\S1SA_01testP5");
+	public final void testMainUnifor() {
+		String path1 = "./Test2/C001_testP10";
+		String path2 = "./Test2/C002_testP10";
+		String autoArgs = "0";
+		boolean autoCalled = false;
+		boolean step = false;
 		boolean verbose = true;
-		p5rmn_.overlayGrid(imp1, MyConst.P5_GRID_NUMBER, verbose);
-		IJ.wait(300);
+		boolean test = false;
+		p10rmn_.mainUnifor(path1, path2, autoArgs, autoCalled, step, verbose,
+				test);
+		new WaitForUserDialog("Do something, then click OK.").show();
+		// IJ.wait(500);
+	}
 
+	@Test
+	public final void testSelfTestSilent() {
+		new p10rmn_().selfTestSilent();
 	}
 
 	@Test
@@ -125,7 +109,8 @@ public class p10rmn_Test {
 		double bx = 70.0;
 		double by = 78.0;
 		double prof = 20.0;
-		double[] out = new p10rmn_().interpola(ax, ay, bx, by, prof);
+		double[] out = p10rmn_.interpola(ax, ay, bx, by, prof);
+		MyLog.logVector(out, "out");
 
 	}
 
@@ -135,8 +120,8 @@ public class p10rmn_Test {
 		double ay = 45.0;
 		double bx = 70.0;
 		double by = 78.0;
-		double prof = 20.0;
-		double out = new p10rmn_().angoloRad(ax, ay, bx, by);
+		// double prof = 20.0;
+		double out = p10rmn_.angoloRad(ax, ay, bx, by);
 		IJ.log("angoloRad= " + out + " angoloDeg= "
 				+ IJ.d2s(Math.toDegrees(out)));
 	}
@@ -149,11 +134,11 @@ public class p10rmn_Test {
 						.findResource("/002.txt")));
 		MyLog.logVector(profile1, "profile1");
 
-		double[] smooth1 = new p10rmn_().smooth3(profile1, 3);
+		double[] smooth1 = p10rmn_.smooth3(profile1, 3);
 
 		boolean invert = true;
 
-		double[] profile2 = new p10rmn_().createErf(smooth1, invert);
+		double[] profile2 = p10rmn_.createErf(smooth1, invert);
 		MyLog.logVector(profile2, "profile2");
 
 		double[] xcoord1 = new double[profile2.length];
@@ -209,6 +194,44 @@ public class p10rmn_Test {
 	}
 
 	@Test
+	public final void testFromPointsToEquLineExplicit() {
+
+		double x1 = 0;
+		double y1 = 0;
+		double x2 = 255;
+		double y2 = 0;
+		double[] out1 = null;
+
+		x1 = 0;
+		y1 = 0;
+		x2 = 0;
+		y2 = 255;
+
+		out1 = p10rmn_.fromPointsToEquLineExplicit(x1, y1, x2, y2);
+
+		MyLog.logVector(out1, "out1");
+	}
+
+	@Test
+	public final void testFromPointsToEquLineImplicit() {
+
+		double x1 = 0;
+		double y1 = 0;
+		double x2 = 255;
+		double y2 = 0;
+		double[] out1 = null;
+
+		x1 = 120;
+		y1 = 30;
+		x2 = 120;
+		y2 = 50;
+
+		out1 = p10rmn_.fromPointsToEquLineImplicit(x1, y1, x2, y2);
+
+		MyLog.logVector(out1, "out1");
+	}
+
+	@Test
 	public final void testLiangBarsky() {
 
 		double edgeLeft = 0.;
@@ -224,6 +247,21 @@ public class p10rmn_Test {
 				edgeTop, x0src, y0src, x1src, y1src);
 
 		MyLog.logVector(out, "out");
+	}
+
+	@Test
+	public final void testCrossing() {
+
+		double x1 = 5;
+		double y1 = 80;
+		double x2 = 36;
+		double y2 = 42;
+		double width = 256;
+		double height = 256;
+
+		double[] out = p10rmn_.crossing(x1, y1, x2, y2, width, height);
+		MyLog.logVector(out, "out");
+
 	}
 
 }
