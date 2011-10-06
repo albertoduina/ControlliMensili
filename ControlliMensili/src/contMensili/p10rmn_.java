@@ -116,22 +116,31 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		MyFileLogger.logger.info("p10rmn_>>> fileDir = " + fileDir);
 
-		String startingDir = "C:/Dati/Test2/";
-		File[] files = new File(startingDir).listFiles();
-		String path1 = null;
-		for (int i1 = 0; i1 < files.length; i1++) {
-			path1 = files[i1].getAbsolutePath();
-			String path2 = "C:/Users/alberto/Repository/git/ControlliMensili/ControlliMensili/test2/HUSA_001testP3";
-			String autoArgs = "0";
-			boolean autoCalled = false;
-			boolean step = false;
-			boolean verbose = true;
-			boolean test = true;
-
-			mainUnifor(path1, path2, autoArgs, autoCalled, step, verbose, test);
+		int nTokens = new StringTokenizer(args, "#").countTokens();
+		if (nTokens == 0) {
+			manualMenu(0, "");
+		} else {
+			autoMenu(args);
 		}
-
 		return;
+
+		// String startingDir = "C:/Dati/Test2/";
+		// File[] files = new File(startingDir).listFiles();
+		// String path1 = null;
+		// for (int i1 = 0; i1 < files.length; i1++) {
+		// path1 = files[i1].getAbsolutePath();
+		// String path2 =
+		// "C:/Users/alberto/Repository/git/ControlliMensili/ControlliMensili/test2/HUSA_001testP3";
+		// String autoArgs = "0";
+		// boolean autoCalled = false;
+		// boolean step = false;
+		// boolean verbose = true;
+		// boolean test = false;
+		//
+		// mainUnifor(path1, path2, autoArgs, autoCalled, step, verbose, test);
+		// }
+		//
+		// return;
 	}
 
 	public int manualMenu(int preset, String testDirectory) {
@@ -275,10 +284,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			boolean test) {
 
 		boolean accetta = false;
-		// verbose = false;
-
 		ResultsTable rt = null;
-
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 
 		do {
@@ -309,16 +315,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// -------------------------------------------------
 			//
 			IJ.run(imp11, "Smooth", "");
-
 			if (step)
 				new WaitForUserDialog("Eseguito SMOOTH").show();
-
 			IJ.run(imp11, "Find Edges", "");
 			if (step)
 				new WaitForUserDialog("Eseguito FIND EDGES").show();
 
 			Overlay over1 = new Overlay();
 			Overlay over2 = new Overlay();
+			imp11.setOverlay(over1);
+
 			double[][] peaks1 = new double[4][1];
 			double[][] peaks2 = new double[4][1];
 			double[][] peaks3 = new double[4][1];
@@ -330,6 +336,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (step) {
 				imp11.updateAndDraw();
 				over1.addElement(imp11.getRoi());
+				over1.setStrokeColor(Color.red);
 			}
 
 			peaks1 = profileAnalyzer(imp11, dimPixel, "BISETTRICE ORIZZONTALE",
@@ -392,12 +399,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 						/ (dimPixel * Math.sqrt(2)));
 			}
 
-			// for (int i1 = 0; i1 < over1.size(); i1++) {
-			// IJ.log("index= " + over1.size());
-			// new WaitForUserDialog("").show();
-			// over1.remove(i1);
-			// }
-
 			// ----------------------------------------------------------------------
 			// Verifica di avere trovato almeno 3 punti, altrimenti chiede la
 			// selezione manuale del cerchio
@@ -410,7 +411,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 					over1.setStrokeColor(Color.red);
 					imp11.setOverlay(over1);
 					imp11.updateAndDraw();
-					new WaitForUserDialog("333 OK").show();
+					new WaitForUserDialog("Premere OK").show();
 				}
 
 				fitCircle(imp11);
@@ -424,7 +425,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp11.setRoi(new OvalRoi((width / 2) - 100, (height / 2) - 100,
 						200, 200));
 				new WaitForUserDialog(
-						"Non si riescono a determinare le coordinate di almeno 3 punti del cerchio,\n posizionare a mano una ROI circolare di diametro uguale \nal fantoccio e premere  OK")
+						"Non si riescono a determinare le coordinate di almeno 3 punti del cerchio,\nposizionare a mano una ROI circolare di diametro uguale al fantoccio e\npremere  OK")
 						.show();
 			}
 
@@ -441,12 +442,17 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// disegno la ROI del centro, a solo scopo dimostrativo !
 			// ----------------------------------------------------------
 			//
+			over1.setStrokeColor(Color.red);
+			imp11.setOverlay(over1);
+
 			if (verbose) {
 				imp11.setRoi(new OvalRoi(x1 - 4, y1 - 4, 8, 8));
 				Roi roi1 = imp11.getRoi();
 				if (roi1 == null)
 					IJ.log("roi1==null");
 				over1.addElement(imp11.getRoi());
+				over1.setStrokeColor(Color.red);
+
 				imp11.killRoi();
 			}
 			ImageProcessor ip11 = imp11.getProcessor();
@@ -467,9 +473,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			double[] rx = null;
 			double[] ry = null;
 			ResultsTable rt1 = ResultsTable.getResultsTable();
-			// PointRoi pr1 = null;
 			int nPunti = 0;
-
 			do {
 				rt1.reset();
 				maxFinder.findMaxima(ip11, tolerance, threshold, outputType,
@@ -494,17 +498,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			if (verbose) {
 				imp11.setRoi(new OvalRoi(x11 - 4, y11 - 4, 8, 8));
-				Roi roi2 = imp11.getRoi();
-				over1.addElement(roi2);
+				over1.addElement(imp11.getRoi());
+				over1.setStrokeColor(Color.red);
 			}
-			Rectangle boundRec2 = imp11.getProcessor().getRoi();
-			int x2 = boundRec2.x + boundRec2.width / 2;
-			int y2 = boundRec2.y + boundRec2.height / 2;
-			rx[0] = x2;
-			ry[0] = y2;
-			Roi roi3 = imp11.getRoi();
-			if (step)
-				over1.addElement(roi3);
 			imp11.killRoi();
 
 			//
@@ -519,9 +515,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			double yEndRefLine = ry[0];
 
 			imp11.setRoi(new Line(x1, y1, (int) rx[0], (int) ry[0]));
-			Roi roi5 = imp11.getRoi();
-			over1.addElement(roi5);
-			imp11.updateAndDraw();
+			over1.addElement(imp11.getRoi());
+			over1.setStrokeColor(Color.red);
+
 			double prof = 20;
 			//
 			// -----------------------------------------------------------
@@ -533,13 +529,17 @@ public class p10rmn_ implements PlugIn, Measurements {
 			double ax = out1[0];
 			double ay = out1[1];
 			imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
-			Roi roi12 = imp11.getRoi();
-			over1.addElement(roi12);
-			imp11.updateAndDraw();
+
+			if (!test)
+				MyLog.waitHere("MODIFICA MANUALE POSIZIONE ROI");
+
+			Rectangle boundRec3 = imp11.getProcessor().getRoi();
+			int xCenterRoi = boundRec3.x + boundRec3.width / 2;
+			int yCenterRoi = boundRec3.y + boundRec3.height / 2;
+
 			if (step)
 				new WaitForUserDialog(
-						"FINE CALCOLI GEOMETRICI SU IMMAGINE\n GENETICAMENTE MODIFICATA")
-						.show();
+						"FINE CALCOLI GEOMETRICI SU IMMAGINE ELABORATA").show();
 
 			// ============================================================================
 			// Fine calcoli geometrici
@@ -557,22 +557,24 @@ public class p10rmn_ implements PlugIn, Measurements {
 			}
 			ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
 
-			int sqNEA = MyConst.P5_NEA_11X11_PIXEL;
-			// ImageProcessor ip1 = imp1.getProcessor();
+			int sqNEA = MyConst.P10_NEA_11X11_PIXEL;
 			// disegno MROI già predeterminata
-			int sqX = (int) ax;
-			int sqY = (int) ay;
+			int sqX = xCenterRoi;
+			int sqY = yCenterRoi;
+			imp1.setOverlay(over2);
+			over2.setStrokeColor(Color.red);
 
 			if (verbose) {
 				// =================================================
+				imp1.setRoi(xCenterRoi - 10, yCenterRoi - 10, 20, 20);
+				over2.addElement(imp1.getRoi());
+
+				imp1.killRoi();
 				imp1.setRoi(new OvalRoi(x1 - 4, y1 - 4, 8, 8));
 				over2.addElement(imp1.getRoi());
-				over2.setStrokeColor(Color.red);
-				imp1.setOverlay(over2);
 				imp1.killRoi();
 				imp1.setRoi(new OvalRoi(x11 - 4, y11 - 4, 8, 8));
 				over2.addElement(imp1.getRoi());
-				over2.setStrokeColor(Color.red);
 				imp1.setRoi(new Line(x1, y1, (int) rx[0], (int) ry[0]));
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(Color.red);
@@ -583,50 +585,50 @@ public class p10rmn_ implements PlugIn, Measurements {
 			imp1.setRoi(sqX - sqNEA / 2, sqY - sqNEA / 2, sqNEA, sqNEA);
 			if (verbose) {
 				over2.addElement(imp1.getRoi());
-				over2.setStrokeColor(Color.red);
 			}
 			imp1.updateAndDraw();
 
-			new WaitForUserDialog("MROI 11 x 11 Premere  OK").show();
+			// MyLog.waitHere("POSIZIONE MROI");
+			if (step)
+				new WaitForUserDialog("MROI 11 x 11 Premere  OK").show();
 
 			//
 			// posiziono la ROI 7x7 all'interno di MROI
 			//
 
-			int sq7 = MyConst.P5_MROI_7X7_PIXEL;
-			int gap = (sqNEA - MyConst.P5_MROI_7X7_PIXEL) / 2;
+			int sq7 = MyConst.P10_MROI_7X7_PIXEL;
+			int gap = (sqNEA - MyConst.P10_MROI_7X7_PIXEL) / 2;
 			imp1.setRoi(sqX - sq7 / 2, sqY - sq7 / 2, sq7, sq7);
 			if (verbose) {
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(Color.red);
 			}
 			imp1.updateAndDraw();
-
-			new WaitForUserDialog("MROI 7 x 7 Premere  OK").show();
+			if (step)
+				new WaitForUserDialog("MROI 7 x 7 Premere  OK").show();
 
 			ImageStatistics stat1 = imp1.getStatistics();
 			double signal1 = stat1.mean;
 
-			int xFondo = MyConst.P5_X_ROI_BACKGROUND;
-			int yFondo = MyConst.P5_Y_ROI_BACKGROUND;
-			if (test)
-				yFondo = yFondo + 40;
+			int xFondo = MyConst.P10_X_ROI_BACKGROUND;
+			int yFondo = MyConst.P10_Y_ROI_BACKGROUND;
+			int dFondo = MyConst.P10_DIAM_ROI_BACKGROUND;
 			if (step)
 				msgMroi();
 			//
 			// disegno RoiFondo su imp1
 			//
-			ImageStatistics statFondo = UtilAyv.backCalc(xFondo, yFondo,
-					MyConst.P5_DIAM_ROI_BACKGROUND, imp1, step, verbose, test);
+			Boolean circular = true;
+			ImageStatistics statFondo = backCalcP10(xFondo, yFondo, dFondo,
+					imp1, step, circular, test);
 
-			new WaitForUserDialog("FONDO").show();
 			//
 			// disegno MROI su imaDiff
 			//
 
 			imaDiff.resetDisplayRange();
-			imaDiff.setRoi(sqX + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL,
-					MyConst.P5_MROI_7X7_PIXEL);
+			imaDiff.setRoi(sqX + gap, sqY + gap, MyConst.P10_MROI_7X7_PIXEL,
+					MyConst.P10_MROI_7X7_PIXEL);
 			imaDiff.updateAndDraw();
 			ImageStatistics statImaDiff = imaDiff.getStatistics();
 			imaDiff.updateAndDraw();
@@ -636,7 +638,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (step)
 				msgMroi();
 
-			// new WaitForUserDialog("004 Premere  OK").show();
 			if (imaDiff.isVisible())
 				imaDiff.getWindow().toBack();
 
@@ -661,12 +662,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// ripetere il loop
 			//
 
-			new WaitForUserDialog("005 Premere  OK").show();
-
-			double checkPixels = MyConst.P5_CHECK_PIXEL_MULTIPLICATOR
+			double checkPixels = MyConst.P10_CHECK_PIXEL_MULTIPLICATOR
 					* prelimImageNoiseEstimate_MROI;
-			int area11x11 = MyConst.P5_NEA_11X11_PIXEL
-					* MyConst.P5_NEA_11X11_PIXEL;
+			int area11x11 = MyConst.P10_NEA_11X11_PIXEL
+					* MyConst.P10_NEA_11X11_PIXEL;
 			int enlarge = 0;
 			int pixx = 0;
 			int xPos = sqX - sqNEA / 2 - enlarge;
@@ -674,11 +673,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			do {
 
-				pixx = countPix(imp1, xPos, yPos, sqNEA, checkPixels);
+				pixx = countPixTest(imp1, xPos, yPos, sqNEA, checkPixels, false);
 
 				imp1.setRoi(xPos, yPos, sqNEA, sqNEA);
 				imp1.updateAndDraw();
-				new WaitForUserDialog("AAA Premere  OK").show();
 
 				// imp1.getWindow().toFront();
 				if (step)
@@ -691,8 +689,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 				if (step) {
 					msgEnlargeRoi(sqNEA);
 				}
-
-				new WaitForUserDialog("006 Premere  OK").show();
 
 				// verifico che quando cresce il lato del quadrato non si esca
 				// dall'immagine
@@ -710,7 +706,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			} while (pixx < area11x11);
 
-			new WaitForUserDialog("BBBB Premere  OK").show();
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
 
@@ -720,7 +715,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// calcolo SD su imaDiff quando i corrispondenti pixel
 			// di imp1 passano il test
 			//
-			// new WaitForUserDialog("007 Premere  OK").show();
 			double[] out11 = devStandardNema(imp1, imaDiff, xPos, yPos, sqNEA,
 					checkPixels);
 			if (step)
@@ -731,45 +725,27 @@ public class p10rmn_ implements PlugIn, Measurements {
 			double snr = signal1 / (out11[1] / Math.sqrt(2));
 			if (step)
 				msgSnr(snr);
-			MyLog.here();
-			new WaitForUserDialog("Premere  OK").show();
 
 			//
 			// calcolo simulata
 			//
 			int[][] classiSimulata = generaSimulata(sqX + gap, sqY + gap,
-					MyConst.P5_MROI_7X7_PIXEL, imp1, step, false, test);
+					MyConst.P10_MROI_7X7_PIXEL, imp1, step, false, test);
 			//
 			// calcolo posizione fwhm a metà della MROI
 			//
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
-			MyLog.here();
-			new WaitForUserDialog("Premere  OK").show();
 			//
 			// ----------------------------------------------------------
 			// Calcolo FWHM
-			// la direzione su cui verrà preso il profilo è quella Maxima-centro
-			// cerchio, la lunghezza segmento .......
+			// la direzione su cui verrà preso il profilo è quella centro
+			// cerchio - centro roi, il segmento raggiunge i bordi
 			// -----------------------------------------------------------
 			//
 
-			//
-			// // punto di maxima
-			// imp1.setRoi(new OvalRoi(x11 - 4, y11 - 4, 8, 8));
-			// over2.addElement(imp1.getRoi());
-			// // centro
-			// imp1.setRoi(new OvalRoi(x1 - 4, y1 - 4, 8, 8));
-			// over2.addElement(imp1.getRoi());
-			//
-			// over2.setStrokeColor(Color.red);
-			// imp1.setOverlay(over2);
-			// imp1.updateAndDraw();
-
-			double[] out2 = crossing(xStartRefLine, yStartRefLine, xEndRefLine,
-					yEndRefLine, width, height);
-			MyLog.here();
-			new WaitForUserDialog("Premere  OK").show();
+			double[] out2 = crossing(xStartRefLine, yStartRefLine, xCenterRoi,
+					yCenterRoi, width, height);
 
 			int xStartProfile = (int) Math.round(out2[0]);
 			int yStartProfile = (int) Math.round(out2[1]);
@@ -779,25 +755,17 @@ public class p10rmn_ implements PlugIn, Measurements {
 			imp1.setRoi(new Line(xStartProfile, yStartProfile, xEndProfile,
 					yEndProfile));
 			imp1.updateAndDraw();
-			MyLog.here();
-			new WaitForUserDialog("Premere  OK").show();
 
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
-			// new WaitForUserDialog("010 Premere  OK").show();
 
 			step = false;
 			double[] outFwhm2 = analyzeProfile(imp1, xStartProfile,
 					yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
-			if (verbose)
-				new WaitForUserDialog("011 Premere  OK").show();
 
 			//
 			// Salvataggio dei risultati nella ResultsTable
-
-			// String[][] tabCodici = new InputOutput().readFile1(
-			// MyConst.CODE_FILE, MyConst.TOKENS4);
-
+			//
 			String[][] tabCodici = TableCode.loadTable(MyConst.CODE_FILE);
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
@@ -929,21 +897,21 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		double simul = 0.0;
 		double signal = 427.57142857142856;
-		double backNoise = 10.47;
-		double snRatio = 42.10678432133364;
-		double fwhm = 14.264787946428575;
-		double num1 = 1164.0;
-		double num2 = 727.0;
-		double num3 = 3387.0;
-		double num4 = 5203.0;
-		double num5 = 3747.0;
-		double num6 = 2895.0;
-		double num7 = 3193.0;
-		double num8 = 3738.0;
-		double num9 = 3828.0;
-		double num10 = 3176.0;
-		double num11 = 549.0;
-		double num12 = 33929.0;
+		double backNoise = 11.1125;
+		double snRatio = 41.90107231706538;
+		double fwhm = 14.451890461530075;
+		double num1 = 1012.0;
+		double num2 = 595.0;
+		double num3 = 2924.0;
+		double num4 = 4410.0;
+		double num5 = 4639.0;
+		double num6 = 3046.0;
+		double num7 = 3235.0;
+		double num8 = 3688.0;
+		double num9 = 4040.0;
+		double num10 = 3386.0;
+		double num11 = 620.0;
+		double num12 = 33941.0;
 
 		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
@@ -961,21 +929,21 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		double simul = 0.0;
 		double signal = 427.57142857142856;
-		double backNoise = 10.47;
-		double snRatio = 42.10678432133364;
-		double fwhm = 14.264787946428575;
-		double num1 = 1164.0;
-		double num2 = 727.0;
-		double num3 = 3387.0;
-		double num4 = 5203.0;
-		double num5 = 3747.0;
-		double num6 = 2895.0;
-		double num7 = 3193.0;
-		double num8 = 3738.0;
-		double num9 = 3828.0;
-		double num10 = 3176.0;
-		double num11 = 549.0;
-		double num12 = 33929.0;
+		double backNoise = 11.1125;
+		double snRatio = 41.90107231706538;
+		double fwhm = 14.451890461530075;
+		double num1 = 1012.0;
+		double num2 = 595.0;
+		double num3 = 2924.0;
+		double num4 = 4410.0;
+		double num5 = 4639.0;
+		double num6 = 3046.0;
+		double num7 = 3235.0;
+		double num8 = 3688.0;
+		double num9 = 4040.0;
+		double num10 = 3386.0;
+		double num11 = 620.0;
+		double num12 = 33941.0;
 
 		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
@@ -1004,7 +972,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-				MyConst.P5_vetName);
+				MyConst.P10_vetName);
 		if (ok) {
 			IJ.log("Il test di p10rmn_ UNIFORMITA' SUPERFICIALE è stato SUPERATO");
 		} else {
@@ -1052,30 +1020,45 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 *            lato della Roi
 	 * @param limit
 	 *            soglia di conteggio
+	 * @param test
+	 *            switch per test
 	 * @return pixel che superano la soglia
 	 */
-	private static int countPix(ImagePlus imp1, int sqX, int sqY, int sqR,
-			double limit) {
+	public static int countPixTest(ImagePlus imp1, int sqX, int sqY, int sqR,
+			double limit, boolean test) {
 		int offset = 0;
 		int w = 0;
 		int count1 = 0;
+		short[] pixels2 = null;
 
 		if (imp1 == null) {
-			IJ.error("CountPix ricevuto null");
+			IJ.error("CountPixTest ricevuto null");
 			return (0);
 		}
 
 		int width = imp1.getWidth();
 		short[] pixels1 = UtilAyv.truePixels(imp1);
+		ImageProcessor ip1 = imp1.getProcessor();
+		if (test) {
+			// N.B. la roi qui sotto è volutamente centrata senza togliere
+			// lato/2
+			imp1.setRoi(sqX, sqY, sqR, sqR);
+			imp1.updateAndDraw();
+			pixels2 = (short[]) ip1.getPixels();
+		}
+
 		for (int y1 = sqY; y1 < (sqY + sqR); y1++) {
 			offset = y1 * width;
 			for (int x1 = sqX; x1 < (sqX + sqR); x1++) {
 				w = offset + x1;
-				if (pixels1[w] > limit) {
+				if (w < pixels1.length && pixels1[w] > limit) {
+					if (test)
+						pixels2[w] = 4096;
 					count1++;
 				}
 			}
 		}
+		imp1.updateAndDraw();
 		return count1;
 	}
 
@@ -1160,7 +1143,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		//
 		// disegno MROI per calcoli
 		//
-		imp1.setRoi(sqX, sqY, sqR, sqR);
+		imp1.setRoi(sqX - sqR / 2, sqY - sqR / 2, sqR, sqR);
 		ImageStatistics stat1 = imp1.getStatistics();
 		double mean = stat1.mean;
 		//
@@ -1600,12 +1583,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 	private static int[][] generaSimulata(int xRoi, int yRoi, int diamRoi,
 			ImagePlus imp, boolean step, boolean verbose, boolean test) {
 
-		// TODO da rivedere per coordinate ROI
+		int xRoiSimulata = xRoi + (diamRoi - MyConst.P10_NEA_11X11_PIXEL) / 2;
+		int yRoiSimulata = yRoi + (diamRoi - MyConst.P10_NEA_11X11_PIXEL) / 2;
 
-		int xRoiSimulata = xRoi + (diamRoi - MyConst.P5_NEA_11X11_PIXEL) / 2;
-		int yRoiSimulata = yRoi + (diamRoi - MyConst.P5_NEA_11X11_PIXEL) / 2;
 		ImagePlus impSimulata = simulata12Classi(xRoiSimulata, yRoiSimulata,
-				MyConst.P5_NEA_11X11_PIXEL, imp);
+				MyConst.P10_NEA_11X11_PIXEL, imp);
 		if (verbose) {
 			UtilAyv.showImageMaximized(impSimulata);
 
@@ -1626,92 +1608,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			new FileSaver(impSimulata).saveAsZip(simulataName);
 		return classiSimulata;
 	}
-
-	// /**
-	// * scelta da parte dell'utente della posizione e direzione del profilo su
-	// * cui poi verrà calcolata l'FWHM
-	// *
-	// * @param xPos
-	// * posizione x MROI
-	// * @param yPos
-	// * posizione y MROI
-	// * @param len
-	// * lato MROI
-	// * @param imp1
-	// * puntatore ImagePlus alla immagine originale
-	// * @return line parametri profilo selezionato
-	// */
-	// private static Line selectProfilePosition(int xPos, int yPos, int len,
-	// ImagePlus imp1) {
-	//
-	// // partiamo da dove è stata posizionata la ROI
-	//
-	// int xStartProfile = 0;
-	// int yStartProfile = 0;
-	// int xEndProfile = 0;
-	// int yEndProfile = 0;
-	// boolean continua = false;
-	//
-	// int width = imp1.getWidth();
-	// int height = imp1.getHeight();
-	// // per la direzione del profilo utilizziamo l'ultima selezionata
-	// boolean profiVert = Prefs.get("prefer.p5rmnVert", true);
-	// do {
-	// if (profiVert) {
-	// xStartProfile = xPos + len / 2;
-	// yStartProfile = 1;
-	// xEndProfile = xPos + len / 2;
-	// yEndProfile = height;
-	// } else {
-	// xStartProfile = 1;
-	// yStartProfile = yPos + len / 2;
-	// xEndProfile = width;
-	// yEndProfile = yPos + len / 2;
-	// }
-	// imp1.setRoi(new Line((int) xStartProfile, (int) yStartProfile,
-	// (int) xEndProfile, (int) yEndProfile));
-	// imp1.updateAndDraw();
-	//
-	// // effettuo la scelta all'interno del loop, in modo da poterla
-	// // ripetere
-	// int userSelection1 = ButtonMessages.ModelessMsg(
-	// "Linea su cui verrà calcolata la FWHM, eventualmente"
-	// + " riposizionarla e premere CONTINUA   <24>",
-	// "CONTINUA", "ORIZZ", "VERT");
-	//
-	// switch (userSelection1) {
-	// case 1:
-	// profiVert = true;
-	// break;
-	// case 2:
-	// profiVert = false;
-	// break;
-	// case 3:
-	// continua = true;
-	// break;
-	// }
-	// } while (!continua);
-	//
-	// Prefs.set("prefer.p5rmnVert", profiVert);
-	// //
-	// // rilettura posizione user-defined linea
-	// //
-	// Roi roi = imp1.getRoi();
-	// Line line = (Line) roi;
-	// return line;
-	// }
-
-	// public static void overlayCircles(ImagePlus imp1, int gridNumber,
-	// boolean verbose) {
-	//
-	// int elements = 10;
-	// CustomCanvasGeneric ccg1 = new CustomCanvasGeneric(imp1);
-	// ccg1.setCircleElements(elements);
-	// if (verbose) {
-	// ImageWindow iw1 = new ImageWindow(imp1, ccg1);
-	// iw1.maximize();
-	// }
-	// }
 
 	/**
 	 * Read preferences from IJ_Prefs.txt
@@ -2463,5 +2359,56 @@ public class p10rmn_ implements PlugIn, Measurements {
 				.getPath();
 		return (home1);
 	}
+
+	/**
+	 * esegue posizionamento e calcolo roi circolare sul fondo
+	 * 
+	 * @param xRoi
+	 *            coordinata x roi
+	 * @param yRoi
+	 *            coordinata y roi
+	 * @param imp
+	 *            puntatore ImagePlus alla immagine
+	 * @param bstep
+	 *            funzionamento passo passo
+	 * @return dati statistici
+	 */
+	public static ImageStatistics backCalcP10(int xRoi, int yRoi, int diaRoi,
+			ImagePlus imp, boolean bstep, boolean circular, boolean selftest) {
+
+		ImageStatistics stat = null;
+		boolean redo = false;
+		do {
+			if (imp.isVisible())
+				imp.getWindow().toFront();
+			if (circular) {
+				imp.setRoi(new OvalRoi(xRoi - diaRoi / 2, yRoi - diaRoi / 2,
+						diaRoi, diaRoi));
+				// imp.updateAndDraw();
+			} else {
+				imp.setRoi(xRoi - diaRoi / 2, yRoi - diaRoi / 2, diaRoi, diaRoi);
+				// imp.updateAndDraw();
+			}
+
+			if (!selftest) {
+				if (redo) {
+					ButtonMessages
+							.ModelessMsg(
+									"ATTENZIONE segnale medio fondo =0 SPOSTARE LA ROI E PREMERE CONTINUA",
+									"CONTINUA");
+
+				}
+			}
+			stat = imp.getStatistics();
+			if (stat.mean == 0)
+				redo = true;
+			else
+				redo = false;
+			if (bstep)
+				ButtonMessages.ModelessMsg("Segnale medio =" + stat.mean,
+						"CONTINUA");
+		} while (redo);
+		return stat;
+	} // backCalcP10
 
 }

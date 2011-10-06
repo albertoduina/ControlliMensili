@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import ij.IJ;
+import ij.ImagePlus;
 import ij.gui.Plot;
 import ij.gui.WaitForUserDialog;
 import ij.measure.ResultsTable;
@@ -44,7 +45,7 @@ public class p10rmn_Test {
 		boolean step = false;
 		boolean verbose = true;
 		boolean test = true;
-		double[] vetReference = new p5rmn_().referenceGe();
+		double[] vetReference = new p10rmn_().referenceGe();
 
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs,
 				autoCalled, step, verbose, test);
@@ -69,7 +70,7 @@ public class p10rmn_Test {
 		boolean step = false;
 		boolean verbose = true;
 		boolean test = true;
-		double[] vetReference = new p5rmn_().referenceSiemens();
+		double[] vetReference = new p10rmn_().referenceSiemens();
 
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs,
 				autoCalled, step, verbose, test);
@@ -261,7 +262,25 @@ public class p10rmn_Test {
 
 		double[] out = p10rmn_.crossing(x1, y1, x2, y2, width, height);
 		MyLog.logVector(out, "out");
+	}
 
+	@Test
+	public final void testCountPixTest() {
+
+		String path1 = "./Test2/C001_testP10";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+
+		int xPos = 50;
+		int yPos = 80;
+		int sqNEA = 20;
+		double checkPixels = 58.064;
+		boolean test = true;
+
+		int pixx = p10rmn_.countPixTest(imp1, xPos, yPos, sqNEA, checkPixels,
+				test);
+
+		IJ.log("pixx= " + pixx);
+		MyLog.waitHere();
 	}
 
 }
