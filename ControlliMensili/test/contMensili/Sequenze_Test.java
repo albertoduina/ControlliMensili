@@ -142,7 +142,8 @@ public class Sequenze_Test {
 	@Test
 	public final void testLoadList2() {
 
-		String CODE_FILE = "codici.txt";
+//		String CODE_FILE = "codici.txt";
+		String CODE_FILE = "codiciNew.txt";
 		String EXPAND_FILE = "expand.txt";
 
 		ArrayList<ArrayList<String>> tabella1 = new InputOutput()

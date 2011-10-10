@@ -211,10 +211,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 				break;
 			case 3:
 				step = true;
-			//	retry = false;
-			//	break;
+				// retry = false;
+				// break;
 			case 4:
-			//	step = false;
+				// step = false;
 				retry = false;
 				boolean verticalProfile = false;
 				boolean autoCalled = true;
@@ -296,6 +296,14 @@ public class p5rmn_ implements PlugIn, Measurements {
 				if (imp1.isVisible())
 					UtilAyv.backgroundEnhancement(0, 0, 10, imp1);
 				int userSelection1 = 0;
+
+				// TODO posizione di test
+
+				// posX = 56;
+				// posY = 111;
+				// IJ.log(""+imp1.getShortTitle());
+				// IJ.log(""+imp2.getShortTitle());
+
 				do {
 					imp1.setRoi(posX, posY, sqNEA, sqNEA);
 					imp1.updateAndDraw();
@@ -438,7 +446,6 @@ public class p5rmn_ implements PlugIn, Measurements {
 			if (step)
 				msgSnr(snr);
 
-
 			//
 			// calcolo simulata
 			//
@@ -515,12 +522,19 @@ public class p5rmn_ implements PlugIn, Measurements {
 			rt.addValue(6, sqNEA);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "Rumore_Fondo");
+			rt.addLabel(t1, "Rumore_Fondo222");
 			rt.addValue(2, statFondo.mean);
-			rt.addValue(3, statFondo.roiX);
-			rt.addValue(4, statFondo.roiY);
-			rt.addValue(5, statFondo.roiWidth);
-			rt.addValue(6, statFondo.roiHeight);
+			int xRoi = (int) statFondo.roiX;
+			int yRoi = (int) statFondo.roiY;
+			int widthRoi = (int) statFondo.roiWidth;
+			int heightRoi = (int) statFondo.roiHeight;
+
+			IJ.log("xRoi= " + xRoi);
+
+			rt.addValue(3, xRoi);
+			rt.addValue(4, yRoi);
+			rt.addValue(5, widthRoi);
+			rt.addValue(6, heightRoi);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "SnR");
@@ -1060,7 +1074,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 		vetHalfPoint = halfPointSearch(profi1);
 		outFwhm = calcFwhm(vetHalfPoint, profi1, dimPixel);
 		if (step)
-			
+
 			createPlot(profi1, true, true); // plot della fwhm
 		if (step)
 			ButtonMessages.ModelessMsg("Continuare?   <51>", "CONTINUA");
