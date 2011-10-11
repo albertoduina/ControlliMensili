@@ -41,8 +41,10 @@ public class p5rmn_Test {
 		int sqX = MyConst.P5_X_ROI_TESTSIEMENS;
 		int sqY = MyConst.P5_Y_ROI_TESTSIEMENS;
 
-		ResultsTable rt1 = p5rmn_.mainUnifor(path, sqX, sqY, autoArgs,
+		ResultsTable rt1 = p5rmn_.mainUnifor(path, sqX, sqY,
 				verticalProfile, autoCalled, step, verbose, test);
+//		ResultsTable rt1 = p5rmn_.mainUnifor(path, sqX, sqY, autoArgs,
+//				verticalProfile, autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 
@@ -58,7 +60,6 @@ public class p5rmn_Test {
 		String[] path = new InputOutput().findListTestImages2(
 				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 
-		String autoArgs = "0";
 		boolean autoCalled = false;
 		boolean step = false;
 		boolean verbose = true;
@@ -68,7 +69,9 @@ public class p5rmn_Test {
 		int sqX = MyConst.P5_X_ROI_TESTGE;
 		int sqY = MyConst.P5_Y_ROI_TESTGE;
 
-		ResultsTable rt1 = p5rmn_.mainUnifor(path, sqX, sqY, autoArgs,
+//		ResultsTable rt1 = p5rmn_.mainUnifor(path, sqX, sqY, autoArgs,
+//				verticalProfile, autoCalled, step, verbose, test);
+		ResultsTable rt1 = p5rmn_.mainUnifor(path, sqX, sqY,
 				verticalProfile, autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);

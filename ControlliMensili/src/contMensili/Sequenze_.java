@@ -98,6 +98,7 @@ public class Sequenze_ implements PlugIn {
 		// + new InputOutput().findResource("Sequenze_.class"));
 
 		String[][] tableCode = TableCode.loadTable(MyConst.CODE_FILE);
+		// MyLog.logMatrix(tableCode, "tableCode");
 		String[][] tableExpand = TableExpand.loadTable(MyConst.EXPAND_FILE);
 		new AboutBox().about("Scansione automatica cartelle", this.getClass());
 		IJ.wait(2000);
@@ -298,6 +299,7 @@ public class Sequenze_ implements PlugIn {
 		List<String> vetAcqTime = new ArrayList<String>();
 		List<String> vetEchoTime = new ArrayList<String>();
 		List<String> vetFatto = new ArrayList<String>();
+		List<String> vetDirez = new ArrayList<String>();
 
 		if (pathList == null) {
 			IJ.log("loadList2.pathList = null");
@@ -336,7 +338,6 @@ public class Sequenze_ implements PlugIn {
 				if (fileName.length() >= 5) {
 					subCodice = fileName.substring(0, 5).trim();
 				}
-				new InputOutput();
 				if (InputOutput.isCode(subCodice, tableCode2)) {
 					codice = subCodice;
 				} else {
@@ -384,6 +385,7 @@ public class Sequenze_ implements PlugIn {
 					vetCodice.add(codice);
 					vetCoil.add(coil);
 					vetImaDaPassare.add(tableCode2[tableRow][1]);
+					vetDirez.add(tableCode2[tableRow][4]);
 					vetSerie.add(numSerie);
 					vetAcq.add(numAcq);
 					vetIma.add(numIma);
@@ -444,11 +446,15 @@ public class Sequenze_ implements PlugIn {
 		String[][] tablePass10 = TableSequence.writeColumn(tablePass9,
 				ArrayUtils.arrayListToArrayString(vetEchoTime),
 				TableSequence.ECHO);
-		String[][] tablePass11 = TableSequence
-				.writeColumn(tablePass10,
+		String[][] tablePass11 = TableSequence.writeColumn(tablePass10,
+				ArrayUtils.arrayListToArrayString(vetDirez),
+				TableSequence.DIREZ);
+
+		String[][] tablePass12 = TableSequence
+				.writeColumn(tablePass11,
 						ArrayUtils.arrayListToArrayString(vetFatto),
 						TableSequence.DONE);
-		return tablePass11;
+		return tablePass12;
 	}
 
 	/**

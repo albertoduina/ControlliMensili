@@ -6,6 +6,7 @@ import ij.Prefs;
 import ij.gui.ImageWindow;
 import ij.gui.Line;
 import ij.gui.NewImage;
+import ij.gui.Overlay;
 import ij.gui.Plot;
 import ij.gui.PlotWindow;
 import ij.gui.Roi;
@@ -145,8 +146,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 				boolean test = false;
 				int sqX = 0;
 				int sqY = 0;
-				ResultsTable rt1 = mainUnifor(path, sqX, sqY, "0",
-						verticalProfile, autoCalled, step, verbose, test);
+				// ResultsTable rt1 = mainUnifor(path, sqX, sqY, "0",
+				// verticalProfile, autoCalled, step, verbose, test);
+				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile,
+						autoCalled, step, verbose, test);
 				if (rt1 == null)
 					return 0;
 
@@ -164,6 +167,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	public int autoMenu(String autoArgs) {
 
+		IJ.log("p5rmn_.autoMenu autoargs= " + autoArgs);
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
 		if (vetRiga[0] == -1) {
@@ -191,6 +195,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 			path[2] = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
 		}
 
+		boolean direz = decodeDirez(TableSequence.getDirez(iw2ayvTable,
+				vetRiga[0]));
+		MyLog.waitHere("direz=" + direz);
+
 		boolean step = false;
 		boolean retry = false;
 		do {
@@ -216,14 +224,16 @@ public class p5rmn_ implements PlugIn, Measurements {
 			case 4:
 				// step = false;
 				retry = false;
-				boolean verticalProfile = false;
+				boolean verticalProfile = direz;
 				boolean autoCalled = true;
 				boolean verbose = true;
 				boolean test = false;
 				int sqX = 0;
 				int sqY = 0;
-				ResultsTable rt1 = mainUnifor(path, sqX, sqY, autoArgs,
-						verticalProfile, autoCalled, step, verbose, test);
+				// ResultsTable rt1 = mainUnifor(path, sqX, sqY, autoArgs,
+				// verticalProfile, autoCalled, step, verbose, test);
+				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile,
+						autoCalled, step, verbose, test);
 				if (rt1 == null)
 					return 0;
 
@@ -241,17 +251,27 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	@SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String[] path, int sqX, int sqY,
-			String autoArgs, boolean verticalProfile, boolean autoCalled,
-			boolean step, boolean verbose, boolean test) {
+			boolean verticalProfile, boolean autoCalled, boolean step,
+			boolean verbose, boolean test) {
+		// public static ResultsTable mainUnifor(String[] path, int sqX, int
+		// sqY,
+		// String autoArgs, boolean verticalProfile, boolean autoCalled,
+		// boolean step, boolean verbose, boolean test) {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
+		MyLog.waitHere("verticalProfile=" + verticalProfile);
+
+		MyLog.logVector(path, "path");
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 
 		do {
 			ImagePlus imp1 = null;
 			ImagePlus imp2 = null;
+			Overlay over2 = new Overlay();
+			Overlay over3 = new Overlay();
+
 			if (verbose) {
 				imp1 = UtilAyv.openImageMaximized(path[0]);
 				imp2 = UtilAyv.openImageNoDisplay(path[1], true);
@@ -271,13 +291,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 				imp1.setTitle("DIMENSIONI RETICOLO= "
 						+ (dimPixel * (double) height / (double) MyConst.P5_GRID_NUMBER)
 						+ " mm");
-			ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
-			if (verbose) {
-				// UtilAyv.showImageMaximized(imaDiff);
-				// imp1.getWindow().toFront();
-			}
 
 			int sqNEA = MyConst.P5_NEA_11X11_PIXEL;
+			imp1.setOverlay(over2);
+			over2.setStrokeColor(Color.red);
 
 			ImageProcessor ip1 = imp1.getProcessor();
 			//
@@ -313,6 +330,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 				// rilettura posizione user-defined
 				//
 				// new WaitForUserDialog("Do something, then click OK.").show();
+				over2.addElement(imp1.getRoi());
+				over2.setStrokeColor(Color.red);
 
 				ip1 = imp1.getProcessor();
 				Rectangle boundingRectangle = ip1.getRoi();
@@ -328,6 +347,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 			} else {
 				imp1.setRoi(sqX, sqY, sqNEA, sqNEA);
 				imp1.updateAndDraw();
+				over2.addElement(imp1.getRoi());
+				over2.setStrokeColor(Color.red);
 			}
 			//
 			// posiziono la ROI 7x7 all'interno di MROI
@@ -336,6 +357,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 			imp1.setRoi(sqX + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL,
 					MyConst.P5_MROI_7X7_PIXEL);
 			imp1.updateAndDraw();
+			over2.addElement(imp1.getRoi());
+			over2.setStrokeColor(Color.red);
 			ImageStatistics stat1 = imp1.getStatistics();
 			double signal1 = stat1.mean;
 
@@ -354,11 +377,25 @@ public class p5rmn_ implements PlugIn, Measurements {
 			//
 			// disegno MROI su imaDiff
 			//
+			ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
+			if (verbose) {
+				UtilAyv.showImageMaximized(imaDiff);
+				// imp1.getWindow().toFront();
+			}
+			overlayGrid(imaDiff, MyConst.P5_GRID_NUMBER, verbose);
 
 			imaDiff.resetDisplayRange();
+			imaDiff.setOverlay(over3);
+			over3.setStrokeColor(Color.green);
+
 			imaDiff.setRoi(sqX + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL,
 					MyConst.P5_MROI_7X7_PIXEL);
+			over3.addElement(imaDiff.getRoi());
+			over3.setStrokeColor(Color.green);
 			imaDiff.updateAndDraw();
+
+			MyLog.waitHere("ROI DISEGNATE SU IMADIFF");
+
 			ImageStatistics statImaDiff = imaDiff.getStatistics();
 			imaDiff.updateAndDraw();
 			if (imaDiff.isVisible())
@@ -380,6 +417,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 			//
 			imp1.setRoi(sqX, sqY, sqNEA, sqNEA);
 			imp1.updateAndDraw();
+
+			over2.addElement(imp1.getRoi());
+			over2.setStrokeColor(Color.red);
+
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
 			//
@@ -399,11 +440,14 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 				imp1.setRoi(sqX - enlarge, sqY - enlarge, sqNEA, sqNEA);
 				imp1.updateAndDraw();
+				over2.addElement(imp1.getRoi());
+				over2.setStrokeColor(Color.red);
+
 				// imp1.getWindow().toFront();
 				if (step)
 					msgDisplayNEA();
 
-				if (pixx < area11x11) {
+				if (pixx < area11x11 * 10) {
 					sqNEA = sqNEA + 2; // accrescimento area
 					enlarge = enlarge + 1;
 				}
@@ -425,7 +469,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 				if (step && pixx >= area11x11)
 					msgSqr2OK(pixx);
 
-			} while (pixx < area11x11);
+			} while (pixx < area11x11 * 10);
 
 			imp1.setRoi(sqX - enlarge, sqY - enlarge, sqNEA, sqNEA);
 			imp1.updateAndDraw();
@@ -479,7 +523,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 				}
 			} else {
 				Line line = selectProfilePosition(sqX + gap, sqY + gap,
-						MyConst.P5_MROI_7X7_PIXEL, imp1);
+						MyConst.P5_MROI_7X7_PIXEL, imp1, verticalProfile);
 
 				xStartProfile = line.x1;
 				yStartProfile = line.y1;
@@ -603,8 +647,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 				boolean test = true;
 				double[] vetReference = referenceGe();
 				boolean verticalProfile = false;
-				ResultsTable rt1 = mainUnifor(path, sqX, sqY, autoArgs,
-						verticalProfile, autoCalled, step, verbose, test);
+				// ResultsTable rt1 = mainUnifor(path, sqX, sqY, autoArgs,
+				// verticalProfile, autoCalled, step, verbose, test);
+				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile,
+						autoCalled, step, verbose, test);
 				if (rt1 == null)
 					return;
 
@@ -636,8 +682,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 				double[] vetReference = referenceSiemens();
 				boolean verticalProfile = true;
-				ResultsTable rt1 = mainUnifor(path, sqX, sqY, autoArgs,
-						verticalProfile, autoCalled, step, verbose, test);
+				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile,
+						autoCalled, step, verbose, test);
+				// ResultsTable rt1 = mainUnifor(path, sqX, sqY, autoArgs,
+				// verticalProfile, autoCalled, step, verbose, test);
 				if (rt1 == null)
 					return;
 				double[] vetResults = UtilAyv.vectorizeResults(rt1);
@@ -738,8 +786,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 		int sqY = MyConst.P5_Y_ROI_TESTSIEMENS;
 		boolean verticalProfile = true;
 
-		ResultsTable rt1 = p5rmn_.mainUnifor(path, sqX, sqY, autoArgs,
-				verticalProfile, autoCalled, step, verbose, test);
+		ResultsTable rt1 = p5rmn_.mainUnifor(path, sqX, sqY, verticalProfile,
+				autoCalled, step, verbose, test);
+		// ResultsTable rt1 = p5rmn_.mainUnifor(path, sqX, sqY, autoArgs,
+		// verticalProfile, autoCalled, step, verbose, test);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 				MyConst.P5_vetName);
@@ -1377,7 +1427,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 * @return line parametri profilo selezionato
 	 */
 	private static Line selectProfilePosition(int xPos, int yPos, int len,
-			ImagePlus imp1) {
+			ImagePlus imp1, boolean profiVert) {
 
 		// partiamo da dove è stata posizionata la ROI
 
@@ -1390,7 +1440,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 		int width = imp1.getWidth();
 		int height = imp1.getHeight();
 		// per la direzione del profilo utilizziamo l'ultima selezionata
-		boolean profiVert = Prefs.get("prefer.p5rmnVert", true);
+		// boolean profiVert = Prefs.get("prefer.p5rmnVert", true);
 		do {
 			if (profiVert) {
 				xStartProfile = xPos + len / 2;
@@ -1495,4 +1545,17 @@ public class p5rmn_ implements PlugIn, Measurements {
 		return userSelection1;
 	}
 
+	public static boolean decodeDirez(String in1) {
+		boolean out = false;
+		if (in1.length() > 1) {
+			IJ.log("il codice della direzione deve essere di 1 lettera");
+			if (in1.equals("v") || in1.equals("V")) {
+				out = false;
+			} else if (in1.equals("h") || in1.equals("H")) {
+				out = true;
+			} else
+				IJ.log("il codice direzione deve essere v = vertical oppure h = horizontal");
+		}
+		return out;
+	}
 } // p5rmn_

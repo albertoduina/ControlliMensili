@@ -57,6 +57,7 @@
 	<!-- ##############			MAIN ROUTINE 		############## -->
 	<target name="main" depends="init, libraries, compile, move1, jar, zipp, wipe, zipp2, cond_INS, cond_OLD, cond_WIN7" />
 	<!--target name="main" depends="init, libraries, compile, move1, jar, zipp, wipe, move2, zipp2, installXp, installOthers" /-->
+	<!--target name="main" depends="init, libraries, compile, move1, jar, zipp, wipe, move2, zipp2, installXp, installOthers" /-->
 
 
 	<!-- INITIALIZE buildnumber, delete and recreate empy directory -->
@@ -104,7 +105,7 @@
 
 	<!-- MOVE1 move the sources into output -->	
 	<target name="move1" description="Move the sources.">
-		<copy todir="${output}">
+		<copy verbose="true" todir="${output}">
 			<fileset dir="." includes=" *.txt , *.pdf, *.rtf, *.number, *.jpg, *.xml, *.config" />
 		</copy>
 	</target>
@@ -143,9 +144,10 @@
 
 	<!--WIPE Delete the build intermedie files  -->	
 	<target name="wipe" description="Delete the build intermedie files.">
-		<delete failonerror="false" verbose="true">
+		<!-- non cancellare i *.txt, servono -->
+		<!-- delete failonerror="false" verbose="true">
 			<fileset dir="${output}" includes="*.txt , *.java, *.rtf, *.number, *.class; *.jpg; *.pdf" />
-		</delete>
+		</delete -->
 	</target>
 	
 	<target name="zipp2" description="Zip executable files">

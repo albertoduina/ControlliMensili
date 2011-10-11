@@ -142,7 +142,7 @@ public class Sequenze_Test {
 	@Test
 	public final void testLoadList2() {
 
-//		String CODE_FILE = "codici.txt";
+		// String CODE_FILE = "codici.txt";
 		String CODE_FILE = "codiciNew.txt";
 		String EXPAND_FILE = "expand.txt";
 
@@ -179,11 +179,10 @@ public class Sequenze_Test {
 			String aux = res1[i1][1];
 			res1[i1][1] = InputOutput.absoluteToRelative(aux);
 		}
-		
 
 		// MyLog.logMatrix(res1, "res1");
 		// MyLog.logMatrix(expected, "expected");
-		
+
 		for (int i1 = 0; i1 < res1.length; i1++) {
 			assertTrue(UtilAyv.compareVectors(res1[i1], expected[i1],
 					"errore in riga " + i1));
@@ -430,6 +429,5 @@ public class Sequenze_Test {
 		// IJ.log("codice letto =" + coil);
 		assertTrue(coil.equals("C:SP1,2"));
 	}
-
 
 }
