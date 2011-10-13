@@ -298,8 +298,9 @@ public class Sequenze_ implements PlugIn {
 		List<String> vetIma = new ArrayList<String>();
 		List<String> vetAcqTime = new ArrayList<String>();
 		List<String> vetEchoTime = new ArrayList<String>();
-		List<String> vetFatto = new ArrayList<String>();
+		List<String> vetDone = new ArrayList<String>();
 		List<String> vetDirez = new ArrayList<String>();
+		List<String> vetProfond = new ArrayList<String>();
 
 		if (pathList == null) {
 			IJ.log("loadList2.pathList = null");
@@ -366,7 +367,7 @@ public class Sequenze_ implements PlugIn {
 						MyConst.DICOM_ECHO_TIME);
 				if (echoTime.compareTo("") == 0)
 					echoTime = "0";
-				String fatto = "0";
+				String done = "0";
 				boolean trovato = false;
 				int tableRow = 0;
 				for (int j1 = 0; j1 < tableCode2.length; j1++) {
@@ -386,12 +387,13 @@ public class Sequenze_ implements PlugIn {
 					vetCoil.add(coil);
 					vetImaDaPassare.add(tableCode2[tableRow][1]);
 					vetDirez.add(tableCode2[tableRow][4]);
+					vetProfond.add(tableCode2[tableRow][5]);
 					vetSerie.add(numSerie);
 					vetAcq.add(numAcq);
 					vetIma.add(numIma);
 					vetAcqTime.add(acqTime);
 					vetEchoTime.add(echoTime);
-					vetFatto.add(fatto);
+					vetDone.add(done);
 					String[] espansione;
 					// vedo se occorre espandere
 					espansione = expandCode(codice, echoTime, tableExpand4);
@@ -409,7 +411,7 @@ public class Sequenze_ implements PlugIn {
 						vetIma.add(numIma);
 						vetAcqTime.add(acqTime);
 						vetEchoTime.add(echoTime);
-						vetFatto.add(fatto);
+						vetDone.add(done);
 					}
 				} else {
 					// non aggiunge alcun dato
@@ -449,12 +451,15 @@ public class Sequenze_ implements PlugIn {
 		String[][] tablePass11 = TableSequence.writeColumn(tablePass10,
 				ArrayUtils.arrayListToArrayString(vetDirez),
 				TableSequence.DIREZ);
+		String[][] tablePass12 = TableSequence.writeColumn(tablePass11,
+				ArrayUtils.arrayListToArrayString(vetProfond),
+				TableSequence.PROFOND);
 
-		String[][] tablePass12 = TableSequence
-				.writeColumn(tablePass11,
-						ArrayUtils.arrayListToArrayString(vetFatto),
+		String[][] tablePass13 = TableSequence
+				.writeColumn(tablePass12,
+						ArrayUtils.arrayListToArrayString(vetDone),
 						TableSequence.DONE);
-		return tablePass12;
+		return tablePass13;
 	}
 
 	/**

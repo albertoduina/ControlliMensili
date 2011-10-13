@@ -76,7 +76,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	private static final int ABORT = 1;
 
-	public static String VERSION = "p10_rmn_v1.00_07oct11_";
+	public static String VERSION = "p10_rmn_v1.10_13oct11_";
 
 	private String TYPE = " >> CONTROLLO SUPERFICIALI UNCOMBINED_";
 
@@ -143,7 +143,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 				boolean autoCalled = false;
 				boolean verbose = true;
 				boolean test = false;
-				mainUnifor(path1, path2, "0", autoCalled, step, verbose, test);
+				double profond = 30;
+				mainUnifor(path1, path2, "0", profond, autoCalled, step,
+						verbose, test);
 
 				UtilAyv.afterWork();
 				retry = true;
@@ -214,8 +216,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 				boolean verbose = true;
 				boolean test = false;
 
-				mainUnifor(path1, path2, autoArgs, autoCalled, step, verbose,
-						test);
+				double profond = Double.parseDouble(TableSequence.getProfond(
+						iw2ayvTable, vetRiga[0]));
+
+				mainUnifor(path1, path2, autoArgs, profond, autoCalled, step,
+						verbose, test);
 
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable);
 
@@ -230,8 +235,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	@SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String path1, String path2,
-			String autoArgs, boolean autoCalled, boolean step, boolean verbose,
-			boolean test) {
+			String autoArgs, double profond, boolean autoCalled, boolean step,
+			boolean verbose, boolean test) {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
@@ -239,8 +244,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		do {
 
-			double out2[] = positionSearch(path1, autoCalled, step, verbose,
-					test);
+			double out2[] = positionSearch(path1, profond, autoCalled, step,
+					verbose, test);
 
 			// ============================================================================
 			// Fine calcoli geometrici
@@ -615,9 +620,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 				boolean step = false;
 				boolean verbose = true;
 				boolean test = true;
+				double profond = 30;
 
-				mainUnifor(path1, path2, autoArgs, autoCalled, step, verbose,
-						test);
+				mainUnifor(path1, path2, autoArgs, profond, autoCalled, step,
+						verbose, test);
 
 			}
 			case 2:
@@ -631,9 +637,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 				boolean step = false;
 				boolean verbose = true;
 				boolean test = true;
+				double profond = 30;
 
-				mainUnifor(path1, path2, autoArgs, autoCalled, step, verbose,
-						test);
+				mainUnifor(path1, path2, autoArgs, profond, autoCalled, step,
+						verbose, test);
 				break;
 			}
 		} else {
@@ -720,9 +727,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean step = false;
 		boolean verbose = false;
 		boolean test = true;
+		double profond = 30;
 
-		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, autoCalled, step,
-				verbose, test);
+		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, profond,
+				autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
@@ -1511,9 +1519,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		// IJ.log("Math.sin(ang1)= " + Math.sin(ang1) + " Math.cos(ang1)= "
 		// + Math.cos(ang1));
-
-		double prof2 = prof * (Math.cos(ang1));
-
+		// double prof2 = prof * (Math.cos(ang1));
 		// IJ.log("prof= " + IJ.d2s(prof) + " prof2= " + IJ.d2s(prof2));
 
 		double cx = 0;
@@ -2185,8 +2191,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * @param verbose
 	 * @param test
 	 */
-	public static double[] positionSearch(String path1, boolean autoCalled,
-			boolean step, boolean verbose, boolean test) {
+	public static double[] positionSearch(String path1, double profond,
+			boolean autoCalled, boolean step, boolean verbose, boolean test) {
 		//
 		// ================================================================================
 		// Inizio calcoli geometrici
@@ -2420,14 +2426,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 		over1.addElement(imp11.getRoi());
 		over1.setStrokeColor(Color.red);
 
-		double prof = 20;
 		//
 		// -----------------------------------------------------------
 		// Calcolo coordinate centro della MROI
 		// ----------------------------------------------------------
 		//
 		double[] out1 = interpola(xEndRefLine, yEndRefLine, xStartRefLine,
-				yStartRefLine, prof / dimPixel);
+				yStartRefLine, profond / dimPixel);
 		double ax = out1[0];
 		double ay = out1[1];
 		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);

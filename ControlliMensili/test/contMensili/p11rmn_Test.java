@@ -3,6 +3,7 @@ package contMensili;
 import static org.junit.Assert.assertTrue;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.gui.WaitForUserDialog;
 import ij.measure.ResultsTable;
 
 import org.junit.After;
@@ -20,31 +21,49 @@ public class p11rmn_Test {
 
 	@After
 	public void tearDown() throws Exception {
-//		new WaitForUserDialog("Do something, then click OK.").show();
+		// new WaitForUserDialog("Do something, then click OK.").show();
 
+	}
+
+	@Test
+	public final void testMainUnifor() {
+		String[] path = new String[2];
+		path[0] = "./Test2/S12S_01testP11";
+		path[1] = "./Test2/S12S_02testP11";
+		boolean autoCalled = false;
+		boolean step = false;
+		boolean verbose = true;
+		boolean test = false;
+		boolean verticalDir = false;
+		double profond = 30.0;
+
+		p11rmn_.mainUnifor(path, verticalDir, profond, autoCalled, step,
+				verbose, test);
+
+		new WaitForUserDialog("Do something, then click OK.").show();
+		// IJ.wait(500);
 	}
 
 	@Test
 	public final void testMainUniforTestSiemens() {
 
-		String[] list = { "S1SA_01testP11", "S1SA_02testP11", "S1SA_03testP11" };
+		String[] list = { "S12S_01testP11", "S12S_02testP11" };
 		String[] path = new InputOutput().findListTestImages2(
 				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 
-		String autoArgs = "0";
 		boolean autoCalled = false;
 		boolean step = false;
 		boolean verbose = true;
-		boolean test = true;
+		boolean test = false;
 		double[] vetReference = new p11rmn_().referenceSiemens();
-		boolean verticalProfile = true;
-		int sqX = MyConst.P11_X_ROI_TESTSIEMENS;
-		int sqY = MyConst.P11_Y_ROI_TESTSIEMENS;
+		boolean verticalDir = false;
+		double profond = 30.0;
 
-		ResultsTable rt1 = p11rmn_.mainUnifor(path, sqX, sqY,
-				verticalProfile, autoCalled, step, verbose, test);
-//		ResultsTable rt1 = p11rmn_.mainUnifor(path, sqX, sqY, autoArgs,
-//				verticalProfile, autoCalled, step, verbose, test);
+		ResultsTable rt1 = p11rmn_.mainUnifor(path, verticalDir, profond,
+				autoCalled, step, verbose, test);
+
+		// ResultsTable rt1 = p11rmn_.mainUnifor(path, sqX, sqY, autoArgs,
+		// verticalProfile, autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 
@@ -56,23 +75,24 @@ public class p11rmn_Test {
 	@Test
 	public final void testMainUniforTestGe() {
 
-		String[] list = { "CTSA2_01testP11", "CTSA2_02testP11", "CTSA2_03testP11" };
+		String[] list = { "CTSA2_01testP11", "CTSA2_02testP11",
+				"CTSA2_03testP11" };
 		String[] path = new InputOutput().findListTestImages2(
 				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 
 		boolean autoCalled = false;
-		boolean step = false;
+		boolean step = true;
 		boolean verbose = true;
 		boolean test = true;
-		boolean verticalProfile = false;
+		boolean direz = false;
+		double profond = 30.0;
 		double[] vetReference = new p11rmn_().referenceGe();
-		int sqX = MyConst.P11_X_ROI_TESTGE;
-		int sqY = MyConst.P11_Y_ROI_TESTGE;
 
-//		ResultsTable rt1 = p11rmn_.mainUnifor(path, sqX, sqY, autoArgs,
-//				verticalProfile, autoCalled, step, verbose, test);
-		ResultsTable rt1 = p11rmn_.mainUnifor(path, sqX, sqY,
-				verticalProfile, autoCalled, step, verbose, test);
+		// ResultsTable rt1 = p11rmn_.mainUnifor(path, sqX, sqY, autoArgs,
+		// verticalProfile, autoCalled, step, verbose, test);
+
+		ResultsTable rt1 = p11rmn_.mainUnifor(path, direz, profond, autoCalled,
+				step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 

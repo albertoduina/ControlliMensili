@@ -46,8 +46,9 @@ public class p10rmn_Test {
 		boolean verbose = true;
 		boolean test = true;
 		double[] vetReference = new p10rmn_().referenceGe();
+		double profond = 30;
 
-		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs,
+		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
 				autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
@@ -71,8 +72,9 @@ public class p10rmn_Test {
 		boolean verbose = true;
 		boolean test = true;
 		double[] vetReference = new p10rmn_().referenceSiemens();
+		double profond = 30;
 
-		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs,
+		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
 				autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
@@ -92,8 +94,9 @@ public class p10rmn_Test {
 		boolean step = false;
 		boolean verbose = true;
 		boolean test = false;
-		p10rmn_.mainUnifor(path1, path2, autoArgs, autoCalled, step, verbose,
-				test);
+		double profond = 30;
+		p10rmn_.mainUnifor(path1, path2, autoArgs, profond, autoCalled, step,
+				verbose, test);
 		new WaitForUserDialog("Do something, then click OK.").show();
 		// IJ.wait(500);
 	}
