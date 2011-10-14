@@ -10,7 +10,6 @@ import ij.gui.OvalRoi;
 import ij.gui.Overlay;
 import ij.gui.Plot;
 import ij.gui.PlotWindow;
-import ij.gui.PointRoi;
 import ij.gui.Roi;
 import ij.gui.WaitForUserDialog;
 import ij.io.FileSaver;
@@ -36,7 +35,6 @@ import utils.Msg;
 import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyLog;
-import utils.MyPlot;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
@@ -293,6 +291,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 			double xEndRefLine = out2[4];
 			double yEndRefLine = out2[5];
 			int index = 0;
+			// MyLog.waitHere("Line1 xStart= " + xStartRefLine + " yStart= "
+			// + yStartRefLine + " xEnd= " + xEndRefLine + " yEnd= "
+			// + yEndRefLine);
 
 			if (verbose) {
 
@@ -304,6 +305,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				imp1.killRoi();
 				imp1.setRoi(new Line(xStartRefLine, yStartRefLine, xEndRefLine,
 						yEndRefLine));
+
 				over2.addElement(imp1.getRoi());
 				index = over2.size();
 				over2.setStrokeColor(Color.red);
@@ -318,10 +320,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 			//
 			int xCenterRoi = 0;
 			int yCenterRoi = 0;
+			int xCenterProposed = (int) out2[0];
+			int yCenterProposed = (int) out2[1];
 
 			if (!test) {
-				int xCenterProposed = (int) out2[0];
-				int yCenterProposed = (int) out2[1];
 				// UtilAyv.autoAdjust(imp1, ip1);
 				if (imp1.isVisible())
 					UtilAyv.backgroundEnhancement(0, 0, 10, imp1);
@@ -347,14 +349,26 @@ public class p11rmn_ implements PlugIn, Measurements {
 				yCenterRoi = boundingRectangle.y;
 
 			} else {
-				imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
-						sqNEA, sqNEA);
+				xCenterRoi = xCenterProposed - sqNEA / 2;
+				yCenterRoi = yCenterProposed - sqNEA / 2;
+
+				imp1.setRoi(xCenterRoi, yCenterRoi, sqNEA, sqNEA);
 				imp1.updateAndDraw();
 			}
-			over2.addElement(imp1.getRoi());
-			over2.setStrokeColor(Color.green);
-			over2.remove(index - 1);
-			imp1.draw();
+
+			// MyLog.waitHere("xCenterRoi= " + xCenterRoi + " yCenterRoi "
+			// + yCenterRoi);
+
+			// Rectangle rect1 = imp1.getRoi().getBounds();
+			// MyLog.waitHere("Roi center x= " + rect1.getX() + " y= "
+			// + rect1.getY());
+
+			if (imp1.isVisible()) {
+				over2.addElement(imp1.getRoi());
+				over2.setStrokeColor(Color.green);
+				over2.remove(index - 1);
+				imp1.draw();
+			}
 
 			double xStartRefLine2 = 0;
 			double yStartRefLine2 = 0;
@@ -362,18 +376,30 @@ public class p11rmn_ implements PlugIn, Measurements {
 			double yEndRefLine2 = 0;
 
 			if (verticalDir) {
+				MyLog.here();
 				xStartRefLine2 = xCenterRoi + sqNEA / 2;
 				yStartRefLine2 = 0;
 				xEndRefLine2 = xCenterRoi + sqNEA / 2;
 				yEndRefLine2 = height;
 			} else {
+				// MyLog.here();
 				xStartRefLine2 = 0;
 				yStartRefLine2 = yCenterRoi + sqNEA / 2;
 				xEndRefLine2 = width;
 				yEndRefLine2 = yCenterRoi + sqNEA / 2;
 			}
+
+			// MyLog.waitHere("Line2 xStart= " + xStartRefLine2 + " yStart= "
+			// + yStartRefLine2 + " xEnd= " + xEndRefLine2 + " yEnd= "
+			// + yEndRefLine2);
+
 			imp1.setRoi(new Line(xStartRefLine2, yStartRefLine2, xEndRefLine2,
 					yEndRefLine2));
+
+			// Rectangle rect2 = imp1.getRoi().getBounds();
+			// MyLog.waitHere("Line center x= " + rect2.getX() + " y= "
+			// + rect2.getY());
+
 			over2.addElement(imp1.getRoi());
 			over2.setStrokeColor(Color.green);
 
@@ -392,8 +418,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 			int xFondo = MyConst.P11_X_ROI_BACKGROUND;
 			int yFondo = MyConst.P11_Y_ROI_BACKGROUND;
-			if (test)
-				yFondo = yFondo + 40;
+			// if (test)
+			// yFondo = yFondo + 40;
 			if (step)
 				msgMroi();
 			//
@@ -492,16 +518,25 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				if ((xCenterRoi + sqNEA - enlarge) >= width
 						|| (xCenterRoi - enlarge) <= 0) {
+
+					// if ((xCenterRoi + sqNEA - enlarge) >= width)
+					// MyLog.waitHere("prima condizione");
+					// if ((xCenterRoi - enlarge) <= 0)
+					// MyLog.waitHere("seconda condizione");
 					msgNot121();
+					// MyLog.waitHere("esco qui");
 					return null;
 				}
 				if ((yCenterRoi + sqNEA - enlarge) >= height
 						|| (yCenterRoi - enlarge) <= 0) {
 					msgNot121();
+					// MyLog.waitHere("esco qui");
 					return null;
 				}
-				if (step && pixx >= area11x11)
+				if (step && pixx >= area11x11) {
+					// MyLog.waitHere();
 					msgSqr2OK(pixx);
+				}
 
 			} while (pixx < area11x11);
 
@@ -608,7 +643,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 			int yRoi = (int) statFondo.roiY;
 			int widthRoi = (int) statFondo.roiWidth;
 			int heightRoi = (int) statFondo.roiHeight;
-
 
 			rt.addValue(3, xRoi);
 			rt.addValue(4, yRoi);
@@ -737,22 +771,22 @@ public class p11rmn_ implements PlugIn, Measurements {
 	double[] referenceSiemens() {
 
 		double simul = 0.0;
-		double signal = 1538.5714285714287;
-		double backNoise = 7.87;
-		double snRatio = 38.26155499878056;
-		double fwhm = 36.56299427908097;
-		double num1 = 1484.0;
-		double num2 = 525.0;
-		double num3 = 1188.0;
-		double num4 = 681.0;
-		double num5 = 769.0;
-		double num6 = 882.0;
-		double num7 = 1077.0;
-		double num8 = 1319.0;
-		double num9 = 1787.0;
-		double num10 = 2581.0;
-		double num11 = 5238.0;
-		double num12 = 48005.0;
+		double signal = 838.2244897959183;
+		double backNoise = 3.43;
+		double snRatio = 342.60901357950996;
+		double fwhm = 50.33006324662394;
+		double num1 = 1195.0;
+		double num2 = 485.0;
+		double num3 = 1156.0;
+		double num4 = 733.0;
+		double num5 = 929.0;
+		double num6 = 1137.0;
+		double num7 = 1481.0;
+		double num8 = 2001.0;
+		double num9 = 2791.0;
+		double num10 = 3983.0;
+		double num11 = 4400.0;
+		double num12 = 45245.0;
 
 		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
@@ -769,22 +803,22 @@ public class p11rmn_ implements PlugIn, Measurements {
 	double[] referenceGe() {
 
 		double simul = 0.0;
-		double signal = 2045.4897959183672;
-		double backNoise = 84.06;
-		double snRatio = 93.19892843975435;
-		double fwhm = 32.93099254935456;
-		double num1 = 1914.0;
-		double num2 = 479.0;
-		double num3 = 1316.0;
-		double num4 = 938.0;
-		double num5 = 1271.0;
-		double num6 = 1957.0;
-		double num7 = 3346.0;
-		double num8 = 2681.0;
-		double num9 = 2333.0;
-		double num10 = 2345.0;
-		double num11 = 1118.0;
-		double num12 = 45838.0;
+		double signal = 838.2244897959183;
+		double backNoise = 3.43;
+		double snRatio = 342.60901357950996;
+		double fwhm = 50.33006324662394;
+		double num1 = 1195.0;
+		double num2 = 485.0;
+		double num3 = 1156.0;
+		double num4 = 733.0;
+		double num5 = 929.0;
+		double num6 = 1137.0;
+		double num7 = 1481.0;
+		double num8 = 2001.0;
+		double num9 = 2791.0;
+		double num10 = 3983.0;
+		double num11 = 4400.0;
+		double num12 = 45245.0;
 
 		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
@@ -809,8 +843,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		boolean autoCalled = false;
 		boolean step = false;
-		boolean verbose = true;
-		boolean test = false;
+		boolean verbose = false;
+		boolean test = true;
 		boolean verticalDir = false;
 		double profond = 30.0;
 

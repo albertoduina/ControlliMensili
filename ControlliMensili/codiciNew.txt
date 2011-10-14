@@ -33,6 +33,63 @@ HRKA_	/* Risoluzione 1024 Head__________*/	1	1	xxx		x	x	p4rmn_
 HR5A_	/* Risoluzione 512 Head___________*/	1	1	xxx		x	x	p4rmn_
 HR2A_	/* Risoluzione 256 Head___________*/	1	1	xxx		x	x	p4rmn_
 //
+// HEAD ARRAY AERA SAVE UNCOMBINED	
+//
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H11		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H12		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H13		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H14		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H21		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H22		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H23		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H24		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H31		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H32		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H33		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H34		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H41		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H42		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H43		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	H44		x	30	p10rmn_
+HUSAA	/* Uniformità Assiale Head________*/	2	2	HE1-4	x	30	p3rmn_
+
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H11		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H12		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H13		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H14		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H21		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H22		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H23		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H24		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H31		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H32		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H33		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H34		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H41		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H42		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H43		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	H44		x	30	p10rmn_
+HUSSA	/* Uniformità Assiale Head________*/	2	2	HE1-4	x	30	p3rmn_
+
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H11		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H12		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H13		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H14		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H21		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H22		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H23		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H24		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H31		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H32		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H33		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H34		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H41		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H42		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H43		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	H44		x	30	p10rmn_
+HUSCA	/* Uniformità Assiale Head________*/	2	2	HE1-4	x	30	p3rmn_
+
+//
 // SPINE SIMPHONY						
 S1FA_	/* Flash SPINE S1_________________*/	4	4	xxx		v	x	p5rmn_
 S1SA_	/* SpinEcho SPINE S1______________*/	4	4	xxx		v	x	p5rmn_
@@ -466,108 +523,108 @@ PA6F_	/* Flash PERIF ARRAY PA6__________*/	4	4	xxx		x	x	p3rmn_
 PA6S_	/* SpinEcho PERIF ARRAY PA6_______*/	4	4	xxx		x	x	p3rmn_
 //
 // MATRIX PERIPHERIC ANGIO AERA SAVE UNCOMBINED	NUOVE NB: DX SU DX E SX SU SX					
-QR1F_	/* Flash PERIF ARRAY PA1__________*/	2	2	PA1		x	30	p10rmn_
-QR1S_	/* SpinEcho PERIF ARRAY PA1_______*/	2   2	PA1		x	30	p10rmn_
-QL1F_	/* Flash PERIF ARRAY PA1__________*/	2   2	PA1		x	30	p10rmn_
-QL1S_	/* SpinEcho PERIF ARRAY PA1_______*/	2   2	PA1		x	30	p10rmn_
-QR2F_	/* Flash PERIF ARRAY PA2__________*/	2   2	PA2		x	30	p10rmn_
-QR2S_	/* SpinEcho PERIF ARRAY PA2_______*/	2   2	PA2		x	30	p10rmn_
-QL2F_	/* Flash PERIF ARRAY PA2__________*/	2   2	PA2		x	30	p10rmn_
-QL2S_	/* SpinEcho PERIF ARRAY PA2_______*/	2   2	PA2		x	30	p10rmn_
-QR3F_	/* Flash PERIF ARRAY PA3__________*/	2   2	PA3		x	30	p10rmn_
-QR3S_	/* SpinEcho PERIF ARRAY PA3_______*/	2   2	PA3		x	30	p10rmn_
-QL3F_	/* Flash PERIF ARRAY PA3__________*/	2   2	PA3		x	30	p10rmn_
-QL3S_	/* SpinEcho PERIF ARRAY PA3_______*/	2   2	PA3		x	30	p10rmn_
-QR4F_	/* Flash PERIF ARRAY PA4__________*/	2   2	PA4		x	30	p10rmn_
-QR4S_	/* SpinEcho PERIF ARRAY PA4_______*/	2   2	PA4		x	30	p10rmn_
-QL4F_	/* Flash PERIF ARRAY PA4__________*/	2   2	PA4		x	30	p10rmn_
-QL4S_	/* SpinEcho PERIF ARRAY PA4_______*/	2   2	PA4		x	30	p10rmn_
-QR5F_	/* Flash PERIF ARRAY PA5__________*/	2   2	PA5		x	30	p10rmn_
-QR5S_	/* SpinEcho PERIF ARRAY PA5_______*/	2   2	PA5		x	30	p10rmn_
-QL5F_	/* Flash PERIF ARRAY PA5__________*/	2   2	PA5		x	30	p10rmn_
-QL5S_	/* SpinEcho PERIF ARRAY PA5_______*/	2   2	PA5		x	30	p10rmn_
-QR6F_	/* Flash PERIF ARRAY PA6__________*/	2   2	PA6		x	30	p10rmn_
-QR6S_	/* SpinEcho PERIF ARRAY PA6_______*/	2   2	PA6		x	30	p10rmn_
-QL6F_	/* Flash PERIF ARRAY PA6__________*/	2   2	PA6		x	30	p10rmn_
-QL6S_	/* SpinEcho PERIF ARRAY PA6_______*/	2   2	PA6		x	30	p10rmn_
+QR1F_	/* Flash PERIF ARRAY PA1__________*/	4	4	PA1		x	30	p10rmn_
+QR1S_	/* SpinEcho PERIF ARRAY PA1_______*/	4	4	PA1		x	30	p10rmn_
+QL1F_	/* Flash PERIF ARRAY PA1__________*/	4	4	PA1		x	30	p10rmn_
+QL1S_	/* SpinEcho PERIF ARRAY PA1_______*/	4	4	PA1		x	30	p10rmn_
+QR2F_	/* Flash PERIF ARRAY PA2__________*/	4	4	PA2		x	30	p10rmn_
+QR2S_	/* SpinEcho PERIF ARRAY PA2_______*/	4	4	PA2		x	30	p10rmn_
+QL2F_	/* Flash PERIF ARRAY PA2__________*/	4	4	PA2		x	30	p10rmn_
+QL2S_	/* SpinEcho PERIF ARRAY PA2_______*/	4	4	PA2		x	30	p10rmn_
+QR3F_	/* Flash PERIF ARRAY PA3__________*/	4	4	PA3		x	30	p10rmn_
+QR3S_	/* SpinEcho PERIF ARRAY PA3_______*/	4	4	PA3		x	30	p10rmn_
+QL3F_	/* Flash PERIF ARRAY PA3__________*/	4	4	PA3		x	30	p10rmn_
+QL3S_	/* SpinEcho PERIF ARRAY PA3_______*/	4	4	PA3		x	30	p10rmn_
+QR4F_	/* Flash PERIF ARRAY PA4__________*/	4	4	PA4		x	30	p10rmn_
+QR4S_	/* SpinEcho PERIF ARRAY PA4_______*/	4	4	PA4		x	30	p10rmn_
+QL4F_	/* Flash PERIF ARRAY PA4__________*/	4	4	PA4		x	30	p10rmn_
+QL4S_	/* SpinEcho PERIF ARRAY PA4_______*/	4	4	PA4		x	30	p10rmn_
+QR5F_	/* Flash PERIF ARRAY PA5__________*/	4	4	PA5		x	30	p10rmn_
+QR5S_	/* SpinEcho PERIF ARRAY PA5_______*/	4	4	PA5		x	30	p10rmn_
+QL5F_	/* Flash PERIF ARRAY PA5__________*/	4	4	PA5		x	30	p10rmn_
+QL5S_	/* SpinEcho PERIF ARRAY PA5_______*/	4	4	PA5		x	30	p10rmn_
+QR6F_	/* Flash PERIF ARRAY PA6__________*/	4	4	PA6		x	30	p10rmn_
+QR6S_	/* SpinEcho PERIF ARRAY PA6_______*/	4	4	PA6		x	30	p10rmn_
+QL6F_	/* Flash PERIF ARRAY PA6__________*/	4	4	PA6		x	30	p10rmn_
+QL6S_	/* SpinEcho PERIF ARRAY PA6_______*/	4	4	PA6		x	30	p10rmn_
 
-QR1F_	/* Flash PERIF ARRAY PA1__________*/	2   2	PR11	x	30	p10rmn_
-QR1S_	/* SpinEcho PERIF ARRAY PA1_______*/	2   2	PR11	x	30	p10rmn_
-QR2F_	/* Flash PERIF ARRAY PA2__________*/	2   2	PR21	x	30	p10rmn_
-QR2S_	/* SpinEcho PERIF ARRAY PA2_______*/	2   2	PR21	x	30	p10rmn_
-QR3F_	/* Flash PERIF ARRAY PA3__________*/	2   2	PR31	x	30	p10rmn_
-QR3S_	/* SpinEcho PERIF ARRAY PA3_______*/	2   2	PR31	x	30	p10rmn_
-QR4F_	/* Flash PERIF ARRAY PA4__________*/	2   2	PR41	x	30	p10rmn_
-QR4S_	/* SpinEcho PERIF ARRAY PA4_______*/	2   2	PR41	x	30	p10rmn_
-QR5F_	/* Flash PERIF ARRAY PA5__________*/	2   2	PR51	x	30	p10rmn_
-QR5S_	/* SpinEcho PERIF ARRAY PA5_______*/	2   2	PR51	x	30	p10rmn_
-QR6F_	/* Flash PERIF ARRAY PA6__________*/	2   2	PR61	x	30	p10rmn_
-QR6S_	/* SpinEcho PERIF ARRAY PA6_______*/	2   2	PR61	x	30	p10rmn_
+QR1F_	/* Flash PERIF ARRAY PA1__________*/	4	4	PR11	x	30	p10rmn_
+QR1S_	/* SpinEcho PERIF ARRAY PA1_______*/	4	4	PR11	x	30	p10rmn_
+QR2F_	/* Flash PERIF ARRAY PA2__________*/	4	4	PR21	x	30	p10rmn_
+QR2S_	/* SpinEcho PERIF ARRAY PA2_______*/	4	4	PR21	x	30	p10rmn_
+QR3F_	/* Flash PERIF ARRAY PA3__________*/	4	4	PR31	x	30	p10rmn_
+QR3S_	/* SpinEcho PERIF ARRAY PA3_______*/	4	4	PR31	x	30	p10rmn_
+QR4F_	/* Flash PERIF ARRAY PA4__________*/	4	4	PR41	x	30	p10rmn_
+QR4S_	/* SpinEcho PERIF ARRAY PA4_______*/	4	4	PR41	x	30	p10rmn_
+QR5F_	/* Flash PERIF ARRAY PA5__________*/	4	4	PR51	x	30	p10rmn_
+QR5S_	/* SpinEcho PERIF ARRAY PA5_______*/	4	4	PR51	x	30	p10rmn_
+QR6F_	/* Flash PERIF ARRAY PA6__________*/	4	4	PR61	x	30	p10rmn_
+QR6S_	/* SpinEcho PERIF ARRAY PA6_______*/	4	4	PR61	x	30	p10rmn_
 
-QR1F_	/* Flash PERIF ARRAY PA1__________*/	2   2	PR12	x	30	p10rmn_
-QR1S_	/* SpinEcho PERIF ARRAY PA1_______*/	2   2	PR12	x	30	p10rmn_
-QR2F_	/* Flash PERIF ARRAY PA2__________*/	2   2	PR22	x	30	p10rmn_
-QR2S_	/* SpinEcho PERIF ARRAY PA2_______*/	2   2	PR22	x	30	p10rmn_
-QR3F_	/* Flash PERIF ARRAY PA3__________*/	2   2	PR32	x	30	p10rmn_
-QR3S_	/* SpinEcho PERIF ARRAY PA3_______*/	2   2	PR32	x	30	p10rmn_
-QR4F_	/* Flash PERIF ARRAY PA4__________*/	2   2	PR42	x	30	p10rmn_
-QR4S_	/* SpinEcho PERIF ARRAY PA4_______*/	2   2	PR42	x	30	p10rmn_
-QR5F_	/* Flash PERIF ARRAY PA5__________*/	2   2	PR52	x	30	p10rmn_
-QR5S_	/* SpinEcho PERIF ARRAY PA5_______*/	2   2	PR52	x	30	p10rmn_
-QR6F_	/* Flash PERIF ARRAY PA6__________*/	2   2	PR62	x	30	p10rmn_
-QR6S_	/* SpinEcho PERIF ARRAY PA6_______*/	2   2	PR62	x	30	p10rmn_
+QR1F_	/* Flash PERIF ARRAY PA1__________*/	4	4	PR12	x	30	p10rmn_
+QR1S_	/* SpinEcho PERIF ARRAY PA1_______*/	4	4	PR12	x	30	p10rmn_
+QR2F_	/* Flash PERIF ARRAY PA2__________*/	4	4	PR22	x	30	p10rmn_
+QR2S_	/* SpinEcho PERIF ARRAY PA2_______*/	4	4	PR22	x	30	p10rmn_
+QR3F_	/* Flash PERIF ARRAY PA3__________*/	4	4	PR32	x	30	p10rmn_
+QR3S_	/* SpinEcho PERIF ARRAY PA3_______*/	4	4	PR32	x	30	p10rmn_
+QR4F_	/* Flash PERIF ARRAY PA4__________*/	4	4	PR42	x	30	p10rmn_
+QR4S_	/* SpinEcho PERIF ARRAY PA4_______*/	4	4	PR42	x	30	p10rmn_
+QR5F_	/* Flash PERIF ARRAY PA5__________*/	4	4	PR52	x	30	p10rmn_
+QR5S_	/* SpinEcho PERIF ARRAY PA5_______*/	4	4	PR52	x	30	p10rmn_
+QR6F_	/* Flash PERIF ARRAY PA6__________*/	4	4	PR62	x	30	p10rmn_
+QR6S_	/* SpinEcho PERIF ARRAY PA6_______*/	4	4	PR62	x	30	p10rmn_
 
-QR1F_	/* Flash PERIF ARRAY PA1__________*/	2   2	PR13	x	30	p10rmn_
-QR1S_	/* SpinEcho PERIF ARRAY PA1_______*/	2   2	PR13	x	30	p10rmn_
-QR2F_	/* Flash PERIF ARRAY PA2__________*/	2   2	PR23	x	30	p10rmn_
-QR2S_	/* SpinEcho PERIF ARRAY PA2_______*/	2   2	PR23	x	30	p10rmn_
-QR3F_	/* Flash PERIF ARRAY PA3__________*/	2   2	PR33	x	30	p10rmn_
-QR3S_	/* SpinEcho PERIF ARRAY PA3_______*/	2   2	PR33	x	30	p10rmn_
-QR4F_	/* Flash PERIF ARRAY PA4__________*/	2   2	PR43	x	30	p10rmn_
-QR4S_	/* SpinEcho PERIF ARRAY PA4_______*/	2   2	PR43	x	30	p10rmn_
-QR5F_	/* Flash PERIF ARRAY PA5__________*/	2   2	PR53	x	30	p10rmn_
-QR5S_	/* SpinEcho PERIF ARRAY PA5_______*/	2   2	PR53	x	30	p10rmn_
-QR6F_	/* Flash PERIF ARRAY PA6__________*/	2   2	PR63	x	30	p10rmn_
-QR6S_	/* SpinEcho PERIF ARRAY PA6_______*/	2   2	PR63	x	30	p10rmn_
+QR1F_	/* Flash PERIF ARRAY PA1__________*/	4	4	PR13	x	30	p10rmn_
+QR1S_	/* SpinEcho PERIF ARRAY PA1_______*/	4	4	PR13	x	30	p10rmn_
+QR2F_	/* Flash PERIF ARRAY PA2__________*/	4	4	PR23	x	30	p10rmn_
+QR2S_	/* SpinEcho PERIF ARRAY PA2_______*/	4	4	PR23	x	30	p10rmn_
+QR3F_	/* Flash PERIF ARRAY PA3__________*/	4	4	PR33	x	30	p10rmn_
+QR3S_	/* SpinEcho PERIF ARRAY PA3_______*/	4	4	PR33	x	30	p10rmn_
+QR4F_	/* Flash PERIF ARRAY PA4__________*/	4	4	PR43	x	30	p10rmn_
+QR4S_	/* SpinEcho PERIF ARRAY PA4_______*/	4	4	PR43	x	30	p10rmn_
+QR5F_	/* Flash PERIF ARRAY PA5__________*/	4	4	PR53	x	30	p10rmn_
+QR5S_	/* SpinEcho PERIF ARRAY PA5_______*/	4	4	PR53	x	30	p10rmn_
+QR6F_	/* Flash PERIF ARRAY PA6__________*/	4	4	PR63	x	30	p10rmn_
+QR6S_	/* SpinEcho PERIF ARRAY PA6_______*/	4	4	PR63	x	30	p10rmn_
 
-QL1F_	/* Flash PERIF ARRAY PA1__________*/	2   2	PL11	x	30	p10rmn_
-QL1S_	/* SpinEcho PERIF ARRAY PA1_______*/	2   2	PL11	x	30	p10rmn_
-QL2F_	/* Flash PERIF ARRAY PA2__________*/	2   2	PL21	x	30	p10rmn_
-QL2S_	/* SpinEcho PERIF ARRAY PA2_______*/	2   2	PL21	x	30	p10rmn_
-QL3F_	/* Flash PERIF ARRAY PA3__________*/	2   2	PL31	x	30	p10rmn_
-QL3S_	/* SpinEcho PERIF ARRAY PA3_______*/	2   2	PL31	x	30	p10rmn_
-QL4F_	/* Flash PERIF ARRAY PA4__________*/	2   2	PL41	x	30	p10rmn_
-QL4S_	/* SpinEcho PERIF ARRAY PA4_______*/	2   2	PL41	x	30	p10rmn_
-QL5F_	/* Flash PERIF ARRAY PA5__________*/	2   2	PL51	x	30	p10rmn_
-QL5S_	/* SpinEcho PERIF ARRAY PA5_______*/	2   2	PL51	x	30	p10rmn_
-QL6F_	/* Flash PERIF ARRAY PA6__________*/	2   2	PL61	x	30	p10rmn_
-QL6S_	/* SpinEcho PERIF ARRAY PA6_______*/	2   2	PL61	x	30	p10rmn_
+QL1F_	/* Flash PERIF ARRAY PA1__________*/	4	4	PL11	x	30	p10rmn_
+QL1S_	/* SpinEcho PERIF ARRAY PA1_______*/	4	4	PL11	x	30	p10rmn_
+QL2F_	/* Flash PERIF ARRAY PA2__________*/	4	4	PL21	x	30	p10rmn_
+QL2S_	/* SpinEcho PERIF ARRAY PA2_______*/	4	4	PL21	x	30	p10rmn_
+QL3F_	/* Flash PERIF ARRAY PA3__________*/	4	4	PL31	x	30	p10rmn_
+QL3S_	/* SpinEcho PERIF ARRAY PA3_______*/	4	4	PL31	x	30	p10rmn_
+QL4F_	/* Flash PERIF ARRAY PA4__________*/	4	4	PL41	x	30	p10rmn_
+QL4S_	/* SpinEcho PERIF ARRAY PA4_______*/	4	4	PL41	x	30	p10rmn_
+QL5F_	/* Flash PERIF ARRAY PA5__________*/	4	4	PL51	x	30	p10rmn_
+QL5S_	/* SpinEcho PERIF ARRAY PA5_______*/	4	4	PL51	x	30	p10rmn_
+QL6F_	/* Flash PERIF ARRAY PA6__________*/	4	4	PL61	x	30	p10rmn_
+QL6S_	/* SpinEcho PERIF ARRAY PA6_______*/	4	4	PL61	x	30	p10rmn_
 
-QL1F_	/* Flash PERIF ARRAY PA1__________*/	2   2	PL12	x	30	p10rmn_
-QL1S_	/* SpinEcho PERIF ARRAY PA1_______*/	2   2	PL12	x	30	p10rmn_
-QL2F_	/* Flash PERIF ARRAY PA2__________*/	2   2	PL22	x	30	p10rmn_
-QL2S_	/* SpinEcho PERIF ARRAY PA2_______*/	2   2	PL22	x	30	p10rmn_
-QL3F_	/* Flash PERIF ARRAY PA3__________*/	2   2	PL32	x	30	p10rmn_
-QL3S_	/* SpinEcho PERIF ARRAY PA3_______*/	2   2	PL32	x	30	p10rmn_
-QL4F_	/* Flash PERIF ARRAY PA4__________*/	2   2	PL42	x	30	p10rmn_
-QL4S_	/* SpinEcho PERIF ARRAY PA4_______*/	2   2	PL42	x	30	p10rmn_
-QL5F_	/* Flash PERIF ARRAY PA5__________*/	2   2	PL52	x	30	p10rmn_
-QL5S_	/* SpinEcho PERIF ARRAY PA5_______*/	2   2	PL52	x	30	p10rmn_
-QL6F_	/* Flash PERIF ARRAY PA6__________*/	2   2	PL62	x	30	p10rmn_
-QL6S_	/* SpinEcho PERIF ARRAY PA6_______*/	2   2	PL62	x	30	p10rmn_
+QL1F_	/* Flash PERIF ARRAY PA1__________*/	4	4	PL12	x	30	p10rmn_
+QL1S_	/* SpinEcho PERIF ARRAY PA1_______*/	4	4	PL12	x	30	p10rmn_
+QL2F_	/* Flash PERIF ARRAY PA2__________*/	4	4	PL22	x	30	p10rmn_
+QL2S_	/* SpinEcho PERIF ARRAY PA2_______*/	4	4	PL22	x	30	p10rmn_
+QL3F_	/* Flash PERIF ARRAY PA3__________*/	4	4	PL32	x	30	p10rmn_
+QL3S_	/* SpinEcho PERIF ARRAY PA3_______*/	4	4	PL32	x	30	p10rmn_
+QL4F_	/* Flash PERIF ARRAY PA4__________*/	4	4	PL42	x	30	p10rmn_
+QL4S_	/* SpinEcho PERIF ARRAY PA4_______*/	4	4	PL42	x	30	p10rmn_
+QL5F_	/* Flash PERIF ARRAY PA5__________*/	4	4	PL52	x	30	p10rmn_
+QL5S_	/* SpinEcho PERIF ARRAY PA5_______*/	4	4	PL52	x	30	p10rmn_
+QL6F_	/* Flash PERIF ARRAY PA6__________*/	4	4	PL62	x	30	p10rmn_
+QL6S_	/* SpinEcho PERIF ARRAY PA6_______*/	4	4	PL62	x	30	p10rmn_
 
-QL1F_	/* Flash PERIF ARRAY PA1__________*/	2   2	PL13	x	30	p10rmn_
-QL1S_	/* SpinEcho PERIF ARRAY PA1_______*/	2   2	PL13	x	30	p10rmn_
-QL2F_	/* Flash PERIF ARRAY PA2__________*/	2   2	PL23	x	30	p10rmn_
-QL2S_	/* SpinEcho PERIF ARRAY PA2_______*/	2   2	PL23	x	30	p10rmn_
-QL3F_	/* Flash PERIF ARRAY PA3__________*/	2   2	PL33	x	30	p10rmn_
-QL3S_	/* SpinEcho PERIF ARRAY PA3_______*/	2   2	PL33	x	30	p10rmn_
-QL4F_	/* Flash PERIF ARRAY PA4__________*/	2   2	PL43	x	30	p10rmn_
-QL4S_	/* SpinEcho PERIF ARRAY PA4_______*/	2   2	PL43	x	30	p10rmn_
-QL5F_	/* Flash PERIF ARRAY PA5__________*/	2   2	PL53	x	30	p10rmn_
-QL5S_	/* SpinEcho PERIF ARRAY PA5_______*/	2   2	PL53	x	30	p10rmn_
-QL6F_	/* Flash PERIF ARRAY PA6__________*/	2   2	PL63	x	30	p10rmn_
-QL6S_	/* SpinEcho PERIF ARRAY PA6_______*/	2   2	PL63	x	30	p10rmn_
+QL1F_	/* Flash PERIF ARRAY PA1__________*/	4	4	PL13	x	30	p10rmn_
+QL1S_	/* SpinEcho PERIF ARRAY PA1_______*/	4	4	PL13	x	30	p10rmn_
+QL2F_	/* Flash PERIF ARRAY PA2__________*/	4	4	PL23	x	30	p10rmn_
+QL2S_	/* SpinEcho PERIF ARRAY PA2_______*/	4	4	PL23	x	30	p10rmn_
+QL3F_	/* Flash PERIF ARRAY PA3__________*/	4	4	PL33	x	30	p10rmn_
+QL3S_	/* SpinEcho PERIF ARRAY PA3_______*/	4	4	PL33	x	30	p10rmn_
+QL4F_	/* Flash PERIF ARRAY PA4__________*/	4	4	PL43	x	30	p10rmn_
+QL4S_	/* SpinEcho PERIF ARRAY PA4_______*/	4	4	PL43	x	30	p10rmn_
+QL5F_	/* Flash PERIF ARRAY PA5__________*/	4	4	PL53	x	30	p10rmn_
+QL5S_	/* SpinEcho PERIF ARRAY PA5_______*/	4	4	PL53	x	30	p10rmn_
+QL6F_	/* Flash PERIF ARRAY PA6__________*/	4	4	PL63	x	30	p10rmn_
+QL6S_	/* SpinEcho PERIF ARRAY PA6_______*/	4	4	PL63	x	30	p10rmn_
 //
 // MATRIX PERIPHERIC ANGIO AVANTO						
 PR1F_	/* Flash PERIF ARRAY PR1__________*/	4	4	xxx		x	x	p3rmn_

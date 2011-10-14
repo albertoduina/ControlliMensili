@@ -75,15 +75,14 @@ public class p11rmn_Test {
 	@Test
 	public final void testMainUniforTestGe() {
 
-		String[] list = { "CTSA2_01testP11", "CTSA2_02testP11",
-				"CTSA2_03testP11" };
+		String[] list = { "S12S_01testP11", "S12S_02testP11" };
 		String[] path = new InputOutput().findListTestImages2(
 				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 
 		boolean autoCalled = false;
-		boolean step = true;
+		boolean step = false;
 		boolean verbose = true;
-		boolean test = true;
+		boolean test = false;
 		boolean direz = false;
 		double profond = 30.0;
 		double[] vetReference = new p11rmn_().referenceGe();
