@@ -39,6 +39,7 @@ import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
 import utils.TableSequence;
+import utils.TableUtils;
 import utils.UtilAyv;
 
 /*
@@ -234,7 +235,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					return 0;
 
 				rt1.show("Results");
-				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable);
+				UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
 				UtilAyv.afterWork();
 				break;

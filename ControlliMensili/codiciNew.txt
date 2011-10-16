@@ -141,104 +141,104 @@ B12S_	/* SpinEcho BODY ARRAY B2_________*/	4	4	BO2		v	x	p5rmn_
 B12F_	/* Flash BODY ARRAY B2____________*/	4	4	BO2		v	x	p5rmn_
 //
 // BODY ARRAY AERA SAVE UNCOMBINED						
-C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	BO1		h	x	p5rmn_
-C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	BO1		h	x	p5rmn_
-C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	BO2		h	x	p5rmn_
-C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	BO2		h	x	p5rmn_
-C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	BO3		h	x	p5rmn_
-C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	BO3		h	x	p5rmn_
+C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	BO1		h	30	p10rmn_
+C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	BO1		h	30	p10rmn_
+C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	BO2		h	30	p10rmn_
+C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	BO2		h	30	p10rmn_
+C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	BO3		h	30	p10rmn_
+C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	BO3		h	30	p10rmn_
 
-C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B11		h	x	p5rmn_
-C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B11		h	x	p5rmn_
-C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B21		h	x	p5rmn_
-C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B21		h	x	p5rmn_
-C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B31		h	x	p5rmn_
-C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B31		h	x	p5rmn_
+C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B11		h	30	p10rmn_
+C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B11		h	30	p10rmn_
+C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B21		h	30	p10rmn_
+C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B21		h	30	p10rmn_
+C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B31		h	30	p10rmn_
+C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B31		h	30	p10rmn_
 
-C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B12		h	x	p5rmn_
-C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B12		h	x	p5rmn_
-C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B22		h	x	p5rmn_
-C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B22		h	x	p5rmn_
-C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B32		h	x	p5rmn_
-C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B32		h	x	p5rmn_
+C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B12		h	30	p10rmn_
+C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B12		h	30	p10rmn_
+C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B22		h	30	p10rmn_
+C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B22		h	30	p10rmn_
+C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B32		h	30	p10rmn_
+C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B32		h	30	p10rmn_
 
-C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B13		h	x	p5rmn_
-C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B13		h	x	p5rmn_
-C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B23		h	x	p5rmn_
-C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B23		h	x	p5rmn_
-C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B33		h	x	p5rmn_
-C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B33		h	x	p5rmn_
+C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B13		h	30	p10rmn_
+C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B13		h	30	p10rmn_
+C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B23		h	30	p10rmn_
+C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B23		h	30	p10rmn_
+C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B33		h	30	p10rmn_
+C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B33		h	30	p10rmn_
 
-C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B14		h	x	p5rmn_
-C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B14		h	x	p5rmn_
-C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B24		h	x	p5rmn_
-C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B24		h	x	p5rmn_
-C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B34		h	x	p5rmn_
-C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B34		h	x	p5rmn_
+C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B14		h	30	p10rmn_
+C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B14		h	30	p10rmn_
+C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B24		h	30	p10rmn_
+C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B24		h	30	p10rmn_
+C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B34		h	30	p10rmn_
+C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B34		h	30	p10rmn_
 
-C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B15		h	x	p5rmn_
-C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B15		h	x	p5rmn_
-C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B25		h	x	p5rmn_
-C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B25		h	x	p5rmn_
-C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B35		h	x	p5rmn_
-C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B35		h	x	p5rmn_
+C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B15		h	30	p10rmn_
+C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B15		h	30	p10rmn_
+C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B25		h	30	p10rmn_
+C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B25		h	30	p10rmn_
+C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B35		h	30	p10rmn_
+C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B35		h	30	p10rmn_
 
-C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B16		h	x	p5rmn_
-C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B16		h	x	p5rmn_
-C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B26		h	x	p5rmn_
-C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B26		h	x	p5rmn_
-C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B36		h	x	p5rmn_
-C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B36		h	x	p5rmn_
+C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B16		h	30	p10rmn_
+C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B16		h	30	p10rmn_
+C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B26		h	30	p10rmn_
+C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B26		h	30	p10rmn_
+C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B36		h	30	p10rmn_
+C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B36		h	30	p10rmn_
 //
 //
-D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	BO1		h	x	p5rmn_
-D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	BO1		h	x	p5rmn_
-D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	BO2		h	x	p5rmn_
-D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	BO2		h	x	p5rmn_
-D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	BO3		h	x	p5rmn_
-D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	BO3		h	x	p5rmn_
+D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	BO1		h	30	p10rmn_
+D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	BO1		h	30	p10rmn_
+D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	BO2		h	30	p10rmn_
+D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	BO2		h	30	p10rmn_
+D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	BO3		h	30	p10rmn_
+D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	BO3		h	30	p10rmn_
 
-D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B11		h	x	p5rmn_
-D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B11		h	x	p5rmn_
-D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B21		h	x	p5rmn_
-D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B21		h	x	p5rmn_
-D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B31		h	x	p5rmn_
-D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B31		h	x	p5rmn_
+D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B11		h	30	p10rmn_
+D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B11		h	30	p10rmn_
+D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B21		h	30	p10rmn_
+D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B21		h	30	p10rmn_
+D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B31		h	30	p10rmn_
+D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B31		h	30	p10rmn_
 
-D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B12		h	x	p5rmn_
-D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B12		h	x	p5rmn_
-D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B22		h	x	p5rmn_
-D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B22		h	x	p5rmn_
-D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B32		h	x	p5rmn_
-D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B32		h	x	p5rmn_
+D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B12		h	30	p10rmn_
+D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B12		h	30	p10rmn_
+D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B22		h	30	p10rmn_
+D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B22		h	30	p10rmn_
+D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B32		h	30	p10rmn_
+D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B32		h	30	p10rmn_
 
-D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B13		h	x	p5rmn_
-D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B13		h	x	p5rmn_
-D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B23		h	x	p5rmn_
-D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B23		h	x	p5rmn_
-D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B33		h	x	p5rmn_
-D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B33		h	x	p5rmn_
+D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B13		h	30	p10rmn_
+D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B13		h	30	p10rmn_
+D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B23		h	30	p10rmn_
+D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B23		h	30	p10rmn_
+D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B33		h	30	p10rmn_
+D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B33		h	30	p10rmn_
 
-D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B14		h	x	p5rmn_
-D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B14		h	x	p5rmn_
-D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B24		h	x	p5rmn_
-D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B24		h	x	p5rmn_
-D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B34		h	x	p5rmn_
-D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B34		h	x	p5rmn_
+D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B14		h	30	p10rmn_
+D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B14		h	30	p10rmn_
+D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B24		h	30	p10rmn_
+D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B24		h	30	p10rmn_
+D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B34		h	30	p10rmn_
+D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B34		h	30	p10rmn_
 
-D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B15		h	x	p5rmn_
-D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B15		h	x	p5rmn_
-D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B25		h	x	p5rmn_
-D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B25		h	x	p5rmn_
-D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B35		h	x	p5rmn_
-D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B35		h	x	p5rmn_
+D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B15		h	30	p10rmn_
+D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B15		h	30	p10rmn_
+D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B25		h	30	p10rmn_
+D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B25		h	30	p10rmn_
+D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B35		h	30	p10rmn_
+D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B35		h	30	p10rmn_
 
-D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B16		h	x	p5rmn_
-D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B16		h	x	p5rmn_
-D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B26		h	x	p5rmn_
-D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B26		h	x	p5rmn_
-D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B36		h	x	p5rmn_
-D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B36		h	x	p5rmn_
+D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B16		h	30	p10rmn_
+D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B16		h	30	p10rmn_
+D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B26		h	30	p10rmn_
+D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B26		h	30	p10rmn_
+D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B36		h	30	p10rmn_
+D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B36		h	30	p10rmn_
 //
 // BODY ARRAY 16ch MANERBIO SAVE UNCOMBINED
 R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A1A		h	x	p5rmn_

@@ -167,7 +167,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	public int autoMenu(String autoArgs) {
 
-		IJ.log("p5rmn_.autoMenu autoargs= " + autoArgs);
+		// IJ.log("p5rmn_.autoMenu autoargs= " + autoArgs);
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
 		if (vetRiga[0] == -1) {

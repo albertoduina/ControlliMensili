@@ -43,6 +43,7 @@ import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
 import utils.TableSequence;
+import utils.TableUtils;
 import utils.UtilAyv;
 
 /*
@@ -159,6 +160,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	public int autoMenu(String autoArgs) {
 
+		IJ.log("p10rmn_.autoMenu autoargs= " + autoArgs);
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
 		if (vetRiga[0] == -1) {
@@ -177,6 +179,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		String path1 = "";
 		String path2 = "";
+		TableUtils.dumpTableRow(iw2ayvTable, vetRiga[0]);
 
 		if (nTokens == MyConst.TOKENS2) {
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
@@ -222,7 +225,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				mainUnifor(path1, path2, autoArgs, profond, autoCalled, step,
 						verbose, test);
 
-				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable);
+				UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
 				UtilAyv.afterWork();
 				break;
@@ -241,12 +244,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean accetta = false;
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
+		double angle = Double.NaN;
 
 		do {
 
 			double out2[] = positionSearch(path1, profond, autoCalled, step,
 					verbose, test);
-
+			angle = out2[6];
+			IJ.log("angle= " + angle);
 			// ============================================================================
 			// Fine calcoli geometrici
 			// Inizio calcoli Uniformità
@@ -547,7 +552,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			rt.addValue(3, stat7x7.roiX);
 			rt.addValue(4, stat7x7.roiY);
 			rt.addValue(5, stat7x7.roiWidth);
-			rt.addValue(6, stat7x7.roiHeight);
+			rt.addValue(6, angle);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "Rumore_Fondo");
@@ -2228,8 +2233,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			new WaitForUserDialog("Eseguito FIND EDGES").show();
 
 		Overlay over1 = new Overlay();
-		Overlay over2 = new Overlay();
-		Overlay over3 = new Overlay();
+		// Overlay over2 = new Overlay();
+		// Overlay over3 = new Overlay();
 		imp11.setOverlay(over1);
 
 		double[][] peaks1 = new double[4][1];
@@ -2423,6 +2428,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		imp11.setRoi(new Line(xCenterCircle, yCenterCircle, (int) rx[0],
 				(int) ry[0]));
+		double angle11 = imp11.getRoi().getAngle(xCenterCircle, yCenterCircle,
+				(int) rx[0], (int) ry[0]);
+
 		over1.addElement(imp11.getRoi());
 		over1.setStrokeColor(Color.red);
 
@@ -2445,13 +2453,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// int yCenterRoi = boundRec3.y + boundRec3.height / 2;
 		double xCenterRoi = boundRec3.getCenterX();
 		double yCenterRoi = boundRec3.getCenterY();
-		double[] out2 = new double[6];
+		double[] out2 = new double[7];
 		out2[0] = xCenterRoi;
 		out2[1] = yCenterRoi;
 		out2[2] = xCenterCircle;
 		out2[3] = yCenterCircle;
 		out2[4] = xMaxima;
 		out2[5] = yMaxima;
+		out2[6] = angle11;
 
 		return out2;
 	}
