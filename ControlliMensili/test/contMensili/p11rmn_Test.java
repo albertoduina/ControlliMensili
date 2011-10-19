@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import utils.InputOutput;
 import utils.MyConst;
+import utils.MyLog;
 import utils.UtilAyv;
 
 public class p11rmn_Test {
@@ -113,6 +114,38 @@ public class p11rmn_Test {
 		boolean verbose = true;
 		p11rmn_.overlayGrid(imp1, MyConst.P11_GRID_NUMBER, verbose);
 		IJ.wait(300);
+
+	}
+
+	@Test
+	public final void testMaxPeakSearch() {
+
+		double[] profile1 = InputOutput
+				.readDoubleArrayFromFile((new InputOutput()
+						.findResource("/002.txt")));
+		MyLog.logVector(profile1, "profile1");
+
+		double[] out = p11rmn_.maxPeakSearch(profile1);
+		MyLog.logVector(out, "out");
+
+	}
+
+	@Test
+	public final void testPositionSearch() {
+		
+//		String path1 = ".\\Test2\\S1SA_01testP11";
+		String path1 = "./Test2/S12S_01testP11";
+
+		boolean autoCalled = false;
+		boolean verticalDir = false;
+		double profond = 30.0;
+		boolean step = false;
+		boolean verbose = false;
+		boolean test = false;
+
+		double[] out = p11rmn_.positionSearch(path1, autoCalled, verticalDir,
+				profond, step, verbose, test);
+		MyLog.logVector(out, "out");
 
 	}
 

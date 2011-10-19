@@ -107,6 +107,7 @@ public class Sequenze_ implements PlugIn {
 		GenericDialog gd = new GenericDialog("", IJ.getInstance());
 		gd.addCheckbox("Nuovo controllo", false);
 		gd.addCheckbox("SelfTest", false);
+		gd.addCheckbox("ZZZIPPP", false);
 
 		gd.showDialog();
 		if (gd.wasCanceled()) {
@@ -114,6 +115,13 @@ public class Sequenze_ implements PlugIn {
 		}
 		boolean nuovo1 = gd.getNextBoolean();
 		boolean self1 = gd.getNextBoolean();
+		boolean fast = gd.getNextBoolean();
+
+		if (fast) {
+			Prefs.set("prefer.fast", "true");
+		} else {
+			Prefs.set("prefer.fast", "false");
+		}
 
 		if (self1) {
 			if (!new InputOutput().checkJar(MyConst.TEST_FILE)) {
@@ -455,10 +463,8 @@ public class Sequenze_ implements PlugIn {
 				ArrayUtils.arrayListToArrayString(vetProfond),
 				TableSequence.PROFOND);
 
-		String[][] tablePass13 = TableSequence
-				.writeColumn(tablePass12,
-						ArrayUtils.arrayListToArrayString(vetDone),
-						TableSequence.DONE);
+		String[][] tablePass13 = TableSequence.writeColumn(tablePass12,
+				ArrayUtils.arrayListToArrayString(vetDone), TableSequence.DONE);
 		return tablePass13;
 	}
 

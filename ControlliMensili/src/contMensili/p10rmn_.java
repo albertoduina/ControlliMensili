@@ -33,6 +33,7 @@ import java.util.StringTokenizer;
 
 import utils.AboutBox;
 import utils.ButtonMessages;
+import utils.ImageUtils;
 import utils.InputOutput;
 import utils.Msg;
 import utils.MyConst;
@@ -160,6 +161,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	public int autoMenu(String autoArgs) {
 
+		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
+				: false;
+		IJ.log("p10rmn_.autoMenu fast= " + fast);
 		IJ.log("p10rmn_.autoMenu autoargs= " + autoArgs);
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
@@ -191,46 +195,64 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		boolean step = false;
 		boolean retry = false;
-		do {
-			// int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE);
-			int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
-					TableSequence.getCode(iw2ayvTable, vetRiga[0]),
-					TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
-					vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
+		if (fast) {
+			retry = false;
+			boolean autoCalled = true;
+			boolean verbose = true;
+			boolean test = false;
 
-			switch (userSelection1) {
-			case ABORT:
-				new AboutBox().close();
-				return 0;
-			case 2:
-				new AboutBox()
-						.about("Controllo Bobine Array, immagine circolare UNCOMBINED",
-								this.getClass());
-				retry = true;
-				break;
-			case 3:
-				step = true;
-				// retry = false;
-				// break;
-			case 4:
-				// step = false;
-				retry = false;
-				boolean autoCalled = true;
-				boolean verbose = true;
-				boolean test = false;
+			double profond = Double.parseDouble(TableSequence.getProfond(
+					iw2ayvTable, vetRiga[0]));
 
-				double profond = Double.parseDouble(TableSequence.getProfond(
-						iw2ayvTable, vetRiga[0]));
+			mainUnifor(path1, path2, autoArgs, profond, autoCalled, step,
+					verbose, test);
 
-				mainUnifor(path1, path2, autoArgs, profond, autoCalled, step,
-						verbose, test);
+			UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
-				UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
+			UtilAyv.afterWork();
 
-				UtilAyv.afterWork();
-				break;
-			}
-		} while (retry);
+		} else
+			do {
+				// int userSelection1 = UtilAyv.userSelectionAuto(VERSION,
+				// TYPE);
+				int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
+						TableSequence.getCode(iw2ayvTable, vetRiga[0]),
+						TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
+						vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
+
+				switch (userSelection1) {
+				case ABORT:
+					new AboutBox().close();
+					return 0;
+				case 2:
+					new AboutBox()
+							.about("Controllo Bobine Array, immagine circolare UNCOMBINED",
+									this.getClass());
+					retry = true;
+					break;
+				case 3:
+					step = true;
+					// retry = false;
+					// break;
+				case 4:
+					// step = false;
+					retry = false;
+					boolean autoCalled = true;
+					boolean verbose = true;
+					boolean test = false;
+
+					double profond = Double.parseDouble(TableSequence
+							.getProfond(iw2ayvTable, vetRiga[0]));
+
+					mainUnifor(path1, path2, autoArgs, profond, autoCalled,
+							step, verbose, test);
+
+					UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
+
+					UtilAyv.afterWork();
+					break;
+				}
+			} while (retry);
 		new AboutBox().close();
 		UtilAyv.afterWork();
 		return 0;
@@ -323,7 +345,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			//
 
 			int sq7 = MyConst.P10_MROI_7X7_PIXEL;
-			int gap = (sqNEA - MyConst.P10_MROI_7X7_PIXEL) / 2;
 			imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7, sq7);
 			if (verbose) {
 				over2.addElement(imp1.getRoi());
@@ -345,8 +366,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// disegno RoiFondo su imp1
 			//
 			Boolean circular = true;
-			ImageStatistics statFondo = backCalcP10(xFondo, yFondo, dFondo,
-					imp1, step, circular, test);
+			ImageStatistics statFondo = UtilAyv.backCalc2(xFondo, yFondo,
+					dFondo, imp1, step, circular, test);
 
 			//
 			// disegno MROI su imaDiff
@@ -491,9 +512,29 @@ public class p10rmn_ implements PlugIn, Measurements {
 			//
 			// calcolo simulata
 			//
-			int[][] classiSimulata = generaSimulata(xCenterRoi + gap,
-					yCenterRoi + gap, MyConst.P10_MROI_7X7_PIXEL, imp1, step,
+			// int gap = (sqNEA - sq7) / 2;
+
+			
+			
+			
+//			int[][] classiSimulata = generaSimulata(xCenterRoi, yCenterRoi,
+//					imp1, step, false, test);
+			
+			String patName = ReadDicom.readDicomParameter(imp1,
+					MyConst.DICOM_PATIENT_NAME);
+			String codice = ReadDicom
+					.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION)
+					.substring(0, 4).trim();
+
+			simulataName = fileDir + patName + codice + "sim.zip";
+
+			int[][] classiSimulata = ImageUtils.generaSimulata12classi(
+					xCenterRoi, yCenterRoi, sq7, imp1, simulataName, step,
 					false, test);
+
+			
+			
+			
 			//
 			// calcolo posizione fwhm a metà della MROI
 			//
@@ -590,7 +631,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (verbose && !test)
 				rt.show("Results");
 
-			if (autoCalled && !test) {
+			boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
+					: false;
+
+			if (fast) {
+				accetta = true;
+			} else if (autoCalled && !test) {
 				accetta = Msg.accettaMenu();
 			} else {
 				if (!test) {
@@ -814,9 +860,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			pixels2 = (short[]) ip1.getPixels();
 		}
 
-		for (int y1 = sqY; y1 < (sqY + sqR); y1++) {
+		for (int y1 = sqY - sqR / 2; y1 <= (sqY + sqR / 2); y1++) {
 			offset = y1 * width;
-			for (int x1 = sqX; x1 < (sqX + sqR); x1++) {
+			for (int x1 = sqX - sqR / 2; x1 <= (sqX + sqR / 2); x1++) {
 				w = offset + x1;
 				if (w < pixels1.length && pixels1[w] > limit) {
 					if (paintPixels)
@@ -1359,14 +1405,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 *            modo autotest
 	 * @return numeriosità classi simulata
 	 */
-	private static int[][] generaSimulata(int xRoi, int yRoi, int diamRoi,
-			ImagePlus imp, boolean step, boolean verbose, boolean test) {
+	private static int[][] generaSimulata(int xRoi, int yRoi, ImagePlus imp,
+			boolean step, boolean verbose, boolean test) {
 
-		int xRoiSimulata = xRoi + (diamRoi - MyConst.P10_NEA_11X11_PIXEL) / 2;
-		int yRoiSimulata = yRoi + (diamRoi - MyConst.P10_NEA_11X11_PIXEL) / 2;
+		int sq7 = MyConst.P11_MROI_7X7_PIXEL;
 
-		ImagePlus impSimulata = simulata12Classi(xRoiSimulata, yRoiSimulata,
-				MyConst.P10_NEA_11X11_PIXEL, imp);
+		ImagePlus impSimulata = simulata12Classi(xRoi, yRoi, sq7, imp);
 		if (verbose) {
 			UtilAyv.showImageMaximized(impSimulata);
 
@@ -2136,57 +2180,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 				.getPath();
 		return (home1);
 	}
-
-	/**
-	 * esegue posizionamento e calcolo roi circolare sul fondo
-	 * 
-	 * @param xRoi
-	 *            coordinata x roi
-	 * @param yRoi
-	 *            coordinata y roi
-	 * @param imp
-	 *            puntatore ImagePlus alla immagine
-	 * @param bstep
-	 *            funzionamento passo passo
-	 * @return dati statistici
-	 */
-	public static ImageStatistics backCalcP10(int xRoi, int yRoi, int diaRoi,
-			ImagePlus imp, boolean bstep, boolean circular, boolean selftest) {
-
-		ImageStatistics stat = null;
-		boolean redo = false;
-		do {
-			if (imp.isVisible())
-				imp.getWindow().toFront();
-			if (circular) {
-				imp.setRoi(new OvalRoi(xRoi - diaRoi / 2, yRoi - diaRoi / 2,
-						diaRoi, diaRoi));
-				// imp.updateAndDraw();
-			} else {
-				imp.setRoi(xRoi - diaRoi / 2, yRoi - diaRoi / 2, diaRoi, diaRoi);
-				// imp.updateAndDraw();
-			}
-
-			if (!selftest) {
-				if (redo) {
-					ButtonMessages
-							.ModelessMsg(
-									"ATTENZIONE segnale medio fondo =0 SPOSTARE LA ROI E PREMERE CONTINUA",
-									"CONTINUA");
-
-				}
-			}
-			stat = imp.getStatistics();
-			if (stat.mean == 0)
-				redo = true;
-			else
-				redo = false;
-			if (bstep)
-				ButtonMessages.ModelessMsg("Segnale medio =" + stat.mean,
-						"CONTINUA");
-		} while (redo);
-		return stat;
-	} // backCalcP10
 
 	/**
 	 * 

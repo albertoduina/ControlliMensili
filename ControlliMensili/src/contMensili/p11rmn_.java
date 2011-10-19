@@ -25,16 +25,19 @@ import ij.util.Tools;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import utils.AboutBox;
 import utils.ButtonMessages;
 import utils.CustomCanvasGeneric;
+import utils.ImageUtils;
 import utils.InputOutput;
 import utils.Msg;
 import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyLog;
+import utils.MyPlot;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
@@ -86,6 +89,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 	private static String fileDir = "";
 
 	private static String simulataName = "";
+
+	private static boolean previous = false;
+	private static boolean init1 = true;
+	private static boolean pulse = false; // lasciare, serve anche se segnalato
+											// inutilizzato
 
 	// private boolean profiVert = false;
 
@@ -168,6 +176,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 	public int autoMenu(String autoArgs) {
 
+		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
+				: false;
+		IJ.log("p11rmn_.autoMenu fast= " + fast);
+
 		IJ.log("p11rmn_.autoMenu autoargs= " + autoArgs);
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
@@ -198,49 +210,67 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		boolean verticalDir = decodeDirez(TableSequence.getDirez(iw2ayvTable,
 				vetRiga[0]));
+
 		double profond = Double.parseDouble(TableSequence.getProfond(
 				iw2ayvTable, vetRiga[0]));
 
 		boolean step = false;
 		boolean retry = false;
-		do {
-			// int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE);
-			int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
-					TableSequence.getCode(iw2ayvTable, vetRiga[0]),
-					TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
-					vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
 
-			switch (userSelection1) {
-			case ABORT:
-				new AboutBox().close();
+		if (fast) {
+			retry = false;
+			boolean autoCalled = true;
+			boolean verbose = true;
+			boolean test = false;
+			ResultsTable rt1 = mainUnifor(path, verticalDir, profond,
+					autoCalled, step, verbose, test);
+			if (rt1 == null)
 				return 0;
-			case 2:
-				new AboutBox().about("Controllo Bobine Superficiali",
-						this.getClass());
-				retry = true;
-				break;
-			case 3:
-				step = true;
-				// retry = false;
-				// break;
-			case 4:
-				// step = false;
-				retry = false;
-				boolean autoCalled = true;
-				boolean verbose = true;
-				boolean test = false;
-				ResultsTable rt1 = mainUnifor(path, verticalDir, profond,
-						autoCalled, step, verbose, test);
-				if (rt1 == null)
+
+			rt1.show("Results");
+			UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
+
+			UtilAyv.afterWork();
+		} else
+			do {
+				// int userSelection1 = UtilAyv.userSelectionAuto(VERSION,
+				// TYPE);
+				int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
+						TableSequence.getCode(iw2ayvTable, vetRiga[0]),
+						TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
+						vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
+
+				switch (userSelection1) {
+				case ABORT:
+					new AboutBox().close();
 					return 0;
+				case 2:
+					new AboutBox().about("Controllo Bobine Superficiali",
+							this.getClass());
+					retry = true;
+					break;
+				case 3:
+					step = true;
+					// retry = false;
+					// break;
+				case 4:
+					// step = false;
+					retry = false;
+					boolean autoCalled = true;
+					boolean verbose = true;
+					boolean test = false;
+					ResultsTable rt1 = mainUnifor(path, verticalDir, profond,
+							autoCalled, step, verbose, test);
+					if (rt1 == null)
+						return 0;
 
-				rt1.show("Results");
-				UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
+					rt1.show("Results");
+					UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
-				UtilAyv.afterWork();
-				break;
-			}
-		} while (retry);
+					UtilAyv.afterWork();
+					break;
+				}
+			} while (retry);
 		new AboutBox().close();
 		UtilAyv.afterWork();
 		return 0;
@@ -273,25 +303,21 @@ public class p11rmn_ implements PlugIn, Measurements {
 			int width = imp1.getWidth();
 			int height = imp1.getHeight();
 
-			overlayGrid(imp1, MyConst.P11_GRID_NUMBER, verbose);
-
 			double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
 					ReadDicom.readDicomParameter(imp1,
 							MyConst.DICOM_PIXEL_SPACING), 2));
-			if (verbose)
-				imp1.setTitle("DIMENSIONI RETICOLO= "
-						+ (dimPixel * (double) height / (double) MyConst.P11_GRID_NUMBER)
-						+ " mm");
 
 			int sqNEA = MyConst.P11_NEA_11X11_PIXEL;
 
-			int xMaxima = (int) out2[6];
-			int yMaxima = (int) out2[7];
+			int xMaximum = (int) out2[6];
+			int yMaximum = (int) out2[7];
 			double xStartRefLine = out2[2];
 			double yStartRefLine = out2[3];
 			double xEndRefLine = out2[4];
 			double yEndRefLine = out2[5];
-			int index = 0;
+			int xCenterRoi = (int) out2[0];
+			int yCenterRoi = (int) out2[1];
+
 			// MyLog.waitHere("Line1 xStart= " + xStartRefLine + " yStart= "
 			// + yStartRefLine + " xEnd= " + xEndRefLine + " yEnd= "
 			// + yEndRefLine);
@@ -299,77 +325,35 @@ public class p11rmn_ implements PlugIn, Measurements {
 			if (verbose) {
 
 				// =================================================
-				imp1.setRoi(new OvalRoi(xMaxima - 4, yMaxima - 4, 8, 8));
+				imp1.setRoi(new OvalRoi(xMaximum - 4, yMaximum - 4, 8, 8));
 				over2.addElement(imp1.getRoi());
 				imp1.setOverlay(over2);
-				over2.setStrokeColor(Color.red);
+				over2.setStrokeColor(Color.green);
 				imp1.killRoi();
 				imp1.setRoi(new Line(xStartRefLine, yStartRefLine, xEndRefLine,
 						yEndRefLine));
-
 				over2.addElement(imp1.getRoi());
-				index = over2.size();
-				over2.setStrokeColor(Color.red);
+				over2.setStrokeColor(Color.green);
 				imp1.killRoi();
+				imp1.setRoi(xCenterRoi - 10, yCenterRoi - 10, 20, 20);
+				over2.addElement(imp1.getRoi());
+				imp1.killRoi();
+
 				imp1.updateAndDraw();
 				// =================================================
 			}
 
-			ImageProcessor ip1 = imp1.getProcessor();
 			//
 			// disegno MROI su imp1
 			//
-			int xCenterRoi = 0;
-			int yCenterRoi = 0;
-			int xCenterProposed = (int) out2[0];
-			int yCenterProposed = (int) out2[1];
 
-			if (!test) {
-				// UtilAyv.autoAdjust(imp1, ip1);
-				if (imp1.isVisible())
-					UtilAyv.backgroundEnhancement(0, 0, 10, imp1);
-				int userSelection1 = 0;
+			imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA,
+					sqNEA);
+			over2.addElement(imp1.getRoi());
+			over2.setStrokeColor(Color.green);
+			imp1.killRoi();
 
-				do {
-					imp1.setRoi(xCenterProposed - sqNEA / 2, yCenterProposed
-							- sqNEA / 2, sqNEA, sqNEA);
-					imp1.updateAndDraw();
-					userSelection1 = menuPositionMroi();
-				} while (userSelection1 == 1);
-				//
-				// rilettura posizione user-defined
-				//
-				// new WaitForUserDialog("Do something, then click OK.").show();
-
-				ip1 = imp1.getProcessor();
-				Rectangle boundingRectangle = ip1.getRoi();
-
-				if (imp1.isVisible())
-					imp1.getWindow().toFront();
-				xCenterRoi = boundingRectangle.x;
-				yCenterRoi = boundingRectangle.y;
-
-			} else {
-				xCenterRoi = xCenterProposed - sqNEA / 2;
-				yCenterRoi = yCenterProposed - sqNEA / 2;
-
-				imp1.setRoi(xCenterRoi, yCenterRoi, sqNEA, sqNEA);
-				imp1.updateAndDraw();
-			}
-
-			// MyLog.waitHere("xCenterRoi= " + xCenterRoi + " yCenterRoi "
-			// + yCenterRoi);
-
-			// Rectangle rect1 = imp1.getRoi().getBounds();
-			// MyLog.waitHere("Roi center x= " + rect1.getX() + " y= "
-			// + rect1.getY());
-
-			if (imp1.isVisible()) {
-				over2.addElement(imp1.getRoi());
-				over2.setStrokeColor(Color.green);
-				over2.remove(index - 1);
-				imp1.draw();
-			}
+			imp1.updateAndDraw();
 
 			double xStartRefLine2 = 0;
 			double yStartRefLine2 = 0;
@@ -378,28 +362,20 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 			if (verticalDir) {
 				MyLog.here();
-				xStartRefLine2 = xCenterRoi + sqNEA / 2;
+				xStartRefLine2 = xCenterRoi;
 				yStartRefLine2 = 0;
-				xEndRefLine2 = xCenterRoi + sqNEA / 2;
+				xEndRefLine2 = xCenterRoi;
 				yEndRefLine2 = height;
 			} else {
 				// MyLog.here();
 				xStartRefLine2 = 0;
-				yStartRefLine2 = yCenterRoi + sqNEA / 2;
+				yStartRefLine2 = yCenterRoi;
 				xEndRefLine2 = width;
-				yEndRefLine2 = yCenterRoi + sqNEA / 2;
+				yEndRefLine2 = yCenterRoi;
 			}
-
-			// MyLog.waitHere("Line2 xStart= " + xStartRefLine2 + " yStart= "
-			// + yStartRefLine2 + " xEnd= " + xEndRefLine2 + " yEnd= "
-			// + yEndRefLine2);
 
 			imp1.setRoi(new Line(xStartRefLine2, yStartRefLine2, xEndRefLine2,
 					yEndRefLine2));
-
-			// Rectangle rect2 = imp1.getRoi().getBounds();
-			// MyLog.waitHere("Line center x= " + rect2.getX() + " y= "
-			// + rect2.getY());
 
 			over2.addElement(imp1.getRoi());
 			over2.setStrokeColor(Color.green);
@@ -408,10 +384,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 			// posiziono la ROI 7x7 all'interno di MROI
 			//
 
-			int gap = (sqNEA - MyConst.P11_MROI_7X7_PIXEL) / 2;
-			imp1.setRoi(xCenterRoi + gap, yCenterRoi + gap,
-					MyConst.P11_MROI_7X7_PIXEL, MyConst.P11_MROI_7X7_PIXEL);
+			int sq7 = MyConst.P11_MROI_7X7_PIXEL;
+
+			imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7, sq7);
 			imp1.updateAndDraw();
+
 			over2.addElement(imp1.getRoi());
 			over2.setStrokeColor(Color.green);
 			ImageStatistics stat1 = imp1.getStatistics();
@@ -419,14 +396,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 			int xFondo = MyConst.P11_X_ROI_BACKGROUND;
 			int yFondo = MyConst.P11_Y_ROI_BACKGROUND;
-			// if (test)
-			// yFondo = yFondo + 40;
-			if (step)
-				msgMroi();
 			//
 			// disegno RoiFondo su imp1
 			//
-			ImageStatistics statFondo = UtilAyv.backCalc(xFondo, yFondo,
+
+			ImageStatistics statFondo = UtilAyv.backCalc2(xFondo, yFondo,
 					MyConst.P11_DIAM_ROI_BACKGROUND, imp1, step, false, test);
 
 			over2.addElement(imp1.getRoi());
@@ -440,22 +414,19 @@ public class p11rmn_ implements PlugIn, Measurements {
 				UtilAyv.showImageMaximized(imaDiff);
 				// imp1.getWindow().toFront();
 			}
-			overlayGrid(imaDiff, MyConst.P11_GRID_NUMBER, verbose);
 
 			imaDiff.resetDisplayRange();
 			imaDiff.setOverlay(over3);
 			over3.setStrokeColor(Color.green);
 
-			imaDiff.setRoi(xCenterRoi + gap, yCenterRoi + gap,
-					MyConst.P11_MROI_7X7_PIXEL, MyConst.P11_MROI_7X7_PIXEL);
+			imaDiff.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7, sq7);
 			over3.addElement(imaDiff.getRoi());
 			over3.setStrokeColor(Color.green);
 			imaDiff.updateAndDraw();
 
-			// MyLog.waitHere("ROI DISEGNATE SU IMADIFF");
-
 			ImageStatistics statImaDiff = imaDiff.getStatistics();
 			imaDiff.updateAndDraw();
+
 			if (imaDiff.isVisible())
 				imaDiff.getWindow().toFront();
 
@@ -473,14 +444,22 @@ public class p11rmn_ implements PlugIn, Measurements {
 			//
 			// loop di calcolo NEA su imp1
 			//
-			imp1.setRoi(xCenterRoi, yCenterRoi, sqNEA, sqNEA);
-			imp1.updateAndDraw();
-
-			over2.addElement(imp1.getRoi());
-			over2.setStrokeColor(Color.green);
 
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
+			if (imaDiff.isVisible())
+				imaDiff.hide();
+
+			imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA,
+					sqNEA);
+			imp1.updateAndDraw();
+
+			imp1.setOverlay(over2);
+
+			over2.addElement(imp1.getRoi());
+			over2.setStrokeColor(Color.green);
+			imp1.updateAndDraw();
+
 			//
 			// qui, se il numero dei pixel < 121 dovrò incrementare sqR2 e
 			// ripetere il loop
@@ -493,11 +472,14 @@ public class p11rmn_ implements PlugIn, Measurements {
 			int pixx = 0;
 
 			do {
-				pixx = countPix(imp1, xCenterRoi - enlarge, yCenterRoi
-						- enlarge, sqNEA, checkPixels);
 
-				imp1.setRoi(xCenterRoi - enlarge, yCenterRoi - enlarge, sqNEA,
-						sqNEA);
+				boolean paintPixels = false;
+
+				pixx = countPixTest(imp1, xCenterRoi, yCenterRoi, sqNEA,
+						checkPixels, paintPixels);
+
+				imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
+						sqNEA, sqNEA);
 				imp1.updateAndDraw();
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(Color.green);
@@ -541,9 +523,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 			} while (pixx < area11x11);
 
-			imp1.setRoi(xCenterRoi - enlarge, yCenterRoi - enlarge, sqNEA,
+			imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA,
 					sqNEA);
 			imp1.updateAndDraw();
+
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
 			//
@@ -555,6 +538,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					checkPixels);
 			if (step)
 				msgDisplayMean4(out1[0], out1[1]);
+
 			//
 			// calcolo SNR finale
 			//
@@ -565,8 +549,17 @@ public class p11rmn_ implements PlugIn, Measurements {
 			//
 			// calcolo simulata
 			//
-			int[][] classiSimulata = generaSimulata(xCenterRoi + gap,
-					yCenterRoi + gap, MyConst.P11_MROI_7X7_PIXEL, imp1, step,
+
+			String patName = ReadDicom.readDicomParameter(imp1,
+					MyConst.DICOM_PATIENT_NAME);
+			String codice = ReadDicom
+					.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION)
+					.substring(0, 4).trim();
+
+			simulataName = fileDir + patName + codice + "sim.zip";
+
+			int[][] classiSimulata = ImageUtils.generaSimulata12classi(
+					xCenterRoi, yCenterRoi, sq7, imp1, simulataName, step,
 					verbose, test);
 
 			//
@@ -579,29 +572,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 			int xEndProfile = 0;
 			int yEndProfile = 0;
 
-			if (test) {
-				if (verticalDir) {
-					xStartProfile = xCenterRoi + gap
-							+ MyConst.P11_MROI_7X7_PIXEL / 2;
-					yStartProfile = 1;
-					xEndProfile = xStartProfile;
-					yEndProfile = height;
-				} else {
-					xStartProfile = 1;
-					yStartProfile = yCenterRoi + gap
-							+ MyConst.P11_MROI_7X7_PIXEL / 2;
-					xEndProfile = width;
-					yEndProfile = yStartProfile;
-				}
+			if (verticalDir) {
+				xStartProfile = xCenterRoi;
+				yStartProfile = 1;
+				xEndProfile = xStartProfile;
+				yEndProfile = height;
 			} else {
-				Line line = selectProfilePosition(xCenterRoi + gap, yCenterRoi
-						+ gap, MyConst.P11_MROI_7X7_PIXEL, imp1, verticalDir);
-
-				xStartProfile = line.x1;
-				yStartProfile = line.y1;
-				xEndProfile = line.x2;
-				yEndProfile = line.y2;
-
+				xStartProfile = 1;
+				yStartProfile = yCenterRoi;
+				xEndProfile = width;
+				yEndProfile = yStartProfile;
 			}
 
 			double[] outFwhm2 = analyzeProfile(imp1, xStartProfile,
@@ -609,9 +589,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 			//
 			// Salvataggio dei risultati nella ResultsTable
-
-			// String[][] tabCodici = new InputOutput().readFile1(
-			// MyConst.CODE_FILE, MyConst.TOKENS4);
 
 			String[][] tabCodici = TableCode.loadTable(MyConst.CODE_FILE);
 
@@ -678,7 +655,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 			if (verbose && !test)
 				rt.show("Results");
 
-			if (autoCalled && !test) {
+			boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
+					: false;
+
+			if (fast) {
+				accetta = true;
+			} else if (autoCalled && !test) {
 				accetta = Msg.accettaMenu();
 			} else {
 				if (!test) {
@@ -901,30 +883,45 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 *            lato della Roi
 	 * @param limit
 	 *            soglia di conteggio
+	 * @param paintPixels
+	 *            switch per test
 	 * @return pixel che superano la soglia
 	 */
-	private static int countPix(ImagePlus imp1, int sqX, int sqY, int sqR,
-			double limit) {
+	public static int countPixTest(ImagePlus imp1, int sqX, int sqY, int sqR,
+			double limit, boolean paintPixels) {
 		int offset = 0;
 		int w = 0;
 		int count1 = 0;
+		short[] pixels2 = null;
 
 		if (imp1 == null) {
-			IJ.error("CountPix ricevuto null");
+			IJ.error("CountPixTest ricevuto null");
 			return (0);
 		}
 
 		int width = imp1.getWidth();
 		short[] pixels1 = UtilAyv.truePixels(imp1);
-		for (int y1 = sqY; y1 < (sqY + sqR); y1++) {
+		ImageProcessor ip1 = imp1.getProcessor();
+		if (paintPixels) {
+			// N.B. la roi qui sotto è volutamente centrata senza togliere
+			// lato/2
+			imp1.setRoi(sqX, sqY, sqR, sqR);
+			imp1.updateAndDraw();
+			pixels2 = (short[]) ip1.getPixels();
+		}
+
+		for (int y1 = sqY - sqR / 2; y1 <= (sqY + sqR / 2); y1++) {
 			offset = y1 * width;
-			for (int x1 = sqX; x1 < (sqX + sqR); x1++) {
+			for (int x1 = sqX - sqR / 2; x1 <= (sqX + sqR / 2); x1++) {
 				w = offset + x1;
-				if (pixels1[w] > limit) {
+				if (w < pixels1.length && pixels1[w] > limit) {
+					if (paintPixels)
+						pixels2[w] = 4096;
 					count1++;
 				}
 			}
 		}
+		imp1.updateAndDraw();
 		return count1;
 	}
 
@@ -981,154 +978,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		results[1] = sd1;
 		return (results);
 	}
-
-	/**
-	 * Genera l'immagine simulata a 11+1 livelli
-	 * 
-	 * @param imp1
-	 *            immagine da analizzare
-	 * @param sqX
-	 *            coordinata x della Roi centrale
-	 * @param sqY
-	 *            coordinata y della Roi centrale
-	 * @param sqR
-	 *            diametro della Roi centrale
-	 * @return immagine simulata a 11+1 livelli
-	 */
-
-	private static ImagePlus simulata12Classi(int sqX, int sqY, int sqR,
-			ImagePlus imp1) {
-
-		if (imp1 == null) {
-			IJ.error("Simula12 ricevuto null");
-			return (null);
-		}
-
-		int width = imp1.getWidth();
-		short[] pixels1 = UtilAyv.truePixels(imp1);
-		//
-		// disegno MROI per calcoli
-		//
-		imp1.setRoi(sqX, sqY, sqR, sqR);
-		ImageStatistics stat1 = imp1.getStatistics();
-		double mean = stat1.mean;
-		//
-		// limiti classi
-		//
-		double minus90 = mean * MyConst.MINUS_90_PERC;
-		double minus80 = mean * MyConst.MINUS_80_PERC;
-		double minus70 = mean * MyConst.MINUS_70_PERC;
-		double minus60 = mean * MyConst.MINUS_60_PERC;
-		double minus50 = mean * MyConst.MINUS_50_PERC;
-		double minus40 = mean * MyConst.MINUS_40_PERC;
-		double minus30 = mean * MyConst.MINUS_30_PERC;
-		double minus20 = mean * MyConst.MINUS_20_PERC;
-		double minus10 = mean * MyConst.MINUS_10_PERC;
-		double plus10 = mean * MyConst.PLUS_10_PERC;
-		double plus20 = mean * MyConst.PLUS_20_PERC;
-		// genero una immagine nera
-		ImagePlus impSimulata = NewImage.createShortImage("Simulata", width,
-				width, 1, NewImage.FILL_BLACK);
-		//
-		// nuova immagine simulata vuota
-		//
-		ShortProcessor processorSimulata = (ShortProcessor) impSimulata
-				.getProcessor();
-		short[] pixelsSimulata = (short[]) processorSimulata.getPixels();
-		//
-		// riempimento immagine simulata
-		//
-		short pixSorgente;
-		short pixSimulata;
-		int posizioneArrayImmagine = 0;
-
-		for (int y = 0; y < width; y++) {
-			for (int x = 0; x < width; x++) {
-				posizioneArrayImmagine = y * width + x;
-				pixSorgente = pixels1[posizioneArrayImmagine];
-				if (pixSorgente > plus20)
-					pixSimulata = MyConst.LEVEL_12;
-				else if (pixSorgente > plus10)
-					pixSimulata = MyConst.LEVEL_11;
-				else if (pixSorgente > minus10)
-					pixSimulata = MyConst.LEVEL_10;
-				else if (pixSorgente > minus20)
-					pixSimulata = MyConst.LEVEL_9;
-				else if (pixSorgente > minus30)
-					pixSimulata = MyConst.LEVEL_8;
-				else if (pixSorgente > minus40)
-					pixSimulata = MyConst.LEVEL_7;
-				else if (pixSorgente > minus50)
-					pixSimulata = MyConst.LEVEL_6;
-				else if (pixSorgente > minus60)
-					pixSimulata = MyConst.LEVEL_5;
-				else if (pixSorgente > minus70)
-					pixSimulata = MyConst.LEVEL_4;
-				else if (pixSorgente > minus80)
-					pixSimulata = MyConst.LEVEL_3;
-				else if (pixSorgente > minus90)
-					pixSimulata = MyConst.LEVEL_2;
-				else
-					pixSimulata = MyConst.LEVEL_1;
-
-				pixelsSimulata[posizioneArrayImmagine] = pixSimulata;
-			}
-		}
-		processorSimulata.resetMinAndMax();
-		return impSimulata;
-	} // simula12
-
-	/**
-	 * Estrae la numerosità dell classi dalla simulata
-	 * 
-	 * @param imp1
-	 *            immagine simulata da analizzare
-	 * @return numerosità delle classi in cui per ogni elemento abbiamo
-	 *         [valore][numerosità]
-	 */
-
-	public static int[][] numeroPixelsClassi(ImagePlus imp1) {
-
-		if (imp1 == null) {
-			IJ.error("numeroPixelClassi ricevuto null");
-			return (null);
-		}
-		int width = imp1.getWidth();
-
-		ImageProcessor ip1 = imp1.getProcessor();
-		short[] pixels1 = (short[]) ip1.getPixels();
-		int offset = 0;
-		int pix1 = 0;
-
-		int[][] vetClassi = { { MyConst.LEVEL_12, 0 }, { MyConst.LEVEL_11, 0 },
-				{ MyConst.LEVEL_10, 0 }, { MyConst.LEVEL_9, 0 },
-				{ MyConst.LEVEL_8, 0 }, { MyConst.LEVEL_7, 0 },
-				{ MyConst.LEVEL_6, 0 }, { MyConst.LEVEL_5, 0 },
-				{ MyConst.LEVEL_4, 0 }, { MyConst.LEVEL_3, 0 },
-				{ MyConst.LEVEL_2, 0 }, { MyConst.LEVEL_1, 0 } };
-		boolean manca = true;
-
-		for (int y1 = 0; y1 < width; y1++) {
-			for (int x1 = 0; x1 < (width); x1++) {
-				offset = y1 * width + x1;
-				pix1 = pixels1[offset];
-				manca = true;
-				for (int i1 = 0; i1 < vetClassi.length; i1++)
-					if (pix1 == vetClassi[i1][0]) {
-						vetClassi[i1][1] = vetClassi[i1][1] + 1;
-						manca = false;
-						break;
-					}
-				if (manca) {
-					ButtonMessages.ModelessMsg("SIMULATA CON VALORE ERRATO="
-							+ pix1 + "   <38>", "CONTINUA");
-					return (null);
-				}
-			}
-		}
-		return (vetClassi);
-
-	} // classi
 
 	/**
 	 * Analisi di un profilo NON mediato
@@ -1192,6 +1041,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 	private static double[] calcFwhm(int[] vetUpDwPoints, double profile[],
 			double dimPixel) {
 
+		// MyLog.logVector(vetUpDwPoints, "vetUpDwPoints");
+
 		double peak = 0;
 		double[] a = Tools.getMinMax(profile);
 		double min = a[0];
@@ -1214,6 +1065,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		py2 = (max - min) / 2.0 + min;
 		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
 		double dx = px2;
+
 		double fwhm = (dx - sx) * dimPixel; // in mm
 		for (int i1 = 0; i1 < profile.length; i1++) {
 			if (profile[i1] == min)
@@ -1371,7 +1223,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double half = (max - min) / 2 + min;
 		// parto da sx e percorro il profilo in cerca del primo valore che
 		// supera half
-		for (i1 = 0; i1 < len1 - 1; i1++) {
+		for (i1 = 0; i1 < len1; i1++) {
 			if (profile1[i1] > half) {
 				downSx = i1;
 				break;
@@ -1393,114 +1245,19 @@ public class p11rmn_ implements PlugIn, Measurements {
 			}
 		}
 		// torno indietro e cerco il primo valore sotto half
-		for (i1 = downDx; i1 < len1 - 1; i1++) {
+		for (i1 = downDx; i1 < len1; i1++) {
 			if (profile1[i1] < half) {
 				upDx = i1;
 				break;
 			}
 		}
+
 		vetHalfPoint[0] = downSx;
 		vetHalfPoint[1] = upSx;
 		vetHalfPoint[2] = downDx;
 		vetHalfPoint[3] = upDx;
 		return vetHalfPoint;
 	} // halfPointSerach
-
-	/**
-	 * generazione di un immagine simulata, display e salvataggio
-	 * 
-	 * @param xRoi
-	 *            coordinata x roi
-	 * @param yRoi
-	 *            coordinata y roi
-	 * @param diamRoi
-	 *            diametro roi
-	 * @param imp
-	 *            puntatore ImagePlus alla immagine originale
-	 * @param step
-	 *            funzionamento passo passo
-	 * @param verbose
-	 * 
-	 * @param test
-	 *            modo autotest
-	 * @return numeriosità classi simulata
-	 */
-	private static int[][] generaSimulata(int xRoi, int yRoi, int diamRoi,
-			ImagePlus imp, boolean step, boolean verbose, boolean test) {
-
-		int xRoiSimulata = xRoi + (diamRoi - MyConst.P11_NEA_11X11_PIXEL) / 2;
-		int yRoiSimulata = yRoi + (diamRoi - MyConst.P11_NEA_11X11_PIXEL) / 2;
-		ImagePlus impSimulata = simulata12Classi(xRoiSimulata, yRoiSimulata,
-				MyConst.P11_NEA_11X11_PIXEL, imp);
-		if (verbose) {
-			UtilAyv.showImageMaximized(impSimulata);
-			IJ.run("Enhance Contrast", "saturated=0.5");
-		}
-		// impSimulata.updateAndDraw();
-		if (step)
-			msgSimulata();
-		int[][] classiSimulata = numeroPixelsClassi(impSimulata);
-		String patName = ReadDicom.readDicomParameter(imp,
-				MyConst.DICOM_PATIENT_NAME);
-		String codice = ReadDicom
-				.readDicomParameter(imp, MyConst.DICOM_SERIES_DESCRIPTION)
-				.substring(0, 4).trim();
-		simulataName = fileDir + patName + codice + "sim.zip";
-
-		if (!test)
-			new FileSaver(impSimulata).saveAsZip(simulataName);
-		return classiSimulata;
-	} // generaSimulata
-
-	/**
-	 * scelta da parte dell'utente della posizione e direzione del profilo su
-	 * cui poi verrà calcolata l'FWHM
-	 * 
-	 * @param xPos
-	 *            posizione x MROI
-	 * @param yPos
-	 *            posizione y MROI
-	 * @param len
-	 *            lato MROI
-	 * @param imp1
-	 *            puntatore ImagePlus alla immagine originale
-	 * @return line parametri profilo selezionato
-	 */
-	private static Line selectProfilePosition(int xPos, int yPos, int len,
-			ImagePlus imp1, boolean verticalDir) {
-
-		// partiamo da dove è stata posizionata la ROI
-
-		int width = imp1.getWidth();
-		int height = imp1.getHeight();
-		int xStartProfile = 0;
-		int yStartProfile = 0;
-		int xEndProfile = 0;
-		int yEndProfile = 0;
-
-		if (verticalDir) {
-			xStartProfile = xPos + len / 2;
-			yStartProfile = 1;
-			xEndProfile = xPos + len / 2;
-			yEndProfile = height;
-		} else {
-			xStartProfile = 1;
-			yStartProfile = yPos + len / 2;
-			xEndProfile = width;
-			yEndProfile = yPos + len / 2;
-		}
-		imp1.setRoi(new Line((int) xStartProfile, (int) yStartProfile,
-				(int) xEndProfile, (int) yEndProfile));
-		imp1.updateAndDraw();
-
-		Prefs.set("prefer.p5rmnVert", verticalDir);
-		//
-		// rilettura posizione user-defined linea
-		//
-		Roi roi = imp1.getRoi();
-		Line line = (Line) roi;
-		return line;
-	}
 
 	public static void overlayGrid(ImagePlus imp1, int gridNumber,
 			boolean verbose) {
@@ -1550,10 +1307,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		ButtonMessages.ModelessMsg("displayNEA", "CONTINUA");
 	}
 
-	private static void msgSimulata() {
-		ButtonMessages.ModelessMsg("Immagine Simulata", "CONTINUA");
-	}
-
 	private static int menuPositionMroi() {
 		int userSelection1 = ButtonMessages.ModelessMsg(
 				"Posizionare la MROI sull'area della bobina"
@@ -1563,15 +1316,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 	public static boolean decodeDirez(String in1) {
 		boolean out = false;
-		if (in1.length() > 1) {
-			IJ.log("il codice della direzione deve essere di 1 lettera");
+
+		if (in1.length() == 1) {
 			if (in1.equals("v") || in1.equals("V")) {
-				out = false;
-			} else if (in1.equals("h") || in1.equals("H")) {
 				out = true;
+			} else if (in1.equals("h") || in1.equals("H")) {
+				out = false;
 			} else
-				IJ.log("il codice direzione deve essere v = vertical oppure h = horizontal");
-		}
+				MyLog.here("il codice direzione deve essere v = vertical oppure h = horizontal");
+		} else
+			MyLog.here("il codice della direzione deve essere di 1 lettera");
 		return out;
 	}
 
@@ -1591,10 +1345,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 		// Inizio calcoli geometrici
 		// ================================================================================
 		//
-		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+
+		ImagePlus imp11 = null;
+		if (verbose) {
+			imp11 = UtilAyv.openImageMaximized(path1);
+		} else {
+			imp11 = UtilAyv.openImageNoDisplay(path1, true);
+		}
+
 		if (imp11 == null)
 			new WaitForUserDialog("imp11 = NULL").show();
-
 		double dimPixel = ReadDicom
 				.readDouble(ReadDicom.readSubstring(
 						ReadDicom.readDicomParameter(imp11,
@@ -1602,102 +1362,340 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		int width = imp11.getWidth();
 		int height = imp11.getHeight();
-		//
-		// -------------------------------------------------
-		// Determinazione del punto di MAXIMA
-		// -------------------------------------------------
-		//
-		ImageProcessor ip11 = imp11.getProcessor();
 
-		double tolerance = 350.0;
-		double threshold = 0.0;
-		int outputType = MaximumFinder.LIST;
-		boolean excludeOnEdges = false;
-		boolean isEDM = false;
+		overlayGrid(imp11, MyConst.P11_GRID_NUMBER, verbose);
+		if (verbose)
+			imp11.setTitle("DIMENSIONI RETICOLO= "
+					+ (dimPixel * (double) height / (double) MyConst.P11_GRID_NUMBER)
+					+ " mm");
 
-		MaximumFinder maxFinder = new MaximumFinder();
+		Overlay over1 = new Overlay();
+		imp11.setOverlay(over1);
 
-		double[] rx = null;
-		double[] ry = null;
-		ResultsTable rt1 = ResultsTable.getResultsTable();
-		int nPunti = 0;
-		do {
-			rt1.reset();
-			maxFinder.findMaxima(ip11, tolerance, threshold, outputType,
-					excludeOnEdges, isEDM);
-			rx = rt1.getColumnAsDoubles(0);
-			ry = rt1.getColumnAsDoubles(1);
-			tolerance += 10.0;
-			nPunti = rx.length;
-		} while (nPunti > 1);
-		int xMaxima = (int) rx[0];
-		int yMaxima = (int) ry[0];
+		double[] out1 = UtilAyv.findMaximumPosition(imp11);
+		double xMaximum = out1[0];
+		double yMaximum = out1[1];
 
-		//
-		// -----------------------------------------------------------
-		// Calcolo delle effettive coordinate del segmento
-		//
-		// ----------------------------------------------------------
-		//
+		// if (step || test) {
+		imp11.setRoi(new OvalRoi((int) xMaximum - 4, (int) yMaximum - 4, 8, 8));
+		over1.addElement(imp11.getRoi());
+		over1.setStrokeColor(Color.red);
+		imp11.updateAndDraw();
+		// MyLog.waitHere();
+		// }
 
-		double xStartRefLine = 0;
-		double yStartRefLine = 0;
-		double xEndRefLine = 0;
-		double yEndRefLine = 0;
+		// IJ.log("width= " + width + " height= " + height);
+
+		double startX = Double.NaN;
+		double startY = Double.NaN;
+		double endX = Double.NaN;
+		double endY = Double.NaN;
+		double diff1 = Double.NaN;
+		double diff2 = Double.NaN;
+		double posX = Double.NaN;
+		double posY = Double.NaN;
 
 		if (verticalDir) {
-			xStartRefLine = rx[0];
-			yStartRefLine = 0;
-			xEndRefLine = rx[0];
-			yEndRefLine = height;
+			diff1 = Math.abs(0 - out1[1]);
+			diff2 = Math.abs(height - out1[1]);
+
+			if (diff1 < diff2) {
+				// suppongo che il punto di maximo sia sempre sul bordo,
+				// pertanto mi sposto di un segmento uguale a profondità
+				posY = out1[1] + profond / dimPixel;
+			} else if (diff1 > diff2) {
+				// suppongo che il punto di maximo sia sempre sul bordo,
+				// pertanto mi sposto di un segmento uguale a profondità
+				posY = out1[1] - profond / dimPixel;
+
+			} else
+				MyLog.waitHere("NON RIESCO A DETERMINARE AUTOMATICAMENTE LA POSIZIONE ROI PERCHE' IL MASSIMO E' ESATTAMENTE AL CENTRO");
+			// ora stabilisco le coordinate della linea orizzontale su cui fare
+			// il profilo
+			startX = 0;
+			startY = posY;
+			endX = width;
+			endY = posY;
+
 		} else {
-			xStartRefLine = 0;
-			yStartRefLine = ry[0];
-			xEndRefLine = width;
-			yEndRefLine = ry[0];
+
+			diff1 = Math.abs(0 - out1[0]);
+			diff2 = Math.abs(width - out1[0]);
+
+			if (diff1 < diff2) {
+				// suppongo che il punto di maximo sia sempre sul bordo,
+				// pertanto mi sposto di un segmento uguale a profondità
+				posX = out1[0] + profond;
+			} else if (diff1 > diff2) {
+				// suppongo che il punto di maximo sia sempre sul bordo,
+				// pertanto mi sposto di un segmento uguale a profondità
+				posX = out1[0] - profond;
+
+			} else
+				MyLog.waitHere("NON RIESCO A DETERMINARE AUTOMATICAMENTE LA POSIZIONE ROI PERCHE' IL MASSIMO E' ESATTAMENTE AL CENTRO");
+			// ora stabilisco le coordinate della linea orizzontale su cui fare
+			// il profilo
+			startX = posX;
+			startY = 0;
+			endX = posX;
+			endY = height;
 		}
 
-		imp11.setRoi(new Line(xStartRefLine, yStartRefLine, xEndRefLine,
-				yEndRefLine));
-		//
-		// -----------------------------------------------------------
-		// Calcolo coordinate centro della MROI
-		// ----------------------------------------------------------
-		//
-		double[] out1 = interpola2(imp11, xStartRefLine, yStartRefLine,
-				xEndRefLine, yEndRefLine, xMaxima, yMaxima, profond, dimPixel,
-				verticalDir);
-		double ax = out1[0];
-		double ay = out1[1];
+		imp11.setRoi(new Line(startX, startY, endX, endY));
+		// if (step || test) {
+		over1.addElement(imp11.getRoi());
+		over1.setStrokeColor(Color.red);
+		// MyLog.waitHere();
+		// }
+
+		double[] profi1 = ((Line) imp11.getRoi()).getPixels();
+		profi1[0] = 0;
+		profi1[profi1.length - 1] = 0;
+
+		// Plot plot1 = MyPlot.basePlot(profi1, "PROFILO", Color.blue);
+		// plot1.show();
+		// MyLog.waitHere();
+
+		int[] vetHalfPoint = halfPointSearch(profi1);
+
+		// MyLog.logVector(vetHalfPoint, "vetHalfPoint");
+
+		double[] fwhm = calcFwhm(vetHalfPoint, profi1, dimPixel);
+		// la posizione della ROI sarà approssimativamente
+		// vetHalfPoint[0]+fwhm/2;
+		// MyLog.logVector(fwhm, "fwhm");
+		// IJ.log("dimPuxel= " + dimPixel);
+
+		double centro = vetHalfPoint[0] + (fwhm[0] / 2) / dimPixel;
+
+		// MyLog.waitHere("centro= " + centro);
+
+		double ax = Double.NaN;
+		double ay = Double.NaN;
+
+		if (verticalDir) {
+			ax = centro;
+			ay = posY;
+
+		} else {
+			ax = posX;
+			ay = centro;
+
+		}
+
+		// if (step || test) {
+		imp11.setRoi(new OvalRoi((int) ax - 4, (int) ay - 4, 8, 8));
+		over1.addElement(imp11.getRoi());
+		over1.setStrokeColor(Color.red);
+		imp11.updateAndDraw();
+
 		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
+
+		if (!test)
+			MyLog.waitHere("MODIFICA MANUALE POSIZIONE ROI");
+
 		Rectangle boundRec3 = imp11.getProcessor().getRoi();
 		double xCenterRoi = boundRec3.getCenterX();
 		double yCenterRoi = boundRec3.getCenterY();
 
-		if (verticalDir) {
-			xStartRefLine = xCenterRoi;
-			yStartRefLine = 0;
-			xEndRefLine = xCenterRoi;
-			yEndRefLine = height;
-		} else {
-			xStartRefLine = 0;
-			yStartRefLine = yCenterRoi;
-			xEndRefLine = width;
-			yEndRefLine = yCenterRoi;
+		double[] out = new double[8];
+		out[0] = xCenterRoi;
+		out[1] = yCenterRoi;
+		out[2] = startX;
+		out[3] = startY;
+		out[4] = endX;
+		out[5] = endY;
+		out[6] = xMaximum;
+		out[7] = yMaximum;
+
+		return out;
+	}
+
+	/***
+	 * Riceve una ImagePlus con impostata una Line, restituisce le coordinate
+	 * dei 2 picchi
+	 * 
+	 * @param imp1
+	 * @param dimPixel
+	 * @return
+	 */
+	public static double[][] profileAnalyzer(ImagePlus imp1, double dimPixel,
+			String title, boolean showProfiles) {
+		Roi roi11 = imp1.getRoi();
+		double[] profi1 = ((Line) roi11).getPixels();
+
+		double[] profi2y = smooth3(profi1, 1);
+
+		double[] profi2x = new double[profi2y.length];
+		double xval = 0.;
+		for (int i1 = 0; i1 < profi2y.length; i1++) {
+			profi2x[i1] = xval;
+			xval += dimPixel;
 		}
 
-		imp11.hide();
-		double[] out2 = new double[8];
-		out2[0] = xCenterRoi;
-		out2[1] = yCenterRoi;
-		out2[2] = xStartRefLine;
-		out2[3] = yStartRefLine;
-		out2[4] = xEndRefLine;
-		out2[5] = yEndRefLine;
-		out2[6] = xMaxima;
-		out2[7] = yMaxima;
+		double[][] profi3 = new double[profi2y.length][2];
+		for (int i1 = 0; i1 < profi2y.length; i1++) {
+			profi3[i1][0] = profi2x[i1];
+			profi3[i1][1] = profi2y[i1];
+		}
+		ArrayList<ArrayList<Double>> matOut = peakDet(profi3, 100.);
+		double[][] peaks1 = new InputOutput()
+				.fromArrayListToDoubleTable(matOut);
 
-		return out2;
+		double[] xPoints = new double[peaks1[2].length];
+		double[] yPoints = new double[peaks1[2].length];
+		for (int i1 = 0; i1 < peaks1[2].length; i1++) {
+			xPoints[i1] = peaks1[2][i1];
+			yPoints[i1] = peaks1[3][i1];
+
+		}
+
+		if (showProfiles) {
+			Plot plot2 = MyPlot.basePlot(profi2x, profi2y, title, Color.GREEN);
+			plot2.draw();
+			plot2.setColor(Color.red);
+			plot2.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
+			plot2.show();
+			new WaitForUserDialog("002 premere  OK").show();
+		}
+
+		return peaks1;
+	}
+
+	/***
+	 * Effettua lo smooth su 3 pixels di un profilo
+	 * 
+	 * @param profile1
+	 *            profilo
+	 * @param loops
+	 *            numerompassaggi
+	 * @return
+	 */
+	public static double[] smooth3(double[] profile1, int loops) {
+
+		int len1 = profile1.length;
+		double[] profile2 = new double[len1];
+		for (int j1 = 1; j1 < len1 - 1; j1++) {
+			profile2[j1] = profile1[j1];
+		}
+
+		for (int i1 = 0; i1 < loops; i1++) {
+			for (int j1 = 1; j1 < len1 - 1; j1++)
+				profile2[j1] = (profile2[j1 - 1] + profile2[j1] + profile2[j1 + 1]) / 3;
+		}
+		return profile2;
+
+	}
+
+	/**
+	 * Copied from http://billauer.co.il/peakdet.htm Peak Detection using MATLAB
+	 * Author: Eli Billauer
+	 * 
+	 * @param profile
+	 *            profilo da analizzare
+	 * @param delta
+	 * @return
+	 */
+	public static ArrayList<ArrayList<Double>> peakDet(double[][] profile,
+			double delta) {
+
+		double max = Double.MIN_VALUE;
+		double min = Double.MAX_VALUE;
+		ArrayList<ArrayList<Double>> matout = new ArrayList<ArrayList<Double>>();
+
+		ArrayList<Double> maxtabx = new ArrayList<Double>();
+		ArrayList<Double> maxtaby = new ArrayList<Double>();
+		ArrayList<Double> mintabx = new ArrayList<Double>();
+		ArrayList<Double> mintaby = new ArrayList<Double>();
+
+		double[] vetx = new double[profile.length];
+		double[] vety = new double[profile.length];
+		for (int i1 = 0; i1 < profile.length; i1++) {
+			vetx[i1] = profile[i1][0];
+			vety[i1] = profile[i1][1];
+		}
+		double maxpos = -1.0;
+		double minpos = -1.0;
+		boolean lookformax = true;
+
+		for (int i1 = 0; i1 < vety.length; i1++) {
+			double valy = vety[i1];
+			if (valy > max) {
+				max = valy;
+				maxpos = vetx[i1];
+			}
+			if (valy < min) {
+				min = valy;
+				minpos = vetx[i1];
+			}
+			stateChange(lookformax);
+
+			if (lookformax) {
+				if (valy < max - delta) {
+					maxtabx.add((Double) maxpos);
+					maxtaby.add((Double) max);
+					min = valy;
+					minpos = vetx[i1];
+					lookformax = false;
+				}
+			} else {
+				if (valy > min + delta) {
+					mintabx.add((Double) minpos);
+					mintaby.add((Double) min);
+					max = valy;
+					maxpos = vetx[i1];
+					lookformax = true;
+				}
+			}
+
+		}
+		// MyLog.logArrayList(mintabx, "############## mintabx #############");
+		// MyLog.logArrayList(mintaby, "############## mintaby #############");
+		// MyLog.logArrayList(maxtabx, "############## maxtabx #############");
+		// MyLog.logArrayList(maxtaby, "############## maxtaby #############");
+		matout.add(mintabx);
+		matout.add(mintaby);
+		matout.add(maxtabx);
+		matout.add(maxtaby);
+
+		return matout;
+	}
+
+	public static double[] maxPeakSearch(double[] profile) {
+
+		double[] a = Tools.getMinMax(profile);
+		double max = a[1];
+
+		// cerco il picco a partire da 0
+		int max00 = -999;
+		int max11 = -999;
+
+		for (int i1 = 0; i1 < profile.length; i1++) {
+			if (profile[i1] == max) {
+				max00 = i1;
+			}
+		}
+
+		for (int i1 = profile.length - 1; i1 >= 0; i1--) {
+			if (profile[i1] == max) {
+				max11 = i1;
+			}
+		}
+		if (max00 != max11)
+			return null;
+		double[] out = new double[2];
+		out[0] = (double) max00;
+		out[1] = max;
+		return out;
+	}
+
+	public static void stateChange(boolean input) {
+		pulse = false;
+		if ((input != previous) && !init1)
+			pulse = true;
+		init1 = false;
+		return;
+
 	}
 
 	public static double angoloRad(double ax, double ay, double bx, double by) {
