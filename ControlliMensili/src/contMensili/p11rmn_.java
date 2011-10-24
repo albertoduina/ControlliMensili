@@ -94,6 +94,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 	private static boolean init1 = true;
 	private static boolean pulse = false; // lasciare, serve anche se segnalato
 											// inutilizzato
+	private static Color color1 = Color.green;
+	private static Color color2 = Color.green;
 
 	// private boolean profiVert = false;
 
@@ -137,28 +139,29 @@ public class p11rmn_ implements PlugIn, Measurements {
 			case 4:
 				step = true;
 			case 5:
-				String[] path = new String[3];
-				path[0] = UtilAyv
+
+				String path1 = UtilAyv
 						.imageSelection("SELEZIONARE PRIMA ACQUISIZIONE PRIMO ECO...");
-				if (path[0] == null)
+				if (path1 == null)
 					return 0;
 
-				path[1] = UtilAyv
+				String path2 = UtilAyv
 						.imageSelection("SELEZIONARE SECONDA ACQUISIZIONE PRIMO ECO...");
-				if (path[1] == null)
+				if (path2 == null)
 					return 0;
 
-				path[2] = UtilAyv
+				String path3 = UtilAyv
 						.imageSelection("SELEZIONARE PRIMA  ACQUISIZIONE SECONDO ECO...");
-				if (path[2] == null)
+				if (path3 == null)
 					return 0;
-				boolean verticalDir = true;
+
+				int direzione = 1;
 				boolean autoCalled = false;
 				boolean verbose = false;
 				boolean test = false;
 				double profond = 30.0;
-				ResultsTable rt1 = mainUnifor(path, verticalDir, profond,
-						autoCalled, step, verbose, test);
+				ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond,
+						"", autoCalled, step, verbose, test);
 				if (rt1 == null)
 					return 0;
 
@@ -178,9 +181,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
 				: false;
-		IJ.log("p11rmn_.autoMenu fast= " + fast);
+		// IJ.log("p11rmn_.autoMenu fast= " + fast);
 
-		IJ.log("p11rmn_.autoMenu autoargs= " + autoArgs);
+		// IJ.log("p11rmn_.autoMenu autoargs= " + autoArgs);
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
 		if (vetRiga[0] == -1) {
@@ -198,17 +201,21 @@ public class p11rmn_ implements PlugIn, Measurements {
 				+ MyConst.SEQUENZE_FILE);
 
 		String[] path = new String[3];
+		String path1 = "";
+		String path2 = "";
+		String path3 = "";
+
 		if (nTokens == MyConst.TOKENS2) {
-			path[0] = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
-			path[1] = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
+			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
+			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
 			// path3 = lr.getPath(strRiga3, riga2);
 		} else {
-			path[0] = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
-			path[1] = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
-			path[2] = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
+			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
+			path3 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
+			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
 		}
 
-		boolean verticalDir = decodeDirez(TableSequence.getDirez(iw2ayvTable,
+		int direzione = decodeDirezione(TableSequence.getDirez(iw2ayvTable,
 				vetRiga[0]));
 
 		double profond = Double.parseDouble(TableSequence.getProfond(
@@ -222,8 +229,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 			boolean autoCalled = true;
 			boolean verbose = true;
 			boolean test = false;
-			ResultsTable rt1 = mainUnifor(path, verticalDir, profond,
-					autoCalled, step, verbose, test);
+
+			String info10 = "code= "
+					+ TableSequence.getCode(iw2ayvTable, vetRiga[0])
+					+ " coil= "
+					+ TableSequence.getCoil(iw2ayvTable, vetRiga[0]) + "  "
+					+ (vetRiga[0] + 1) + " / "
+					+ TableSequence.getLength(iw2ayvTable);
+
+			ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond,
+					info10, autoCalled, step, verbose, test);
 			if (rt1 == null)
 				return 0;
 
@@ -259,8 +274,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 					boolean autoCalled = true;
 					boolean verbose = true;
 					boolean test = false;
-					ResultsTable rt1 = mainUnifor(path, verticalDir, profond,
-							autoCalled, step, verbose, test);
+					ResultsTable rt1 = mainUnifor(path1, path2, direzione,
+							profond, "", autoCalled, step, verbose, test);
 					if (rt1 == null)
 						return 0;
 
@@ -277,16 +292,28 @@ public class p11rmn_ implements PlugIn, Measurements {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static ResultsTable mainUnifor(String[] path, boolean verticalDir,
-			double profond, boolean autoCalled, boolean step, boolean verbose,
-			boolean test) {
+	public static ResultsTable mainUnifor(String path1, String path2,
+			int direzione, double profond, String info10, boolean autoCalled,
+			boolean step, boolean verbose, boolean test) {
 		boolean accetta = false;
 		ResultsTable rt = null;
+
+		boolean fast = false;
+		if (Prefs.get("prefer.fast", "false").equals("true")) {
+			fast = true;
+		} else {
+			fast = false;
+		}
+
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		do {
 
-			double out2[] = positionSearch(path[0], autoCalled, verticalDir,
-					profond, step, verbose, test);
+			ImagePlus imp11 = UtilAyv.openImageMaximized(path1);
+			if (imp11 == null)
+				MyLog.waitHere("Non trovato il file " + path1);
+
+			double out2[] = positionSearch(imp11, autoCalled, direzione,
+					profond, info10, step, verbose, test);
 
 			ImagePlus imp1 = null;
 			ImagePlus imp2 = null;
@@ -294,11 +321,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 			Overlay over3 = new Overlay();
 
 			if (verbose) {
-				imp1 = UtilAyv.openImageMaximized(path[0]);
-				imp2 = UtilAyv.openImageNoDisplay(path[1], true);
+				imp1 = UtilAyv.openImageMaximized(path1);
+				imp2 = UtilAyv.openImageNoDisplay(path2, true);
 			} else {
-				imp1 = UtilAyv.openImageNoDisplay(path[0], true);
-				imp2 = UtilAyv.openImageNoDisplay(path[1], true);
+				imp1 = UtilAyv.openImageNoDisplay(path1, true);
+				imp2 = UtilAyv.openImageNoDisplay(path2, true);
 			}
 			int width = imp1.getWidth();
 			int height = imp1.getHeight();
@@ -318,28 +345,27 @@ public class p11rmn_ implements PlugIn, Measurements {
 			int xCenterRoi = (int) out2[0];
 			int yCenterRoi = (int) out2[1];
 
-			// MyLog.waitHere("Line1 xStart= " + xStartRefLine + " yStart= "
-			// + yStartRefLine + " xEnd= " + xEndRefLine + " yEnd= "
-			// + yEndRefLine);
-
 			if (verbose) {
 
 				// =================================================
 				imp1.setRoi(new OvalRoi(xMaximum - 4, yMaximum - 4, 8, 8));
 				over2.addElement(imp1.getRoi());
 				imp1.setOverlay(over2);
-				over2.setStrokeColor(Color.green);
+				over2.setStrokeColor(color2);
 				imp1.killRoi();
 				imp1.setRoi(new Line(xStartRefLine, yStartRefLine, xEndRefLine,
 						yEndRefLine));
 				over2.addElement(imp1.getRoi());
-				over2.setStrokeColor(Color.green);
+				over2.setStrokeColor(color2);
 				imp1.killRoi();
 				imp1.setRoi(xCenterRoi - 10, yCenterRoi - 10, 20, 20);
 				over2.addElement(imp1.getRoi());
 				imp1.killRoi();
 
 				imp1.updateAndDraw();
+				if (step)
+					MyLog.waitHere();
+
 				// =================================================
 			}
 
@@ -350,24 +376,25 @@ public class p11rmn_ implements PlugIn, Measurements {
 			imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA,
 					sqNEA);
 			over2.addElement(imp1.getRoi());
-			over2.setStrokeColor(Color.green);
+			over2.setStrokeColor(color2);
 			imp1.killRoi();
 
 			imp1.updateAndDraw();
+			if (step)
+				MyLog.waitHere();
 
 			double xStartRefLine2 = 0;
 			double yStartRefLine2 = 0;
 			double xEndRefLine2 = 0;
 			double yEndRefLine2 = 0;
 
-			if (verticalDir) {
-				MyLog.here();
+			if (direzione < 3) {
 				xStartRefLine2 = xCenterRoi;
 				yStartRefLine2 = 0;
 				xEndRefLine2 = xCenterRoi;
 				yEndRefLine2 = height;
 			} else {
-				// MyLog.here();
+
 				xStartRefLine2 = 0;
 				yStartRefLine2 = yCenterRoi;
 				xEndRefLine2 = width;
@@ -378,7 +405,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 					yEndRefLine2));
 
 			over2.addElement(imp1.getRoi());
-			over2.setStrokeColor(Color.green);
+			over2.setStrokeColor(color2);
+			imp1.updateAndDraw();
+			if (step)
+				MyLog.waitHere();
 
 			//
 			// posiziono la ROI 7x7 all'interno di MROI
@@ -390,7 +420,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 			imp1.updateAndDraw();
 
 			over2.addElement(imp1.getRoi());
-			over2.setStrokeColor(Color.green);
+			over2.setStrokeColor(color2);
+			imp1.updateAndDraw();
+			if (step)
+				MyLog.waitHere();
+
 			ImageStatistics stat1 = imp1.getStatistics();
 			double signal1 = stat1.mean;
 
@@ -404,24 +438,24 @@ public class p11rmn_ implements PlugIn, Measurements {
 					MyConst.P11_DIAM_ROI_BACKGROUND, imp1, step, false, test);
 
 			over2.addElement(imp1.getRoi());
-			over2.setStrokeColor(Color.green);
+			over2.setStrokeColor(color2);
 
 			//
 			// disegno MROI su imaDiff
 			//
 			ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
-			if (verbose) {
+			if (verbose && !fast) {
 				UtilAyv.showImageMaximized(imaDiff);
 				// imp1.getWindow().toFront();
 			}
 
 			imaDiff.resetDisplayRange();
 			imaDiff.setOverlay(over3);
-			over3.setStrokeColor(Color.green);
+			over3.setStrokeColor(color2);
 
 			imaDiff.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7, sq7);
 			over3.addElement(imaDiff.getRoi());
-			over3.setStrokeColor(Color.green);
+			over3.setStrokeColor(color2);
 			imaDiff.updateAndDraw();
 
 			ImageStatistics statImaDiff = imaDiff.getStatistics();
@@ -457,7 +491,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			imp1.setOverlay(over2);
 
 			over2.addElement(imp1.getRoi());
-			over2.setStrokeColor(Color.green);
+			over2.setStrokeColor(color2);
 			imp1.updateAndDraw();
 
 			//
@@ -482,7 +516,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 						sqNEA, sqNEA);
 				imp1.updateAndDraw();
 				over2.addElement(imp1.getRoi());
-				over2.setStrokeColor(Color.green);
+				over2.setStrokeColor(color2);
 
 				// imp1.getWindow().toFront();
 				if (step)
@@ -502,22 +536,15 @@ public class p11rmn_ implements PlugIn, Measurements {
 				if ((xCenterRoi + sqNEA - enlarge) >= width
 						|| (xCenterRoi - enlarge) <= 0) {
 
-					// if ((xCenterRoi + sqNEA - enlarge) >= width)
-					// MyLog.waitHere("prima condizione");
-					// if ((xCenterRoi - enlarge) <= 0)
-					// MyLog.waitHere("seconda condizione");
 					msgNot121();
-					// MyLog.waitHere("esco qui");
 					return null;
 				}
 				if ((yCenterRoi + sqNEA - enlarge) >= height
 						|| (yCenterRoi - enlarge) <= 0) {
 					msgNot121();
-					// MyLog.waitHere("esco qui");
 					return null;
 				}
 				if (step && pixx >= area11x11) {
-					// MyLog.waitHere();
 					msgSqr2OK(pixx);
 				}
 
@@ -572,7 +599,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			int xEndProfile = 0;
 			int yEndProfile = 0;
 
-			if (verticalDir) {
+			if (direzione < 3) {
 				xStartProfile = xCenterRoi;
 				yStartProfile = 1;
 				xEndProfile = xStartProfile;
@@ -592,7 +619,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 			String[][] tabCodici = TableCode.loadTable(MyConst.CODE_FILE);
 
-			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path[0],
+			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
 					imp1, tabCodici, VERSION, autoCalled);
 
 			//
@@ -655,9 +682,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 			if (verbose && !test)
 				rt.show("Results");
 
-			boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
-					: false;
-
 			if (fast) {
 				accetta = true;
 			} else if (autoCalled && !test) {
@@ -689,16 +713,20 @@ public class p11rmn_ implements PlugIn, Measurements {
 				String[] path = new InputOutput().findListTestImages2(
 						MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 
+				String path1 = path[0];
+				String path2 = path[2];
+				String path3 = path[1];
+
 				boolean autoCalled = false;
 				boolean step = false;
 				boolean verbose = true;
 				boolean test = true;
 				double[] vetReference = referenceGe();
-				boolean verticalDir = false;
+				int verticalDir = 3;
 				double profond = 30.0;
 
-				ResultsTable rt1 = mainUnifor(path, verticalDir, profond,
-						autoCalled, step, verbose, test);
+				ResultsTable rt1 = mainUnifor(path1, path2, verticalDir,
+						profond, "", autoCalled, step, verbose, test);
 				if (rt1 == null)
 					return;
 
@@ -718,16 +746,20 @@ public class p11rmn_ implements PlugIn, Measurements {
 				String[] path = new InputOutput().findListTestImages2(
 						MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 
+				String path1 = path[0];
+				String path2 = path[2];
+				String path3 = path[1];
+
 				boolean autoCalled = false;
 				boolean step = false;
 				boolean verbose = true;
 				boolean test = true;
 
 				double[] vetReference = referenceSiemens();
-				boolean verticalDir = true;
+				int verticalDir = 2;
 				double profond = 30.0;
-				ResultsTable rt1 = mainUnifor(path, verticalDir, profond,
-						autoCalled, step, verbose, test);
+				ResultsTable rt1 = mainUnifor(path1, path2, verticalDir,
+						profond, "", autoCalled, step, verbose, test);
 				if (rt1 == null)
 					return;
 				double[] vetResults = UtilAyv.vectorizeResults(rt1);
@@ -821,6 +853,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		String[] path = new InputOutput().findListTestImages2(
 				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
+		String path1 = path[0];
+		String path2 = path[2];
+		String path3 = path[1];
 
 		double[] vetReference = referenceSiemens();
 
@@ -828,11 +863,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 		boolean step = false;
 		boolean verbose = false;
 		boolean test = true;
-		boolean verticalDir = false;
+		int verticalDir = 3;
 		double profond = 30.0;
 
-		ResultsTable rt1 = p11rmn_.mainUnifor(path, verticalDir, profond,
-				autoCalled, step, verbose, test);
+		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, verticalDir,
+				profond, "", autoCalled, step, verbose, test);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 				MyConst.P11_vetName);
@@ -1166,13 +1201,13 @@ public class p11rmn_ implements PlugIn, Measurements {
 				"dx interp       =  " + IJ.d2s(dx, 2));
 		plot.addLabel(labelPosition, 0.80,
 				"fwhm            =  " + IJ.d2s(fwhm, 2));
-		plot.setColor(Color.green);
+		plot.setColor(color2);
 		xVetLineHalf[0] = 0;
 		xVetLineHalf[1] = len1;
 		yVetLineHalf[0] = half;
 		yVetLineHalf[1] = half;
 		plot.addPoints(xVetLineHalf, yVetLineHalf, PlotWindow.LINE);
-		plot.setColor(Color.red);
+		plot.setColor(color1);
 		plot.show();
 
 		plot.draw();
@@ -1314,18 +1349,27 @@ public class p11rmn_ implements PlugIn, Measurements {
 		return userSelection1;
 	}
 
-	public static boolean decodeDirez(String in1) {
-		boolean out = false;
+	public static int decodeDirezione(String in1) {
+		int out = 0;
 
-		if (in1.length() == 1) {
-			if (in1.equals("v") || in1.equals("V")) {
-				out = true;
-			} else if (in1.equals("h") || in1.equals("H")) {
-				out = false;
-			} else
-				MyLog.here("il codice direzione deve essere v = vertical oppure h = horizontal");
-		} else
-			MyLog.here("il codice della direzione deve essere di 1 lettera");
+		// TODO
+		if (in1.compareToIgnoreCase("x") == 0)
+			out = 0;
+
+		else if (in1.compareToIgnoreCase("vup") == 0)
+			out = 1;
+		else if (in1.compareToIgnoreCase("vdw") == 0)
+			out = 2;
+		else if (in1.compareToIgnoreCase("hsx") == 0)
+			out = 3;
+		else if (in1.compareToIgnoreCase("hdx") == 0)
+			out = 4;
+		else {
+			MyLog.waitHere("errore nella direzione in " + MyConst.CODE_FILE
+					+ " valore " + in1 + " non previsto");
+			out = -1;
+		}
+
 		return out;
 	}
 
@@ -1337,24 +1381,17 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * @param verbose
 	 * @param test
 	 */
-	public static double[] positionSearch(String path1, boolean autoCalled,
-			boolean verticalDir, double profond, boolean step, boolean verbose,
-			boolean test) {
+	public static double[] positionSearch(ImagePlus imp11, boolean autoCalled,
+			int direzione, double profond, String info10, boolean step,
+			boolean verbose, boolean test) {
 		//
 		// ================================================================================
 		// Inizio calcoli geometrici
 		// ================================================================================
 		//
+		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
+				: false;
 
-		ImagePlus imp11 = null;
-		if (verbose) {
-			imp11 = UtilAyv.openImageMaximized(path1);
-		} else {
-			imp11 = UtilAyv.openImageNoDisplay(path1, true);
-		}
-
-		if (imp11 == null)
-			new WaitForUserDialog("imp11 = NULL").show();
 		double dimPixel = ReadDicom
 				.readDouble(ReadDicom.readSubstring(
 						ReadDicom.readDicomParameter(imp11,
@@ -1364,6 +1401,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 		int height = imp11.getHeight();
 
 		overlayGrid(imp11, MyConst.P11_GRID_NUMBER, verbose);
+		imp11.updateAndDraw();
+
 		if (verbose)
 			imp11.setTitle("DIMENSIONI RETICOLO= "
 					+ (dimPixel * (double) height / (double) MyConst.P11_GRID_NUMBER)
@@ -1371,17 +1410,20 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		Overlay over1 = new Overlay();
 		imp11.setOverlay(over1);
+		imp11.updateAndDraw();
 
 		double[] out1 = UtilAyv.findMaximumPosition(imp11);
 		double xMaximum = out1[0];
 		double yMaximum = out1[1];
 
-		// if (step || test) {
+		// if (fast && (step || test)) {
 		imp11.setRoi(new OvalRoi((int) xMaximum - 4, (int) yMaximum - 4, 8, 8));
 		over1.addElement(imp11.getRoi());
-		over1.setStrokeColor(Color.red);
+		over1.setStrokeColor(color1);
 		imp11.updateAndDraw();
-		// MyLog.waitHere();
+		if (step)
+			MyLog.waitHere("Maximum value= " + out1[2] + " find at x= "
+					+ xMaximum + " y= " + yMaximum);
 		// }
 
 		// IJ.log("width= " + width + " height= " + height);
@@ -1390,109 +1432,117 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double startY = Double.NaN;
 		double endX = Double.NaN;
 		double endY = Double.NaN;
-		double diff1 = Double.NaN;
-		double diff2 = Double.NaN;
-		double posX = Double.NaN;
-		double posY = Double.NaN;
 
-		if (verticalDir) {
-			diff1 = Math.abs(0 - out1[1]);
-			diff2 = Math.abs(height - out1[1]);
-
-			if (diff1 < diff2) {
-				// suppongo che il punto di maximo sia sempre sul bordo,
-				// pertanto mi sposto di un segmento uguale a profondità
-				posY = out1[1] + profond / dimPixel;
-			} else if (diff1 > diff2) {
-				// suppongo che il punto di maximo sia sempre sul bordo,
-				// pertanto mi sposto di un segmento uguale a profondità
-				posY = out1[1] - profond / dimPixel;
-
-			} else
-				MyLog.waitHere("NON RIESCO A DETERMINARE AUTOMATICAMENTE LA POSIZIONE ROI PERCHE' IL MASSIMO E' ESATTAMENTE AL CENTRO");
-			// ora stabilisco le coordinate della linea orizzontale su cui fare
-			// il profilo
+		String strDirez = "";
+		// vup = 1 vdw = 2 hsx = 3 hdx = 4
+		switch (direzione) {
+		case 1:
+			strDirez = " verticale a salire";
 			startX = 0;
-			startY = posY;
 			endX = width;
-			endY = posY;
-
-		} else {
-
-			diff1 = Math.abs(0 - out1[0]);
-			diff2 = Math.abs(width - out1[0]);
-
-			if (diff1 < diff2) {
-				// suppongo che il punto di maximo sia sempre sul bordo,
-				// pertanto mi sposto di un segmento uguale a profondità
-				posX = out1[0] + profond;
-			} else if (diff1 > diff2) {
-				// suppongo che il punto di maximo sia sempre sul bordo,
-				// pertanto mi sposto di un segmento uguale a profondità
-				posX = out1[0] - profond;
-
-			} else
-				MyLog.waitHere("NON RIESCO A DETERMINARE AUTOMATICAMENTE LA POSIZIONE ROI PERCHE' IL MASSIMO E' ESATTAMENTE AL CENTRO");
-			// ora stabilisco le coordinate della linea orizzontale su cui fare
-			// il profilo
-			startX = posX;
+			startY = out1[1] - profond / dimPixel;
+			endY = startY;
+			break;
+		case 2:
+			strDirez = " verticale a scendere";
+			startX = 0;
+			endX = width;
+			startY = out1[1] + profond / dimPixel;
+			endY = startY;
+			break;
+		case 3:
+			strDirez = " orizzontale a sinistra";
+			startX = out1[0] - profond / dimPixel;
+			endX = startX;
 			startY = 0;
-			endX = posX;
 			endY = height;
+			break;
+		case 4:
+			strDirez = " orizzontale a destra";
+			startX = out1[0] + profond / dimPixel;
+			endX = startX;
+			startY = 0;
+			endY = height;
+			break;
+		default:
+			MyLog.waitHere("direzione non prevista !!!!");
 		}
 
+		// MyLog.waitHere("startX= " + startX + " startY= " + startY + " endX= "
+		// + endX + " endY= " + endY);
+
 		imp11.setRoi(new Line(startX, startY, endX, endY));
-		// if (step || test) {
 		over1.addElement(imp11.getRoi());
-		over1.setStrokeColor(Color.red);
-		// MyLog.waitHere();
-		// }
+		over1.setStrokeColor(color1);
+		imp11.updateAndDraw();
+		if (step)
+			MyLog.waitHere("selezione automatica direzione = " + strDirez);
 
 		double[] profi1 = ((Line) imp11.getRoi()).getPixels();
 		profi1[0] = 0;
 		profi1[profi1.length - 1] = 0;
 
-		// Plot plot1 = MyPlot.basePlot(profi1, "PROFILO", Color.blue);
-		// plot1.show();
-		// MyLog.waitHere();
-
 		int[] vetHalfPoint = halfPointSearch(profi1);
 
-		// MyLog.logVector(vetHalfPoint, "vetHalfPoint");
+		double[] xPoints = new double[vetHalfPoint.length];
+		double[] yPoints = new double[vetHalfPoint.length];
+		for (int i1 = 0; i1 < vetHalfPoint.length; i1++) {
+			xPoints[i1] = (double) vetHalfPoint[i1];
+			yPoints[i1] = profi1[vetHalfPoint[i1]];
+		}
+
+		// if (step) {
+		// Plot plot1 = MyPlot.basePlot(profi1, "PROFILO", Color.blue);
+		// plot1.draw();
+		// plot1.setColor(Color.red);
+		// plot1.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
+		// plot1.show();
+		//
+		// plot1.show();
+		// MyLog.waitHere();
+		// }
 
 		double[] fwhm = calcFwhm(vetHalfPoint, profi1, dimPixel);
-		// la posizione della ROI sarà approssimativamente
-		// vetHalfPoint[0]+fwhm/2;
-		// MyLog.logVector(fwhm, "fwhm");
-		// IJ.log("dimPuxel= " + dimPixel);
-
 		double centro = vetHalfPoint[0] + (fwhm[0] / 2) / dimPixel;
 
-		// MyLog.waitHere("centro= " + centro);
+		double xCenter[] = { centro };
+		double yCenter[] = { profi1[(int) centro] };
 
+		if (step) {
+			Plot plot1 = MyPlot.basePlot(profi1, "PROFILO", Color.blue);
+			plot1.draw();
+			plot1.setColor(Color.red);
+			plot1.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
+			plot1.draw();
+			plot1.addPoints(xCenter, yCenter, PlotWindow.BOX);
+			plot1.show();
+		}
+
+		MyLog.waitHere();
 		double ax = Double.NaN;
 		double ay = Double.NaN;
 
-		if (verticalDir) {
+		if (direzione < 3) {
 			ax = centro;
-			ay = posY;
+			ay = startY;
 
 		} else {
-			ax = posX;
+			ax = startX;
 			ay = centro;
 
 		}
 
-		// if (step || test) {
-		imp11.setRoi(new OvalRoi((int) ax - 4, (int) ay - 4, 8, 8));
-		over1.addElement(imp11.getRoi());
-		over1.setStrokeColor(Color.red);
-		imp11.updateAndDraw();
+		if (!fast && (step || test)) {
+			imp11.setRoi(new OvalRoi((int) ax - 4, (int) ay - 4, 8, 8));
+			over1.addElement(imp11.getRoi());
+			over1.setStrokeColor(color1);
+			imp11.updateAndDraw();
+		}
 
 		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 
 		if (!test)
-			MyLog.waitHere("MODIFICA MANUALE POSIZIONE ROI");
+			MyLog.waitMessage(info10 + "\n \nMODIFICA MANUALE POSIZIONE ROI");
 
 		Rectangle boundRec3 = imp11.getProcessor().getRoi();
 		double xCenterRoi = boundRec3.getCenterX();
@@ -1551,9 +1601,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 		}
 
 		if (showProfiles) {
-			Plot plot2 = MyPlot.basePlot(profi2x, profi2y, title, Color.GREEN);
+			Plot plot2 = MyPlot.basePlot(profi2x, profi2y, title, color2);
 			plot2.draw();
-			plot2.setColor(Color.red);
+			plot2.setColor(color1);
 			plot2.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
 			plot2.show();
 			new WaitForUserDialog("002 premere  OK").show();
@@ -1844,9 +1894,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 		// MyLog.logVector(xPoints2, "xPoints2");
 		// MyLog.logVector(yPoints2, "yPoints2");
 
-		// Plot plot2 = MyPlot.basePlot(profi1, "P R O F I L O", Color.GREEN);
+		// Plot plot2 = MyPlot.basePlot(profi1, "P R O F I L O", color2);
 		// plot2.draw();
-		// plot2.setColor(Color.red);
+		// plot2.setColor(color1);
 		// plot2.addPoints(xPoints1, yPoints1, PlotWindow.CIRCLE);
 		// plot2.setColor(Color.blue);
 		// plot2.addPoints(xPoints2, yPoints2, PlotWindow.CIRCLE);

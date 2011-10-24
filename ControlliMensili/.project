@@ -3,8 +3,6 @@
 	<name>ControlliMensili</name>
 	<comment></comment>
 	<projects>
-		<project>jcommon</project>
-		<project>jfreechart</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

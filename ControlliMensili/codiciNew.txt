@@ -1,7 +1,9 @@
 // Contiene le regole utilizzate da Sequenze per compilare il file
 // ayv.txt che verrà poi usato per chiamare il plug-in adatto
 // ad elaborare una determinata immagine
-// CODICE__________COMMENTO________________DA PASSARE_TOTALI__coil_v/h_prof_PLUGIN
+// N.B. si hanno 4 directions vup verticale a crescere, vdw vertivale a scendere 
+// hsx orizz. verso sx, hdx orizz. verso dx                  
+// CODICE__________COMMENTO________________DA PASSARE_TOTALI__coil_direction_prof_PLUGIN
 // MACCHINE SIEMENS SYMPHONY + AVANTO
 // BODY										
 BUSA_	/* Uniformità Assiale Body________*/	2	2	xxx		x	x	p3rmn_
@@ -91,400 +93,400 @@ HUSCA	/* Uniformità Assiale Head________*/	2	2	HE1-4	x	30	p3rmn_
 
 //
 // SPINE SIMPHONY						
-S1FA_	/* Flash SPINE S1_________________*/	4	4	xxx		v	x	p5rmn_
-S1SA_	/* SpinEcho SPINE S1______________*/	4	4	xxx		v	x	p5rmn_
-S2FA_	/* Flash SPINE S2_________________*/	4	4	xxx		v	x	p5rmn_
-S2SA_	/* SpinEcho SPINE S2______________*/	4	4	xxx		v	x	p5rmn_
-S3FA_	/* Flash SPINE S3_________________*/	4	4	xxx		v	x	p5rmn_
-S3SA_	/* SpinEcho SPINE S3______________*/	4	4	xxx		v	x	p5rmn_
-S4FA_	/* Flash SPINE S4_________________*/	4	4	xxx		v	x	p5rmn_
-S4SA_	/* SpinEcho SPINE S4______________*/	4	4	xxx		v	x	p5rmn_
-S5FA_	/* Flash SPINE S5_________________*/	4	4	xxx		v	x	p5rmn_
-S5SA_	/* SpinEcho SPINE S5______________*/	4	4	xxx		v	x	p5rmn_
-S6FA_	/* Flash SPINE S6_________________*/	4	4	xxx		v	x	p5rmn_
-S6SA_	/* SpinEcho SPINE S6______________*/	4	4	xxx		v	x	p5rmn_
+S1FA_	/* Flash SPINE S1_________________*/	4	4	xxx		vup	x	p5rmn_
+S1SA_	/* SpinEcho SPINE S1______________*/	4	4	xxx		vup	x	p5rmn_
+S2FA_	/* Flash SPINE S2_________________*/	4	4	xxx		vup	x	p5rmn_
+S2SA_	/* SpinEcho SPINE S2______________*/	4	4	xxx		vup	x	p5rmn_
+S3FA_	/* Flash SPINE S3_________________*/	4	4	xxx		vup	x	p5rmn_
+S3SA_	/* SpinEcho SPINE S3______________*/	4	4	xxx		vup	x	p5rmn_
+S4FA_	/* Flash SPINE S4_________________*/	4	4	xxx		vup	x	p5rmn_
+S4SA_	/* SpinEcho SPINE S4______________*/	4	4	xxx		vup	x	p5rmn_
+S5FA_	/* Flash SPINE S5_________________*/	4	4	xxx		vup	x	p5rmn_
+S5SA_	/* SpinEcho SPINE S5______________*/	4	4	xxx		vup	x	p5rmn_
+S6FA_	/* Flash SPINE S6_________________*/	4	4	xxx		vup	x	p5rmn_
+S6SA_	/* SpinEcho SPINE S6______________*/	4	4	xxx		vup	x	p5rmn_
 //               
 // BODY ARRAY SIMPHONY						
-B1FS_	/* Flash BODY ARRAY B1____________*/	4	4	xxx		h	x	p5rmn_
-B1SS_	/* SpinEcho BODY ARRAY B1_________*/	4	4	xxx		h	x	p5rmn_
-B2FS_	/* Flash BODY ARRAY B2____________*/	4	4	xxx		h	x	p5rmn_
-B2SS_	/* SpinEcho BODY ARRAY B2_________*/	4	4	xxx		h	x	p5rmn_
+B1FS_	/* Flash BODY ARRAY B1____________*/	4	4	xxx		hdx	x	p5rmn_
+B1SS_	/* SpinEcho BODY ARRAY B1_________*/	4	4	xxx		hdx	x	p5rmn_
+B2FS_	/* Flash BODY ARRAY B2____________*/	4	4	xxx		hdx	x	p5rmn_
+B2SS_	/* SpinEcho BODY ARRAY B2_________*/	4	4	xxx		hdx	x	p5rmn_
 //           
 // ROVATO
-B1FE_	/* Flash BODY ARRAY EXT B1________*/	4	4	xxx		h	x	p5rmn_
-B1SE_	/* SpinEcho BODY ARRAY EXT B1_____*/	4	4	xxx		h	x	p5rmn_
-B2FE_	/* Flash BODY ARRAY EXT B2________*/	4	4	xxx		h	x	p5rmn_
-B2SE_	/* SpinEcho BODY ARRAY EXT B2_____*/	4	4	xxx		h	x	p5rmn_
-B3FE_	/* Flash BODY ARRAY EXT B3________*/	4	4	xxx		h	x	p5rmn_
-B3SE_	/* SpinEcho BODY ARRAY EXT B3_____*/	4	4	xxx		h	x	p5rmn_
-B4FE_	/* Flash BODY ARRAY EXT B4________*/	4	4	xxx		h	x	p5rmn_
-B4SE_	/* SpinEcho BODY ARRAY EXT B4_____*/	4	4	xxx		h	x	p5rmn_
+B1FE_	/* Flash BODY ARRAY EXT B1________*/	4	4	xxx		hdx	x	p5rmn_
+B1SE_	/* SpinEcho BODY ARRAY EXT B1_____*/	4	4	xxx		hdx	x	p5rmn_
+B2FE_	/* Flash BODY ARRAY EXT B2________*/	4	4	xxx		hdx	x	p5rmn_
+B2SE_	/* SpinEcho BODY ARRAY EXT B2_____*/	4	4	xxx		hdx	x	p5rmn_
+B3FE_	/* Flash BODY ARRAY EXT B3________*/	4	4	xxx		hdx	x	p5rmn_
+B3SE_	/* SpinEcho BODY ARRAY EXT B3_____*/	4	4	xxx		hdx	x	p5rmn_
+B4FE_	/* Flash BODY ARRAY EXT B4________*/	4	4	xxx		hdx	x	p5rmn_
+B4SE_	/* SpinEcho BODY ARRAY EXT B4_____*/	4	4	xxx		hdx	x	p5rmn_
 //
 // BODY ARRAY AVANTO						
-B1FA_	/* Flash BODY ARRAY B1____________*/	4	4	xxx		v	x	p5rmn_
-B1SA_	/* SpinEcho BODY ARRAY B1_________*/	4	4	xxx		v	x	p5rmn_
-B2FA_	/* Flash BODY ARRAY B2____________*/	4	4	xxx		v	x	p5rmn_
-B2SA_	/* SpinEcho BODY ARRAY B2_________*/	4	4	xxx		v	x	p5rmn_
-B1FB_	/* Flash BODY ARRAY B1____________*/	4	4	xxx		v	x	p5rmn_
-B1SB_	/* SpinEcho BODY ARRAY B1_________*/	4	4	xxx		v	x	p5rmn_
-B2FB_	/* Flash BODY ARRAY B2____________*/	4	4	xxx		v	x	p5rmn_
-B2SB_	/* SpinEcho BODY ARRAY B2_________*/	4	4	xxx		v	x	p5rmn_
+B1FA_	/* Flash BODY ARRAY B1____________*/	4	4	xxx		vdw	x	p5rmn_
+B1SA_	/* SpinEcho BODY ARRAY B1_________*/	4	4	xxx		vdw	x	p5rmn_
+B2FA_	/* Flash BODY ARRAY B2____________*/	4	4	xxx		vdw	x	p5rmn_
+B2SA_	/* SpinEcho BODY ARRAY B2_________*/	4	4	xxx		vdw	x	p5rmn_
+B1FB_	/* Flash BODY ARRAY B1____________*/	4	4	xxx		vdw	x	p5rmn_
+B1SB_	/* SpinEcho BODY ARRAY B1_________*/	4	4	xxx		vdw	x	p5rmn_
+B2FB_	/* Flash BODY ARRAY B2____________*/	4	4	xxx		vdw	x	p5rmn_
+B2SB_	/* SpinEcho BODY ARRAY B2_________*/	4	4	xxx		vdw	x	p5rmn_
 //
 // BODY ARRAY AVANTO SAVE UNCOMBINED						
-A12S_	/* SpinEcho BODY ARRAY B1_________*/	4	4	BO1		v	x	p5rmn_
-A12F_	/* Flash BODY ARRAY B1____________*/	4	4	BO1		v	x	p5rmn_
-A12S_	/* SpinEcho BODY ARRAY B2_________*/	4	4	BO2		v	x	p5rmn_
-A12F_	/* Flash BODY ARRAY B2____________*/	4	4	BO2		v	x	p5rmn_
-B12S_	/* SpinEcho BODY ARRAY B1_________*/	4	4	BO1		v	x	p5rmn_
-B12F_	/* Flash BODY ARRAY B1____________*/	4	4	BO1		v	x	p5rmn_
-B12S_	/* SpinEcho BODY ARRAY B2_________*/	4	4	BO2		v	x	p5rmn_ 
-B12F_	/* Flash BODY ARRAY B2____________*/	4	4	BO2		v	x	p5rmn_
+A12S_	/* SpinEcho BODY ARRAY B1_________*/	4	4	BO1		vdw	x	p5rmn_
+A12F_	/* Flash BODY ARRAY B1____________*/	4	4	BO1		vdw	x	p5rmn_
+A12S_	/* SpinEcho BODY ARRAY B2_________*/	4	4	BO2		vdw	x	p5rmn_
+A12F_	/* Flash BODY ARRAY B2____________*/	4	4	BO2		vdw	x	p5rmn_
+B12S_	/* SpinEcho BODY ARRAY B1_________*/	4	4	BO1		vdw	x	p5rmn_
+B12F_	/* Flash BODY ARRAY B1____________*/	4	4	BO1		vdw	x	p5rmn_
+B12S_	/* SpinEcho BODY ARRAY B2_________*/	4	4	BO2		vdw	x	p5rmn_ 
+B12F_	/* Flash BODY ARRAY B2____________*/	4	4	BO2		vdw	x	p5rmn_
 //
 // BODY ARRAY AERA SAVE UNCOMBINED						
-C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	BO1		h	30	p10rmn_
-C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	BO1		h	30	p10rmn_
-C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	BO2		h	30	p10rmn_
-C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	BO2		h	30	p10rmn_
-C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	BO3		h	30	p10rmn_
-C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	BO3		h	30	p10rmn_
+C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	BO1		hdx	30	p10rmn_
+C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	BO1		hdx	30	p10rmn_
+C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	BO2		hdx	30	p10rmn_
+C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	BO2		hdx	30	p10rmn_
+C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	BO3		hdx	30	p10rmn_
+C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	BO3		hdx	30	p10rmn_
 
-C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B11		h	30	p10rmn_
-C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B11		h	30	p10rmn_
-C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B21		h	30	p10rmn_
-C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B21		h	30	p10rmn_
-C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B31		h	30	p10rmn_
-C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B31		h	30	p10rmn_
+C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B11		hdx	30	p10rmn_
+C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B11		hdx	30	p10rmn_
+C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B21		hdx	30	p10rmn_
+C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B21		hdx	30	p10rmn_
+C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B31		hdx	30	p10rmn_
+C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B31		hdx	30	p10rmn_
 
-C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B12		h	30	p10rmn_
-C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B12		h	30	p10rmn_
-C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B22		h	30	p10rmn_
-C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B22		h	30	p10rmn_
-C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B32		h	30	p10rmn_
-C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B32		h	30	p10rmn_
+C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B12		hdx	30	p10rmn_
+C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B12		hdx	30	p10rmn_
+C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B22		hdx	30	p10rmn_
+C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B22		hdx	30	p10rmn_
+C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B32		hdx	30	p10rmn_
+C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B32		hdx	30	p10rmn_
 
-C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B13		h	30	p10rmn_
-C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B13		h	30	p10rmn_
-C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B23		h	30	p10rmn_
-C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B23		h	30	p10rmn_
-C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B33		h	30	p10rmn_
-C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B33		h	30	p10rmn_
+C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B13		hdx	30	p10rmn_
+C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B13		hdx	30	p10rmn_
+C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B23		hdx	30	p10rmn_
+C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B23		hdx	30	p10rmn_
+C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B33		hdx	30	p10rmn_
+C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B33		hdx	30	p10rmn_
 
-C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B14		h	30	p10rmn_
-C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B14		h	30	p10rmn_
-C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B24		h	30	p10rmn_
-C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B24		h	30	p10rmn_
-C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B34		h	30	p10rmn_
-C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B34		h	30	p10rmn_
+C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B14		hdx	30	p10rmn_
+C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B14		hdx	30	p10rmn_
+C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B24		hdx	30	p10rmn_
+C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B24		hdx	30	p10rmn_
+C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B34		hdx	30	p10rmn_
+C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B34		hdx	30	p10rmn_
 
-C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B15		h	30	p10rmn_
-C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B15		h	30	p10rmn_
-C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B25		h	30	p10rmn_
-C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B25		h	30	p10rmn_
-C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B35		h	30	p10rmn_
-C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B35		h	30	p10rmn_
+C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B15		hdx	30	p10rmn_
+C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B15		hdx	30	p10rmn_
+C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B25		hdx	30	p10rmn_
+C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B25		hdx	30	p10rmn_
+C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B35		hdx	30	p10rmn_
+C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B35		hdx	30	p10rmn_
 
-C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B16		h	30	p10rmn_
-C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B16		h	30	p10rmn_
-C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B26		h	30	p10rmn_
-C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B26		h	30	p10rmn_
-C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B36		h	30	p10rmn_
-C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B36		h	30	p10rmn_
+C1AS_	/* SpinEcho BODY ARRAY B01_A______*/	4	4	B16		hdx	30	p10rmn_
+C1AF_	/* Flash BODY ARRAY B01_A_________*/	4	4	B16		hdx	30	p10rmn_
+C1BS_	/* SpinEcho BODY ARRAY B02_A______*/	4	4	B26		hdx	30	p10rmn_
+C1BF_	/* Flash BODY ARRAY B02_A_________*/	4	4	B26		hdx	30	p10rmn_
+C1CS_	/* SpinEcho BODY ARRAY B03_A______*/	4	4	B36		hdx	30	p10rmn_
+C1CF_	/* Flash BODY ARRAY B03_A_________*/	4	4	B36		hdx	30	p10rmn_
 //
 //
-D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	BO1		h	30	p10rmn_
-D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	BO1		h	30	p10rmn_
-D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	BO2		h	30	p10rmn_
-D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	BO2		h	30	p10rmn_
-D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	BO3		h	30	p10rmn_
-D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	BO3		h	30	p10rmn_
+D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	BO1		hdx	30	p10rmn_
+D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	BO1		hdx	30	p10rmn_
+D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	BO2		hdx	30	p10rmn_
+D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	BO2		hdx	30	p10rmn_
+D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	BO3		hdx	30	p10rmn_
+D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	BO3		hdx	30	p10rmn_
 
-D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B11		h	30	p10rmn_
-D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B11		h	30	p10rmn_
-D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B21		h	30	p10rmn_
-D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B21		h	30	p10rmn_
-D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B31		h	30	p10rmn_
-D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B31		h	30	p10rmn_
+D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B11		hdx	30	p10rmn_
+D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B11		hdx	30	p10rmn_
+D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B21		hdx	30	p10rmn_
+D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B21		hdx	30	p10rmn_
+D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B31		hdx	30	p10rmn_
+D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B31		hdx	30	p10rmn_
 
-D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B12		h	30	p10rmn_
-D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B12		h	30	p10rmn_
-D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B22		h	30	p10rmn_
-D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B22		h	30	p10rmn_
-D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B32		h	30	p10rmn_
-D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B32		h	30	p10rmn_
+D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B12		hdx	30	p10rmn_
+D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B12		hdx	30	p10rmn_
+D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B22		hdx	30	p10rmn_
+D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B22		hdx	30	p10rmn_
+D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B32		hdx	30	p10rmn_
+D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B32		hdx	30	p10rmn_
 
-D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B13		h	30	p10rmn_
-D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B13		h	30	p10rmn_
-D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B23		h	30	p10rmn_
-D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B23		h	30	p10rmn_
-D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B33		h	30	p10rmn_
-D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B33		h	30	p10rmn_
+D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B13		hdx	30	p10rmn_
+D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B13		hdx	30	p10rmn_
+D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B23		hdx	30	p10rmn_
+D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B23		hdx	30	p10rmn_
+D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B33		hdx	30	p10rmn_
+D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B33		hdx	30	p10rmn_
 
-D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B14		h	30	p10rmn_
-D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B14		h	30	p10rmn_
-D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B24		h	30	p10rmn_
-D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B24		h	30	p10rmn_
-D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B34		h	30	p10rmn_
-D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B34		h	30	p10rmn_
+D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B14		hdx	30	p10rmn_
+D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B14		hdx	30	p10rmn_
+D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B24		hdx	30	p10rmn_
+D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B24		hdx	30	p10rmn_
+D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B34		hdx	30	p10rmn_
+D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B34		hdx	30	p10rmn_
 
-D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B15		h	30	p10rmn_
-D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B15		h	30	p10rmn_
-D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B25		h	30	p10rmn_
-D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B25		h	30	p10rmn_
-D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B35		h	30	p10rmn_
-D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B35		h	30	p10rmn_
+D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B15		hdx	30	p10rmn_
+D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B15		hdx	30	p10rmn_
+D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B25		hdx	30	p10rmn_
+D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B25		hdx	30	p10rmn_
+D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B35		hdx	30	p10rmn_
+D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B35		hdx	30	p10rmn_
 
-D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B16		h	30	p10rmn_
-D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B16		h	30	p10rmn_
-D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B26		h	30	p10rmn_
-D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B26		h	30	p10rmn_
-D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B36		h	30	p10rmn_
-D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B36		h	30	p10rmn_
+D1AS_	/* SpinEcho BODY ARRAY B01_B______*/	4	4	B16		hdx	30	p10rmn_
+D1AF_	/* Flash BODY ARRAY B01_B_________*/	4	4	B16		hdx	30	p10rmn_
+D1BS_	/* SpinEcho BODY ARRAY B02_B______*/	4	4	B26		hdx	30	p10rmn_
+D1BF_	/* Flash BODY ARRAY B02_B_________*/	4	4	B26		hdx	30	p10rmn_
+D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B36		hdx	30	p10rmn_
+D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B36		hdx	30	p10rmn_
 //
 // BODY ARRAY 16ch MANERBIO SAVE UNCOMBINED
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A1A		h	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A1A		h	x	p5rmn_
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A1B		h	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A1B		h	x	p5rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A1A		hdx	x	p5rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A1A		hdx	x	p5rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A1B		hdx	x	p5rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A1B		hdx	x	p5rmn_
 
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A2A		h	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A2A		h	x	p5rmn_
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A2B		h	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A2B		h	x	p5rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A2A		hdx	x	p5rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A2A		hdx	x	p5rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A2B		hdx	x	p5rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A2B		hdx	x	p5rmn_
 
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A3A		h	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A3A		h	x	p5rmn_
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A3B		h	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A3B		h	x	p5rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A3A		hdx	x	p5rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A3A		hdx	x	p5rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A3B		hdx	x	p5rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A3B		hdx	x	p5rmn_
 
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A4A		h	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A4A		h	x	p5rmn_
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A4B		h	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A4B		h	x	p5rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A4A		hdx	x	p5rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A4A		hdx	x	p5rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A4B		hdx	x	p5rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A4B		hdx	x	p5rmn_
 
 R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	C:BA1,2	x	x	p3rmn_
 R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	C:BA1,2	x	x	p3rmn_
 
 
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A5A		h	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A5A		h	x	p5rmn_
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A5B		h	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A5B		h	x	p5rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A5A		hdx	x	p5rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A5A		hdx	x	p5rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A5B		hdx	x	p5rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A5B		hdx	x	p5rmn_
 
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A6A		h	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A6A		h	x	p5rmn_
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A6B		h	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A6B		h	x	p5rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A6A		hdx	x	p5rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A6A		hdx	x	p5rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A6B		hdx	x	p5rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A6B		hdx	x	p5rmn_
 
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A7A		h	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A7A		h	x	p5rmn_
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A7B		h	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A7B		h	x	p5rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A7A		hdx	x	p5rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A7A		hdx	x	p5rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A7B		hdx	x	p5rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A7B		hdx	x	p5rmn_
 
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A8A		h	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A8A		h	x	p5rmn_
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A8B		h	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A8B		h	x	p5rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A8A		hdx	x	p5rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A8A		hdx	x	p5rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A8B		hdx	x	p5rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A8B		hdx	x	p5rmn_
 
 R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	C:BA3,4	x	x	p3rmn_
 R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	C:BA3,4	x	x	p3rmn_
 
-R1FA_	/* Flash BODY ARRAY 16CH B1_______*/	4	0	xxx		h	x	p5rmn_
-R1SA_	/* SpinEcho BODY ARRAY 16CH B1____*/	4	0	xxx		h	x	p5rmn_
-R2FA_	/* Flash BODY ARRAY 16CH B2_______*/	4	0	xxx		h	x	p5rmn_
-R2SA_	/* SpinEcho BODY ARRAY 16CH B2____*/	4	0	xxx		h	x	p5rmn_
+R1FA_	/* Flash BODY ARRAY 16CH B1_______*/	4	0	xxx		hdx	x	p5rmn_
+R1SA_	/* SpinEcho BODY ARRAY 16CH B1____*/	4	0	xxx		hdx	x	p5rmn_
+R2FA_	/* Flash BODY ARRAY 16CH B2_______*/	4	0	xxx		hdx	x	p5rmn_
+R2SA_	/* SpinEcho BODY ARRAY 16CH B2____*/	4	0	xxx		hdx	x	p5rmn_
 //
 // SPINE AVANTO						
-S1FS_	/* Flash SPINE S1_________________*/	4	4	xxx		h	x	p5rmn_
-S1SS_	/* SpinEcho SPINE S1______________*/	4	4	xxx		h	x	p5rmn_
-S2FS_	/* Flash SPINE S2_________________*/	4	4	xxx		h	x	p5rmn_
-S2SS_	/* SpinEcho SPINE S2______________*/	4	4	xxx		h	x	p5rmn_
-S3FS_	/* Flash SPINE S3_________________*/	4	4	xxx		h	x	p5rmn_
-S3SS_	/* SpinEcho SPINE S3______________*/	4	4	xxx		h	x	p5rmn_
-S4FS_	/* Flash SPINE S4_________________*/	4	4	xxx		h	x	p5rmn_
-S4SS_	/* SpinEcho SPINE S4______________*/	4	4	xxx		h	x	p5rmn_
-S5FS_	/* Flash SPINE S5_________________*/	4	4	xxx		h	x	p5rmn_
-S5SS_	/* SpinEcho SPINE S5______________*/	4	4	xxx		h	x	p5rmn_
-S6FS_	/* Flash SPINE S6_________________*/	4	4	xxx		h	x	p5rmn_
-S6SS_	/* SpinEcho SPINE S6______________*/	4	4	xxx		h	x	p5rmn_
-S7FS_	/* Flash SPINE S7_________________*/	4	4	xxx		h	x	p5rmn_
-S7SS_	/* SpinEcho SPINE S7______________*/	4	4	xxx		h	x	p5rmn_
-S8FS_	/* Flash SPINE S8_________________*/	4	4	xxx		h	x	p5rmn_
-S8SS_	/* SpinEcho SPINE S8______________*/	4	4	xxx		h	x	p5rmn_
+S1FS_	/* Flash SPINE S1_________________*/	4	4	xxx		hdx	x	p5rmn_
+S1SS_	/* SpinEcho SPINE S1______________*/	4	4	xxx		hdx	x	p5rmn_
+S2FS_	/* Flash SPINE S2_________________*/	4	4	xxx		hdx	x	p5rmn_
+S2SS_	/* SpinEcho SPINE S2______________*/	4	4	xxx		hdx	x	p5rmn_
+S3FS_	/* Flash SPINE S3_________________*/	4	4	xxx		hdx	x	p5rmn_
+S3SS_	/* SpinEcho SPINE S3______________*/	4	4	xxx		hdx	x	p5rmn_
+S4FS_	/* Flash SPINE S4_________________*/	4	4	xxx		hdx	x	p5rmn_
+S4SS_	/* SpinEcho SPINE S4______________*/	4	4	xxx		hdx	x	p5rmn_
+S5FS_	/* Flash SPINE S5_________________*/	4	4	xxx		hdx	x	p5rmn_
+S5SS_	/* SpinEcho SPINE S5______________*/	4	4	xxx		hdx	x	p5rmn_
+S6FS_	/* Flash SPINE S6_________________*/	4	4	xxx		hdx	x	p5rmn_
+S6SS_	/* SpinEcho SPINE S6______________*/	4	4	xxx		hdx	x	p5rmn_
+S7FS_	/* Flash SPINE S7_________________*/	4	4	xxx		hdx	x	p5rmn_
+S7SS_	/* SpinEcho SPINE S7______________*/	4	4	xxx		hdx	x	p5rmn_
+S8FS_	/* Flash SPINE S8_________________*/	4	4	xxx		hdx	x	p5rmn_
+S8SS_	/* SpinEcho SPINE S8______________*/	4	4	xxx		hdx	x	p5rmn_
 //
 // SPINE AVANTO SAVE UNCOMBINED
-S12S_	/* SpinEcho SPINE S1-2____________*/	4	4	SP1		h	30	p11rmn_
-S12F_	/* Flash SPINE S1-2_______________*/	4	4	SP1		h	30	p11rmn_
-S34S_	/* SpinEcho SPINE S3-4____________*/	4	4	SP3		h	x	p5rmn_
-S34F_	/* Flash SPINE S3-4_______________*/	4	4	SP3		h	x	p5rmn_
-S56S_	/* SpinEcho SPINE S5-6____________*/	4	4	SP5		h	x	p5rmn_
-S56F_	/* Flash SPINE S5-6_______________*/	4	4	SP5		h	x	p5rmn_
-S78S_	/* SpinEcho SPINE S7-8____________*/	4	4	SP7		h	x	p5rmn_
-S78F_	/* Flash SPINE S7-8_______________*/	4	4	SP7		h	x	p5rmn_
+S12S_	/* SpinEcho SPINE S1-2____________*/	4	4	SP1		hsx	30	p11rmn_
+S12F_	/* Flash SPINE S1-2_______________*/	4	4	SP1		hsx	30	p11rmn_
+S34S_	/* SpinEcho SPINE S3-4____________*/	4	4	SP3		hsx	x	p5rmn_
+S34F_	/* Flash SPINE S3-4_______________*/	4	4	SP3		hsx	x	p5rmn_
+S56S_	/* SpinEcho SPINE S5-6____________*/	4	4	SP5		hsx	x	p5rmn_
+S56F_	/* Flash SPINE S5-6_______________*/	4	4	SP5		hsx	x	p5rmn_
+S78S_	/* SpinEcho SPINE S7-8____________*/	4	4	SP7		hsx	x	p5rmn_
+S78F_	/* Flash SPINE S7-8_______________*/	4	4	SP7		hsx	x	p5rmn_
 
 
-S12S_	/* SpinEcho SPINE S1-2____________*/	4	4	SP2		h	30	p11rmn_
-S12F_	/* Flash SPINE S1-2_______________*/	4	4	SP2		h	30	p11rmn_
-S34F_	/* Flash SPINE S3-4_______________*/	4	4	SP4		h	x	p5rmn_
-S34S_	/* SpinEcho SPINE S3-4____________*/	4	4	SP4		h	x	p5rmn_
-S56S_	/* SpinEcho SPINE S5-6____________*/	4	4	SP6		h	x	p5rmn_
-S56F_	/* Flash SPINE S5-6_______________*/	4	4	SP6		h	x	p5rmn_
-S78S_	/* SpinEcho SPINE S7-8____________*/	4	4	SP8		h	x	p5rmn_
-S78F_	/* Flash SPINE S7-8_______________*/	4	4	SP8		h	x	p5rmn_
+S12S_	/* SpinEcho SPINE S1-2____________*/	4	4	SP2		hsx	30	p11rmn_
+S12F_	/* Flash SPINE S1-2_______________*/	4	4	SP2		hsx	30	p11rmn_
+S34F_	/* Flash SPINE S3-4_______________*/	4	4	SP4		hsx	x	p5rmn_
+S34S_	/* SpinEcho SPINE S3-4____________*/	4	4	SP4		hsx	x	p5rmn_
+S56S_	/* SpinEcho SPINE S5-6____________*/	4	4	SP6		hsx	x	p5rmn_
+S56F_	/* Flash SPINE S5-6_______________*/	4	4	SP6		hsx	x	p5rmn_
+S78S_	/* SpinEcho SPINE S7-8____________*/	4	4	SP8		hsx	x	p5rmn_
+S78F_	/* Flash SPINE S7-8_______________*/	4	4	SP8		hsx	x	p5rmn_
 
-//S12S_	/* SpinEcho SPINE S1-2____________*/	4	4	C:SP1,2	h	30	p11rmn_
-//S12F_	/* Flash SPINE S1-2_______________*/	4	4	C:SP1,2	h	30	p11rmn_
-//S34F_	/* Flash SPINE S3-4_______________*/	4	4	C:SP3,4	h	x	p5rmn_
-//S34S_	/* SpinEcho SPINE S3-4____________*/	4	4	C:SP3,4	h	x	p5rmn_
-//S56S_	/* SpinEcho SPINE S5-6____________*/	4	4	C:SP5,6	h	x	p5rmn_
-//S56F_	/* Flash SPINE S5-6_______________*/	4	4	C:SP5,6	h	x	p5rmn_
-//S78F_	/* Flash SPINE S7-8_______________*/	4	4	C:SP7,8	h	x	p5rmn_
-//S78S_	/* SpinEcho SPINE S7-8____________*/	4	4	C:SP7,8	h	x	p5rmn_
+//S12S_	/* SpinEcho SPINE S1-2____________*/	4	4	C:SP1,2	hsx	30	p11rmn_
+//S12F_	/* Flash SPINE S1-2_______________*/	4	4	C:SP1,2	hsx	30	p11rmn_
+//S34F_	/* Flash SPINE S3-4_______________*/	4	4	C:SP3,4	hsx	x	p5rmn_
+//S34S_	/* SpinEcho SPINE S3-4____________*/	4	4	C:SP3,4	hsx	x	p5rmn_
+//S56S_	/* SpinEcho SPINE S5-6____________*/	4	4	C:SP5,6	hsx	x	p5rmn_
+//S56F_	/* Flash SPINE S5-6_______________*/	4	4	C:SP5,6	hsx	x	p5rmn_
+//S78F_	/* Flash SPINE S7-8_______________*/	4	4	C:SP7,8	hsx	x	p5rmn_
+//S78S_	/* SpinEcho SPINE S7-8____________*/	4	4	C:SP7,8	hsx	x	p5rmn_
 //
 // SPINE AERA SAVE UNCOMBINED
-S1AS_	/* SpinEcho SPINE S1______________*/	4	4	SP1		v	30	p11rmn_
-S1AF_	/* Flash SPINE S1_________________*/	4	4	SP1		v	30	p11rmn_
-S2AS_	/* SpinEcho SPINE S2______________*/	4	4	SP2		v	30	p11rmn_
-S2AF_	/* Flash SPINE S2_________________*/	4	4	SP2		v	30	p11rmn_
-S3AS_	/* SpinEcho SPINE S3______________*/	4	4	SP3		v	30	p11rmn_
-S3AF_	/* Flash SPINE S3_________________*/	4	4	SP3		v	30	p11rmn_
-S4AS_	/* SpinEcho SPINE S4______________*/	4	4	SP4		v	30	p11rmn_
-S4AF_	/* Flash SPINE S4_________________*/	4	4	SP4		v	30	p11rmn_
-S5AS_	/* SpinEcho SPINE S5______________*/	4	4	SP5		v	30	p11rmn_
-S5AF_	/* Flash SPINE S5_________________*/	4	4	SP5		v	30	p11rmn_
-S6AS_	/* SpinEcho SPINE S6______________*/	4	4	SP6		v	30	p11rmn_
-S6AF_	/* Flash SPINE S6_________________*/	4	4	SP6		v	30	p11rmn_
-S7AS_	/* SpinEcho SPINE S7______________*/	4	4	SP7		v	30	p11rmn_
-S7AF_	/* Flash SPINE S7_________________*/	4	4	SP7		v	30	p11rmn_
-S8AS_	/* SpinEcho SPINE S8______________*/	4	4	SP8		v	30	p11rmn_
-S8AF_	/* Flash SPINE S8_________________*/	4	4	SP8		v	30	p11rmn_
+S1AS_	/* SpinEcho SPINE S1______________*/	4	4	SP1		vup	30	p11rmn_
+S1AF_	/* Flash SPINE S1_________________*/	4	4	SP1		vup	30	p11rmn_
+S2AS_	/* SpinEcho SPINE S2______________*/	4	4	SP2		vup	30	p11rmn_
+S2AF_	/* Flash SPINE S2_________________*/	4	4	SP2		vup	30	p11rmn_
+S3AS_	/* SpinEcho SPINE S3______________*/	4	4	SP3		vup	30	p11rmn_
+S3AF_	/* Flash SPINE S3_________________*/	4	4	SP3		vup	30	p11rmn_
+S4AS_	/* SpinEcho SPINE S4______________*/	4	4	SP4		vup	30	p11rmn_
+S4AF_	/* Flash SPINE S4_________________*/	4	4	SP4		vup	30	p11rmn_
+S5AS_	/* SpinEcho SPINE S5______________*/	4	4	SP5		vup	30	p11rmn_
+S5AF_	/* Flash SPINE S5_________________*/	4	4	SP5		vup	30	p11rmn_
+S6AS_	/* SpinEcho SPINE S6______________*/	4	4	SP6		vup	30	p11rmn_
+S6AF_	/* Flash SPINE S6_________________*/	4	4	SP6		vup	30	p11rmn_
+S7AS_	/* SpinEcho SPINE S7______________*/	4	4	SP7		vup	30	p11rmn_
+S7AF_	/* Flash SPINE S7_________________*/	4	4	SP7		vup	30	p11rmn_
+S8AS_	/* SpinEcho SPINE S8______________*/	4	4	SP8		vup	30	p11rmn_
+S8AF_	/* Flash SPINE S8_________________*/	4	4	SP8		vup	30	p11rmn_
 
-S1AS_	/* SpinEcho SPINE S1______________*/	4	4	S11		v	30	p11rmn_
-S1AF_	/* Flash SPINE S1_________________*/	4	4	S11		v	30	p11rmn_
-S2AS_	/* SpinEcho SPINE S2______________*/	4	4	S21		v	30	p11rmn_
-S2AF_	/* Flash SPINE S2_________________*/	4	4	S21		v	30	p11rmn_
-S3AS_	/* SpinEcho SPINE S3______________*/	4	4	S31		v	30	p11rmn_
-S3AF_	/* Flash SPINE S3_________________*/	4	4	S31		v	30	p11rmn_
-S4AS_	/* SpinEcho SPINE S4______________*/	4	4	S41		v	30	p11rmn_
-S4AF_	/* Flash SPINE S4_________________*/	4	4	S41		v	30	p11rmn_
-S5AS_	/* SpinEcho SPINE S5______________*/	4	4	S51		v	30	p11rmn_
-S5AF_	/* Flash SPINE S5_________________*/	4	4	S51		v	30	p11rmn_
-S6AS_	/* SpinEcho SPINE S6______________*/	4	4	S61		v	30	p11rmn_
-S6AF_	/* Flash SPINE S6_________________*/	4	4	S61		v	30	p11rmn_
-S7AS_	/* SpinEcho SPINE S7______________*/	4	4	S71		v	30	p11rmn_
-S7AF_	/* Flash SPINE S7_________________*/	4	4	S71		v	30	p11rmn_
-S8AS_	/* SpinEcho SPINE S8______________*/	4	4	S81		v	30	p11rmn_
-S8AF_	/* Flash SPINE S8_________________*/	4	4	S81		v	30	p11rmn_
+S1AS_	/* SpinEcho SPINE S1______________*/	4	4	S11		vup	30	p11rmn_
+S1AF_	/* Flash SPINE S1_________________*/	4	4	S11		vup	30	p11rmn_
+S2AS_	/* SpinEcho SPINE S2______________*/	4	4	S21		vup	30	p11rmn_
+S2AF_	/* Flash SPINE S2_________________*/	4	4	S21		vup	30	p11rmn_
+S3AS_	/* SpinEcho SPINE S3______________*/	4	4	S31		vup	30	p11rmn_
+S3AF_	/* Flash SPINE S3_________________*/	4	4	S31		vup	30	p11rmn_
+S4AS_	/* SpinEcho SPINE S4______________*/	4	4	S41		vup	30	p11rmn_
+S4AF_	/* Flash SPINE S4_________________*/	4	4	S41		vup	30	p11rmn_
+S5AS_	/* SpinEcho SPINE S5______________*/	4	4	S51		vup	30	p11rmn_
+S5AF_	/* Flash SPINE S5_________________*/	4	4	S51		vup	30	p11rmn_
+S6AS_	/* SpinEcho SPINE S6______________*/	4	4	S61		vup	30	p11rmn_
+S6AF_	/* Flash SPINE S6_________________*/	4	4	S61		vup	30	p11rmn_
+S7AS_	/* SpinEcho SPINE S7______________*/	4	4	S71		vup	30	p11rmn_
+S7AF_	/* Flash SPINE S7_________________*/	4	4	S71		vup	30	p11rmn_
+S8AS_	/* SpinEcho SPINE S8______________*/	4	4	S81		vup	30	p11rmn_
+S8AF_	/* Flash SPINE S8_________________*/	4	4	S81		vup	30	p11rmn_
 
-S1AS_	/* SpinEcho SPINE S1______________*/	4	4	S12		v	30	p11rmn_
-S1AF_	/* Flash SPINE S1_________________*/	4	4	S12		v	30	p11rmn_
-S2AS_	/* SpinEcho SPINE S2______________*/	4	4	S22		v	30	p11rmn_
-S2AF_	/* Flash SPINE S2_________________*/	4	4	S22		v	30	p11rmn_
-S3AS_	/* SpinEcho SPINE S3______________*/	4	4	S32		v	30	p11rmn_
-S3AF_	/* Flash SPINE S3_________________*/	4	4	S32		v	30	p11rmn_
-S4AS_	/* SpinEcho SPINE S4______________*/	4	4	S42		v	30	p11rmn_
-S4AF_	/* Flash SPINE S4_________________*/	4	4	S42		v	30	p11rmn_
-S5AS_	/* SpinEcho SPINE S5______________*/	4	4	S52		v	30	p11rmn_
-S5AF_	/* Flash SPINE S5_________________*/	4	4	S52		v	30	p11rmn_
-S6AS_	/* SpinEcho SPINE S6______________*/	4	4	S62		v	30	p11rmn_
-S6AF_	/* Flash SPINE S6_________________*/	4	4	S62		v	30	p11rmn_
-S7AS_	/* SpinEcho SPINE S7______________*/	4	4	S72		v	30	p11rmn_
-S7AF_	/* Flash SPINE S7_________________*/	4	4	S72		v	30	p11rmn_
-S8AS_	/* SpinEcho SPINE S8______________*/	4	4	S82		v	30	p11rmn_
-S8AF_	/* Flash SPINE S8_________________*/	4	4	S82		v	30	p11rmn_
+S1AS_	/* SpinEcho SPINE S1______________*/	4	4	S12		vup	30	p11rmn_
+S1AF_	/* Flash SPINE S1_________________*/	4	4	S12		vup	30	p11rmn_
+S2AS_	/* SpinEcho SPINE S2______________*/	4	4	S22		vup	30	p11rmn_
+S2AF_	/* Flash SPINE S2_________________*/	4	4	S22		vup	30	p11rmn_
+S3AS_	/* SpinEcho SPINE S3______________*/	4	4	S32		vup	30	p11rmn_
+S3AF_	/* Flash SPINE S3_________________*/	4	4	S32		vup	30	p11rmn_
+S4AS_	/* SpinEcho SPINE S4______________*/	4	4	S42		vup	30	p11rmn_
+S4AF_	/* Flash SPINE S4_________________*/	4	4	S42		vup	30	p11rmn_
+S5AS_	/* SpinEcho SPINE S5______________*/	4	4	S52		vup	30	p11rmn_
+S5AF_	/* Flash SPINE S5_________________*/	4	4	S52		vup	30	p11rmn_
+S6AS_	/* SpinEcho SPINE S6______________*/	4	4	S62		vup	30	p11rmn_
+S6AF_	/* Flash SPINE S6_________________*/	4	4	S62		vup	30	p11rmn_
+S7AS_	/* SpinEcho SPINE S7______________*/	4	4	S72		vup	30	p11rmn_
+S7AF_	/* Flash SPINE S7_________________*/	4	4	S72		vup	30	p11rmn_
+S8AS_	/* SpinEcho SPINE S8______________*/	4	4	S82		vup	30	p11rmn_
+S8AF_	/* Flash SPINE S8_________________*/	4	4	S82		vup	30	p11rmn_
 
-S1AS_	/* SpinEcho SPINE S1______________*/	4	4	S13		v	30	p11rmn_
-S1AF_	/* Flash SPINE S1_________________*/	4	4	S13		v	30	p11rmn_
-S2AS_	/* SpinEcho SPINE S2______________*/	4	4	S23		v	30	p11rmn_
-S2AF_	/* Flash SPINE S2_________________*/	4	4	S23		v	30	p11rmn_
-S3AS_	/* SpinEcho SPINE S3______________*/	4	4	S33		v	30	p11rmn_
-S3AF_	/* Flash SPINE S3_________________*/	4	4	S33		v	30	p11rmn_
-S4AS_	/* SpinEcho SPINE S4______________*/	4	4	S43		v	30	p11rmn_
-S4AF_	/* Flash SPINE S4_________________*/	4	4	S43		v	30	p11rmn_
-S5AS_	/* SpinEcho SPINE S5______________*/	4	4	S53		v	30	p11rmn_
-S5AF_	/* Flash SPINE S5_________________*/	4	4	S53		v	30	p11rmn_
-S6AS_	/* SpinEcho SPINE S6______________*/	4	4	S63		v	30	p11rmn_
-S6AF_	/* Flash SPINE S6_________________*/	4	4	S63		v	30	p11rmn_
-S7AS_	/* SpinEcho SPINE S7______________*/	4	4	S73		v	30	p11rmn_
-S7AF_	/* Flash SPINE S7_________________*/	4	4	S73		v	30	p11rmn_
-S8AS_	/* SpinEcho SPINE S8______________*/	4	4	S83		v	30	p11rmn_
-S8AF_	/* Flash SPINE S8_________________*/	4	4	S83		v	30	p11rmn_
+S1AS_	/* SpinEcho SPINE S1______________*/	4	4	S13		vup	30	p11rmn_
+S1AF_	/* Flash SPINE S1_________________*/	4	4	S13		vup	30	p11rmn_
+S2AS_	/* SpinEcho SPINE S2______________*/	4	4	S23		vup	30	p11rmn_
+S2AF_	/* Flash SPINE S2_________________*/	4	4	S23		vup	30	p11rmn_
+S3AS_	/* SpinEcho SPINE S3______________*/	4	4	S33		vup	30	p11rmn_
+S3AF_	/* Flash SPINE S3_________________*/	4	4	S33		vup	30	p11rmn_
+S4AS_	/* SpinEcho SPINE S4______________*/	4	4	S43		vup	30	p11rmn_
+S4AF_	/* Flash SPINE S4_________________*/	4	4	S43		vup	30	p11rmn_
+S5AS_	/* SpinEcho SPINE S5______________*/	4	4	S53		vup	30	p11rmn_
+S5AF_	/* Flash SPINE S5_________________*/	4	4	S53		vup	30	p11rmn_
+S6AS_	/* SpinEcho SPINE S6______________*/	4	4	S63		vup	30	p11rmn_
+S6AF_	/* Flash SPINE S6_________________*/	4	4	S63		vup	30	p11rmn_
+S7AS_	/* SpinEcho SPINE S7______________*/	4	4	S73		vup	30	p11rmn_
+S7AF_	/* Flash SPINE S7_________________*/	4	4	S73		vup	30	p11rmn_
+S8AS_	/* SpinEcho SPINE S8______________*/	4	4	S83		vup	30	p11rmn_
+S8AF_	/* Flash SPINE S8_________________*/	4	4	S83		vup	30	p11rmn_
 
-S1AS_	/* SpinEcho SPINE S1______________*/	4	4	S14		v	30	p11rmn_
-S1AF_	/* Flash SPINE S1_________________*/	4	4	S14		v	30	p11rmn_
-S2AS_	/* SpinEcho SPINE S2______________*/	4	4	S24		v	30	p11rmn_
-S2AF_	/* Flash SPINE S2_________________*/	4	4	S24		v	30	p11rmn_
-S3AS_	/* SpinEcho SPINE S3______________*/	4	4	S34		v	30	p11rmn_
-S3AF_	/* Flash SPINE S3_________________*/	4	4	S34		v	30	p11rmn_
-S4AS_	/* SpinEcho SPINE S4______________*/	4	4	S44		v	30	p11rmn_
-S4AF_	/* Flash SPINE S4_________________*/	4	4	S44		v	30	p11rmn_
-S5AS_	/* SpinEcho SPINE S5______________*/	4	4	S54		v	30	p11rmn_
-S5AF_	/* Flash SPINE S5_________________*/	4	4	S54		v	30	p11rmn_
-S6AS_	/* SpinEcho SPINE S6______________*/	4	4	S64		v	30	p11rmn_
-S6AF_	/* Flash SPINE S6_________________*/	4	4	S64		v	30	p11rmn_
-S7AS_	/* SpinEcho SPINE S7______________*/	4	4	S74		v	30	p11rmn_
-S7AF_	/* Flash SPINE S7_________________*/	4	4	S74		v	30	p11rmn_
-S8AS_	/* SpinEcho SPINE S8______________*/	4	4	S84		v	30	p11rmn_
-S8AF_	/* Flash SPINE S8_________________*/	4	4	S84		v	30	p11rmn_
+S1AS_	/* SpinEcho SPINE S1______________*/	4	4	S14		vup	30	p11rmn_
+S1AF_	/* Flash SPINE S1_________________*/	4	4	S14		vup	30	p11rmn_
+S2AS_	/* SpinEcho SPINE S2______________*/	4	4	S24		vup	30	p11rmn_
+S2AF_	/* Flash SPINE S2_________________*/	4	4	S24		vup	30	p11rmn_
+S3AS_	/* SpinEcho SPINE S3______________*/	4	4	S34		vup	30	p11rmn_
+S3AF_	/* Flash SPINE S3_________________*/	4	4	S34		vup	30	p11rmn_
+S4AS_	/* SpinEcho SPINE S4______________*/	4	4	S44		vup	30	p11rmn_
+S4AF_	/* Flash SPINE S4_________________*/	4	4	S44		vup	30	p11rmn_
+S5AS_	/* SpinEcho SPINE S5______________*/	4	4	S54		vup	30	p11rmn_
+S5AF_	/* Flash SPINE S5_________________*/	4	4	S54		vup	30	p11rmn_
+S6AS_	/* SpinEcho SPINE S6______________*/	4	4	S64		vup	30	p11rmn_
+S6AF_	/* Flash SPINE S6_________________*/	4	4	S64		vup	30	p11rmn_
+S7AS_	/* SpinEcho SPINE S7______________*/	4	4	S74		vup	30	p11rmn_
+S7AF_	/* Flash SPINE S7_________________*/	4	4	S74		vup	30	p11rmn_
+S8AS_	/* SpinEcho SPINE S8______________*/	4	4	S84		vup	30	p11rmn_
+S8AF_	/* Flash SPINE S8_________________*/	4	4	S84		vup	30	p11rmn_
 //
 // BREAST 						
-BL1S_	/* Flash BREAST LEFT______________*/	4	4	xxx		h	x	p5rmn_
-BL1F_	/* Flash BREAST LEFT______________*/	4	4	xxx		h	x	p5rmn_
-BR1S_	/* SpinEcho BREAST RIGHT__________*/	4	4	xxx		h	x	p5rmn_
-BR1F_	/* SpinEcho BREAST RIGHT__________*/	4	4	xxx		h	x	p5rmn_
+BL1S_	/* Flash BREAST LEFT______________*/	4	4	xxx		hdx	x	p5rmn_
+BL1F_	/* Flash BREAST LEFT______________*/	4	4	xxx		hdx	x	p5rmn_
+BR1S_	/* SpinEcho BREAST RIGHT__________*/	4	4	xxx		hdx	x	p5rmn_
+BR1F_	/* SpinEcho BREAST RIGHT__________*/	4	4	xxx		hdx	x	p5rmn_
 //
 // NECK ARRAY SIMPHONY					
-N1FS_	/* Flash NECK ARRAY N1____________*/	4	4	xxx		h	x	p5rmn_
-N1SS_	/* SpinEcho NECK ARRAY N1_________*/	4	4	xxx		h	x	p5rmn_
-N2FS_	/* Flash NECK ARRAY N2____________*/	4	4	xxx		h	x	p5rmn_
-N2SS_	/* SpinEcho NECK ARRAY N2_________*/	4	4	xxx		h	x	p5rmn_
+N1FS_	/* Flash NECK ARRAY N1____________*/	4	4	xxx		hdx	x	p5rmn_
+N1SS_	/* SpinEcho NECK ARRAY N1_________*/	4	4	xxx		hdx	x	p5rmn_
+N2FS_	/* Flash NECK ARRAY N2____________*/	4	4	xxx		hdx	x	p5rmn_
+N2SS_	/* SpinEcho NECK ARRAY N2_________*/	4	4	xxx		hdx	x	p5rmn_
 //
 // ROVATO
-N1FE_	/* Flash NECK ARRAY N1____________*/	4	4	xxx		h	x	p5rmn_
-N1SE_	/* SpinEcho NECK ARRAY N1_________*/	4	4	xxx		h	x	p5rmn_
-N2FE_	/* Flash NECK ARRAY N2____________*/	4	4	xxx		h	x	p5rmn_
-N2SE_	/* SpinEcho NECK ARRAY N2_________*/	4	4	xxx		h	x	p5rmn_
+N1FE_	/* Flash NECK ARRAY N1____________*/	4	4	xxx		hdx	x	p5rmn_
+N1SE_	/* SpinEcho NECK ARRAY N1_________*/	4	4	xxx		hdx	x	p5rmn_
+N2FE_	/* Flash NECK ARRAY N2____________*/	4	4	xxx		hdx	x	p5rmn_
+N2SE_	/* SpinEcho NECK ARRAY N2_________*/	4	4	xxx		hdx	x	p5rmn_
 //
 // NECK MATRIX AVANTO					
-N1FA_	/* Flash NECK ARRAY B1____________*/	4	4	xxx		h	x	p5rmn_
-N1SA_	/* SpinEcho NECK ARRAY B1_________*/	4	4	xxx		h	x	p5rmn_
-N2FA_	/* Flash NECK ARRAY B2____________*/	4	4	xxx		h	x	p5rmn_
-N2SA_	/* SpinEcho NECK ARRAY B2_________*/	4	4	xxx		h	x	p5rmn_
+N1FA_	/* Flash NECK ARRAY B1____________*/	4	4	xxx		hdx	x	p5rmn_
+N1SA_	/* SpinEcho NECK ARRAY B1_________*/	4	4	xxx		hdx	x	p5rmn_
+N2FA_	/* Flash NECK ARRAY B2____________*/	4	4	xxx		hdx	x	p5rmn_
+N2SA_	/* SpinEcho NECK ARRAY B2_________*/	4	4	xxx		hdx	x	p5rmn_
 //
 // NECK MATRIX AVANTO SAVE UNCOMBINED					
-N12S_	/* SpinEcho NECK ARRAY B1-2_______*/	4	4	NE1		h	x	p5rmn_
-N12F_	/* Flash NECK ARRAY B1-2__________*/	4	4	NE1		h	x	p5rmn_
-N12S_	/* SpinEcho NECK ARRAY B1-2_______*/	4	4	NE2		h	x	p5rmn_
-N12F_	/* Flash NECK ARRAY B1-2__________*/	4	4	NE2		h	x	p5rmn_
-//N12S_	/* SpinEcho NECK ARRAY B1-2_______*/	4	4	C:NE1,2	h	x	p5rmn_
-//N12F_	/* Flash NECK ARRAY B1-2__________*/	4	4	C:NE1,2	h	x	p5rmn_
+N12S_	/* SpinEcho NECK ARRAY B1-2_______*/	4	4	NE1		hdx	x	p5rmn_
+N12F_	/* Flash NECK ARRAY B1-2__________*/	4	4	NE1		hdx	x	p5rmn_
+N12S_	/* SpinEcho NECK ARRAY B1-2_______*/	4	4	NE2		hdx	x	p5rmn_
+N12F_	/* Flash NECK ARRAY B1-2__________*/	4	4	NE2		hdx	x	p5rmn_
+//N12S_	/* SpinEcho NECK ARRAY B1-2_______*/	4	4	C:NE1,2	hdx	x	p5rmn_
+//N12F_	/* Flash NECK ARRAY B1-2__________*/	4	4	C:NE1,2	hdx	x	p5rmn_
 //
 // NECK MATRIX AERA SAVE UNCOMBINED					
-O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N11		h	30	p11rmn_
-O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N12		h	30	p11rmn_
-O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N21		h	30	p11rmn_
-O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N22		h	30	p11rmn_
-O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	NE1,2	h	30	p11rmn_
-O12F_	/* Flash NECK ARRAY_______________*/	4	4	N11		h	30	p11rmn_
-O12F_	/* Flash NECK ARRAY_______________*/	4	4	N12		h	30	p11rmn_
-O12F_	/* Flash NECK ARRAY_______________*/	4	4	N21		h	30	p11rmn_
-O12F_	/* Flash NECK ARRAY_______________*/	4	4	N22		h	30	p11rmn_
-O12F_	/* Flash NECK ARRAY_______________*/	4	4	NE1,2	h	30	p11rmn_
+O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N11		hdx	30	p11rmn_
+O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N12		hdx	30	p11rmn_
+O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N21		hdx	30	p11rmn_
+O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N22		hdx	30	p11rmn_
+O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	NE1,2	hdx	30	p11rmn_
+O12F_	/* Flash NECK ARRAY_______________*/	4	4	N11		hdx	30	p11rmn_
+O12F_	/* Flash NECK ARRAY_______________*/	4	4	N12		hdx	30	p11rmn_
+O12F_	/* Flash NECK ARRAY_______________*/	4	4	N21		hdx	30	p11rmn_
+O12F_	/* Flash NECK ARRAY_______________*/	4	4	N22		hdx	30	p11rmn_
+O12F_	/* Flash NECK ARRAY_______________*/	4	4	NE1,2	hdx	30	p11rmn_
 //
 // LOOP AND FLEXIBLE						
 LLFS_	/* Flash LARGE LOOP_______________*/	4	4	xxx		x	x	p3rmn_
 LLSS_	/* SpinEcho LARGE LOOP____________*/	4	4	xxx		x	x	p3rmn_
-SLFS_	/* Flash SMALL LOOP_______________*/	4	4	xxx		h	x	p5rmn_
-SLSS_	/* SpinEcho SMALL LOOP____________*/	4	4	xxx		h	x	p5rmn_
+SLFS_	/* Flash SMALL LOOP_______________*/	4	4	xxx		hdx	x	p5rmn_
+SLSS_	/* SpinEcho SMALL LOOP____________*/	4	4	xxx		hdx	x	p5rmn_
 LFFS_	/* Flash LARGE FLEXIBLE___________*/	4	4	xxx		x	x	p3rmn_
 LFSS_	/* SpinEcho LARGE FLEXIBLE________*/	4	4	xxx		x	x	p3rmn_
 SFFS_	/* Flash SMALL FLEXIBLE___________*/	4	4	xxx		x	x	p3rmn_
 SFSS_	/* SpinEcho SMALL FLEXIBLE________*/	4	4	xxx		x	x	p3rmn_
 //
 // SMALL LOOP AERA 						
-TLFS_	/* Flash SMALL LOOP_______________*/	4	4	xxx		h	x	p5rmn_
-TLSS_	/* SpinEcho SMALL LOOP____________*/	4	4	xxx		h	x	p5rmn_
-ULFS_	/* Flash SMALL LOOP_B_____________*/	4	4	xxx		h	x	p5rmn_
-ULSS_	/* SpinEcho SMALL LOOP_B__________*/	4	4	xxx		h	x	p5rmn_
+TLFS_	/* Flash SMALL LOOP_______________*/	4	4	xxx		hdx	x	p5rmn_
+TLSS_	/* SpinEcho SMALL LOOP____________*/	4	4	xxx		hdx	x	p5rmn_
+ULFS_	/* Flash SMALL LOOP_B_____________*/	4	4	xxx		hdx	x	p5rmn_
+ULSS_	/* SpinEcho SMALL LOOP_B__________*/	4	4	xxx		hdx	x	p5rmn_
 //
 // FLEXIBLE AERA SAVE UNCOMBINED
 LBFS_	/* Flash LARGE FLEXIBLE___________*/	4	4	FL		x	x	p5rmn_
@@ -683,12 +685,12 @@ T2M3_	/* T2 multi SpinEcho Body_________*/	1	0	xxx		x	x	p9rmn_
 // GIORNALIERI						
 D1BC_	/* Daily Body_____________________*/	4	0	xxx		x	x	p3rmn_
 D2HC_	/* Daily Head_____________________*/	4	0	xxx		x	x	p3rmn_
-D3S1_	/* Daily SPINE S1_________________*/	4	0	xxx		h	x	p5rmn_
-D4S5_	/* Daily SPINE S5_________________*/	4	0	xxx		h	x	p5rmn_
-D5N1_	/* Daily NECK ARRAY N1____________*/	4	0	xxx		h	x	p5rmn_
-D5N2_	/* Daily NECK ARRAY N2____________*/	4	0	xxx		h	x	p5rmn_
-D3B1_	/* Daily BODY ARRAY B1____________*/	4	0	xxx		h	x	p5rmn_
-D3B2_	/* Daily BODY ARRAY B2____________*/	4	0	xxx		h	x	p5rmn_
+D3S1_	/* Daily SPINE S1_________________*/	4	0	xxx		hdx	x	p5rmn_
+D4S5_	/* Daily SPINE S5_________________*/	4	0	xxx		hdx	x	p5rmn_
+D5N1_	/* Daily NECK ARRAY N1____________*/	4	0	xxx		hdx	x	p5rmn_
+D5N2_	/* Daily NECK ARRAY N2____________*/	4	0	xxx		hdx	x	p5rmn_
+D3B1_	/* Daily BODY ARRAY B1____________*/	4	0	xxx		hdx	x	p5rmn_
+D3B2_	/* Daily BODY ARRAY B2____________*/	4	0	xxx		hdx	x	p5rmn_
 D4LF_	/* Daily LARGE FLEXIBLE___________*/	4	0	xxx		x	x	p3rmn_
 D5SF_	/* Daily SMALL FLEXIBLE___________*/	4	0	xxx		x	x	p3rmn_
 //
@@ -719,11 +721,11 @@ NVAH2	/* NeurovascularArray Ass.Head____*/	2	2	xxx		x	x	p3rmn_
 9GSA2	/* 9 inch General Purpose_________*/	2	2	xxx		x	x	p3rmn_
 LKSA2	/* Large Knee_____________________*/	2	2	xxx		x	x	p3rmn_
 SKSA2	/* Small Knee_____________________*/	2	2	xxx		x	x	p3rmn_
-FOSA2	/* Foot___________________________*/	4	4	xxx		h	x	p5rmn_
-WRSA2	/* Wrist__________________________*/	4	4	xxx		h	x	p5rmn_
-CVSA2	/* Spine  Cervical________________*/	4	4	xxx		h	x	p5rmn_
-CTSA2	/* Spine  Thoracic________________*/	4	4	xxx		h	x	p5rmn_
-CLSA2	/* Spine  Lumbar__________________*/	4	4	xxx		h	x	p5rmn_
+FOSA2	/* Foot___________________________*/	4	4	xxx		hdx	x	p5rmn_
+WRSA2	/* Wrist__________________________*/	4	4	xxx		hdx	x	p5rmn_
+CVSA2	/* Spine  Cervical________________*/	4	4	xxx		hdx	x	p5rmn_
+CTSA2	/* Spine  Thoracic________________*/	4	4	xxx		hdx	x	p5rmn_
+CLSA2	/* Spine  Lumbar__________________*/	4	4	xxx		hdx	x	p5rmn_
 T2MA2	/* T2 multi SpinEcho Head_________*/	4	4	xxx		x	x	p2rmn_
 HT1A2	/* Head SE pesata T1 _____________*/	1	1	xxx		x	x	p9rmn_
 T2M12	/* T2 multi SpinEcho Head_________*/	1	0	xxx		x	x	p9rmn_
@@ -776,6 +778,6 @@ NVCH3	/* Neurovascular Coil Head________*/	2	2	xxx		x	x	p3rmn_
 RWCA3	/* Wrist__________________________*/	2	2	xxx		x	x	p3rmn_
 RBCA3	/* Torso__________________________*/	2	2	xxx		x	x	p3rmn_
 CTLC3	/* CervicalToracicLumbar Cerv_____*/	2	2	xxx		x	x	p3rmn_
-CTLT3	/* CervicalToracicLumbar Torac____*/	2	2	xxx		h	x	p5rmn_
-CTL13	/* CervicalToracicLumbar Lumb1____*/	2	2	xxx		h	x	p5rmn_
-CTL23	/* CervicalToracicLumbar Lumb2____*/	2	2	xxx		h	x	p5rmn_
+CTLT3	/* CervicalToracicLumbar Torac____*/	2	2	xxx		hdx	x	p5rmn_
+CTL13	/* CervicalToracicLumbar Lumb1____*/	2	2	xxx		hdx	x	p5rmn_
+CTL23	/* CervicalToracicLumbar Lumb2____*/	2	2	xxx		hdx	x	p5rmn_

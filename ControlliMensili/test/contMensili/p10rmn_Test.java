@@ -37,8 +37,8 @@ public class p10rmn_Test {
 	public final void testMainUniforTestGe() {
 
 		String home1 = new p10rmn_().findTestImages();
-		String path1 = home1 + "A001_testP10";
-		String path2 = home1 + "A002_testP10";
+		String path1 = home1 + "C001_testP10";
+		String path2 = home1 + "C002_testP10";
 
 		String autoArgs = "0";
 		boolean autoCalled = false;
@@ -49,7 +49,7 @@ public class p10rmn_Test {
 		double profond = 30;
 
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				autoCalled, step, verbose, test);
+				"", autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 
@@ -63,8 +63,8 @@ public class p10rmn_Test {
 	public final void testMainUniforTestSiemens() {
 
 		String home1 = new p10rmn_().findTestImages();
-		String path1 = home1 + "A001_testP10";
-		String path2 = home1 + "A002_testP10";
+		String path1 = home1 + "C001_testP10";
+		String path2 = home1 + "C002_testP10";
 
 		String autoArgs = "0";
 		boolean autoCalled = false;
@@ -75,7 +75,7 @@ public class p10rmn_Test {
 		double profond = 30;
 
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				autoCalled, step, verbose, test);
+				"", autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 
@@ -95,8 +95,8 @@ public class p10rmn_Test {
 		boolean verbose = true;
 		boolean test = false;
 		double profond = 30;
-		p10rmn_.mainUnifor(path1, path2, autoArgs, profond, autoCalled, step,
-				verbose, test);
+		p10rmn_.mainUnifor(path1, path2, autoArgs, profond, "info10",
+				autoCalled, step, verbose, test);
 		new WaitForUserDialog("Do something, then click OK.").show();
 		// IJ.wait(500);
 	}

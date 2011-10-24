@@ -2,6 +2,8 @@ package contMensili;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.WindowManager;
+import ij.gui.ImageWindow;
 import ij.gui.Line;
 import ij.gui.PointRoi;
 import ij.gui.Roi;
@@ -13,6 +15,7 @@ import java.awt.Color;
 
 import utils.InputOutput;
 import utils.MyConst;
+import utils.MyLog;
 import utils.ReadDicom;
 import utils.UtilAyv;
 
@@ -81,5 +84,30 @@ public class demo_ implements PlugIn, Measurements {
 				.getPath();
 		return (home1);
 	} // findTestImages
+
+	public void showImages() {
+		
+		ImagePlus imp1 = UtilAyv.openImageMaximized("./Test2/B003_TestP2");
+		ImageWindow iw1 = WindowManager.getCurrentWindow();
+		ImagePlus imp2 = UtilAyv.openImageMaximized("./Test2/C001_TestP10");
+		ImageWindow iw2 = WindowManager.getCurrentWindow();
+
+		MyLog.waitHere("win1 to front");
+		if (true) {
+			WindowManager.setCurrentWindow(iw1);
+		}
+		MyLog.waitHere("win2 to front");
+		if (true) {
+			WindowManager.setCurrentWindow(iw2);
+		}
+		MyLog.waitHere("win1 to front");
+		if (true) {
+			WindowManager.setCurrentWindow(iw1);
+		}
+		MyLog.waitHere("win2 to front");
+		if (true) {
+			WindowManager.setCurrentWindow(iw2);
+		}
+	}
 
 }

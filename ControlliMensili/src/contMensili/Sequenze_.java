@@ -98,7 +98,7 @@ public class Sequenze_ implements PlugIn {
 		// + new InputOutput().findResource("Sequenze_.class"));
 
 		String[][] tableCode = TableCode.loadTable(MyConst.CODE_FILE);
-		// MyLog.logMatrix(tableCode, "tableCode");
+	//	MyLog.logMatrix(tableCode, "tableCode");
 		String[][] tableExpand = TableExpand.loadTable(MyConst.EXPAND_FILE);
 		new AboutBox().about("Scansione automatica cartelle", this.getClass());
 		IJ.wait(2000);
@@ -107,7 +107,7 @@ public class Sequenze_ implements PlugIn {
 		GenericDialog gd = new GenericDialog("", IJ.getInstance());
 		gd.addCheckbox("Nuovo controllo", false);
 		gd.addCheckbox("SelfTest", false);
-		gd.addCheckbox("ZZZIPPP", false);
+		gd.addCheckbox("Fast", true);
 
 		gd.showDialog();
 		if (gd.wasCanceled()) {
@@ -215,6 +215,8 @@ public class Sequenze_ implements PlugIn {
 			}
 			String[][] tableSequenceLoaded = generateSequenceTable(list,
 					tableCode, tableExpand);
+			// MyLog.logMatrix(tableSequenceLoaded, "tableSequenceLoaded");
+			// MyLog.waitHere("salvare il log");
 
 			// cancello gli eventuali messaggi di ImageJ dal log
 			// if (WindowManager.getFrame("Log") != null) {
@@ -226,12 +228,18 @@ public class Sequenze_ implements PlugIn {
 				return;
 			}
 			String[][] tableSequenceSorted = bubbleSortSequenceTable(tableSequenceLoaded);
+			// MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
+			// MyLog.waitHere("salvare il log");
 
 			String[][] tableSequenceReordered = reorderSequenceTable(
 					tableSequenceSorted, tableCode);
+			// MyLog.logMatrix(tableSequenceReordered, "tableSequenceReordered");
+			// MyLog.waitHere("salvare il log");
 
 			String[][] listProblems = verifySequenceTable(
 					tableSequenceReordered, tableCode);
+			// MyLog.logMatrix(listProblems, "listProblems");
+			// MyLog.waitHere("salvare il log");
 
 			logVerifySequenceTable(listProblems);
 
@@ -320,7 +328,8 @@ public class Sequenze_ implements PlugIn {
 		}
 		int count3 = 0;
 		for (int i1 = 0; i1 < pathList.length; i1++) {
-			IJ.showStatus(i1 + " / " + pathList.length);
+			IJ.showStatus("generateSequenceTable " + i1 + " / "
+					+ pathList.length);
 			IJ.redirectErrorMessages();
 
 			int type = (new Opener()).getFileType(pathList[i1]);
@@ -394,13 +403,13 @@ public class Sequenze_ implements PlugIn {
 					vetCodice.add(codice);
 					vetCoil.add(coil);
 					vetImaDaPassare.add(tableCode2[tableRow][1]);
-					vetDirez.add(tableCode2[tableRow][4]);
-					vetProfond.add(tableCode2[tableRow][5]);
 					vetSerie.add(numSerie);
 					vetAcq.add(numAcq);
 					vetIma.add(numIma);
 					vetAcqTime.add(acqTime);
 					vetEchoTime.add(echoTime);
+					vetDirez.add(tableCode2[tableRow][4]);
+					vetProfond.add(tableCode2[tableRow][5]);
 					vetDone.add(done);
 					String[] espansione;
 					// vedo se occorre espandere
@@ -419,6 +428,8 @@ public class Sequenze_ implements PlugIn {
 						vetIma.add(numIma);
 						vetAcqTime.add(acqTime);
 						vetEchoTime.add(echoTime);
+						vetDirez.add(tableCode2[tableRow][4]);
+						vetProfond.add(tableCode2[tableRow][5]);
 						vetDone.add(done);
 					}
 				} else {
@@ -628,6 +639,7 @@ public class Sequenze_ implements PlugIn {
 				j1++;
 			}
 		}
+		
 		String[][] chiamate = new String[vetPlugin.size()][2];
 		for (int i1 = 0; i1 < vetPlugin.size(); i1++) {
 			chiamate[i1][0] = vetPlugin.get(i1);

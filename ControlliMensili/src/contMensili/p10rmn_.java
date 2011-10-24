@@ -3,6 +3,8 @@ package contMensili;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
+import ij.WindowManager;
+import ij.gui.ImageWindow;
 import ij.gui.Line;
 import ij.gui.NewImage;
 import ij.gui.OvalRoi;
@@ -146,7 +148,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				boolean verbose = true;
 				boolean test = false;
 				double profond = 30;
-				mainUnifor(path1, path2, "0", profond, autoCalled, step,
+				mainUnifor(path1, path2, "0", profond, "", autoCalled, step,
 						verbose, test);
 
 				UtilAyv.afterWork();
@@ -163,8 +165,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
 				: false;
-		IJ.log("p10rmn_.autoMenu fast= " + fast);
-		IJ.log("p10rmn_.autoMenu autoargs= " + autoArgs);
+		// IJ.log("p10rmn_.autoMenu fast= " + fast);
+		// IJ.log("p10rmn_.autoMenu autoargs= " + autoArgs);
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
 		if (vetRiga[0] == -1) {
@@ -181,9 +183,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
 				+ MyConst.SEQUENZE_FILE);
 
+		String info10 = (vetRiga[0] + 1) + " / "
+				+ TableSequence.getLength(iw2ayvTable) + "   code= "
+				+ TableSequence.getCode(iw2ayvTable, vetRiga[0]) + "   coil= "
+				+ TableSequence.getCoil(iw2ayvTable, vetRiga[0]);
+
 		String path1 = "";
 		String path2 = "";
-		TableUtils.dumpTableRow(iw2ayvTable, vetRiga[0]);
+		// TableUtils.dumpTableRow(iw2ayvTable, vetRiga[0]);
 
 		if (nTokens == MyConst.TOKENS2) {
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
@@ -201,11 +208,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 			boolean verbose = true;
 			boolean test = false;
 
-			double profond = Double.parseDouble(TableSequence.getProfond(
-					iw2ayvTable, vetRiga[0]));
+			double profond = readDouble(TableSequence.getProfond(iw2ayvTable,
+					vetRiga[0]));
+			if (UtilAyv.isNaN(profond)) {
+				MyLog.logVector(iw2ayvTable[vetRiga[0]], "stringa");
+				MyLog.waitHere();
+			}
+			
 
-			mainUnifor(path1, path2, autoArgs, profond, autoCalled, step,
-					verbose, test);
+			mainUnifor(path1, path2, autoArgs, profond, info10, autoCalled,
+					step, verbose, test);
 
 			UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
@@ -244,8 +256,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 					double profond = Double.parseDouble(TableSequence
 							.getProfond(iw2ayvTable, vetRiga[0]));
 
-					mainUnifor(path1, path2, autoArgs, profond, autoCalled,
-							step, verbose, test);
+					mainUnifor(path1, path2, autoArgs, profond, info10,
+							autoCalled, step, verbose, test);
 
 					UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
@@ -260,30 +272,39 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	@SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String path1, String path2,
-			String autoArgs, double profond, boolean autoCalled, boolean step,
-			boolean verbose, boolean test) {
+			String autoArgs, double profond, String info10, boolean autoCalled,
+			boolean step, boolean verbose, boolean test) {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		double angle = Double.NaN;
+		boolean fast = false;
+
+		if (Prefs.get("prefer.fast", "false").equals("true")) {
+			fast = true;
+		} else {
+			fast = false;
+		}
+
+		// boolean fast = Prefs.get("prefer.fast", "false").equals("true") ?
+		// true
+		// : false;
 
 		do {
 
-			double out2[] = positionSearch(path1, profond, autoCalled, step,
-					verbose, test);
-			angle = out2[6];
-			IJ.log("angle= " + angle);
-			// ============================================================================
-			// Fine calcoli geometrici
-			// Inizio calcoli Uniformità
-			// ============================================================================
+			ImagePlus imp11 = UtilAyv.openImageMaximized(path1);
+			if (imp11 == null)
+				MyLog.waitHere("Non trovato il file " + path1);
+			ImageWindow iw11 = WindowManager.getCurrentWindow();
+
+			// MyLog.waitHere();
+
+			double out2[] = positionSearch(imp11, profond, info10, autoCalled,
+					step, verbose, test);
 
 			ImagePlus imp1 = null;
 			ImagePlus imp2 = null;
-			Overlay over2 = new Overlay();
-			Overlay over3 = new Overlay();
-
 			if (verbose) {
 				imp1 = UtilAyv.openImageMaximized(path1);
 				imp2 = UtilAyv.openImageNoDisplay(path2, true);
@@ -291,9 +312,19 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp1 = UtilAyv.openImageNoDisplay(path1, true);
 				imp2 = UtilAyv.openImageNoDisplay(path2, true);
 			}
+			if (imp2 == null)
+				MyLog.waitHere("Non trovato il file " + path2);
+			// ImageWindow iw1=WindowManager.getCurrentWindow();
 
-			IJ.log("" + imp1.getShortTitle());
-			IJ.log("" + imp2.getShortTitle());
+			angle = out2[6];
+			// IJ.log("angle= " + angle);
+			// ============================================================================
+			// Fine calcoli geometrici
+			// Inizio calcoli Uniformità
+			// ============================================================================
+
+			Overlay over2 = new Overlay();
+			Overlay over3 = new Overlay();
 
 			int sqNEA = MyConst.P10_NEA_11X11_PIXEL;
 			// disegno MROI già predeterminata
@@ -326,7 +357,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp1.setRoi(new Line(xCenterCircle, yCenterCircle, xMaxima,
 						yMaxima));
 				over2.addElement(imp1.getRoi());
-				over2.setStrokeColor(Color.red);
+				over2.setStrokeColor(Color.green);
 				imp1.updateAndDraw();
 				// =================================================
 			}
@@ -337,6 +368,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 				over2.addElement(imp1.getRoi());
 			}
 			imp1.updateAndDraw();
+
+			// MyLog.waitHere();
+
 			if (step)
 				new WaitForUserDialog("MROI 11 x 11 Premere  OK").show();
 
@@ -348,14 +382,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 			imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7, sq7);
 			if (verbose) {
 				over2.addElement(imp1.getRoi());
-				over2.setStrokeColor(Color.red);
+				over2.setStrokeColor(Color.green);
 			}
 			imp1.updateAndDraw();
 			if (step)
 				new WaitForUserDialog("MROI 7 x 7 Premere  OK").show();
 
 			ImageStatistics stat7x7 = imp1.getStatistics();
-			IJ.log("area= " + stat7x7.area);
+
+			// eseguo un controllo di sicurezza sul risultato.
+			checkLimits(stat7x7.mean, 0, 3000, "stat7x7.mean");
 
 			int xFondo = MyConst.P10_X_ROI_BACKGROUND;
 			int yFondo = MyConst.P10_Y_ROI_BACKGROUND;
@@ -369,11 +405,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 			ImageStatistics statFondo = UtilAyv.backCalc2(xFondo, yFondo,
 					dFondo, imp1, step, circular, test);
 
+			checkLimits(statFondo.mean, 0, 50, "statFondo.mean");
+
 			//
 			// disegno MROI su imaDiff
 			//
 			ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
-			if (verbose)
+			if (verbose && !fast)
 				UtilAyv.showImageMaximized(imaDiff);
 			imaDiff.setOverlay(over3);
 			over3.setStrokeColor(Color.green);
@@ -382,16 +420,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 				// =================================================
 				imaDiff.setRoi(xCenterRoi - 10, yCenterRoi - 10, 20, 20);
 				over3.addElement(imaDiff.getRoi());
-				over3.setStrokeColor(Color.green);
 				imaDiff.killRoi();
 				imaDiff.setRoi(new OvalRoi(xCenterCircle - 4,
 						yCenterCircle - 4, 8, 8));
 				over3.addElement(imaDiff.getRoi());
-				over3.setStrokeColor(Color.green);
 				imaDiff.killRoi();
 				imaDiff.setRoi(new OvalRoi(xMaxima - 4, yMaxima - 4, 8, 8));
 				over3.addElement(imaDiff.getRoi());
-				over3.setStrokeColor(Color.green);
 				imaDiff.setRoi(new Line(xCenterCircle, yCenterCircle, xMaxima,
 						yMaxima));
 				over3.addElement(imaDiff.getRoi());
@@ -404,6 +439,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			imaDiff.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7, sq7);
 			imaDiff.updateAndDraw();
 			ImageStatistics statImaDiff = imaDiff.getStatistics();
+
+			checkLimits(statImaDiff.stdDev, 0, 20, "statImaDiff.stdDev");
+
 			imaDiff.updateAndDraw();
 			if (imaDiff.isVisible())
 				imaDiff.getWindow().toFront();
@@ -453,7 +491,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
 						sqNEA, sqNEA);
 				over2.addElement(imp1.getRoi());
-				over2.setStrokeColor(Color.red);
+				over2.setStrokeColor(Color.green);
 
 				imp1.updateAndDraw();
 
@@ -486,6 +524,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 					msgSqr2OK(pixx);
 
 			} while (pixx < area11x11);
+			// MyLog.waitHere();
 
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
@@ -509,17 +548,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (step)
 				msgSnr(snr);
 
-			//
-			// calcolo simulata
-			//
-			// int gap = (sqNEA - sq7) / 2;
+			checkLimits(snr, 0, 800, "snr");
 
-			
-			
-			
-//			int[][] classiSimulata = generaSimulata(xCenterRoi, yCenterRoi,
-//					imp1, step, false, test);
-			
 			String patName = ReadDicom.readDicomParameter(imp1,
 					MyConst.DICOM_PATIENT_NAME);
 			String codice = ReadDicom
@@ -532,9 +562,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 					xCenterRoi, yCenterRoi, sq7, imp1, simulataName, step,
 					false, test);
 
-			
-			
-			
+			// if (imp1.isVisible())
+			// imp1.getWindow().toFront();
+
 			//
 			// calcolo posizione fwhm a metà della MROI
 			//
@@ -562,10 +592,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
+			// MyLog.waitHere();
 
 			step = false;
 			double[] outFwhm2 = analyzeProfile3(imp1, xStartProfile,
 					yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
+
+			checkLimits(outFwhm2[0], 5, outFwhm2[2], "outFwhm2[0]");
+
 			//
 			// Salvataggio dei risultati nella ResultsTable
 			//
@@ -573,6 +607,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
 					imp1, tabCodici, VERSION, autoCalled);
+			// MyLog.waitHere();
 
 			//
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
@@ -628,11 +663,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 						+ levelString[i1]);
 				rt.addValue(2, classiSimulata[i1][1]);
 			}
-			if (verbose && !test)
+			if (verbose && !test && !fast)
 				rt.show("Results");
-
-			boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
-					: false;
 
 			if (fast) {
 				accetta = true;
@@ -673,8 +705,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 				boolean test = true;
 				double profond = 30;
 
-				mainUnifor(path1, path2, autoArgs, profond, autoCalled, step,
-						verbose, test);
+				mainUnifor(path1, path2, autoArgs, profond, "", autoCalled,
+						step, verbose, test);
 
 			}
 			case 2:
@@ -690,8 +722,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 				boolean test = true;
 				double profond = 30;
 
-				mainUnifor(path1, path2, autoArgs, profond, autoCalled, step,
-						verbose, test);
+				mainUnifor(path1, path2, autoArgs, profond, "", autoCalled,
+						step, verbose, test);
 				break;
 			}
 		} else {
@@ -708,22 +740,22 @@ public class p10rmn_ implements PlugIn, Measurements {
 	double[] referenceSiemens() {
 
 		double simul = 0.0;
-		double signal = 427.57142857142856;
+		double signal = 355.0;
 		double backNoise = 11.1125;
-		double snRatio = 42.10678432133364;
-		double fwhm = 14.451890461530075;
-		double num1 = 1012.0;
-		double num2 = 595.0;
-		double num3 = 2924.0;
-		double num4 = 4410.0;
-		double num5 = 4639.0;
-		double num6 = 3046.0;
-		double num7 = 3235.0;
-		double num8 = 3688.0;
-		double num9 = 4040.0;
-		double num10 = 3386.0;
-		double num11 = 620.0;
-		double num12 = 33941.0;
+		double snRatio = 35.48765967441802;
+		double fwhm = 11.401143711292473;
+		double num1 = 2763.0;
+		double num2 = 1532.0;
+		double num3 = 7785.0;
+		double num4 = 2634.0;
+		double num5 = 2574.0;
+		double num6 = 2652.0;
+		double num7 = 3054.0;
+		double num8 = 3284.0;
+		double num9 = 3333.0;
+		double num10 = 1755.0;
+		double num11 = 354.0;
+		double num12 = 33816.0;
 
 		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
@@ -740,22 +772,22 @@ public class p10rmn_ implements PlugIn, Measurements {
 	double[] referenceGe() {
 
 		double simul = 0.0;
-		double signal = 427.57142857142856;
+		double signal = 355.0;
 		double backNoise = 11.1125;
-		double snRatio = 42.10678432133364;
-		double fwhm = 14.451890461530075;
-		double num1 = 1012.0;
-		double num2 = 595.0;
-		double num3 = 2924.0;
-		double num4 = 4410.0;
-		double num5 = 4639.0;
-		double num6 = 3046.0;
-		double num7 = 3235.0;
-		double num8 = 3688.0;
-		double num9 = 4040.0;
-		double num10 = 3386.0;
-		double num11 = 620.0;
-		double num12 = 33941.0;
+		double snRatio = 35.48765967441802;
+		double fwhm = 11.401143711292473;
+		double num1 = 2763.0;
+		double num2 = 1532.0;
+		double num3 = 7785.0;
+		double num4 = 2634.0;
+		double num5 = 2574.0;
+		double num6 = 2652.0;
+		double num7 = 3054.0;
+		double num8 = 3284.0;
+		double num9 = 3333.0;
+		double num10 = 1755.0;
+		double num11 = 354.0;
+		double num12 = 33816.0;
 
 		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
@@ -768,8 +800,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 */
 	public void selfTestSilent() {
 		String home1 = findTestImages();
-		String path1 = home1 + "A001_testP10";
-		String path2 = home1 + "A002_testP10";
+		String path1 = home1 + "C001_testP10";
+		String path2 = home1 + "C002_testP10";
 
 		double[] vetReference = referenceSiemens();
 
@@ -780,7 +812,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean test = true;
 		double profond = 30;
 
-		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, profond,
+		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, profond, "",
 				autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
@@ -1197,7 +1229,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				peak = i1;
 		}
 
-		double[] out = { fwhm2, peak };
+		double[] out = { fwhm2, peak, lengthImagej };
 		return (out);
 	} // calcFwhm
 
@@ -2171,11 +2203,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * @return path of temporarary directory
 	 */
 	public String findTestImages() {
+
 		InputOutput io = new InputOutput();
-		io.extractFromJAR(MyConst.TEST_FILE, "A001_testP10", "./Test2/");
-		io.extractFromJAR(MyConst.TEST_FILE, "A002_testP10", "./Test2/");
-		// io.extractFromJAR(MyConst.TEST_FILE, "A001_testP10", "./Test2/");
-		// io.extractFromJAR(MyConst.TEST_FILE, "A002_testP10", "./Test2/");
+		long num1 = io.extractFromJAR2(MyConst.TEST_FILE, "C001_testP10",
+				"./Test2/");
+		long num2 = io.extractFromJAR2(MyConst.TEST_FILE, "C002_testP10",
+				"./Test2/");
+		if (num1 <= 0 || num2 <= 0)
+			MyLog.waitHere("errore estrazione files da test2.jar");
 		String home1 = this.getClass().getResource(MyConst.TEST_DIRECTORY)
 				.getPath();
 		return (home1);
@@ -2189,22 +2224,18 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * @param verbose
 	 * @param test
 	 */
-	public static double[] positionSearch(String path1, double profond,
-			boolean autoCalled, boolean step, boolean verbose, boolean test) {
+	public static double[] positionSearch(ImagePlus imp11, double profond,
+			String info1, boolean autoCalled, boolean step, boolean verbose,
+			boolean test) {
 		//
 		// ================================================================================
 		// Inizio calcoli geometrici
 		// ================================================================================
 		//
-		ImagePlus imp11 = null;
-		if (verbose) {
-			imp11 = UtilAyv.openImageMaximized(path1);
-		} else {
-			imp11 = UtilAyv.openImageNoDisplay(path1, true);
-		}
 
-		if (imp11 == null)
-			new WaitForUserDialog("imp11 = NULL").show();
+		// boolean fast = Prefs.get("prefer.fast", "false").equals("true") ?
+		// true
+		// : false;
 
 		double dimPixel = ReadDicom
 				.readDouble(ReadDicom.readSubstring(
@@ -2243,6 +2274,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			over1.addElement(imp11.getRoi());
 			over1.setStrokeColor(Color.red);
 		}
+		// MyLog.waitHere();
 
 		peaks1 = profileAnalyzer(imp11, dimPixel, "BISETTRICE ORIZZONTALE",
 				showProfiles);
@@ -2273,6 +2305,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		}
 		peaks4 = profileAnalyzer(imp11, dimPixel,
 				"BISETTRICE DIAGONALE DESTRA", showProfiles);
+		// MyLog.waitHere();
 
 		int len3 = peaks1[2].length + peaks2[2].length + peaks3[2].length
 				+ peaks4[2].length;
@@ -2318,8 +2351,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp11.updateAndDraw();
 				new WaitForUserDialog("Premere OK").show();
 			}
+			// MyLog.waitHere();
 
 			fitCircle(imp11);
+			// MyLog.waitHere();
 
 			if (step) {
 				over1.addElement(imp11.getRoi());
@@ -2361,35 +2396,37 @@ public class p10rmn_ implements PlugIn, Measurements {
 			imp11.killRoi();
 		}
 		ImageProcessor ip11 = imp11.getProcessor();
+		// MyLog.waitHere();
 
 		//
 		// -------------------------------------------------
 		// Determinazione del punto di MAXIMA
 		// -------------------------------------------------
 		//
-		double tolerance = 350.0;
-		double threshold = 0.0;
-		int outputType = MaximumFinder.LIST;
-		boolean excludeOnEdges = false;
-		boolean isEDM = false;
 
-		MaximumFinder maxFinder = new MaximumFinder();
+		// double tolerance = 350.0;
+		// double threshold = 0.0;
+		// int outputType = MaximumFinder.LIST;
+		// boolean excludeOnEdges = false;
+		// boolean isEDM = false;
 
-		double[] rx = null;
-		double[] ry = null;
-		ResultsTable rt1 = ResultsTable.getResultsTable();
-		int nPunti = 0;
-		do {
-			rt1.reset();
-			maxFinder.findMaxima(ip11, tolerance, threshold, outputType,
-					excludeOnEdges, isEDM);
-			rx = rt1.getColumnAsDoubles(0);
-			ry = rt1.getColumnAsDoubles(1);
-			tolerance += 10.0;
-			nPunti = rx.length;
-		} while (nPunti > 1);
-
-		// IJ.log("tolerance=" + tolerance);
+		// MaximumFinder maxFinder = new MaximumFinder();
+		//
+		// double[] rx = null;
+		// double[] ry = null;
+		// ResultsTable rt1 = ResultsTable.getResultsTable();
+		// int nPunti = 0;
+		// do {
+		// rt1.reset();
+		// maxFinder.findMaxima(ip11, tolerance, threshold, outputType,
+		// excludeOnEdges, isEDM);
+		// rx = rt1.getColumnAsDoubles(0);
+		// ry = rt1.getColumnAsDoubles(1);
+		// tolerance += 10.0;
+		// nPunti = rx.length;
+		// } while (nPunti > 1);
+		//
+		// // IJ.log("tolerance=" + tolerance);
 		//
 		// ----------------------------------------------------------
 		// disegno la ROI del maxima, a solo scopo dimostrativo !
@@ -2397,16 +2434,23 @@ public class p10rmn_ implements PlugIn, Measurements {
 		//
 
 		// x1 ed y1 sono le due coordinate del punto di maxima
+		double[] out10 = UtilAyv.findMaximumPosition(imp11);
+		double xMaxima = out10[0];
+		double yMaxima = out10[1];
 
-		int xMaxima = (int) rx[0];
-		int yMaxima = (int) ry[0];
+		// int xMaxima = (int) rx[0];
+		// int yMaxima = (int) ry[0];
+		//
+		// MyLog.waitHere("xMaximum= " + xMaximum + " yMaximum= " + yMaximum
+		// + " xMaxima= " + xMaxima + " yMaxima= " + yMaxima);
 
 		if (verbose) {
-			imp11.setRoi(new OvalRoi(xMaxima - 4, yMaxima - 4, 8, 8));
+			imp11.setRoi(new OvalRoi((int) xMaxima - 4, (int) yMaxima - 4, 8, 8));
 			over1.addElement(imp11.getRoi());
 			over1.setStrokeColor(Color.red);
 		}
 		imp11.killRoi();
+		// MyLog.waitHere();
 
 		//
 		// -----------------------------------------------------------
@@ -2416,16 +2460,17 @@ public class p10rmn_ implements PlugIn, Measurements {
 		//
 		double xStartRefLine = (double) xCenterCircle;
 		double yStartRefLine = (double) yCenterCircle;
-		double xEndRefLine = rx[0];
-		double yEndRefLine = ry[0];
+		double xEndRefLine = out10[0];
+		double yEndRefLine = out10[1];
 
-		imp11.setRoi(new Line(xCenterCircle, yCenterCircle, (int) rx[0],
-				(int) ry[0]));
+		imp11.setRoi(new Line(xCenterCircle, yCenterCircle, (int) out10[0],
+				(int) out10[1]));
 		double angle11 = imp11.getRoi().getAngle(xCenterCircle, yCenterCircle,
-				(int) rx[0], (int) ry[0]);
+				(int) out10[0], (int) out10[1]);
 
 		over1.addElement(imp11.getRoi());
 		over1.setStrokeColor(Color.red);
+		// MyLog.waitHere();
 
 		//
 		// -----------------------------------------------------------
@@ -2438,8 +2483,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double ay = out1[1];
 		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 
+		// MyLog.waitHere();
+
 		if (!test)
-			MyLog.waitHere("MODIFICA MANUALE POSIZIONE ROI");
+			MyLog.waitMessage(info1 + "\n \nMODIFICA MANUALE POSIZIONE ROI");
 
 		Rectangle boundRec3 = imp11.getProcessor().getRoi();
 		// int xCenterRoi = boundRec3.x + boundRec3.width / 2;
@@ -2456,6 +2503,29 @@ public class p10rmn_ implements PlugIn, Measurements {
 		out2[6] = angle11;
 
 		return out2;
+	}
+
+	public static boolean checkLimits(double signal, double low, double high,
+			String title) {
+		if ((signal <= low) || (signal >= high)) {
+			MyLog.waitThere("Il valore " + title + "= " + signal
+					+ " è fuori dai limiti low= " + low + " high= " + high);
+			return false;
+		} else
+
+			return true;
+
+	}
+
+	public static double readDouble(String s1) {
+		double x = 0;
+		try {
+			x = (new Double(s1)).doubleValue();
+		} catch (Exception e) {
+			MyLog.waitHere("input non numerico= " + s1);
+			x = Double.NaN;
+		}
+		return x;
 	}
 
 }
