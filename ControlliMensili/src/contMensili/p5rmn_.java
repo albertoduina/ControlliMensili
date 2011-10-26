@@ -1546,15 +1546,12 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	public static boolean decodeDirez(String in1) {
 		boolean out = false;
-		if (in1.length() > 1) {
-			IJ.log("il codice della direzione deve essere di 1 lettera");
-			if (in1.equals("v") || in1.equals("V")) {
+		String aux1= in1.substring(0, 1);
+			if (aux1.equals("v") || aux1.equals("V")) {
 				out = false;
-			} else if (in1.equals("h") || in1.equals("H")) {
+			} else if (aux1.equals("h") || aux1.equals("H")) {
 				out = true;
-			} else
-				IJ.log("il codice direzione deve essere v = vertical oppure h = horizontal");
-		}
+			} 
 		return out;
 	}
 } // p5rmn_

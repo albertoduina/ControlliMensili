@@ -2241,6 +2241,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 				.readDouble(ReadDicom.readSubstring(
 						ReadDicom.readDicomParameter(imp11,
 								MyConst.DICOM_PIXEL_SPACING), 1));
+		
+		ImagePlus imp12 = imp11.duplicate();
+		
 
 		int width = imp11.getWidth();
 		int height = imp11.getHeight();
@@ -2482,6 +2485,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double ax = out1[0];
 		double ay = out1[1];
 		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
+		imp11.updateAndDraw();
+		
+		imp12.setOverlay(over1);
+		
+		imp12.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
+		UtilAyv.showImageMaximized2(imp12);
+		imp12.updateAndDraw();
 
 		// MyLog.waitHere();
 

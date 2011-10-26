@@ -1,0 +1,7 @@
+CODICE			COIL					PLUGIN			NUOVO PLUGIN	DIREZIONE			
+LBFS_			FL						P5					P10				X
+LBFS_			FL1						P10
+
+
+
+O12S_			N21						P11									hsx

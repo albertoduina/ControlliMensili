@@ -463,14 +463,14 @@ N12F_	/* Flash NECK ARRAY B1-2__________*/	4	4	NE2		hdx	x	p5rmn_
 // NECK MATRIX AERA SAVE UNCOMBINED					
 O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N11		hdx	30	p11rmn_
 O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N12		hdx	30	p11rmn_
-O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N21		hdx	30	p11rmn_
-O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N22		hdx	30	p11rmn_
-O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	NE1,2	hdx	30	p11rmn_
+O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N21		hsx	30	p11rmn_
+O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N22		hsx	30	p11rmn_
+O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	NE1,2	hsx	30	p11rmn_
 O12F_	/* Flash NECK ARRAY_______________*/	4	4	N11		hdx	30	p11rmn_
 O12F_	/* Flash NECK ARRAY_______________*/	4	4	N12		hdx	30	p11rmn_
-O12F_	/* Flash NECK ARRAY_______________*/	4	4	N21		hdx	30	p11rmn_
-O12F_	/* Flash NECK ARRAY_______________*/	4	4	N22		hdx	30	p11rmn_
-O12F_	/* Flash NECK ARRAY_______________*/	4	4	NE1,2	hdx	30	p11rmn_
+O12F_	/* Flash NECK ARRAY_______________*/	4	4	N21		hsx	30	p11rmn_
+O12F_	/* Flash NECK ARRAY_______________*/	4	4	N22		hsx	30	p11rmn_
+O12F_	/* Flash NECK ARRAY_______________*/	4	4	NE1,2	hsx	30	p11rmn_
 //
 // LOOP AND FLEXIBLE						
 LLFS_	/* Flash LARGE LOOP_______________*/	4	4	xxx		x	x	p3rmn_
@@ -489,8 +489,8 @@ ULFS_	/* Flash SMALL LOOP_B_____________*/	4	4	xxx		hdx	x	p5rmn_
 ULSS_	/* SpinEcho SMALL LOOP_B__________*/	4	4	xxx		hdx	x	p5rmn_
 //
 // FLEXIBLE AERA SAVE UNCOMBINED
-LBFS_	/* Flash LARGE FLEXIBLE___________*/	4	4	FL		x	x	p5rmn_
-LBSS_	/* SpinEcho LARGE FLEXIBLE________*/	4	4	FL		x	x	p5rmn_
+LBFS_	/* Flash LARGE FLEXIBLE___________*/	4	4	FL		x	x	p3rmn_
+LBSS_	/* SpinEcho LARGE FLEXIBLE________*/	4	4	FL		x	x	p3rmn_
 LBFS_	/* Flash LARGE FLEXIBLE___________*/	4	4	FL1		x	30	p10rmn_
 LBSS_	/* SpinEcho LARGE FLEXIBLE________*/	4	4	FL1		x	30	p10rmn_
 LBFS_	/* Flash LARGE FLEXIBLE___________*/	4	4	FL2		x	30	p10rmn_
@@ -499,8 +499,8 @@ LBFS_	/* Flash LARGE FLEXIBLE___________*/	4	4	FL3		x	30	p10rmn_
 LBSS_	/* SpinEcho LARGE FLEXIBLE________*/	4	4	FL3		x	30	p10rmn_
 LBFS_	/* Flash LARGE FLEXIBLE___________*/	4	4	FL4		x	30	p10rmn_
 LBSS_	/* SpinEcho LARGE FLEXIBLE________*/	4	4	FL4		x	30	p10rmn_
-SBFS_	/* Flash SMALL FLEXIBLE___________*/	4	4	FS		x	x	p5rmn_
-SBSS_	/* SpinEcho SMALL FLEXIBLE________*/	4	4	FS		x	x	p5rmn_
+SBFS_	/* Flash SMALL FLEXIBLE___________*/	4	4	FS		x	x	p3rmn_
+SBSS_	/* SpinEcho SMALL FLEXIBLE________*/	4	4	FS		x	x	p3rmn_
 SBFS_	/* Flash SMALL FLEXIBLE___________*/	4	4	FS1		x	30	p10rmn_
 SBSS_	/* SpinEcho SMALL FLEXIBLE________*/	4	4	FS1		x	30	p10rmn_
 SBFS_	/* Flash SMALL FLEXIBLE___________*/	4	4	FS2		x	30	p10rmn_

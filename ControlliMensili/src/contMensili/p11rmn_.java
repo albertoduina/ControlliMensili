@@ -1518,7 +1518,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			plot1.show();
 		}
 
-		MyLog.waitHere();
+		
 		double ax = Double.NaN;
 		double ay = Double.NaN;
 

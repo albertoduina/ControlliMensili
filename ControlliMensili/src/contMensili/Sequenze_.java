@@ -98,7 +98,7 @@ public class Sequenze_ implements PlugIn {
 		// + new InputOutput().findResource("Sequenze_.class"));
 
 		String[][] tableCode = TableCode.loadTable(MyConst.CODE_FILE);
-	//	MyLog.logMatrix(tableCode, "tableCode");
+		// MyLog.logMatrix(tableCode, "tableCode");
 		String[][] tableExpand = TableExpand.loadTable(MyConst.EXPAND_FILE);
 		new AboutBox().about("Scansione automatica cartelle", this.getClass());
 		IJ.wait(2000);
@@ -233,7 +233,8 @@ public class Sequenze_ implements PlugIn {
 
 			String[][] tableSequenceReordered = reorderSequenceTable(
 					tableSequenceSorted, tableCode);
-			// MyLog.logMatrix(tableSequenceReordered, "tableSequenceReordered");
+			// MyLog.logMatrix(tableSequenceReordered,
+			// "tableSequenceReordered");
 			// MyLog.waitHere("salvare il log");
 
 			String[][] listProblems = verifySequenceTable(
@@ -388,13 +389,20 @@ public class Sequenze_ implements PlugIn {
 				boolean trovato = false;
 				int tableRow = 0;
 				for (int j1 = 0; j1 < tableCode2.length; j1++) {
+
 					if (codice.equals(tableCode2[j1][0])) {
-						tableRow = j1;
-						trovato = true;
-						break;
+
+						if ((tableCode2[j1][3].equals("x"))
+								|| (coil.equals(tableCode2[j1][3]))) {
+							tableRow = j1;
+							trovato = true;
+							break;
+						}
 					}
 				}
 				if (trovato) {
+					// IJ.log(tableCode2[tableRow][0] + "  " + coil + "  "
+					// + tableCode2[tableRow][4]);
 					// count3++;
 					// se il codice è conosciuto aggiunge i dati
 					vetConta.add("" + (count3));
@@ -639,7 +647,7 @@ public class Sequenze_ implements PlugIn {
 				j1++;
 			}
 		}
-		
+
 		String[][] chiamate = new String[vetPlugin.size()][2];
 		for (int i1 = 0; i1 < vetPlugin.size(); i1++) {
 			chiamate[i1][0] = vetPlugin.get(i1);
