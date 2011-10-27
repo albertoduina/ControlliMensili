@@ -256,15 +256,33 @@ public class p10rmn_Test {
 	@Test
 	public final void testCrossing() {
 
-		double x1 = 5;
-		double y1 = 80;
-		double x2 = 36;
-		double y2 = 42;
-		double width = 256;
-		double height = 256;
+		double x0 = 54.14;
+		double y0 = 99.69;
+		double x1 = 94.53;
+		double y1 = 57.58;
+		double width = 220;
+		double height = 220;
 
-		double[] out = p10rmn_.crossing(x1, y1, x2, y2, width, height);
+		double[] out = p10rmn_.crossing(x0, y0, x1, y1, width, height);
 		MyLog.logVector(out, "out");
+
+		double[] vetResults1 = { 149.75812158632155, 0.0, 0.0, 156.135540975489 };
+		boolean ok = UtilAyv.verifyResults1(vetResults1, out, null);
+		assertTrue(ok);
+
+		x0 = 25.78;
+		y0 = 205.05868;
+		x1 = 151.25;
+		y1 = 132.34;
+
+		out = p10rmn_.crossing(x0, y0, x1, y1, width, height);
+		MyLog.logVector(out, "out");
+
+		double[] vetResults2 = { 2.0627437110885412E-6, 220.0, 220.0,
+				92.49454491113413 };
+		ok = UtilAyv.verifyResults1(vetResults2, out, null);
+		assertTrue(ok);
+
 	}
 
 	@Test

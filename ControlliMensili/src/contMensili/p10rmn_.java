@@ -214,7 +214,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 				MyLog.logVector(iw2ayvTable[vetRiga[0]], "stringa");
 				MyLog.waitHere();
 			}
-			
 
 			mainUnifor(path1, path2, autoArgs, profond, info10, autoCalled,
 					step, verbose, test);
@@ -580,6 +579,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			double[] out3 = crossing(xCenterCircle, yCenterCircle, xCenterRoi,
 					yCenterRoi, width, height);
+
+			// aveva restituito null
+			if (out3 == null)
+				MyLog.waitHere("out3==null");
 
 			int xStartProfile = (int) Math.round(out3[0]);
 			int yStartProfile = (int) Math.round(out3[1]);
@@ -2137,62 +2140,123 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		double x;
 		double y;
+		boolean upperLeftVertex = false;
+		boolean upperRightVertex = false;
+		boolean lowerLeftVertex = false;
+		boolean lowerRightVertex = false;
+
+		// MyLog.waitHere("a= " + a + " b= " + b + " c= " + c + " width= " +
+		// width
+		// + " height= " + height);
 
 		double[] clippingPoints = new double[4];
 		int count = 0;
+
+		// ora andrò a calcolare il crossing per i vari lati dell'immagine. Mi
+		// aspetto di avere due soli crossing. Esiste però un eccezione è il
+		// caso particolare in cui il crossing avviene esattamente su di un
+		// angolo dell'immagine: in tal caso avrò che is between mi darà il
+		// crossing sia per il lato orizzontale che per il lato verticale, per
+		// cui mi troverò con 3 crossing. Nel caso ancora più particolare di una
+		// diagonale del quadrato mi troverò con quattro cfrossing, anzichè due.
+		// ed io devo passare ad imageJ le coordinate di solo due punti.
 
 		// lato superiore
 		y = 0;
 		x = -(b * y + c) / a;
 
+		// IJ.log("lato superiore x= " + x + " y= " + y);
+
+		upperLeftVertex = UtilAyv.myTestEquals(x, 0D, tolerance);
+		upperRightVertex = UtilAyv.myTestEquals(x, width, tolerance);
 		if (isBetween(x, 0, width, tolerance)) {
 			if (count <= 2) {
 				clippingPoints[count++] = x;
 				clippingPoints[count++] = y;
-			} else
+			} else {
+				MyLog.waitHere("001 ERROR count= " + count);
 				return null;
+			}
 		}
 
 		// lato inferiore
 		y = height;
 		x = -(b * y + c) / a;
+		// IJ.log("lato inferiore x= " + x + " y= " + y);
+		lowerLeftVertex = UtilAyv.myTestEquals(x, 0D, tolerance);
+		lowerRightVertex = UtilAyv.myTestEquals(x, width, tolerance);
+
 		if (isBetween(x, 0, width, tolerance)) {
 			if (count <= 2) {
 				clippingPoints[count++] = x;
 				clippingPoints[count++] = y;
-			} else
+			} else {
+				MyLog.waitHere("002 ERROR count= " + count);
 				return null;
+			}
 		}
 
 		// lato sinistro
 		x = 0;
 		y = -(a * x + c) / b;
-		if (isBetween(y, 0, height, tolerance)) {
+		// IJ.log("lato sinistro x= " + x + " y= " + y);
+		if (isBetween(y, 0, height, tolerance) && (!upperLeftVertex)
+				&& (!lowerLeftVertex)) {
+			// if (isBetween(y, 0, height, tolerance)) {
 			if (count <= 2) {
 				clippingPoints[count++] = x;
 				clippingPoints[count++] = y;
-			} else
+			} else {
+				MyLog.waitHere("003 ERROR count= " + count);
 				return null;
+			}
 		}
 
 		// lato destro
 		x = width;
 		y = -(a * x + c) / b;
-		if (isBetween(y, 0, height, tolerance)) {
+		// IJ.log("lato destro x= " + x + " y= " + y);
+		if (isBetween(y, 0, height, tolerance) && (!upperRightVertex)
+				&& (!lowerRightVertex)) {
+			// if (isBetween(y, 0, height, tolerance)) {
 			if (count <= 2) {
 				clippingPoints[count++] = x;
 				clippingPoints[count++] = y;
-			} else
+			} else {
+				MyLog.waitHere("004 ERROR count= " + count);
 				return null;
+			}
 		}
 		return clippingPoints;
 	}
 
 	public static boolean isBetween(double x1, double bound1, double bound2,
 			double tolerance) {
+		// double aux1 = 0;
+		// double aux2 = 0;
+		// boolean res1 = false;
+		// boolean res2 = false;
+
 		if (bound1 < bound2) {
+			// aux1 = bound1 - tolerance;
+			// aux2 = bound2 + tolerance;
+			// res1 = x1 >= (bound1 - tolerance);
+			// res2 = x1 <= (bound2 + tolerance);
+			// MyLog.waitHere("x1= " + x1 + " caso bound1 < bound2 aux1= " +
+			// aux1
+			// + " aux2= " + aux2 + " res1= " + res1 + " res2= " + res2);
+
 			return ((x1 >= (bound1 - tolerance)) && (x1 <= (bound2 + tolerance)));
 		} else {
+			// aux1 = bound2 - tolerance;
+			// aux2 = bound1 + tolerance;
+			// res1 = x1 >= (bound2 - tolerance);
+			// res2 = x1 <= (bound1 + tolerance);
+
+			// MyLog.waitHere("x1= " + x1 + " caso bound1 >= bound2 aux1= " +
+			// aux1
+			// + " aux2= " + aux2 + " res1= " + res1 + " res2= " + res2);
+
 			return ((x1 >= (bound2 - tolerance)) && (x1 <= (bound1 + tolerance)));
 		}
 	}
@@ -2241,9 +2305,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 				.readDouble(ReadDicom.readSubstring(
 						ReadDicom.readDicomParameter(imp11,
 								MyConst.DICOM_PIXEL_SPACING), 1));
-		
+
 		ImagePlus imp12 = imp11.duplicate();
-		
 
 		int width = imp11.getWidth();
 		int height = imp11.getHeight();
@@ -2486,9 +2549,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double ay = out1[1];
 		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 		imp11.updateAndDraw();
-		
+
 		imp12.setOverlay(over1);
-		
+
 		imp12.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 		UtilAyv.showImageMaximized2(imp12);
 		imp12.updateAndDraw();
