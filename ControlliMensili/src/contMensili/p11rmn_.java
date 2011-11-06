@@ -160,8 +160,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 				boolean verbose = false;
 				boolean test = false;
 				double profond = 30.0;
+				boolean fast = false;
 				ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond,
-						"", autoCalled, step, verbose, test);
+						"", autoCalled, step, verbose, test, fast);
 				if (rt1 == null)
 					return 0;
 
@@ -227,7 +228,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		if (fast) {
 			retry = false;
 			boolean autoCalled = true;
-			boolean verbose = true;
+			boolean verbose = false;
 			boolean test = false;
 
 			String info10 = "code= "
@@ -238,11 +239,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 					+ TableSequence.getLength(iw2ayvTable);
 
 			ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond,
-					info10, autoCalled, step, verbose, test);
+					info10, autoCalled, step, verbose, test, fast);
 			if (rt1 == null)
 				return 0;
 
-			rt1.show("Results");
+			// rt1.show("Results");
 			UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
 			UtilAyv.afterWork();
@@ -275,11 +276,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 					boolean verbose = true;
 					boolean test = false;
 					ResultsTable rt1 = mainUnifor(path1, path2, direzione,
-							profond, "", autoCalled, step, verbose, test);
+							profond, "", autoCalled, step, verbose, test, fast);
 					if (rt1 == null)
 						return 0;
 
-					rt1.show("Results");
+	//				rt1.show("Results");
 					UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
 					UtilAyv.afterWork();
@@ -294,26 +295,32 @@ public class p11rmn_ implements PlugIn, Measurements {
 	@SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String path1, String path2,
 			int direzione, double profond, String info10, boolean autoCalled,
-			boolean step, boolean verbose, boolean test) {
+			boolean step, boolean verbose, boolean test, boolean fast) {
 		boolean accetta = false;
 		ResultsTable rt = null;
 
-		boolean fast = false;
-		if (Prefs.get("prefer.fast", "false").equals("true")) {
-			fast = true;
-		} else {
-			fast = false;
-		}
+		// boolean fast = false;
+		// if (Prefs.get("prefer.fast", "false").equals("true")) {
+		// fast = true;
+		// } else {
+		// fast = false;
+		// }
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		do {
 
-			ImagePlus imp11 = UtilAyv.openImageMaximized(path1);
+			ImagePlus imp11;
+			if (fast)
+				imp11 = UtilAyv.openImageNoDisplay(path1, true);
+			// imp11 = UtilAyv.openImageMaximized(path1);
+			else
+				imp11 = UtilAyv.openImageMaximized(path1);
+
 			if (imp11 == null)
 				MyLog.waitHere("Non trovato il file " + path1);
 
 			double out2[] = positionSearch(imp11, autoCalled, direzione,
-					profond, info10, step, verbose, test);
+					profond, info10, step, verbose, test, fast);
 
 			ImagePlus imp1 = null;
 			ImagePlus imp2 = null;
@@ -679,8 +686,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 						+ levelString[i1]);
 				rt.addValue(2, classiSimulata[i1][1]);
 			}
-			if (verbose && !test)
+			if (verbose && !test && !fast) {
 				rt.show("Results");
+			}
 
 			if (fast) {
 				accetta = true;
@@ -724,9 +732,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 				double[] vetReference = referenceGe();
 				int verticalDir = 3;
 				double profond = 30.0;
+				boolean fast = true;
 
 				ResultsTable rt1 = mainUnifor(path1, path2, verticalDir,
-						profond, "", autoCalled, step, verbose, test);
+						profond, "", autoCalled, step, verbose, test, fast);
 				if (rt1 == null)
 					return;
 
@@ -754,12 +763,13 @@ public class p11rmn_ implements PlugIn, Measurements {
 				boolean step = false;
 				boolean verbose = true;
 				boolean test = true;
+				boolean fast = true;
 
 				double[] vetReference = referenceSiemens();
 				int verticalDir = 2;
 				double profond = 30.0;
 				ResultsTable rt1 = mainUnifor(path1, path2, verticalDir,
-						profond, "", autoCalled, step, verbose, test);
+						profond, "", autoCalled, step, verbose, test, fast);
 				if (rt1 == null)
 					return;
 				double[] vetResults = UtilAyv.vectorizeResults(rt1);
@@ -786,22 +796,22 @@ public class p11rmn_ implements PlugIn, Measurements {
 	double[] referenceSiemens() {
 
 		double simul = 0.0;
-		double signal = 838.2244897959183;
-		double backNoise = 3.43;
-		double snRatio = 342.60901357950996;
-		double fwhm = 50.33006324662394;
-		double num1 = 1195.0;
-		double num2 = 485.0;
-		double num3 = 1156.0;
-		double num4 = 733.0;
-		double num5 = 929.0;
-		double num6 = 1137.0;
-		double num7 = 1481.0;
-		double num8 = 2001.0;
-		double num9 = 2791.0;
-		double num10 = 3983.0;
-		double num11 = 4400.0;
-		double num12 = 45245.0;
+		double signal = 953.6122448979592;
+		double backNoise = 2.96;
+		double snRatio = 291.53433741655306;
+		double fwhm = 51.16454748650474;
+		double num1 = 573.0;
+		double num2 = 419.0;
+		double num3 = 1085.0;
+		double num4 = 689.0;
+		double num5 = 820.0;
+		double num6 = 1082.0;
+		double num7 = 1386.0;
+		double num8 = 1890.0;
+		double num9 = 2681.0;
+		double num10 = 3981.0;
+		double num11 = 5089.0;
+		double num12 = 45841.0;
 
 		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
@@ -818,22 +828,22 @@ public class p11rmn_ implements PlugIn, Measurements {
 	double[] referenceGe() {
 
 		double simul = 0.0;
-		double signal = 838.2244897959183;
-		double backNoise = 3.43;
-		double snRatio = 342.60901357950996;
-		double fwhm = 50.33006324662394;
-		double num1 = 1195.0;
-		double num2 = 485.0;
-		double num3 = 1156.0;
-		double num4 = 733.0;
-		double num5 = 929.0;
-		double num6 = 1137.0;
-		double num7 = 1481.0;
-		double num8 = 2001.0;
-		double num9 = 2791.0;
-		double num10 = 3983.0;
-		double num11 = 4400.0;
-		double num12 = 45245.0;
+		double signal = 953.6122448979592;
+		double backNoise = 2.96;
+		double snRatio = 291.53433741655306;
+		double fwhm = 51.16454748650474;
+		double num1 = 573.0;
+		double num2 = 419.0;
+		double num3 = 1085.0;
+		double num4 = 689.0;
+		double num5 = 820.0;
+		double num6 = 1082.0;
+		double num7 = 1386.0;
+		double num8 = 1890.0;
+		double num9 = 2681.0;
+		double num10 = 3981.0;
+		double num11 = 5089.0;
+		double num12 = 45841.0;
 
 		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
@@ -854,8 +864,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		String[] path = new InputOutput().findListTestImages2(
 				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 		String path1 = path[0];
-		String path2 = path[2];
-		String path3 = path[1];
+		String path2 = path[1];
 
 		double[] vetReference = referenceSiemens();
 
@@ -865,9 +874,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 		boolean test = true;
 		int verticalDir = 3;
 		double profond = 30.0;
+		boolean fast = true;
 
 		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, verticalDir,
-				profond, "", autoCalled, step, verbose, test);
+				profond, "", autoCalled, step, verbose, test, fast);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 				MyConst.P11_vetName);
@@ -1383,14 +1393,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 */
 	public static double[] positionSearch(ImagePlus imp11, boolean autoCalled,
 			int direzione, double profond, String info10, boolean step,
-			boolean verbose, boolean test) {
+			boolean verbose, boolean test, boolean fast) {
 		//
 		// ================================================================================
 		// Inizio calcoli geometrici
 		// ================================================================================
 		//
-		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
-				: false;
 
 		double dimPixel = ReadDicom
 				.readDouble(ReadDicom.readSubstring(
@@ -1518,7 +1526,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 			plot1.show();
 		}
 
-		
 		double ax = Double.NaN;
 		double ay = Double.NaN;
 
@@ -1541,7 +1548,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 
-		if (!test)
+		if (!fast)
 			MyLog.waitMessage(info10 + "\n \nMODIFICA MANUALE POSIZIONE ROI");
 
 		Rectangle boundRec3 = imp11.getProcessor().getRoi();

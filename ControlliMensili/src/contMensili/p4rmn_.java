@@ -245,6 +245,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 		do {
 			ImagePlus imp1 = null;
 			imp1 = UtilAyv.openImageMaximized(path1);
+			// l'immagine deve esere visualizzata perchè uso RoiManager
 			if (imp1 == null) {
 				IJ.log("Immagine non trovata " + path1);
 				return null;
@@ -262,8 +263,8 @@ public class p4rmn_ implements PlugIn, Measurements {
 			double xEndRefline = vetPreferences[2];
 			double yEndRefline = vetPreferences[3];
 
-//			IJ.log("readPreferences " + xStartRefline + ", " + yStartRefline
-//					+ ", " + xEndRefline + ", " + yEndRefline);
+			// IJ.log("readPreferences " + xStartRefline + ", " + yStartRefline
+			// + ", " + xEndRefline + ", " + yEndRefline);
 
 			if (!test) {
 				if (((Math.abs(xStartRefline - xEndRefline) < 5) && (Math
@@ -316,8 +317,8 @@ public class p4rmn_ implements PlugIn, Measurements {
 			data1[2] = xEndReflineUser * dimPixel;
 			data1[3] = yEndReflineUser * dimPixel;
 
-//			IJ.log("savePreferences " + data1[0] + ", " + data1[1] + ", "
-//					+ data1[2] + ", " + data1[3]);
+			// IJ.log("savePreferences " + data1[0] + ", " + data1[1] + ", "
+			// + data1[2] + ", " + data1[3]);
 
 			writePreferences(data1);
 			// -----------------------------------------------------------------------/
@@ -753,6 +754,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 		String path1 = home1 + "/HR2A_testP4";
 		double[] vetReference = referenceSiemens();
 
+		String autoArgs = "-1";
 		boolean autoCalled = false;
 		boolean step = false;
 		boolean verbose = false;
@@ -811,23 +813,23 @@ public class p4rmn_ implements PlugIn, Measurements {
 		double mod20 = (Math.PI * Math.sqrt(2.0) / 2.0)
 				* (Math.sqrt(Math.pow(ds20, 2)
 						- (Math.pow(dsAcqua, 2) + Math.pow(dsPlexi, 2)) / 2) / Math
-						.abs(siPlexi - siAcqua));
+							.abs(siPlexi - siAcqua));
 		double mod15 = (Math.PI * Math.sqrt(2.0) / 2.0)
 				* (Math.sqrt(Math.pow(ds15, 2)
 						- (Math.pow(dsAcqua, 2) + Math.pow(dsPlexi, 2)) / 2) / Math
-						.abs(siPlexi - siAcqua));
+							.abs(siPlexi - siAcqua));
 		double mod10 = (Math.PI * Math.sqrt(2.0) / 2.0)
 				* (Math.sqrt(Math.pow(ds10, 2)
 						- (Math.pow(dsAcqua, 2) + Math.pow(dsPlexi, 2)) / 2) / Math
-						.abs(siPlexi - siAcqua));
+							.abs(siPlexi - siAcqua));
 		double mod05 = (Math.PI * Math.sqrt(2.0) / 2.0)
 				* (Math.sqrt(Math.pow(ds05, 2)
 						- (Math.pow(dsAcqua, 2) + Math.pow(dsPlexi, 2)) / 2) / Math
-						.abs(siPlexi - siAcqua));
+							.abs(siPlexi - siAcqua));
 		double mod03 = (Math.PI * Math.sqrt(2.0) / 2.0)
 				* (Math.sqrt(Math.pow(ds03, 2)
 						- (Math.pow(dsAcqua, 2) + Math.pow(dsPlexi, 2)) / 2) / Math
-						.abs(siPlexi - siAcqua));
+							.abs(siPlexi - siAcqua));
 		double[] vetCalc = new double[5];
 
 		vetCalc[0] = mod20;

@@ -259,9 +259,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
-//		MyLog.waitHere("verticalProfile=" + verticalProfile);
-//
-//		MyLog.logVector(path, "path");
+		// MyLog.waitHere("verticalProfile=" + verticalProfile);
+		//
+		// MyLog.logVector(path, "path");
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 
@@ -393,7 +393,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			over3.setStrokeColor(Color.green);
 			imaDiff.updateAndDraw();
 
-			MyLog.waitHere("ROI DISEGNATE SU IMADIFF");
+			// MyLog.waitHere("ROI DISEGNATE SU IMADIFF");
 
 			ImageStatistics statImaDiff = imaDiff.getStatistics();
 			imaDiff.updateAndDraw();
@@ -572,7 +572,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			int widthRoi = (int) statFondo.roiWidth;
 			int heightRoi = (int) statFondo.roiHeight;
 
-			IJ.log("xRoi= " + xRoi);
+			// IJ.log("xRoi= " + xRoi);
 
 			rt.addValue(3, xRoi);
 			rt.addValue(4, yRoi);
@@ -1546,12 +1546,12 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	public static boolean decodeDirez(String in1) {
 		boolean out = false;
-		String aux1= in1.substring(0, 1);
-			if (aux1.equals("v") || aux1.equals("V")) {
-				out = false;
-			} else if (aux1.equals("h") || aux1.equals("H")) {
-				out = true;
-			} 
+		String aux1 = in1.substring(0, 1);
+		if (aux1.equals("v") || aux1.equals("V")) {
+			out = false;
+		} else if (aux1.equals("h") || aux1.equals("H")) {
+			out = true;
+		}
 		return out;
 	}
 } // p5rmn_

@@ -1,0 +1,30 @@
+Modifiche da apportare ai codici delle sequenze 
+
+Per le sequenze PeriphericAngio bisogna cambiare il codice 
+
+PR1F	-> QR1F
+PR1S	-> QR1S
+PL1F	-> QL1F
+PL1S	-> QL1S
+...
+...
+...
+PR6S	-> QR6S
+PR6F	-> QR6F
+PL6F	-> QL6F
+PL6S	-> QL6S
+
+Per le sequenze HEAD con save uncombined bisogna cambiare il codice 
+
+HUSA_	-> HUSAA
+HUSS_	-> HUSSA
+HUSC_	-> HUSCA
+
+
+
+PER POTER ELABORARE LE IMMAGINI:
+
+TOLTE LE IMMAGINI BDSA / BDMA SENZA CORREZIONE GEOMETRICA (NON POSSONO CONVIVERE CON LE ALTRE)
+ELIMINATE ANCHE LE IMMAGINI HUSA_ HUSC_ HUSS_ NOPRESCAN UNCOMBINED
+ELIMINATE ANCHE CORRECTION 2D
+

@@ -99,6 +99,7 @@ public class Sequenze_ implements PlugIn {
 
 		String[][] tableCode = TableCode.loadTable(MyConst.CODE_FILE);
 		// MyLog.logMatrix(tableCode, "tableCode");
+		// MyLog.waitHere();
 		String[][] tableExpand = TableExpand.loadTable(MyConst.EXPAND_FILE);
 		new AboutBox().about("Scansione automatica cartelle", this.getClass());
 		IJ.wait(2000);
@@ -136,6 +137,8 @@ public class Sequenze_ implements PlugIn {
 			IJ.runPlugIn("contMensili.p6rmn_", "-1");
 			IJ.runPlugIn("contMensili.p7rmn_", "-1");
 			IJ.runPlugIn("contMensili.p8rmn_", "-1");
+			IJ.runPlugIn("contMensili.p10rmn_", "-1");
+			IJ.runPlugIn("contMensili.p11rmn_", "-1");
 			// IJ.runPlugIn("contMensili.p9rmn_", "-1");
 			ButtonMessages.ModelessMsg(
 					"Sequenze: fine selfTest, vedere Log per risultati",
@@ -393,6 +396,7 @@ public class Sequenze_ implements PlugIn {
 					if (codice.equals(tableCode2[j1][0])) {
 
 						if ((tableCode2[j1][3].equals("x"))
+								|| (tableCode2[j1][3].equals("xxx"))
 								|| (coil.equals(tableCode2[j1][3]))) {
 							tableRow = j1;
 							trovato = true;

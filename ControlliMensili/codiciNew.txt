@@ -55,41 +55,41 @@ HUSAA	/* Uniformità Assiale Head________*/	2	2	H43		x	30	p10rmn_
 HUSAA	/* Uniformità Assiale Head________*/	2	2	H44		x	30	p10rmn_
 HUSAA	/* Uniformità Assiale Head________*/	2	2	HE1-4	x	30	p3rmn_
 
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H11		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H12		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H13		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H14		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H21		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H22		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H23		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H24		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H31		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H32		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H33		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H34		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H41		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H42		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H43		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	H44		x	30	p10rmn_
-HUSSA	/* Uniformità Assiale Head________*/	2	2	HE1-4	x	30	p3rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H11		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H12		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H13		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H14		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H21		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H22		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H23		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H24		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H31		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H32		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H33		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H34		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H41		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H42		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H43		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	H44		x	30	p10rmn_
+HUSSA	/* Uniformità Sagittale Head________*/	2	2	HE1-4	x	30	p3rmn_
 
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H11		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H12		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H13		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H14		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H21		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H22		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H23		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H24		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H31		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H32		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H33		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H34		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H41		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H42		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H43		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	H44		x	30	p10rmn_
-HUSCA	/* Uniformità Assiale Head________*/	2	2	HE1-4	x	30	p3rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H11		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H12		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H13		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H14		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H21		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H22		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H23		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H24		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H31		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H32		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H33		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H34		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H41		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H42		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H43		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	H44		x	30	p10rmn_
+HUSCA	/* Uniformità Coronale Head________*/	2	2	HE1-4	x	30	p3rmn_
 
 //
 // SPINE SIMPHONY						
@@ -483,10 +483,10 @@ SFFS_	/* Flash SMALL FLEXIBLE___________*/	4	4	xxx		x	x	p3rmn_
 SFSS_	/* SpinEcho SMALL FLEXIBLE________*/	4	4	xxx		x	x	p3rmn_
 //
 // SMALL LOOP AERA 						
-TLFS_	/* Flash SMALL LOOP_______________*/	4	4	xxx		hdx	x	p5rmn_
-TLSS_	/* SpinEcho SMALL LOOP____________*/	4	4	xxx		hdx	x	p5rmn_
-ULFS_	/* Flash SMALL LOOP_B_____________*/	4	4	xxx		hdx	x	p5rmn_
-ULSS_	/* SpinEcho SMALL LOOP_B__________*/	4	4	xxx		hdx	x	p5rmn_
+TLFS_	/* Flash SMALL LOOP_______________*/	4	4	L4		vup	30	p11rmn_
+TLSS_	/* SpinEcho SMALL LOOP____________*/	4	4	L4		vup	30	p11rmn_
+ULFS_	/* Flash SMALL LOOP_B_____________*/	4	4	L4		vup	30	p11rmn_
+ULSS_	/* SpinEcho SMALL LOOP_B__________*/	4	4	L4		vup	30	p11rmn_
 //
 // FLEXIBLE AERA SAVE UNCOMBINED
 LBFS_	/* Flash LARGE FLEXIBLE___________*/	4	4	FL		x	x	p3rmn_

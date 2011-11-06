@@ -45,11 +45,12 @@ public class p10rmn_Test {
 		boolean step = false;
 		boolean verbose = true;
 		boolean test = true;
+		boolean fast=false;
 		double[] vetReference = new p10rmn_().referenceGe();
 		double profond = 30;
 
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"", autoCalled, step, verbose, test);
+				"", autoCalled, step, verbose, test, fast);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 
@@ -73,9 +74,10 @@ public class p10rmn_Test {
 		boolean test = true;
 		double[] vetReference = new p10rmn_().referenceSiemens();
 		double profond = 30;
+		boolean fast=false;
 
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"", autoCalled, step, verbose, test);
+				"", autoCalled, step, verbose, test, fast);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 
@@ -92,12 +94,33 @@ public class p10rmn_Test {
 		String autoArgs = "0";
 		boolean autoCalled = false;
 		boolean step = false;
-		boolean verbose = true;
+		boolean verbose = false;
 		boolean test = false;
 		double profond = 30;
+		boolean fast=true;
 		p10rmn_.mainUnifor(path1, path2, autoArgs, profond, "info10",
-				autoCalled, step, verbose, test);
-		new WaitForUserDialog("Do something, then click OK.").show();
+				autoCalled, step, verbose, test, fast);
+		new WaitForUserDialog("FINE").show();
+		// IJ.wait(500);
+	}
+
+	@Test
+	public final void testPositionSearch() {
+		String path1 = "./Test2/C001_testP10";
+
+		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+
+		boolean autoCalled = false;
+		boolean step = false;
+		boolean verbose = false;
+		boolean test = false;
+		boolean fast = true;
+		double profond = 30;
+
+		double out2[] = p10rmn_.positionSearch(imp11, profond, "", autoCalled,
+				step, verbose, test, fast);
+
+		new WaitForUserDialog("FINE").show();
 		// IJ.wait(500);
 	}
 

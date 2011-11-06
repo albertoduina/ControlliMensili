@@ -32,16 +32,17 @@ public class p11rmn_Test {
 		String path1 = "./Test2/S12S_01testP11";
 		String path2 = "./Test2/S12S_02testP11";
 		boolean autoCalled = false;
-		boolean step = true;
-		boolean verbose = true;
+		boolean step = false;
+		boolean verbose = false;
 		boolean test = false;
 		int verticalDir = 3;
 		double profond = 30.0;
+		boolean fast=true;
 
 		p11rmn_.mainUnifor(path1, path2, verticalDir, profond, "", autoCalled,
-				step, verbose, test);
+				step, verbose, test, fast);
 
-		new WaitForUserDialog("Do something, then click OK.").show();
+		new WaitForUserDialog("FINE").show();
 		// IJ.wait(500);
 	}
 
@@ -62,9 +63,10 @@ public class p11rmn_Test {
 		double[] vetReference = new p11rmn_().referenceSiemens();
 		int verticalDir = 1;
 		double profond = 30.0;
+		boolean fast=true;
 
 		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, verticalDir,
-				profond, "", autoCalled, step, verbose, test);
+				profond, "", autoCalled, step, verbose, test, fast);
 
 		// ResultsTable rt1 = p11rmn_.mainUnifor(path, sqX, sqY, autoArgs,
 		// verticalProfile, autoCalled, step, verbose, test);
@@ -91,13 +93,14 @@ public class p11rmn_Test {
 		boolean test = false;
 		int direz = 3;
 		double profond = 30.0;
+		boolean fast=true;
 		double[] vetReference = new p11rmn_().referenceGe();
 
 		// ResultsTable rt1 = p11rmn_.mainUnifor(path, sqX, sqY, autoArgs,
 		// verticalProfile, autoCalled, step, verbose, test);
 
 		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, direz, profond, "",
-				autoCalled, step, verbose, test);
+				autoCalled, step, verbose, test, fast);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 
@@ -142,15 +145,17 @@ public class p11rmn_Test {
 		boolean autoCalled = false;
 		int verticalDir = 3;
 		double profond = 30.0;
-		boolean step = true;
+		boolean step = false;
 		boolean verbose = false;
 		boolean test = false;
+		boolean fast=true;
+		String path1 = "./Test2/S12S_01testP11";
 
-		ImagePlus imp1 = UtilAyv.openImageMaximized("./Test2/S12S_01testP11");
+		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, true);
 
 		
 		double[] out = p11rmn_.positionSearch(imp1, autoCalled, verticalDir,
-				profond, "STRINGA", step, verbose, test);
+				profond, "STRINGA", step, verbose, test, fast);
 		MyLog.logVector(out, "out");
 
 	}

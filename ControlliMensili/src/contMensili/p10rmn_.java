@@ -102,7 +102,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		if (IJ.versionLessThan("1.43k"))
 			return;
 
-		MyFileLogger.logger.info("p10rmn_>>> fileDir = " + fileDir);
+		// MyFileLogger.logger.info("p10rmn_>>> fileDir = " + fileDir);
 
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
@@ -116,6 +116,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	public int manualMenu(int preset, String testDirectory) {
 		boolean retry = false;
 		boolean step = false;
+		boolean fast = false;
 		do {
 			int userSelection1 = UtilAyv.userSelectionManual(VERSION, TYPE);
 			switch (userSelection1) {
@@ -149,7 +150,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				boolean test = false;
 				double profond = 30;
 				mainUnifor(path1, path2, "0", profond, "", autoCalled, step,
-						verbose, test);
+						verbose, test, fast);
 
 				UtilAyv.afterWork();
 				retry = true;
@@ -205,7 +206,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		if (fast) {
 			retry = false;
 			boolean autoCalled = true;
-			boolean verbose = true;
+			boolean verbose = false;
 			boolean test = false;
 
 			double profond = readDouble(TableSequence.getProfond(iw2ayvTable,
@@ -216,7 +217,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			}
 
 			mainUnifor(path1, path2, autoArgs, profond, info10, autoCalled,
-					step, verbose, test);
+					step, verbose, test, fast);
 
 			UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
@@ -256,7 +257,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 							.getProfond(iw2ayvTable, vetRiga[0]));
 
 					mainUnifor(path1, path2, autoArgs, profond, info10,
-							autoCalled, step, verbose, test);
+							autoCalled, step, verbose, test, fast);
 
 					UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
@@ -272,19 +273,19 @@ public class p10rmn_ implements PlugIn, Measurements {
 	@SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String path1, String path2,
 			String autoArgs, double profond, String info10, boolean autoCalled,
-			boolean step, boolean verbose, boolean test) {
+			boolean step, boolean verbose, boolean test, boolean fast) {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		double angle = Double.NaN;
-		boolean fast = false;
-
-		if (Prefs.get("prefer.fast", "false").equals("true")) {
-			fast = true;
-		} else {
-			fast = false;
-		}
+		// boolean fast = false;
+		//
+		// if (Prefs.get("prefer.fast", "false").equals("true")) {
+		// fast = true;
+		// } else {
+		// fast = false;
+		// }
 
 		// boolean fast = Prefs.get("prefer.fast", "false").equals("true") ?
 		// true
@@ -292,7 +293,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		do {
 
-			ImagePlus imp11 = UtilAyv.openImageMaximized(path1);
+			ImagePlus imp11 = null;
+			if (fast)
+				imp11 = UtilAyv.openImageNoDisplay(path1, true);
+			else
+				imp11 = UtilAyv.openImageMaximized(path1);
 			if (imp11 == null)
 				MyLog.waitHere("Non trovato il file " + path1);
 			ImageWindow iw11 = WindowManager.getCurrentWindow();
@@ -300,7 +305,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// MyLog.waitHere();
 
 			double out2[] = positionSearch(imp11, profond, info10, autoCalled,
-					step, verbose, test);
+					step, verbose, test, fast);
 
 			ImagePlus imp1 = null;
 			ImagePlus imp2 = null;
@@ -666,8 +671,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 						+ levelString[i1]);
 				rt.addValue(2, classiSimulata[i1][1]);
 			}
-			if (verbose && !test && !fast)
+			if (verbose && !test && !fast) {
 				rt.show("Results");
+			}
 
 			if (fast) {
 				accetta = true;
@@ -707,9 +713,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 				boolean verbose = true;
 				boolean test = true;
 				double profond = 30;
+				boolean fast = false;
 
 				mainUnifor(path1, path2, autoArgs, profond, "", autoCalled,
-						step, verbose, test);
+						step, verbose, test, fast);
 
 			}
 			case 2:
@@ -724,9 +731,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 				boolean verbose = true;
 				boolean test = true;
 				double profond = 30;
+				boolean fast = false;
 
 				mainUnifor(path1, path2, autoArgs, profond, "", autoCalled,
-						step, verbose, test);
+						step, verbose, test, fast);
 				break;
 			}
 		} else {
@@ -814,9 +822,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean verbose = false;
 		boolean test = true;
 		double profond = 30;
+		boolean fast = true;
 
 		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, profond, "",
-				autoCalled, step, verbose, test);
+				autoCalled, step, verbose, test, fast);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
@@ -2232,31 +2241,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	public static boolean isBetween(double x1, double bound1, double bound2,
 			double tolerance) {
-		// double aux1 = 0;
-		// double aux2 = 0;
-		// boolean res1 = false;
-		// boolean res2 = false;
 
 		if (bound1 < bound2) {
-			// aux1 = bound1 - tolerance;
-			// aux2 = bound2 + tolerance;
-			// res1 = x1 >= (bound1 - tolerance);
-			// res2 = x1 <= (bound2 + tolerance);
-			// MyLog.waitHere("x1= " + x1 + " caso bound1 < bound2 aux1= " +
-			// aux1
-			// + " aux2= " + aux2 + " res1= " + res1 + " res2= " + res2);
-
 			return ((x1 >= (bound1 - tolerance)) && (x1 <= (bound2 + tolerance)));
 		} else {
-			// aux1 = bound2 - tolerance;
-			// aux2 = bound1 + tolerance;
-			// res1 = x1 >= (bound2 - tolerance);
-			// res2 = x1 <= (bound1 + tolerance);
-
-			// MyLog.waitHere("x1= " + x1 + " caso bound1 >= bound2 aux1= " +
-			// aux1
-			// + " aux2= " + aux2 + " res1= " + res1 + " res2= " + res2);
-
 			return ((x1 >= (bound2 - tolerance)) && (x1 <= (bound1 + tolerance)));
 		}
 	}
@@ -2290,7 +2278,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 */
 	public static double[] positionSearch(ImagePlus imp11, double profond,
 			String info1, boolean autoCalled, boolean step, boolean verbose,
-			boolean test) {
+			boolean test, boolean fast) {
 		//
 		// ================================================================================
 		// Inizio calcoli geometrici
@@ -2553,12 +2541,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 		imp12.setOverlay(over1);
 
 		imp12.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
-		UtilAyv.showImageMaximized2(imp12);
+		if (!fast)
+			UtilAyv.showImageMaximized2(imp12);
 		imp12.updateAndDraw();
 
 		// MyLog.waitHere();
 
-		if (!test)
+		if (!fast)
 			MyLog.waitMessage(info1 + "\n \nMODIFICA MANUALE POSIZIONE ROI");
 
 		Rectangle boundRec3 = imp11.getProcessor().getRoi();
