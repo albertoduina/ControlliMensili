@@ -474,8 +474,8 @@ O12F_	/* Flash NECK ARRAY_______________*/	4	4	NE1,2	hsx	30	p11rmn_
 // LOOP AND FLEXIBLE						
 LLFS_	/* Flash LARGE LOOP_______________*/	4	4	xxx		x	x	p3rmn_
 LLSS_	/* SpinEcho LARGE LOOP____________*/	4	4	xxx		x	x	p3rmn_
-SLFS_	/* Flash SMALL LOOP_______________*/	4	4	xxx		hdx	x	p5rmn_
-SLSS_	/* SpinEcho SMALL LOOP____________*/	4	4	xxx		hdx	x	p5rmn_
+SLFS_	/* Flash SMALL LOOP_______________*/	4	4	xxx		vup	30	p11rmn_
+SLSS_	/* SpinEcho SMALL LOOP____________*/	4	4	xxx		vup	30	p11rmn_
 LFFS_	/* Flash LARGE FLEXIBLE___________*/	4	4	xxx		x	x	p3rmn_
 LFSS_	/* SpinEcho LARGE FLEXIBLE________*/	4	4	xxx		x	x	p3rmn_
 SFFS_	/* Flash SMALL FLEXIBLE___________*/	4	4	xxx		x	x	p3rmn_

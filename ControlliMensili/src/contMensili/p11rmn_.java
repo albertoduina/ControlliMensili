@@ -64,10 +64,9 @@ import utils.UtilAyv;
  */
 
 /**
- * Analizza UNIFORMITA', SNR, FWHM per le bobine superficiali
+ * Analizza in maniera automatica o semi-automatica UNIFORMITA', SNR, FWHM per
+ * le bobine superficiali
  * 
- * Per salvare i dati in formato xls necessita di Excel_Writer.jar nella
- * directory plugins
  * 
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
@@ -280,7 +279,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					if (rt1 == null)
 						return 0;
 
-	//				rt1.show("Results");
+					// rt1.show("Results");
 					UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
 					UtilAyv.afterWork();
@@ -297,7 +296,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 			int direzione, double profond, String info10, boolean autoCalled,
 			boolean step, boolean verbose, boolean test, boolean fast) {
 		boolean accetta = false;
+		boolean manualRequired2 = false;
 		ResultsTable rt = null;
+		boolean fast2 = false;
 
 		// boolean fast = false;
 		// if (Prefs.get("prefer.fast", "false").equals("true")) {
@@ -310,7 +311,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		do {
 
 			ImagePlus imp11;
-			if (fast)
+			if (fast && !manualRequired2)
 				imp11 = UtilAyv.openImageNoDisplay(path1, true);
 			// imp11 = UtilAyv.openImageMaximized(path1);
 			else
@@ -319,390 +320,402 @@ public class p11rmn_ implements PlugIn, Measurements {
 			if (imp11 == null)
 				MyLog.waitHere("Non trovato il file " + path1);
 
+			fast2 = fast && !manualRequired2;
+
 			double out2[] = positionSearch(imp11, autoCalled, direzione,
-					profond, info10, step, verbose, test, fast);
+					profond, info10, step, verbose, test, fast2);
 
-			ImagePlus imp1 = null;
-			ImagePlus imp2 = null;
-			Overlay over2 = new Overlay();
-			Overlay over3 = new Overlay();
-
-			if (verbose) {
-				imp1 = UtilAyv.openImageMaximized(path1);
-				imp2 = UtilAyv.openImageNoDisplay(path2, true);
+			if (out2 == null) {
+				manualRequired2 = true;
 			} else {
-				imp1 = UtilAyv.openImageNoDisplay(path1, true);
-				imp2 = UtilAyv.openImageNoDisplay(path2, true);
-			}
-			int width = imp1.getWidth();
-			int height = imp1.getHeight();
+				manualRequired2 = false;
+				ImagePlus imp1 = null;
+				ImagePlus imp2 = null;
+				Overlay over2 = new Overlay();
+				Overlay over3 = new Overlay();
 
-			double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
-					ReadDicom.readDicomParameter(imp1,
-							MyConst.DICOM_PIXEL_SPACING), 2));
+				if (verbose) {
+					imp1 = UtilAyv.openImageMaximized(path1);
+					imp2 = UtilAyv.openImageNoDisplay(path2, true);
+				} else {
+					imp1 = UtilAyv.openImageNoDisplay(path1, true);
+					imp2 = UtilAyv.openImageNoDisplay(path2, true);
+				}
+				int width = imp1.getWidth();
+				int height = imp1.getHeight();
 
-			int sqNEA = MyConst.P11_NEA_11X11_PIXEL;
+				double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
+						ReadDicom.readDicomParameter(imp1,
+								MyConst.DICOM_PIXEL_SPACING), 2));
 
-			int xMaximum = (int) out2[6];
-			int yMaximum = (int) out2[7];
-			double xStartRefLine = out2[2];
-			double yStartRefLine = out2[3];
-			double xEndRefLine = out2[4];
-			double yEndRefLine = out2[5];
-			int xCenterRoi = (int) out2[0];
-			int yCenterRoi = (int) out2[1];
+				int sqNEA = MyConst.P11_NEA_11X11_PIXEL;
 
-			if (verbose) {
+				int xMaximum = (int) out2[6];
+				int yMaximum = (int) out2[7];
+				double xStartRefLine = out2[2];
+				double yStartRefLine = out2[3];
+				double xEndRefLine = out2[4];
+				double yEndRefLine = out2[5];
+				int xCenterRoi = (int) out2[0];
+				int yCenterRoi = (int) out2[1];
 
-				// =================================================
-				imp1.setRoi(new OvalRoi(xMaximum - 4, yMaximum - 4, 8, 8));
+				if (verbose) {
+
+					// =================================================
+					imp1.setRoi(new OvalRoi(xMaximum - 4, yMaximum - 4, 8, 8));
+					over2.addElement(imp1.getRoi());
+					imp1.setOverlay(over2);
+					over2.setStrokeColor(color2);
+					imp1.killRoi();
+					imp1.setRoi(new Line(xStartRefLine, yStartRefLine,
+							xEndRefLine, yEndRefLine));
+					over2.addElement(imp1.getRoi());
+					over2.setStrokeColor(color2);
+					imp1.killRoi();
+					imp1.setRoi(xCenterRoi - 10, yCenterRoi - 10, 20, 20);
+					over2.addElement(imp1.getRoi());
+					imp1.killRoi();
+
+					imp1.updateAndDraw();
+					if (step)
+						MyLog.waitHere();
+
+					// =================================================
+				}
+
+				//
+				// disegno MROI su imp1
+				//
+
+				imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
+						sqNEA, sqNEA);
 				over2.addElement(imp1.getRoi());
-				imp1.setOverlay(over2);
 				over2.setStrokeColor(color2);
-				imp1.killRoi();
-				imp1.setRoi(new Line(xStartRefLine, yStartRefLine, xEndRefLine,
-						yEndRefLine));
-				over2.addElement(imp1.getRoi());
-				over2.setStrokeColor(color2);
-				imp1.killRoi();
-				imp1.setRoi(xCenterRoi - 10, yCenterRoi - 10, 20, 20);
-				over2.addElement(imp1.getRoi());
 				imp1.killRoi();
 
 				imp1.updateAndDraw();
 				if (step)
 					MyLog.waitHere();
 
-				// =================================================
-			}
+				double xStartRefLine2 = 0;
+				double yStartRefLine2 = 0;
+				double xEndRefLine2 = 0;
+				double yEndRefLine2 = 0;
 
-			//
-			// disegno MROI su imp1
-			//
+				if (direzione < 3) {
+					xStartRefLine2 = xCenterRoi;
+					yStartRefLine2 = 0;
+					xEndRefLine2 = xCenterRoi;
+					yEndRefLine2 = height;
+				} else {
 
-			imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA,
-					sqNEA);
-			over2.addElement(imp1.getRoi());
-			over2.setStrokeColor(color2);
-			imp1.killRoi();
+					xStartRefLine2 = 0;
+					yStartRefLine2 = yCenterRoi;
+					xEndRefLine2 = width;
+					yEndRefLine2 = yCenterRoi;
+				}
 
-			imp1.updateAndDraw();
-			if (step)
-				MyLog.waitHere();
+				imp1.setRoi(new Line(xStartRefLine2, yStartRefLine2,
+						xEndRefLine2, yEndRefLine2));
 
-			double xStartRefLine2 = 0;
-			double yStartRefLine2 = 0;
-			double xEndRefLine2 = 0;
-			double yEndRefLine2 = 0;
+				over2.addElement(imp1.getRoi());
+				over2.setStrokeColor(color2);
+				imp1.updateAndDraw();
+				if (step)
+					MyLog.waitHere();
 
-			if (direzione < 3) {
-				xStartRefLine2 = xCenterRoi;
-				yStartRefLine2 = 0;
-				xEndRefLine2 = xCenterRoi;
-				yEndRefLine2 = height;
-			} else {
+				//
+				// posiziono la ROI 7x7 all'interno di MROI
+				//
 
-				xStartRefLine2 = 0;
-				yStartRefLine2 = yCenterRoi;
-				xEndRefLine2 = width;
-				yEndRefLine2 = yCenterRoi;
-			}
+				int sq7 = MyConst.P11_MROI_7X7_PIXEL;
 
-			imp1.setRoi(new Line(xStartRefLine2, yStartRefLine2, xEndRefLine2,
-					yEndRefLine2));
+				imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7,
+						sq7);
+				imp1.updateAndDraw();
 
-			over2.addElement(imp1.getRoi());
-			over2.setStrokeColor(color2);
-			imp1.updateAndDraw();
-			if (step)
-				MyLog.waitHere();
+				over2.addElement(imp1.getRoi());
+				over2.setStrokeColor(color2);
+				imp1.updateAndDraw();
+				if (step)
+					MyLog.waitHere();
 
-			//
-			// posiziono la ROI 7x7 all'interno di MROI
-			//
+				ImageStatistics stat1 = imp1.getStatistics();
+				double signal1 = stat1.mean;
 
-			int sq7 = MyConst.P11_MROI_7X7_PIXEL;
+				int xFondo = MyConst.P11_X_ROI_BACKGROUND;
+				int yFondo = MyConst.P11_Y_ROI_BACKGROUND;
+				//
+				// disegno RoiFondo su imp1
+				//
 
-			imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7, sq7);
-			imp1.updateAndDraw();
+				ImageStatistics statFondo = UtilAyv.backCalc2(xFondo, yFondo,
+						MyConst.P11_DIAM_ROI_BACKGROUND, imp1, step, false,
+						test);
 
-			over2.addElement(imp1.getRoi());
-			over2.setStrokeColor(color2);
-			imp1.updateAndDraw();
-			if (step)
-				MyLog.waitHere();
+				over2.addElement(imp1.getRoi());
+				over2.setStrokeColor(color2);
 
-			ImageStatistics stat1 = imp1.getStatistics();
-			double signal1 = stat1.mean;
+				//
+				// disegno MROI su imaDiff
+				//
+				ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
+				if (verbose && !fast) {
+					UtilAyv.showImageMaximized(imaDiff);
+					// imp1.getWindow().toFront();
+				}
 
-			int xFondo = MyConst.P11_X_ROI_BACKGROUND;
-			int yFondo = MyConst.P11_Y_ROI_BACKGROUND;
-			//
-			// disegno RoiFondo su imp1
-			//
+				imaDiff.resetDisplayRange();
+				imaDiff.setOverlay(over3);
+				over3.setStrokeColor(color2);
 
-			ImageStatistics statFondo = UtilAyv.backCalc2(xFondo, yFondo,
-					MyConst.P11_DIAM_ROI_BACKGROUND, imp1, step, false, test);
+				imaDiff.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7,
+						sq7);
+				over3.addElement(imaDiff.getRoi());
+				over3.setStrokeColor(color2);
+				imaDiff.updateAndDraw();
 
-			over2.addElement(imp1.getRoi());
-			over2.setStrokeColor(color2);
+				ImageStatistics statImaDiff = imaDiff.getStatistics();
+				imaDiff.updateAndDraw();
 
-			//
-			// disegno MROI su imaDiff
-			//
-			ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
-			if (verbose && !fast) {
-				UtilAyv.showImageMaximized(imaDiff);
-				// imp1.getWindow().toFront();
-			}
+				if (imaDiff.isVisible())
+					imaDiff.getWindow().toFront();
 
-			imaDiff.resetDisplayRange();
-			imaDiff.setOverlay(over3);
-			over3.setStrokeColor(color2);
+				if (step)
+					msgMroi();
+				//
+				// calcolo P su imaDiff
+				//
+				double prelimImageNoiseEstimate_MROI = statImaDiff.stdDev
+						/ Math.sqrt(2);
 
-			imaDiff.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7, sq7);
-			over3.addElement(imaDiff.getRoi());
-			over3.setStrokeColor(color2);
-			imaDiff.updateAndDraw();
+				if (step) {
+					msgNea(prelimImageNoiseEstimate_MROI);
+				}
+				//
+				// loop di calcolo NEA su imp1
+				//
 
-			ImageStatistics statImaDiff = imaDiff.getStatistics();
-			imaDiff.updateAndDraw();
-
-			if (imaDiff.isVisible())
-				imaDiff.getWindow().toFront();
-
-			if (step)
-				msgMroi();
-			//
-			// calcolo P su imaDiff
-			//
-			double prelimImageNoiseEstimate_MROI = statImaDiff.stdDev
-					/ Math.sqrt(2);
-
-			if (step) {
-				msgNea(prelimImageNoiseEstimate_MROI);
-			}
-			//
-			// loop di calcolo NEA su imp1
-			//
-
-			if (imp1.isVisible())
-				imp1.getWindow().toFront();
-			if (imaDiff.isVisible())
-				imaDiff.hide();
-
-			imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA,
-					sqNEA);
-			imp1.updateAndDraw();
-
-			imp1.setOverlay(over2);
-
-			over2.addElement(imp1.getRoi());
-			over2.setStrokeColor(color2);
-			imp1.updateAndDraw();
-
-			//
-			// qui, se il numero dei pixel < 121 dovrò incrementare sqR2 e
-			// ripetere il loop
-			//
-			double checkPixels = MyConst.P11_CHECK_PIXEL_MULTIPLICATOR
-					* prelimImageNoiseEstimate_MROI;
-			int area11x11 = MyConst.P11_NEA_11X11_PIXEL
-					* MyConst.P11_NEA_11X11_PIXEL;
-			int enlarge = 0;
-			int pixx = 0;
-
-			do {
-
-				boolean paintPixels = false;
-
-				pixx = countPixTest(imp1, xCenterRoi, yCenterRoi, sqNEA,
-						checkPixels, paintPixels);
+				if (imp1.isVisible())
+					imp1.getWindow().toFront();
+				if (imaDiff.isVisible())
+					imaDiff.hide();
 
 				imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
 						sqNEA, sqNEA);
 				imp1.updateAndDraw();
+
+				imp1.setOverlay(over2);
+
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(color2);
+				imp1.updateAndDraw();
 
-				// imp1.getWindow().toFront();
+				//
+				// qui, se il numero dei pixel < 121 dovrò incrementare sqR2 e
+				// ripetere il loop
+				//
+				double checkPixels = MyConst.P11_CHECK_PIXEL_MULTIPLICATOR
+						* prelimImageNoiseEstimate_MROI;
+				int area11x11 = MyConst.P11_NEA_11X11_PIXEL
+						* MyConst.P11_NEA_11X11_PIXEL;
+				int enlarge = 0;
+				int pixx = 0;
+
+				do {
+
+					boolean paintPixels = false;
+
+					pixx = countPixTest(imp1, xCenterRoi, yCenterRoi, sqNEA,
+							checkPixels, paintPixels);
+
+					imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
+							sqNEA, sqNEA);
+					imp1.updateAndDraw();
+					over2.addElement(imp1.getRoi());
+					over2.setStrokeColor(color2);
+
+					// imp1.getWindow().toFront();
+					if (step)
+						msgDisplayNEA();
+
+					if (pixx < area11x11) {
+						sqNEA = sqNEA + 2; // accrescimento area
+						enlarge = enlarge + 1;
+					}
+					if (step) {
+						msgEnlargeRoi(sqNEA);
+					}
+
+					// verifico che quando cresce il lato del quadrato non si
+					// esca
+					// dall'immagine
+
+					if ((xCenterRoi + sqNEA - enlarge) >= width
+							|| (xCenterRoi - enlarge) <= 0) {
+
+						msgNot121();
+						return null;
+					}
+					if ((yCenterRoi + sqNEA - enlarge) >= height
+							|| (yCenterRoi - enlarge) <= 0) {
+						msgNot121();
+						return null;
+					}
+					if (step && pixx >= area11x11) {
+						msgSqr2OK(pixx);
+					}
+
+				} while (pixx < area11x11);
+
+				imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
+						sqNEA, sqNEA);
+				imp1.updateAndDraw();
+
+				if (imp1.isVisible())
+					imp1.getWindow().toFront();
+				//
+				// calcolo SD su imaDiff quando i corrispondenti pixel
+				// di imp1 passano il test
+				//
+				double[] out1 = devStandardNema(imp1, imaDiff, xCenterRoi
+						- enlarge, yCenterRoi - enlarge, sqNEA, checkPixels);
 				if (step)
-					msgDisplayNEA();
+					msgDisplayMean4(out1[0], out1[1]);
 
-				if (pixx < area11x11) {
-					sqNEA = sqNEA + 2; // accrescimento area
-					enlarge = enlarge + 1;
-				}
-				if (step) {
-					msgEnlargeRoi(sqNEA);
-				}
+				//
+				// calcolo SNR finale
+				//
+				double snr = signal1 / (out1[1] / Math.sqrt(2));
+				if (step)
+					msgSnr(snr);
 
-				// verifico che quando cresce il lato del quadrato non si esca
-				// dall'immagine
+				//
+				// calcolo simulata
+				//
 
-				if ((xCenterRoi + sqNEA - enlarge) >= width
-						|| (xCenterRoi - enlarge) <= 0) {
+				String patName = ReadDicom.readDicomParameter(imp1,
+						MyConst.DICOM_PATIENT_NAME);
+				String codice = ReadDicom
+						.readDicomParameter(imp1,
+								MyConst.DICOM_SERIES_DESCRIPTION)
+						.substring(0, 4).trim();
 
-					msgNot121();
-					return null;
-				}
-				if ((yCenterRoi + sqNEA - enlarge) >= height
-						|| (yCenterRoi - enlarge) <= 0) {
-					msgNot121();
-					return null;
-				}
-				if (step && pixx >= area11x11) {
-					msgSqr2OK(pixx);
-				}
+				simulataName = fileDir + patName + codice + "sim.zip";
 
-			} while (pixx < area11x11);
+				int[][] classiSimulata = ImageUtils.generaSimulata12classi(
+						xCenterRoi, yCenterRoi, sq7, imp1, simulataName, step,
+						verbose, test);
 
-			imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA,
-					sqNEA);
-			imp1.updateAndDraw();
+				//
+				// calcolo posizione fwhm a metà della MROI
+				//
+				if (imp1.isVisible())
+					imp1.getWindow().toFront();
+				int xStartProfile = 0;
+				int yStartProfile = 0;
+				int xEndProfile = 0;
+				int yEndProfile = 0;
 
-			if (imp1.isVisible())
-				imp1.getWindow().toFront();
-			//
-			// calcolo SD su imaDiff quando i corrispondenti pixel
-			// di imp1 passano il test
-			//
-			double[] out1 = devStandardNema(imp1, imaDiff,
-					xCenterRoi - enlarge, yCenterRoi - enlarge, sqNEA,
-					checkPixels);
-			if (step)
-				msgDisplayMean4(out1[0], out1[1]);
-
-			//
-			// calcolo SNR finale
-			//
-			double snr = signal1 / (out1[1] / Math.sqrt(2));
-			if (step)
-				msgSnr(snr);
-
-			//
-			// calcolo simulata
-			//
-
-			String patName = ReadDicom.readDicomParameter(imp1,
-					MyConst.DICOM_PATIENT_NAME);
-			String codice = ReadDicom
-					.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION)
-					.substring(0, 4).trim();
-
-			simulataName = fileDir + patName + codice + "sim.zip";
-
-			int[][] classiSimulata = ImageUtils.generaSimulata12classi(
-					xCenterRoi, yCenterRoi, sq7, imp1, simulataName, step,
-					verbose, test);
-
-			//
-			// calcolo posizione fwhm a metà della MROI
-			//
-			if (imp1.isVisible())
-				imp1.getWindow().toFront();
-			int xStartProfile = 0;
-			int yStartProfile = 0;
-			int xEndProfile = 0;
-			int yEndProfile = 0;
-
-			if (direzione < 3) {
-				xStartProfile = xCenterRoi;
-				yStartProfile = 1;
-				xEndProfile = xStartProfile;
-				yEndProfile = height;
-			} else {
-				xStartProfile = 1;
-				yStartProfile = yCenterRoi;
-				xEndProfile = width;
-				yEndProfile = yStartProfile;
-			}
-
-			double[] outFwhm2 = analyzeProfile(imp1, xStartProfile,
-					yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
-
-			//
-			// Salvataggio dei risultati nella ResultsTable
-
-			String[][] tabCodici = TableCode.loadTable(MyConst.CODE_FILE);
-
-			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-					imp1, tabCodici, VERSION, autoCalled);
-
-			//
-			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
-			int col = 2;
-			String t1 = "TESTO          ";
-			rt.setHeading(++col, "roi_x");
-			rt.setHeading(++col, "roi_y");
-			rt.setHeading(++col, "roi_b");
-			rt.setHeading(++col, "roi_h");
-
-			rt.addLabel(t1, simulataName);
-			rt.incrementCounter();
-
-			rt.addLabel(t1, "Segnale");
-			rt.addValue(2, signal1);
-			rt.addValue(3, xCenterRoi);
-			rt.addValue(4, yCenterRoi);
-			rt.addValue(5, sqNEA);
-			rt.addValue(6, sqNEA);
-
-			rt.incrementCounter();
-			rt.addLabel(t1, "Rumore_Fondo222");
-			rt.addValue(2, statFondo.mean);
-			int xRoi = (int) statFondo.roiX;
-			int yRoi = (int) statFondo.roiY;
-			int widthRoi = (int) statFondo.roiWidth;
-			int heightRoi = (int) statFondo.roiHeight;
-
-			rt.addValue(3, xRoi);
-			rt.addValue(4, yRoi);
-			rt.addValue(5, widthRoi);
-			rt.addValue(6, heightRoi);
-
-			rt.incrementCounter();
-			rt.addLabel(t1, "SnR");
-			rt.addValue(2, snr);
-			rt.addValue(3, xCenterRoi);
-			rt.addValue(4, yCenterRoi);
-			rt.addValue(5, sqNEA);
-			rt.addValue(6, sqNEA);
-
-			rt.incrementCounter();
-			rt.addLabel(t1, "FWHM");
-			rt.addValue(2, outFwhm2[0]);
-			rt.addValue(3, xStartProfile);
-			rt.addValue(4, yStartProfile);
-			rt.addValue(5, xEndProfile);
-			rt.addValue(6, yEndProfile);
-
-			String[] levelString = { "+20%", "+10%", "-10%", "-10%", "-30%",
-					"-40%", "-50%", "-60%", "-70%", "-80%", "-90%", "fondo" };
-
-			for (int i1 = 0; i1 < classiSimulata.length; i1++) {
-				rt.incrementCounter();
-				rt.addLabel(t1, ("Classe" + classiSimulata[i1][0]) + "_"
-						+ levelString[i1]);
-				rt.addValue(2, classiSimulata[i1][1]);
-			}
-			if (verbose && !test && !fast) {
-				rt.show("Results");
-			}
-
-			if (fast) {
-				accetta = true;
-			} else if (autoCalled && !test) {
-				accetta = Msg.accettaMenu();
-			} else {
-				if (!test) {
-					accetta = Msg.msgStandalone();
+				if (direzione < 3) {
+					xStartProfile = xCenterRoi;
+					yStartProfile = 1;
+					xEndProfile = xStartProfile;
+					yEndProfile = height;
 				} else {
-					accetta = test;
+					xStartProfile = 1;
+					yStartProfile = yCenterRoi;
+					xEndProfile = width;
+					yEndProfile = yStartProfile;
 				}
 
+				double[] outFwhm2 = analyzeProfile(imp1, xStartProfile,
+						yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
+
+				//
+				// Salvataggio dei risultati nella ResultsTable
+
+				String[][] tabCodici = TableCode.loadTable(MyConst.CODE_FILE);
+
+				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
+						path1, imp1, tabCodici, VERSION, autoCalled);
+
+				//
+				rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+				int col = 2;
+				String t1 = "TESTO          ";
+				rt.setHeading(++col, "roi_x");
+				rt.setHeading(++col, "roi_y");
+				rt.setHeading(++col, "roi_b");
+				rt.setHeading(++col, "roi_h");
+
+				rt.addLabel(t1, simulataName);
+				rt.incrementCounter();
+
+				rt.addLabel(t1, "Segnale");
+				rt.addValue(2, signal1);
+				rt.addValue(3, xCenterRoi);
+				rt.addValue(4, yCenterRoi);
+				rt.addValue(5, sqNEA);
+				rt.addValue(6, sqNEA);
+
+				rt.incrementCounter();
+				rt.addLabel(t1, "Rumore_Fondo222");
+				rt.addValue(2, statFondo.mean);
+				int xRoi = (int) statFondo.roiX;
+				int yRoi = (int) statFondo.roiY;
+				int widthRoi = (int) statFondo.roiWidth;
+				int heightRoi = (int) statFondo.roiHeight;
+
+				rt.addValue(3, xRoi);
+				rt.addValue(4, yRoi);
+				rt.addValue(5, widthRoi);
+				rt.addValue(6, heightRoi);
+
+				rt.incrementCounter();
+				rt.addLabel(t1, "SnR");
+				rt.addValue(2, snr);
+				rt.addValue(3, xCenterRoi);
+				rt.addValue(4, yCenterRoi);
+				rt.addValue(5, sqNEA);
+				rt.addValue(6, sqNEA);
+
+				rt.incrementCounter();
+				rt.addLabel(t1, "FWHM");
+				rt.addValue(2, outFwhm2[0]);
+				rt.addValue(3, xStartProfile);
+				rt.addValue(4, yStartProfile);
+				rt.addValue(5, xEndProfile);
+				rt.addValue(6, yEndProfile);
+
+				String[] levelString = { "+20%", "+10%", "-10%", "-10%",
+						"-30%", "-40%", "-50%", "-60%", "-70%", "-80%", "-90%",
+						"fondo" };
+
+				for (int i1 = 0; i1 < classiSimulata.length; i1++) {
+					rt.incrementCounter();
+					rt.addLabel(t1, ("Classe" + classiSimulata[i1][0]) + "_"
+							+ levelString[i1]);
+					rt.addValue(2, classiSimulata[i1][1]);
+				}
+				if (verbose && !test && !fast) {
+					rt.show("Results");
+				}
+
+				if (fast) {
+					accetta = true;
+				} else if (autoCalled && !test) {
+					accetta = Msg.accettaMenu();
+				} else {
+					if (!test) {
+						accetta = Msg.msgStandalone();
+					} else {
+						accetta = test;
+					}
+
+				}
 			}
-		} while (!accetta);
+		} while (!accetta || manualRequired2);
 		return rt;
 
 	}
@@ -1440,6 +1453,17 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double startY = Double.NaN;
 		double endX = Double.NaN;
 		double endY = Double.NaN;
+		boolean manualRequired = false;
+
+		// TODO cercare di eliminare il problema delle imnmagini col
+		// ribaltamento.
+		// ci sono 2 possibilità:
+		// 1) sfruttare il fatto che conosciamo la direzione in cui muoverci,
+		// per cui possiamo riprendere dall'altro lato dell'immagine
+		// 2) richiedere un intervento manuale per il posizionamento (in questo
+		// modo l'operatore può addirittura venire invitato a modificare i
+		// parametri di acquisizione)
+		//
 
 		String strDirez = "";
 		// vup = 1 vdw = 2 hsx = 3 hdx = 4
@@ -1449,6 +1473,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 			startX = 0;
 			endX = width;
 			startY = out1[1] - profond / dimPixel;
+			if (startY < 0) {
+				manualRequired = true;
+				startY = startY + height;
+			}
 			endY = startY;
 			break;
 		case 2:
@@ -1456,11 +1484,20 @@ public class p11rmn_ implements PlugIn, Measurements {
 			startX = 0;
 			endX = width;
 			startY = out1[1] + profond / dimPixel;
+			if (startY > height) {
+				manualRequired = true;
+				startY = startY - height;
+			}
 			endY = startY;
 			break;
 		case 3:
 			strDirez = " orizzontale a sinistra";
 			startX = out1[0] - profond / dimPixel;
+			if (startX < 0) {
+				manualRequired = true;
+				startX = startX + width;
+			}
+
 			endX = startX;
 			startY = 0;
 			endY = height;
@@ -1468,6 +1505,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 		case 4:
 			strDirez = " orizzontale a destra";
 			startX = out1[0] + profond / dimPixel;
+			if (startX > width) {
+				manualRequired = true;
+				startX = startX - width;
+			}
 			endX = startX;
 			startY = 0;
 			endY = height;
@@ -1539,6 +1580,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		}
 
+		// if (manualRequired) {
+		// ax = width / 2;
+		// ay = height / 2;
+		// }
+
 		if (!fast && (step || test)) {
 			imp11.setRoi(new OvalRoi((int) ax - 4, (int) ay - 4, 8, 8));
 			over1.addElement(imp11.getRoi());
@@ -1548,8 +1594,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 
-		if (!fast)
-			MyLog.waitMessage(info10 + "\n \nMODIFICA MANUALE POSIZIONE ROI");
+		if (!fast) {
+			MyLog.waitMessage(info10 + "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI");
+			manualRequired = false;
+		}
 
 		Rectangle boundRec3 = imp11.getProcessor().getRoi();
 		double xCenterRoi = boundRec3.getCenterX();
@@ -1565,7 +1613,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 		out[6] = xMaximum;
 		out[7] = yMaximum;
 
-		return out;
+		if (manualRequired)
+			return null;
+		else
+			return out;
 	}
 
 	/***
