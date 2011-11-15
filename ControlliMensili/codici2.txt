@@ -406,12 +406,12 @@ O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N11			p5rmn_
 O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N12			p5rmn_
 O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N21			p5rmn_
 O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	N22			p5rmn_
-O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	NE1,2		p5rmn_
+//O12S_	/* SpinEcho NECK ARRAY ___________*/	4	4	NE1,2		p5rmn_
 O12F_	/* Flash NECK ARRAY_______________*/	4	4	N11			p5rmn_
 O12F_	/* Flash NECK ARRAY_______________*/	4	4	N12			p5rmn_
 O12F_	/* Flash NECK ARRAY_______________*/	4	4	N21			p5rmn_
 O12F_	/* Flash NECK ARRAY_______________*/	4	4	N22			p5rmn_
-O12F_	/* Flash NECK ARRAY_______________*/	4	4	NE1,2		p5rmn_
+//O12F_	/* Flash NECK ARRAY_______________*/	4	4	NE1,2		p5rmn_
 //
 // LOOP AND FLEXIBLE						
 LLFS_	/* Flash LARGE LOOP_______________*/	4	4	xxx			p3rmn_

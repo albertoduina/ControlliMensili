@@ -10,4 +10,7 @@ fast disponibile, di eseguire l'elaborazione delle misure alla massima velocità,
 limiti impostati, permettendo così un rapido controllo visuale. 
 <<<< Anzichè aspettare che se ne accorga Lorella e me lo dica, oppure aspettare di elaborare il report in VBA >>>>>
 
+Una possibilità, però ci sarebbe:
+analogamente a quanto fatto in VBA, si prende la sigla della macchina, la si compara con una tabella e da questa si è in  grado di sapere la 
+"classe" della macchina e, di conseguenza, adottare gli appropriati limiti per la misura. 
 
