@@ -37,6 +37,9 @@ HR2A_	/* Risoluzione 256 Head___________*/	1	1	xxx		x	x	p4rmn_
 //
 // HEAD ARRAY AERA SAVE UNCOMBINED	
 //
+// RISERVIAMO IL CODICE HVSA_ HVSS_ HVSC_ perchè sostituito in vba a questi
+// IN FUTURO CAMBIEREMO IL CODICE NELLA SEQUENZA AERA
+// --------------------------------------
 HUSAA	/* Uniformità Assiale Head________*/	2	2	H11		x	30	p10rmn_
 HUSAA	/* Uniformità Assiale Head________*/	2	2	H12		x	30	p10rmn_
 HUSAA	/* Uniformità Assiale Head________*/	2	2	H13		x	30	p10rmn_
@@ -113,14 +116,14 @@ B2FS_	/* Flash BODY ARRAY B2____________*/	4	4	xxx		hdx	x	p5rmn_
 B2SS_	/* SpinEcho BODY ARRAY B2_________*/	4	4	xxx		hdx	x	p5rmn_
 //           
 // ROVATO
-B1FE_	/* Flash BODY ARRAY EXT B1________*/	4	4	xxx		hdx	x	p5rmn_
-B1SE_	/* SpinEcho BODY ARRAY EXT B1_____*/	4	4	xxx		hdx	x	p5rmn_
-B2FE_	/* Flash BODY ARRAY EXT B2________*/	4	4	xxx		hdx	x	p5rmn_
-B2SE_	/* SpinEcho BODY ARRAY EXT B2_____*/	4	4	xxx		hdx	x	p5rmn_
-B3FE_	/* Flash BODY ARRAY EXT B3________*/	4	4	xxx		hdx	x	p5rmn_
-B3SE_	/* SpinEcho BODY ARRAY EXT B3_____*/	4	4	xxx		hdx	x	p5rmn_
-B4FE_	/* Flash BODY ARRAY EXT B4________*/	4	4	xxx		hdx	x	p5rmn_
-B4SE_	/* SpinEcho BODY ARRAY EXT B4_____*/	4	4	xxx		hdx	x	p5rmn_
+B1FE_	/* Flash BODY ARRAY EXT B1________*/	4	4	xxx		hdx	30	p11rmn_
+B1SE_	/* SpinEcho BODY ARRAY EXT B1_____*/	4	4	xxx		hdx	30	p11rmn_
+B2FE_	/* Flash BODY ARRAY EXT B2________*/	4	4	xxx		hdx	30	p11rmn_
+B2SE_	/* SpinEcho BODY ARRAY EXT B2_____*/	4	4	xxx		hdx	30	p11rmn_
+B3FE_	/* Flash BODY ARRAY EXT B3________*/	4	4	xxx		hdx	30	p11rmn_
+B3SE_	/* SpinEcho BODY ARRAY EXT B3_____*/	4	4	xxx		hdx	30	p11rmn_
+B4FE_	/* Flash BODY ARRAY EXT B4________*/	4	4	xxx		hdx	30	p11rmn_
+B4SE_	/* SpinEcho BODY ARRAY EXT B4_____*/	4	4	xxx		hdx	30	p11rmn_
 //
 // BODY ARRAY AVANTO						
 B1FA_	/* Flash BODY ARRAY B1____________*/	4	4	xxx		hdx	30	p11rmn_
@@ -243,57 +246,57 @@ D1CS_	/* SpinEcho BODY ARRAY B03_B______*/	4	4	B36		hdx	30	p10rmn_
 D1CF_	/* Flash BODY ARRAY B03_B_________*/	4	4	B36		hdx	30	p10rmn_
 //
 // BODY ARRAY 16ch MANERBIO SAVE UNCOMBINED
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A1A		hdx	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A1A		hdx	x	p5rmn_
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A1B		hdx	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A1B		hdx	x	p5rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A1A		hdx	30	p10rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A1A		hdx	30	p10rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A1B		hdx	30	p10rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A1B		hdx	30	p10rmn_
 
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A2A		hdx	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A2A		hdx	x	p5rmn_
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A2B		hdx	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A2B		hdx	x	p5rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A2A		hdx	30	p10rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A2A		hdx	30	p10rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A2B		hdx	30	p10rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A2B		hdx	30	p10rmn_
 
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A3A		hdx	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A3A		hdx	x	p5rmn_
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A3B		hdx	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A3B		hdx	x	p5rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A3A		hdx	30	p10rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A3A		hdx	30	p10rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A3B		hdx	30	p10rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A3B		hdx	30	p10rmn_
 
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A4A		hdx	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A4A		hdx	x	p5rmn_
-R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A4B		hdx	x	p5rmn_
-R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A4B		hdx	x	p5rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A4A		hdx	30	p10rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A4A		hdx	30	p10rmn_
+R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	A4B		hdx	30	p10rmn_
+R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	A4B		hdx	30	p10rmn_
 
 R12F_	/* Flash BODY ARRAY 16CH BA1-2____*/	4	4	C:BA1,2	x	x	p3rmn_
 R12S_	/* SpinEcho BODY ARRAY 16CH BA1-2_*/	4	4	C:BA1,2	x	x	p3rmn_
 
 
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A5A		hdx	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A5A		hdx	x	p5rmn_
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A5B		hdx	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A5B		hdx	x	p5rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A5A		hdx	30	p10rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A5A		hdx	30	p10rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A5B		hdx	30	p10rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A5B		hdx	30	p10rmn_
 
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A6A		hdx	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A6A		hdx	x	p5rmn_
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A6B		hdx	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A6B		hdx	x	p5rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A6A		hdx	30	p10rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A6A		hdx	30	p10rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A6B		hdx	30	p10rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A6B		hdx	30	p10rmn_
 
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A7A		hdx	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A7A		hdx	x	p5rmn_
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A7B		hdx	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A7B		hdx	x	p5rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A7A		hdx	30	p10rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A7A		hdx	30	p10rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A7B		hdx	30	p10rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A7B		hdx	30	p10rmn_
 
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A8A		hdx	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A8A		hdx	x	p5rmn_
-R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A8B		hdx	x	p5rmn_
-R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A8B		hdx	x	p5rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A8A		hdx	30	p10rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A8A		hdx	30	p10rmn_
+R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	A8B		hdx	30	p10rmn_
+R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	A8B		hdx	30	p10rmn_
 
 R34F_	/* Flash BODY ARRAY 16CH BA3-4____*/	4	4	C:BA3,4	x	x	p3rmn_
 R34S_	/* SpinEcho BODY ARRAY 16CH BA3-4_*/	4	4	C:BA3,4	x	x	p3rmn_
 
-R1FA_	/* Flash BODY ARRAY 16CH B1_______*/	4	0	xxx		hdx	x	p5rmn_
-R1SA_	/* SpinEcho BODY ARRAY 16CH B1____*/	4	0	xxx		hdx	x	p5rmn_
-R2FA_	/* Flash BODY ARRAY 16CH B2_______*/	4	0	xxx		hdx	x	p5rmn_
-R2SA_	/* SpinEcho BODY ARRAY 16CH B2____*/	4	0	xxx		hdx	x	p5rmn_
+R1FA_	/* Flash BODY ARRAY 16CH B1_______*/	4	0	xxx		hdx	30	p10rmn_
+R1SA_	/* SpinEcho BODY ARRAY 16CH B1____*/	4	0	xxx		hdx	30	p10rmn_
+R2FA_	/* Flash BODY ARRAY 16CH B2_______*/	4	0	xxx		hdx	30	p10rmn_
+R2SA_	/* SpinEcho BODY ARRAY 16CH B2____*/	4	0	xxx		hdx	30	p10rmn_
 //
 // SPINE AVANTO						
 S1FS_	/* Flash SPINE S1_________________*/	4	4	xxx		hsx	30	p11rmn_
@@ -440,10 +443,10 @@ N2FS_	/* Flash NECK ARRAY N2____________*/	4	4	xxx		hdx	x	p5rmn_
 N2SS_	/* SpinEcho NECK ARRAY N2_________*/	4	4	xxx		hdx	x	p5rmn_
 //
 // ROVATO
-N1FE_	/* Flash NECK ARRAY N1____________*/	4	4	xxx		hdx	x	p5rmn_
-N1SE_	/* SpinEcho NECK ARRAY N1_________*/	4	4	xxx		hdx	x	p5rmn_
-N2FE_	/* Flash NECK ARRAY N2____________*/	4	4	xxx		hdx	x	p5rmn_
-N2SE_	/* SpinEcho NECK ARRAY N2_________*/	4	4	xxx		hdx	x	p5rmn_
+N1FE_	/* Flash NECK ARRAY N1____________*/	4	4	xxx		hdx	30	p11rmn_
+N1SE_	/* SpinEcho NECK ARRAY N1_________*/	4	4	xxx		hdx	30	p11rmn_
+N2FE_	/* Flash NECK ARRAY N2____________*/	4	4	xxx		hdx 30	p11rmn_
+N2SE_	/* SpinEcho NECK ARRAY N2_________*/	4	4	xxx		hdx	30	p11rmn_
 //
 // NECK MATRIX AVANTO					
 N1FA_	/* Flash NECK ARRAY B1____________*/	4	4	xxx		hdx	x	p5rmn_
