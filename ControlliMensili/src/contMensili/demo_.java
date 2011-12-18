@@ -32,6 +32,9 @@ public class demo_ implements PlugIn, Measurements {
 				.readDouble(ReadDicom.readSubstring(ReadDicom
 						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
 						1));
+		
+		
+	
 
 		// double mag = canvas.getMagnification();
 		// double wid = imp1.getWidth();

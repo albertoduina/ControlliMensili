@@ -573,7 +573,7 @@ public class Sequenze_ implements PlugIn {
 	 * @param tableSequenze5
 	 *            è il file iw2ayv.txt ricaricato da disco
 	 * @param tableCode5
-	 *            è il file codici2.txt caricato da disco
+	 *            è il file codiciXXXX.txt caricato da disco
 	 */
 	public String[][] callPluginsFromSequenceTable(String[][] tableSequenze5,
 			String[][] tableCode5, boolean test) {
@@ -1191,6 +1191,14 @@ public class Sequenze_ implements PlugIn {
 			}
 		}
 		return tableOut;
+	}
+
+	public boolean checkSequenceTable(String source) {
+		URL url1 = this.getClass().getResource("/" + source);
+		if (url1 != null)
+			return true;
+		else
+			return false;
 	}
 
 	/**

@@ -61,7 +61,7 @@ public class p4rmn_Test {
 		int num = WindowManager.getWindowCount();
 		int expected = 2;
 		assertTrue(num > 0);
-		IJ.log("p4rmn>>> num="+num);
+		IJ.log("p4rmn>>> num=" + num);
 		IJ.log("------------------------------");
 		UtilAyv.afterWork();
 		// ButtonMessages.ModelessMsg("", "CONTINUA");
@@ -93,8 +93,14 @@ public class p4rmn_Test {
 
 		ResultsTable rt = p4rmn_.mainMTF(path1, vetPreferences, autoCalled,
 				step, verbose, test);
-		UtilAyv.dumpResultsTable(rt);
 
+		double[] vetResults = UtilAyv.vectorizeResults(rt);
+		double[] vetReference = { 0.0, 0.9598900737778213, 0.9866962668164938,
+				0.9883716512349785, 0.14203500307561293, 0.3751277435706519,
+				0.9765625, 0.0 };
+
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, null);
+		assertTrue(ok);
 	}
 
 }

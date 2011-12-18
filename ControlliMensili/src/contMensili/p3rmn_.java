@@ -345,6 +345,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 			if (!test)
 				msgElabImaDiff(step);
 			impDiff.setRoi(new OvalRoi(xRoi2, yRoi2, diamRoi2, diamRoi2));
+			
+		
+			
 			ImageStatistics statImaDiff = impDiff.getStatistics();
 			if (verbose)
 				impDiff.updateAndDraw();

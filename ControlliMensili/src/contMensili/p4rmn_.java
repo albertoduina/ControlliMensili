@@ -22,6 +22,7 @@ import utils.CustomCanvasGeneric;
 import utils.InputOutput;
 import utils.Msg;
 import utils.MyConst;
+import utils.MyLog;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
@@ -226,9 +227,6 @@ public class p4rmn_ implements PlugIn, Measurements {
 	public static void prepMTF(String path1, String autoArgs,
 			boolean autoCalled, boolean step, boolean verbose, boolean test) {
 
-		// ImagePlus imp0 = UtilAyv.openImageNoDisplay(path1, verbose);
-		// int height = imp0.getHeight();
-		// int width = imp0.getWidth();
 		double[] vetPreferences = readPreferences();
 		mainMTF(path1, vetPreferences, autoCalled, step, verbose, test);
 
@@ -278,6 +276,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 					yEndRefline = 120.;
 				}
 			}
+			
 
 			double xStartRefline2 = xStartRefline / dimPixel;
 			double yStartRefline2 = yStartRefline / dimPixel;
@@ -426,18 +425,24 @@ public class p4rmn_ implements PlugIn, Measurements {
 			imp1.setRoi(new OvalRoi(xRoi_plexi, yRoi_plexi, dRoi_plexi,
 					dRoi_plexi));
 			rm1.addRoi(imp1.getRoi());
-
+	
 			// if (verbose) {
 			rm1.runCommand("Combine");
+	
 			if (verbose)
 				msgRefinePositioning();
+
 			rm1.runCommand("Measure");
 
 			rm1.runCommand("Delete");
+
 			int visualResolution = 0;
 			// qui applichiamo il custom canvas generico
 			if (verbose && !test) {
+
 				overlayNumbers(imp1, true);
+				
+
 				visualResolution = msgLastVisiblePositioning();
 			}
 

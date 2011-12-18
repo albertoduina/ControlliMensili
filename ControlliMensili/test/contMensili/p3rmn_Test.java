@@ -23,17 +23,6 @@ public class p3rmn_Test {
 	public void tearDown() throws Exception {
 	}
 
-	@Test
-	public final void testAfterWork() {
-		String path1 = ".\\Test2\\HUSA_001testP3";
-		UtilAyv.openImageMaximized(path1);
-		UtilAyv.openImageMaximized(path1);
-		// ButtonMessages.ModelessMsg("", "CONTINUA");
-		IJ.wait(500);
-		UtilAyv.afterWork();
-		// ButtonMessages.ModelessMsg("", "CONTINUA");
-		IJ.wait(500);
-	}
 
 	@Test
 	public final void testDecodeTokens() {

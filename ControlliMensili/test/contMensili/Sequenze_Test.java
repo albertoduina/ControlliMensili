@@ -23,6 +23,7 @@ import utils.InputOutput;
 import utils.MyConst;
 import utils.MyLog;
 import utils.ReadDicom;
+import utils.TableSequence;
 import utils.TableUtils;
 import utils.UtilAyv;
 
@@ -257,33 +258,51 @@ public class Sequenze_Test {
 
 	@Test
 	public final void testCallPluginFromSequenceTable() {
-		String[][] expected = { { "contMensili.p3rmn_", "#2#3" },
-				{ "contMensili.p6rmn_", "#4#5#6#7" },
-				{ "contMensili.p6rmn_", "#8" } };
+		
+		// 18 dec 2011 sistemato, ora funziona in automatico
+		
+		String[][] expected = { { "contMensili.p3rmn_", "#2#3" } };
 
-		MyLog.logMatrix(orderedTable, "orderedTable");
 		MyLog.logMatrix(codeTable, "codeTable");
 
+		String[][] iw2ayvTable = new TableSequence()
+				.loadTable(new InputOutput().findResource("/iw2ayv.txt"));
+
+		MyLog.logMatrix(iw2ayvTable, "iw2ayvTable");
+
 		String[][] chiamate = new Sequenze_().callPluginsFromSequenceTable(
-				orderedTable, codeTable, true);
+				iw2ayvTable, codeTable, true);
+
 		TableUtils.dumpTable(chiamate, "chiamate");
 		assertTrue(TableUtils.compareTable(expected, chiamate));
 	}
 
 	@Test
 	public final void testPluginToBeCalled() {
-		String nome = new Sequenze_().pluginToBeCalled(2, orderedTable,
+		
+		
+		String[][] iw2ayvTable = new TableSequence()
+		.loadTable(new InputOutput().findResource("/iw2ayv.txt"));
+		
+		MyLog.logMatrix(iw2ayvTable, "iw2ayvTable");
+
+
+		String nome = new Sequenze_().pluginToBeCalled(2, iw2ayvTable,
 				codeTable);
-		// System.out.printf("\nnome= " + nome);
+		System.out.printf("\nnome= " + nome);
 		assertEquals("contMensili.p3rmn_", nome);
 	}
 
 	@Test
 	public final void testPluginToBeCalledWithCoil() {
-		TableUtils.dumpTable(orderedTable, "orderedTable");
-		TableUtils.dumpTable(codeTable, "codeTable");
+		
+		String[][] iw2ayvTable = new TableSequence()
+		.loadTable(new InputOutput().findResource("/iw2ayv.txt"));
+		
+		MyLog.logMatrix(iw2ayvTable, "iw2ayvTable");
 
-		String nome = new Sequenze_().pluginToBeCalledWithCoil(2, orderedTable,
+
+		String nome = new Sequenze_().pluginToBeCalledWithCoil(2, iw2ayvTable,
 				codeTable);
 		System.out.printf("\nnome= " + nome);
 		assertEquals("contMensili.p3rmn_", nome);

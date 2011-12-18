@@ -36,6 +36,8 @@ public class p10rmn_Test {
 	@Test
 	public final void testMainUniforTestGe() {
 
+		// 16 dec 2011 sistemato, ora funziona in automatico
+
 		String home1 = new p10rmn_().findTestImages();
 		String path1 = home1 + "C001_testP10";
 		String path2 = home1 + "C002_testP10";
@@ -45,8 +47,8 @@ public class p10rmn_Test {
 		boolean step = false;
 		boolean verbose = true;
 		boolean test = true;
-		boolean fast=false;
-		double[] vetReference = new p10rmn_().referenceGe();
+		boolean fast = true;
+		double[] vetReference = new p10rmn_().referenceSiemens();
 		double profond = 30;
 
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
@@ -54,15 +56,15 @@ public class p10rmn_Test {
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-				MyConst.P5_vetName);
-		// ButtonMessages.ModelessMsg("", "CONTINUA");
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, null);
 		assertTrue(ok);
 	}
 
 	@Test
 	public final void testMainUniforTestSiemens() {
 
+		// 16 dec 2011 sistemato, ora funziona in automatico
+
 		String home1 = new p10rmn_().findTestImages();
 		String path1 = home1 + "C001_testP10";
 		String path2 = home1 + "C002_testP10";
@@ -72,9 +74,9 @@ public class p10rmn_Test {
 		boolean step = false;
 		boolean verbose = true;
 		boolean test = true;
+		boolean fast = true;
 		double[] vetReference = new p10rmn_().referenceSiemens();
 		double profond = 30;
-		boolean fast=false;
 
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
 				"", autoCalled, step, verbose, test, fast);
@@ -83,12 +85,14 @@ public class p10rmn_Test {
 
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 				MyConst.P5_vetName);
-		// ButtonMessages.ModelessMsg("", "CONTINUA");
 		assertTrue(ok);
 	}
 
 	@Test
 	public final void testMainUnifor() {
+
+		// 16 dec 2011 sistemato, ora funziona in automatico
+
 		String path1 = "./Test2/C001_testP10";
 		String path2 = "./Test2/C002_testP10";
 		String autoArgs = "0";
@@ -97,15 +101,22 @@ public class p10rmn_Test {
 		boolean verbose = false;
 		boolean test = false;
 		double profond = 30;
-		boolean fast=true;
-		p10rmn_.mainUnifor(path1, path2, autoArgs, profond, "info10",
-				autoCalled, step, verbose, test, fast);
-		new WaitForUserDialog("FINE").show();
-		// IJ.wait(500);
+		boolean fast = true;
+		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
+				"info10", autoCalled, step, verbose, test, fast);
+
+		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		double[] vetReference = new p10rmn_().referenceSiemens();
+
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, null);
+		assertTrue(ok);
 	}
 
 	@Test
 	public final void testPositionSearch() {
+
+		// 16 dic 2011 sistemato, ora funziona in automatico
+
 		String path1 = "./Test2/C001_testP10";
 
 		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
@@ -120,8 +131,11 @@ public class p10rmn_Test {
 		double out2[] = p10rmn_.positionSearch(imp11, profond, "", autoCalled,
 				step, verbose, test, fast);
 
-		new WaitForUserDialog("FINE").show();
-		// IJ.wait(500);
+		double[] expected = { 159.0, 105.0, 118.0, 133.0, 202.0, 77.0,
+				33.690067525979785 };
+		// MyLog.logVector(out2, "out2");
+		boolean ok = UtilAyv.verifyResults1(expected, out2, null);
+		assertTrue(ok);
 	}
 
 	@Test
@@ -156,6 +170,9 @@ public class p10rmn_Test {
 	@Test
 	public final void testCreateErf() {
 
+		// 16 dec 2011 sistemato, ora funziona in automatico senza bisogno di
+		// visualizzare il profilo
+
 		double[] profile1 = InputOutput
 				.readDoubleArrayFromFile((new InputOutput()
 						.findResource("/002.txt")));
@@ -168,30 +185,34 @@ public class p10rmn_Test {
 		double[] profile2 = p10rmn_.createErf(smooth1, invert);
 		MyLog.logVector(profile2, "profile2");
 
-		double[] xcoord1 = new double[profile2.length];
-		for (int j = 0; j < profile2.length; j++)
-			xcoord1[j] = j;
-		Plot plot2 = MyPlot.basePlot(profile2, "Plot profilo ERF", Color.blue);
+		double[] expected = InputOutput
+				.readDoubleArrayFromFile((new InputOutput()
+						.findResource("/003.txt")));
 
-		plot2.show();
-		new WaitForUserDialog("Do something, then click OK.").show();
-		// IJ.wait(500);
+		boolean ok = UtilAyv.verifyResults1(expected, profile2, null);
+		assertTrue(ok);
 
-		// plot3.draw();
+		// Plot plot2 = MyPlot.basePlot(profile2, "Plot profilo ERF",
+		// Color.blue);
+		// plot2.show();
+		// MyLog.waitHere("display plot, dare OK");
+		// IJ.wait(200);
 
 	}
 
 	@Test
 	public final void testPeakDet() {
+
+		// 16 dec 2011 sistemato, ora funziona in automatico senza bisogno di
+		// visualizzare il profilo
+
 		double[][] profile1 = InputOutput
 				.readDoubleMatrixFromFile((new InputOutput()
 						.findResource("/BADProfile.txt")));
-		MyLog.logMatrix(profile1, "profile1");
 		double delta = 100.0;
 		new p10rmn_();
 		ArrayList<ArrayList<Double>> matOut = p10rmn_.peakDet(profile1, delta);
 		double[][] out = new InputOutput().fromArrayListToDoubleTable(matOut);
-		MyLog.logMatrix(out, "out");
 
 		double[] vetx = new double[profile1.length];
 		double[] vety = new double[profile1.length];
@@ -201,22 +222,23 @@ public class p10rmn_Test {
 		for (int j = 0; j < profile1.length; j++)
 			vety[j] = profile1[j][1];
 
-		Plot plot2 = MyPlot.basePlot(vetx, vety, "P R O F I L O", Color.blue);
-		plot2.show();
+		// Plot plot2 = MyPlot.basePlot(vetx, vety, "P R O F I L O",
+		// Color.blue);
+		// plot2.show();
 		// new WaitForUserDialog("Do something, then click OK.").show();
-		IJ.wait(1000);
+		// IJ.wait(200);
 
-		double expected = 155.2734375;
+		double expected = 66.796875;
 		assertEquals(expected, out[0][0], 1e-12);
-		expected = 3.583803177;
+		expected = 14.09287783266325;
 		assertEquals(expected, out[1][0], 1e-12);
-		expected = 45.703125;
+		expected = 9.9609375;
 		assertEquals(expected, out[2][0], 1e-12);
-		expected = 163.4765625;
+		expected = 128.3203125;
 		assertEquals(expected, out[2][1], 1e-12);
-		expected = 1990.840209961;
+		expected = 445.2493818993196;
 		assertEquals(expected, out[3][0], 1e-12);
-		expected = 399.587341309;
+		expected = 199.34767076939997;
 		assertEquals(expected, out[3][1], 1e-12);
 	}
 
@@ -314,17 +336,21 @@ public class p10rmn_Test {
 		String path1 = "./Test2/C001_testP10";
 		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
 
-		int xPos = 50;
-		int yPos = 80;
+		int xPos = 117;
+		int yPos = 117;
 		int sqNEA = 20;
 		double checkPixels = 58.064;
 		boolean test = true;
+		// rispetto a questo test ricordarsi che la roi assegnata è
+		// assolutamente arbitraria, si deve solo vedere un quadrato chiaro, più
+		// o meno al centro dell'immagine
 
 		int pixx = p10rmn_.countPixTest(imp1, xPos, yPos, sqNEA, checkPixels,
 				test);
 
-		IJ.log("pixx= " + pixx);
-		MyLog.waitHere();
+		// IJ.log("pixx= " + pixx);
+		IJ.wait(200);
+		assertEquals(pixx, 441);
 	}
 
 }

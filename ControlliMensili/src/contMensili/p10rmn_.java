@@ -473,6 +473,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			imp1.updateAndDraw();
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
+
 			//
 			// qui, se il numero dei pixel < 121 dovrò incrementare sqR2 e
 			// ripetere il loop
@@ -491,6 +492,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 				pixx = countPixTest(imp1, xCenterRoi, yCenterRoi, sqNEA,
 						checkPixels, paintPixels);
+
 
 				imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
 						sqNEA, sqNEA);
@@ -876,9 +878,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * @param sqR
 	 *            lato della Roi
 	 * @param limit
-	 *            soglia di conteggio
+	 *            soglia di conteggio, vengono contati i pixel che la superano
 	 * @param paintPixels
-	 *            switch per test
+	 *            switch per test, se attivato vengono colorati i pixels di cui
+	 *            viene effettuato il conteggio. Utilizzato per verificare che
+	 *            le varie ROI siano posizionate correttamente
 	 * @return pixel che superano la soglia
 	 */
 	public static int countPixTest(ImagePlus imp1, int sqX, int sqY, int sqR,
@@ -897,12 +901,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 		short[] pixels1 = UtilAyv.truePixels(imp1);
 		ImageProcessor ip1 = imp1.getProcessor();
 		if (paintPixels) {
-			// N.B. la roi qui sotto è volutamente centrata senza togliere
-			// lato/2
-			imp1.setRoi(sqX, sqY, sqR, sqR);
-			imp1.updateAndDraw();
 			pixels2 = (short[]) ip1.getPixels();
 		}
+
 
 		for (int y1 = sqY - sqR / 2; y1 <= (sqY + sqR / 2); y1++) {
 			offset = y1 * width;
@@ -2548,7 +2549,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// MyLog.waitHere();
 
 		if (!fast)
-			MyLog.waitMessage(info1 + "\n \nMODIFICA MANUALE POSIZIONE ROI");
+			MyLog.waitHere(info1 + "\n \nMODIFICA MANUALE POSIZIONE ROI");
 
 		Rectangle boundRec3 = imp11.getProcessor().getRoi();
 		// int xCenterRoi = boundRec3.x + boundRec3.width / 2;
