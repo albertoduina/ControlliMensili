@@ -96,6 +96,7 @@ public class Sequenze_Test {
 		// }
 	}
 
+
 	@Test
 	public final void testLogVerifySequenceTableLONG() {
 
@@ -258,9 +259,9 @@ public class Sequenze_Test {
 
 	@Test
 	public final void testCallPluginFromSequenceTable() {
-		
+
 		// 18 dec 2011 sistemato, ora funziona in automatico
-		
+
 		String[][] expected = { { "contMensili.p3rmn_", "#2#3" } };
 
 		MyLog.logMatrix(codeTable, "codeTable");
@@ -279,13 +280,11 @@ public class Sequenze_Test {
 
 	@Test
 	public final void testPluginToBeCalled() {
-		
-		
-		String[][] iw2ayvTable = new TableSequence()
-		.loadTable(new InputOutput().findResource("/iw2ayv.txt"));
-		
-		MyLog.logMatrix(iw2ayvTable, "iw2ayvTable");
 
+		String[][] iw2ayvTable = new TableSequence()
+				.loadTable(new InputOutput().findResource("/iw2ayv.txt"));
+
+		MyLog.logMatrix(iw2ayvTable, "iw2ayvTable");
 
 		String nome = new Sequenze_().pluginToBeCalled(2, iw2ayvTable,
 				codeTable);
@@ -295,48 +294,35 @@ public class Sequenze_Test {
 
 	@Test
 	public final void testPluginToBeCalledWithCoil() {
-		
+
 		String[][] iw2ayvTable = new TableSequence()
-		.loadTable(new InputOutput().findResource("/iw2ayv.txt"));
-		
-		MyLog.logMatrix(iw2ayvTable, "iw2ayvTable");
-
-
+				.loadTable(new InputOutput().findResource("/iw2ayv.txt"));
 		String nome = new Sequenze_().pluginToBeCalledWithCoil(2, iw2ayvTable,
 				codeTable);
-		System.out.printf("\nnome= " + nome);
 		assertEquals("contMensili.p3rmn_", nome);
 	}
 
 	@Test
 	public final void testArgumentForPluginToBeCalled2() {
-		Sequenze_ seq = new Sequenze_();
-
-		String argomento = seq.argumentForPluginToBeCalled(2, orderedTable);
-		// System.out.printf("\nargomento= " + argomento);
+		String argomento = new Sequenze_().argumentForPluginToBeCalled(2, orderedTable);
 		assertEquals("#2#3", argomento);
 	}
 
 	@Test
 	public final void testArgumentForPluginToBeCalled4() {
-		Sequenze_ seq = new Sequenze_();
 
-		String argomento = seq.argumentForPluginToBeCalled(4, orderedTable);
-		// System.out.printf("\nargomento= " + argomento);
+		String argomento = new Sequenze_().argumentForPluginToBeCalled(4, orderedTable);
 		assertEquals("#4#5#6#7", argomento);
 	}
 
 	@Test
 	public final void testArgumentForPluginToBeCalled1() {
-		Sequenze_ seq = new Sequenze_();
-		String argomento = seq.argumentForPluginToBeCalled(0, orderedTable);
-		// System.out.printf("\nargomento= " + argomento);
+		String argomento = new Sequenze_().argumentForPluginToBeCalled(0, orderedTable);
 		assertEquals("#0", argomento);
 	}
 
 	@Test
 	public final void testExpandCode() {
-		Sequenze_ seq = new Sequenze_();
 		String codice = "T2MA_";
 		String eco = "180";
 		String[][] expandTable = {
@@ -353,9 +339,8 @@ public class Sequenze_Test {
 
 		String[] expected = { "T2MA_", "180", "T2M3_", "1" };
 
-		String[] vetExpanded = seq.expandCode(codice, eco, expandTable);
+		String[] vetExpanded = new Sequenze_().expandCode(codice, eco, expandTable);
 		new UtilAyv();
-		// new UtilAyv().logVector(vetExpanded, "vetExpanded");
 		assertTrue(UtilAyv.compareVectors(vetExpanded, expected,
 				"errore comparazione"));
 	}
@@ -445,7 +430,6 @@ public class Sequenze_Test {
 	public final void testKludge() {
 		String codeIma = "./test2/S12S_MISSING";
 		String coil = new UtilAyv().kludge(codeIma);
-		// IJ.log("codice letto =" + coil);
 		assertTrue(coil.equals("C:SP1,2"));
 	}
 

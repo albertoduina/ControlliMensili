@@ -104,3 +104,5 @@ INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argome
 INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
 18-dic-2011 21.49.50 contMensili.Sequenze_ callPluginsFromSequenceTable
 INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+19-dic-2011 11.05.59 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
