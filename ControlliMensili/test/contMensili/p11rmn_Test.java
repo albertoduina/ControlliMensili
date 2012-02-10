@@ -1,5 +1,6 @@
 package contMensili;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import ij.IJ;
 import ij.ImagePlus;
@@ -37,6 +38,7 @@ public class p11rmn_Test {
 		boolean test = false;
 		int verticalDir = 3;
 		double[] vetReference = new p11rmn_().referenceSiemens();
+
 		double profond = 30.0;
 		boolean fast = true;
 
@@ -44,6 +46,8 @@ public class p11rmn_Test {
 				profond, "", autoCalled, step, verbose, test, fast);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		// MyLog.logVector(vetResults, "vetResults");
+		// MyLog.logVector(vetReference, "vetReference");
 
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, null);
 		assertTrue(ok);
@@ -177,6 +181,29 @@ public class p11rmn_Test {
 		boolean ok = UtilAyv.verifyResults1(expected, out, null);
 		assertTrue(ok);
 		// MyLog.logVector(out, "out");
+
+	}
+
+	@Test
+	public final void testDevStandardNema() {
+
+		String path1 = "./Test2/1_SLFS";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		String path2 = "./Test2/2_SLFS";
+		ImagePlus imp2 = UtilAyv.openImageNoDisplay(path2, true);
+		ImagePlus imp3 = UtilAyv.genImaDifference(imp1, imp2);
+
+		// UtilAyv.showImageMaximized(imp3);
+		int sqX = 124;
+		int sqY = 203;
+		int sqR = 11;
+		double limit = 11.2;
+
+		double[] devStand = p11rmn_.devStandardNema(imp1, imp3, sqX, sqY, sqR,
+				limit);
+		// IJ.log("p11rmn.devStand= " + devStand[1]);
+		double expected = 0.9569954129386802;
+		assertEquals(expected, devStand[1], 1e-12);
 
 	}
 

@@ -106,9 +106,11 @@ public class Sequenze_ implements PlugIn {
 		new AboutBox().close();
 
 		GenericDialog gd = new GenericDialog("", IJ.getInstance());
-		gd.addCheckbox("Nuovo controllo", false);
+		gd.addCheckbox("Nuovo controllo", true);
 		gd.addCheckbox("SelfTest", false);
+		gd.addCheckbox("p10_ p11_", true);
 		gd.addCheckbox("Fast", true);
+		gd.addCheckbox("Superficiali", true);
 
 		gd.showDialog();
 		if (gd.wasCanceled()) {
@@ -116,7 +118,9 @@ public class Sequenze_ implements PlugIn {
 		}
 		boolean nuovo1 = gd.getNextBoolean();
 		boolean self1 = gd.getNextBoolean();
+		boolean p10p11 = gd.getNextBoolean();
 		boolean fast = gd.getNextBoolean();
+		boolean superficiali = gd.getNextBoolean();
 
 		if (fast) {
 			Prefs.set("prefer.fast", "true");
@@ -257,7 +261,9 @@ public class Sequenze_ implements PlugIn {
 
 		String[][] tableSequenceReloaded = new TableSequence()
 				.loadTable(startingDir + MyConst.SEQUENZE_FILE);
-		callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false);
+		callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false,
+				superficiali, p10p11);
+		MyLog.waitHere("FINE LAVORO");
 	}
 
 	/**
@@ -576,7 +582,8 @@ public class Sequenze_ implements PlugIn {
 	 *            è il file codiciXXXX.txt caricato da disco
 	 */
 	public String[][] callPluginsFromSequenceTable(String[][] tableSequenze5,
-			String[][] tableCode5, boolean test) {
+			String[][] tableCode5, boolean test, boolean superficiali,
+			boolean p10p11) {
 
 		// Attenzione: contrariamente a quanto scritto più sotto, per
 		// la struttura della tableSequenze è stata creata la classe
@@ -620,15 +627,40 @@ public class Sequenze_ implements PlugIn {
 		}
 
 		int j1 = 0;
+		int count = 0;
 		List<String> vetPlugin = new ArrayList<String>();
 		List<String> vetArgomento = new ArrayList<String>();
 		while (j1 < tableSequenze5.length) {
 			if (TableSequence.getDone(tableSequenze5, j1).equals("0")) {
 				String plugin = pluginToBeCalledWithCoil(j1, tableSequenze5,
 						tableCode5);
+				// qui altero il plugin per poter chiamare, durante i tests le
+				// vecchie versioni, senza dover modificare i sorgenti
+
+				if (!p10p11) {
+//					MyLog.waitHere("MANUALE p10p11= " + p10p11);
+					if (plugin.equals("contMensili.p10rmn_"))
+						plugin = "contMensili.p5rmn_";
+					if (plugin.equals("contMensili.p11rmn_"))
+						plugin = "contMensili.p5rmn_";
+				}
+
 				String argomento = argumentForPluginToBeCalled(j1,
 						tableSequenze5);
-				if ((plugin == null) || (argomento == null)) {
+				boolean jump = false;
+				if (superficiali) {
+					if ((plugin.equals("contMensili.p10rmn_"))
+							|| (plugin.equals("contMensili.p11rmn_"))
+							|| (plugin.equals("contMensili.p5rmn_"))
+							|| (plugin.equals("contMensili.p5rmn_"))) {
+						jump = false;
+						count++;
+						// IJ.log("" + count + " eseguito superficiali");
+					} else {
+						jump = true;
+					}
+				}
+				if ((plugin == null) || (argomento == null) || jump) {
 					j1++;
 				} else {
 					new TableSequence();
@@ -660,7 +692,7 @@ public class Sequenze_ implements PlugIn {
 
 		// MyLog.here();
 		// MyLog.logMatrix(chiamate, "chiamate");
-
+		// MyLog.waitHere();
 		return chiamate;
 
 	}

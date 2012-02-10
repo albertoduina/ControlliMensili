@@ -37,6 +37,11 @@ public class p10rmn_Test {
 	public final void testMainUniforTestGe() {
 
 		// 16 dec 2011 sistemato, ora funziona in automatico
+		
+		//
+		// 
+		//
+		
 
 		String home1 = new p10rmn_().findTestImages();
 		String path1 = home1 + "C001_testP10";
@@ -48,7 +53,7 @@ public class p10rmn_Test {
 		boolean verbose = true;
 		boolean test = true;
 		boolean fast = true;
-		double[] vetReference = new p10rmn_().referenceSiemens();
+		double[] vetReference = new p10rmn_().referenceGe();
 		double profond = 30;
 
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,

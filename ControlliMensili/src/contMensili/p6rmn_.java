@@ -30,6 +30,7 @@ import utils.ButtonMessages;
 import utils.InputOutput;
 import utils.Msg;
 import utils.MyConst;
+import utils.MyStackUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
@@ -470,7 +471,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 
 		for (int w1 = 0; w1 < nFrames; w1++) {
 
-			ImagePlus imp3 = UtilAyv.imageFromStack(impStack, w1 + 1);
+			ImagePlus imp3 = MyStackUtils.imageFromStack(impStack, w1 + 1);
 
 			String pos2 = ReadDicom.readDicomParameter(imp3,
 					MyConst.DICOM_IMAGE_POSITION);

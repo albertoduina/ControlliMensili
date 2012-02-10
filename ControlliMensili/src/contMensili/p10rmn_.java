@@ -102,8 +102,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		if (IJ.versionLessThan("1.43k"))
 			return;
 
-		// MyFileLogger.logger.info("p10rmn_>>> fileDir = " + fileDir);
-
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
 			manualMenu(0, "");
@@ -112,6 +110,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 		}
 		return;
 	}
+
+	/**
+	 * Menu funzionamento manuale (chiamato dal menu di ImageJ)
+	 * 
+	 * @param preset
+	 *            da utilizzare per eventuali test
+	 * @param testDirectory
+	 *            da utilizzare per eventuali test
+	 * @return
+	 */
 
 	public int manualMenu(int preset, String testDirectory) {
 		boolean retry = false;
@@ -161,6 +169,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 		UtilAyv.afterWork();
 		return 0;
 	}
+
+	/**
+	 * Menu funzionamento automatico (chiamato da Sequenze)
+	 * 
+	 * @param autoArgs
+	 *            parametri ricevuti da Sequenze ad esempio: "#2#3"
+	 * @return
+	 */
 
 	public int autoMenu(String autoArgs) {
 
@@ -270,6 +286,30 @@ public class p10rmn_ implements PlugIn, Measurements {
 		return 0;
 	}
 
+	/**
+	 * Main per il calcolo dell'uniformità per bobine di superficie
+	 * 
+	 * @param path1
+	 *            path prima immagine
+	 * @param path2
+	 *            path seconda immagine
+	 * @param autoArgs
+	 *            argomentoi ricevuti dalla chiamata
+	 * @param profond
+	 *            profondità a cui porre la ROI
+	 * @param info10
+	 * @param autoCalled
+	 *            flag true se chiamato in automatico
+	 * @param step
+	 *            flag true se funzionamento passo-passo
+	 * @param verbose
+	 *            flag true se verbose
+	 * @param test
+	 *            flag true se in modo test
+	 * @param fast
+	 *            flag true se in modo batch
+	 * @return
+	 */
 	@SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String path1, String path2,
 			String autoArgs, double profond, String info10, boolean autoCalled,
@@ -279,18 +319,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		double angle = Double.NaN;
-		// boolean fast = false;
-		//
-		// if (Prefs.get("prefer.fast", "false").equals("true")) {
-		// fast = true;
-		// } else {
-		// fast = false;
-		// }
-
-		// boolean fast = Prefs.get("prefer.fast", "false").equals("true") ?
-		// true
-		// : false;
-
 		do {
 
 			ImagePlus imp11 = null;
@@ -300,10 +328,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp11 = UtilAyv.openImageMaximized(path1);
 			if (imp11 == null)
 				MyLog.waitHere("Non trovato il file " + path1);
-			ImageWindow iw11 = WindowManager.getCurrentWindow();
-
-			// MyLog.waitHere();
-
+			// ImageWindow iw11 = WindowManager.getCurrentWindow();
 			double out2[] = positionSearch(imp11, profond, info10, autoCalled,
 					step, verbose, test, fast);
 
@@ -372,16 +397,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 				over2.addElement(imp1.getRoi());
 			}
 			imp1.updateAndDraw();
-
-			// MyLog.waitHere();
-
 			if (step)
 				new WaitForUserDialog("MROI 11 x 11 Premere  OK").show();
-
 			//
 			// posiziono la ROI 7x7 all'interno di MROI
 			//
-
 			int sq7 = MyConst.P10_MROI_7X7_PIXEL;
 			imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7, sq7);
 			if (verbose) {
@@ -492,7 +512,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 				pixx = countPixTest(imp1, xCenterRoi, yCenterRoi, sqNEA,
 						checkPixels, paintPixels);
-
 
 				imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
 						sqNEA, sqNEA);
@@ -904,7 +923,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			pixels2 = (short[]) ip1.getPixels();
 		}
 
-
 		for (int y1 = sqY - sqR / 2; y1 <= (sqY + sqR / 2); y1++) {
 			offset = y1 * width;
 			for (int x1 = sqX - sqR / 2; x1 <= (sqX + sqR / 2); x1++) {
@@ -973,154 +991,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		results[1] = sd1;
 		return (results);
 	}
-
-	/**
-	 * Genera l'immagine simulata a 11+1 livelli
-	 * 
-	 * @param imp1
-	 *            immagine da analizzare
-	 * @param sqX
-	 *            coordinata x della Roi centrale
-	 * @param sqY
-	 *            coordinata y della Roi centrale
-	 * @param sqR
-	 *            diametro della Roi centrale
-	 * @return immagine simulata a 11+1 livelli
-	 */
-
-	private static ImagePlus simulata12Classi(int sqX, int sqY, int sqR,
-			ImagePlus imp1) {
-
-		if (imp1 == null) {
-			IJ.error("Simula12 ricevuto null");
-			return (null);
-		}
-
-		int width = imp1.getWidth();
-		short[] pixels1 = UtilAyv.truePixels(imp1);
-		//
-		// disegno MROI per calcoli
-		//
-		imp1.setRoi(sqX - sqR / 2, sqY - sqR / 2, sqR, sqR);
-		ImageStatistics stat1 = imp1.getStatistics();
-		double mean = stat1.mean;
-		//
-		// limiti classi
-		//
-		double minus90 = mean * MyConst.MINUS_90_PERC;
-		double minus80 = mean * MyConst.MINUS_80_PERC;
-		double minus70 = mean * MyConst.MINUS_70_PERC;
-		double minus60 = mean * MyConst.MINUS_60_PERC;
-		double minus50 = mean * MyConst.MINUS_50_PERC;
-		double minus40 = mean * MyConst.MINUS_40_PERC;
-		double minus30 = mean * MyConst.MINUS_30_PERC;
-		double minus20 = mean * MyConst.MINUS_20_PERC;
-		double minus10 = mean * MyConst.MINUS_10_PERC;
-		double plus10 = mean * MyConst.PLUS_10_PERC;
-		double plus20 = mean * MyConst.PLUS_20_PERC;
-		// genero una immagine nera
-		ImagePlus impSimulata = NewImage.createShortImage("Simulata", width,
-				width, 1, NewImage.FILL_BLACK);
-		//
-		// nuova immagine simulata vuota
-		//
-		ShortProcessor processorSimulata = (ShortProcessor) impSimulata
-				.getProcessor();
-		short[] pixelsSimulata = (short[]) processorSimulata.getPixels();
-		//
-		// riempimento immagine simulata
-		//
-		short pixSorgente;
-		short pixSimulata;
-		int posizioneArrayImmagine = 0;
-
-		for (int y = 0; y < width; y++) {
-			for (int x = 0; x < width; x++) {
-				posizioneArrayImmagine = y * width + x;
-				pixSorgente = pixels1[posizioneArrayImmagine];
-				if (pixSorgente > plus20)
-					pixSimulata = MyConst.LEVEL_12;
-				else if (pixSorgente > plus10)
-					pixSimulata = MyConst.LEVEL_11;
-				else if (pixSorgente > minus10)
-					pixSimulata = MyConst.LEVEL_10;
-				else if (pixSorgente > minus20)
-					pixSimulata = MyConst.LEVEL_9;
-				else if (pixSorgente > minus30)
-					pixSimulata = MyConst.LEVEL_8;
-				else if (pixSorgente > minus40)
-					pixSimulata = MyConst.LEVEL_7;
-				else if (pixSorgente > minus50)
-					pixSimulata = MyConst.LEVEL_6;
-				else if (pixSorgente > minus60)
-					pixSimulata = MyConst.LEVEL_5;
-				else if (pixSorgente > minus70)
-					pixSimulata = MyConst.LEVEL_4;
-				else if (pixSorgente > minus80)
-					pixSimulata = MyConst.LEVEL_3;
-				else if (pixSorgente > minus90)
-					pixSimulata = MyConst.LEVEL_2;
-				else
-					pixSimulata = MyConst.LEVEL_1;
-
-				pixelsSimulata[posizioneArrayImmagine] = pixSimulata;
-			}
-		}
-		processorSimulata.resetMinAndMax();
-		return impSimulata;
-	} // simula12
-
-	/**
-	 * Estrae la numerosità dell classi dalla simulata
-	 * 
-	 * @param imp1
-	 *            immagine simulata da analizzare
-	 * @return numerosità delle classi in cui per ogni elemento abbiamo
-	 *         [valore][numerosità]
-	 */
-
-	public static int[][] numeroPixelsClassi(ImagePlus imp1) {
-
-		if (imp1 == null) {
-			IJ.error("numeroPixelClassi ricevuto null");
-			return (null);
-		}
-		int width = imp1.getWidth();
-
-		ImageProcessor ip1 = imp1.getProcessor();
-		short[] pixels1 = (short[]) ip1.getPixels();
-		int offset = 0;
-		int pix1 = 0;
-
-		int[][] vetClassi = { { MyConst.LEVEL_12, 0 }, { MyConst.LEVEL_11, 0 },
-				{ MyConst.LEVEL_10, 0 }, { MyConst.LEVEL_9, 0 },
-				{ MyConst.LEVEL_8, 0 }, { MyConst.LEVEL_7, 0 },
-				{ MyConst.LEVEL_6, 0 }, { MyConst.LEVEL_5, 0 },
-				{ MyConst.LEVEL_4, 0 }, { MyConst.LEVEL_3, 0 },
-				{ MyConst.LEVEL_2, 0 }, { MyConst.LEVEL_1, 0 } };
-		boolean manca = true;
-
-		for (int y1 = 0; y1 < width; y1++) {
-			for (int x1 = 0; x1 < (width); x1++) {
-				offset = y1 * width + x1;
-				pix1 = pixels1[offset];
-				manca = true;
-				for (int i1 = 0; i1 < vetClassi.length; i1++)
-					if (pix1 == vetClassi[i1][0]) {
-						vetClassi[i1][1] = vetClassi[i1][1] + 1;
-						manca = false;
-						break;
-					}
-				if (manca) {
-					ButtonMessages.ModelessMsg("SIMULATA CON VALORE ERRATO="
-							+ pix1 + "   <38>", "CONTINUA");
-					return (null);
-				}
-			}
-		}
-		return (vetClassi);
-
-	} // classi
 
 	/**
 	 * Analisi di un profilo NON mediato
@@ -1205,46 +1075,30 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double[] a = Tools.getMinMax(profile);
 		double min = a[0];
 		double max = a[1];
-
 		// interpolazione lineare sinistra
 		double px0 = vetUpDwPoints[0];
 		double px1 = vetUpDwPoints[1];
-		double px2;
 		double py0 = profile[vetUpDwPoints[0]];
 		double py1 = profile[vetUpDwPoints[1]];
 		double py2 = (max - min) / 2.0 + min;
-		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
-
-		double sx = px2;
-
+		double sx = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
 		// interpolazione lineare destra
 		px0 = vetUpDwPoints[2];
 		px1 = vetUpDwPoints[3];
 		py0 = profile[vetUpDwPoints[2]];
 		py1 = profile[vetUpDwPoints[3]];
 		py2 = (max - min) / 2.0 + min;
-		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
-		double dx = px2;
-
-		// questo è il calcolo dell'fwhm utilizzato in precedenza
-		double fwhm = (dx - sx) * dimPixel; // in mm
-		// double fwhm = (dx - sx);
-		// in alternativa, non conoscendo l'incilnazione del mio profilo,
-		// utilizzo la lunghezza del profilo calcolata da ImageJ assumo che:
-		// profile.length : lengthImagej = (dx-sx) : fwhm2
-
+		double dx = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+		// Non conoscendo l'incilnazione del mio profilo,
+		// utilizzo la lunghezza del profilo calcolata da ImageJ
 		double fwhm2 = lengthImagej * (dx - sx) / profile.length;
-
-		// IJ.log("fwhm = " + fwhm + " fwhm2= " + fwhm2);
-
 		for (int i1 = 0; i1 < profile.length; i1++) {
 			if (profile[i1] == min)
 				peak = i1;
 		}
-
 		double[] out = { fwhm2, peak, lengthImagej };
 		return (out);
-	} // calcFwhm
+	}
 
 	/**
 	 * Mostra a video un profilo con linea a metà picco
@@ -1382,11 +1236,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		vetHalfPoint[3] = 0;
 		int len1 = profile1.length;
 
-		// String str = "";
-		// for (int i2 = 0; i2 < len1; i2++)
-		// str = str + profile1[i2] + " ";
-		// IJ.log("pixels profile1=" + str);
-
 		double[] a = Tools.getMinMax(profile1);
 		double min = a[0];
 
@@ -1429,52 +1278,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		vetHalfPoint[2] = downDx;
 		vetHalfPoint[3] = upDx;
 		return vetHalfPoint;
-	} // halfPointSerach
-
-	/**
-	 * generazione di un immagine simulata, display e salvataggio
-	 * 
-	 * @param xRoi
-	 *            coordinata x roi
-	 * @param yRoi
-	 *            coordinata y roi
-	 * @param diamRoi
-	 *            diametro roi
-	 * @param imp
-	 *            puntatore ImagePlus alla immagine originale
-	 * @param step
-	 *            funzionamento passo passo
-	 * @param verbose
-	 * 
-	 * @param test
-	 *            modo autotest
-	 * @return numeriosità classi simulata
-	 */
-	private static int[][] generaSimulata(int xRoi, int yRoi, ImagePlus imp,
-			boolean step, boolean verbose, boolean test) {
-
-		int sq7 = MyConst.P11_MROI_7X7_PIXEL;
-
-		ImagePlus impSimulata = simulata12Classi(xRoi, yRoi, sq7, imp);
-		if (verbose) {
-			UtilAyv.showImageMaximized(impSimulata);
-
-			IJ.run("Enhance Contrast", "saturated=0.5");
-		}
-		// impSimulata.updateAndDraw();
-		if (step)
-			msgSimulata();
-		int[][] classiSimulata = numeroPixelsClassi(impSimulata);
-		String patName = ReadDicom.readDicomParameter(imp,
-				MyConst.DICOM_PATIENT_NAME);
-		String codice = ReadDicom
-				.readDicomParameter(imp, MyConst.DICOM_SERIES_DESCRIPTION)
-				.substring(0, 4).trim();
-		simulataName = fileDir + patName + codice + "sim.zip";
-
-		if (!test)
-			new FileSaver(impSimulata).saveAsZip(simulataName);
-		return classiSimulata;
 	}
 
 	/**
@@ -1504,41 +1307,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			yRoi1 = width / 2 - diam / 2;
 		int[] defaults = { xRoi1, yRoi1, diam };
 		return defaults;
-	}
-
-	/***
-	 * find255 serve ad analizzare i risultati di findMaxima che mette a 255 i
-	 * pixel di MAXIMA
-	 * 
-	 * @param bp1
-	 * @return
-	 */
-	public static int[][] find255(ByteProcessor bp1) {
-		int width = bp1.getWidth();
-		byte[] pixels = (byte[]) bp1.getPixels();
-		int count = 0;
-		for (int i1 = 0; i1 > pixels.length; i1++) {
-			if (pixels[i1] == 255) {
-				count++;
-			}
-		}
-		int[][] result = new int[2][count];
-		count = 0;
-		for (int i1 = 0; i1 > pixels.length; i1++) {
-			if (pixels[i1] == 255) {
-				int y = i1 / width;
-				int x = i1 - y;
-				result[0][count] = x;
-				result[1][count] = y;
-				count++;
-			}
-		}
-		return result;
-	}
-
-	private static void msgMainRoiPositioning() {
-		ButtonMessages.ModelessMsg(
-				"Posizionare ROI diamFantoccio e premere CONTINUA", "CONTINUA");
 	}
 
 	private static void msgNot121() {
@@ -1578,57 +1346,68 @@ public class p10rmn_ implements PlugIn, Measurements {
 		ButtonMessages.ModelessMsg("displayNEA", "CONTINUA");
 	}
 
-	private static void msgSimulata() {
-		ButtonMessages.ModelessMsg("Immagine Simulata", "CONTINUA");
-	}
+	// private static void msgSimulata() {
+	// ButtonMessages.ModelessMsg("Immagine Simulata", "CONTINUA");
+	// }
 
-	private static int menuPositionMroi() {
-		int userSelection1 = ButtonMessages.ModelessMsg(
-				"Posizionare la MROI sull'area della bobina"
-						+ "  e premere Accetta", "ACCETTA", "RIDISEGNA");
-		return userSelection1;
-	}
-
+	/**
+	 * Dati i punti di inizio e fine di un segmento, restituisce il valore
+	 * dell'angolo theta, effettuando la conversione da coordinate rettangolari
+	 * (x,y) a coordinate polari (r, theta). NB: tiene conto che in ImageJ la
+	 * coordinata Y ha lo 0 in alto a sx, anzichè in basso a sx, come siamo
+	 * soliti a vedere il piano cartesiano
+	 * 
+	 * @param ax
+	 *            coordinata X inizio
+	 * @param ay
+	 *            coordinata Y inizio
+	 * @param bx
+	 *            coordinata X fine
+	 * @param by
+	 *            coordinata Y fine
+	 * @return valore dell'angolo in radianti
+	 */
 	public static double angoloRad(double ax, double ay, double bx, double by) {
-		//
-		// cambio di segno il sin per tenere conto del fatto che lìorigine delle
-		// coordinate è in alto a sinistra, anzichè in basso
-		//
+
 		double dx = ax - bx;
-		double dy = by - ay;
-		double alf1 = Math.atan2(dy, dx);
-		return alf1;
+		double dy = by - ay; // dy è all'incontrario, per le coordinate di
+								// ImageJ
+		double theta = Math.atan2(dy, dx);
+		return theta;
 
 	}
 
+	/**
+	 * Calcola le coordinate del centro ROI sul segmento circonferenza - centro,
+	 * alla profondità desiderata
+	 * 
+	 * @param ax
+	 *            coordinata X su circonferenza
+	 * @param ay
+	 *            coordinata Y su circonferenza
+	 * @param bx
+	 *            coordinata X del centro
+	 * @param by
+	 *            coordinata Y del centro
+	 * @param prof
+	 *            profondità centro ROI
+	 * @return vettore coordinate centro ROI
+	 */
 	public static double[] interpola(double ax, double ay, double bx,
 			double by, double prof) {
-		//
-		// con ax, ay indico le coordinate del punto sul cerchio con bx, by
-		// indico le coordinate del centro
-		//
-		// IJ.log("-------- interpola --------");
 
 		double ang1 = angoloRad(ax, ay, bx, by);
-
-		// IJ.log("Math.sin(ang1)= " + Math.sin(ang1) + " Math.cos(ang1)= "
-		// + Math.cos(ang1));
-		// double prof2 = prof * (Math.cos(ang1));
-		// IJ.log("prof= " + IJ.d2s(prof) + " prof2= " + IJ.d2s(prof2));
 
 		double cx = 0;
 		double cy = 0;
 		// IJ.log("proiezioneX= " + prof * (Math.cos(ang1)));
 		// IJ.log("proiezioneY= " + prof * (Math.sin(ang1)));
-
 		cx = ax - prof * (Math.cos(ang1));
 		cy = ay + prof * (Math.sin(ang1));
-
 		// IJ.log("cx= " + IJ.d2s(cx) + " cy= " + IJ.d2s(cy));
 		double[] out = new double[2];
 		out[0] = cx;
 		out[1] = cy;
-		// IJ.log("-----------------------------");
 		return out;
 	}
 
@@ -1639,7 +1418,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 *            profilo
 	 * @param loops
 	 *            numerompassaggi
-	 * @return
+	 * @return profilo dopo smooth
 	 */
 	public static double[] smooth3(double[] profile1, int loops) {
 
@@ -1658,7 +1437,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * calcolo ERF
+	 * Calcolo della Edge Response Function (ERF)
 	 * 
 	 * @param profile1
 	 *            profilo da elaborare
@@ -1681,18 +1460,23 @@ public class p10rmn_ implements PlugIn, Measurements {
 		}
 		erf[len1 - 1] = erf[len1 - 2];
 		return (erf);
-	} // createErf
+	}
 
-	// public Plot basePlot(double[] profile, String title) {
-	// int len1 = profile.length;
-	// double[] xcoord1 = new double[len1];
-	// for (int j = 0; j < len1; j++)
-	// xcoord1[j] = j;
-	// Plot plot = new Plot(title, "pixel", "valore", xcoord1, profile);
-	// plot.setColor(Color.red);
-	// return plot;
-	// }
-
+	/**
+	 * Interpolazione lineare di un punto su di un segmento
+	 * 
+	 * @param x0
+	 *            coordinata X inizio
+	 * @param y0
+	 *            coordinata Y inizio
+	 * @param x1
+	 *            coordinata X fine
+	 * @param y1
+	 *            coordinata X fine
+	 * @param x2
+	 *            valore X di cui calcolare la Y
+	 * @return valore Y calcolato
+	 */
 	public static double linearInterpolation(double x0, double y0, double x1,
 			double y1, double x2) {
 
@@ -1774,6 +1558,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 		return matout;
 	}
 
+	/***
+	 * Impulso al fronte di salita
+	 * 
+	 * @param input
+	 */
 	public static void stateChange(boolean input) {
 		pulse = false;
 		if ((input != previous) && !init1)
@@ -1989,11 +1778,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		imp.setRoi(new OvalRoi((int) Math.round(CenterX - radius), (int) Math
 				.round(CenterY - radius), (int) Math.round(2 * radius),
 				(int) Math.round(2 * radius)));
-
-		// IJ.makeOval((int) Math.round(CenterX - radius),
-		// (int) Math.round(CenterY - radius),
-		// (int) Math.round(2 * radius), (int) Math.round(2 * radius));
-
 	}
 
 	/***
@@ -2081,27 +1865,33 @@ public class p10rmn_ implements PlugIn, Measurements {
 		clips[2] = x1clip;
 		clips[3] = y1clip;
 
-		return clips; // (clipped) line is drawn
+		return clips;
 	}
 
 	/**
+	 * Trasformazione delle coordinate dei punti in equazione esplicita della
+	 * retta
 	 * 
+	 * @param x0
+	 *            coordinata X inizio
+	 * @param y0
+	 *            coordinata Y inizio
 	 * @param x1
+	 *            coordinata X fine
 	 * @param y1
-	 * @param x2
-	 * @param y2
-	 * @return
+	 *            coordinata Y fine
+	 * @return vettore con parametri equazione
 	 */
-	public static double[] fromPointsToEquLineExplicit(double x1, double y1,
-			double x2, double y2) {
+	public static double[] fromPointsToEquLineExplicit(double x0, double y0,
+			double x1, double y1) {
 		// la formula esplicita è y = mx + b
 		// in cui m è detta anche slope (pendenza) e b intercept (intercetta)
 		// non può rappresentare rette verticali
 		double[] out = new double[2];
 
-		double m = (y2 - y1) / (x2 - x1);
+		double m = (y1 - y0) / (x1 - x0);
 
-		double b = y1 - m * x1;
+		double b = y0 - m * x0;
 
 		out[0] = m;
 		out[1] = b;
@@ -2109,21 +1899,27 @@ public class p10rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
+	 * Trasformazione delle coordinate dei punti in equazione implicita della
+	 * retta
 	 * 
+	 * @param x0
+	 *            coordinata X inizio
+	 * @param y0
+	 *            coordinata Y inizio
 	 * @param x1
+	 *            coordinata X fine
 	 * @param y1
-	 * @param x2
-	 * @param y2
-	 * @return
+	 *            coordinata Y fine
+	 * @return vettore con parametri equazione
 	 */
-	public static double[] fromPointsToEquLineImplicit(double x1, double y1,
-			double x2, double y2) {
+	public static double[] fromPointsToEquLineImplicit(double x0, double y0,
+			double x1, double y1) {
 		// la formula implicita è ax + by + c = 0
 		double[] out = new double[3];
 
-		double a = y1 - y2;
-		double b = x2 - x1;
-		double c = x1 * y2 - x2 * y1;
+		double a = y0 - y1;
+		double b = x1 - x0;
+		double c = x0 * y1 - x1 * y0;
 
 		out[0] = a;
 		out[1] = b;
@@ -2132,6 +1928,24 @@ public class p10rmn_ implements PlugIn, Measurements {
 		return out;
 	}
 
+	/**
+	 * Determinazione dei crossing points tra la retta della prosecuzione di un
+	 * segmento ed i lati del frame
+	 * 
+	 * @param x0
+	 *            coordinata X inizio
+	 * @param y0
+	 *            coordinata Y inizio
+	 * @param x1
+	 *            coordinata X fine
+	 * @param y1
+	 *            coordinata Y fine
+	 * @param width
+	 *            larghezza immagine
+	 * @param height
+	 *            altezza immagine
+	 * @return vettore con coordinate clipping points
+	 */
 	public static double[] crossing(double x0, double y0, double x1, double y1,
 			double width, double height) {
 
@@ -2240,13 +2054,27 @@ public class p10rmn_ implements PlugIn, Measurements {
 		return clippingPoints;
 	}
 
-	public static boolean isBetween(double x1, double bound1, double bound2,
+	/**
+	 * Verifica se un valore è all'interno dei limiti assegnati, con una certa
+	 * tolleranza
+	 * 
+	 * @param x1
+	 *            valore calcolato
+	 * @param low
+	 *            limite inferiore
+	 * @param high
+	 *            limite superiore
+	 * @param tolerance
+	 *            tolleranza
+	 * @return true se il valore è valido (entro i limiti)
+	 */
+	public static boolean isBetween(double x1, double low, double high,
 			double tolerance) {
 
-		if (bound1 < bound2) {
-			return ((x1 >= (bound1 - tolerance)) && (x1 <= (bound2 + tolerance)));
+		if (low < high) {
+			return ((x1 >= (low - tolerance)) && (x1 <= (high + tolerance)));
 		} else {
-			return ((x1 >= (bound2 - tolerance)) && (x1 <= (bound1 + tolerance)));
+			return ((x1 >= (high - tolerance)) && (x1 <= (low + tolerance)));
 		}
 	}
 
@@ -2270,12 +2098,25 @@ public class p10rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
+	 * Ricerca della posizione della ROI per il calcolo dell'uniformità
 	 * 
-	 * @param path1
+	 * @param imp11
+	 *            immagine di input
+	 * @param profond
+	 *            profondità ROI
+	 * @param info1
+	 *            messaggio esplicativo
 	 * @param autoCalled
+	 *            flag true se chiamato in automatico
 	 * @param step
+	 *            flag true se funzionamento passo - passo
 	 * @param verbose
+	 *            flag true se funzionamento verbose
 	 * @param test
+	 *            flag true se in test
+	 * @param fast
+	 *            flag true se modo batch
+	 * @return vettore con dati ROI
 	 */
 	public static double[] positionSearch(ImagePlus imp11, double profond,
 			String info1, boolean autoCalled, boolean step, boolean verbose,
@@ -2285,10 +2126,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// Inizio calcoli geometrici
 		// ================================================================================
 		//
-
-		// boolean fast = Prefs.get("prefer.fast", "false").equals("true") ?
-		// true
-		// : false;
 
 		double dimPixel = ReadDicom
 				.readDouble(ReadDicom.readSubstring(
@@ -2312,8 +2149,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			new WaitForUserDialog("Eseguito FIND EDGES").show();
 
 		Overlay over1 = new Overlay();
-		// Overlay over2 = new Overlay();
-		// Overlay over3 = new Overlay();
 		imp11.setOverlay(over1);
 
 		double[][] peaks1 = new double[4][1];
@@ -2329,11 +2164,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			over1.addElement(imp11.getRoi());
 			over1.setStrokeColor(Color.red);
 		}
-		// MyLog.waitHere();
-
 		peaks1 = profileAnalyzer(imp11, dimPixel, "BISETTRICE ORIZZONTALE",
 				showProfiles);
-
 		// IJ.log("BISETTRICE VERTICALE");
 		imp11.setRoi(new Line(width / 2, 0, width / 2, height));
 		if (step) {
@@ -2342,7 +2174,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		}
 		peaks2 = profileAnalyzer(imp11, dimPixel, "BISETTRICE VERTICALE",
 				showProfiles);
-
 		// IJ.log("DIAGONALE 1");
 		imp11.setRoi(new Line(0, 0, width, height));
 		if (step) {
@@ -2351,7 +2182,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		}
 		peaks3 = profileAnalyzer(imp11, dimPixel,
 				"BISETTRICE DIAGONALE SINISTRA", showProfiles);
-
 		// IJ.log("DIAGONALE 2");
 		imp11.setRoi(new Line(0, width, height, 0));
 		if (step) {
@@ -2361,10 +2191,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 		peaks4 = profileAnalyzer(imp11, dimPixel,
 				"BISETTRICE DIAGONALE DESTRA", showProfiles);
 		// MyLog.waitHere();
-
 		int len3 = peaks1[2].length + peaks2[2].length + peaks3[2].length
 				+ peaks4[2].length;
-
 		int[] xPoints3 = new int[len3];
 		int[] yPoints3 = new int[len3];
 		int j1 = -1;
@@ -2406,11 +2234,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp11.updateAndDraw();
 				new WaitForUserDialog("Premere OK").show();
 			}
-			// MyLog.waitHere();
-
 			fitCircle(imp11);
-			// MyLog.waitHere();
-
 			if (step) {
 				over1.addElement(imp11.getRoi());
 				over1.setStrokeColor(Color.red);
@@ -2430,8 +2254,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		int xCenterCircle = boundRec.x + boundRec.width / 2;
 		int yCenterCircle = boundRec.y + boundRec.height / 2;
-		// int diamRoi1 = boundRec.width;
-		// IJ.log("Il centro cerchio è x=" + x1 + " y=" + y1);
 		//
 		// ----------------------------------------------------------
 		// disegno la ROI del centro, a solo scopo dimostrativo !
@@ -2450,38 +2272,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			imp11.killRoi();
 		}
-		ImageProcessor ip11 = imp11.getProcessor();
-		// MyLog.waitHere();
-
-		//
-		// -------------------------------------------------
-		// Determinazione del punto di MAXIMA
-		// -------------------------------------------------
-		//
-
-		// double tolerance = 350.0;
-		// double threshold = 0.0;
-		// int outputType = MaximumFinder.LIST;
-		// boolean excludeOnEdges = false;
-		// boolean isEDM = false;
-
-		// MaximumFinder maxFinder = new MaximumFinder();
-		//
-		// double[] rx = null;
-		// double[] ry = null;
-		// ResultsTable rt1 = ResultsTable.getResultsTable();
-		// int nPunti = 0;
-		// do {
-		// rt1.reset();
-		// maxFinder.findMaxima(ip11, tolerance, threshold, outputType,
-		// excludeOnEdges, isEDM);
-		// rx = rt1.getColumnAsDoubles(0);
-		// ry = rt1.getColumnAsDoubles(1);
-		// tolerance += 10.0;
-		// nPunti = rx.length;
-		// } while (nPunti > 1);
-		//
-		// // IJ.log("tolerance=" + tolerance);
 		//
 		// ----------------------------------------------------------
 		// disegno la ROI del maxima, a solo scopo dimostrativo !
@@ -2492,21 +2282,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double[] out10 = UtilAyv.findMaximumPosition(imp11);
 		double xMaxima = out10[0];
 		double yMaxima = out10[1];
-
-		// int xMaxima = (int) rx[0];
-		// int yMaxima = (int) ry[0];
-		//
-		// MyLog.waitHere("xMaximum= " + xMaximum + " yMaximum= " + yMaximum
-		// + " xMaxima= " + xMaxima + " yMaxima= " + yMaxima);
-
 		if (verbose) {
 			imp11.setRoi(new OvalRoi((int) xMaxima - 4, (int) yMaxima - 4, 8, 8));
 			over1.addElement(imp11.getRoi());
 			over1.setStrokeColor(Color.red);
 		}
 		imp11.killRoi();
-		// MyLog.waitHere();
-
 		//
 		// -----------------------------------------------------------
 		// Calcolo delle effettive coordinate del segmento
@@ -2525,8 +2306,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		over1.addElement(imp11.getRoi());
 		over1.setStrokeColor(Color.red);
-		// MyLog.waitHere();
-
 		//
 		// -----------------------------------------------------------
 		// Calcolo coordinate centro della MROI
@@ -2538,22 +2317,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double ay = out1[1];
 		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 		imp11.updateAndDraw();
-
 		imp12.setOverlay(over1);
-
 		imp12.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 		if (!fast)
 			UtilAyv.showImageMaximized2(imp12);
 		imp12.updateAndDraw();
-
-		// MyLog.waitHere();
-
 		if (!fast)
 			MyLog.waitHere(info1 + "\n \nMODIFICA MANUALE POSIZIONE ROI");
-
 		Rectangle boundRec3 = imp11.getProcessor().getRoi();
-		// int xCenterRoi = boundRec3.x + boundRec3.width / 2;
-		// int yCenterRoi = boundRec3.y + boundRec3.height / 2;
 		double xCenterRoi = boundRec3.getCenterX();
 		double yCenterRoi = boundRec3.getCenterY();
 		double[] out2 = new double[7];
@@ -2564,10 +2335,22 @@ public class p10rmn_ implements PlugIn, Measurements {
 		out2[4] = xMaxima;
 		out2[5] = yMaxima;
 		out2[6] = angle11;
-
 		return out2;
 	}
 
+	/**
+	 * Verifica se un valore calcolato è nei limiti assegnati
+	 * 
+	 * @param signal
+	 *            valore calcolato
+	 * @param low
+	 *            limite inferiore accettabilità
+	 * @param high
+	 *            limite superiore accettabilità
+	 * @param title
+	 *            stringa con nome valore
+	 * @return true se accettato
+	 */
 	public static boolean checkLimits(double signal, double low, double high,
 			String title) {
 		if ((signal <= low) || (signal >= high)) {
@@ -2580,6 +2363,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	}
 
+	/**
+	 * Lettura di un valore double da una stringa
+	 * 
+	 * @param s1
+	 *            stringa di input
+	 * @return double di output
+	 */
 	public static double readDouble(String s1) {
 		double x = 0;
 		try {

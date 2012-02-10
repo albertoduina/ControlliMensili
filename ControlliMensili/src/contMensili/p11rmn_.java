@@ -211,8 +211,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 			// path3 = lr.getPath(strRiga3, riga2);
 		} else {
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
-			path3 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
-			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
+			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
+			path3 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
 		}
 
 		int direzione = decodeDirezione(TableSequence.getDirez(iw2ayvTable,
@@ -453,6 +453,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 						MyConst.P11_DIAM_ROI_BACKGROUND, imp1, step, false,
 						test);
 
+				// MyLog.waitHere("Roi Fondo coordinate: x= " + xFondo + " y= "
+				// + yFondo + " statFondo.mean= " + statFondo.mean);
+
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(color2);
 
@@ -660,7 +663,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				rt.addValue(6, sqNEA);
 
 				rt.incrementCounter();
-				rt.addLabel(t1, "Rumore_Fondo222");
+				rt.addLabel(t1, "Rumore_Fondo");
 				rt.addValue(2, statFondo.mean);
 				int xRoi = (int) statFondo.roiX;
 				int yRoi = (int) statFondo.roiY;
@@ -810,7 +813,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		double simul = 0.0;
 		double signal = 953.6122448979592;
-		double backNoise = 2.96;
+		double backNoise = 3.43;
 		double snRatio = 291.53433741655306;
 		double fwhm = 51.16454748650474;
 		double num1 = 573.0;
@@ -842,7 +845,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		double simul = 0.0;
 		double signal = 953.6122448979592;
-		double backNoise = 2.96;
+		double backNoise = 3.43;
 		double snRatio = 291.53433741655306;
 		double fwhm = 51.16454748650474;
 		double num1 = 573.0;
@@ -1003,7 +1006,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * @return [0] sum / pixelcount [1] devStan
 	 */
 
-	private static double[] devStandardNema(ImagePlus imp1, ImagePlus imp3,
+	public static double[] devStandardNema(ImagePlus imp1, ImagePlus imp3,
 			int sqX, int sqY, int sqR, double limit) {
 		double[] results = new double[2];
 		double value4 = 0.0;
@@ -1595,7 +1598,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 
 		if (!fast) {
-			MyLog.waitMessage(info10 + "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI");
+//			MyLog.waitMessage(info10
+//					+ "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI");
+			MyLog.waitHere(info10
+					+ "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI");
 			manualRequired = false;
 		}
 

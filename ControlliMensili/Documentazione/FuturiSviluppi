@@ -14,3 +14,10 @@ Una possibilità, però ci sarebbe:
 analogamente a quanto fatto in VBA, si prende la sigla della macchina, la si compara con una tabella e da questa si è in  grado di sapere la 
 "classe" della macchina e, di conseguenza, adottare gli appropriati limiti per la misura. 
 
+
+======================================================================================================================================================
+1/1/2012
+NIENTE DI TUTTO QUESTO
+Da quanto mi dice Lorella i limiti di correttezza dei risultati sono specifici per la singola macchina, non riguardano un modello di macchina. 
+Per cui bisogna comunque legare i limiti alla matricola della macchina (a patrto che venga correttamente impostata dal costruttore nell'header dicom)
+======================================================================================================================================================

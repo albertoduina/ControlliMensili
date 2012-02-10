@@ -272,7 +272,7 @@ public class Sequenze_Test {
 		MyLog.logMatrix(iw2ayvTable, "iw2ayvTable");
 
 		String[][] chiamate = new Sequenze_().callPluginsFromSequenceTable(
-				iw2ayvTable, codeTable, true);
+				iw2ayvTable, codeTable, true, false, true);
 
 		TableUtils.dumpTable(chiamate, "chiamate");
 		assertTrue(TableUtils.compareTable(expected, chiamate));

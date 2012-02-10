@@ -27,6 +27,7 @@ import java.util.StringTokenizer;
 import utils.AboutBox;
 import utils.ButtonMessages;
 import utils.CustomCanvasGeneric;
+import utils.ImageUtils;
 import utils.InputOutput;
 import utils.Msg;
 import utils.MyConst;
@@ -93,6 +94,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			return;
 
 		MyFileLogger.logger.info("p5rmn_>>> fileDir = " + fileDir);
+		MyFileLogger.logger.info("p5rmn_argomenti ricevuti: >" + args + "<");
 
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
@@ -278,6 +280,16 @@ public class p5rmn_ implements PlugIn, Measurements {
 				imp1 = UtilAyv.openImageNoDisplay(path[0], true);
 				imp2 = UtilAyv.openImageNoDisplay(path[1], true);
 			}
+			// MyLog.waitHere();
+
+			ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
+			if (verbose) {
+				UtilAyv.showImageMaximized(imaDiff);
+				// imp1.getWindow().toFront();
+			}
+
+			// MyLog.waitHere();
+
 			int width = imp1.getWidth();
 			int height = imp1.getHeight();
 
@@ -376,11 +388,11 @@ public class p5rmn_ implements PlugIn, Measurements {
 			//
 			// disegno MROI su imaDiff
 			//
-			ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
-			if (verbose) {
-				UtilAyv.showImageMaximized(imaDiff);
-				// imp1.getWindow().toFront();
-			}
+			// ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
+			// if (verbose) {
+			// UtilAyv.showImageMaximized(imaDiff);
+			// // imp1.getWindow().toFront();
+			// }
 			overlayGrid(imaDiff, MyConst.P5_GRID_NUMBER, verbose);
 
 			imaDiff.resetDisplayRange();
@@ -474,17 +486,24 @@ public class p5rmn_ implements PlugIn, Measurements {
 			imp1.updateAndDraw();
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
+
+			// MyLog.waitHere("verificare la roi");
+
 			//
 			// calcolo SD su imaDiff quando i corrispondenti pixel
 			// di imp1 passano il test
 			//
+
+			boolean paintPixels = false;
 			double[] out1 = devStandardNema(imp1, imaDiff, sqX - enlarge, sqY
-					- enlarge, sqNEA, checkPixels);
+					- enlarge, sqNEA, checkPixels, paintPixels);
+
 			if (step)
 				msgDisplayMean4(out1[0], out1[1]);
 			//
 			// calcolo SNR finale
 			//
+
 			double snr = signal1 / (out1[1] / Math.sqrt(2));
 			if (step)
 				msgSnr(snr);
@@ -492,8 +511,13 @@ public class p5rmn_ implements PlugIn, Measurements {
 			//
 			// calcolo simulata
 			//
-			int[][] classiSimulata = generaSimulata(sqX + gap, sqY + gap,
-					MyConst.P5_MROI_7X7_PIXEL, imp1, step, verbose, test);
+			// int[][] classiSimulata = ImageUtils.generaSimulata12classi(sqX
+			// + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL, imp1, step,
+			// verbose, test);
+
+			int[][] classiSimulata = ImageUtils.generaSimulata12classi(sqX
+					+ gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL, imp1, step,
+					verbose, test);
 			//
 			// calcolo posizione fwhm a metà della MROI
 			//
@@ -639,15 +663,12 @@ public class p5rmn_ implements PlugIn, Measurements {
 				int sqX = MyConst.P5_X_ROI_TESTGE;
 				int sqY = MyConst.P5_Y_ROI_TESTGE;
 
-				String autoArgs = "0";
 				boolean autoCalled = false;
 				boolean step = false;
 				boolean verbose = true;
 				boolean test = true;
 				double[] vetReference = referenceGe();
 				boolean verticalProfile = false;
-				// ResultsTable rt1 = mainUnifor(path, sqX, sqY, autoArgs,
-				// verticalProfile, autoCalled, step, verbose, test);
 				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile,
 						autoCalled, step, verbose, test);
 				if (rt1 == null)
@@ -715,18 +736,18 @@ public class p5rmn_ implements PlugIn, Measurements {
 		double backNoise = 7.87;
 		double snRatio = 38.26155499878056;
 		double fwhm = 36.56299427908097;
-		double num1 = 1484.0;
-		double num2 = 525.0;
-		double num3 = 1188.0;
-		double num4 = 681.0;
-		double num5 = 769.0;
-		double num6 = 882.0;
-		double num7 = 1077.0;
-		double num8 = 1319.0;
-		double num9 = 1787.0;
-		double num10 = 2581.0;
-		double num11 = 5238.0;
-		double num12 = 48005.0;
+		double num1 = 1798.0;
+		double num2 = 527.0;
+		double num3 = 1156.0;
+		double num4 = 678.0;
+		double num5 = 770.0;
+		double num6 = 902.0;
+		double num7 = 1044.0;
+		double num8 = 1359.0;
+		double num9 = 1792.0;
+		double num10 = 2617.0;
+		double num11 = 5287.0;
+		double num12 = 47606.0;
 
 		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
@@ -747,18 +768,18 @@ public class p5rmn_ implements PlugIn, Measurements {
 		double backNoise = 84.06;
 		double snRatio = 93.19892843975435;
 		double fwhm = 32.93099254935456;
-		double num1 = 1914.0;
-		double num2 = 479.0;
-		double num3 = 1316.0;
-		double num4 = 938.0;
-		double num5 = 1271.0;
-		double num6 = 1957.0;
-		double num7 = 3346.0;
-		double num8 = 2681.0;
-		double num9 = 2333.0;
-		double num10 = 2345.0;
-		double num11 = 1118.0;
-		double num12 = 45838.0;
+		double num1 = 2262.0;
+		double num2 = 521.0;
+		double num3 = 1427.0;
+		double num4 = 1038.0;
+		double num5 = 1430.0;
+		double num6 = 2307.0;
+		double num7 = 3178.0;
+		double num8 = 2365.0;
+		double num9 = 2149.0;
+		double num10 = 2110.0;
+		double num11 = 948.0;
+		double num12 = 45801.0;
 
 		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
@@ -776,7 +797,6 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 		double[] vetReference = referenceSiemens();
 
-		String autoArgs = "-1";
 		boolean autoCalled = false;
 		boolean step = false;
 		boolean verbose = false;
@@ -883,11 +903,24 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 *            lato della Roi
 	 * @param limit
 	 *            soglia di conteggio
+	 * @param paintPixels
+	 *            ATTENZIONE da usare solo per test, altera i risultati !!!!! VA TENUTO FALSE
+	 * 
 	 * @return [0] sum / pixelcount [1] devStan
 	 */
 
-	private static double[] devStandardNema(ImagePlus imp1, ImagePlus imp3,
-			int sqX, int sqY, int sqR, double limit) {
+	/***
+	 * 
+	 * @param imp1
+	 * @param imp3
+	 * @param sqX
+	 * @param sqY
+	 * @param sqR
+	 * @param limit
+	 * @return
+	 */
+	public static double[] devStandardNema(ImagePlus imp1, ImagePlus imp3,
+			int sqX, int sqY, int sqR, double limit, boolean paintPixels) {
 		double[] results = new double[2];
 		double value4 = 0.0;
 		double sumValues = 0.0;
@@ -899,6 +932,13 @@ public class p5rmn_ implements PlugIn, Measurements {
 		}
 		int width = imp1.getWidth();
 		short[] pixels1 = UtilAyv.truePixels(imp1);
+		short[] pixels2 = null;
+
+		ImageProcessor ip1 = imp1.getProcessor();
+		if (paintPixels) {
+			pixels2 = (short[]) ip1.getPixels();
+		}
+
 		int pixelCount = 0;
 		int offset = 0;
 		ImageProcessor ip3 = imp3.getProcessor();
@@ -911,162 +951,18 @@ public class p5rmn_ implements PlugIn, Measurements {
 					value4 = pixels4[offset];
 					sumValues += value4;
 					sumSquare += value4 * value4;
+					// IJ.log("p5 x1=" + x1 + " y1=" + y1 + " s1=" + value4);
+					if (paintPixels)
+						pixels2[offset] = 4096;
 				}
 			}
 		}
+		imp1.updateAndDraw();
 		results[0] = sumValues / pixelCount;
 		double sd1 = calculateStdDev4(pixelCount, sumValues, sumSquare);
 		results[1] = sd1;
 		return (results);
 	}
-
-	/**
-	 * Genera l'immagine simulata a 11+1 livelli
-	 * 
-	 * @param imp1
-	 *            immagine da analizzare
-	 * @param sqX
-	 *            coordinata x della Roi centrale
-	 * @param sqY
-	 *            coordinata y della Roi centrale
-	 * @param sqR
-	 *            diametro della Roi centrale
-	 * @return immagine simulata a 11+1 livelli
-	 */
-
-	private static ImagePlus simulata12Classi(int sqX, int sqY, int sqR,
-			ImagePlus imp1) {
-
-		if (imp1 == null) {
-			IJ.error("Simula12 ricevuto null");
-			return (null);
-		}
-
-		int width = imp1.getWidth();
-		short[] pixels1 = UtilAyv.truePixels(imp1);
-		//
-		// disegno MROI per calcoli
-		//
-		imp1.setRoi(sqX, sqY, sqR, sqR);
-		ImageStatistics stat1 = imp1.getStatistics();
-		double mean = stat1.mean;
-		//
-		// limiti classi
-		//
-		double minus90 = mean * MyConst.MINUS_90_PERC;
-		double minus80 = mean * MyConst.MINUS_80_PERC;
-		double minus70 = mean * MyConst.MINUS_70_PERC;
-		double minus60 = mean * MyConst.MINUS_60_PERC;
-		double minus50 = mean * MyConst.MINUS_50_PERC;
-		double minus40 = mean * MyConst.MINUS_40_PERC;
-		double minus30 = mean * MyConst.MINUS_30_PERC;
-		double minus20 = mean * MyConst.MINUS_20_PERC;
-		double minus10 = mean * MyConst.MINUS_10_PERC;
-		double plus10 = mean * MyConst.PLUS_10_PERC;
-		double plus20 = mean * MyConst.PLUS_20_PERC;
-		// genero una immagine nera
-		ImagePlus impSimulata = NewImage.createShortImage("Simulata", width,
-				width, 1, NewImage.FILL_BLACK);
-		//
-		// nuova immagine simulata vuota
-		//
-		ShortProcessor processorSimulata = (ShortProcessor) impSimulata
-				.getProcessor();
-		short[] pixelsSimulata = (short[]) processorSimulata.getPixels();
-		//
-		// riempimento immagine simulata
-		//
-		short pixSorgente;
-		short pixSimulata;
-		int posizioneArrayImmagine = 0;
-
-		for (int y = 0; y < width; y++) {
-			for (int x = 0; x < width; x++) {
-				posizioneArrayImmagine = y * width + x;
-				pixSorgente = pixels1[posizioneArrayImmagine];
-				if (pixSorgente > plus20)
-					pixSimulata = MyConst.LEVEL_12;
-				else if (pixSorgente > plus10)
-					pixSimulata = MyConst.LEVEL_11;
-				else if (pixSorgente > minus10)
-					pixSimulata = MyConst.LEVEL_10;
-				else if (pixSorgente > minus20)
-					pixSimulata = MyConst.LEVEL_9;
-				else if (pixSorgente > minus30)
-					pixSimulata = MyConst.LEVEL_8;
-				else if (pixSorgente > minus40)
-					pixSimulata = MyConst.LEVEL_7;
-				else if (pixSorgente > minus50)
-					pixSimulata = MyConst.LEVEL_6;
-				else if (pixSorgente > minus60)
-					pixSimulata = MyConst.LEVEL_5;
-				else if (pixSorgente > minus70)
-					pixSimulata = MyConst.LEVEL_4;
-				else if (pixSorgente > minus80)
-					pixSimulata = MyConst.LEVEL_3;
-				else if (pixSorgente > minus90)
-					pixSimulata = MyConst.LEVEL_2;
-				else
-					pixSimulata = MyConst.LEVEL_1;
-
-				pixelsSimulata[posizioneArrayImmagine] = pixSimulata;
-			}
-		}
-		processorSimulata.resetMinAndMax();
-		return impSimulata;
-	} // simula12
-
-	/**
-	 * Estrae la numerosità dell classi dalla simulata
-	 * 
-	 * @param imp1
-	 *            immagine simulata da analizzare
-	 * @return numerosità delle classi in cui per ogni elemento abbiamo
-	 *         [valore][numerosità]
-	 */
-
-	public static int[][] numeroPixelsClassi(ImagePlus imp1) {
-
-		if (imp1 == null) {
-			IJ.error("numeroPixelClassi ricevuto null");
-			return (null);
-		}
-		int width = imp1.getWidth();
-
-		ImageProcessor ip1 = imp1.getProcessor();
-		short[] pixels1 = (short[]) ip1.getPixels();
-		int offset = 0;
-		int pix1 = 0;
-
-		int[][] vetClassi = { { MyConst.LEVEL_12, 0 }, { MyConst.LEVEL_11, 0 },
-				{ MyConst.LEVEL_10, 0 }, { MyConst.LEVEL_9, 0 },
-				{ MyConst.LEVEL_8, 0 }, { MyConst.LEVEL_7, 0 },
-				{ MyConst.LEVEL_6, 0 }, { MyConst.LEVEL_5, 0 },
-				{ MyConst.LEVEL_4, 0 }, { MyConst.LEVEL_3, 0 },
-				{ MyConst.LEVEL_2, 0 }, { MyConst.LEVEL_1, 0 } };
-		boolean manca = true;
-
-		for (int y1 = 0; y1 < width; y1++) {
-			for (int x1 = 0; x1 < (width); x1++) {
-				offset = y1 * width + x1;
-				pix1 = pixels1[offset];
-				manca = true;
-				for (int i1 = 0; i1 < vetClassi.length; i1++)
-					if (pix1 == vetClassi[i1][0]) {
-						vetClassi[i1][1] = vetClassi[i1][1] + 1;
-						manca = false;
-						break;
-					}
-				if (manca) {
-					ButtonMessages.ModelessMsg("SIMULATA CON VALORE ERRATO="
-							+ pix1 + "   <38>", "CONTINUA");
-					return (null);
-				}
-			}
-		}
-		return (vetClassi);
-
-	} // classi
 
 	/**
 	 * Analisi di un profilo NON mediato
@@ -1364,52 +1260,6 @@ public class p5rmn_ implements PlugIn, Measurements {
 		vetHalfPoint[3] = upDx;
 		return vetHalfPoint;
 	} // halfPointSerach
-
-	/**
-	 * generazione di un immagine simulata, display e salvataggio
-	 * 
-	 * @param xRoi
-	 *            coordinata x roi
-	 * @param yRoi
-	 *            coordinata y roi
-	 * @param diamRoi
-	 *            diametro roi
-	 * @param imp
-	 *            puntatore ImagePlus alla immagine originale
-	 * @param step
-	 *            funzionamento passo passo
-	 * @param verbose
-	 * 
-	 * @param test
-	 *            modo autotest
-	 * @return numeriosità classi simulata
-	 */
-	private static int[][] generaSimulata(int xRoi, int yRoi, int diamRoi,
-			ImagePlus imp, boolean step, boolean verbose, boolean test) {
-
-		int xRoiSimulata = xRoi + (diamRoi - MyConst.P5_NEA_11X11_PIXEL) / 2;
-		int yRoiSimulata = yRoi + (diamRoi - MyConst.P5_NEA_11X11_PIXEL) / 2;
-		ImagePlus impSimulata = simulata12Classi(xRoiSimulata, yRoiSimulata,
-				MyConst.P5_NEA_11X11_PIXEL, imp);
-		if (verbose) {
-			UtilAyv.showImageMaximized(impSimulata);
-			IJ.run("Enhance Contrast", "saturated=0.5");
-		}
-		// impSimulata.updateAndDraw();
-		if (step)
-			msgSimulata();
-		int[][] classiSimulata = numeroPixelsClassi(impSimulata);
-		String patName = ReadDicom.readDicomParameter(imp,
-				MyConst.DICOM_PATIENT_NAME);
-		String codice = ReadDicom
-				.readDicomParameter(imp, MyConst.DICOM_SERIES_DESCRIPTION)
-				.substring(0, 4).trim();
-		simulataName = fileDir + patName + codice + "sim.zip";
-
-		if (!test)
-			new FileSaver(impSimulata).saveAsZip(simulataName);
-		return classiSimulata;
-	} // generaSimulata
 
 	/**
 	 * scelta da parte dell'utente della posizione e direzione del profilo su
