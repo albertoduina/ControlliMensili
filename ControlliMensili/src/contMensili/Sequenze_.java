@@ -83,7 +83,6 @@ public class Sequenze_ implements PlugIn {
 			IJ.error("ATTENZIONE, manca il file Excel_Writer.jar");
 			return;
 		}
-
 		String startingDir = Prefs.get(MyConst.PREFERENCES_1,
 				MyConst.DEFAULT_PATH);
 		MyFileLogger.logger.info("Sequenze_>>> startingDir letta= "
@@ -97,21 +96,19 @@ public class Sequenze_ implements PlugIn {
 		// IJ.log("il file trovami si trova in:"
 		// + new InputOutput().findResource("Sequenze_.class"));
 
-		String[][] tableCode = TableCode.loadTable(MyConst.CODE_FILE);
-		// MyLog.logMatrix(tableCode, "tableCode");
-		// MyLog.waitHere();
+		// String[][] tableCode = TableCode.loadTable(MyConst.CODE_FILE);
+
+		String[][] tableCode = TableCode.loadTableCSV("codiciNew.csv");
 		String[][] tableExpand = TableExpand.loadTable(MyConst.EXPAND_FILE);
 		new AboutBox().about("Scansione automatica cartelle", this.getClass());
 		IJ.wait(2000);
 		new AboutBox().close();
-
 		GenericDialog gd = new GenericDialog("", IJ.getInstance());
 		gd.addCheckbox("Nuovo controllo", true);
 		gd.addCheckbox("SelfTest", false);
 		gd.addCheckbox("p10_ p11_", true);
 		gd.addCheckbox("Fast", true);
 		gd.addCheckbox("Superficiali", true);
-
 		gd.showDialog();
 		if (gd.wasCanceled()) {
 			return;
@@ -269,9 +266,7 @@ public class Sequenze_ implements PlugIn {
 	/**
 	 * Legge ricorsivamente la directory e relative sottodirectory
 	 * 
-	 * @author www.javapractices.com
-	 * @author Alex Wong
-	 * @author anonymous user
+	 * copied from www.javapractices.com (Alex Wong
 	 * 
 	 * @param startingDir
 	 *            directory "radice"
@@ -638,7 +633,7 @@ public class Sequenze_ implements PlugIn {
 				// vecchie versioni, senza dover modificare i sorgenti
 
 				if (!p10p11) {
-//					MyLog.waitHere("MANUALE p10p11= " + p10p11);
+					// MyLog.waitHere("MANUALE p10p11= " + p10p11);
 					if (plugin.equals("contMensili.p10rmn_"))
 						plugin = "contMensili.p5rmn_";
 					if (plugin.equals("contMensili.p11rmn_"))
@@ -1092,8 +1087,9 @@ public class Sequenze_ implements PlugIn {
 
 		if (tableVerify == null)
 			return;
-		// TableUtils.dumpTable(tableVerify, "tableVerify");
 		IJ.showMessage("Problemi con le immagini, vedere il log");
+
+		// TableUtils.dumpTable(tableVerify, "tableVerify");
 		String codice2 = "";
 		String coil2 = "";
 		boolean stamp = false;
@@ -1129,6 +1125,7 @@ public class Sequenze_ implements PlugIn {
 				stamp = false;
 			}
 		}
+		MyLog.waitHere("Problemi con le immagini, vedere il log");
 
 	}
 
@@ -1245,6 +1242,27 @@ public class Sequenze_ implements PlugIn {
 			return true;
 		else
 			return false;
+	}
+
+	/***
+	 * Questo è un test per vedere se posso avere duefile di identico nome, uno
+	 * esterno ed uno interno al file jar (in modo da tenere l'interno come
+	 * default ed eventualmente l'esterno come risorsa modificabile dall'utente)
+	 * 
+	 * @param source
+	 */
+
+	public void readExperiment(String source) {
+		if (this.getClass().getResource("/" + source) == null) {
+			String[][] mat1 = new InputOutput().readFile6(source);
+			MyLog.logMatrix(mat1, "mat1");
+			MyLog.waitHere();
+		} else {
+			String[][] mat1 = new InputOutput().readFile6(source);
+			MyLog.logMatrix(mat1, "mat1");
+			MyLog.waitHere();
+
+		}
 	}
 
 } // ultima

@@ -106,7 +106,7 @@
 	<!-- MOVE1 move the sources into output -->	
 	<target name="move1" description="Move the sources.">
 		<copy verbose="true" todir="${output}">
-			<fileset dir="." includes=" *.txt , *.pdf, *.rtf, *.number, *.jpg, *.xml, *.config" />
+			<fileset dir="." includes=" *.txt , *.pdf, *.rtf, *.number, *.jpg, *.xml, *.config, *.csv" />
 		</copy>
 	</target>
 	

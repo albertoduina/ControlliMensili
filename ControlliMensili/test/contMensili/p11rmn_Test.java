@@ -60,33 +60,8 @@ public class p11rmn_Test {
 	public final void testMainUniforTestSiemens() {
 
 		// 16 dec 2011 sistemato, ora funziona in automatico
-
-		String[] list = { "S12S_01testP11", "S12S_02testP11" };
-		String[] path = new InputOutput().findListTestImages2(
-				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
-
-		String path1 = path[0];
-		String path2 = path[1];
-
-		boolean autoCalled = false;
-		boolean step = false;
-		boolean verbose = true;
-		boolean test = false;
-		double[] vetReference = new p11rmn_().referenceSiemens();
-		int direz = 3;
-		double profond = 30.0;
-		boolean fast = true;
-
-		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, direz, profond, "",
-				autoCalled, step, verbose, test, fast);
-
-		// ResultsTable rt1 = p11rmn_.mainUnifor(path, sqX, sqY, autoArgs,
-		// verticalProfile, autoCalled, step, verbose, test);
-
-		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-				MyConst.P11_vetName);
+		boolean verbose= true;
+		boolean ok = p11rmn_.selfTestSiemens(verbose);
 		assertTrue(ok);
 	}
 
@@ -94,33 +69,8 @@ public class p11rmn_Test {
 	public final void testMainUniforTestGe() {
 
 		// 16 dec 2011 sistemato, ora funziona in automatico
-
-		String[] list = { "S12S_01testP11", "S12S_02testP11" };
-		String[] path = new InputOutput().findListTestImages2(
-				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
-
-		String path1 = path[0];
-		String path2 = path[1];
-		boolean autoCalled = false;
-		boolean step = false;
 		boolean verbose = true;
-		boolean test = false;
-		int direz = 3;
-		double profond = 30.0;
-		boolean fast = true;
-		double[] vetReference = new p11rmn_().referenceGe();
-
-		// ResultsTable rt1 = p11rmn_.mainUnifor(path, sqX, sqY, autoArgs,
-		// verticalProfile, autoCalled, step, verbose, test);
-
-		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, direz, profond, "",
-				autoCalled, step, verbose, test, fast);
-
-		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-				MyConst.P11_vetName);
-		// ButtonMessages.ModelessMsg("", "CONTINUA");
+		boolean ok = p11rmn_.selfTestGe(verbose);
 		assertTrue(ok);
 	}
 

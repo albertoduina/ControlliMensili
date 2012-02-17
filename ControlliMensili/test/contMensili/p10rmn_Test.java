@@ -1,6 +1,7 @@
 package contMensili;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
@@ -34,34 +35,22 @@ public class p10rmn_Test {
 	}
 
 	@Test
+	public final void testDecoderLimiti() {
+
+		String[][] limiti = new InputOutput().readFile6("LIMITI.csv");
+		MyLog.logMatrix(limiti, "limiti");
+		MyLog.waitHere();
+		String[] result = p10rmn_.decoderLimiti(limiti, "P10MAX");
+		MyLog.logVector(result, "result");
+
+	}
+
+	@Test
 	public final void testMainUniforTestGe() {
 
 		// 16 dec 2011 sistemato, ora funziona in automatico
-		
-		//
-		// 
-		//
-		
-
-		String home1 = new p10rmn_().findTestImages();
-		String path1 = home1 + "C001_testP10";
-		String path2 = home1 + "C002_testP10";
-
-		String autoArgs = "0";
-		boolean autoCalled = false;
-		boolean step = false;
 		boolean verbose = true;
-		boolean test = true;
-		boolean fast = true;
-		double[] vetReference = new p10rmn_().referenceGe();
-		double profond = 30;
-
-		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"", autoCalled, step, verbose, test, fast);
-
-		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, null);
+		boolean ok = p10rmn_.selfTestGe(verbose);
 		assertTrue(ok);
 	}
 
@@ -69,32 +58,18 @@ public class p10rmn_Test {
 	public final void testMainUniforTestSiemens() {
 
 		// 16 dec 2011 sistemato, ora funziona in automatico
-
-		String home1 = new p10rmn_().findTestImages();
-		String path1 = home1 + "C001_testP10";
-		String path2 = home1 + "C002_testP10";
-
-		String autoArgs = "0";
-		boolean autoCalled = false;
-		boolean step = false;
 		boolean verbose = true;
-		boolean test = true;
-		boolean fast = true;
-		double[] vetReference = new p10rmn_().referenceSiemens();
-		double profond = 30;
-
-		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"", autoCalled, step, verbose, test, fast);
-
-		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-				MyConst.P5_vetName);
+		boolean ok = p10rmn_.selfTestSiemens(verbose);
 		assertTrue(ok);
 	}
 
 	@Test
-	public final void testMainUnifor() {
+	public final void testSelfTestSilent() {
+		new p10rmn_().selfTestSilent();
+	}
+
+	@Test
+	public final void testMainUniforFast() {
 
 		// 16 dec 2011 sistemato, ora funziona in automatico
 
@@ -107,6 +82,58 @@ public class p10rmn_Test {
 		boolean test = false;
 		double profond = 30;
 		boolean fast = true;
+		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
+				"info10", autoCalled, step, verbose, test, fast);
+
+		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		double[] vetReference = new p10rmn_().referenceSiemens();
+		String[] vetName = { "vetResults", "vetReference" };
+
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, vetName);
+		assertTrue(ok);
+	}
+
+	@Test
+	public final void testMainUniforFault() {
+
+		// 16 dec 2011 sistemato, ora funziona in automatico
+
+		String path1 = "./data/F001_testP10";
+		String path2 = "./data/F002_testP10";
+		String autoArgs = "0";
+		boolean autoCalled = false;
+		boolean step = false;
+		boolean verbose = false;
+		boolean test = false;
+		double profond = 30;
+		boolean fast = true;
+		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
+				"info10", autoCalled, step, verbose, test, fast);
+
+		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		double fwhm = vetResults[4];
+		MyLog.waitHere("fwhm= " + fwhm);
+
+		double[] vetReference = new p10rmn_().referenceSiemens();
+		String[] vetName = { "vetResults", "vetReference" };
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, vetName);
+		assertTrue(ok);
+	}
+
+	@Test
+	public final void testMainUniforSlow() {
+
+		// 16 dec 2011 sistemato, ora funziona in automatico
+
+		String path1 = "./Test2/C001_testP10";
+		String path2 = "./Test2/C002_testP10";
+		String autoArgs = "0";
+		boolean autoCalled = false;
+		boolean step = true;
+		boolean verbose = true;
+		boolean test = false;
+		double profond = 30;
+		boolean fast = false;
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
 				"info10", autoCalled, step, verbose, test, fast);
 
@@ -141,11 +168,6 @@ public class p10rmn_Test {
 		// MyLog.logVector(out2, "out2");
 		boolean ok = UtilAyv.verifyResults1(expected, out2, null);
 		assertTrue(ok);
-	}
-
-	@Test
-	public final void testSelfTestSilent() {
-		new p10rmn_().selfTestSilent();
 	}
 
 	@Test

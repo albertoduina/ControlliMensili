@@ -444,7 +444,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				double signal1 = stat1.mean;
 
 				int xFondo = MyConst.P11_X_ROI_BACKGROUND;
-				int yFondo = MyConst.P11_Y_ROI_BACKGROUND;
+				int yFondo = MyConst.P11_Y_ROI_BACKGROUND + 5;
 				//
 				// disegno RoiFondo su imp1
 				//
@@ -463,6 +463,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 				// disegno MROI su imaDiff
 				//
 				ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
+				// ImagePlus imaDiff = UtilAyv.diffIma(imp1, imp2);
+				imaDiff.show();
+
 				if (verbose && !fast) {
 					UtilAyv.showImageMaximized(imaDiff);
 					// imp1.getWindow().toFront();
@@ -524,7 +527,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 						* MyConst.P11_NEA_11X11_PIXEL;
 				int enlarge = 0;
 				int pixx = 0;
-
 				do {
 
 					boolean paintPixels = false;
@@ -729,68 +731,23 @@ public class p11rmn_ implements PlugIn, Measurements {
 	public void selfTestMenu() {
 		if (new InputOutput().checkJar(MyConst.TEST_FILE)) {
 			int userSelection2 = UtilAyv.siemensGe();
+			boolean verbose = false;
+			boolean ok = false;
 			switch (userSelection2) {
-			case 1: {
+			case 1:
 				// GE
-				String[] list = { "CTSA2_01testP11", "CTSA2_02testP11",
-						"CTSA2_03testP11" };
-				String[] path = new InputOutput().findListTestImages2(
-						MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
-
-				String path1 = path[0];
-				String path2 = path[2];
-				String path3 = path[1];
-
-				boolean autoCalled = false;
-				boolean step = false;
-				boolean verbose = true;
-				boolean test = true;
-				double[] vetReference = referenceGe();
-				int verticalDir = 3;
-				double profond = 30.0;
-				boolean fast = true;
-
-				ResultsTable rt1 = mainUnifor(path1, path2, verticalDir,
-						profond, "", autoCalled, step, verbose, test, fast);
-				if (rt1 == null)
-					return;
-
-				double[] vetResults = UtilAyv.vectorizeResults(rt1);
-				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-						MyConst.P11_vetName);
+				verbose = true;
+				ok = selfTestGe(verbose);
 				if (ok)
 					Msg.msgTestPassed();
 				else
 					Msg.msgTestFault();
 				UtilAyv.afterWork();
 				break;
-			}
+
 			case 2:
-				// Siemens
-				String[] list = { "S12S_01testP11", "S12S_02testP11" };
-				String[] path = new InputOutput().findListTestImages2(
-						MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
-
-				String path1 = path[0];
-				String path2 = path[2];
-				String path3 = path[1];
-
-				boolean autoCalled = false;
-				boolean step = false;
-				boolean verbose = true;
-				boolean test = true;
-				boolean fast = true;
-
-				double[] vetReference = referenceSiemens();
-				int verticalDir = 2;
-				double profond = 30.0;
-				ResultsTable rt1 = mainUnifor(path1, path2, verticalDir,
-						profond, "", autoCalled, step, verbose, test, fast);
-				if (rt1 == null)
-					return;
-				double[] vetResults = UtilAyv.vectorizeResults(rt1);
-				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-						MyConst.P11_vetName);
+				verbose = true;
+				ok = selfTestSiemens(verbose);
 				if (ok)
 					Msg.msgTestPassed();
 				else
@@ -809,25 +766,25 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * 
 	 * @return
 	 */
-	double[] referenceSiemens() {
+	public static double[] referenceSiemens() {
 
 		double simul = 0.0;
-		double signal = 953.6122448979592;
-		double backNoise = 3.43;
-		double snRatio = 291.53433741655306;
-		double fwhm = 51.16454748650474;
-		double num1 = 573.0;
-		double num2 = 419.0;
-		double num3 = 1085.0;
-		double num4 = 689.0;
-		double num5 = 820.0;
-		double num6 = 1082.0;
-		double num7 = 1386.0;
-		double num8 = 1890.0;
-		double num9 = 2681.0;
-		double num10 = 3981.0;
-		double num11 = 5089.0;
-		double num12 = 45841.0;
+		double signal = 1275.530612244898;
+		double backNoise = 7.85;
+		double snRatio = 34.43115820571181;
+		double fwhm = 38.891139825926565;
+		double num1 = 2616.0;
+		double num2 = 505.0;
+		double num3 = 1163.0;
+		double num4 = 661.0;
+		double num5 = 764.0;
+		double num6 = 910.0;
+		double num7 = 1094.0;
+		double num8 = 1382.0;
+		double num9 = 1799.0;
+		double num10 = 2752.0;
+		double num11 = 5478.0;
+		double num12 = 46412.0;
 
 		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
@@ -841,25 +798,25 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * 
 	 * @return
 	 */
-	double[] referenceGe() {
+	public static double[] referenceGe() {
 
 		double simul = 0.0;
-		double signal = 953.6122448979592;
-		double backNoise = 3.43;
-		double snRatio = 291.53433741655306;
-		double fwhm = 51.16454748650474;
-		double num1 = 573.0;
-		double num2 = 419.0;
-		double num3 = 1085.0;
-		double num4 = 689.0;
-		double num5 = 820.0;
-		double num6 = 1082.0;
-		double num7 = 1386.0;
-		double num8 = 1890.0;
-		double num9 = 2681.0;
-		double num10 = 3981.0;
-		double num11 = 5089.0;
-		double num12 = 45841.0;
+		double signal = 2278.4897959183672;
+		double backNoise = 1.66;
+		double snRatio = 94.11744027303934;
+		double fwhm = 36.25918394251357;
+		double num1 = 1393.0;
+		double num2 = 430.0;
+		double num3 = 1161.0;
+		double num4 = 816.0;
+		double num5 = 1159.0;
+		double num6 = 1556.0;
+		double num7 = 2726.0;
+		double num8 = 3614.0;
+		double num9 = 2588.0;
+		double num10 = 2644.0;
+		double num11 = 1549.0;
+		double num12 = 45900.0;
 
 		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
@@ -867,36 +824,66 @@ public class p11rmn_ implements PlugIn, Measurements {
 		return vetReference;
 	}
 
+	public static boolean selfTestGe(boolean verbose) {
+		String[] list = { "CTSA2_01testP11", "CTSA2_03testP11",
+				"CTSA2_02testP11" };
+		String[] path = new InputOutput().findListTestImages2(
+				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
+		String path1 = path[0];
+		String path2 = path[2];
+		// String path3 = path[1];
+		boolean autoCalled = false;
+		boolean step = false;
+		// boolean verbose = true;
+		boolean test = true;
+		double[] vetReference = referenceGe();
+		int verticalDir = 3;
+		double profond = 30.0;
+		boolean fast = true;
+		ResultsTable rt1 = mainUnifor(path1, path2, verticalDir, profond, "",
+				autoCalled, step, verbose, test, fast);
+		if (rt1 == null) {
+			MyLog.waitHere("rt1==null");
+			return false;
+		}
+		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
+				MyConst.P11_vetName);
+		return ok;
+	}
+
+	public static boolean selfTestSiemens(boolean verbose) {
+		String[] list = { "S1SA_01testP5", "S1SA_02testP5", "S1SA_03testP5" };
+		String[] path = new InputOutput().findListTestImages2(
+				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
+		String path1 = path[0];
+		// String path3 = path[2];
+		String path2 = path[1];
+		boolean autoCalled = false;
+		boolean step = false;
+		boolean test = true;
+		boolean fast = true;
+		// boolean verbose = true;
+		double[] vetReference = referenceSiemens();
+		int verticalDir = 1;
+		double profond = 30.0;
+		ResultsTable rt1 = mainUnifor(path1, path2, verticalDir, profond, "",
+				autoCalled, step, verbose, test, fast);
+		if (rt1 == null)
+			return false;
+		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
+				MyConst.P11_vetName);
+		return ok;
+	}
+
 	/**
 	 * Automatic silent self test
 	 */
 	public void selfTestSilent() {
-
-		String[] list = { "S12S_01testP11", "S12S_02testP11" };
-
-		// String[] list = { "S1SA_01testP11", "S1SA_02testP11",
-		// "S1SA_03testP11" };
-
-		String[] path = new InputOutput().findListTestImages2(
-				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
-		String path1 = path[0];
-		String path2 = path[1];
-
-		double[] vetReference = referenceSiemens();
-
-		boolean autoCalled = false;
-		boolean step = false;
 		boolean verbose = false;
-		boolean test = true;
-		int verticalDir = 3;
-		double profond = 30.0;
-		boolean fast = true;
-
-		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, verticalDir,
-				profond, "", autoCalled, step, verbose, test, fast);
-		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-				MyConst.P11_vetName);
+		boolean ok = selfTestSiemens(verbose);
 		if (ok) {
 			IJ.log("Il test di p11rmn_ UNIFORMITA' SUPERFICIALE è stato SUPERATO");
 		} else {
@@ -1014,7 +1001,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double sumSquare = 0.0;
 
 		if ((imp1 == null) || (imp3 == null)) {
-			IJ.error("devStandardNema ricevuto null");
+			IJ.error("devStandardNema ricevuto imp null");
 			return (null);
 		}
 		int width = imp1.getWidth();
@@ -1375,6 +1362,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 		return userSelection1;
 	}
 
+	/***
+	 * Legge la direzione preimpostata nel file di configurazione (codici)
+	 * 
+	 * @param in1
+	 * @return codice numerico direzione
+	 */
 	public static int decodeDirezione(String in1) {
 		int out = 0;
 
@@ -1399,13 +1392,18 @@ public class p11rmn_ implements PlugIn, Measurements {
 		return out;
 	}
 
-	/**
+	/***
 	 * 
-	 * @param path1
+	 * @param imp11
 	 * @param autoCalled
+	 * @param direzione
+	 * @param profond
+	 * @param info10
 	 * @param step
 	 * @param verbose
 	 * @param test
+	 * @param fast
+	 * @return
 	 */
 	public static double[] positionSearch(ImagePlus imp11, boolean autoCalled,
 			int direzione, double profond, String info10, boolean step,
@@ -1598,8 +1596,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 
 		if (!fast) {
-//			MyLog.waitMessage(info10
-//					+ "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI");
+			// MyLog.waitMessage(info10
+			// + "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI");
 			MyLog.waitHere(info10
 					+ "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI");
 			manualRequired = false;
@@ -1631,7 +1629,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * 
 	 * @param imp1
 	 * @param dimPixel
-	 * @return
+	 * @return coordinate picchi
 	 */
 	public static double[][] profileAnalyzer(ImagePlus imp1, double dimPixel,
 			String title, boolean showProfiles) {
@@ -1683,7 +1681,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 *            profilo
 	 * @param loops
 	 *            numerompassaggi
-	 * @return
+	 * @return profilo smoothato
 	 */
 	public static double[] smooth3(double[] profile1, int loops) {
 
@@ -1708,7 +1706,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * @param profile
 	 *            profilo da analizzare
 	 * @param delta
-	 * @return
+	 * @return ArrayList con le posizioni del picco minimo e del picco massimo
 	 */
 	public static ArrayList<ArrayList<Double>> peakDet(double[][] profile,
 			double delta) {
