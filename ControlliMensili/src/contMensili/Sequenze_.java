@@ -73,6 +73,18 @@ public class Sequenze_ implements PlugIn {
 
 		// MyFileLogger.logger.severe("Sequenze"+ MyFileLogger.here("aaaa"));
 		// MyFileLogger.logger.warning("Sequenze"+ MyFileLogger.here("aaaa"));
+
+		// estraggo i prototipi di codiciNew e LIMITI. I file estratti sono
+		// quelli che verranno usati dal programma. Così diventa facile fare
+		// modifiche senza doversi occupare del file jar. ATTENZIONE PERO': il
+		// sistema di sviluppo pialla inesorabilmente la cartella quindi IO ME
+		// MEDESIMO non devo fidarmi assolutamente a fare modifiche al file
+		// estratto, perchè le perderei inevitabilmente alla prima compilazione
+
+		new InputOutput().findCSV(MyConst.CODE_FILE);
+		new InputOutput().findCSV(MyConst.LIMITS_FILE);
+		new InputOutput().findCSV(MyConst.EXPAND_FILE);
+
 		MyFileLogger.logger.info("-----INIZIO Sequenze----");
 
 		if (this.getClass().getResource("/iw2ayv.jar") == null) {
@@ -98,8 +110,9 @@ public class Sequenze_ implements PlugIn {
 
 		// String[][] tableCode = TableCode.loadTable(MyConst.CODE_FILE);
 
-		String[][] tableCode = TableCode.loadTableCSV("codiciNew.csv");
-		String[][] tableExpand = TableExpand.loadTable(MyConst.EXPAND_FILE);
+		String[][] tableCode = TableCode.loadTableCSV(MyConst.CODE_FILE);
+		String[][] tableExpand = TableExpand.loadTableCSV(MyConst.EXPAND_FILE);
+				
 		new AboutBox().about("Scansione automatica cartelle", this.getClass());
 		IJ.wait(2000);
 		new AboutBox().close();

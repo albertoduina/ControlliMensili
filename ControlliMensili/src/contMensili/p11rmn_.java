@@ -640,7 +640,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				//
 				// Salvataggio dei risultati nella ResultsTable
 
-				String[][] tabCodici = TableCode.loadTable(MyConst.CODE_FILE);
+				String[][] tabCodici = TableCode.loadTableCSV(MyConst.CODE_FILE);
 
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
 						path1, imp1, tabCodici, VERSION, autoCalled);

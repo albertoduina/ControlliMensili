@@ -237,7 +237,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
 				+ MyConst.SEQUENZE_FILE);
 
-
 		String info10 = (vetRiga[0] + 1) + " / "
 				+ TableSequence.getLength(iw2ayvTable) + "   code= "
 				+ TableSequence.getCode(iw2ayvTable, vetRiga[0]) + "   coil= "
@@ -262,6 +261,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 			boolean autoCalled = true;
 			boolean verbose = false;
 			boolean test = false;
+
+			// int userSelection10 = UtilAyv.userSelectionAuto(VERSION, TYPE,
+			// TableSequence.getCode(iw2ayvTable, vetRiga[0]),
+			// TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
+			// vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
+
+			MyLog.waitHere(TableSequence.getCode(iw2ayvTable, vetRiga[0])
+					+ "   " + TableSequence.getCoil(iw2ayvTable, vetRiga[0])
+					+ "   " + (vetRiga[0] + 1) + " / "
+					+ TableSequence.getLength(iw2ayvTable));
 
 			double profond = readDouble(TableSequence.getProfond(iw2ayvTable,
 					vetRiga[0]));
@@ -359,17 +368,19 @@ public class p10rmn_ implements PlugIn, Measurements {
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		double angle = Double.NaN;
 		String[][] limiti = new InputOutput().readFile6("LIMITI.csv");
-		String[] vetMinimi = p10rmn_.decoderLimiti(limiti, "P10MIN");
-		String[] vetMaximi = p10rmn_.decoderLimiti(limiti, "P10MAX");
-		MyLog.logVector(vetMinimi, "vetMinimi");		
-		MyLog.logVector(vetMaximi, "vetMaximi");		
-		
-		
-		MyLog.waitHere("sono appena prima del do");
+		// String[] vetMinimi = p10rmn_.decoderLimiti(limiti, "P10MIN");
+		// String[] vetMaximi = p10rmn_.decoderLimiti(limiti, "P10MAX");
+		double[] vetMinimi = doubleLimiti(decoderLimiti(limiti, "P10MIN"));
+		double[] vetMaximi = doubleLimiti(decoderLimiti(limiti, "P10MAX"));
+		// MyLog.logVector(vetMinimi, "vetMinimi");
+		// MyLog.logVector(vetMaximi, "vetMaximi");
+		//
+		// MyLog.waitHere("sono appena prima del do");
 		do {
 
-			MyLog.waitHere("sono appena dopo il do fast=" + fast + " verbose="
-					+ verbose);
+			// MyLog.waitHere("sono appena dopo il do fast=" + fast +
+			// " verbose="
+			// + verbose);
 			ImagePlus imp11 = null;
 			if (fast)
 				imp11 = UtilAyv.openImageNoDisplay(path1, true);
@@ -478,8 +489,18 @@ public class p10rmn_ implements PlugIn, Measurements {
 			ImageStatistics stat7x7 = imp1.getStatistics();
 
 			// eseguo un controllo di sicurezza sul risultato.
-			UtilAyv.checkLimits(stat7x7.mean, 0, 3000, "stat7x7.mean");
-
+			//
+			// =============================================================
+			int userSelection2 = UtilAyv.checkLimits(stat7x7.mean,
+					vetMinimi[0], vetMaximi[0], "SEGNALE");
+			if (userSelection2 == 2) {
+				fast = false;
+				verbose = true;
+				continue;
+			} else if (userSelection2 == 3) {
+				break;
+			}
+			// =============================================================
 			int xFondo = MyConst.P10_X_ROI_BACKGROUND;
 			int yFondo = MyConst.P10_Y_ROI_BACKGROUND;
 			int dFondo = MyConst.P10_DIAM_ROI_BACKGROUND;
@@ -493,7 +514,18 @@ public class p10rmn_ implements PlugIn, Measurements {
 					dFondo, imp1, step, circular, test);
 
 			// UtilAyv.checkLimits(statFondo.mean, 0, 50, "statFondo.mean");
-			UtilAyv.checkLimits(statFondo.mean, 0, 50, "statFondo.mean");
+
+			// =============================================================
+			userSelection2 = UtilAyv.checkLimits(statFondo.mean, vetMinimi[1],
+					vetMaximi[1], "RUMORE");
+			if (userSelection2 == 2) {
+				fast = false;
+				verbose = true;
+				continue;
+			} else if (userSelection2 == 3) {
+				break;
+			}
+			// =============================================================
 
 			//
 			// disegno MROI su imaDiff
@@ -527,8 +559,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			imaDiff.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7, sq7);
 			imaDiff.updateAndDraw();
 			ImageStatistics statImaDiff = imaDiff.getStatistics();
-
-			UtilAyv.checkLimits(statImaDiff.stdDev, 0, 20, "statImaDiff.stdDev");
 
 			imaDiff.updateAndDraw();
 			if (imaDiff.isVisible())
@@ -572,7 +602,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			do {
 
-				boolean paintPixels = false;
+				boolean paintPixels = true;
 
 				pixx = countPixTest(imp1, xCenterRoi, yCenterRoi, sqNEA,
 						checkPixels, paintPixels);
@@ -638,15 +668,17 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (step)
 				msgSnr(snr);
 
-			int userSelection2 = UtilAyv.checkLimits(snr, 1, -10, "snr");
+			// =============================================================
+			userSelection2 = UtilAyv.checkLimits(snr, vetMinimi[2],
+					vetMaximi[2], "SNR");
 			if (userSelection2 == 2) {
 				fast = false;
 				verbose = true;
 				continue;
-			}
-			if (userSelection2 == 3) {
+			} else if (userSelection2 == 3) {
 				break;
 			}
+			// =============================================================
 
 			String patName = ReadDicom.readDicomParameter(imp1,
 					MyConst.DICOM_PATIENT_NAME);
@@ -659,9 +691,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			int[][] classiSimulata = ImageUtils.generaSimulata12classi(
 					xCenterRoi, yCenterRoi, sq7, imp1, simulataName, step,
 					false, test);
-
-			// if (imp1.isVisible())
-			// imp1.getWindow().toFront();
 
 			//
 			// calcolo posizione fwhm a metà della MROI
@@ -694,24 +723,26 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
-			// MyLog.waitHere();
 
 			step = false;
 			double[] outFwhm2 = analyzeProfile3(imp1, xStartProfile,
 					yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
-			//
-			// ricordo che qui sotto la lunghezza minima che accetto vale 5, la
-			// massima sarà la lunghezza totale del profilo, calcolata da ImageJ
-			// (si potrebbe scegliere altro, ma questa dovrebbe andare bene
-
-			// // UtilAyv.checkLimits(outFwhm2[0], 5, outFwhm2[2],
-			// "outFwhm2[0]");
-			UtilAyv.checkLimits(outFwhm2[0], 1, outFwhm2[2], "outFwhm2[0]");
+			// =============================================================
+			userSelection2 = UtilAyv.checkLimits(outFwhm2[0], vetMinimi[3],
+					vetMaximi[3], "FWHM");
+			if (userSelection2 == 2) {
+				fast = false;
+				verbose = true;
+				continue;
+			} else if (userSelection2 == 3) {
+				break;
+			}
+			// =============================================================
 
 			//
 			// Salvataggio dei risultati nella ResultsTable
 			//
-			String[][] tabCodici = TableCode.loadTable(MyConst.CODE_FILE);
+			String[][] tabCodici = TableCode.loadTableCSV(MyConst.CODE_FILE);
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
 					imp1, tabCodici, VERSION, autoCalled);
@@ -996,6 +1027,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			return (0);
 		}
 
+		// MyLog.waitHere("sqX= "+sqX+" sqY= "+sqY+" sqR= "+sqR);
 		int width = imp1.getWidth();
 		short[] pixels1 = UtilAyv.truePixels(imp1);
 		ImageProcessor ip1 = imp1.getProcessor();
@@ -1003,13 +1035,17 @@ public class p10rmn_ implements PlugIn, Measurements {
 			pixels2 = (short[]) ip1.getPixels();
 		}
 
+		
 		for (int y1 = sqY - sqR / 2; y1 <= (sqY + sqR / 2); y1++) {
 			offset = y1 * width;
 			for (int x1 = sqX - sqR / 2; x1 <= (sqX + sqR / 2); x1++) {
 				w = offset + x1;
-				if (w < pixels1.length && pixels1[w] > limit) {
-					if (paintPixels)
+				if (w>=0 && w < pixels1.length && pixels1[w] > limit) {
+					if (paintPixels) {
+						// if (w >= 0 && w < pixels2.length)
+						// MyLog.waitHere("sono entrato, painPixels= "+paintPixels);
 						pixels2[w] = 4096;
+					}
 					count1++;
 				}
 			}
@@ -2489,7 +2525,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 		try {
 			x = (new Double(s1)).doubleValue();
 		} catch (Exception e) {
-			MyLog.waitHere("input non numerico= " + s1);
+			// MyLog.waitHere("input non numerico= " + s1);
+			// MyLog.caller("chiamante=");
 			x = Double.NaN;
 		}
 		return x;
@@ -2504,6 +2541,18 @@ public class p10rmn_ implements PlugIn, Measurements {
 			}
 		}
 		return null;
+	}
+
+	public static double[] doubleLimiti(String[] in1) {
+		double[] result = new double[in1.length - 1];
+		int i2 = 0;
+		// MyLog.logVector(in1, "in1");
+		// MyLog.waitHere();
+		for (int i1 = 1; i1 < in1.length; i1++) {
+
+			result[i2++] = readDouble(in1[i1]);
+		}
+		return result;
 	}
 
 }
