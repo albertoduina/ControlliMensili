@@ -3,10 +3,7 @@ package contMensili;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
-import ij.WindowManager;
-import ij.gui.ImageWindow;
 import ij.gui.Line;
-import ij.gui.NewImage;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
 import ij.gui.Plot;
@@ -14,22 +11,17 @@ import ij.gui.PlotWindow;
 import ij.gui.PointRoi;
 import ij.gui.Roi;
 import ij.gui.WaitForUserDialog;
-import ij.io.FileSaver;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
-import ij.plugin.filter.MaximumFinder;
-import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
-import ij.process.ShortProcessor;
 import ij.util.Tools;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Polygon;
 import java.awt.Rectangle;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -39,14 +31,12 @@ import utils.ImageUtils;
 import utils.InputOutput;
 import utils.Msg;
 import utils.MyConst;
-import utils.MyFileLogger;
 import utils.MyLog;
 import utils.MyPlot;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
 import utils.TableSequence;
-import utils.TableUtils;
 import utils.UtilAyv;
 
 /*
@@ -92,6 +82,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	private static String simulataName = "";
 	private static boolean previous = false;
 	private static boolean init1 = true;
+	@SuppressWarnings("unused")
 	private static boolean pulse = false; // lasciare, serve anche se segnalato
 											// inutilizzato
 
@@ -262,11 +253,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			boolean verbose = false;
 			boolean test = false;
 
-			// int userSelection10 = UtilAyv.userSelectionAuto(VERSION, TYPE,
-			// TableSequence.getCode(iw2ayvTable, vetRiga[0]),
-			// TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
-			// vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
-
 			MyLog.waitHere(TableSequence.getCode(iw2ayvTable, vetRiga[0])
 					+ "   " + TableSequence.getCoil(iw2ayvTable, vetRiga[0])
 					+ "   " + (vetRiga[0] + 1) + " / "
@@ -288,8 +274,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		} else
 			do {
-				// int userSelection1 = UtilAyv.userSelectionAuto(VERSION,
-				// TYPE);
 				int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
 						TableSequence.getCode(iw2ayvTable, vetRiga[0]),
 						TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
@@ -307,10 +291,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 					break;
 				case 3:
 					step = true;
-					// retry = false;
-					// break;
 				case 4:
-					// step = false;
 					retry = false;
 					boolean autoCalled = true;
 					boolean verbose = true;
@@ -363,24 +344,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 			boolean step, boolean verbose, boolean test, boolean fast) {
 
 		boolean accetta = false;
-		boolean slow = false;
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		double angle = Double.NaN;
 		String[][] limiti = new InputOutput().readFile6("LIMITI.csv");
-		// String[] vetMinimi = p10rmn_.decoderLimiti(limiti, "P10MIN");
-		// String[] vetMaximi = p10rmn_.decoderLimiti(limiti, "P10MAX");
 		double[] vetMinimi = doubleLimiti(decoderLimiti(limiti, "P10MIN"));
 		double[] vetMaximi = doubleLimiti(decoderLimiti(limiti, "P10MAX"));
-		// MyLog.logVector(vetMinimi, "vetMinimi");
-		// MyLog.logVector(vetMaximi, "vetMaximi");
-		//
-		// MyLog.waitHere("sono appena prima del do");
 		do {
-
-			// MyLog.waitHere("sono appena dopo il do fast=" + fast +
-			// " verbose="
-			// + verbose);
 			ImagePlus imp11 = null;
 			if (fast)
 				imp11 = UtilAyv.openImageNoDisplay(path1, true);
@@ -403,8 +373,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// se anche uno solo dei check limits è fallito si deve tornare qui
 			// ed eseguire il controllo, come minimo senza fast attivo ed in
 			// modalità verbose
-			//
-			//
 			// ========================================================================
 			ImagePlus imp1 = null;
 			ImagePlus imp2 = null;
@@ -418,9 +386,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (imp2 == null)
 				MyLog.waitHere("Non trovato il file " + path2);
 			// ImageWindow iw1=WindowManager.getCurrentWindow();
-
 			angle = out2[6];
-			// IJ.log("angle= " + angle);
 			// ============================================================================
 			// Fine calcoli geometrici
 			// Inizio calcoli Uniformità
@@ -488,8 +454,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			ImageStatistics stat7x7 = imp1.getStatistics();
 
+			// =============================================================
 			// eseguo un controllo di sicurezza sul risultato.
-			//
 			// =============================================================
 			int userSelection2 = UtilAyv.checkLimits(stat7x7.mean,
 					vetMinimi[0], vetMaximi[0], "SEGNALE");
@@ -602,7 +568,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			do {
 
-				boolean paintPixels = true;
+				boolean paintPixels = false;
 
 				pixx = countPixTest(imp1, xCenterRoi, yCenterRoi, sqNEA,
 						checkPixels, paintPixels);
@@ -724,9 +690,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
 
-			step = false;
+			step = true;
 			double[] outFwhm2 = analyzeProfile3(imp1, xStartProfile,
 					yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
+			MyLog.waitHere();
 			// =============================================================
 			userSelection2 = UtilAyv.checkLimits(outFwhm2[0], vetMinimi[3],
 					vetMaximi[3], "FWHM");
@@ -1022,6 +989,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 		int count1 = 0;
 		short[] pixels2 = null;
 
+		// ======================================================================
+		// per sicurezza forzo lo switch a false, poi lo toglierò dai parametri
+		// in modo che non venga mai utilizzato, neanche da me, , tutte le
+		// volte che viene attivato crea enormi problemi al funzionamento di
+		// lavoro
+		paintPixels = false;
+		// ======================================================================
+
 		if (imp1 == null) {
 			IJ.error("CountPixTest ricevuto null");
 			return (0);
@@ -1035,12 +1010,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 			pixels2 = (short[]) ip1.getPixels();
 		}
 
-		
 		for (int y1 = sqY - sqR / 2; y1 <= (sqY + sqR / 2); y1++) {
 			offset = y1 * width;
 			for (int x1 = sqX - sqR / 2; x1 <= (sqX + sqR / 2); x1++) {
 				w = offset + x1;
-				if (w>=0 && w < pixels1.length && pixels1[w] > limit) {
+				if (w >= 0 && w < pixels1.length && pixels1[w] > limit) {
 					if (paintPixels) {
 						// if (w >= 0 && w < pixels2.length)
 						// MyLog.waitHere("sono entrato, painPixels= "+paintPixels);
@@ -1128,11 +1102,21 @@ public class p10rmn_ implements PlugIn, Measurements {
 	private static double[] analyzeProfile3(ImagePlus imp1, int ax, int ay,
 			int bx, int by, double dimPixel, boolean step) {
 
+		
+		
+		
+		
 		if (imp1 == null) {
 			IJ.error("analyzeProfile3  ricevuto null");
 			return (null);
 		}
 
+		
+		String code = ReadDicom.getCode(imp1);
+		String coil = ReadDicom.getFirstCoil(imp1);
+		String title = code + "_"+coil;
+		
+		
 		imp1.setRoi(new Line((int) ax, (int) ay, (int) bx, (int) by));
 		Roi roi1 = imp1.getRoi();
 
@@ -1167,7 +1151,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		if (step)
 
-			createPlot(profi1, true, true); // plot della fwhm
+			createPlot(profi1, true, true, title); // plot della fwhm
 		if (step)
 			ButtonMessages.ModelessMsg("Continuare?   <51>", "CONTINUA");
 		return (outFwhm);
@@ -1215,7 +1199,19 @@ public class p10rmn_ implements PlugIn, Measurements {
 		//
 		// dx-sx = lunghezza reale in pixels
 
-		double fwhm2 = lengthImagej * (dx - sx) / profile.length;
+		double fwhm2 = (dx - sx) * (profile.length / lengthImagej);
+		// questo è il nuovo calcolo
+		double fwhm3 = (dx - sx) / dimPixel;
+		// ma questo è poco differente
+		double fwhm4 = (dx - sx) * dimPixel;
+
+//		MyLog.waitHere("fwhm2= " + fwhm2 + " fwhm3= " + fwhm3 + " fwhm4= "
+//				+ fwhm4);
+		// // MyLog.waitHere("fwhm2= " + fwhm2 + " lengthImagej= " +
+		// lengthImagej
+		// // + " dx= " + dx + " sx= " + sx + " profile.length= "
+		// // + profile.length);
+
 		for (int i1 = 0; i1 < profile.length; i1++) {
 			if (profile[i1] == min)
 				peak = i1;
@@ -1234,7 +1230,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 */
 
 	private static void createPlot(double profile1[], boolean bslab,
-			boolean bLabelSx) {
+			boolean bLabelSx, String title) {
 
 		int[] vetUpDwPoints = halfPointSearch(profile1);
 		double[] a = Tools.getMinMax(profile1);
@@ -1257,7 +1253,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// PlotWindow plot = new PlotWindow("Plot profilo penetrazione",
 		// "pixel",
 		// "valore", xcoord1, profile1);
-		Plot plot = new Plot("Plot profilo penetrazione", "pixel", "valore",
+		Plot plot = new Plot("Profilo penetrazione__"+title, "pixel", "valore",
 				xcoord1, profile1);
 		if (bslab)
 			plot.setLimits(0, len1, min, max);
@@ -1302,6 +1298,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			labelPosition = 0.10;
 		else
 			labelPosition = 0.60;
+		
+		plot.addLabel(labelPosition, 0.40, title);
 		plot.addLabel(labelPosition, 0.45, "peak / 2=   " + IJ.d2s(max / 2, 2));
 		plot.addLabel(labelPosition, 0.50, "down sx " + vetUpDwPoints[0]
 				+ "  =   " + IJ.d2s(profile1[vetUpDwPoints[0]], 2));

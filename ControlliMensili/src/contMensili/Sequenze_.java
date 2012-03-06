@@ -10,6 +10,7 @@ import utils.ButtonMessages;
 import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyLog;
+import utils.ReadVersion;
 import utils.TableCode;
 import utils.TableExpand;
 import utils.ReadDicom;
@@ -84,6 +85,11 @@ public class Sequenze_ implements PlugIn {
 		new InputOutput().findCSV(MyConst.CODE_FILE);
 		new InputOutput().findCSV(MyConst.LIMITS_FILE);
 		new InputOutput().findCSV(MyConst.EXPAND_FILE);
+		
+		IJ.log(ReadVersion.readVersionInfoInManifest("utils"));
+		IJ.log(ReadVersion.readVersionInfoInManifest("pippo"));
+		IJ.log(ReadVersion.readVersionInfoInManifest("contMensili"));
+		MyLog.waitHere();
 
 		MyFileLogger.logger.info("-----INIZIO Sequenze----");
 
@@ -112,7 +118,7 @@ public class Sequenze_ implements PlugIn {
 
 		String[][] tableCode = TableCode.loadTableCSV(MyConst.CODE_FILE);
 		String[][] tableExpand = TableExpand.loadTableCSV(MyConst.EXPAND_FILE);
-				
+
 		new AboutBox().about("Scansione automatica cartelle", this.getClass());
 		IJ.wait(2000);
 		new AboutBox().close();
@@ -383,8 +389,7 @@ public class Sequenze_ implements PlugIn {
 						codice = seriesDescription.substring(0, 5).trim();
 					}
 				}
-				String coil = UtilAyv.firstCoil(ReadDicom.readDicomParameter(
-						imp1, MyConst.DICOM_COIL));
+				String coil = ReadDicom.getFirstCoil(imp1);
 
 				if (coil.equals("MISSING")) {
 					coil = new UtilAyv().kludge(pathList[i1]);
