@@ -34,6 +34,7 @@ import utils.MyConst;
 import utils.MyLog;
 import utils.MyPlot;
 import utils.ReadDicom;
+import utils.ReadVersion;
 import utils.ReportStandardInfo;
 import utils.TableCode;
 import utils.TableSequence;
@@ -87,6 +88,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 											// inutilizzato
 
 	public void run(String args) {
+
+		VERSION = VERSION + "build_"
+				+ ReadVersion.readVersionInfoInManifest("contMensili")
+				+ "_iw2ayv_" + ReadVersion.readVersionInfoInManifest("utils");
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -1102,21 +1107,15 @@ public class p10rmn_ implements PlugIn, Measurements {
 	private static double[] analyzeProfile3(ImagePlus imp1, int ax, int ay,
 			int bx, int by, double dimPixel, boolean step) {
 
-		
-		
-		
-		
 		if (imp1 == null) {
 			IJ.error("analyzeProfile3  ricevuto null");
 			return (null);
 		}
 
-		
 		String code = ReadDicom.getCode(imp1);
 		String coil = ReadDicom.getFirstCoil(imp1);
-		String title = code + "_"+coil;
-		
-		
+		String title = code + "_" + coil;
+
 		imp1.setRoi(new Line((int) ax, (int) ay, (int) bx, (int) by));
 		Roi roi1 = imp1.getRoi();
 
@@ -1205,8 +1204,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// ma questo è poco differente
 		double fwhm4 = (dx - sx) * dimPixel;
 
-//		MyLog.waitHere("fwhm2= " + fwhm2 + " fwhm3= " + fwhm3 + " fwhm4= "
-//				+ fwhm4);
+		// MyLog.waitHere("fwhm2= " + fwhm2 + " fwhm3= " + fwhm3 + " fwhm4= "
+		// + fwhm4);
 		// // MyLog.waitHere("fwhm2= " + fwhm2 + " lengthImagej= " +
 		// lengthImagej
 		// // + " dx= " + dx + " sx= " + sx + " profile.length= "
@@ -1253,8 +1252,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// PlotWindow plot = new PlotWindow("Plot profilo penetrazione",
 		// "pixel",
 		// "valore", xcoord1, profile1);
-		Plot plot = new Plot("Profilo penetrazione__"+title, "pixel", "valore",
-				xcoord1, profile1);
+		Plot plot = new Plot("Profilo penetrazione__" + title, "pixel",
+				"valore", xcoord1, profile1);
 		if (bslab)
 			plot.setLimits(0, len1, min, max);
 		else
@@ -1298,7 +1297,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			labelPosition = 0.10;
 		else
 			labelPosition = 0.60;
-		
+
 		plot.addLabel(labelPosition, 0.40, title);
 		plot.addLabel(labelPosition, 0.45, "peak / 2=   " + IJ.d2s(max / 2, 2));
 		plot.addLabel(labelPosition, 0.50, "down sx " + vetUpDwPoints[0]

@@ -85,11 +85,11 @@ public class Sequenze_ implements PlugIn {
 		new InputOutput().findCSV(MyConst.CODE_FILE);
 		new InputOutput().findCSV(MyConst.LIMITS_FILE);
 		new InputOutput().findCSV(MyConst.EXPAND_FILE);
-		
-		IJ.log(ReadVersion.readVersionInfoInManifest("utils"));
-		IJ.log(ReadVersion.readVersionInfoInManifest("pippo"));
-		IJ.log(ReadVersion.readVersionInfoInManifest("contMensili"));
-		MyLog.waitHere();
+
+		// IJ.log(ReadVersion.readVersionInfoInManifest("utils"));
+		// IJ.log(ReadVersion.readVersionInfoInManifest("pippo"));
+		// IJ.log(ReadVersion.readVersionInfoInManifest("contMensili"));
+		// MyLog.waitHere();
 
 		MyFileLogger.logger.info("-----INIZIO Sequenze----");
 

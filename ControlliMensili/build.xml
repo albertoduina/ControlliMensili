@@ -116,7 +116,9 @@
 		<delete file="MANIFEST.MF" />
 		<property name="version.num" value="2.00" />
 		<manifest file="MANIFEST.MF">
-			<attribute name="Built-By" value="${user.name}" />
+			<!--attribute name="Built-By" value="${user.name}" /-->
+			<attribute name="Built-By" value="AlbertoDuina" />
+			<attribute name="Built-Date" value="${TODAY}" />			
 			<attribute name="Main-Class" value="contMensili.Sequenze_" />
 			<attribute name="Implementation-Version" value="${version.num}-b${build.number}" />
 		</manifest>
