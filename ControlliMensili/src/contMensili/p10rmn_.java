@@ -31,6 +31,7 @@ import utils.ImageUtils;
 import utils.InputOutput;
 import utils.Msg;
 import utils.MyConst;
+import utils.MyFwhm;
 import utils.MyLog;
 import utils.MyPlot;
 import utils.ReadDicom;
@@ -88,10 +89,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 											// inutilizzato
 
 	public void run(String args) {
+		
+		String className = this.getClass().getName();
 
-		VERSION = VERSION + "build_"
+		VERSION = className + "_build_"
 				+ ReadVersion.readVersionInfoInManifest("contMensili")
-				+ "_iw2ayv_" + ReadVersion.readVersionInfoInManifest("utils");
+				+ "_iw2ayv_build_" + ReadVersion.readVersionInfoInManifest("utils");
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -672,21 +675,45 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// ----------------------------------------------------------
 			// Calcolo FWHM
 			// la direzione su cui verrà preso il profilo è quella centro
-			// cerchio - centro roi, il segmento raggiunge i bordi
+			// ROI - centro cerchio, il segmento su cui tracciamo il profilo
 			// -----------------------------------------------------------
 			//
 
-			double[] out3 = crossing(xCenterCircle, yCenterCircle, xCenterRoi,
-					yCenterRoi, width, height);
+			// double[] out3 = crossing(xCenterCircle, yCenterCircle,
+			// xCenterRoi,
+			// yCenterRoi, width, height);
+
+			double[] out3 = crossing(xCenterRoi, yCenterRoi, xCenterCircle,
+					yCenterCircle, width, height);
 
 			// aveva restituito null
 			if (out3 == null)
 				MyLog.waitHere("out3==null");
 
-			int xStartProfile = (int) Math.round(out3[0]);
-			int yStartProfile = (int) Math.round(out3[1]);
-			int xEndProfile = (int) Math.round(out3[2]);
-			int yEndProfile = (int) Math.round(out3[3]);
+			// ora però devo rodinare i valori restituiti da crossing, in modo
+			// che il punto di start del profilo sia quello più vicino al centro
+			// ROI.
+
+			double dist1 = MyFwhm.lengthCalculation(out3[0], out3[1],
+					xCenterRoi, yCenterRoi);
+			double dist2 = MyFwhm.lengthCalculation(out3[2], out3[3],
+					xCenterRoi, yCenterRoi);
+			int xStartProfile = 0;
+			int yStartProfile = 0;
+			int xEndProfile = 0;
+			int yEndProfile = 0;
+
+			if (dist1 <= dist2) {
+				xStartProfile = (int) Math.round(out3[0]);
+				yStartProfile = (int) Math.round(out3[1]);
+				xEndProfile = (int) Math.round(out3[2]);
+				yEndProfile = (int) Math.round(out3[3]);
+			} else {
+				xStartProfile = (int) Math.round(out3[2]);
+				yStartProfile = (int) Math.round(out3[3]);
+				xEndProfile = (int) Math.round(out3[0]);
+				yEndProfile = (int) Math.round(out3[1]);
+			}
 
 			imp1.setRoi(new Line(xStartProfile, yStartProfile, xEndProfile,
 					yEndProfile));
@@ -1116,7 +1143,26 @@ public class p10rmn_ implements PlugIn, Measurements {
 		String coil = ReadDicom.getFirstCoil(imp1);
 		String title = code + "_" + coil;
 
-		imp1.setRoi(new Line((int) ax, (int) ay, (int) bx, (int) by));
+		// provo ad inserire un criterio che metta come coordinata di partenza
+		// quella che ha la x di valore inferiore
+
+		// int x1 = 0;
+		// int y1 = 0;
+		// int x2 = 0;
+		// int y2 = 0;
+		// if (ax <= bx) {
+		// x1 = ax;
+		// y1 = ay;
+		// x2 = bx;
+		// y2 = by;
+		// } else {
+		// x2 = ax;
+		// y2 = ay;
+		// x1 = bx;
+		// y1 = by;
+		// }
+
+		imp1.setRoi(new Line(ax, ay, bx, by));
 		Roi roi1 = imp1.getRoi();
 
 		double[] profi1 = ((Line) roi1).getPixels(); // profilo non mediato
@@ -1514,8 +1560,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 *            profondità centro ROI
 	 * @return vettore coordinate centro ROI
 	 */
-	public static double[] interpola(double ax, double ay, double bx,
-			double by, double prof) {
+	public static double[] interpolaProfondCentroROI(double ax, double ay,
+			double bx, double by, double prof) {
 
 		double ang1 = angoloRad(ax, ay, bx, by);
 
@@ -2054,7 +2100,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Determinazione dei crossing points tra la retta della prosecuzione di un
-	 * segmento ed i lati del frame
+	 * segmento ed i lati del frame. ATTENZIONE: si limita a trovare i punti di
+	 * crossing, non li mette in ordine
 	 * 
 	 * @param x0
 	 *            coordinata X inizio
@@ -2460,8 +2507,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// ----------------------------------------------------------
 		//
 
-		double[] out1 = interpola(xEndRefLine, yEndRefLine, xStartRefLine,
-				yStartRefLine, profond / dimPixel);
+		double[] out1 = interpolaProfondCentroROI(xEndRefLine, yEndRefLine,
+				xStartRefLine, yStartRefLine, profond / dimPixel);
 		ax = out1[0];
 		ay = out1[1];
 		imp12.setRoi((int) ax - 10, (int) ay - 10, 20, 20);

@@ -177,7 +177,7 @@ public class p10rmn_Test {
 		double bx = 70.0;
 		double by = 78.0;
 		double prof = 20.0;
-		double[] out = p10rmn_.interpola(ax, ay, bx, by, prof);
+		double[] out = p10rmn_.interpolaProfondCentroROI(ax, ay, bx, by, prof);
 		MyLog.logVector(out, "out");
 
 	}

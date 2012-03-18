@@ -66,6 +66,9 @@ public class Sequenze_ implements PlugIn {
 	public int location;
 
 	public void run(String arg) {
+		
+		new ReadVersion().readDateInfoInManifest("contMensili");
+
 
 		// inizializziamo l'eventuale logger file MyFileLog.txt
 		// ricordimaci che vengono loggati tutti i messaggi
