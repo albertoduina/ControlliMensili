@@ -89,12 +89,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 											// inutilizzato
 
 	public void run(String args) {
-		
+
 		String className = this.getClass().getName();
 
 		VERSION = className + "_build_"
 				+ ReadVersion.readVersionInfoInManifest("contMensili")
-				+ "_iw2ayv_build_" + ReadVersion.readVersionInfoInManifest("utils");
+				+ "_iw2ayv_build_"
+				+ ReadVersion.readVersionInfoInManifest("utils");
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -261,10 +262,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 			boolean verbose = false;
 			boolean test = false;
 
-			MyLog.waitHere(TableSequence.getCode(iw2ayvTable, vetRiga[0])
-					+ "   " + TableSequence.getCoil(iw2ayvTable, vetRiga[0])
-					+ "   " + (vetRiga[0] + 1) + " / "
-					+ TableSequence.getLength(iw2ayvTable));
+			// MyLog.waitHere(TableSequence.getCode(iw2ayvTable, vetRiga[0])
+			// + "   " + TableSequence.getCoil(iw2ayvTable, vetRiga[0])
+			// + "   " + (vetRiga[0] + 1) + " / "
+			// + TableSequence.getLength(iw2ayvTable));
 
 			double profond = readDouble(TableSequence.getProfond(iw2ayvTable,
 					vetRiga[0]));
@@ -510,7 +511,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			imaDiff.setOverlay(over3);
 			over3.setStrokeColor(Color.green);
 
-			if (true) {
+			if (verbose && !fast) {
 				// =================================================
 				imaDiff.setRoi(xCenterRoi - 10, yCenterRoi - 10, 20, 20);
 				over3.addElement(imaDiff.getRoi());
@@ -722,10 +723,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
 
-			step = true;
+			// step = true;
 			double[] outFwhm2 = analyzeProfile3(imp1, xStartProfile,
 					yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
-			MyLog.waitHere();
+			// MyLog.waitHere();
 			// =============================================================
 			userSelection2 = UtilAyv.checkLimits(outFwhm2[0], vetMinimi[3],
 					vetMaximi[3], "FWHM");
@@ -1234,6 +1235,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		py1 = profile[vetUpDwPoints[3]];
 		py2 = (max - min) / 2.0 + min;
 		double dx = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+
 		// Non conoscendo l'incilnazione del mio profilo,
 		// utilizzo la lunghezza del profilo calcolata da ImageJ
 		// in pratica ho le seguenti cose:

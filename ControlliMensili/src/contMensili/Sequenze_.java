@@ -67,7 +67,7 @@ public class Sequenze_ implements PlugIn {
 
 	public void run(String arg) {
 		
-		new ReadVersion().readDateInfoInManifest("contMensili");
+		// new ReadVersion().readDateInfoInManifest("contMensili");
 
 
 		// inizializziamo l'eventuale logger file MyFileLog.txt
@@ -126,11 +126,11 @@ public class Sequenze_ implements PlugIn {
 		IJ.wait(2000);
 		new AboutBox().close();
 		GenericDialog gd = new GenericDialog("", IJ.getInstance());
-		gd.addCheckbox("Nuovo controllo", true);
+		gd.addCheckbox("Nuovo controllo", false);
 		gd.addCheckbox("SelfTest", false);
 		gd.addCheckbox("p10_ p11_", true);
 		gd.addCheckbox("Fast", true);
-		gd.addCheckbox("Superficiali", true);
+		gd.addCheckbox("Superficiali", false);
 		gd.showDialog();
 		if (gd.wasCanceled()) {
 			return;
@@ -404,8 +404,17 @@ public class Sequenze_ implements PlugIn {
 						MyConst.DICOM_ACQUISITION_NUMBER);
 				String numIma = ReadDicom.readDicomParameter(imp1,
 						MyConst.DICOM_IMAGE_NUMBER);
-				String acqTime = deleteDot(ReadDicom.readDicomParameter(imp1,
-						MyConst.DICOM_ACQUISITION_TIME));
+				
+//TODO			modifica acqtime	
+				
+//				String acqTime = deleteDot(ReadDicom.readDicomParameter(imp1,
+//						MyConst.DICOM_ACQUISITION_TIME));
+				
+				
+				
+				String acqTime = readTime(imp1);	
+				
+				
 				String echoTime = ReadDicom.readDicomParameter(imp1,
 						MyConst.DICOM_ECHO_TIME);
 				if (echoTime.compareTo("") == 0)
@@ -566,6 +575,25 @@ public class Sequenze_ implements PlugIn {
 		}
 		return strOut;
 	}
+	
+	/**
+	 * Lettura di AcqTime di una immagine (Siemens + Philips)
+	 * 
+	 * @param imp1
+	 *            ImagePlus immagine
+	 * @return acqTime
+	 */
+	public static String readTime(ImagePlus imp1) {
+		String acqTime = ReadDicom.readDicomParameter(imp1,
+				MyConst.DICOM_ACQUISITION_TIME);
+		if (acqTime.equals("MISSING"))
+			acqTime = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_IMATIME);
+		return acqTime;
+	}
+	
+	
+	
+	
 
 	/**
 	 * Scrive una riga nella tabella dei dati

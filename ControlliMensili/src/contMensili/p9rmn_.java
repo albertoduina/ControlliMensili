@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 
 import utils.AboutBox;
 import utils.MyConst;
+import utils.TableCode;
 import utils.TableSequence;
 import utils.UtilAyv;
 import utils.ButtonMessages;
@@ -190,7 +191,6 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
-		
 		//
 		// questo plugin è organizzato per ricevere solo i numeri di riga,
 		// che fanno riferimento alla lista immagini COMMAND_FILE generata da
@@ -199,7 +199,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 		//
 		InputOutput io = new InputOutput();
 
-		tabl = io.readFile1(CODE_FILE, TOKENS4);
+		// tabl = io.readFile1(CODE_FILE, TOKENS4);
+
+		tabl = TableCode.loadTableCSV(MyConst.CODE_FILE);
 
 		StringTokenizer strTok = new StringTokenizer(args, "#");
 		int nTokens = strTok.countTokens();
@@ -579,7 +581,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 		//
 
 		if (autoCalled) {
-			
+
 			try {
 				mySaveAs(fileDir + MyConst.TXT_FILE);
 			} catch (IOException e) {
@@ -587,8 +589,6 @@ public class p9rmn_ implements PlugIn, Measurements {
 				e.printStackTrace();
 			}
 
-
-			
 			IJ.run("Excel...", "select...=[" + fileDir + XLS_FILE + "]");
 			TableSequence lr = new TableSequence();
 			lr.putDone(strRiga3, riga1);
