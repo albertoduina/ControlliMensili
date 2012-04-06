@@ -66,9 +66,8 @@ public class Sequenze_ implements PlugIn {
 	public int location;
 
 	public void run(String arg) {
-		
-		// new ReadVersion().readDateInfoInManifest("contMensili");
 
+		// new ReadVersion().readDateInfoInManifest("contMensili");
 
 		// inizializziamo l'eventuale logger file MyFileLog.txt
 		// ricordimaci che vengono loggati tutti i messaggi
@@ -404,17 +403,14 @@ public class Sequenze_ implements PlugIn {
 						MyConst.DICOM_ACQUISITION_NUMBER);
 				String numIma = ReadDicom.readDicomParameter(imp1,
 						MyConst.DICOM_IMAGE_NUMBER);
-				
-//TODO			modifica acqtime	
-				
-//				String acqTime = deleteDot(ReadDicom.readDicomParameter(imp1,
-//						MyConst.DICOM_ACQUISITION_TIME));
-				
-				
-				
-				String acqTime = readTime(imp1);	
-				
-				
+
+				// TODO modifica acqtime
+
+				// String acqTime = deleteDot(ReadDicom.readDicomParameter(imp1,
+				// MyConst.DICOM_ACQUISITION_TIME));
+
+				String acqTime = deleteDot(readTime(imp1));
+
 				String echoTime = ReadDicom.readDicomParameter(imp1,
 						MyConst.DICOM_ECHO_TIME);
 				if (echoTime.compareTo("") == 0)
@@ -575,7 +571,7 @@ public class Sequenze_ implements PlugIn {
 		}
 		return strOut;
 	}
-	
+
 	/**
 	 * Lettura di AcqTime di una immagine (Siemens + Philips)
 	 * 
@@ -586,14 +582,11 @@ public class Sequenze_ implements PlugIn {
 	public static String readTime(ImagePlus imp1) {
 		String acqTime = ReadDicom.readDicomParameter(imp1,
 				MyConst.DICOM_ACQUISITION_TIME);
-		if (acqTime.equals("MISSING"))
+		if (acqTime.equals("MISSING")) {
 			acqTime = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_IMATIME);
+		}
 		return acqTime;
 	}
-	
-	
-	
-	
 
 	/**
 	 * Scrive una riga nella tabella dei dati
