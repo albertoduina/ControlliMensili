@@ -515,9 +515,28 @@ public class p5rmn_ implements PlugIn, Measurements {
 			// + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL, imp1, step,
 			// verbose, test);
 
+			String patName = ReadDicom.readDicomParameter(imp1,
+					MyConst.DICOM_PATIENT_NAME);
+
+			String codice1 = ReadDicom.readDicomParameter(imp1,
+					MyConst.DICOM_SERIES_DESCRIPTION);
+
+			String codice = UtilAyv.getFiveLetters(codice1);
+
+			// String codice = ReadDicom
+			// .readDicomParameter(imp1,
+			// MyConst.DICOM_SERIES_DESCRIPTION)
+			// .substring(0, 4).trim();
+
+			simulataName = fileDir + patName + codice + "sim.zip";
+
+			// int[][] classiSimulata = ImageUtils.generaSimulata12classi(sqX
+			// + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL, imp1, step,
+			// verbose, test);
+
 			int[][] classiSimulata = ImageUtils.generaSimulata12classi(sqX
-					+ gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL, imp1, step,
-					verbose, test);
+					+ gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL, imp1,
+					simulataName, step, verbose, test);
 			//
 			// calcolo posizione fwhm a metà della MROI
 			//
@@ -904,7 +923,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 * @param limit
 	 *            soglia di conteggio
 	 * @param paintPixels
-	 *            ATTENZIONE da usare solo per test, altera i risultati !!!!! VA TENUTO FALSE
+	 *            ATTENZIONE da usare solo per test, altera i risultati !!!!! VA
+	 *            TENUTO FALSE
 	 * 
 	 * @return [0] sum / pixelcount [1] devStan
 	 */

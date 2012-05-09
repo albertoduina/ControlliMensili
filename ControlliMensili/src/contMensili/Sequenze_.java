@@ -10,7 +10,6 @@ import utils.ButtonMessages;
 import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyLog;
-import utils.ReadVersion;
 import utils.TableCode;
 import utils.TableExpand;
 import utils.ReadDicom;
@@ -228,6 +227,7 @@ public class Sequenze_ implements PlugIn {
 				fz.delete();
 			// MyLog.here();
 			// IJ.log("startingDir=" + startingDir);
+			MyLog.initLog(startingDir + "MyLog.txt");
 
 			List<File> result = getFileListing(new File(startingDir));
 			if (result == null) {

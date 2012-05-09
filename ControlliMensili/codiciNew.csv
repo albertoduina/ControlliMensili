@@ -94,6 +94,7 @@ HUSCA;Uniformità Coronale Head;2;2;H43;x;30;p10rmn_
 HUSCA;Uniformità Coronale Head;2;2;H44;x;30;p10rmn_
 HUSCA;Uniformità Coronale Head;2;2;HE1-4;x;30;p3rmn_
 
+
 //;;;;;;;
 // SPINE SIMPHONY;;;;;;;
 S1FA_;Flash SPINE S1;4;4;xxx;vup;30;p11rmn_
@@ -457,8 +458,8 @@ N2SA_;SpinEcho NECK ARRAY B2;4;4;xxx;hdx;x;p5rmn_
 // NECK MATRIX AVANTO SAVE UNCOMBINED;;;;;;;
 N12S_;SpinEcho NECK ARRAY B1-2;4;4;NE1;hdx;30;p11rmn_
 N12F_;Flash NECK ARRAY B1-2;4;4;NE1;hdx;30;p11rmn_
-N12S_;SpinEcho NECK ARRAY B1-2;4;4;NE2;hdx;30;p11rmn_
-N12F_;Flash NECK ARRAY B1-2;4;4;NE2;hdx;30;p11rmn_
+N12S_;SpinEcho NECK ARRAY B1-2;4;4;NE2;hsx;30;p11rmn_
+N12F_;Flash NECK ARRAY B1-2;4;4;NE2;hsx;30;p11rmn_
 //N12S_;SpinEcho NECK ARRAY B1-2;4;4;C:NE1,2;hdx;30;p11rmn_
 //N12F_;Flash NECK ARRAY B1-2;4;4;C:NE1,2;hdx;30;p11rmn_
 //;;;;;;;

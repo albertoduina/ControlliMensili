@@ -22,6 +22,7 @@ import utils.InputOutput;
 import utils.Msg;
 import utils.MyConst;
 import utils.MyFileLogger;
+import utils.MyLog;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
@@ -64,9 +65,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 	public static String VERSION = "p3_rmn_v5.10_10feb11_";
 
 	private static String TYPE = " >> CONTROLLO UNIFORMITA'_____________";
-	
-	private static String fileDir = "";
 
+	private static String fileDir = "";
 
 	// ---------------------------"01234567890123456789012345678901234567890"
 
@@ -158,7 +158,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
 		if (vetRiga[0] == -1) {
-			
+
 			IJ.log("selfTestSilent.p3rmn_");
 
 			selfTestSilent();
@@ -192,7 +192,6 @@ public class p3rmn_ implements PlugIn, Measurements {
 					TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
 					vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
 
-			
 			switch (userSelection1) {
 			case ABORT:
 				new AboutBox().close();
@@ -315,11 +314,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 					+ ((boundingRectangle.height - diamRoi2) / 2);
 
 			imp1.setRoi(new OvalRoi(xRoi2, yRoi2, diamRoi2, diamRoi2));
-			
-	//		IJ.log("roi 80% prima del riposizionamento: xRoi2= "+xRoi2+" yRoi2= "+yRoi2+" diamRoi2= "+diamRoi2);
-			
-			
-			
+
+			// IJ.log("roi 80% prima del riposizionamento: xRoi2= "+xRoi2+" yRoi2= "+yRoi2+" diamRoi2= "+diamRoi2);
+
 			if (!test)
 				msgRoi85percPositioning();
 
@@ -329,8 +326,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 					+ ((boundingRectangle2.width - diamRoi2) / 2);
 			yRoi2 = boundingRectangle2.y
 					+ ((boundingRectangle2.height - diamRoi2) / 2);
-			
-	//		IJ.log("roi 80% dopo il riposizionamento: xRoi2= "+xRoi2+" yRoi2= "+yRoi2+" diamRoi2= "+diamRoi2);
+
+			// IJ.log("roi 80% dopo il riposizionamento: xRoi2= "+xRoi2+" yRoi2= "+yRoi2+" diamRoi2= "+diamRoi2);
 
 			ImageStatistics stat1 = imp1.getStatistics();
 			double mean1 = stat1.mean;
@@ -345,9 +342,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 			if (!test)
 				msgElabImaDiff(step);
 			impDiff.setRoi(new OvalRoi(xRoi2, yRoi2, diamRoi2, diamRoi2));
-			
-		
-			
+
 			ImageStatistics statImaDiff = impDiff.getStatistics();
 			if (verbose)
 				impDiff.updateAndDraw();
@@ -643,9 +638,20 @@ public class p3rmn_ implements PlugIn, Measurements {
 		int[][] classiSimulata = numeroPixelsClassi(impSimulata);
 		String patName = ReadDicom.readDicomParameter(imp,
 				MyConst.DICOM_PATIENT_NAME);
-		String codice = ReadDicom
-				.readDicomParameter(imp, MyConst.DICOM_SERIES_DESCRIPTION)
-				.substring(0, 4).trim();
+
+		String codice1 = ReadDicom.readDicomParameter(imp,
+				MyConst.DICOM_SERIES_DESCRIPTION);
+
+		String codice = UtilAyv.getFiveLetters(codice1);
+
+		// if (codice1.length() >= 4) {
+		// codice = ReadDicom
+		// .readDicomParameter(imp, MyConst.DICOM_SERIES_DESCRIPTION)
+		// .substring(0, 4).trim();
+		// } else {
+		// codice = "____";
+		// }
+
 		String simName = filename + patName + codice + "sim.zip";
 
 		if (!test)
@@ -660,7 +666,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 	public static int[][] numeroPixelsClassi(ImagePlus imp1) {
-		
+
 		if (imp1 == null) {
 			IJ.error("numeroPixelClassi ricevuto null");
 			return (null);

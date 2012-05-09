@@ -39,6 +39,7 @@ import utils.MyFileLogger;
 import utils.MyLog;
 import utils.MyPlot;
 import utils.ReadDicom;
+import utils.ReadVersion;
 import utils.ReportStandardInfo;
 import utils.TableCode;
 import utils.TableSequence;
@@ -78,7 +79,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 	public static String VERSION = "p11_rmn_v1.10_13oct11_";
 
-	private String TYPE = " >> CONTROLLO SUPERFICIALI____________";
+	private String TYPE = " >> CONTROLLO SUPERFICIALI UNCOMBINED_PIATTE";
 
 	// ---------------------------"01234567890123456789012345678901234567890"
 
@@ -99,6 +100,13 @@ public class p11rmn_ implements PlugIn, Measurements {
 	// private boolean profiVert = false;
 
 	public void run(String args) {
+
+		String className = this.getClass().getName();
+
+		VERSION = className + "_build_"
+				+ ReadVersion.readVersionInfoInManifest("contMensili")
+				+ "_iw2ayv_build_"
+				+ ReadVersion.readVersionInfoInManifest("utils");
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -221,16 +229,23 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double profond = Double.parseDouble(TableSequence.getProfond(
 				iw2ayvTable, vetRiga[0]));
 
+		if (UtilAyv.isNaN(profond)) {
+			MyLog.logVector(iw2ayvTable[vetRiga[0]], "stringa");
+			MyLog.waitHere();
+		}
+
 		boolean step = false;
 		boolean retry = false;
 
 		if (fast) {
 			retry = false;
 			boolean autoCalled = true;
-			boolean verbose = false;
+			// TODO ripristinare verbose=false
+			// boolean verbose = false;
+			boolean verbose = true;
 			boolean test = false;
 
-			String info10 = "code= "
+			String info11 = "code= "
 					+ TableSequence.getCode(iw2ayvTable, vetRiga[0])
 					+ " coil= "
 					+ TableSequence.getCoil(iw2ayvTable, vetRiga[0]) + "  "
@@ -238,7 +253,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					+ TableSequence.getLength(iw2ayvTable);
 
 			ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond,
-					info10, autoCalled, step, verbose, test, fast);
+					info11, autoCalled, step, verbose, test, fast);
 			if (rt1 == null)
 				return 0;
 
@@ -456,8 +471,23 @@ public class p11rmn_ implements PlugIn, Measurements {
 				// MyLog.waitHere("Roi Fondo coordinate: x= " + xFondo + " y= "
 				// + yFondo + " statFondo.mean= " + statFondo.mean);
 
+//				over2.addElement(imp1.getRoi());
+//				over2.setStrokeColor(color2);
+				
+				
+				// TODO =============PROVVISORIO=====================================
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(color2);
+				imp1.updateAndDraw();
+				ImagePlus imp8 = imp1.flatten();
+				String newName = path1 + "_flat_p11.jpg";
+				new FileSaver(imp8).saveAsJpeg(newName);
+				MyLog.appendLog(fileDir + "MyLog.txt", "saved: " + newName);
+				// =============================================================
+				
+				
+				
+				
 
 				//
 				// disegno MROI su imaDiff
@@ -601,10 +631,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				String patName = ReadDicom.readDicomParameter(imp1,
 						MyConst.DICOM_PATIENT_NAME);
-				String codice = ReadDicom
-						.readDicomParameter(imp1,
-								MyConst.DICOM_SERIES_DESCRIPTION)
-						.substring(0, 4).trim();
+				
+				String codice1 = ReadDicom.readDicomParameter(imp1,
+						MyConst.DICOM_SERIES_DESCRIPTION);
+
+				String codice = UtilAyv.getFiveLetters(codice1);
+
+//				String codice = ReadDicom
+//						.readDicomParameter(imp1,
+//								MyConst.DICOM_SERIES_DESCRIPTION)
+//						.substring(0, 4).trim();
 
 				simulataName = fileDir + patName + codice + "sim.zip";
 
@@ -640,7 +676,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 				//
 				// Salvataggio dei risultati nella ResultsTable
 
-				String[][] tabCodici = TableCode.loadTableCSV(MyConst.CODE_FILE);
+				String[][] tabCodici = TableCode
+						.loadTableCSV(MyConst.CODE_FILE);
 
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
 						path1, imp1, tabCodici, VERSION, autoCalled);

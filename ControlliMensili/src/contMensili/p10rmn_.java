@@ -11,6 +11,7 @@ import ij.gui.PlotWindow;
 import ij.gui.PointRoi;
 import ij.gui.Roi;
 import ij.gui.WaitForUserDialog;
+import ij.io.FileSaver;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
@@ -256,23 +257,25 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		boolean step = false;
 		boolean retry = false;
+		double profond = readDouble(TableSequence.getProfond(iw2ayvTable,
+				vetRiga[0]));
+		if (UtilAyv.isNaN(profond)) {
+			MyLog.logVector(iw2ayvTable[vetRiga[0]], "stringa");
+			MyLog.waitHere();
+		}
+
 		if (fast) {
 			retry = false;
 			boolean autoCalled = true;
-			boolean verbose = false;
+			// TODO ripristinare verbose=false
+			// boolean verbose = false;
+			boolean verbose = true;
 			boolean test = false;
 
 			// MyLog.waitHere(TableSequence.getCode(iw2ayvTable, vetRiga[0])
 			// + "   " + TableSequence.getCoil(iw2ayvTable, vetRiga[0])
 			// + "   " + (vetRiga[0] + 1) + " / "
 			// + TableSequence.getLength(iw2ayvTable));
-
-			double profond = readDouble(TableSequence.getProfond(iw2ayvTable,
-					vetRiga[0]));
-			if (UtilAyv.isNaN(profond)) {
-				MyLog.logVector(iw2ayvTable[vetRiga[0]], "stringa");
-				MyLog.waitHere();
-			}
 
 			mainUnifor(path1, path2, autoArgs, profond, info10, autoCalled,
 					step, verbose, test, fast);
@@ -306,8 +309,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 					boolean verbose = true;
 					boolean test = false;
 
-					double profond = Double.parseDouble(TableSequence
-							.getProfond(iw2ayvTable, vetRiga[0]));
+					// double profond = Double.parseDouble(TableSequence
+					// .getProfond(iw2ayvTable, vetRiga[0]));
 
 					mainUnifor(path1, path2, autoArgs, profond, info10,
 							autoCalled, step, verbose, test, fast);
@@ -437,6 +440,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(Color.green);
 				imp1.updateAndDraw();
+				// MyLog.waitHere();
 				// =================================================
 			}
 
@@ -446,6 +450,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				over2.addElement(imp1.getRoi());
 			}
 			imp1.updateAndDraw();
+			// MyLog.waitHere();
 			if (step)
 				new WaitForUserDialog("MROI 11 x 11 Premere  OK").show();
 			//
@@ -458,6 +463,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				over2.setStrokeColor(Color.green);
 			}
 			imp1.updateAndDraw();
+			// MyLog.waitHere();
 			if (step)
 				new WaitForUserDialog("MROI 7 x 7 Premere  OK").show();
 
@@ -488,6 +494,18 @@ public class p10rmn_ implements PlugIn, Measurements {
 			ImageStatistics statFondo = UtilAyv.backCalc2(xFondo, yFondo,
 					dFondo, imp1, step, circular, test);
 
+			// TODO
+			// =============PROVVISORIO=====================================
+			over2.addElement(imp1.getRoi());
+			imp1.updateAndDraw();
+			ImagePlus imp8 = imp1.flatten();
+			String newName = path1 + "_flat_p10.jpg";
+			new FileSaver(imp8).saveAsJpeg(newName);
+			MyLog.appendLog(fileDir + "MyLog.txt", "saved: " + newName);
+			// =============================================================
+
+			// MyLog.waitHere();
+			// =============================================================
 			// UtilAyv.checkLimits(statFondo.mean, 0, 50, "statFondo.mean");
 
 			// =============================================================
@@ -527,6 +545,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				over3.addElement(imaDiff.getRoi());
 				over3.setStrokeColor(Color.green);
 				imaDiff.updateAndDraw();
+
 				// =================================================
 			}
 
@@ -559,7 +578,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			//
 			imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA,
 					sqNEA);
-			imp1.updateAndDraw();
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
 
@@ -657,9 +675,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			String patName = ReadDicom.readDicomParameter(imp1,
 					MyConst.DICOM_PATIENT_NAME);
-			String codice = ReadDicom
-					.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION)
-					.substring(0, 4).trim();
+			
+			String codice1 = ReadDicom.readDicomParameter(imp1,
+					MyConst.DICOM_SERIES_DESCRIPTION);
+
+			String codice = UtilAyv.getFiveLetters(codice1);
+
+			
+//			String codice = ReadDicom
+//					.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION)
+//					.substring(0, 4).trim();
 
 			simulataName = fileDir + patName + codice + "sim.zip";
 
