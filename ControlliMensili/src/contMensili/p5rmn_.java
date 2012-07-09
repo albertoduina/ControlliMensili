@@ -3,20 +3,20 @@ package contMensili;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
+
 import ij.gui.ImageWindow;
 import ij.gui.Line;
-import ij.gui.NewImage;
 import ij.gui.Overlay;
 import ij.gui.Plot;
 import ij.gui.PlotWindow;
 import ij.gui.Roi;
-import ij.io.FileSaver;
+
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
-import ij.process.ShortProcessor;
+
 import ij.util.Tools;
 
 import java.awt.Color;
@@ -26,18 +26,18 @@ import java.util.StringTokenizer;
 
 import utils.AboutBox;
 import utils.ButtonMessages;
-import utils.CustomCanvasGeneric;
-import utils.ImageUtils;
 import utils.InputOutput;
 import utils.Msg;
 import utils.MyConst;
 import utils.MyFileLogger;
-import utils.MyLog;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
 import utils.TableSequence;
 import utils.UtilAyv;
+
+import utils.CustomCanvasGeneric;
+import utils.ImageUtils;
 
 /*
  * Copyright (C) 2007 Alberto Duina, SPEDALI CIVILI DI BRESCIA, Brescia ITALY
@@ -75,23 +75,30 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	private String TYPE = " >> CONTROLLO SUPERFICIALI____________";
 
-	// ---------------------------"01234567890123456789012345678901234567890"
-
-	/**
-	 * directory dati, dove vengono memorizzati ayv.txt e Results1.xls
-	 */
 	private static String fileDir = "";
 
-	private static String simulataName = "";
+	// private static String simulataName = "";
 
 	// private boolean profiVert = false;
 
 	public void run(String args) {
 
-		fileDir = Prefs.get("prefer.string1", "none");
+		//
+		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
+		// modo il messaggio viene emesso, altrimenti si ha una eccezione
+		//
+
+		try {
+			Class.forName("utils.IW2AYV");
+		} catch (ClassNotFoundException e) {
+			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
+			return;
+		}
 
 		if (IJ.versionLessThan("1.43k"))
 			return;
+
+		fileDir = Prefs.get("prefer.string1", "none");
 
 		MyFileLogger.logger.info("p5rmn_>>> fileDir = " + fileDir);
 		MyFileLogger.logger.info("p5rmn_argomenti ricevuti: >" + args + "<");
@@ -261,6 +268,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
+		String simulataName = "";
 		// MyLog.waitHere("verticalProfile=" + verticalProfile);
 		//
 		// MyLog.logVector(path, "path");

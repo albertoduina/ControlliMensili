@@ -7,6 +7,7 @@ import java.util.*;
 import utils.AboutBox;
 import utils.ArrayUtils;
 import utils.ButtonMessages;
+import utils.IW2AYV;
 import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyLog;
@@ -83,6 +84,20 @@ public class Sequenze_ implements PlugIn {
 		// MEDESIMO non devo fidarmi assolutamente a fare modifiche al file
 		// estratto, perchè le perderei inevitabilmente alla prima compilazione
 
+		//
+		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
+		// modo il messaggio viene emesso, altrimenti si ha una eccezione
+		//
+
+		try {
+			Class.forName("utils.IW2AYV");
+		} catch (ClassNotFoundException e) {
+			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
+			return;
+		}
+
+		MyFileLogger.logger.info("-----INIZIO Sequenze----");
+
 		new InputOutput().findCSV(MyConst.CODE_FILE);
 		new InputOutput().findCSV(MyConst.LIMITS_FILE);
 		new InputOutput().findCSV(MyConst.EXPAND_FILE);
@@ -92,12 +107,10 @@ public class Sequenze_ implements PlugIn {
 		// IJ.log(ReadVersion.readVersionInfoInManifest("contMensili"));
 		// MyLog.waitHere();
 
-		MyFileLogger.logger.info("-----INIZIO Sequenze----");
-
-		if (this.getClass().getResource("/iw2ayv.jar") == null) {
-			IJ.error("ATTENZIONE, manca il file iw2ayv.jar");
-			return;
-		}
+		// if (this.getClass().getResource("/iw2ayv*.jar") == null) {
+		// IJ.error("ATTENZIONE, manca il file iw2ayv.jar");
+		// return;
+		// }
 		if (this.getClass().getResource("/Excel_Writer.jar") == null) {
 			IJ.error("ATTENZIONE, manca il file Excel_Writer.jar");
 			return;

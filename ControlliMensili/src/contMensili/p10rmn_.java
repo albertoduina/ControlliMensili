@@ -34,6 +34,7 @@ import utils.Msg;
 import utils.MyConst;
 import utils.MyFwhm;
 import utils.MyLog;
+import utils.MyOvalProfile;
 import utils.MyPlot;
 import utils.ReadDicom;
 import utils.ReadVersion;
@@ -675,16 +676,15 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			String patName = ReadDicom.readDicomParameter(imp1,
 					MyConst.DICOM_PATIENT_NAME);
-			
+
 			String codice1 = ReadDicom.readDicomParameter(imp1,
 					MyConst.DICOM_SERIES_DESCRIPTION);
 
 			String codice = UtilAyv.getFiveLetters(codice1);
 
-			
-//			String codice = ReadDicom
-//					.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION)
-//					.substring(0, 4).trim();
+			// String codice = ReadDicom
+			// .readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION)
+			// .substring(0, 4).trim();
 
 			simulataName = fileDir + patName + codice + "sim.zip";
 
@@ -2335,6 +2335,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double xCenterRoi = 0;
 		double yCenterRoi = 0;
 		Overlay over12 = new Overlay();
+		Overlay over11 = new Overlay();
 
 		double dimPixel = ReadDicom
 				.readDouble(ReadDicom.readSubstring(
@@ -2534,10 +2535,24 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// ----------------------------------------------------------
 		//
 
+		profond = 10;
+		
 		double[] out1 = interpolaProfondCentroROI(xEndRefLine, yEndRefLine,
 				xStartRefLine, yStartRefLine, profond / dimPixel);
 		ax = out1[0];
 		ay = out1[1];
+		
+		
+		double radius1 = distance(xCenterCircle, yCenterCircle, ax, ay);
+
+		//
+		// -----------------------------------------------------------
+		// in realtà adesso imposto il cerchio con centro xCenterCircle ed
+		// yCenterCircle
+		// il diametro verrà dato dalla distanza CenterCircle ed out1
+		// ----------------------------------------------------------
+		//
+
 		imp12.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 		imp12.updateAndDraw();
 		over12.addElement(imp12.getRoi());
@@ -2552,6 +2567,50 @@ public class p10rmn_ implements PlugIn, Measurements {
 		yCenterRoi = boundRec4.getCenterY();
 		imp12.hide();
 		// }
+		
+		
+		UtilAyv.showImageMaximized(imp11);
+		imp11.setOverlay(over11);
+
+		imp11.setRoi(new OvalRoi(xCenterCircle - radius1, yCenterCircle
+				- radius1, (int) radius1 * 2, (int) radius1 * 2));
+		imp11.updateAndDraw();
+		over11.addElement(imp11.getRoi());
+		over11.setStrokeColor(Color.red);
+
+		// double angoloRad1 = angoloRad( xCenterCircle, yCenterCircle, ax, ay);
+		double angoloRad1 = angoloRad(ax, ay, xCenterCircle, yCenterCircle);
+		double angoloGrad1 = Math.toDegrees(angoloRad1);
+
+		double angoloRad2 = angoloRad(ax, ay, xCenterCircle, yCenterCircle)
+				+ Math.PI;
+		double angoloGrad2 = Math.toDegrees(angoloRad2);
+
+		int npunti = 720;
+		double fraz = (npunti * angoloRad2) / (Math.PI * 2);
+		int frazione = (int) fraz;
+
+		//TODO LAVORI IN CORSOI
+		
+		MyLog.waitHere("angoloRad1= " + angoloRad1 + " angoloGrad1= "
+				+ angoloGrad1 + " angoloRad2= " + angoloRad2 + " angoloGrad2= "
+				+ angoloGrad2 + " frazione= " + frazione);
+
+		double[] profi1 = MyOvalProfile.getOvalProfile(imp12, frazione, npunti);
+		String title = "P R O V A";
+		Color color = Color.red;
+
+		Plot plot = MyPlot.basePlot(profi1, title, color);
+		plot.show();
+
+		MyLog.waitHere();
+	
+		
+		
+		
+		
+		
+		
 
 		if (!fast && !test) {
 			UtilAyv.showImageMaximized(imp11);
@@ -2624,6 +2683,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 			result[i2++] = readDouble(in1[i1]);
 		}
 		return result;
+	}
+
+	public static double distance(double x1, double y1, double x2, double y2) {
+		double dx = x1 - x2;
+		double dy = y1 - y2;
+		return Math.sqrt(dx * dx + dy * dy);
 	}
 
 }

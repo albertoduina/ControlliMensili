@@ -77,6 +77,19 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 		if (IJ.versionLessThan("1.43k"))
 			return;
+		
+		//
+		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
+		// modo il messaggio viene emesso, altrimenti si ha una eccezione
+		//
+		try {
+			Class.forName("utils.IW2AYV");
+		} catch (ClassNotFoundException e) {
+			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
+			return;
+		}
+
+		
 		fileDir = Prefs.get("prefer.string1", "none");
 
 		// tabl = new InputOutput().readFile1(CODE_FILE, TOKENS4);

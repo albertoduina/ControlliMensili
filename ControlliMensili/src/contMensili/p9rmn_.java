@@ -189,6 +189,17 @@ public class p9rmn_ implements PlugIn, Measurements {
 		int[] vetRx = new int[N_GELS];
 		int[] vetRy = new int[N_GELS];
 
+		//
+		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
+		// modo il messaggio viene emesso, altrimenti si ha una eccezione
+		//
+		try {
+			Class.forName("utils.IW2AYV");
+		} catch (ClassNotFoundException e) {
+			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
+			return;
+		}
+
 		fileDir = Prefs.get("prefer.string1", "none");
 
 		//

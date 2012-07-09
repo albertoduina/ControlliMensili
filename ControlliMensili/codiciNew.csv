@@ -36,7 +36,7 @@ HR5A_;Risoluzione 512 Head;1;1;xxx;x;x;p4rmn_
 HR2A_;Risoluzione 256 Head;1;1;xxx;x;x;p4rmn_
 //;;;;;;;
 // HEAD ARRAY AERA SAVE UNCOMBINED;;;;;;;
-//;;;;;;;
+// DA LUGLIO 2012 ANCHE HEAD ARRAY AVANTO SAVE UNCOMBINED;;;;;;;
 // RISERVIAMO IL CODICE HVSA_ HVSS_ HVSC_ perchè sostituito in vba a questi;;;;;;;
 // IN FUTURO CAMBIEREMO IL CODICE NELLA SEQUENZA AERA;;;;;;;
 // --------------------------------------;;;;;;;

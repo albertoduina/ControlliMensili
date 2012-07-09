@@ -202,6 +202,19 @@ public class p2rmn_ implements PlugIn, Measurements {
 		double kDevStFiltroFondo = 3.0;
 
 		InputOutput io = new InputOutput();
+		
+		
+		//
+		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
+		// modo il messaggio viene emesso, altrimenti si ha una eccezione
+		//
+		try {
+			Class.forName("utils.IW2AYV");
+		} catch (ClassNotFoundException e) {
+			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
+			return;
+		}
+
 
 		// tabl = io.readFile1(CODE_FILE, TOKENS4);
 

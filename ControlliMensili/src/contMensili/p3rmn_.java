@@ -22,12 +22,18 @@ import utils.InputOutput;
 import utils.Msg;
 import utils.MyConst;
 import utils.MyFileLogger;
-import utils.MyLog;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
 import utils.TableSequence;
 import utils.UtilAyv;
+
+
+
+
+
+
+
 
 /*
  * Copyright (C) 2007 Alberto Duina, SPEDALI CIVILI DI BRESCIA, Brescia ITALY
@@ -78,6 +84,18 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 		if (IJ.versionLessThan("1.43k"))
 			return;
+		
+		//
+		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
+		// modo il messaggio viene emesso, altrimenti si ha una eccezione
+		//
+		try {
+			Class.forName("utils.IW2AYV");
+		} catch (ClassNotFoundException e) {
+			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
+			return;
+		}
+
 		fileDir = Prefs.get("prefer.string1", "none");
 
 		MyFileLogger.logger.info("p3rmn_>>> fileDir= " + fileDir);

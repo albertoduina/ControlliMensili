@@ -1,38 +1,38 @@
 <!-- Ant makefile for ControlliMensili -->
 <project name="ContMensili" default="main">
 
-	
+
 	<!-- Definizioni property -->
-	<property environment="env"/>
-	
+	<property environment="env" />
+
 	<property name="disk" value="${env.SystemDrive}" />
-	
+
 	<echo message="basedir= ${basedir}" />
 	<echo message="ant.file= ${ant.file}" />
-	
+
 	<property name="work" value="${basedir}\..\.." />
 	<echo message="work= ${work}" />
 	<echo message="work= $" />
-	
-	
+
+
 	<property name="productDir" location="${disk}/Programmi/ImageJ/Plugins/ContMensili2" />
 	<property name="productDir1" location="${disk}/Programmi/ImageJ/Plugins/ContMensili2" />
 	<property name="productDir2" location="${disk}/Programmi2/ImageJ/Plugins/ContMensili2" />
-	
+
 	<property name="pluginsDir" location="${disk}/Repository/git/imagej/plugins/ContMensili2" />
 	<echo message="pluginsDir= ${pluginsDir}" />
 
 	<property name="output" location="build" />
 	<echo message="output= ${output}" />
-	
+
 	<property name="source" location="src/contMensili" />
 	<echo message="source= ${source}" />
-	
-	
+
+
 	<property name="pathImageJ" location="${work}/imagej/ij.jar" />
 	<echo message="pathImageJ= ${pathImageJ}" />
-	
-	
+
+
 	<property name="pathExcelWriter" location="lib/Excel_Writer.jar" />
 	<echo message="pathExcelWriter= ${pathExcelWriter}" />
 
@@ -40,20 +40,30 @@
 	<property name="dist" location="dist" />
 	<property name="data" location="data" />
 	<property name="test" location="test/contMensili" />
-	
-	
-	<property name="pathIW2AYV" location="${work}\iw2ayv\iw2ayv\dist\iw2ayv.jar" /> 
+
+	<!-- in questo modo posso utilizzare le wildcards per il nome del file-->
+	<path id="pathIW2AYVxx">
+		<fileset dir="${work}\iw2ayv\iw2ayv\dist\">
+			<include name="iw2ayv*.jar" />
+		</fileset>
+	</path>
+	<property name="pathIW2AYV" refid="pathIW2AYVxx" />
 	<echo message="pathIW2AYV= ${pathIW2AYV}" />
 
-	<property name="baseIw2ayv" location="${work}\iw2ayv\iw2ayv" /> 
+
+
+	<!--property name="pathIW2AYV" location="${work}\iw2ayv\iw2ayv\dist\iw2ayv*.jar" />
+	<echo message="pathIW2AYV= ${pathIW2AYV}" /-->
+
+	<property name="baseIw2ayv" location="${work}\iw2ayv\iw2ayv" />
 	<echo message="baseIw2ayv= ${baseIw2ayv}" />
 
-	
-	
+
+
 	<property name="eclipse-home" value="${basedir}\..\.." />
 	<echo message="eclipse-home= ${eclipse-home}" />
-	
-	
+
+
 	<!-- ##############			MAIN ROUTINE 		############## -->
 	<target name="main" depends="init, libraries, compile, move1, jar, zipp, wipe, zipp2, cond_INS, cond_OLD, cond_WIN7" />
 	<!--target name="main" depends="init, libraries, compile, move1, jar, zipp, wipe, move2, zipp2, installXp, installOthers" /-->
@@ -69,7 +79,7 @@
 		<mkdir dir="${output}" />
 		<delete dir="${dist}" />
 		<mkdir dir="${dist}" />
-		
+
 		<property name="productDirINSIDE" location="${work}\imagej\Plugins" />
 		<available file="${productDirINSIDE}" type="dir" property="ins" />
 		<echo message="ins=${ins}" />
@@ -81,9 +91,9 @@
 		<property name="productDirWIN7" location="${disk}/Programmi2\ImageJ\plugins" />
 		<available file="${productDirWIN7}" type="dir" property="win7" />
 		<echo message="win7=${win7}" />
-	
+
 	</target>
-	
+
 	<!-- LIBRARIES copy the external libraries -->
 	<target name="libraries" description="copy the external libraries">
 		<echo message="Copio le librerie necessarie" />
@@ -101,16 +111,16 @@
 		<!--javac srcdir="${source}" destdir="${output}" optimize="on" target="1.5" encoding="iso8859-1" debug="on" classpath="${pathImageJ};${pathJfreechart};${pathJcommon}" /-->
 		<javac srcdir="${source}" destdir="${output}" optimize="on" target="1.5" encoding="iso8859-1" debug="on" classpath="${pathImageJ};${pathIW2AYV}" />
 	</target>
-	
 
-	<!-- MOVE1 move the sources into output -->	
+
+	<!-- MOVE1 move the sources into output -->
 	<target name="move1" description="Move the sources.">
 		<copy verbose="true" todir="${output}">
 			<fileset dir="." includes=" *.txt , *.pdf, *.rtf, *.number, *.jpg, *.xml, *.config, *.csv" />
 		</copy>
 	</target>
-	
-	<!-- Create MANIFEST and JARS application  -->	
+
+	<!-- Create MANIFEST and JARS application  -->
 	<target name="jar" description="JARs the Task">
 		<echo message="Eseguo CREA JAR" />
 		<delete file="MANIFEST.MF" />
@@ -118,57 +128,57 @@
 		<manifest file="MANIFEST.MF">
 			<!--attribute name="Built-By" value="${user.name}" /-->
 			<attribute name="Built-By" value="AlbertoDuina" />
-			<attribute name="Built-Date" value="${TODAY}" />			
+			<attribute name="Built-Date" value="${TODAY}" />
 			<attribute name="Main-Class" value="contMensili.Sequenze_" />
 			<attribute name="Implementation-Version" value="${version.num}-b${build.number}" />
 		</manifest>
-		<jar destfile="${output}/ContMens_b${build.number}.jar" manifest="MANIFEST.MF" >
-			<fileset dir="${output}"/>
-			</jar>
+		<jar destfile="${output}/ContMens_b${build.number}.jar" manifest="MANIFEST.MF">
+			<fileset dir="${output}" />
+		</jar>
 		<delete dir="${output}/contMensili" />
 		<copy todir="${dist}">
 			<fileset dir="${output}" includes="*.jar" />
 		</copy>
-	</target>	
-	
-	
-	<!-- ZIP sources and data  -->	
+	</target>
+
+
+	<!-- ZIP sources and data  -->
 	<target name="zipp" description="Zip source and test files.">
 		<zip destfile="${output}/ContMensSource_b${build.number}.zip">
-			<zipfileset dir="${source}" prefix="ControlliMensili/src/contMensili"/>
-			<zipfileset dir="${test}" prefix="ControlliMensili/test/contMensili"/>
-			<zipfileset dir="${data}" prefix="ControlliMensili/data"/>
-			<zipfileset dir="${baseIw2ayv}/src" prefix="iw2ayv/src/utils"/>
-			<zipfileset dir="${baseIw2ayv}/test" prefix="iw2ayv/test/utils"/>
-			<zipfileset dir="${baseIw2ayv}/data" prefix="iw2ayv/data"/>
+			<zipfileset dir="${source}" prefix="ControlliMensili/src/contMensili" />
+			<zipfileset dir="${test}" prefix="ControlliMensili/test/contMensili" />
+			<zipfileset dir="${data}" prefix="ControlliMensili/data" />
+			<zipfileset dir="${baseIw2ayv}/src" prefix="iw2ayv/src/utils" />
+			<zipfileset dir="${baseIw2ayv}/test" prefix="iw2ayv/test/utils" />
+			<zipfileset dir="${baseIw2ayv}/data" prefix="iw2ayv/data" />
 		</zip>
 	</target>
 
-	<!--WIPE Delete the build intermedie files  -->	
+	<!--WIPE Delete the build intermedie files  -->
 	<target name="wipe" description="Delete the build intermedie files.">
 		<!-- non cancellare i *.txt, servono -->
 		<!-- delete failonerror="false" verbose="true">
 			<fileset dir="${output}" includes="*.txt , *.java, *.rtf, *.number, *.class; *.jpg; *.pdf" />
 		</delete -->
 	</target>
-	
+
 	<target name="zipp2" description="Zip executable files">
-	<echo message="Eseguo ZIPP2" />
+		<echo message="Eseguo ZIPP2" />
 		<zip destfile="${output}/ContMensili_b${build.number}.zip">
 			<fileset dir="${lib}">
-				<include name="test2.jar"/>
-				<include name="Excel_Writer.jar"/>
+				<include name="test2.jar" />
+				<include name="Excel_Writer.jar" />
 			</fileset>
 			<fileset dir="${output}">
-				<include name="ContMens_b${build.number}.jar"/>
-			</fileset>		
+				<include name="ContMens_b${build.number}.jar" />
+			</fileset>
 			<fileset dir="${baseIw2ayv}">
-				<include name="iw2ayv.jar"/>
-			</fileset>		
+				<include name="iw2ayv.jar" />
+			</fileset>
 		</zip>
 	</target>
 
-	
+
 	<target name="cond_INS" depends="init" if="ins">
 		<echo message="Eseguo cond_INS" />
 		<delete dir="${productDirINSIDE}/ContMensili" />
@@ -178,7 +188,7 @@
 			<fileset dir="${output}" includes="*.jar" />
 		</copy>
 	</target>
-	
+
 	<target name="cond_OLD" depends="init" if="old">
 		<echo message="Eseguo cond_OLD" />
 		<delete dir="${productDirOLD}/ContMensili" />
@@ -198,7 +208,7 @@
 		</copy>
 	</target>
 
-	
+
 
 </project>
 
