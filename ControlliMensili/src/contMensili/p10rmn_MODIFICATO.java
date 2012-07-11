@@ -3,8 +3,6 @@ package contMensili;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
-import ij.WindowManager;
-import ij.gui.ImageWindow;
 import ij.gui.Line;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
@@ -33,9 +31,11 @@ import utils.ButtonMessages;
 import utils.ImageUtils;
 import utils.InputOutput;
 import utils.Msg;
+import utils.MyCircleDetector;
 import utils.MyConst;
 import utils.MyFwhm;
 import utils.MyLog;
+import utils.MyOvalProfile;
 import utils.MyPlot;
 import utils.ReadDicom;
 import utils.ReadVersion;
@@ -71,7 +71,7 @@ import utils.UtilAyv;
  *         Sanitaria
  * 
  */
-public class p10rmn_ implements PlugIn, Measurements {
+public class p10rmn_MODIFICATO implements PlugIn, Measurements {
 
 	private static final int ABORT = 1;
 
@@ -111,7 +111,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		} else {
 			autoMenu(args);
 		}
-	
 		return;
 	}
 
@@ -272,7 +271,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			boolean autoCalled = true;
 			// TODO ripristinare verbose=false
 			// boolean verbose = false;
-			boolean verbose = false;
+			boolean verbose = true;
 			boolean test = false;
 
 			// MyLog.waitHere(TableSequence.getCode(iw2ayvTable, vetRiga[0])
@@ -362,23 +361,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		double angle = Double.NaN;
-
-		//
-		// IL VERBOSE FORZATO A TRUE, QUI DI SEGUITO, SERVE
-		// A MOSTRARE, PER UN ISTANTE, DOVE VIENE POSIZIONATA AUTOMATICAMENTE
-		// LA ROI, anche in FAST.
-		//
-
-		verbose = true;
-
-		//
-		//
-		//
-		// String[][] limiti = new InputOutput().readFile7("limiti.csv");
-		// if (limiti == null)
-		// MyLog.waitHere("limiti == null");
-		// double[] vetMinimi = doubleLimiti(decoderLimiti(limiti, "P10MIN"));
-		// double[] vetMaximi = doubleLimiti(decoderLimiti(limiti, "P10MAX"));
+		String[][] limiti = new InputOutput().readFile6("LIMITI.csv");
+		double[] vetMinimi = doubleLimiti(decoderLimiti(limiti, "P10MIN"));
+		double[] vetMaximi = doubleLimiti(decoderLimiti(limiti, "P10MAX"));
 		do {
 			ImagePlus imp11 = null;
 			if (fast)
@@ -486,18 +471,18 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			ImageStatistics stat7x7 = imp1.getStatistics();
 
-			// // =============================================================
-			// // eseguo un controllo di sicurezza sul risultato.
-			// // =============================================================
-			// int userSelection2 = UtilAyv.checkLimits(stat7x7.mean,
-			// vetMinimi[0], vetMaximi[0], "SEGNALE");
-			// if (userSelection2 == 2) {
-			// fast = false;
-			// verbose = true;
-			// continue;
-			// } else if (userSelection2 == 3) {
-			// break;
-			// }
+			// =============================================================
+			// eseguo un controllo di sicurezza sul risultato.
+			// =============================================================
+			int userSelection2 = UtilAyv.checkLimits(stat7x7.mean,
+					vetMinimi[0], vetMaximi[0], "SEGNALE");
+			if (userSelection2 == 2) {
+				fast = false;
+				verbose = true;
+				continue;
+			} else if (userSelection2 == 3) {
+				break;
+			}
 			// =============================================================
 			int xFondo = MyConst.P10_X_ROI_BACKGROUND;
 			int yFondo = MyConst.P10_Y_ROI_BACKGROUND;
@@ -526,16 +511,15 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// UtilAyv.checkLimits(statFondo.mean, 0, 50, "statFondo.mean");
 
 			// =============================================================
-			// userSelection2 = UtilAyv.checkLimits(statFondo.mean,
-			// vetMinimi[1],
-			// vetMaximi[1], "RUMORE");
-			// if (userSelection2 == 2) {
-			// fast = false;
-			// verbose = true;
-			// continue;
-			// } else if (userSelection2 == 3) {
-			// break;
-			// }
+			userSelection2 = UtilAyv.checkLimits(statFondo.mean, vetMinimi[1],
+					vetMaximi[1], "RUMORE");
+			if (userSelection2 == 2) {
+				fast = false;
+				verbose = true;
+				continue;
+			} else if (userSelection2 == 3) {
+				break;
+			}
 			// =============================================================
 
 			//
@@ -679,17 +663,17 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (step)
 				msgSnr(snr);
 
-			// // =============================================================
-			// userSelection2 = UtilAyv.checkLimits(snr, vetMinimi[2],
-			// vetMaximi[2], "SNR");
-			// if (userSelection2 == 2) {
-			// fast = false;
-			// verbose = true;
-			// continue;
-			// } else if (userSelection2 == 3) {
-			// break;
-			// }
-			// // =============================================================
+			// =============================================================
+			userSelection2 = UtilAyv.checkLimits(snr, vetMinimi[2],
+					vetMaximi[2], "SNR");
+			if (userSelection2 == 2) {
+				fast = false;
+				verbose = true;
+				continue;
+			} else if (userSelection2 == 3) {
+				break;
+			}
+			// =============================================================
 
 			String patName = ReadDicom.readDicomParameter(imp1,
 					MyConst.DICOM_PATIENT_NAME);
@@ -768,17 +752,17 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// step = true;
 			double[] outFwhm2 = analyzeProfile3(imp1, xStartProfile,
 					yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
-
+			// MyLog.waitHere();
 			// =============================================================
-			// userSelection2 = UtilAyv.checkLimits(outFwhm2[0], vetMinimi[3],
-			// vetMaximi[3], "FWHM");
-			// if (userSelection2 == 2) {
-			// fast = false;
-			// verbose = true;
-			// continue;
-			// } else if (userSelection2 == 3) {
-			// break;
-			// }
+			userSelection2 = UtilAyv.checkLimits(outFwhm2[0], vetMinimi[3],
+					vetMaximi[3], "FWHM");
+			if (userSelection2 == 2) {
+				fast = false;
+				verbose = true;
+				continue;
+			} else if (userSelection2 == 3) {
+				break;
+			}
 			// =============================================================
 
 			//
@@ -788,6 +772,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
 					imp1, tabCodici, VERSION, autoCalled);
+			// MyLog.waitHere();
 
 			//
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
@@ -843,7 +828,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 						+ levelString[i1]);
 				rt.addValue(2, classiSimulata[i1][1]);
 			}
-
 			if (verbose && !test && !fast) {
 				rt.show("Results");
 			}
@@ -945,7 +929,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double signal = 355.0;
 		double backNoise = 12.225;
 		double snRatio = 35.48765967441802;
-		double fwhm = 33.40162835693244;
+		double fwhm = 11.401143711292473;
 		double num1 = 2763.0;
 		double num2 = 1532.0;
 		double num3 = 7785.0;
@@ -1236,7 +1220,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double[] outFwhm;
 		vetHalfPoint = halfPointSearch(profi1);
 		outFwhm = calcFwhm(vetHalfPoint, profi1, dimPixel, length);
-		// MyLog.logVector(outFwhm, "outFwhm");
 
 		if (step)
 
@@ -1297,9 +1280,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		// MyLog.waitHere("fwhm2= " + fwhm2 + " fwhm3= " + fwhm3 + " fwhm4= "
 		// + fwhm4);
-		// MyLog.waitHere("fwhm2= " + fwhm2 + " lengthImagej= " + lengthImagej
-		// + " dx= " + dx + " sx= " + sx + " profile.length= "
-		// + profile.length);
+		// // MyLog.waitHere("fwhm2= " + fwhm2 + " lengthImagej= " +
+		// lengthImagej
+		// // + " dx= " + dx + " sx= " + sx + " profile.length= "
+		// // + profile.length);
 
 		for (int i1 = 0; i1 < profile.length; i1++) {
 			if (profile[i1] == min)
@@ -1843,158 +1827,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 	}
 
 	/***
-	 * Questo è il fitCircle preso da ImageJ (ij.plugins.Selection.java, con
-	 * sostituito imp.setRoi a IJ.makeOval
-	 * 
-	 * if selection is closed shape, create a circle with the same area and
-	 * centroid, otherwise use<br>
-	 * the Pratt method to fit a circle to the points that define the line or
-	 * multi-point selection.<br>
-	 * Reference: Pratt V., Direct least-squares fitting of algebraic surfaces",
-	 * Computer Graphics, Vol. 21, pages 145-152 (1987).<br>
-	 * Original code: Nikolai Chernov's MATLAB script for Newton-based Pratt
-	 * fit.<br>
-	 * (http://www.math.uab.edu/~chernov/cl/MATLABcircle.html)<br>
-	 * Java version:
-	 * https://github.com/mdoube/BoneJ/blob/master/src/org/doube/geometry
-	 * /FitCircle.java<br>
-	 * 
-	 * authors: Nikolai Chernov, Michael Doube, Ved Sharma
-	 */
-	public static void fitCircle(ImagePlus imp) {
-		Roi roi = imp.getRoi();
-
-		if (roi == null) {
-			IJ.error("Fit Circle", "Selection required");
-			return;
-		}
-
-		if (roi.isArea()) { // create circle with the same area and centroid
-			ImageProcessor ip = imp.getProcessor();
-			ip.setRoi(roi);
-			ImageStatistics stats = ImageStatistics.getStatistics(ip,
-					Measurements.AREA + Measurements.CENTROID, null);
-			double r = Math.sqrt(stats.pixelCount / Math.PI);
-			imp.killRoi();
-			int d = (int) Math.round(2.0 * r);
-			imp.setRoi(new OvalRoi((int) Math.round(stats.xCentroid - r),
-					(int) Math.round(stats.yCentroid - r), d, d));
-
-			// IJ.makeOval((int) Math.round(stats.xCentroid - r),
-			// (int) Math.round(stats.yCentroid - r), d, d);
-			return;
-		}
-
-		Polygon poly = roi.getPolygon();
-		int n = poly.npoints;
-		int[] x = poly.xpoints;
-		int[] y = poly.ypoints;
-		if (n < 3) {
-			IJ.error("Fit Circle",
-					"At least 3 points are required to fit a circle.");
-			return;
-		}
-
-		// calculate point centroid
-		double sumx = 0, sumy = 0;
-		for (int i = 0; i < n; i++) {
-			sumx = sumx + poly.xpoints[i];
-			sumy = sumy + poly.ypoints[i];
-		}
-		double meanx = sumx / n;
-		double meany = sumy / n;
-
-		// calculate moments
-		double[] X = new double[n], Y = new double[n];
-		double Mxx = 0, Myy = 0, Mxy = 0, Mxz = 0, Myz = 0, Mzz = 0;
-		for (int i = 0; i < n; i++) {
-			X[i] = x[i] - meanx;
-			Y[i] = y[i] - meany;
-			double Zi = X[i] * X[i] + Y[i] * Y[i];
-			Mxy = Mxy + X[i] * Y[i];
-			Mxx = Mxx + X[i] * X[i];
-			Myy = Myy + Y[i] * Y[i];
-			Mxz = Mxz + X[i] * Zi;
-			Myz = Myz + Y[i] * Zi;
-			Mzz = Mzz + Zi * Zi;
-		}
-		Mxx = Mxx / n;
-		Myy = Myy / n;
-		Mxy = Mxy / n;
-		Mxz = Mxz / n;
-		Myz = Myz / n;
-		Mzz = Mzz / n;
-
-		// calculate the coefficients of the characteristic polynomial
-		double Mz = Mxx + Myy;
-		double Cov_xy = Mxx * Myy - Mxy * Mxy;
-		double Mxz2 = Mxz * Mxz;
-		double Myz2 = Myz * Myz;
-		double A2 = 4 * Cov_xy - 3 * Mz * Mz - Mzz;
-		double A1 = Mzz * Mz + 4 * Cov_xy * Mz - Mxz2 - Myz2 - Mz * Mz * Mz;
-		double A0 = Mxz2 * Myy + Myz2 * Mxx - Mzz * Cov_xy - 2 * Mxz * Myz
-				* Mxy + Mz * Mz * Cov_xy;
-		double A22 = A2 + A2;
-		double epsilon = 1e-12;
-		double ynew = 1e+20;
-		int IterMax = 20;
-		double xnew = 0;
-		int iterations = 0;
-
-		// Newton's method starting at x=0
-		for (int iter = 1; iter <= IterMax; iter++) {
-			iterations = iter;
-			double yold = ynew;
-			ynew = A0 + xnew * (A1 + xnew * (A2 + 4. * xnew * xnew));
-			if (Math.abs(ynew) > Math.abs(yold)) {
-				if (IJ.debugMode)
-					IJ.log("Fit Circle: wrong direction: |ynew| > |yold|");
-				xnew = 0;
-				break;
-			}
-			double Dy = A1 + xnew * (A22 + 16 * xnew * xnew);
-			double xold = xnew;
-			xnew = xold - ynew / Dy;
-			if (Math.abs((xnew - xold) / xnew) < epsilon)
-				break;
-			if (iter >= IterMax) {
-				if (IJ.debugMode)
-					IJ.log("Fit Circle: will not converge");
-				xnew = 0;
-			}
-			if (xnew < 0) {
-				if (IJ.debugMode)
-					IJ.log("Fit Circle: negative root:  x = " + xnew);
-				xnew = 0;
-			}
-		}
-		if (IJ.debugMode)
-			IJ.log("Fit Circle: n=" + n + ", xnew=" + IJ.d2s(xnew, 2)
-					+ ", iterations=" + iterations);
-
-		// calculate the circle parameters
-		double DET = xnew * xnew - xnew * Mz + Cov_xy;
-		double CenterX = (Mxz * (Myy - xnew) - Myz * Mxy) / (2 * DET);
-		double CenterY = (Myz * (Mxx - xnew) - Mxz * Mxy) / (2 * DET);
-		double radius = Math.sqrt(CenterX * CenterX + CenterY * CenterY + Mz
-				+ 2 * xnew);
-		if (Double.isNaN(radius)) {
-			IJ.error("Fit Circle", "Points are collinear.");
-			return;
-		}
-
-		CenterX = CenterX + meanx;
-		CenterY = CenterY + meany;
-		imp.killRoi();
-
-		// messo imp.setRoi anzichè IJ.makeOval perchè permette di non mostrare
-		// l'immagine
-		imp.setRoi(new OvalRoi((int) Math.round(CenterX - radius), (int) Math
-				.round(CenterY - radius), (int) Math.round(2 * radius),
-				(int) Math.round(2 * radius)));
-	}
-
-	/***
 	 * Liang-Barsky function by Daniel White
 	 * http://www.skytopia.com/project/articles/compsci/clipping.html .This
 	 * function inputs 8 numbers, and outputs 4 new numbers (plus a boolean
@@ -2352,6 +2184,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double xCenterRoi = 0;
 		double yCenterRoi = 0;
 		Overlay over12 = new Overlay();
+		Overlay over11 = new Overlay();
 
 		double dimPixel = ReadDicom
 				.readDouble(ReadDicom.readSubstring(
@@ -2375,18 +2208,24 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// Determinazione del cerchio
 		// -------------------------------------------------
 		//
-//		IJ.run(imp12, "Smooth", "");
 
-		ImageProcessor ip12 = imp12.getProcessor();
+		// TODO modifica del 090712
+
+		 IJ.run(imp12, "Smooth", "");
+
+//		ImageProcessor ip12 = imp12.getProcessor();
 //		ip12.setSnapshotCopyMode(true);
-		ip12.smooth();
+//		ip12.smooth();
 //		ip12.setSnapshotCopyMode(false);
 
-		
 		if (step)
 			new WaitForUserDialog("Eseguito SMOOTH").show();
-//		IJ.run(imp12, "Find Edges", "");
-		ip12.findEdges();
+
+		 IJ.run(imp12, "Find Edges", "");
+
+//		ip12.setSnapshotCopyMode(true);
+//		ip12.findEdges();
+//		ip12.setSnapshotCopyMode(false);
 
 		if (step)
 			new WaitForUserDialog("Eseguito FIND EDGES").show();
@@ -2432,6 +2271,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		}
 		peaks4 = profileAnalyzer(imp12, dimPixel,
 				"BISETTRICE DIAGONALE DESTRA", showProfiles);
+		// MyLog.waitHere();
 		int len3 = peaks1[2].length + peaks2[2].length + peaks3[2].length
 				+ peaks4[2].length;
 		int[] xPoints3 = new int[len3];
@@ -2475,7 +2315,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp12.updateAndDraw();
 				new WaitForUserDialog("Premere OK").show();
 			}
-			fitCircle(imp12);
+			MyCircleDetector.fitCircle(imp12);
 			if (step) {
 				over12.addElement(imp12.getRoi());
 				over12.setStrokeColor(Color.red);
@@ -2494,7 +2334,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// fantoccio
 			//
 		}
-
 
 		Rectangle boundRec = imp12.getProcessor().getRoi();
 
@@ -2560,10 +2399,23 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// ----------------------------------------------------------
 		//
 
+		profond = 10;
+
 		double[] out1 = interpolaProfondCentroROI(xEndRefLine, yEndRefLine,
 				xStartRefLine, yStartRefLine, profond / dimPixel);
 		ax = out1[0];
 		ay = out1[1];
+
+		double radius1 = distance(xCenterCircle, yCenterCircle, ax, ay);
+
+		//
+		// -----------------------------------------------------------
+		// in realtà adesso imposto il cerchio con centro xCenterCircle ed
+		// yCenterCircle
+		// il diametro verrà dato dalla distanza CenterCircle ed out1
+		// ----------------------------------------------------------
+		//
+
 		imp12.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 		imp12.updateAndDraw();
 		over12.addElement(imp12.getRoi());
@@ -2579,15 +2431,44 @@ public class p10rmn_ implements PlugIn, Measurements {
 		imp12.hide();
 		// }
 
-		if (!fast && !test) {
+		UtilAyv.showImageMaximized(imp11);
+		imp11.setOverlay(over11);
 
-			ImageWindow iw11 = imp11.getWindow();
-			if (iw11 != null) {
-				WindowManager.setCurrentWindow(iw11);
-				WindowManager.setWindow(iw11);
-			} else MyLog.waitHere();
-			
-			// UtilAyv.showImageMaximized(imp11);
+		imp11.setRoi(new OvalRoi(xCenterCircle - radius1, yCenterCircle
+				- radius1, (int) radius1 * 2, (int) radius1 * 2));
+		imp11.updateAndDraw();
+		over11.addElement(imp11.getRoi());
+		over11.setStrokeColor(Color.red);
+
+		// double angoloRad1 = angoloRad( xCenterCircle, yCenterCircle, ax, ay);
+		double angoloRad1 = angoloRad(ax, ay, xCenterCircle, yCenterCircle);
+		double angoloGrad1 = Math.toDegrees(angoloRad1);
+
+		double angoloRad2 = angoloRad(ax, ay, xCenterCircle, yCenterCircle)
+				+ Math.PI;
+		double angoloGrad2 = Math.toDegrees(angoloRad2);
+
+		int npunti = 720;
+		double fraz = (npunti * angoloRad2) / (Math.PI * 2);
+		int frazione = (int) fraz;
+
+		// TODO LAVORI IN CORSOI
+
+		MyLog.waitHere("angoloRad1= " + angoloRad1 + " angoloGrad1= "
+				+ angoloGrad1 + " angoloRad2= " + angoloRad2 + " angoloGrad2= "
+				+ angoloGrad2 + " frazione= " + frazione);
+
+		double[] profi1 = MyOvalProfile.getOvalProfile(imp12, frazione, npunti);
+		String title = "P R O V A";
+		Color color = Color.red;
+
+		Plot plot = MyPlot.basePlot(profi1, title, color);
+		plot.show();
+
+		MyLog.waitHere();
+
+		if (!fast && !test) {
+			UtilAyv.showImageMaximized(imp11);
 			imp11.setOverlay(over12);
 			imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 			imp11.updateAndDraw();
@@ -2638,10 +2519,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	public static String[] decoderLimiti(String[][] tableLimiti, String vetName) {
 		String[] result;
-		if (tableLimiti == null)
-			MyLog.waitHere("tableLimiti == null");
-		if (vetName == null || vetName == "")
-			MyLog.waitHere("vetName == none");
 		for (int i1 = 0; i1 < tableLimiti.length; i1++) {
 			if (tableLimiti[i1][0].equals(vetName)) {
 				result = tableLimiti[i1];
@@ -2661,6 +2538,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 			result[i2++] = readDouble(in1[i1]);
 		}
 		return result;
+	}
+
+	public static double distance(double x1, double y1, double x2, double y2) {
+		double dx = x1 - x2;
+		double dy = y1 - y2;
+		return Math.sqrt(dx * dx + dy * dy);
 	}
 
 }

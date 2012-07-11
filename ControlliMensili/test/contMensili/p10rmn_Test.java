@@ -87,7 +87,12 @@ public class p10rmn_Test {
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		double[] vetReference = new p10rmn_().referenceSiemens();
-		String[] vetName = { "vetResults", "vetReference" };
+
+		double simul = 0.0;
+
+		String[] vetName = { "simul", "signal", "backNoise", "snRatio", "fwhm",
+				"num1", "num2", "num3", "num4", "num5", "num6", "num7", "num8",
+				"num9", "num10", "num11", "num12" };
 
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, vetName);
 		assertTrue(ok);
@@ -115,7 +120,9 @@ public class p10rmn_Test {
 		MyLog.waitHere("fwhm= " + fwhm);
 
 		double[] vetReference = new p10rmn_().referenceSiemens();
-		String[] vetName = { "vetResults", "vetReference" };
+		String[] vetName = { "simul", "signal", "backNoise", "snRatio", "fwhm",
+				"num1", "num2", "num3", "num4", "num5", "num6", "num7", "num8",
+				"num9", "num10", "num11", "num12" };
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, vetName);
 		assertTrue(ok);
 	}
@@ -139,8 +146,13 @@ public class p10rmn_Test {
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		double[] vetReference = new p10rmn_().referenceSiemens();
+		MyLog.logVector(vetResults, "vetResults");
+		MyLog.logVector(vetReference, "vetReference");
+		String[] vetName = { "simul", "signal", "backNoise", "snRatio", "fwhm",
+				"num1", "num2", "num3", "num4", "num5", "num6", "num7", "num8",
+				"num9", "num10", "num11", "num12" };
 
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, null);
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, vetName);
 		assertTrue(ok);
 	}
 
