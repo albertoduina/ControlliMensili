@@ -111,10 +111,10 @@ public class Sequenze_ implements PlugIn {
 		// IJ.error("ATTENZIONE, manca il file iw2ayv.jar");
 		// return;
 		// }
-		if (this.getClass().getResource("/Excel_Writer.jar") == null) {
-			IJ.error("ATTENZIONE, manca il file Excel_Writer.jar");
-			return;
-		}
+		// if (this.getClass().getResource("/Excel_Writer.jar") == null) {
+		// IJ.error("ATTENZIONE, manca il file Excel_Writer.jar");
+		// return;
+		// }
 		String startingDir = Prefs.get(MyConst.PREFERENCES_1,
 				MyConst.DEFAULT_PATH);
 		MyFileLogger.logger.info("Sequenze_>>> startingDir letta= "
@@ -251,6 +251,9 @@ public class Sequenze_ implements PlugIn {
 			for (File file : result) {
 				list[j1++] = file.getPath();
 			}
+			// MyLog.logVectorVertical(list, "list");
+			// MyLog.waitHere();
+
 			String[][] tableSequenceLoaded = generateSequenceTable(list,
 					tableCode, tableExpand);
 			// MyLog.logMatrix(tableSequenceLoaded, "tableSequenceLoaded");
@@ -261,6 +264,7 @@ public class Sequenze_ implements PlugIn {
 			// IJ.selectWindow("Log");
 			// IJ.run("Close");
 			// }
+
 			if (tableSequenceLoaded == null) {
 				MyLog.here("non sono state trovate immagini da analizzare");
 				return;
@@ -371,16 +375,23 @@ public class Sequenze_ implements PlugIn {
 					+ pathList.length);
 			IJ.redirectErrorMessages();
 
+			// boolean questo = false;
+
 			int type = (new Opener()).getFileType(pathList[i1]);
 
 			if (type == Opener.DICOM) {
 
 				ImagePlus imp1 = new Opener().openImage(pathList[i1]);
+
 				if (imp1 == null) {
 					// IJ.log("" + i1 + " file " + pathList[i1] +
 					// " problematic");
 					continue;
 				}
+				// if (imp1.getTitle().equals("27679928")) {
+				// MyLog.waitHere("TROVATO 27679928");
+				// questo = true;
+				// }
 
 				if (!ReadDicom.hasHeader(imp1)) {
 					// IJ.log("" + i1 + " file " + pathList[i1] + " not dicom");
@@ -434,7 +445,9 @@ public class Sequenze_ implements PlugIn {
 				for (int j1 = 0; j1 < tableCode2.length; j1++) {
 
 					if (codice.equals(tableCode2[j1][0])) {
-
+						// if (questo)
+						// MyLog.waitHere("coil= "+ coil + " table code= "
+						// + tableCode2[j1][3]);
 						if ((tableCode2[j1][3].equals("x"))
 								|| (tableCode2[j1][3].equals("xxx"))
 								|| (coil.equals(tableCode2[j1][3]))) {
@@ -445,6 +458,8 @@ public class Sequenze_ implements PlugIn {
 					}
 				}
 				if (trovato) {
+					// if (questo)
+					// MyLog.waitHere("leggo questo");
 					// IJ.log(tableCode2[tableRow][0] + "  " + coil + "  "
 					// + tableCode2[tableRow][4]);
 					// count3++;
@@ -486,6 +501,8 @@ public class Sequenze_ implements PlugIn {
 					}
 				} else {
 					// non aggiunge alcun dato
+					// if (questo)
+					// MyLog.waitHere("NON leggo questo");
 				}
 			}
 		}

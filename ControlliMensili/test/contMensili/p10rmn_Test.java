@@ -239,6 +239,21 @@ public class p10rmn_Test {
 
 	}
 
+//	@Test
+//	public final void testCreatePlot() {
+//		double[] profile1 = InputOutput
+//				.readDoubleArrayFromFile("./data/vet20.txt");
+//		String sTitolo = "createPlotWork";
+//
+//		int[] vetUpDwPoints = { 63, 62, 131, 132 };
+//		double fwhm2 = 71.8679;
+//
+//		new p10rmn_().createPlot(profile1, sTitolo, vetUpDwPoints, fwhm2);
+//		// MyLog.waitHere();
+//
+//		IJ.wait(1000);
+//	}
+
 	@Test
 	public final void testPeakDet() {
 

@@ -111,7 +111,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		} else {
 			autoMenu(args);
 		}
-	
+
 		return;
 	}
 
@@ -137,6 +137,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * TEST SILENT: VIENE ESEGUITO IL MODO FAST SULLA IMMAGINE CAMPIONE
 	 * 
 	 * 
+	 * ****************** QUANTO SCRITTO DI SEGUITO NON E'VALIDO ***********
 	 * A QUESTA DESCRIZIONE VA AGGIUNTO IL MODO DI FUNZIONAMENTO SE ANCHE UNO
 	 * SOLO DEI PARAMETRI VA AL DI FUORI DAI LIMITI DI MASSIMA:
 	 * 
@@ -733,7 +734,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (out3 == null)
 				MyLog.waitHere("out3==null");
 
-			// ora però devo rodinare i valori restituiti da crossing, in modo
+			// ora però devo riordinare i valori restituiti da crossing, in modo
 			// che il punto di start del profilo sia quello più vicino al centro
 			// ROI.
 
@@ -765,10 +766,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
 
-			// step = true;
-			double[] outFwhm2 = analyzeProfile3(imp1, xStartProfile,
-					yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
+			double[] profile2 = getProfile(imp1, xStartProfile, yStartProfile,
+					xEndProfile, yEndProfile, dimPixel, step);
 
+			// step = true;
+			double[] outFwhm2 = MyFwhm.analyzeProfile(profile2, dimPixel,
+					codice, false, step);
+
+			// MyLog.waitHere("dimPixel= "+dimPixel+" fwhm= " + outFwhm2[0]);
 			// =============================================================
 			// userSelection2 = UtilAyv.checkLimits(outFwhm2[0], vetMinimi[3],
 			// vetMaximi[3], "FWHM");
@@ -812,7 +817,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "Rumore_Fondo");
-			rt.addValue(2, statFondo.mean);
+			rt.addValue(2, (out11[1] / Math.sqrt(2)));
 			rt.addValue(3, statFondo.roiX);
 			rt.addValue(4, statFondo.roiY);
 			rt.addValue(5, statFondo.roiWidth);
@@ -922,9 +927,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 		String autoArgs = "0";
 		boolean autoCalled = false;
 		boolean step = false;
-		boolean test = true;
+		boolean test = false;
 		double profond = 30;
-		boolean fast = false;
+		boolean fast = true;
 
 		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, profond, "",
 				autoCalled, step, verbose, test, fast);
@@ -943,9 +948,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		double simul = 0.0;
 		double signal = 355.0;
-		double backNoise = 12.225;
+	//	double backNoise = 12.225;
+		double backNoise = 10.00347735683198;
 		double snRatio = 35.48765967441802;
-		double fwhm = 33.40162835693244;
+	//	double fwhm = 11.43429317989865;
+		double fwhm = 23.977086148658152;
 		double num1 = 2763.0;
 		double num2 = 1532.0;
 		double num3 = 7785.0;
@@ -976,9 +983,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		double simul = 0.0;
 		double signal = 355.0;
-		double backNoise = 12.225;
+		double backNoise = 10.00347735683198;
 		double snRatio = 35.48765967441802;
-		double fwhm = 11.401143711292473;
+		double fwhm = 23.977086148658152;
 		double num1 = 2763.0;
 		double num2 = 1532.0;
 		double num3 = 7785.0;
@@ -1174,140 +1181,96 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * @return outFwhm[0]=FWHM, outFwhm[1]=peak position
 	 */
 
-	private static double[] analyzeProfile3(ImagePlus imp1, int ax, int ay,
-			int bx, int by, double dimPixel, boolean step) {
+	private static double[] getProfile(ImagePlus imp1, int ax, int ay, int bx,
+			int by, double dimPixel, boolean step) {
 
 		if (imp1 == null) {
-			IJ.error("analyzeProfile3  ricevuto null");
+			IJ.error("getProfile  ricevuto null");
 			return (null);
 		}
-
-		String code = ReadDicom.getCode(imp1);
-		String coil = ReadDicom.getFirstCoil(imp1);
-		String title = code + "_" + coil;
-
-		// provo ad inserire un criterio che metta come coordinata di partenza
-		// quella che ha la x di valore inferiore
-
-		// int x1 = 0;
-		// int y1 = 0;
-		// int x2 = 0;
-		// int y2 = 0;
-		// if (ax <= bx) {
-		// x1 = ax;
-		// y1 = ay;
-		// x2 = bx;
-		// y2 = by;
-		// } else {
-		// x2 = ax;
-		// y2 = ay;
-		// x1 = bx;
-		// y1 = by;
-		// }
-
 		imp1.setRoi(new Line(ax, ay, bx, by));
 		Roi roi1 = imp1.getRoi();
-
 		double[] profi1 = ((Line) roi1).getPixels(); // profilo non mediato
-
-		double length = roi1.getLength();
-
-		/*
-		 * le seguenti istruzioni sono state superate dalla release 1.40a di
-		 * ImageJ. Tale cambiamento è dovuto alle modifiche apportate a
-		 * ij\ImagePlus.java, in pratica se l'immagine è calibrata la
-		 * calibrazione viene automaticamente applicata anche ad ImagePlus
-		 */
-
-		// Calibration cal = imp1.getCalibration();
-		// if (utils.versionLess("1.40a")) {
-		// for (int i1 = 0; i1 < profi1.length; i1++) {
-		// profi1[i1] = cal.getCValue(profi1[i1]);
-		// }
-		// }
 		profi1[profi1.length - 1] = 0; // azzero a mano l'ultimo pixel
-
 		if (step) {
 			imp1.updateAndDraw();
 			ButtonMessages.ModelessMsg("Profilo non mediato  <50>", "CONTINUA");
 		}
-
-		int vetHalfPoint[];
-		double[] outFwhm;
-		vetHalfPoint = halfPointSearch(profi1);
-		outFwhm = calcFwhm(vetHalfPoint, profi1, dimPixel, length);
-		// MyLog.logVector(outFwhm, "outFwhm");
-
-		if (step)
-
-			createPlot(profi1, true, true, title); // plot della fwhm
-		if (step)
-			ButtonMessages.ModelessMsg("Continuare?   <51>", "CONTINUA");
-		return (outFwhm);
-	} // analProf2
-
-	/**
-	 * Calcolo dell'FWHM su di un vettore profilo, valori in mm
-	 * 
-	 * @param vetUpDwPoints
-	 *            Vettore restituito da AnalPlot2 con le posizioni dei punti
-	 *            sopra e sotto la metà altezza
-	 * @param profile
-	 *            Profilo da analizzare
-	 * @return out[0]=FWHM, out[1]=peak position
-	 */
-
-	private static double[] calcFwhm(int[] vetUpDwPoints, double profile[],
-			double dimPixel, double lengthImagej) {
-
-		double peak = 0;
-		double[] a = Tools.getMinMax(profile);
-		double min = a[0];
-		double max = a[1];
-		// interpolazione lineare sinistra
-		double px0 = vetUpDwPoints[0];
-		double px1 = vetUpDwPoints[1];
-		double py0 = profile[vetUpDwPoints[0]];
-		double py1 = profile[vetUpDwPoints[1]];
-		double py2 = (max - min) / 2.0 + min;
-		double sx = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
-		// interpolazione lineare destra
-		px0 = vetUpDwPoints[2];
-		px1 = vetUpDwPoints[3];
-		py0 = profile[vetUpDwPoints[2]];
-		py1 = profile[vetUpDwPoints[3]];
-		py2 = (max - min) / 2.0 + min;
-		double dx = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
-
-		// Non conoscendo l'incilnazione del mio profilo,
-		// utilizzo la lunghezza del profilo calcolata da ImageJ
-		// in pratica ho le seguenti cose:
-		//
-		// lengthImagej = lunghezza profilo completo, data da Imagej
-		//
-		// profile.length = lunghezza del profilo, come numero di pixels
-		//
-		// dx-sx = lunghezza reale in pixels
-
-		double fwhm2 = (dx - sx) * (profile.length / lengthImagej);
-		// questo è il nuovo calcolo
-		double fwhm3 = (dx - sx) / dimPixel;
-		// ma questo è poco differente
-		double fwhm4 = (dx - sx) * dimPixel;
-
-		// MyLog.waitHere("fwhm2= " + fwhm2 + " fwhm3= " + fwhm3 + " fwhm4= "
-		// + fwhm4);
-		// MyLog.waitHere("fwhm2= " + fwhm2 + " lengthImagej= " + lengthImagej
-		// + " dx= " + dx + " sx= " + sx + " profile.length= "
-		// + profile.length);
-
-		for (int i1 = 0; i1 < profile.length; i1++) {
-			if (profile[i1] == min)
-				peak = i1;
-		}
-		double[] out = { fwhm2, peak, lengthImagej };
-		return (out);
+		return (profi1);
 	}
+
+	// /**
+	// * Calcolo dell'FWHM su di un vettore profilo, valori in mm
+	// *
+	// * @param vetUpDwPoints
+	// * Vettore restituito da AnalPlot2 con le posizioni dei punti
+	// * sopra e sotto la metà altezza
+	// * @param profile
+	// * Profilo da analizzare
+	// * @return out[0]=FWHM, out[1]=peak position
+	// */
+	//
+	// private static double[] calcFwhm(int[] vetUpDwPoints, double[] profile,
+	// double dimPixel, double lengthImagej) {
+	//
+	// double peak = 0;
+	// double[] a = Tools.getMinMax(profile);
+	// double min = a[0];
+	// double max = a[1];
+	// // interpolazione lineare sinistra
+	// double px0 = vetUpDwPoints[0];
+	// double px1 = vetUpDwPoints[1];
+	// double py0 = profile[vetUpDwPoints[0]];
+	// double py1 = profile[vetUpDwPoints[1]];
+	// double py2 = (max - min) / 2.0 + min;
+	// double sx = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+	// // interpolazione lineare destra
+	// px0 = vetUpDwPoints[2];
+	// px1 = vetUpDwPoints[3];
+	// py0 = profile[vetUpDwPoints[2]];
+	// py1 = profile[vetUpDwPoints[3]];
+	// py2 = (max - min) / 2.0 + min;
+	// double dx = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+	//
+	// // Non conoscendo l'inclinazione del mio profilo,
+	// // utilizzo la lunghezza del profilo calcolata da ImageJ
+	// // in pratica ho le seguenti cose:
+	// //
+	// // lengthImagej = lunghezza profilo completo, data da Imagej
+	// //
+	// // profile.length = lunghezza del profilo, come numero di pixels
+	// //
+	// // dx-sx = lunghezza reale in pixels
+	//
+	// double fwhm2 = (dx - sx) * (profile.length / lengthImagej);
+	//
+	// // ho provato anche a fare nei seguenti modi, poi ho commentato
+	// // double fwhm3 = (dx - sx) / dimPixel;
+	// // ma questo è poco differente
+	// // double fwhm4 = (dx - sx) * dimPixel;
+	// // MyLog.waitHere("fwhm2= " + fwhm2 + " fwhm3= " + fwhm3 + " fwhm4= "
+	// // + fwhm4);
+	// // MyLog.waitHere("fwhm2= " + fwhm2 + " lengthImagej= " + lengthImagej
+	// // + " dx= " + dx + " sx= " + sx + " profile.length= "
+	// // + profile.length);
+	//
+	// for (int i1 = 0; i1 < profile.length; i1++) {
+	// if (profile[i1] == min)
+	// peak = i1;
+	// }
+	//
+	// /**
+	// * parametri da passare double[] profile profilo segnale String title
+	// * nome immagine/codice int[] vetUpDwPoints coordinate x punti sopra e
+	// * sotto [4] double sx punto interpolato di sx double dx punto
+	// * interpolato di dx double fwhm2 fwhm calcolata double py2
+	// */
+	//
+	// createPlot(profile, "grafico", vetUpDwPoints, fwhm2);
+	//
+	// double[] out = { fwhm2, peak, lengthImagej };
+	// return (out);
+	// }
 
 	/**
 	 * Mostra a video un profilo con linea a metà picco
@@ -1318,7 +1281,25 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 *            Flag slab che qui mettiamo sempre true
 	 */
 
-	private static void createPlot(double profile1[], boolean bslab,
+	/**
+	 * parametri da passare double[] profile profilo segnale String title nome
+	 * immagine/codice double[] vetUpDwPoints coordinate x punti sopra e sotto
+	 * [4] double sx punto interpolato di sx double dx punto interpolato di dx
+	 * double fwhm2 fwhm calcolata double py2
+	 * 
+	 * 
+	 */
+
+	/**
+	 * Mostra a video un profilo con linea a metà picco
+	 * 
+	 * @param profile1
+	 *            Vettore con il profilo da analizzare
+	 * @param bslab
+	 *            Flag slab che qui mettiamo sempre true
+	 */
+
+	private static void createPlot2(double profile1[], boolean bslab,
 			boolean bLabelSx, String title) {
 
 		int[] vetUpDwPoints = halfPointSearch(profile1);
@@ -1414,7 +1395,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		plot.show();
 
 		plot.draw();
-	} // createPlot2
+	}
 
 	/**
 	 * ricerca dei punti a metà altezza
@@ -2375,17 +2356,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// Determinazione del cerchio
 		// -------------------------------------------------
 		//
-//		IJ.run(imp12, "Smooth", "");
+		// IJ.run(imp12, "Smooth", "");
 
 		ImageProcessor ip12 = imp12.getProcessor();
-//		ip12.setSnapshotCopyMode(true);
+		// ip12.setSnapshotCopyMode(true);
 		ip12.smooth();
-//		ip12.setSnapshotCopyMode(false);
+		// ip12.setSnapshotCopyMode(false);
 
-		
 		if (step)
 			new WaitForUserDialog("Eseguito SMOOTH").show();
-//		IJ.run(imp12, "Find Edges", "");
+		// IJ.run(imp12, "Find Edges", "");
 		ip12.findEdges();
 
 		if (step)
@@ -2495,7 +2475,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			//
 		}
 
-
 		Rectangle boundRec = imp12.getProcessor().getRoi();
 
 		// x1 ed y1 sono le due coordinate del centro
@@ -2585,8 +2564,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (iw11 != null) {
 				WindowManager.setCurrentWindow(iw11);
 				WindowManager.setWindow(iw11);
-			} else MyLog.waitHere();
-			
+			} else
+				MyLog.waitHere();
+
 			// UtilAyv.showImageMaximized(imp11);
 			imp11.setOverlay(over12);
 			imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);

@@ -93,7 +93,33 @@ HUSCA;Uniformità Coronale Head;2;2;H42;x;30;p10rmn_
 HUSCA;Uniformità Coronale Head;2;2;H43;x;30;p10rmn_
 HUSCA;Uniformità Coronale Head;2;2;H44;x;30;p10rmn_
 HUSCA;Uniformità Coronale Head;2;2;HE1-4;x;30;p3rmn_
+//;;;;;;;
+// AVANTO SAVE UNCOMBINED;;;;;;;
+// RISERVIAMO IL CODICE HXSA_ HXSS_ HXSC_ perchè sostituito in vba a questi;;;;;;;
+HUSAA;Uniformità Assiale Head;2;2;HE1;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;HE2;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;HE3;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;HE4;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;C:HE1-4;x;30;p3rmn_
 
+HUSSA;Uniformità Assiale Head;2;2;HE1;x;30;p10rmn_
+HUSSA;Uniformità Assiale Head;2;2;HE2;x;30;p10rmn_
+HUSSA;Uniformità Assiale Head;2;2;HE3;x;30;p10rmn_
+HUSSA;Uniformità Assiale Head;2;2;HE4;x;30;p10rmn_
+HUSSA;Uniformità Assiale Head;2;2;C:HE1-4;x;30;p3rmn_
+
+HUSCA;Uniformità Assiale Head;2;2;HE1;x;30;p10rmn_
+HUSCA;Uniformità Assiale Head;2;2;HE2;x;30;p10rmn_
+HUSCA;Uniformità Assiale Head;2;2;HE3;x;30;p10rmn_
+HUSCA;Uniformità Assiale Head;2;2;HE4;x;30;p10rmn_
+HUSCA;Uniformità Assiale Head;2;2;C:HE1-4;x;30;p3rmn_
+
+// SYMPHONY SAVE UNCOMBINED;;;;;;;
+// RISERVIAMO IL CODICE HXSA_ HXSS_ HXSC_ perchè sostituito in vba a questi;;;;;;;
+//  per i clusters separati  abbiamo lo stesso codice dll'AVANTO (HE1 HE2 HE3 HE4);;;;;;;
+HUSAA;Uniformità Assiale Head;2;2;t:HE1-4;x;30;p3rmn_
+HUSSA;Uniformità Assiale Head;2;2;t:HE1-4;x;30;p3rmn_
+HUSCA;Uniformità Assiale Head;2;2;t:HE1-4;x;30;p3rmn_
 
 //;;;;;;;
 // SPINE SIMPHONY;;;;;;;
@@ -446,14 +472,14 @@ N2SS_;SpinEcho NECK ARRAY N2;4;4;xxx;hdx;x;p5rmn_
 // ROVATO;;;;;;;
 N1FE_;Flash NECK ARRAY N1;4;4;xxx;hdx;30;p11rmn_
 N1SE_;SpinEcho NECK ARRAY N1;4;4;xxx;hdx;30;p11rmn_
-N2FE_;Flash NECK ARRAY N2;4;4;xxx;hdx 30;p11rmn_;
+N2FE_;Flash NECK ARRAY N2;4;4;xxx;hdx ;30;p11rmn_
 N2SE_;SpinEcho NECK ARRAY N2;4;4;xxx;hdx;30;p11rmn_
 //;;;;;;;
 // NECK MATRIX AVANTO;;;;;;;
-N1FA_;Flash NECK ARRAY B1;4;4;xxx;hdx;x;p5rmn_
-N1SA_;SpinEcho NECK ARRAY B1;4;4;xxx;hdx;x;p5rmn_
-N2FA_;Flash NECK ARRAY B2;4;4;xxx;hdx;x;p5rmn_
-N2SA_;SpinEcho NECK ARRAY B2;4;4;xxx;hdx;x;p5rmn_
+N1FA_;Flash NECK ARRAY B1;4;4;NE1;hdx;30;p11rmn_
+N1SA_;SpinEcho NECK ARRAY B1;4;4;NE1;hdx;30;p11rmn_
+N2FA_;Flash NECK ARRAY B2;4;4;NE2;hsx;30;p11rmn_
+N2SA_;SpinEcho NECK ARRAY B2;4;4;NE2;hsx;30;p11rmn_
 //;;;;;;;
 // NECK MATRIX AVANTO SAVE UNCOMBINED;;;;;;;
 N12S_;SpinEcho NECK ARRAY B1-2;4;4;NE1;hdx;30;p11rmn_
@@ -662,6 +688,9 @@ SHSS_;SpinEcho SHOULDER COIL;4;4;xxx;x;x;p3rmn_
 // T2 AND T1;;;;;;;
 T2MA_;T2 multi SpinEcho Body;20;20;xxx;x;x;p2rmn_
 T2MB_;T2 multi SpinEcho Body;32;32;xxx;x;x;p2rmn_
+T2M1_;T2 multi SpinEcho Body;1;0;xxx;x;x;p9rmn_
+T2M2_;T2 multi SpinEcho Body;1;0;xxx;x;x;p9rmn_
+T2M3_;T2 multi SpinEcho Body;1;0;xxx;x;x;p9rmn_
 B2K0_;T1 ir 2000 Body;18;1;xxx;x;x;p2rmn_
 B1K8_;T1 ir 1800 Body;18;1;xxx;x;x;p2rmn_
 B1K6_;T1 ir 1600 Body;18;1;xxx;x;x;p2rmn_
@@ -681,9 +710,6 @@ B008_;T1 ir 80 Body;18;1;xxx;x;x;p2rmn_
 B005_;T1 ir 50 Body;18;1;xxx;x;x;p2rmn_
 B003_;T1 ir 30 Body;18;1;xxx;x;x;p2rmn_
 C080_;T1 ir 800 Body;1;0;xxx;x;x;p9rmn_
-T2M1_;T2 multi SpinEcho Body;1;0;xxx;x;x;p9rmn_
-T2M2_;T2 multi SpinEcho Body;1;0;xxx;x;x;p9rmn_
-T2M3_;T2 multi SpinEcho Body;1;0;xxx;x;x;p9rmn_
 //;;;;;;;
 // GIORNALIERI;;;;;;;
 D1BC_;Daily Body;4;0;xxx;x;x;p3rmn_
@@ -730,10 +756,10 @@ CVSA2;Spine  Cervical;4;4;xxx;hdx;x;p5rmn_
 CTSA2;Spine  Thoracic;4;4;xxx;hdx;x;p5rmn_
 CLSA2;Spine  Lumbar;4;4;xxx;hdx;x;p5rmn_
 T2MA2;T2 multi SpinEcho Head;4;4;xxx;x;x;p2rmn_
-HT1A2;Head SE pesata T1 ;1;1;xxx;x;x;p9rmn_
 T2M12;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
 T2M22;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
 T2M32;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
+HT1A2;Head SE pesata T1 ;1;1;xxx;x;x;p9rmn_
 //;;;;;;;
 // DESENZANO APERTO;;;;;;;
 HUSA3;Uniformità Assiale Head;2;2;xxx;x;x;p3rmn_
@@ -749,14 +775,14 @@ HRKA3;Risoluzione 1024 Head;1;1;xxx;x;x;p4rmn_
 HR5A3;Risoluzione 512 Head;1;1;xxx;x;x;p4rmn_
 HR2A3;Risoluzione 256 Head;1;1;xxx;x;x;p4rmn_
 T2MA3;T2 multi SpinEcho Head;4;4;xxx;x;x;p2rmn_
+T2M13;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
+T2M23;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
+T2M33;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
 B1K03;T1 ir 1000 Head;4;1;xxx;x;x;p2rmn_
 B0503;T1 ir 500 Head;4;1;xxx;x;x;p2rmn_
 B0203;T1 ir 200 Head;4;1;xxx;x;x;p2rmn_
 B0023;T1 ir 20 Head;4;1;xxx;x;x;p2rmn_
 T1AA3;T1 per CNR;1;1;xxx;x;x;p9rmn_
-T2M13;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
-T2M23;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
-T2M33;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
 //;;;;;;;
 // DESENZANO ECHELON;;;;;;;
 BUSA3;Uniformità Assiale Body;2;2;xxx;x;x;p3rmn_
@@ -780,7 +806,7 @@ NVCN3;Neurovascular Coil NeuroVasc;2;2;xxx;x;x;p3rmn_
 NVCH3;Neurovascular Coil Head;2;2;xxx;x;x;p3rmn_
 RWCA3;Wrist;2;2;xxx;x;x;p3rmn_
 RBCA3;Torso;2;2;xxx;x;x;p3rmn_
-CTLC3;CervicalToracicLumbar Cerv;2;2;xxx;x;x;p3rmn_
-CTLT3;CervicalToracicLumbar Torac;2;2;xxx;hdx;x;p5rmn_
-CTL13;CervicalToracicLumbar Lumb1;2;2;xxx;hdx;x;p5rmn_
-CTL23;CervicalToracicLumbar Lumb2;2;2;xxx;hdx;x;p5rmn_
+CTLC3;CervicalToracicLumbar Cerv;2;2;xxx;vup;x;p3rmn_
+CTLT3;CervicalToracicLumbar Torac;2;2;xxx;vup;x;p5rmn_
+CTL13;CervicalToracicLumbar Lumb1;2;2;xxx;vup;x;p5rmn_
+CTL23;CervicalToracicLumbar Lumb2;2;2;xxx;vup;x;p5rmn_

@@ -29,6 +29,7 @@ import java.util.StringTokenizer;
 import utils.ButtonMessages;
 import utils.InputOutput;
 import utils.MyConst;
+import utils.MyLog;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.SimplexBasedRegressor;
@@ -202,8 +203,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 		double kDevStFiltroFondo = 3.0;
 
 		InputOutput io = new InputOutput();
-		
-		
+
 		//
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
 		// modo il messaggio viene emesso, altrimenti si ha una eccezione
@@ -214,7 +214,6 @@ public class p2rmn_ implements PlugIn, Measurements {
 			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
 			return;
 		}
-
 
 		// tabl = io.readFile1(CODE_FILE, TOKENS4);
 
@@ -328,6 +327,11 @@ public class p2rmn_ implements PlugIn, Measurements {
 					.getPos(defaultVetXUpperLeftCornerRoiGels);
 			vetYUpperLeftCornerRoiGels = UtilAyv
 					.getPos(defaultVetYUpperLeftCornerRoiGels);
+			MyLog.logVector(vetXUpperLeftCornerRoiGels,
+					"vetXUpperLeftCornerRoiGels");
+			MyLog.logVector(vetYUpperLeftCornerRoiGels,
+					"vetYUpperLeftCornerRoiGels");
+			MyLog.waitHere();
 
 			for (int i1 = 0; i1 < T2_TEST_IMAGES; i1++) {
 				if (i1 < SINGLE_DIGIT)
@@ -470,15 +474,26 @@ public class p2rmn_ implements PlugIn, Measurements {
 					defaultVetXUpperLeftCornerRoiGels);
 			String saveVetYUpperLeftCornerRoiGels = Prefs.get("prefer.p2rmnGy",
 					defaultVetYUpperLeftCornerRoiGels);
+
 			if (selftest) {
 				saveVetXUpperLeftCornerRoiGels = defaultVetXUpperLeftCornerRoiGels;
 				saveVetYUpperLeftCornerRoiGels = defaultVetYUpperLeftCornerRoiGels;
 			}
 
-			vetXUpperLeftCornerRoiGels = UtilAyv
-					.getPos(saveVetXUpperLeftCornerRoiGels);
-			vetYUpperLeftCornerRoiGels = UtilAyv
-					.getPos(saveVetYUpperLeftCornerRoiGels);
+			if (!selftest) {
+				vetXUpperLeftCornerRoiGels = UtilAyv.getPos2(
+						saveVetXUpperLeftCornerRoiGels, Columns);
+
+				vetYUpperLeftCornerRoiGels = UtilAyv.getPos2(
+						saveVetYUpperLeftCornerRoiGels, Rows);
+			}
+
+			// MyLog.logVector(vetXUpperLeftCornerRoiGels,
+			// "vetXUpperLeftCornerRoiGels");
+			// MyLog.waitHere();
+			// MyLog.logVector(vetYUpperLeftCornerRoiGels,
+			// "vetXUpperLeftCornerRoiGels");
+			// MyLog.waitHere("VALORI LETTI DA PREFERENZE");
 
 			for (int i1 = 0; i1 < vetRoi.length; i1++) {
 				if (!selftest) {
@@ -511,6 +526,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 							vetYUpperLeftCornerRoiGels[i1], roi_diam, roi_diam,
 							imp8));
 					imp8.updateAndDraw();
+					MyLog.waitHere("verifica posizione");
 					// if (bstep)
 					// userSelection1 = utils.ModelessMsg(
 					// "Test non modificare <40>", "CONTINUA");
@@ -520,14 +536,23 @@ public class p2rmn_ implements PlugIn, Measurements {
 				vetYUpperLeftCornerRoiGels[i1] = (int) stat1.roiY;
 				vetRoi[i1] = imp8.getRoi();
 			}
-			saveVetXUpperLeftCornerRoiGels = "";
-			saveVetYUpperLeftCornerRoiGels = "";
-			for (int i1 = 0; i1 < vetXUpperLeftCornerRoiGels.length; i1++) {
-				saveVetXUpperLeftCornerRoiGels = saveVetXUpperLeftCornerRoiGels
-						+ vetXUpperLeftCornerRoiGels[i1] + ";";
-				saveVetYUpperLeftCornerRoiGels = saveVetYUpperLeftCornerRoiGels
-						+ vetYUpperLeftCornerRoiGels[i1] + ";";
-			}
+
+			saveVetXUpperLeftCornerRoiGels = UtilAyv.putPos2(
+					vetXUpperLeftCornerRoiGels, Columns);
+			saveVetYUpperLeftCornerRoiGels = UtilAyv.putPos2(
+					vetYUpperLeftCornerRoiGels, Rows);
+
+			// MyLog.waitHere("saveVetXUpperLeftCornerRoiGels = "+saveVetXUpperLeftCornerRoiGels);
+			// MyLog.waitHere("saveVetYUpperLeftCornerRoiGels = "+saveVetYUpperLeftCornerRoiGels);
+
+			// saveVetXUpperLeftCornerRoiGels = "";
+			// saveVetYUpperLeftCornerRoiGels = "";
+			// for (int i1 = 0; i1 < vetXUpperLeftCornerRoiGels.length; i1++) {
+			// saveVetXUpperLeftCornerRoiGels = saveVetXUpperLeftCornerRoiGels
+			// + vetXUpperLeftCornerRoiGels[i1] + ";";
+			// saveVetYUpperLeftCornerRoiGels = saveVetYUpperLeftCornerRoiGels
+			// + vetYUpperLeftCornerRoiGels[i1] + ";";
+			// }
 
 			Prefs.set("prefer.p2rmnGx", saveVetXUpperLeftCornerRoiGels);
 			Prefs.set("prefer.p2rmnGy", saveVetYUpperLeftCornerRoiGels);
@@ -656,7 +681,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 				e.printStackTrace();
 			}
 
-			IJ.run("Excel...", "select...=[" + fileDir + XLS_FILE + "]");
+			// IJ.run("Excel...", "select...=[" + fileDir + XLS_FILE + "]");
 			TableSequence lr = new TableSequence();
 			for (int i1 = 0; i1 < nTokens; i1++)
 				lr.putDone(strRiga3, vetRiga1[i1]);

@@ -33,8 +33,8 @@
 	<echo message="pathImageJ= ${pathImageJ}" />
 
 
-	<property name="pathExcelWriter" location="lib/Excel_Writer.jar" />
-	<echo message="pathExcelWriter= ${pathExcelWriter}" />
+	<!--property name="pathExcelWriter" location="lib/Excel_Writer.jar" /-->
+	<!--echo message="pathExcelWriter= ${pathExcelWriter}" /-->
 
 	<property name="lib" location="lib" />
 	<property name="dist" location="dist" />
@@ -97,7 +97,7 @@
 	<!-- LIBRARIES copy the external libraries -->
 	<target name="libraries" description="copy the external libraries">
 		<echo message="Copio le librerie necessarie" />
-		<copy file="${pathExcelWriter}" todir="${dist}" />
+		<!--copy file="${pathExcelWriter}" todir="${dist}" /-->
 		<copy todir="${dist}">
 			<fileset dir="${lib}" includes="*.jar" />
 		</copy>
@@ -167,7 +167,7 @@
 		<zip destfile="${output}/ContMensili_b${build.number}.zip">
 			<fileset dir="${lib}">
 				<include name="test2.jar" />
-				<include name="Excel_Writer.jar" />
+				<!--include name="Excel_Writer.jar" /-->
 			</fileset>
 			<fileset dir="${output}">
 				<include name="ContMens_b${build.number}.jar" />

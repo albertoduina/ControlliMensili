@@ -458,6 +458,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 				ImageStatistics stat1 = imp1.getStatistics();
 				double signal1 = stat1.mean;
 
+				// TODO bisogna cambiare MyConst.P11_X_ROI_BACKGROUND in modo da
+				// sottrarla a imp.getWidth(), questo per fare in modo che vada
+				// bene con tutte le matrici
+
 				int xFondo = MyConst.P11_X_ROI_BACKGROUND;
 				int yFondo = MyConst.P11_Y_ROI_BACKGROUND + 5;
 				//
@@ -471,11 +475,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 				// MyLog.waitHere("Roi Fondo coordinate: x= " + xFondo + " y= "
 				// + yFondo + " statFondo.mean= " + statFondo.mean);
 
-//				over2.addElement(imp1.getRoi());
-//				over2.setStrokeColor(color2);
-				
-				
-				// TODO =============PROVVISORIO=====================================
+				// over2.addElement(imp1.getRoi());
+				// over2.setStrokeColor(color2);
+
+				// TODO
+				// =============PROVVISORIO=====================================
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(color2);
 				imp1.updateAndDraw();
@@ -484,10 +488,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 				new FileSaver(imp8).saveAsJpeg(newName);
 				MyLog.appendLog(fileDir + "MyLog.txt", "saved: " + newName);
 				// =============================================================
-				
-				
-				
-				
 
 				//
 				// disegno MROI su imaDiff
@@ -622,6 +622,15 @@ public class p11rmn_ implements PlugIn, Measurements {
 				// calcolo SNR finale
 				//
 				double snr = signal1 / (out1[1] / Math.sqrt(2));
+
+				// ************************ 140812*************
+
+//				IJ.log("" + imp1.getTitle() + " signal1= " + signal1
+//						+ " noise1= " + out1[1] + " snr= " + snr);
+//				MyLog.waitHere();
+
+				// ********************************************
+
 				if (step)
 					msgSnr(snr);
 
@@ -631,16 +640,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				String patName = ReadDicom.readDicomParameter(imp1,
 						MyConst.DICOM_PATIENT_NAME);
-				
+
 				String codice1 = ReadDicom.readDicomParameter(imp1,
 						MyConst.DICOM_SERIES_DESCRIPTION);
 
 				String codice = UtilAyv.getFiveLetters(codice1);
 
-//				String codice = ReadDicom
-//						.readDicomParameter(imp1,
-//								MyConst.DICOM_SERIES_DESCRIPTION)
-//						.substring(0, 4).trim();
+				// String codice = ReadDicom
+				// .readDicomParameter(imp1,
+				// MyConst.DICOM_SERIES_DESCRIPTION)
+				// .substring(0, 4).trim();
 
 				simulataName = fileDir + patName + codice + "sim.zip";
 
@@ -703,7 +712,14 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				rt.incrementCounter();
 				rt.addLabel(t1, "Rumore_Fondo");
-				rt.addValue(2, statFondo.mean);
+
+				// =================================================
+				// TODO ERRATO, QUI BISOGNA STAMPARE OUT1[1] ANZICHE'
+				// STATFONDO.MEAN
+				// rt.addValue(2, statFondo.mean);
+				rt.addValue(2, (out1[1] / Math.sqrt(2)));
+				// =================================================
+
 				int xRoi = (int) statFondo.roiX;
 				int yRoi = (int) statFondo.roiY;
 				int widthRoi = (int) statFondo.roiWidth;
@@ -807,7 +823,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		double simul = 0.0;
 		double signal = 1275.530612244898;
-		double backNoise = 7.85;
+	//	double backNoise = 7.85;
+		double backNoise = 37.045823571316845;
 		double snRatio = 34.43115820571181;
 		double fwhm = 38.891139825926565;
 		double num1 = 2616.0;

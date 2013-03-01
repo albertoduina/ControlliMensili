@@ -412,10 +412,17 @@ public class p9rmn_ implements PlugIn, Measurements {
 				saveVetXUpperLeftCornerRoiGels = defaultVetGx;
 				saveVetYUpperLeftCornerRoiGels = defaultVetGy;
 			}
-			vetXUpperLeftCornerRoiGels = UtilAyv
-					.getPos(saveVetXUpperLeftCornerRoiGels);
-			vetYUpperLeftCornerRoiGels = UtilAyv
-					.getPos(saveVetYUpperLeftCornerRoiGels);
+
+			vetXUpperLeftCornerRoiGels = UtilAyv.getPos2(
+					saveVetXUpperLeftCornerRoiGels, Columns);
+
+			vetYUpperLeftCornerRoiGels = UtilAyv.getPos2(
+					saveVetYUpperLeftCornerRoiGels, Rows);
+
+			// vetXUpperLeftCornerRoiGels = UtilAyv
+			// .getPos(saveVetXUpperLeftCornerRoiGels);
+			// vetYUpperLeftCornerRoiGels = UtilAyv
+			// .getPos(saveVetYUpperLeftCornerRoiGels);
 
 			medGels = new double[vetXUpperLeftCornerRoiGels.length];
 			devGels = new double[vetXUpperLeftCornerRoiGels.length];
@@ -475,14 +482,19 @@ public class p9rmn_ implements PlugIn, Measurements {
 				devGels[i1] = stat1.stdDev;
 			}
 
-			saveVetXUpperLeftCornerRoiGels = "";
-			saveVetYUpperLeftCornerRoiGels = "";
-			for (int i1 = 0; i1 < vetXUpperLeftCornerRoiGels.length; i1++) {
-				saveVetXUpperLeftCornerRoiGels = saveVetXUpperLeftCornerRoiGels
-						+ vetXUpperLeftCornerRoiGels[i1] + ";";
-				saveVetYUpperLeftCornerRoiGels = saveVetYUpperLeftCornerRoiGels
-						+ vetYUpperLeftCornerRoiGels[i1] + ";";
-			}
+			// saveVetXUpperLeftCornerRoiGels = "";
+			// saveVetYUpperLeftCornerRoiGels = "";
+			// for (int i1 = 0; i1 < vetXUpperLeftCornerRoiGels.length; i1++) {
+			// saveVetXUpperLeftCornerRoiGels = saveVetXUpperLeftCornerRoiGels
+			// + vetXUpperLeftCornerRoiGels[i1] + ";";
+			// saveVetYUpperLeftCornerRoiGels = saveVetYUpperLeftCornerRoiGels
+			// + vetYUpperLeftCornerRoiGels[i1] + ";";
+			// }
+
+			saveVetXUpperLeftCornerRoiGels = UtilAyv.putPos2(
+					vetXUpperLeftCornerRoiGels, Columns);
+			saveVetYUpperLeftCornerRoiGels = UtilAyv.putPos2(
+					vetYUpperLeftCornerRoiGels, Rows);
 
 			Prefs.set("prefer.p2rmnGx", saveVetXUpperLeftCornerRoiGels);
 			Prefs.set("prefer.p2rmnGy", saveVetYUpperLeftCornerRoiGels);
@@ -600,7 +612,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 				e.printStackTrace();
 			}
 
-			IJ.run("Excel...", "select...=[" + fileDir + XLS_FILE + "]");
+			// IJ.run("Excel...", "select...=[" + fileDir + XLS_FILE + "]");
 			TableSequence lr = new TableSequence();
 			lr.putDone(strRiga3, riga1);
 			lr.writeTable(fileDir + SEQUENZE_FILE, strRiga3);

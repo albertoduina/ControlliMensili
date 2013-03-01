@@ -30,6 +30,7 @@ import utils.InputOutput;
 import utils.Msg;
 import utils.MyConst;
 import utils.MyFileLogger;
+import utils.MyLog;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
@@ -505,6 +506,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 			boolean paintPixels = false;
 			double[] out1 = devStandardNema(imp1, imaDiff, sqX - enlarge, sqY
 					- enlarge, sqNEA, checkPixels, paintPixels);
+			
+
 
 			if (step)
 				msgDisplayMean4(out1[0], out1[1]);
@@ -617,7 +620,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "Rumore_Fondo222");
-			rt.addValue(2, statFondo.mean);
+			rt.addValue(2, (out1[1] / Math.sqrt(2)));
 			int xRoi = (int) statFondo.roiX;
 			int yRoi = (int) statFondo.roiY;
 			int widthRoi = (int) statFondo.roiWidth;
@@ -760,7 +763,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 		double simul = 0.0;
 		double signal = 1538.5714285714287;
-		double backNoise = 7.87;
+	//	double backNoise = 7.87;
+		double backNoise = 40.21194195114299;
 		double snRatio = 38.26155499878056;
 		double fwhm = 36.56299427908097;
 		double num1 = 1798.0;
@@ -792,7 +796,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 		double simul = 0.0;
 		double signal = 2045.4897959183672;
-		double backNoise = 84.06;
+	//	double backNoise = 84.06;
+		double backNoise = 21.947567747419033;
 		double snRatio = 93.19892843975435;
 		double fwhm = 32.93099254935456;
 		double num1 = 2262.0;
