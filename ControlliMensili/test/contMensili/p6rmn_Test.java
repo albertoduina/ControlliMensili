@@ -94,6 +94,10 @@ public class p6rmn_Test {
 		double[] expectedOutput = InputOutput
 				.readDoubleArrayFromFile("./data/vet05.txt");
 		Line.setWidth(1);
+
+		MyLog.logVector(profiM1, "profiM1");
+		MyLog.logVector(expectedOutput, "expectedOutput");
+
 		assertTrue(UtilAyv.compareVectors(expectedOutput, profiM1, 1e-8, ""));
 	}
 
@@ -112,7 +116,7 @@ public class p6rmn_Test {
 
 		double[] profiM1 = new p6rmn_().getLinePixels(imp1, c2x, c2y, d2x, d2y);
 		Line.setWidth(1);
-		// 
+		//
 		// utils.logVector(profiM1);
 		//
 		double[] expectedOutput = InputOutput
@@ -440,8 +444,8 @@ public class p6rmn_Test {
 				vetRefPosition, autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt);
-		boolean ok = UtilAyv.verifyResults1(vetResults, new p6rmn_()
-				.referenceSiemens(), MyConst.P6_vetName);
+		boolean ok = UtilAyv.verifyResults1(vetResults,
+				new p6rmn_().referenceSiemens(), MyConst.P6_vetName);
 		assertTrue(ok);
 	}
 
@@ -463,8 +467,8 @@ public class p6rmn_Test {
 				vetRefPosition, autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt);
-		boolean ok = UtilAyv.verifyResults1(vetResults, new p6rmn_()
-				.referenceGe(), MyConst.P6_vetName);
+		boolean ok = UtilAyv.verifyResults1(vetResults,
+				new p6rmn_().referenceGe(), MyConst.P6_vetName);
 		assertTrue(ok);
 	}
 
@@ -491,8 +495,8 @@ public class p6rmn_Test {
 				vetRefPosition, autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt);
-		boolean ok = UtilAyv.verifyResults1(vetResults, new p6rmn_()
-				.referenceSiemens(), MyConst.P6_vetName);
+		boolean ok = UtilAyv.verifyResults1(vetResults,
+				new p6rmn_().referenceSiemens(), MyConst.P6_vetName);
 		assertTrue(ok);
 	}
 

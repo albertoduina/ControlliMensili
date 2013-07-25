@@ -95,11 +95,12 @@ public class p4rmn_Test {
 				step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt);
+		
 		double[] vetReference = { 0.0, 0.9598900737778213, 0.9866962668164938,
 				0.9883716512349785, 0.14203500307561293, 0.3751277435706519,
 				0.9765625, 0.0 };
 
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, null);
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference);
 		assertTrue(ok);
 	}
 

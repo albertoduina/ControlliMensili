@@ -284,7 +284,8 @@ public class Sequenze_ implements PlugIn {
 			// MyLog.logMatrix(listProblems, "listProblems");
 			// MyLog.waitHere("salvare il log");
 
-			logVerifySequenceTable(listProblems);
+			boolean test = true;
+			logVerifySequenceTable(listProblems, test);
 
 			boolean success = new TableSequence().writeTable(startingDir
 					+ MyConst.SEQUENZE_FILE, tableSequenceReordered);
@@ -1155,17 +1156,17 @@ public class Sequenze_ implements PlugIn {
 	 * 
 	 * @param tableVerify
 	 */
-	public void logVerifySequenceTable(String[][] tableVerify) {
+	public void logVerifySequenceTable(String[][] tableVerify, boolean test) {
 
 		if (tableVerify == null)
 			return;
-		IJ.showMessage("Problemi con le immagini, vedere il log");
+		if (!test) IJ.showMessage("Problemi con le immagini, vedere il log");
 
 		// TableUtils.dumpTable(tableVerify, "tableVerify");
 		String codice2 = "";
 		String coil2 = "";
 		boolean stamp = false;
-		IJ.log("---------------------------------------------");
+		if (!test) IJ.log("---------------------------------------------");
 		for (int i1 = 0; i1 < tableVerify.length; i1++) {
 			String codice1 = TableVerify.getCode(tableVerify, i1);
 			String coil1 = TableVerify.getCoil(tableVerify, i1);
@@ -1173,31 +1174,38 @@ public class Sequenze_ implements PlugIn {
 					i1));
 			if ((!codice1.equals(codice2)) || (!coil1.equals(coil2))) {
 				stamp = true;
-				IJ.log("per il codice " + codice1 + " e la bobina " + coil1
-						+ " sono necessarie "
-						+ TableVerify.getImaRequired(tableVerify, i1)
-						+ " immagini, trovate " + numero);
+				if (!test)
+					IJ.log("per il codice " + codice1 + " e la bobina " + coil1
+							+ " sono necessarie "
+							+ TableVerify.getImaRequired(tableVerify, i1)
+							+ " immagini, trovate " + numero);
 
 				codice2 = codice1;
 				coil2 = coil1;
 				if ((i1 + numero) <= tableVerify.length) {
 					for (int i2 = i1; i2 < i1 + numero; i2++) {
 
-						IJ.log(TableVerify.getPath(tableVerify, i2) + " ser:"
-								+ TableVerify.getSerie(tableVerify, i2)
-								+ " acq:" + TableVerify.getAcq(tableVerify, i2)
-								+ " ima:" + TableVerify.getIma(tableVerify, i2)
-								+ " coil:"
-								+ TableVerify.getCoil(tableVerify, i2));
+						if (!test)
+							IJ.log(TableVerify.getPath(tableVerify, i2)
+									+ " ser:"
+									+ TableVerify.getSerie(tableVerify, i2)
+									+ " acq:"
+									+ TableVerify.getAcq(tableVerify, i2)
+									+ " ima:"
+									+ TableVerify.getIma(tableVerify, i2)
+									+ " coil:"
+									+ TableVerify.getCoil(tableVerify, i2));
 					}
 				}
 			}
 			if (stamp) {
-				IJ.log("---------------------------------------------");
+				if (!test)
+					IJ.log("---------------------------------------------");
 				stamp = false;
 			}
 		}
-		MyLog.waitHere("Problemi con le immagini, vedere il log");
+		if (!test)
+			MyLog.waitHere("Problemi con le immagini, vedere il log");
 
 	}
 

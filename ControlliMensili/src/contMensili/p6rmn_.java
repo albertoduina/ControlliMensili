@@ -30,6 +30,7 @@ import utils.ButtonMessages;
 import utils.InputOutput;
 import utils.Msg;
 import utils.MyConst;
+import utils.MyLog;
 import utils.MyStackUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
@@ -1186,8 +1187,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		double[] xcoord1 = new double[len1];
 		for (int j = 0; j < len1; j++)
 			xcoord1[j] = j;
-		Plot plot = new Plot(sTitolo, "pixel", "valore", xcoord1,
-				profile1);
+		Plot plot = new Plot(sTitolo, "pixel", "valore", xcoord1, profile1);
 		if (bslab)
 			plot.setLimits(0, len1, min1, max1);
 		else
