@@ -243,7 +243,8 @@ public class p9rmn_ implements PlugIn, Measurements {
 					retry = false;
 					return;
 				case 2:
-					ab.about("Controllo CNR", this.getClass());
+//					ab.about("Controllo CNR", this.getClass());
+					ab.about("Controllo CNR", MyVersion.CURRENT_VERSION);
 					retry = true;
 					break;
 				case 3:
@@ -334,7 +335,8 @@ public class p9rmn_ implements PlugIn, Measurements {
 					ab.close();
 					return;
 				case 2:
-					ab.about("Contollo CNR", this.getClass());
+//					ab.about("Contollo CNR", this.getClass());
+					ab.about("Controllo CNR", MyVersion.CURRENT_VERSION);
 					retry = true;
 					break;
 				case 3:

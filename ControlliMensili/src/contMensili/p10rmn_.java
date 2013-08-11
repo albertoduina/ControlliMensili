@@ -37,6 +37,7 @@ import utils.MyConst;
 import utils.MyFwhm;
 import utils.MyLog;
 import utils.MyPlot;
+import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReadVersion;
 import utils.ReportStandardInfo;
@@ -95,10 +96,15 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		String className = this.getClass().getName();
 
+//		VERSION = className + "_build_"
+//				+ ReadVersion.readVersionInfoInManifest("contMensili")
+//				+ "_iw2ayv_build_"
+//				+ ReadVersion.readVersionInfoInManifest("utils");
+		
 		VERSION = className + "_build_"
-				+ ReadVersion.readVersionInfoInManifest("contMensili")
+				+ MyVersion.getVersion()
 				+ "_iw2ayv_build_"
-				+ ReadVersion.readVersionInfoInManifest("utils");
+				+ MyVersionUtils.getVersion();
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -175,9 +181,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 				retry = false;
 				return 0;
 			case 2:
+//				new AboutBox()
+//				.about("Controllo Uniformità, con save UNCOMBINED e immagini circolari",
+//						this.getClass());
 				new AboutBox()
-						.about("Controllo Uniformità, con save UNCOMBINED e immagini circolari",
-								this.getClass());
+				.about("Controllo Uniformità, con save UNCOMBINED e immagini circolari",
+						MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -300,9 +309,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 					new AboutBox().close();
 					return 0;
 				case 2:
+//					new AboutBox()
+//					.about("Controllo Bobine Array, immagine circolare UNCOMBINED",
+//							this.getClass());
 					new AboutBox()
-							.about("Controllo Bobine Array, immagine circolare UNCOMBINED",
-									this.getClass());
+					.about("Controllo Bobine Array, immagine circolare UNCOMBINED",MyVersion.CURRENT_VERSION);
 					retry = true;
 					break;
 				case 3:

@@ -133,7 +133,8 @@ public class Sequenze_ implements PlugIn {
 		String[][] tableCode = TableCode.loadTableCSV(MyConst.CODE_FILE);
 		String[][] tableExpand = TableExpand.loadTableCSV(MyConst.EXPAND_FILE);
 
-		new AboutBox().about("Scansione automatica cartelle", this.getClass());
+	//	new AboutBox().about("Scansione automatica cartelle", this.getClass());
+		new AboutBox().about("Scansione automatica cartelle", MyVersion.CURRENT_VERSION);
 		IJ.wait(2000);
 		new AboutBox().close();
 		GenericDialog gd = new GenericDialog("", IJ.getInstance());

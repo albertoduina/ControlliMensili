@@ -124,8 +124,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 				retry = false;
 				return 0;
 			case 2:
+//				new AboutBox().about("Controllo Bobine Superficiali",
+//						this.getClass());
 				new AboutBox().about("Controllo Bobine Superficiali",
-						this.getClass());
+						MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -222,8 +224,11 @@ public class p5rmn_ implements PlugIn, Measurements {
 				new AboutBox().close();
 				return 0;
 			case 2:
+//				new AboutBox().about("Controllo Bobine Superficiali",
+//						this.getClass());
 				new AboutBox().about("Controllo Bobine Superficiali",
-						this.getClass());
+						MyVersion.CURRENT_VERSION);
+
 				retry = true;
 				break;
 			case 3:

@@ -38,6 +38,7 @@ import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyLog;
 import utils.MyPlot;
+import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReadVersion;
 import utils.ReportStandardInfo;
@@ -103,10 +104,17 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		String className = this.getClass().getName();
 
+//		VERSION = className + "_build_"
+//				+ ReadVersion.readVersionInfoInManifest("contMensili")
+//				+ "_iw2ayv_build_"
+//				+ ReadVersion.readVersionInfoInManifest("utils");
+		
 		VERSION = className + "_build_"
-				+ ReadVersion.readVersionInfoInManifest("contMensili")
+				+ MyVersion.getVersion()
 				+ "_iw2ayv_build_"
-				+ ReadVersion.readVersionInfoInManifest("utils");
+				+ MyVersionUtils.getVersion();
+	
+		
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -135,8 +143,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 				retry = false;
 				return 0;
 			case 2:
+//				new AboutBox().about("Controllo Bobine Superficiali",
+//						this.getClass());
 				new AboutBox().about("Controllo Bobine Superficiali",
-						this.getClass());
+						MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -275,8 +285,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 					new AboutBox().close();
 					return 0;
 				case 2:
-					new AboutBox().about("Controllo Bobine Superficiali",
-							this.getClass());
+//					new AboutBox().about("Controllo Bobine Superficiali",
+//					this.getClass());
+			new AboutBox().about("Controllo Bobine Superficiali",
+					MyVersion.CURRENT_VERSION);
 					retry = true;
 					break;
 				case 3:

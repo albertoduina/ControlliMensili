@@ -250,7 +250,8 @@ public class p2rmn_ implements PlugIn, Measurements {
 					retry = false;
 					return;
 				case 2:
-					ab.about("Controllo T1 e  T2", this.getClass());
+					ab.about("Controllo T1 e  T2", MyVersion.CURRENT_VERSION);
+//					ab.about("Controllo T1 e  T2", this.getClass());
 					retry = true;
 					break;
 				case 3:
@@ -366,7 +367,8 @@ public class p2rmn_ implements PlugIn, Measurements {
 					ab.close();
 					return;
 				case 2:
-					ab.about("Controllo T1 e  T2", this.getClass());
+//					ab.about("Controllo T1 e  T2", this.getClass());
+					ab.about("Controllo T1 e  T2", MyVersion.CURRENT_VERSION);
 					retry = true;
 					break;
 				case 3:

@@ -5,13 +5,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.Plot;
 import ij.gui.WaitForUserDialog;
 import ij.measure.ResultsTable;
+import ij.process.ImageProcessor;
 
 import org.junit.After;
 import org.junit.Before;
@@ -173,8 +176,8 @@ public class p12rmn_Test {
 		boolean fast = false;
 		double profond = 30;
 
-		double out2[] = p12rmn_.positionSearch12(imp11, profond, 0, "", autoCalled,
-				step, verbose, test, fast);
+		double out2[] = p12rmn_.positionSearch12(imp11, profond, 0, "",
+				autoCalled, step, verbose, test, fast);
 
 		MyLog.logVector(out2, "out2");
 
@@ -300,6 +303,50 @@ public class p12rmn_Test {
 	}
 
 	@Test
+	public final void testPeakDetAAAAAA() {
+
+		// 16 dec 2011 sistemato, ora funziona in automatico senza bisogno di
+		// visualizzare il profilo
+
+		double[][] profile1 = InputOutput
+				.readDoubleMatrixFromFile((new InputOutput()
+						.findResource("/profi3.txt")));
+		double delta = 100.0;
+		new p12rmn_();
+		ArrayList<ArrayList<Double>> matOut = p12rmn_.peakDet(profile1, delta);
+		double[][] out = new InputOutput().fromArrayListToDoubleTable(matOut);
+
+		double[] vetx = new double[profile1.length];
+		double[] vety = new double[profile1.length];
+
+		for (int j = 0; j < profile1.length; j++)
+			vetx[j] = profile1[j][0];
+		for (int j = 0; j < profile1.length; j++)
+			vety[j] = profile1[j][1];
+
+		Plot plot2 = MyPlot.basePlot(vetx, vety, "P R O F I L O", Color.blue);
+		plot2.show();
+		new WaitForUserDialog("Do something, then click OK.").show();
+		IJ.wait(200);
+
+		MyLog.logMatrix(out, "out");
+		MyLog.waitHere();
+
+		double expected = 66.796875;
+		assertEquals(expected, out[0][0], 1e-12);
+		expected = 14.09287783266325;
+		assertEquals(expected, out[1][0], 1e-12);
+		expected = 9.9609375;
+		assertEquals(expected, out[2][0], 1e-12);
+		expected = 128.3203125;
+		assertEquals(expected, out[2][1], 1e-12);
+		expected = 445.2493818993196;
+		assertEquals(expected, out[3][0], 1e-12);
+		expected = 199.34767076939997;
+		assertEquals(expected, out[3][1], 1e-12);
+	}
+
+	@Test
 	public final void testFromPointsToEquLineExplicit() {
 
 		double x1 = 0;
@@ -409,17 +456,113 @@ public class p12rmn_Test {
 		IJ.wait(200);
 		assertEquals(pixx, 441);
 	}
-	
+
+	@Test
+	public final void testHorizontalScanLeftBubble() {
+
+		// String path1 = "./Test2/C001_testP10";
+		String path1 = "data/67226879";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+
+		boolean scan = true;
+		p12rmn_.horizontalScan(imp1, scan);
+
+	}
+
+	@Test
+	public final void testHorizontalScanHighBubble() {
+
+		// String path1 = "./Test2/C001_testP10";
+		String path1 = "data/67226831";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+
+		boolean scan = true;
+		p12rmn_.horizontalScan(imp1, scan);
+
+	}
+
+	@Test
+	public final void testInsideOutside() {
+
+		// String path1 = "./Test2/C001_testP10";
+		String path1 = "data/P12/0009";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+
+		boolean scan = true;
+		int low = 100;
+		int high = 1000;
+		ImagePlus imp10 = p12rmn_.insideOutside(imp1, low, high, scan);
+		UtilAyv.showImageMaximized(imp10);
+
+		MyLog.waitHere();
+
+	}
+
+	@Test
+	public final void testCanny() {
+
+		// // String path1 = "./Test2/C001_testP10";
+		// String path1 = "data/P12/0009";
+		// ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+
+		String path2 = "data/P12/";
+		Sequenze_ sq1 = new Sequenze_();
+		List<File> list1 = sq1.getFileListing((new File(path2)));
+		String[] list2 = new String[list1.size()];
+		int j1 = 0;
+		for (File file : list1) {
+			list2[j1++] = file.getPath();
+			ImagePlus imp1 = UtilAyv.openImageMaximized(file.getPath());
+			float low = 3.01f;
+			float high = 10.0f;
+			float radius = 2.0f;
+			boolean normalized = false;
+
+			ImagePlus imp10 = p12rmn_
+					.canny(imp1, low, high, radius, normalized);
+			UtilAyv.showImageMaximized(imp10);
+			MyLog.waitHere();
+			imp1.close();
+			imp10.close();
+		}
+
+	}
 	
 	
 	@Test
-	public final void testHorizontalScan() {
+	public final void testCanny2() {
 
-		String path1 = "./Test2/C001_testP10";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		 // String path1 = "./Test2/C001_testP10";
+		 String path1 = "data/P12/0010";
+		 ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
 
-	boolean scan=true;
-	 p12rmn_.horizontalScan(imp1, scan);
+			float low = 3.01f;
+			float high = 10.0f;
+			float radius = 2.0f;
+			boolean normalized = false;
+
+			ImagePlus imp10 = p12rmn_
+					.canny(imp1, low, high, radius, normalized);
+			UtilAyv.showImageMaximized(imp10);
+			MyLog.waitHere();
+			imp10.close();
+			ImagePlus imp2 = UtilAyv.openImageNoDisplay(path1, false);
+			ImageProcessor ip2= imp2.getProcessor();
+			ip2.invert();
+			imp2.updateImage();
+			 
+			UtilAyv.showImageMaximized(imp2);
+			MyLog.waitHere();
+			
+		
+			
+
+
+			ImagePlus imp11 = p12rmn_
+					.canny(imp2, low, high, radius, normalized);
+			UtilAyv.showImageMaximized(imp11);
+			MyLog.waitHere();
+
 
 	}
 

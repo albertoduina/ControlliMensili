@@ -122,7 +122,8 @@ public class p7rmn_ implements PlugIn, Measurements {
 				retry = false;
 				return 0;
 			case 2:
-				new AboutBox().about("Controllo Warp", this.getClass());
+//				new AboutBox().about("Controllo Warp", this.getClass());
+				new AboutBox().about("Controllo Warp", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -177,7 +178,8 @@ public class p7rmn_ implements PlugIn, Measurements {
 				new AboutBox().close();
 				return 0;
 			case 2:
-				new AboutBox().about("Controllo Warp", this.getClass());
+//				new AboutBox().about("Controllo Warp", this.getClass());
+				new AboutBox().about("Controllo Warp", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
