@@ -29,12 +29,6 @@ import utils.TableSequence;
 import utils.UtilAyv;
 
 
-
-
-
-
-
-
 /*
  * Copyright (C) 2007 Alberto Duina, SPEDALI CIVILI DI BRESCIA, Brescia ITALY
  *

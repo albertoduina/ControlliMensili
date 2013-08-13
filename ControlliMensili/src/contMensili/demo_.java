@@ -18,7 +18,12 @@ import utils.MyConst;
 import utils.MyLog;
 import utils.ReadDicom;
 import utils.UtilAyv;
-
+/**
+ * Questo plugin serve a testare eventuali problemi, prima di segnalarli a Wayne Rasband od altri.
+ * 
+ * @author alberto
+ *
+ */
 public class demo_ implements PlugIn, Measurements {
 
 	public void run(String args) {

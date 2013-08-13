@@ -1,6 +1,11 @@
 package contMensili;
 
-
+/**
+ * Questo plugin permette di leggere la versione (hardcoded) di tutti i vari plugin
+ * 
+ * @author alberto
+ *
+ */
 	public class MyVersion {
 		public final static String CURRENT_VERSION = MyVersion.class.getPackage().getImplementationVersion();
 		
