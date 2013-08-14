@@ -2539,10 +2539,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		Rectangle boundingRectangle2 = imp12.getProcessor().getRoi();
 		diamRoi2 = (int) boundingRectangle2.width;
-		xRoi2 = boundingRectangle2.x
-				+ ((boundingRectangle2.width - diamRoi2) / 2);
-		yRoi2 = boundingRectangle2.y
-				+ ((boundingRectangle2.height - diamRoi2) / 2);
+		// xRoi2 = boundingRectangle2.x
+		// + ((boundingRectangle2.width - diamRoi2) / 2);
+		// yRoi2 = boundingRectangle2.y
+		// + ((boundingRectangle2.height - diamRoi2) / 2);
+		xRoi2 = boundingRectangle2.x + boundingRectangle2.width / 2;
+		yRoi2 = boundingRectangle2.y + boundingRectangle2.height / 2;
 
 		// imp12.deleteRoi();imp12.updateAndDraw();
 		// MyLog.waitHere("pulito???");
@@ -2570,83 +2572,154 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 * 
 	 */
 
-	public static int[] positionSearch13(ImagePlus imp1, int[] circleData, int diamGhost, int guard,
-			String info1, boolean autoCalled, boolean step, boolean verbose,
-			boolean test, boolean fast) {
+	public static int[] positionSearch13(ImagePlus imp1, int[] circleData,
+			int diamGhost, int guard, String info1, boolean autoCalled,
+			boolean step, boolean verbose, boolean test, boolean fast) {
 
 		// leggo i dati del cerchio "esterno" del fantoccio e li plotto
 		// sull'immagine
 
-		
 		Overlay over2 = new Overlay();
 		over2.setStrokeColor(Color.red);
+		imp1.deleteRoi();
 
 		ImagePlus imp2 = imp1.duplicate();
 		imp2.setOverlay(over2);
-		int criticalDistance=0;
-		
-		
+		IJ.run(imp2, "Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");
+
+		int width = imp1.getWidth();
+		int height = imp1.getHeight();
+
 		int xCenterCircle = circleData[0];
 		int yCenterCircle = circleData[1];
 		int diamCircle = circleData[2];
 
+		int xRoi0 = xCenterCircle - diamCircle / 2;
+		int yRoi0 = yCenterCircle - diamCircle / 2;
 		int diamRoi0 = diamCircle;
-		int xRoi0 = xCenterCircle - diamRoi0 / 2;
-		int yRoi0 = yCenterCircle - diamRoi0 / 2;
-		
-		
-		
 
 		imp2.setRoi(new OvalRoi(xRoi0, yRoi0, diamRoi0, diamRoi0));
 		UtilAyv.showImageMaximized(imp2);
 		over2.addElement(imp2.getRoi());
-		
-		
-		// ora calcolo dove disporre le roi per il calcolo dei ghost 
-		
-		int xRoi1 = xCenterCircle-diamGhost/2;
-		int yRoi1=0;
-		
+
+		// ora calcolo dove disporre le roi per il calcolo dei ghost
+
+		int xRoi1 = xCenterCircle - diamGhost / 2;
+		int yRoi1 = 0;
+		int critic_1;
+
+		do {
+			critic_1 = criticalDistanceCalculation(xRoi1, yRoi1, diamGhost,
+					xRoi0, yRoi0, diamRoi0);
+//			MyLog.waitHere("critic_1= " + critic_1 + " guard= " + guard);
+
+			imp2.setRoi(new OvalRoi(xRoi1, yRoi1, diamGhost, diamGhost));
+			over2.addElement(imp2.getRoi());
+			imp2.killRoi();
+			xRoi1 += 5;
+			if (xRoi1 > width) {
+				MyLog.waitHere("non trovo posizione");
+				continue;
+			}
+
+		} while (critic_1 < guard);
 		
 		// qui la criticalDistance è su y
-		//TODO calcolare tutte le criticalDistance
+		// TODO calcolare tutte le criticalDistance
+
+		int xRoi2 = imp1.getWidth() - diamGhost;
+		int yRoi2 = yCenterCircle - diamGhost / 2;
+		int critic_2;
+
+		do {
+			critic_2 = criticalDistanceCalculation(xRoi2, yRoi2, diamGhost,
+					xRoi0, yRoi0, diamRoi0);
+//			MyLog.waitHere("critic_2= " + critic_2 + " guard= " + guard);
+
+			imp2.setRoi(new OvalRoi(xRoi2, yRoi2, diamGhost, diamGhost));
+			over2.addElement(imp2.getRoi());
+			imp2.killRoi();
+			yRoi2 += 5;
+			if (yRoi2 > height) {
+				MyLog.waitHere("non trovo posizione");
+				continue;
+			}
+
+		} while (critic_2 < guard);
+
+		int xRoi3 = xCenterCircle - diamGhost / 2;
+		int yRoi3 = imp1.getWidth() - diamGhost;
+		int critic_3;
 		
-				
-				
-				
-		imp2.setRoi(new OvalRoi(xRoi1, yRoi1, diamGhost, diamGhost));
-		over2.addElement(imp2.getRoi());
-		imp2.killRoi();
-		
-		
-		int xRoi2 = imp1.getWidth()-diamGhost;
-		int yRoi2=yCenterCircle-diamGhost/2;
-		imp2.setRoi(new OvalRoi(xRoi2, yRoi2, diamGhost, diamGhost));
-		over2.addElement(imp2.getRoi());
-		imp2.killRoi();
-		
-		int xRoi3 = xCenterCircle-diamGhost/2;
-		int yRoi3=imp1.getWidth()-diamGhost;
-		imp2.setRoi(new OvalRoi(xRoi3, yRoi3, diamGhost, diamGhost));
-		over2.addElement(imp2.getRoi());
-		imp2.killRoi();
+		do {
+			critic_3 = criticalDistanceCalculation(xRoi3, yRoi3, diamGhost,
+					xRoi0, yRoi0, diamRoi0);
+//			MyLog.waitHere("critic_2= " + critic_2 + " guard= " + guard);
+
+			imp2.setRoi(new OvalRoi(xRoi3, yRoi3, diamGhost, diamGhost));
+			over2.addElement(imp2.getRoi());
+			imp2.killRoi();
+			xRoi3 -= 5;
+			if (xRoi3 < diamGhost) {
+				MyLog.waitHere("non trovo posizione");
+				continue;
+			}
+
+		} while (critic_3 < guard);
 		
 		int xRoi4 = 0;
-		int yRoi4=yCenterCircle-diamGhost/2;
-		imp2.setRoi(new OvalRoi(xRoi4, yRoi4, diamGhost, diamGhost));
-		over2.addElement(imp2.getRoi());
-		imp2.killRoi();
-		
-		
+		int yRoi4 = yCenterCircle - diamGhost / 2;
+		int critic_4;
+		do {
+			critic_4 = criticalDistanceCalculation(xRoi4, yRoi4, diamGhost,
+					xRoi0, yRoi0, diamRoi0);
+//			MyLog.waitHere("critic_2= " + critic_2 + " guard= " + guard);
+
+			imp2.setRoi(new OvalRoi(xRoi4, yRoi4, diamGhost, diamGhost));
+			over2.addElement(imp2.getRoi());
+			imp2.killRoi();
+			yRoi4 -= 5;
+			if (yRoi4 < diamGhost) {
+				MyLog.waitHere("non trovo posizione");
+				continue;
+			}
+
+		} while (critic_4 < guard);
 		
 		imp2.updateAndDraw();
 		MyLog.waitHere();
-		
-		
-		
-		
 
 		return null;
+	}
+
+	/**
+	 * Calcolo delle distanza tra due circonferenze
+	 * 
+	 * @param x1
+	 * @param y1
+	 * @param r1
+	 * @param x2
+	 * @param y2
+	 * @param r2
+	 * @return
+	 */
+	public static int criticalDistanceCalculation(int x1, int y1, int r1,
+			int x2, int y2, int r2) {
+
+		double x1c = x1 + r1 / 2.0;
+		double y1c = y1 + r1 / 2.0;
+		double x2c = x2 + r2 / 2.0;
+		double y2c = y2 + r2 / 2.0;
+
+		double dCentri = Math.sqrt((x2c - x1c) * (x2c - x1c) + (y2c - y1c)
+				* (y2c - y1c));
+		double critical = dCentri - (r1/2 + r2/2);
+
+//		IJ.log("x1c= " + x1c + " y1c= " + y1c + " r1= " + r1 + " x2c= " + x2c
+//				+ " y2c= " + y2c + " r2= " + r2 + " dCentri= " + dCentri
+//				+ " critical= " + critical);
+
+		return (int) Math.round(critical);
 	}
 
 	/**

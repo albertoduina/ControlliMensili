@@ -197,34 +197,46 @@ public class p12rmn_Test {
 
 		// 16 dic 2011 sistemato, ora funziona in automatico
 
-		String path1 = "./Test2/HUSA_001testP3";
-
+		String path1 = "./Test2/aaa.tif";
 		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
-		imp11.show();
-
-
+		imp11.deleteRoi();
+		ImagePlus imp13 = UtilAyv.openImageNoDisplay(path1, true);
+		imp13.deleteRoi();
 		boolean autoCalled = false;
 		boolean step = true;
 		boolean verbose = true;
 		boolean test = false;
 		boolean fast = false;
-		
-		 
-		int[] circleData= { 125,  114,  171,  49,  38,  152 };
-		
-		int diamGhost=20;
-		int guard=10;
-		
-		
-		
-		
 
-
-		int out2[] = p12rmn_.positionSearch13(imp11, circleData, diamGhost, guard, "", autoCalled,
+		int[] out2 = p12rmn_.positionSearch12(imp11, imp13, "", autoCalled,
 				step, verbose, test, fast);
+		MyLog.logVector(out2, "out2"); 
+		int[] circleData= out2;
+		int diamGhost=20;
+		int guard=20;
+		int[] out3 = p12rmn_.positionSearch13(imp11, circleData, diamGhost, guard, "", autoCalled,
+				step, verbose, test, fast);
+		MyLog.logVector(out2, "out3");
+		
+		
+		path1 = "./Test2/bbb.tif";
+		imp11 = UtilAyv.openImageNoDisplay(path1, true);
+		imp11.deleteRoi();
+		imp13 = UtilAyv.openImageNoDisplay(path1, true);
+		imp13.deleteRoi();
 
-		MyLog.logVector(out2, "out2");
+		out2 = p12rmn_.positionSearch12(imp11, imp13, "", autoCalled,
+				step, verbose, test, fast);
+		MyLog.logVector(out2, "out2"); 
+		circleData= out2;
+		diamGhost=20;
+		guard=20;
+		out3 = p12rmn_.positionSearch13(imp11, circleData, diamGhost, guard, "", autoCalled,
+				step, verbose, test, fast);
+		MyLog.logVector(out2, "out3");
 
+		
+		
 		double[] expected = { 159.0, 105.0, 118.0, 133.0, 202.0, 77.0,
 				33.690067525979785 };
 		// MyLog.logVector(out2, "out2");
@@ -238,6 +250,21 @@ public class p12rmn_Test {
 	
 	
 	
+	
+	
+	@Test
+	public final void testCriticalDistanceCalculation() {
+		int x1=55;
+		int y1=22;
+		int r1=19;
+		int x2=129;
+		int y2=140;
+		int r2=86;
+		int out1 = p12rmn_.criticalDistanceCalculation(x1, y1, r1,
+				x2, y2, r2);
+		MyLog.waitHere("out1= "+out1);
+
+	}
 	
 	
 	@Test
