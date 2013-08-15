@@ -32,6 +32,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import utils.AboutBox;
 import utils.ButtonMessages;
@@ -2585,6 +2586,205 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		ImagePlus imp2 = imp1.duplicate();
 		imp2.setOverlay(over2);
+		IJ.setMinAndMax(imp2, 10, 50);
+
+		IJ.run(imp2, "Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");
+
+		int width = imp1.getWidth();
+		int height = imp1.getHeight();
+
+		int xCenterCircle = circleData[0];
+		int yCenterCircle = circleData[1];
+		int diamCircle = circleData[2];
+
+		// marco con un punto il centro del fantoccio
+		imp2.setRoi(xCenterCircle, yCenterCircle, 1, 1);
+		UtilAyv.showImageMaximized(imp2);
+		over2.addElement(imp2.getRoi());
+
+		// disegno il perimetro del fantoccio
+		int xRoi0 = xCenterCircle - diamCircle / 2;
+		int yRoi0 = yCenterCircle - diamCircle / 2;
+		int diamRoi0 = diamCircle;
+
+		imp2.setRoi(new OvalRoi(xRoi0, yRoi0, diamRoi0, diamRoi0));
+		over2.addElement(imp2.getRoi());
+
+		MyLog.waitHere("AAAAA");
+		// ghost di sinistra
+
+		MyLog.waitHere("ghost di sinistra");
+
+		int critic_0;
+		double ghMaxSx = -99999;
+		int xGhMaxSx = -9999;
+		int yGhMaxSx = -9999;
+
+		for (int i1 = 0; i1 < diamCircle - diamGhost; i1++) {
+			for (int i2 = 0; i2 < diamCircle - diamGhost; i2++) {
+				int px = i2;
+				int py = i1 + (yCenterCircle - diamCircle / 2);
+				int xcentGhost = px + diamGhost / 2;
+				int ycentGhost = py + diamGhost / 2;
+				critic_0 = criticalDistanceCalculation(xcentGhost, ycentGhost,
+						diamGhost / 2, xCenterCircle, yCenterCircle,
+						diamCircle / 2);
+				if (critic_0 < guard) {
+					break;
+				}
+				imp2.setRoi(new OvalRoi(px, py, diamGhost, diamGhost));
+				double ghMean = imp2.getStatistics().mean;
+				if (ghMean > ghMaxSx) {
+					ghMaxSx = ghMean;
+					xGhMaxSx = xcentGhost;
+					yGhMaxSx = ycentGhost;
+				}
+				// over2.addElement(imp2.getRoi());
+			}
+		}
+		imp2.setRoi(new OvalRoi(xGhMaxSx - diamGhost / 2, yGhMaxSx - diamGhost / 2,
+				diamGhost, diamGhost));
+		over2.addElement(imp2.getRoi());
+
+		MyLog.waitHere("il massimo del ghost di sinistra si trova a x= "
+				+ xGhMaxSx + " y= " + yGhMaxSx + " mean= " + ghMaxSx);
+
+		// ora, dei ghost mi interessa solo il segnale .........
+
+		// ghost superiore
+		MyLog.waitHere("ghost superiore");
+		int critic_1;
+		double ghMaxUp = -99999;
+		int xGhMaxUp = -9999;
+		int yGhMaxUp = -9999;
+
+		
+		for (int i1 = 0; i1 < diamCircle - diamGhost; i1++) {
+			for (int i2 = 0; i2 < diamCircle - diamGhost; i2++) {
+				int py = i2;
+				int px = i1 + (xCenterCircle - diamCircle / 2);
+				int xcentGhost = px + diamGhost / 2;
+				int ycentGhost = py + diamGhost / 2;
+				critic_1 = criticalDistanceCalculation(xcentGhost, ycentGhost,
+						diamGhost / 2, xCenterCircle, yCenterCircle,
+						diamCircle / 2);
+				if (critic_1 < guard) {
+					break;
+				}
+				imp2.setRoi(new OvalRoi(px, py, diamGhost, diamGhost));
+				double ghMean = imp2.getStatistics().mean;
+				if (ghMean > ghMaxUp) {
+					ghMaxUp = ghMean;
+					xGhMaxUp = xcentGhost;
+					yGhMaxUp = ycentGhost;
+				}
+//				over2.addElement(imp2.getRoi());
+			}
+		}
+		
+		imp2.setRoi(new OvalRoi(xGhMaxUp - diamGhost / 2, yGhMaxUp - diamGhost / 2,
+				diamGhost, diamGhost));
+		over2.addElement(imp2.getRoi());
+
+		MyLog.waitHere("il massimo del ghost superiore si trova a x= "
+				+ xGhMaxUp + " y= " + yGhMaxUp + " mean= " + ghMaxUp);
+
+		
+
+		// ghost di destra (e te pareva che non la buttavano in politica!)
+		MyLog.waitHere("ghost di destra");
+
+		int critic_2;
+		double ghMaxDx = -99999;
+		int xGhMaxDx = -9999;
+		int yGhMaxDx = -9999;
+
+		for (int i2 = 0; i2 < diamCircle - diamGhost; i2++) {
+			for (int i1 = width - diamGhost; i1 > diamCircle - diamGhost; i1--) {
+				int px = i1;
+				int py = i2 + (yCenterCircle - diamCircle / 2);
+				int xcentGhost = px + diamGhost / 2;
+				int ycentGhost = py + diamGhost / 2;
+				critic_2 = criticalDistanceCalculation(xcentGhost, ycentGhost,
+						diamGhost / 2, xCenterCircle, yCenterCircle,
+						diamCircle / 2);
+				if (critic_2 < guard) {
+					break;
+				}
+				imp2.setRoi(new OvalRoi(px, py, diamGhost, diamGhost));
+				double ghMean = imp2.getStatistics().mean;
+				if (ghMean > ghMaxDx) {
+					ghMaxDx = ghMean;
+					xGhMaxDx = xcentGhost;
+					yGhMaxDx = ycentGhost;
+				}
+//				over2.addElement(imp2.getRoi());
+			}
+		}
+
+		imp2.setRoi(new OvalRoi(xGhMaxDx - diamGhost / 2, yGhMaxDx - diamGhost / 2,
+				diamGhost, diamGhost));
+		over2.addElement(imp2.getRoi());
+
+		MyLog.waitHere("il massimo del ghost di destra si trova a x= "
+				+ xGhMaxDx + " y= " + yGhMaxDx + " mean= " + ghMaxDx);
+
+		MyLog.waitHere("ghost inferiore");
+
+		int critic_3;
+		double ghMaxDw = -99999;
+		int xGhMaxDw = -9999;
+		int yGhMaxDw = -9999;
+		
+		for (int i1 = 0; i1 < diamCircle - diamGhost; i1++) {
+			for (int i2 = height - diamGhost; i2 > diamCircle - diamGhost; i2--) {
+				int py = i2;
+				int px = i1 + (xCenterCircle - diamCircle / 2);
+				int xcentGhost = px + diamGhost / 2;
+				int ycentGhost = py + diamGhost / 2;
+				critic_3 = criticalDistanceCalculation(xcentGhost, ycentGhost,
+						diamGhost / 2, xCenterCircle, yCenterCircle,
+						diamCircle / 2);
+				if (critic_3 < guard) {
+					break;
+				}
+				imp2.setRoi(new OvalRoi(px, py, diamGhost, diamGhost));
+				double ghMean = imp2.getStatistics().mean;
+				if (ghMean > ghMaxDw) {
+					ghMaxDw = ghMean;
+					xGhMaxDw = xcentGhost;
+					yGhMaxDw = ycentGhost;
+				}
+//				over2.addElement(imp2.getRoi());
+			}
+		}
+
+		imp2.setRoi(new OvalRoi(xGhMaxDw - diamGhost / 2, yGhMaxDw - diamGhost / 2,
+				diamGhost, diamGhost));
+		over2.addElement(imp2.getRoi());
+
+		MyLog.waitHere("il massimo del ghost inferiore si trova a x= "
+				+ xGhMaxDw + " y= " + yGhMaxDw + " mean= " + ghMaxDw);
+
+		
+		MyLog.waitHere();
+
+		return null;
+	}
+
+	public static int[] positionSearch13bis(ImagePlus imp1, int[] circleData,
+			int diamGhost, int guard, String info1, boolean autoCalled,
+			boolean step, boolean verbose, boolean test, boolean fast) {
+
+		// leggo i dati del cerchio "esterno" del fantoccio e li plotto
+		// sull'immagine
+
+		Overlay over2 = new Overlay();
+		over2.setStrokeColor(Color.red);
+		imp1.deleteRoi();
+
+		ImagePlus imp2 = imp1.duplicate();
+		imp2.setOverlay(over2);
 		IJ.run(imp2, "Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");
 
 		int width = imp1.getWidth();
@@ -2611,7 +2811,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		do {
 			critic_1 = criticalDistanceCalculation(xRoi1, yRoi1, diamGhost,
 					xRoi0, yRoi0, diamRoi0);
-//			MyLog.waitHere("critic_1= " + critic_1 + " guard= " + guard);
+			// MyLog.waitHere("critic_1= " + critic_1 + " guard= " + guard);
 
 			imp2.setRoi(new OvalRoi(xRoi1, yRoi1, diamGhost, diamGhost));
 			over2.addElement(imp2.getRoi());
@@ -2623,7 +2823,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			}
 
 		} while (critic_1 < guard);
-		
+
 		// qui la criticalDistance è su y
 		// TODO calcolare tutte le criticalDistance
 
@@ -2634,7 +2834,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		do {
 			critic_2 = criticalDistanceCalculation(xRoi2, yRoi2, diamGhost,
 					xRoi0, yRoi0, diamRoi0);
-//			MyLog.waitHere("critic_2= " + critic_2 + " guard= " + guard);
+			// MyLog.waitHere("critic_2= " + critic_2 + " guard= " + guard);
 
 			imp2.setRoi(new OvalRoi(xRoi2, yRoi2, diamGhost, diamGhost));
 			over2.addElement(imp2.getRoi());
@@ -2650,11 +2850,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int xRoi3 = xCenterCircle - diamGhost / 2;
 		int yRoi3 = imp1.getWidth() - diamGhost;
 		int critic_3;
-		
+
 		do {
 			critic_3 = criticalDistanceCalculation(xRoi3, yRoi3, diamGhost,
 					xRoi0, yRoi0, diamRoi0);
-//			MyLog.waitHere("critic_2= " + critic_2 + " guard= " + guard);
+			// MyLog.waitHere("critic_2= " + critic_2 + " guard= " + guard);
 
 			imp2.setRoi(new OvalRoi(xRoi3, yRoi3, diamGhost, diamGhost));
 			over2.addElement(imp2.getRoi());
@@ -2666,14 +2866,14 @@ public class p12rmn_ implements PlugIn, Measurements {
 			}
 
 		} while (critic_3 < guard);
-		
+
 		int xRoi4 = 0;
 		int yRoi4 = yCenterCircle - diamGhost / 2;
 		int critic_4;
 		do {
 			critic_4 = criticalDistanceCalculation(xRoi4, yRoi4, diamGhost,
 					xRoi0, yRoi0, diamRoi0);
-//			MyLog.waitHere("critic_2= " + critic_2 + " guard= " + guard);
+			// MyLog.waitHere("critic_2= " + critic_2 + " guard= " + guard);
 
 			imp2.setRoi(new OvalRoi(xRoi4, yRoi4, diamGhost, diamGhost));
 			over2.addElement(imp2.getRoi());
@@ -2685,7 +2885,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			}
 
 		} while (critic_4 < guard);
-		
+
 		imp2.updateAndDraw();
 		MyLog.waitHere();
 
@@ -2693,32 +2893,28 @@ public class p12rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * Calcolo delle distanza tra due circonferenze
+	 * Calcolo delle distanza minima tra due circonferenze esterne
 	 * 
 	 * @param x1
+	 *            coordinata x cerchio 1
 	 * @param y1
+	 *            coordinata y cerchio 1
 	 * @param r1
+	 *            raggio cerchio 1
 	 * @param x2
+	 *            coordinata x cerchio 2
 	 * @param y2
+	 *            coordinata y cerchio 2
 	 * @param r2
-	 * @return
+	 *            raggio cerchio 2
+	 * @return distanza minima tra i cechi
 	 */
 	public static int criticalDistanceCalculation(int x1, int y1, int r1,
 			int x2, int y2, int r2) {
 
-		double x1c = x1 + r1 / 2.0;
-		double y1c = y1 + r1 / 2.0;
-		double x2c = x2 + r2 / 2.0;
-		double y2c = y2 + r2 / 2.0;
-
-		double dCentri = Math.sqrt((x2c - x1c) * (x2c - x1c) + (y2c - y1c)
-				* (y2c - y1c));
-		double critical = dCentri - (r1/2 + r2/2);
-
-//		IJ.log("x1c= " + x1c + " y1c= " + y1c + " r1= " + r1 + " x2c= " + x2c
-//				+ " y2c= " + y2c + " r2= " + r2 + " dCentri= " + dCentri
-//				+ " critical= " + critical);
-
+		double dCentri = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1)
+				* (y2 - y1));
+		double critical = dCentri - (r1 + r2);
 		return (int) Math.round(critical);
 	}
 

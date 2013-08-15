@@ -373,8 +373,11 @@ public class p3rmn_ implements PlugIn, Measurements {
 			int xRoi5 = 1;
 			int yRoi5 = height / 2 - MyConst.P3_DIAM_ROI_GHOSTS / 2;
 
-			if (verbose)
-				UtilAyv.autoAdjust(imp1, imp1.getProcessor());
+			//TODO da provare
+			IJ.setMinAndMax(imp1, 10, 30);
+			
+			// if (verbose)
+			// UtilAyv.autoAdjust(imp1, imp1.getProcessor());
 			ImageStatistics statGh1 = ghostRoi(xRoi5, yRoi5, imp1, 1, step,
 					test);
 			double mediaGhost1 = statGh1.mean;

@@ -202,22 +202,22 @@ public class p12rmn_Test {
 		imp11.deleteRoi();
 		ImagePlus imp13 = UtilAyv.openImageNoDisplay(path1, true);
 		imp13.deleteRoi();
-		boolean autoCalled = false;
-		boolean step = true;
+		boolean autoCalled = true;
+		boolean step = false;
 		boolean verbose = true;
 		boolean test = false;
-		boolean fast = false;
+		boolean fast = true;
 
 		int[] out2 = p12rmn_.positionSearch12(imp11, imp13, "", autoCalled,
 				step, verbose, test, fast);
 		MyLog.logVector(out2, "out2"); 
 		int[] circleData= out2;
 		int diamGhost=20;
-		int guard=20;
+		int guard=5;
 		int[] out3 = p12rmn_.positionSearch13(imp11, circleData, diamGhost, guard, "", autoCalled,
 				step, verbose, test, fast);
-		MyLog.logVector(out2, "out3");
-		
+		MyLog.logVector(out3, "out3");
+		MyLog.waitHere();
 		
 		path1 = "./Test2/bbb.tif";
 		imp11 = UtilAyv.openImageNoDisplay(path1, true);
@@ -230,10 +230,10 @@ public class p12rmn_Test {
 		MyLog.logVector(out2, "out2"); 
 		circleData= out2;
 		diamGhost=20;
-		guard=20;
+		guard=5;
 		out3 = p12rmn_.positionSearch13(imp11, circleData, diamGhost, guard, "", autoCalled,
 				step, verbose, test, fast);
-		MyLog.logVector(out2, "out3");
+		MyLog.logVector(out3, "out3");
 
 		
 		
