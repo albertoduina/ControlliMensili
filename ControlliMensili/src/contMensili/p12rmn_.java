@@ -2343,6 +2343,261 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 *            flag true se modo batch
 	 * @return vettore con dati ROI
 	 */
+	public static int[] positionSearch11(ImagePlus imp11, ImagePlus imp13,
+			String info1, boolean autoCalled, boolean step, boolean verbose,
+			boolean test, boolean fast) {
+		//
+		// ================================================================================
+		// Inizio calcoli geometrici
+		// ================================================================================
+		//
+
+		int xCenterCircle = 0;
+		int yCenterCircle = 0;
+		Overlay over12 = new Overlay();
+
+		double dimPixel = ReadDicom
+				.readDouble(ReadDicom.readSubstring(
+						ReadDicom.readDicomParameter(imp11,
+								MyConst.DICOM_PIXEL_SPACING), 1));
+
+		int width = imp11.getWidth();
+		int height = imp11.getHeight();
+
+		ImagePlus imp112 = imp11.duplicate();
+
+		MyCannyEdgeDetector mce = new MyCannyEdgeDetector();
+
+		ImagePlus imp12 = mce.process(imp112);
+		if (step)
+			UtilAyv.showImageMaximized(imp12);
+
+		//
+		// -------------------------------------------------
+		// Determinazione del cerchio utilizzando l'algoritmo canny edge
+		// detector
+		// -------------------------------------------------
+		//
+		// ImageProcessor ip12 = imp12.getProcessor();
+		// ip12.smooth();
+		// if (step)
+		// new WaitForUserDialog("Eseguito SMOOTH").show();
+		// ip12.findEdges();
+		//
+		// if (step)
+		// new WaitForUserDialog("Eseguito FIND EDGES").show();
+
+		imp12.setOverlay(over12);
+
+		double[][] peaks1 = new double[4][1];
+		double[][] peaks2 = new double[4][1];
+		double[][] peaks3 = new double[4][1];
+		double[][] peaks4 = new double[4][1];
+		boolean showProfiles = step;
+
+		showProfiles = false;
+
+		// IJ.log("BISETTRICE ORIZZONTALE");
+		imp12.setRoi(new Line(0, height / 2, width, height / 2));
+		if (step) {
+			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+			over12.setStrokeColor(Color.red);
+		}
+		peaks1 = profileAnalyzer(imp12, dimPixel, "BISETTRICE ORIZZONTALE",
+				showProfiles);
+
+		// IJ.log("BISETTRICE VERTICALE");
+		imp12.setRoi(new Line(width / 2, 0, width / 2, height));
+		if (step) {
+			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+		}
+		peaks2 = profileAnalyzer(imp12, dimPixel, "BISETTRICE VERTICALE",
+				showProfiles);
+		// IJ.log("DIAGONALE 1");
+		imp12.setRoi(new Line(0, 0, width, height));
+		if (step) {
+			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+		}
+		peaks3 = profileAnalyzer(imp12, dimPixel,
+				"BISETTRICE DIAGONALE SINISTRA", showProfiles);
+		// IJ.log("DIAGONALE 2");
+		imp12.setRoi(new Line(0, width, height, 0));
+		if (step) {
+			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+		}
+		peaks4 = profileAnalyzer(imp12, dimPixel,
+				"BISETTRICE DIAGONALE DESTRA", showProfiles);
+
+		int len3 = peaks1[2].length + peaks2[2].length + peaks3[2].length
+				+ peaks4[2].length;
+		int[] xPoints3 = new int[len3];
+		int[] yPoints3 = new int[len3];
+		int j1 = -1;
+
+		for (int i1 = 0; i1 < peaks1[2].length; i1++) {
+			j1++;
+			xPoints3[j1] = (int) (peaks1[2][i1] / dimPixel);
+			yPoints3[j1] = (int) ((double) (height / 2));
+		}
+		for (int i1 = 0; i1 < peaks2[2].length; i1++) {
+			j1++;
+			xPoints3[j1] = (int) ((double) (width / 2));
+			yPoints3[j1] = (int) (peaks2[2][i1] / dimPixel);
+		}
+		for (int i1 = 0; i1 < peaks3[2].length; i1++) {
+			j1++;
+			xPoints3[j1] = (int) (peaks3[2][i1] / dimPixel * Math.sin(Math
+					.toRadians(45 + 90)));
+			yPoints3[j1] = (int) (peaks3[2][i1] / dimPixel * Math.sin(Math
+					.toRadians(45 + 90)));
+		}
+		for (int i1 = 0; i1 < peaks4[2].length; i1++) {
+			j1++;
+			xPoints3[j1] = (int) ((peaks4[2][i1] / (dimPixel * Math.sqrt(2))));
+			yPoints3[j1] = (int) ((double) height - peaks4[2][i1]
+					/ (dimPixel * Math.sqrt(2)));
+		}
+
+		over12.clear();
+
+		// ----------------------------------------------------------------------
+		// Verifica di avere trovato almeno 3 punti, altrimenti chiede la
+		// selezione manuale del cerchio
+		// -------------------------------------------------------------------
+		if (xPoints3.length >= 3) {
+			imp12.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
+			if (step) {
+				imp12.updateAndDraw();
+				over12.addElement(imp12.getRoi());
+				over12.setStrokeColor(Color.red);
+				imp12.setOverlay(over12);
+				imp12.updateAndDraw();
+				new WaitForUserDialog("Premere OK").show();
+			}
+			// eseguo ora fitCircle per trovare centro e dimensione del
+			// fantoccio
+			fitCircle(imp12);
+			if (step) {
+				over12.addElement(imp12.getRoi());
+				over12.setStrokeColor(Color.red);
+			}
+
+		} else {
+			fast = false;
+			UtilAyv.showImageMaximized(imp12);
+			imp12.setRoi(new OvalRoi((width / 2) - 100, (height / 2) - 100,
+					200, 200));
+			new WaitForUserDialog(
+					"Non si riescono a determinare le coordinate di almeno 3 punti del cerchio,\nposizionare a mano una ROI circolare di diametro uguale al fantoccio e\npremere  OK")
+					.show();
+			//
+			// Ho così risolto la mancata localizzazione automatica del
+			// fantoccio
+			//
+		}
+		MyLog.waitHere("005");
+
+		Rectangle boundRec = imp12.getProcessor().getRoi();
+
+		// x1 ed y1 sono le due coordinate del centro
+
+		xCenterCircle = boundRec.x + boundRec.width / 2;
+		yCenterCircle = boundRec.y + boundRec.height / 2;
+		int diamCircle = boundRec.width;
+
+		//
+		// ----------------------------------------------------------
+		// disegno la ROI del centro, a solo scopo dimostrativo !
+		// ----------------------------------------------------------
+		//
+		over12.setStrokeColor(Color.red);
+		imp12.setOverlay(over12);
+
+		if (verbose) {
+			imp12.setRoi(new OvalRoi(xCenterCircle - 4, yCenterCircle - 4, 8, 8));
+			Roi roi1 = imp12.getRoi();
+			if (roi1 == null)
+				IJ.log("roi1==null");
+			over12.addElement(imp12.getRoi());
+			over12.setStrokeColor(Color.red);
+
+			imp12.killRoi();
+		}
+
+		MyLog.waitHere("Determinazione dati per la ROI all'80%");
+
+		int diamRoi2 = (int) Math.round(diamCircle
+				* MyConst.P3_AREA_PERC_80_DIAM);
+		int xRoi2 = xCenterCircle - diamRoi2 / 2;
+		int yRoi2 = yCenterCircle - diamRoi2 / 2;
+
+		imp12.setRoi(new OvalRoi(xRoi2, yRoi2, diamRoi2, diamRoi2));
+
+		// Ora posso chiedere di riposizionare la ROI 80%, oppure automatizzerò
+		// la (rara) richiesta;
+
+		if (!test)
+			msgRoi85percPositioning();
+
+		Rectangle boundingRectangle2 = imp12.getProcessor().getRoi();
+		diamRoi2 = (int) boundingRectangle2.width;
+		// xRoi2 = boundingRectangle2.x
+		// + ((boundingRectangle2.width - diamRoi2) / 2);
+		// yRoi2 = boundingRectangle2.y
+		// + ((boundingRectangle2.height - diamRoi2) / 2);
+		xRoi2 = boundingRectangle2.x + boundingRectangle2.width / 2;
+		yRoi2 = boundingRectangle2.y + boundingRectangle2.height / 2;
+
+		// imp12.deleteRoi();imp12.updateAndDraw();
+		// MyLog.waitHere("pulito???");
+
+		// Ridisegno la Roi 80% al posto che poi restituirò
+
+		// imp12.setRoi(new OvalRoi(xRoi2, yRoi2, diamRoi2, diamRoi2));
+		//
+		// MyLog.waitHere("roi 80% dopo il riposizionamento: xRoi2= "+xRoi2+" yRoi2= "+yRoi2+" diamRoi2= "+diamRoi2);
+
+		int[] out2 = new int[6];
+		out2[0] = xCenterCircle;
+		out2[1] = yCenterCircle;
+		out2[2] = diamCircle;
+
+		out2[3] = xRoi2;
+		out2[4] = yRoi2;
+		out2[5] = diamRoi2;
+
+		return out2;
+	}
+
+	/***
+	 * * Ricerca della posizione della ROI per il calcolo dell'uniformità
+	 * 
+	 * @param imp11
+	 *            immagine di input
+	 * @param profond
+	 *            profondità ROI
+	 * @param direction
+	 *            direzione in cui eventualmente trovo la bolla (si può ricavare
+	 *            anche dai dati dicom) 0= nessuna, 1= alto 2 sinistra .... poi
+	 *            nin zò
+	 * @param info1
+	 *            messaggio esplicativo
+	 * @param autoCalled
+	 *            flag true se chiamato in automatico
+	 * @param step
+	 *            flag true se funzionamento passo - passo
+	 * @param verbose
+	 *            flag true se funzionamento verbose
+	 * @param test
+	 *            flag true se in test
+	 * @param fast
+	 *            flag true se modo batch
+	 * @return vettore con dati ROI
+	 */
 	public static int[] positionSearch12(ImagePlus imp11, ImagePlus imp13,
 			String info1, boolean autoCalled, boolean step, boolean verbose,
 			boolean test, boolean fast) {
@@ -2639,15 +2894,20 @@ public class p12rmn_ implements PlugIn, Measurements {
 					xGhMaxSx = xcentGhost;
 					yGhMaxSx = ycentGhost;
 				}
-				// over2.addElement(imp2.getRoi());
+				if (verbose)
+					over2.addElement(imp2.getRoi());
 			}
 		}
-		imp2.setRoi(new OvalRoi(xGhMaxSx - diamGhost / 2, yGhMaxSx - diamGhost / 2,
-				diamGhost, diamGhost));
+		imp2.setRoi(new OvalRoi(xGhMaxSx - diamGhost / 2, yGhMaxSx - diamGhost
+				/ 2, diamGhost, diamGhost));
+		imp2.getRoi().setStrokeColor(Color.red);
 		over2.addElement(imp2.getRoi());
 
 		MyLog.waitHere("il massimo del ghost di sinistra si trova a x= "
 				+ xGhMaxSx + " y= " + yGhMaxSx + " mean= " + ghMaxSx);
+
+		MyLog.waitHere("AAAAAA per conferma la media è= "
+				+ imp2.getStatistics().mean);
 
 		// ora, dei ghost mi interessa solo il segnale .........
 
@@ -2658,7 +2918,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int xGhMaxUp = -9999;
 		int yGhMaxUp = -9999;
 
-		
 		for (int i1 = 0; i1 < diamCircle - diamGhost; i1++) {
 			for (int i2 = 0; i2 < diamCircle - diamGhost; i2++) {
 				int py = i2;
@@ -2678,18 +2937,17 @@ public class p12rmn_ implements PlugIn, Measurements {
 					xGhMaxUp = xcentGhost;
 					yGhMaxUp = ycentGhost;
 				}
-//				over2.addElement(imp2.getRoi());
+				if (verbose)
+					over2.addElement(imp2.getRoi());
 			}
 		}
-		
-		imp2.setRoi(new OvalRoi(xGhMaxUp - diamGhost / 2, yGhMaxUp - diamGhost / 2,
-				diamGhost, diamGhost));
-		over2.addElement(imp2.getRoi());
 
+		imp2.setRoi(new OvalRoi(xGhMaxUp - diamGhost / 2, yGhMaxUp - diamGhost
+				/ 2, diamGhost, diamGhost));
+		imp2.getRoi().setStrokeColor(Color.red);
+		over2.addElement(imp2.getRoi());
 		MyLog.waitHere("il massimo del ghost superiore si trova a x= "
 				+ xGhMaxUp + " y= " + yGhMaxUp + " mean= " + ghMaxUp);
-
-		
 
 		// ghost di destra (e te pareva che non la buttavano in politica!)
 		MyLog.waitHere("ghost di destra");
@@ -2718,14 +2976,15 @@ public class p12rmn_ implements PlugIn, Measurements {
 					xGhMaxDx = xcentGhost;
 					yGhMaxDx = ycentGhost;
 				}
-//				over2.addElement(imp2.getRoi());
+				if (verbose)
+					over2.addElement(imp2.getRoi());
 			}
 		}
 
-		imp2.setRoi(new OvalRoi(xGhMaxDx - diamGhost / 2, yGhMaxDx - diamGhost / 2,
-				diamGhost, diamGhost));
+		imp2.setRoi(new OvalRoi(xGhMaxDx - diamGhost / 2, yGhMaxDx - diamGhost
+				/ 2, diamGhost, diamGhost));
+		imp2.getRoi().setStrokeColor(Color.red);
 		over2.addElement(imp2.getRoi());
-
 		MyLog.waitHere("il massimo del ghost di destra si trova a x= "
 				+ xGhMaxDx + " y= " + yGhMaxDx + " mean= " + ghMaxDx);
 
@@ -2735,7 +2994,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		double ghMaxDw = -99999;
 		int xGhMaxDw = -9999;
 		int yGhMaxDw = -9999;
-		
+
 		for (int i1 = 0; i1 < diamCircle - diamGhost; i1++) {
 			for (int i2 = height - diamGhost; i2 > diamCircle - diamGhost; i2--) {
 				int py = i2;
@@ -2755,26 +3014,26 @@ public class p12rmn_ implements PlugIn, Measurements {
 					xGhMaxDw = xcentGhost;
 					yGhMaxDw = ycentGhost;
 				}
-//				over2.addElement(imp2.getRoi());
+				if (verbose)
+					over2.addElement(imp2.getRoi());
 			}
 		}
 
-		imp2.setRoi(new OvalRoi(xGhMaxDw - diamGhost / 2, yGhMaxDw - diamGhost / 2,
-				diamGhost, diamGhost));
+		imp2.setRoi(new OvalRoi(xGhMaxDw - diamGhost / 2, yGhMaxDw - diamGhost
+				/ 2, diamGhost, diamGhost));
+		imp2.getRoi().setStrokeColor(Color.red);
 		over2.addElement(imp2.getRoi());
-
 		MyLog.waitHere("il massimo del ghost inferiore si trova a x= "
 				+ xGhMaxDw + " y= " + yGhMaxDw + " mean= " + ghMaxDw);
 
-		
 		MyLog.waitHere();
 
 		return null;
 	}
 
-	public static int[] positionSearch13bis(ImagePlus imp1, int[] circleData,
+	public static int[] positionSearch14(ImagePlus imp1, int[] circleData,
 			int diamGhost, int guard, String info1, boolean autoCalled,
-			boolean step, boolean verbose, boolean test, boolean fast) {
+			boolean step, boolean verbose, boolean test, boolean fast, boolean irraggiungibile) {
 
 		// leggo i dati del cerchio "esterno" del fantoccio e li plotto
 		// sull'immagine
@@ -2785,6 +3044,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		ImagePlus imp2 = imp1.duplicate();
 		imp2.setOverlay(over2);
+		IJ.setMinAndMax(imp2, 10, 50);
+
 		IJ.run(imp2, "Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");
 
 		int width = imp1.getWidth();
@@ -2794,102 +3055,170 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int yCenterCircle = circleData[1];
 		int diamCircle = circleData[2];
 
+		// marco con un punto il centro del fantoccio
+		imp2.setRoi(xCenterCircle, yCenterCircle, 1, 1);
+		UtilAyv.showImageMaximized(imp2);
+		over2.addElement(imp2.getRoi());
+
+		// disegno il perimetro del fantoccio
 		int xRoi0 = xCenterCircle - diamCircle / 2;
 		int yRoi0 = yCenterCircle - diamCircle / 2;
 		int diamRoi0 = diamCircle;
 
 		imp2.setRoi(new OvalRoi(xRoi0, yRoi0, diamRoi0, diamRoi0));
-		UtilAyv.showImageMaximized(imp2);
 		over2.addElement(imp2.getRoi());
 
-		// ora calcolo dove disporre le roi per il calcolo dei ghost
+		MyLog.waitHere("AAAAA");
+		// ghost di sinistra
 
-		int xRoi1 = xCenterCircle - diamGhost / 2;
-		int yRoi1 = 0;
-		int critic_1;
+		MyLog.waitHere("ghost di fondo");
 
+		
+		int a=0;
+		if (irraggiungibile) a=1;
+		int critic_0;
+		int px = 0;
+		int py = 0;
+		double ghMean = 0;
+		int incr = 1;
+		boolean pieno = false;
 		do {
-			critic_1 = criticalDistanceCalculation(xRoi1, yRoi1, diamGhost,
-					xRoi0, yRoi0, diamRoi0);
-			// MyLog.waitHere("critic_1= " + critic_1 + " guard= " + guard);
+			incr--;
+			px = width - diamGhost + incr;
+			py = height - diamGhost + incr;
+			int xcentGhost = px + diamGhost / 2;
+			int ycentGhost = py + diamGhost / 2;
+			critic_0 = criticalDistanceCalculation(xcentGhost, ycentGhost,
+					diamGhost / 2, xCenterCircle, yCenterCircle, diamCircle / 2);
+			imp2.setRoi(new OvalRoi(px, py, diamGhost, diamGhost));
+			ghMean = imp2.getStatistics().mean;
 
-			imp2.setRoi(new OvalRoi(xRoi1, yRoi1, diamGhost, diamGhost));
-			over2.addElement(imp2.getRoi());
-			imp2.killRoi();
-			xRoi1 += 5;
-			if (xRoi1 > width) {
-				MyLog.waitHere("non trovo posizione");
-				continue;
-			}
-
-		} while (critic_1 < guard);
-
-		// qui la criticalDistance è su y
-		// TODO calcolare tutte le criticalDistance
-
-		int xRoi2 = imp1.getWidth() - diamGhost;
-		int yRoi2 = yCenterCircle - diamGhost / 2;
-		int critic_2;
-
-		do {
-			critic_2 = criticalDistanceCalculation(xRoi2, yRoi2, diamGhost,
-					xRoi0, yRoi0, diamRoi0);
-			// MyLog.waitHere("critic_2= " + critic_2 + " guard= " + guard);
-
-			imp2.setRoi(new OvalRoi(xRoi2, yRoi2, diamGhost, diamGhost));
-			over2.addElement(imp2.getRoi());
-			imp2.killRoi();
-			yRoi2 += 5;
-			if (yRoi2 > height) {
-				MyLog.waitHere("non trovo posizione");
-				continue;
-			}
-
-		} while (critic_2 < guard);
-
-		int xRoi3 = xCenterCircle - diamGhost / 2;
-		int yRoi3 = imp1.getWidth() - diamGhost;
-		int critic_3;
-
-		do {
-			critic_3 = criticalDistanceCalculation(xRoi3, yRoi3, diamGhost,
-					xRoi0, yRoi0, diamRoi0);
-			// MyLog.waitHere("critic_2= " + critic_2 + " guard= " + guard);
-
-			imp2.setRoi(new OvalRoi(xRoi3, yRoi3, diamGhost, diamGhost));
-			over2.addElement(imp2.getRoi());
-			imp2.killRoi();
-			xRoi3 -= 5;
-			if (xRoi3 < diamGhost) {
-				MyLog.waitHere("non trovo posizione");
-				continue;
-			}
-
-		} while (critic_3 < guard);
-
-		int xRoi4 = 0;
-		int yRoi4 = yCenterCircle - diamGhost / 2;
-		int critic_4;
-		do {
-			critic_4 = criticalDistanceCalculation(xRoi4, yRoi4, diamGhost,
-					xRoi0, yRoi0, diamRoi0);
-			// MyLog.waitHere("critic_2= " + critic_2 + " guard= " + guard);
-
-			imp2.setRoi(new OvalRoi(xRoi4, yRoi4, diamGhost, diamGhost));
-			over2.addElement(imp2.getRoi());
-			imp2.killRoi();
-			yRoi4 -= 5;
-			if (yRoi4 < diamGhost) {
-				MyLog.waitHere("non trovo posizione");
-				continue;
-			}
-
-		} while (critic_4 < guard);
-
-		imp2.updateAndDraw();
-		MyLog.waitHere();
+			pieno = verifyCircularRoiPixels(imp2, xcentGhost, ycentGhost,
+					diamGhost);
+			if (critic_0 < guard) {MyLog.waitHere("non riesco a posizionare il fondo!!!");}
+		} while (pieno || a>0);
+//	} while (pieno);
 
 		return null;
+	}
+
+	/***
+	 * Cerco se all'interno del cerchio esiste almeno un area di 3x3 pixel a
+	 * zero
+	 * 
+	 * @param imp1
+	 * @param xRoi
+	 * @param yRoi
+	 * @param diamRoi
+	 */
+	public static void circleBlackAreaSearch(ImagePlus imp1, int xRoi,
+			int yRoi, int diamRoi) {
+		// disegno la Roi di diametro diamRoi (forse la diminuirò di 2 pixel)
+		int xRoi0 = xRoi - diamRoi / 2;
+		int yRoi0 = yRoi - diamRoi / 2;
+		int diamRoi0 = diamRoi;
+		ImageProcessor ip1 = imp1.getProcessor();
+
+		imp1.setRoi(new OvalRoi(xRoi0, yRoi0, diamRoi0, diamRoi0));
+		Rectangle r1 = ip1.getRoi();
+		// tento un primo approccio, senza utilizzare la mask
+		Roi roi1 = imp1.getRoi();
+		Rectangle rect = roi1.getBounds();
+		int rx = rect.x;
+		int ry = rect.y;
+		int w = rect.width;
+		int h = rect.height;
+		for (int y = ry; y < ry + h; y++) {
+			for (int x = rx; x < rx + w; x++) {
+				if (roi1.contains(x, y)) {
+
+				}
+
+			}
+		}
+	}
+
+	/**
+	 * extract the pixel values of a circular ROI
+	 * 
+	 * @param imp1
+	 * @return
+	 */
+	public static boolean verifyCircularRoiPixels(ImagePlus imp1, int xRoi,
+			int yRoi, int diamRoi) {
+		int xRoi0 = xRoi - diamRoi / 2;
+		int yRoi0 = yRoi - diamRoi / 2;
+		int diamRoi0 = diamRoi;
+		IJ.setMinAndMax(imp1, 10, 30);
+		Overlay over2 = new Overlay();
+		over2.setStrokeColor(Color.red);
+		imp1.setOverlay(over2);
+
+		imp1.setRoi(new OvalRoi(xRoi0, yRoi0, diamRoi0, diamRoi0));
+		imp1.getRoi().setStrokeColor(Color.red);
+
+		over2.addElement(imp1.getRoi());
+
+		UtilAyv.showImageMaximized2(imp1);
+		ImageProcessor ip1 = imp1.getProcessor();
+		Roi roi1 = imp1.getRoi();
+
+		ImageProcessor mask = roi1.getMask();
+		if (mask == null)
+			MyLog.waitHere("mask==null");
+
+//		short[] pixels = (short[]) ip1.getPixelsCopy();
+		short[] pixels = UtilAyv.truePixels(imp1);
+
+		Rectangle roi2 = ip1.getRoi();
+		int x1 = roi2.x;
+		int y1 = roi2.y;
+		int width = roi2.width;
+		int height = roi2.height;
+		int offset = 0;
+		int[] vet = new int[9];
+		// float[][] result = new float[width][height];
+		ip1.setRoi(imp1.getRoi());
+		byte[] maskArray = ip1.getMaskArray();
+		if (maskArray == null)
+			MyLog.waitHere("maskArray==null");
+		int width1 = imp1.getWidth();
+		int sum = 0;
+
+		for (int i1 = 0; i1 < width; i1++) {
+			for (int i2 = 0; i2 < height; i2++) {
+				sum=0;
+				offset = (y1 + i2) * width1 + (x1 + i1);
+				if (maskArray[i1 * width + i2] != 0) {
+					// se questo pixel fa parte della roi, allora analizzo
+					// l'intorno di 3x3 pixel
+					vet[0] = offset - width1 - 1;
+					vet[1] = offset - width1;
+					vet[2] = offset - width1 + 1;
+					vet[3] = offset - 1;
+					vet[4] = offset;
+					vet[5] = offset + 1;
+					vet[6] = offset + width - 1;
+					vet[7] = offset + width;
+					vet[8] = offset + width + 1;
+					for (int i4 = 0; i4 < 9; i4++) {
+						if (vet[i4] <= pixels.length) {
+							sum = sum + pixels[vet[i4]];
+//							MyLog.waitHere("offset= "+offset+" pixel= "+pixels[vet[i4]]);
+							imp1.setRoi(x1 + i1, y1 + i2, 1, 1);
+							over2.addElement(imp1.getRoi());
+						}
+					}
+//					MyLog.waitHere("sum= " + sum);
+					
+					if (sum == 0)
+						return true;
+				}
+			}
+		}
+		// imp1.updateAndDraw();
+		// MyLog.waitHere();
+		return false;
 	}
 
 	/**

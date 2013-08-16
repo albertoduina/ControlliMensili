@@ -160,6 +160,38 @@ public class p12rmn_Test {
 	}
 
 	@Test
+	public final void testPositionSearch11() {
+
+		// 16 dic 2011 sistemato, ora funziona in automatico
+
+		String path1 = "./Test2/HUSA2_01testP3";
+
+		String path2 = "./Test2/HUSA2_02testP3";
+		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+		imp11.show();
+
+		ImagePlus imp13 = UtilAyv.openImageNoDisplay(path2, true);
+		imp11.show();
+
+		boolean autoCalled = false;
+		boolean step = true;
+		boolean verbose = true;
+		boolean test = false;
+		boolean fast = false;
+
+		int out2[] = p12rmn_.positionSearch11(imp11, imp13, "", autoCalled,
+				step, verbose, test, fast);
+
+		MyLog.logVector(out2, "out2");
+
+		double[] expected = { 159.0, 105.0, 118.0, 133.0, 202.0, 77.0,
+				33.690067525979785 };
+		// MyLog.logVector(out2, "out2");
+		// boolean ok = UtilAyv.verifyResults1(expected, out2, null);
+		// assertTrue(ok);
+	}
+
+	@Test
 	public final void testPositionSearch12() {
 
 		// 16 dic 2011 sistemato, ora funziona in automatico
@@ -187,11 +219,10 @@ public class p12rmn_Test {
 		double[] expected = { 159.0, 105.0, 118.0, 133.0, 202.0, 77.0,
 				33.690067525979785 };
 		// MyLog.logVector(out2, "out2");
-//		boolean ok = UtilAyv.verifyResults1(expected, out2, null);
-//		assertTrue(ok);
+		// boolean ok = UtilAyv.verifyResults1(expected, out2, null);
+		// assertTrue(ok);
 	}
-	
-	
+
 	@Test
 	public final void testPositionSearch13() {
 
@@ -204,69 +235,105 @@ public class p12rmn_Test {
 		imp13.deleteRoi();
 		boolean autoCalled = true;
 		boolean step = false;
-		boolean verbose = true;
+		boolean verbose = false;
 		boolean test = false;
 		boolean fast = true;
 
 		int[] out2 = p12rmn_.positionSearch12(imp11, imp13, "", autoCalled,
 				step, verbose, test, fast);
-		MyLog.logVector(out2, "out2"); 
-		int[] circleData= out2;
-		int diamGhost=20;
-		int guard=5;
-		int[] out3 = p12rmn_.positionSearch13(imp11, circleData, diamGhost, guard, "", autoCalled,
-				step, verbose, test, fast);
+		MyLog.logVector(out2, "out2");
+		int[] circleData = out2;
+		int diamGhost = 20;
+		int guard = 10;
+		int[] out3 = p12rmn_.positionSearch13(imp11, circleData, diamGhost,
+				guard, "", autoCalled, step, verbose, test, fast);
 		MyLog.logVector(out3, "out3");
 		MyLog.waitHere();
-		
+
 		path1 = "./Test2/bbb.tif";
 		imp11 = UtilAyv.openImageNoDisplay(path1, true);
 		imp11.deleteRoi();
 		imp13 = UtilAyv.openImageNoDisplay(path1, true);
 		imp13.deleteRoi();
 
-		out2 = p12rmn_.positionSearch12(imp11, imp13, "", autoCalled,
-				step, verbose, test, fast);
-		MyLog.logVector(out2, "out2"); 
-		circleData= out2;
-		diamGhost=20;
-		guard=5;
-		out3 = p12rmn_.positionSearch13(imp11, circleData, diamGhost, guard, "", autoCalled,
-				step, verbose, test, fast);
+		out2 = p12rmn_.positionSearch12(imp11, imp13, "", autoCalled, step,
+				verbose, test, fast);
+		MyLog.logVector(out2, "out2");
+		circleData = out2;
+		out3 = p12rmn_.positionSearch13(imp11, circleData, diamGhost, guard,
+				"", autoCalled, step, verbose, test, fast);
 		MyLog.logVector(out3, "out3");
 
-		
-		
 		double[] expected = { 159.0, 105.0, 118.0, 133.0, 202.0, 77.0,
 				33.690067525979785 };
 		// MyLog.logVector(out2, "out2");
-//		boolean ok = UtilAyv.verifyResults1(expected, out2, null);
-//		assertTrue(ok);
+		// boolean ok = UtilAyv.verifyResults1(expected, out2, null);
+		// assertTrue(ok);
 	}
 
+	@Test
+	public final void testPositionSearch14() {
 
-	
-	
-	
-	
-	
-	
-	
+		// 16 dic 2011 sistemato, ora funziona in automatico
+
+		String path1 = "./Test2/HUSA2_01testP3";
+		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+		imp11.deleteRoi();
+		ImagePlus imp13 = UtilAyv.openImageNoDisplay(path1, true);
+		imp13.deleteRoi();
+		boolean autoCalled = true;
+		boolean step = false;
+		boolean verbose = false;
+		boolean test = false;
+		boolean fast = true;
+
+		int[] out2 = p12rmn_.positionSearch11(imp11, imp13, "", autoCalled,
+				step, verbose, test, fast);
+		MyLog.logVector(out2, "out2");
+		int[] circleData = out2;
+		int diamGhost = 20;
+		int guard = 10;
+		boolean irraggiungibile = true;
+		int[] out3 = p12rmn_.positionSearch14(imp11, circleData, diamGhost,
+				guard, "", autoCalled, step, verbose, test, fast,
+				irraggiungibile);
+		MyLog.logVector(out3, "out3");
+		MyLog.waitHere();
+
+	}
+
+	@Test
+	public final void testVerifyCircularRoiPixels() {
+
+		// 16 dic 2011 sistemato, ora funziona in automatico
+
+		String path1 = "./Test2/HUSA2_01testP3";
+		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+		imp11.deleteRoi();
+		ImagePlus imp13 = UtilAyv.openImageNoDisplay(path1, true);
+		imp13.deleteRoi();
+		int xRoi = 240;
+		int yRoi = 240;
+		int diamRoi = 20;
+		boolean out3 = p12rmn_.verifyCircularRoiPixels(imp11, xRoi, yRoi,
+				diamRoi);
+		MyLog.waitHere("out3= " + out3);
+
+	}
+
 	@Test
 	public final void testCriticalDistanceCalculation() {
-		int x1=55;
-		int y1=22;
-		int r1=19;
-		int x2=129;
-		int y2=140;
-		int r2=86;
-		int out1 = p12rmn_.criticalDistanceCalculation(x1, y1, r1,
-				x2, y2, r2);
-		MyLog.waitHere("out1= "+out1);
+		int x1 = 55;
+		int y1 = 22;
+		int r1 = 19;
+		int x2 = 129;
+		int y2 = 140;
+		int r2 = 86;
+		int out1 = p12rmn_.criticalDistanceCalculation(x1, y1, r1, x2, y2, r2);
+		MyLog.waitHere("out1= " + out1);
 
 	}
-	
-	
+
 	@Test
 	public final void testInterpola() {
 		double ax = 117.0;
