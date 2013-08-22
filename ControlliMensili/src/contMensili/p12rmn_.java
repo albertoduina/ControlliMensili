@@ -16,6 +16,7 @@ import ij.gui.PolygonRoi;
 import ij.gui.Roi;
 import ij.gui.WaitForUserDialog;
 import ij.io.FileSaver;
+import ij.measure.Calibration;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
@@ -35,12 +36,14 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import utils.AboutBox;
+import utils.ArrayUtils;
 import utils.ButtonMessages;
 import utils.ImageUtils;
 import utils.InputOutput;
 import utils.Msg;
 import utils.MyConst;
 import utils.MyFwhm;
+import utils.MyLine;
 import utils.MyLog;
 import utils.MyPlot;
 import utils.MyVersionUtils;
@@ -1798,6 +1801,69 @@ public class p12rmn_ implements PlugIn, Measurements {
 	}
 
 	/***
+	 * Riceve una ImagePlus derivante da un CannyEdgeDetector con impostata una
+	 * Line, restituisce le coordinate dei 2 picchi
+	 * 
+	 * @param imp1
+	 * @param dimPixel
+	 * @return
+	 */
+	public static double[][] cannyProfileAnalyzer(ImagePlus imp1,
+			double dimPixel, String title, boolean showProfiles) {
+
+		double[][] line1 = MyLine.decomposer(imp1);
+		int count1 = 0;
+		boolean ready1 = false;
+		for (int i1 = 0; i1 < line1[0].length; i1++) {
+
+			if ((line1[2][i1] == 255) && ready1) {
+				count1++;
+				ready1 = false;
+			} else
+				ready1 = true;
+		}
+		MyLog.logMatrixVertical(line1, title);
+		// devo ora contare i pixel a 255 che ho trovato, ne accetterò solo 2,
+		if (count1 > 2)
+			MyLog.waitHere("" + title + " trovati più di 2 punti count= "
+					+ count1);
+
+		// peaks1 viene utilizzato in un altra routine, per cui gli elementi 0
+		// ed 1 sono utilizzati per altro, li lascio a 0
+		double[][] peaks1 = new double[4][count1];
+
+		int count2 = 0;
+		boolean ready2 = false;
+		for (int i1 = 0; i1 < line1[0].length; i1++) {
+
+			if (line1[2][i1] == 255 && ready2) {
+				peaks1[2][count2] = line1[0][i1];
+				peaks1[3][count2] = line1[1][i1];
+				count2++;
+				ready2 = false;
+			} else
+				ready2 = true;
+		}
+		if (showProfiles) {
+			Plot plot2 = MyPlot
+					.basePlot(line1[0], line1[1], title, Color.GREEN);
+			plot2.draw();
+			plot2.setColor(Color.red);
+			plot2.addPoints(line1[0], line1[1], PlotWindow.CIRCLE);
+			plot2.show();
+			new WaitForUserDialog("002 premere  OK").show();
+		}
+
+		// verifico di avere trovato un max di 2 picchi
+		if (peaks1[2].length > 2)
+			MyLog.waitHere("Attenzione trovati troppe intersezioni col cerchio, cioè "
+					+ peaks1[2].length + "  VERIFICARE");
+
+		MyLog.logMatrix(peaks1, "peaks1 " + title);
+		return peaks1;
+	}
+
+	/***
 	 * Riceve una ImagePlus con impostata una Line, restituisce le coordinate
 	 * dei 2 picchi
 	 * 
@@ -1844,6 +1910,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 			plot2.show();
 			new WaitForUserDialog("002 premere  OK").show();
 		}
+
+		// verifico di avere trovato un max di 2 picchi
+		if (peaks1[2].length > 2)
+			MyLog.waitHere("Attenzione trovati troppe intersezioni col cerchio, VERIFICARE");
 
 		return peaks1;
 	}
@@ -2319,7 +2389,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 	}
 
 	/***
-	 * * Ricerca della posizione della ROI per il calcolo dell'uniformità
+	 * * Ricerca della posizione della ROI per il calcolo dell'uniformità,
+	 * utilizzando il Canny Edge Detector
 	 * 
 	 * @param imp11
 	 *            immagine di input
@@ -2338,14 +2409,29 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 * @param verbose
 	 *            flag true se funzionamento verbose
 	 * @param test
-	 *            flag true se in test
+	 *            flag true se in test, non vengono visualizzate immagini e non
+	 *            viene chiesta alcuna conferma
 	 * @param fast
 	 *            flag true se modo batch
 	 * @return vettore con dati ROI
 	 */
-	public static int[] positionSearch11(ImagePlus imp11, ImagePlus imp13,
-			String info1, boolean autoCalled, boolean step, boolean verbose,
-			boolean test, boolean fast) {
+
+	/**
+	 * Ricerca posizione ROI per calcolo uniformità. Versione con Canny Edge
+	 * Detector
+	 * 
+	 * @param imp11
+	 * @param info1
+	 * @param autoCalled
+	 * @param step
+	 * @param verbose
+	 * @param test
+	 * @param fast
+	 * @return
+	 */
+	public static int[] positionSearch11(ImagePlus imp11, String info1,
+			boolean autoCalled, boolean step, boolean verbose, boolean test,
+			boolean fast) {
 		//
 		// ================================================================================
 		// Inizio calcoli geometrici
@@ -2363,30 +2449,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		int width = imp11.getWidth();
 		int height = imp11.getHeight();
-
 		ImagePlus imp112 = imp11.duplicate();
-
 		MyCannyEdgeDetector mce = new MyCannyEdgeDetector();
-
 		ImagePlus imp12 = mce.process(imp112);
-		if (step)
+		if (step && !test)
 			UtilAyv.showImageMaximized(imp12);
-
-		//
-		// -------------------------------------------------
-		// Determinazione del cerchio utilizzando l'algoritmo canny edge
-		// detector
-		// -------------------------------------------------
-		//
-		// ImageProcessor ip12 = imp12.getProcessor();
-		// ip12.smooth();
-		// if (step)
-		// new WaitForUserDialog("Eseguito SMOOTH").show();
-		// ip12.findEdges();
-		//
-		// if (step)
-		// new WaitForUserDialog("Eseguito FIND EDGES").show();
-
 		imp12.setOverlay(over12);
 
 		double[][] peaks1 = new double[4][1];
@@ -2394,60 +2461,238 @@ public class p12rmn_ implements PlugIn, Measurements {
 		double[][] peaks3 = new double[4][1];
 		double[][] peaks4 = new double[4][1];
 		boolean showProfiles = step;
-
+		int[] xcoord = new int[2];
+		int[] ycoord = new int[2];
+		int xprimo;
+		int yprimo;
+		int xsecondo;
+		int ysecondo;
 		showProfiles = false;
 
-		// IJ.log("BISETTRICE ORIZZONTALE");
-		imp12.setRoi(new Line(0, height / 2, width, height / 2));
-		if (step) {
+		// -------- ORIZZONTALE ---------------------
+		xcoord[0] = 0;
+		ycoord[0] = height / 2;
+		xcoord[1] = width;
+		ycoord[1] = height / 2;
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
+		if (step && !test) {
 			imp12.updateAndDraw();
 			over12.addElement(imp12.getRoi());
-			over12.setStrokeColor(Color.red);
 		}
-		peaks1 = profileAnalyzer(imp12, dimPixel, "BISETTRICE ORIZZONTALE",
-				showProfiles);
+		peaks1 = cannyProfileAnalyzer(imp12, dimPixel,
+				"BISETTRICE ORIZZONTALE", showProfiles);
+		// PLOTTAGGIO PUNTI
+		xprimo = (int) (peaks1[2][0]);
+		yprimo = (int) (peaks1[3][0]);
+		xsecondo = (int) (peaks1[2][1]);
+		ysecondo = (int) (peaks1[3][1]);
+		imp12.setRoi(xprimo, yprimo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+		imp12.setRoi(xsecondo, ysecondo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
 
-		// IJ.log("BISETTRICE VERTICALE");
-		imp12.setRoi(new Line(width / 2, 0, width / 2, height));
-		if (step) {
+		// NOTA BENE: sulla bisettrice (e ricordiamoci, è la bisettrice
+		// dell'immagine) potrebbe esserci la bolla d'aria a sinistra, quindi
+		// non dovrei utilizzare questo punto per la determinazione automatica
+		// del centro, poichè può introdurre un leggero shift del centro
+
+		// -------- VERTICALE ---------------------
+		xcoord[0] = width / 2;
+		ycoord[0] = 0;
+		xcoord[1] = width / 2;
+		ycoord[1] = height;
+		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		if (step && !test) {
 			imp12.updateAndDraw();
 			over12.addElement(imp12.getRoi());
 		}
-		peaks2 = profileAnalyzer(imp12, dimPixel, "BISETTRICE VERTICALE",
+		peaks2 = cannyProfileAnalyzer(imp12, dimPixel, "BISETTRICE VERTICALE",
 				showProfiles);
-		// IJ.log("DIAGONALE 1");
-		imp12.setRoi(new Line(0, 0, width, height));
-		if (step) {
+		// PLOTTAGGIO PUNTI
+		xprimo = (int) (peaks2[2][0]);
+		yprimo = (int) (peaks2[3][0]);
+		imp12.setRoi(xprimo, yprimo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+		xsecondo = (int) (peaks2[2][1]);
+		ysecondo = (int) (peaks2[3][1]);
+		imp12.setRoi(xsecondo, ysecondo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+
+		// -------- INCERTA SX---------------------
+		xcoord[0] = width / 4;
+		ycoord[0] = 0;
+		xcoord[1] = width * 3 / 4;
+		ycoord[1] = height;
+		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		if (step && !test) {
 			imp12.updateAndDraw();
 			over12.addElement(imp12.getRoi());
 		}
-		peaks3 = profileAnalyzer(imp12, dimPixel,
+		peaks2 = cannyProfileAnalyzer(imp12, dimPixel, "BISETTRICE INCERTA SX",
+				showProfiles);
+		// PLOTTAGGIO PUNTI
+		xprimo = (int) (peaks2[2][0]);
+		yprimo = (int) (peaks2[3][0]);
+		imp12.setRoi(xprimo, yprimo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+		xsecondo = (int) (peaks2[2][1]);
+		ysecondo = (int) (peaks2[3][1]);
+		imp12.setRoi(xsecondo, ysecondo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+
+		// -------- INCERTA DX---------------------
+		xcoord[0] = width * 3 / 4;
+		ycoord[0] = 0;
+		xcoord[1] = width / 4;
+		ycoord[1] = height;
+		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		if (step && !test) {
+			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+		}
+		peaks2 = cannyProfileAnalyzer(imp12, dimPixel, "BISETTRICE INCERTA SX",
+				showProfiles);
+		// PLOTTAGGIO PUNTI
+		xprimo = (int) (peaks2[2][0]);
+		yprimo = (int) (peaks2[3][0]);
+		imp12.setRoi(xprimo, yprimo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+		xsecondo = (int) (peaks2[2][1]);
+		ysecondo = (int) (peaks2[3][1]);
+		imp12.setRoi(xsecondo, ysecondo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+
+		// --------DIAGONALE SINISTRA---------------------
+		xcoord[0] = 0;
+		ycoord[0] = 0;
+		xcoord[1] = width;
+		ycoord[1] = height;
+		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		if (step && !test) {
+			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+		}
+		peaks3 = cannyProfileAnalyzer(imp12, dimPixel,
 				"BISETTRICE DIAGONALE SINISTRA", showProfiles);
-		// IJ.log("DIAGONALE 2");
-		imp12.setRoi(new Line(0, width, height, 0));
-		if (step) {
+		// PLOTTAGGIO PUNTI
+		xprimo = (int) (peaks3[2][0]);
+		yprimo = (int) (peaks3[3][0]);
+		imp12.setRoi(xprimo, yprimo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+		xsecondo = (int) (peaks3[2][1]);
+		ysecondo = (int) (peaks3[3][1]);
+		imp12.setRoi(xsecondo, ysecondo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+		// --------DIAGONALE DESTRA---------------------
+		xcoord[0] = width;
+		ycoord[0] = 0;
+		xcoord[1] = 0;
+		ycoord[1] = height;
+		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		if (step && !test) {
 			imp12.updateAndDraw();
 			over12.addElement(imp12.getRoi());
 		}
-		peaks4 = profileAnalyzer(imp12, dimPixel,
+		peaks4 = cannyProfileAnalyzer(imp12, dimPixel,
 				"BISETTRICE DIAGONALE DESTRA", showProfiles);
+		// PLOTTAGGIO PUNTI
+		xprimo = (int) (peaks4[2][0]);
+		yprimo = (int) (peaks4[3][0]);
+		imp12.setRoi(xprimo, yprimo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+		xsecondo = (int) (peaks4[2][1]);
+		ysecondo = (int) (peaks4[3][1]);
+		imp12.setRoi(xsecondo, ysecondo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
 
-		int len3 = peaks1[2].length + peaks2[2].length + peaks3[2].length
-				+ peaks4[2].length;
+		// --------DIAGONALE DESTRA extra---------------------
+		xcoord[0] = width;
+		ycoord[0] = height * 1 / 4;
+		xcoord[1] = 0;
+		ycoord[1] = height * 3 / 4;
+		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		if (step && !test) {
+			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+		}
+		peaks4 = cannyProfileAnalyzer(imp12, dimPixel,
+				"BISETTRICE DIAGONALE DESTRA EXTRA", showProfiles);
+		// PLOTTAGGIO PUNTI
+		xprimo = (int) (peaks4[2][0]);
+		yprimo = (int) (peaks4[3][0]);
+		imp12.setRoi(xprimo, yprimo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+		xsecondo = (int) (peaks4[2][1]);
+		ysecondo = (int) (peaks4[3][1]);
+		imp12.setRoi(xsecondo, ysecondo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+		
+		// --------DIAGONALE DESTRA extra---------------------
+		xcoord[0] = 0;
+		ycoord[0] = height * 1 / 4;
+		xcoord[1] = width;
+		ycoord[1] = height * 3 / 4;
+		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		if (step && !test) {
+			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+		}
+		peaks4 = cannyProfileAnalyzer(imp12, dimPixel,
+				"BISETTRICE DIAGONALE DESTRA EXTRA", showProfiles);
+		// PLOTTAGGIO PUNTI
+		xprimo = (int) (peaks4[2][0]);
+		yprimo = (int) (peaks4[3][0]);
+		imp12.setRoi(xprimo, yprimo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+		xsecondo = (int) (peaks4[2][1]);
+		ysecondo = (int) (peaks4[3][1]);
+		imp12.setRoi(xsecondo, ysecondo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+		// /----------------------------------
+
+
+		MyLog.waitHere("VERIFICARE I PUNTI");
+
+		int len3 = peaks1[2].length - 1 + peaks2[2].length - 1
+				+ peaks3[2].length + peaks4[2].length;
 		int[] xPoints3 = new int[len3];
 		int[] yPoints3 = new int[len3];
 		int j1 = -1;
 
-		for (int i1 = 0; i1 < peaks1[2].length; i1++) {
-			j1++;
-			xPoints3[j1] = (int) (peaks1[2][i1] / dimPixel);
-			yPoints3[j1] = (int) ((double) (height / 2));
-		}
-		for (int i1 = 0; i1 < peaks2[2].length; i1++) {
-			j1++;
-			xPoints3[j1] = (int) ((double) (width / 2));
-			yPoints3[j1] = (int) (peaks2[2][i1] / dimPixel);
-		}
+		// della bisettice orizzontale prendo solo il picco di dx
+		j1++;
+		xPoints3[j1] = (int) (peaks1[2][1] / dimPixel);
+		yPoints3[j1] = (int) ((double) (height / 2));
+
+		// della bisettice verticale prendo solo il picco in basso
+		j1++;
+		xPoints3[j1] = (int) ((double) (width / 2));
+		yPoints3[j1] = (int) (peaks2[2][1] / dimPixel);
+
 		for (int i1 = 0; i1 < peaks3[2].length; i1++) {
 			j1++;
 			xPoints3[j1] = (int) (peaks3[2][i1] / dimPixel * Math.sin(Math
@@ -2462,6 +2707,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 					/ (dimPixel * Math.sqrt(2)));
 		}
 
+		MyLog.waitHere("AAAAA");
+
 		over12.clear();
 
 		// ----------------------------------------------------------------------
@@ -2470,7 +2717,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		// -------------------------------------------------------------------
 		if (xPoints3.length >= 3) {
 			imp12.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
-			if (step) {
+			if (step && !test) {
 				imp12.updateAndDraw();
 				over12.addElement(imp12.getRoi());
 				over12.setStrokeColor(Color.red);
@@ -2481,7 +2728,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			// eseguo ora fitCircle per trovare centro e dimensione del
 			// fantoccio
 			fitCircle(imp12);
-			if (step) {
+			if (step && !test) {
 				over12.addElement(imp12.getRoi());
 				over12.setStrokeColor(Color.red);
 			}
@@ -2499,12 +2746,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			// fantoccio
 			//
 		}
-		MyLog.waitHere("005");
 
 		Rectangle boundRec = imp12.getProcessor().getRoi();
-
-		// x1 ed y1 sono le due coordinate del centro
-
 		xCenterCircle = boundRec.x + boundRec.width / 2;
 		yCenterCircle = boundRec.y + boundRec.height / 2;
 		int diamCircle = boundRec.width;
@@ -2514,10 +2757,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 		// disegno la ROI del centro, a solo scopo dimostrativo !
 		// ----------------------------------------------------------
 		//
-		over12.setStrokeColor(Color.red);
-		imp12.setOverlay(over12);
+		if (!test) {
+			over12.setStrokeColor(Color.red);
+			imp12.setOverlay(over12);
+		}
 
-		if (verbose) {
+		if (verbose && !test) {
 			imp12.setRoi(new OvalRoi(xCenterCircle - 4, yCenterCircle - 4, 8, 8));
 			Roi roi1 = imp12.getRoi();
 			if (roi1 == null)
@@ -2528,7 +2773,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			imp12.killRoi();
 		}
 
-		MyLog.waitHere("Determinazione dati per la ROI all'80%");
+		if (step)
+			MyLog.waitHere("Determinazione dati per la ROI all'80%");
 
 		int diamRoi2 = (int) Math.round(diamCircle
 				* MyConst.P3_AREA_PERC_80_DIAM);
@@ -2536,36 +2782,16 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int yRoi2 = yCenterCircle - diamRoi2 / 2;
 
 		imp12.setRoi(new OvalRoi(xRoi2, yRoi2, diamRoi2, diamRoi2));
-
-		// Ora posso chiedere di riposizionare la ROI 80%, oppure automatizzerò
-		// la (rara) richiesta;
-
-		if (!test)
+		if (step)
 			msgRoi85percPositioning();
 
 		Rectangle boundingRectangle2 = imp12.getProcessor().getRoi();
 		diamRoi2 = (int) boundingRectangle2.width;
-		// xRoi2 = boundingRectangle2.x
-		// + ((boundingRectangle2.width - diamRoi2) / 2);
-		// yRoi2 = boundingRectangle2.y
-		// + ((boundingRectangle2.height - diamRoi2) / 2);
 		xRoi2 = boundingRectangle2.x + boundingRectangle2.width / 2;
-		yRoi2 = boundingRectangle2.y + boundingRectangle2.height / 2;
-
-		// imp12.deleteRoi();imp12.updateAndDraw();
-		// MyLog.waitHere("pulito???");
-
-		// Ridisegno la Roi 80% al posto che poi restituirò
-
-		// imp12.setRoi(new OvalRoi(xRoi2, yRoi2, diamRoi2, diamRoi2));
-		//
-		// MyLog.waitHere("roi 80% dopo il riposizionamento: xRoi2= "+xRoi2+" yRoi2= "+yRoi2+" diamRoi2= "+diamRoi2);
-
 		int[] out2 = new int[6];
 		out2[0] = xCenterCircle;
 		out2[1] = yCenterCircle;
 		out2[2] = diamCircle;
-
 		out2[3] = xRoi2;
 		out2[4] = yRoi2;
 		out2[5] = diamRoi2;
@@ -2749,7 +2975,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 			// fantoccio
 			//
 		}
-		MyLog.waitHere("005");
 
 		Rectangle boundRec = imp12.getProcessor().getRoi();
 
@@ -2778,7 +3003,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			imp12.killRoi();
 		}
 
-		MyLog.waitHere("Determinazione dati per la ROI all'80%");
+		if (step)
+			MyLog.waitHere("Determinazione dati per la ROI all'80%");
 
 		int diamRoi2 = (int) Math.round(diamCircle
 				* MyConst.P3_AREA_PERC_80_DIAM);
@@ -2790,7 +3016,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		// Ora posso chiedere di riposizionare la ROI 80%, oppure automatizzerò
 		// la (rara) richiesta;
 
-		if (!test)
+		if (step)
 			msgRoi85percPositioning();
 
 		Rectangle boundingRectangle2 = imp12.getProcessor().getRoi();
@@ -3033,7 +3259,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 	public static int[] positionSearch14(ImagePlus imp1, int[] circleData,
 			int diamGhost, int guard, String info1, boolean autoCalled,
-			boolean step, boolean verbose, boolean test, boolean fast, boolean irraggiungibile) {
+			boolean step, boolean verbose, boolean test, boolean fast,
+			boolean irraggiungibile) {
 
 		// leggo i dati del cerchio "esterno" del fantoccio e li plotto
 		// sull'immagine
@@ -3073,15 +3300,17 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		MyLog.waitHere("ghost di fondo");
 
-		
-		int a=0;
-		if (irraggiungibile) a=1;
+		int a = 0;
+		if (irraggiungibile)
+			a = 1;
 		int critic_0;
 		int px = 0;
 		int py = 0;
 		double ghMean = 0;
 		int incr = 1;
 		boolean pieno = false;
+		boolean demo = true;
+
 		do {
 			incr--;
 			px = width - diamGhost + incr;
@@ -3094,10 +3323,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 			ghMean = imp2.getStatistics().mean;
 
 			pieno = verifyCircularRoiPixels(imp2, xcentGhost, ycentGhost,
-					diamGhost);
-			if (critic_0 < guard) {MyLog.waitHere("non riesco a posizionare il fondo!!!");}
-		} while (pieno || a>0);
-//	} while (pieno);
+					diamGhost, test, demo);
+			if (critic_0 < guard) {
+				MyLog.waitHere("non riesco a posizionare il fondo!!!");
+			}
+		} while (pieno || a > 0);
+		// } while (pieno);
 
 		return null;
 	}
@@ -3139,35 +3370,47 @@ public class p12rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * extract the pixel values of a circular ROI
+	 * Verifica che nella roi (beh, all'incirca) non sia presente un gruppo di
+	 * 3x3 pixels. Utilizzata per verificare che nella posizione in cui si
+	 * misura il segnale di fondo, non esistano spazi senza segnale (vedi
+	 * immagini di Esine)
 	 * 
 	 * @param imp1
+	 * @param xRoi
+	 * @param yRoi
+	 * @param diamRoi
 	 * @return
 	 */
 	public static boolean verifyCircularRoiPixels(ImagePlus imp1, int xRoi,
-			int yRoi, int diamRoi) {
+			int yRoi, int diamRoi, boolean test, boolean demo) {
 		int xRoi0 = xRoi - diamRoi / 2;
 		int yRoi0 = yRoi - diamRoi / 2;
 		int diamRoi0 = diamRoi;
-		IJ.setMinAndMax(imp1, 10, 30);
+		// effettua un adjust per esaltare il segnale di fondo
 		Overlay over2 = new Overlay();
-		over2.setStrokeColor(Color.red);
-		imp1.setOverlay(over2);
+
+		if (demo) {
+			over2.setStrokeColor(Color.red);
+			imp1.setOverlay(over2);
+		}
 
 		imp1.setRoi(new OvalRoi(xRoi0, yRoi0, diamRoi0, diamRoi0));
 		imp1.getRoi().setStrokeColor(Color.red);
 
-		over2.addElement(imp1.getRoi());
+		if (demo)
+			over2.addElement(imp1.getRoi());
 
-		UtilAyv.showImageMaximized2(imp1);
+		if (!test) {
+			IJ.setMinAndMax(imp1, 10, 30);
+			UtilAyv.showImageMaximized2(imp1);
+		}
 		ImageProcessor ip1 = imp1.getProcessor();
 		Roi roi1 = imp1.getRoi();
 
 		ImageProcessor mask = roi1.getMask();
 		if (mask == null)
 			MyLog.waitHere("mask==null");
-
-//		short[] pixels = (short[]) ip1.getPixelsCopy();
+		// prevengo problemi con le immagini calibrate
 		short[] pixels = UtilAyv.truePixels(imp1);
 
 		Rectangle roi2 = ip1.getRoi();
@@ -3187,7 +3430,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		for (int i1 = 0; i1 < width; i1++) {
 			for (int i2 = 0; i2 < height; i2++) {
-				sum=0;
+				sum = 0;
 				offset = (y1 + i2) * width1 + (x1 + i1);
 				if (maskArray[i1 * width + i2] != 0) {
 					// se questo pixel fa parte della roi, allora analizzo
@@ -3204,13 +3447,15 @@ public class p12rmn_ implements PlugIn, Measurements {
 					for (int i4 = 0; i4 < 9; i4++) {
 						if (vet[i4] <= pixels.length) {
 							sum = sum + pixels[vet[i4]];
-//							MyLog.waitHere("offset= "+offset+" pixel= "+pixels[vet[i4]]);
-							imp1.setRoi(x1 + i1, y1 + i2, 1, 1);
-							over2.addElement(imp1.getRoi());
+							// MyLog.waitHere("offset= "+offset+" pixel= "+pixels[vet[i4]]);
+							if (demo) {
+								imp1.setRoi(x1 + i1, y1 + i2, 1, 1);
+								over2.addElement(imp1.getRoi());
+							}
 						}
 					}
-//					MyLog.waitHere("sum= " + sum);
-					
+					// MyLog.waitHere("sum= " + sum);
+
 					if (sum == 0)
 						return true;
 				}

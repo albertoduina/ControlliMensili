@@ -164,14 +164,10 @@ public class p12rmn_Test {
 
 		// 16 dic 2011 sistemato, ora funziona in automatico
 
-		String path1 = "./Test2/HUSA2_01testP3";
+		String path1 = "./Test2/HUSA_001testP3";
 
-		String path2 = "./Test2/HUSA2_02testP3";
 		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
-		imp11.show();
 
-		ImagePlus imp13 = UtilAyv.openImageNoDisplay(path2, true);
-		imp11.show();
 
 		boolean autoCalled = false;
 		boolean step = true;
@@ -179,16 +175,15 @@ public class p12rmn_Test {
 		boolean test = false;
 		boolean fast = false;
 
-		int out2[] = p12rmn_.positionSearch11(imp11, imp13, "", autoCalled,
+		int out2[] = p12rmn_.positionSearch11(imp11, "", autoCalled,
 				step, verbose, test, fast);
 
 		MyLog.logVector(out2, "out2");
 
-		double[] expected = { 159.0, 105.0, 118.0, 133.0, 202.0, 77.0,
-				33.690067525979785 };
-		// MyLog.logVector(out2, "out2");
-		// boolean ok = UtilAyv.verifyResults1(expected, out2, null);
-		// assertTrue(ok);
+		int[] expected = { 126, 115, 172, 126, 39, 153 };
+		 MyLog.logVector(expected, "expected");
+		 boolean ok = UtilAyv.compareVectors(out2, expected, "");
+		 assertTrue(ok);
 	}
 
 	@Test
@@ -233,9 +228,9 @@ public class p12rmn_Test {
 		imp11.deleteRoi();
 		ImagePlus imp13 = UtilAyv.openImageNoDisplay(path1, true);
 		imp13.deleteRoi();
-		boolean autoCalled = true;
+		boolean autoCalled = false;
 		boolean step = false;
-		boolean verbose = false;
+		boolean verbose = true;
 		boolean test = false;
 		boolean fast = true;
 
@@ -279,26 +274,34 @@ public class p12rmn_Test {
 		String path1 = "./Test2/HUSA2_01testP3";
 		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
 		imp11.deleteRoi();
-		ImagePlus imp13 = UtilAyv.openImageNoDisplay(path1, true);
-		imp13.deleteRoi();
 		boolean autoCalled = true;
 		boolean step = false;
 		boolean verbose = false;
 		boolean test = false;
 		boolean fast = true;
+		boolean irraggiungibile = false;
 
-		int[] out2 = p12rmn_.positionSearch11(imp11, imp13, "", autoCalled,
+
+		int[] out2 = p12rmn_.positionSearch11(imp11, "", autoCalled,
 				step, verbose, test, fast);
 		MyLog.logVector(out2, "out2");
 		int[] circleData = out2;
 		int diamGhost = 20;
 		int guard = 10;
-		boolean irraggiungibile = true;
 		int[] out3 = p12rmn_.positionSearch14(imp11, circleData, diamGhost,
 				guard, "", autoCalled, step, verbose, test, fast,
 				irraggiungibile);
 		MyLog.logVector(out3, "out3");
 		MyLog.waitHere();
+		
+		irraggiungibile=true;
+		MyLog.waitHere("irraggiungibile= "+irraggiungibile);
+		out3 = p12rmn_.positionSearch14(imp11, circleData, diamGhost,
+				guard, "", autoCalled, step, verbose, test, fast,
+				irraggiungibile);
+		MyLog.logVector(out3, "out3");
+		MyLog.waitHere();
+
 
 	}
 
@@ -310,13 +313,13 @@ public class p12rmn_Test {
 		String path1 = "./Test2/HUSA2_01testP3";
 		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
 		imp11.deleteRoi();
-		ImagePlus imp13 = UtilAyv.openImageNoDisplay(path1, true);
-		imp13.deleteRoi();
 		int xRoi = 240;
 		int yRoi = 240;
 		int diamRoi = 20;
+		boolean test = true;
+		boolean demo = false;
 		boolean out3 = p12rmn_.verifyCircularRoiPixels(imp11, xRoi, yRoi,
-				diamRoi);
+				diamRoi, test, demo);
 		MyLog.waitHere("out3= " + out3);
 
 	}
