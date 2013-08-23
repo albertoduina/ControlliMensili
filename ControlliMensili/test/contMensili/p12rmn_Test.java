@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ij.IJ;
+import ij.ImageJ;
 import ij.ImagePlus;
 import ij.gui.Plot;
 import ij.gui.WaitForUserDialog;
@@ -29,6 +30,7 @@ import utils.UtilAyv;
 public class p12rmn_Test {
 	@Before
 	public void setUp() throws Exception {
+		new ImageJ(ImageJ.NORMAL);
 	}
 
 	@After
@@ -164,26 +166,35 @@ public class p12rmn_Test {
 
 		// 16 dic 2011 sistemato, ora funziona in automatico
 
-		String path1 = "./Test2/HUSA_001testP3";
+		// String path1 = "./Test2/HUSA_001testP3";
 
-		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+	//	String path1 = "./data/P12/0001";
 
+		String path2 = "c:\\dati\\000P12";
+		String[] list = new File(path2).list();
+		if (list == null)
+			return;
+		for (int i1 = 0; i1 < list.length; i1++) {
+			String path1= path2+"\\"+list[i1];
+//			MyLog.waitHere("path1= "+path1);
+			ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+			
+			boolean autoCalled = false;
+			boolean step = true;
+			boolean verbose = true;
+			boolean test = false;
+			boolean fast = false;
 
-		boolean autoCalled = false;
-		boolean step = true;
-		boolean verbose = true;
-		boolean test = false;
-		boolean fast = false;
+			int out2[] = p12rmn_.positionSearch11(imp11, "", autoCalled, step,
+					verbose, test, fast);
 
-		int out2[] = p12rmn_.positionSearch11(imp11, "", autoCalled,
-				step, verbose, test, fast);
+			MyLog.logVector(out2, "out2");
 
-		MyLog.logVector(out2, "out2");
-
-		int[] expected = { 126, 115, 172, 126, 39, 153 };
-		 MyLog.logVector(expected, "expected");
-		 boolean ok = UtilAyv.compareVectors(out2, expected, "");
-		 assertTrue(ok);
+//			int[] expected = { 126, 115, 172, 126, 39, 153 };
+//			MyLog.logVector(expected, "expected");
+//			boolean ok = UtilAyv.compareVectors(out2, expected, "");
+//			assertTrue(ok);
+		}
 	}
 
 	@Test
@@ -281,9 +292,8 @@ public class p12rmn_Test {
 		boolean fast = true;
 		boolean irraggiungibile = false;
 
-
-		int[] out2 = p12rmn_.positionSearch11(imp11, "", autoCalled,
-				step, verbose, test, fast);
+		int[] out2 = p12rmn_.positionSearch11(imp11, "", autoCalled, step,
+				verbose, test, fast);
 		MyLog.logVector(out2, "out2");
 		int[] circleData = out2;
 		int diamGhost = 20;
@@ -293,15 +303,13 @@ public class p12rmn_Test {
 				irraggiungibile);
 		MyLog.logVector(out3, "out3");
 		MyLog.waitHere();
-		
-		irraggiungibile=true;
-		MyLog.waitHere("irraggiungibile= "+irraggiungibile);
-		out3 = p12rmn_.positionSearch14(imp11, circleData, diamGhost,
-				guard, "", autoCalled, step, verbose, test, fast,
-				irraggiungibile);
+
+		irraggiungibile = true;
+		MyLog.waitHere("irraggiungibile= " + irraggiungibile);
+		out3 = p12rmn_.positionSearch14(imp11, circleData, diamGhost, guard,
+				"", autoCalled, step, verbose, test, fast, irraggiungibile);
 		MyLog.logVector(out3, "out3");
 		MyLog.waitHere();
-
 
 	}
 

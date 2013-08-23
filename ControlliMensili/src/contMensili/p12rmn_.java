@@ -1814,13 +1814,18 @@ public class p12rmn_ implements PlugIn, Measurements {
 		double[][] line1 = MyLine.decomposer(imp1);
 		int count1 = 0;
 		boolean ready1 = false;
+		double max1 = 0;
 		for (int i1 = 0; i1 < line1[0].length; i1++) {
 
-			if ((line1[2][i1] == 255) && ready1) {
+			if (line1[2][i1] > max1) {
+				max1 = line1[2][i1];
+				ready1 = true;
+			}
+			if ((line1[2][i1] == 0) && ready1) {
+				max1 = 0;
 				count1++;
 				ready1 = false;
-			} else
-				ready1 = true;
+			}
 		}
 		MyLog.logMatrixVertical(line1, title);
 		// devo ora contare i pixel a 255 che ho trovato, ne accetterò solo 2,
@@ -1834,15 +1839,20 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		int count2 = 0;
 		boolean ready2 = false;
+		double max2 = 0;
 		for (int i1 = 0; i1 < line1[0].length; i1++) {
 
-			if (line1[2][i1] == 255 && ready2) {
+			if (line1[2][i1] > max2) {
 				peaks1[2][count2] = line1[0][i1];
 				peaks1[3][count2] = line1[1][i1];
+				max2 = line1[2][i1];
+				ready2 = true;
+			}
+			if ((line1[2][i1] == 0) && ready2) {
+				max2 = 0;
 				count2++;
 				ready2 = false;
-			} else
-				ready2 = true;
+			}
 		}
 		if (showProfiles) {
 			Plot plot2 = MyPlot
@@ -2460,6 +2470,13 @@ public class p12rmn_ implements PlugIn, Measurements {
 		double[][] peaks2 = new double[4][1];
 		double[][] peaks3 = new double[4][1];
 		double[][] peaks4 = new double[4][1];
+		double[][] peaks5 = new double[4][1];
+		double[][] peaks6 = new double[4][1];
+		double[][] peaks7 = new double[4][1];
+		double[][] peaks8 = new double[4][1];
+		double[][] peaks9 = new double[4][1];
+		double[][] peaks10 = new double[4][1];
+
 		boolean showProfiles = step;
 		int[] xcoord = new int[2];
 		int[] ycoord = new int[2];
@@ -2474,7 +2491,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 		ycoord[0] = height / 2;
 		xcoord[1] = width;
 		ycoord[1] = height / 2;
+
 		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		imp12.getRoi().setStrokeWidth(1.1);
 		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
 		if (step && !test) {
 			imp12.updateAndDraw();
@@ -2506,6 +2525,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		ycoord[1] = height;
 		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
 		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		imp12.getRoi().setStrokeWidth(1.1);
 		if (step && !test) {
 			imp12.updateAndDraw();
 			over12.addElement(imp12.getRoi());
@@ -2531,62 +2551,13 @@ public class p12rmn_ implements PlugIn, Measurements {
 		ycoord[1] = height;
 		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
 		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		imp12.getRoi().setStrokeWidth(1.1);
 		if (step && !test) {
 			imp12.updateAndDraw();
 			over12.addElement(imp12.getRoi());
 		}
-		peaks2 = cannyProfileAnalyzer(imp12, dimPixel, "BISETTRICE INCERTA SX",
+		peaks3 = cannyProfileAnalyzer(imp12, dimPixel, "BISETTRICE INCERTA SX",
 				showProfiles);
-		// PLOTTAGGIO PUNTI
-		xprimo = (int) (peaks2[2][0]);
-		yprimo = (int) (peaks2[3][0]);
-		imp12.setRoi(xprimo, yprimo, 2, 2);
-		imp12.getRoi().setStrokeColor(Color.red);
-		over12.addElement(imp12.getRoi());
-		xsecondo = (int) (peaks2[2][1]);
-		ysecondo = (int) (peaks2[3][1]);
-		imp12.setRoi(xsecondo, ysecondo, 2, 2);
-		imp12.getRoi().setStrokeColor(Color.red);
-		over12.addElement(imp12.getRoi());
-
-		// -------- INCERTA DX---------------------
-		xcoord[0] = width * 3 / 4;
-		ycoord[0] = 0;
-		xcoord[1] = width / 4;
-		ycoord[1] = height;
-		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
-		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
-		if (step && !test) {
-			imp12.updateAndDraw();
-			over12.addElement(imp12.getRoi());
-		}
-		peaks2 = cannyProfileAnalyzer(imp12, dimPixel, "BISETTRICE INCERTA SX",
-				showProfiles);
-		// PLOTTAGGIO PUNTI
-		xprimo = (int) (peaks2[2][0]);
-		yprimo = (int) (peaks2[3][0]);
-		imp12.setRoi(xprimo, yprimo, 2, 2);
-		imp12.getRoi().setStrokeColor(Color.red);
-		over12.addElement(imp12.getRoi());
-		xsecondo = (int) (peaks2[2][1]);
-		ysecondo = (int) (peaks2[3][1]);
-		imp12.setRoi(xsecondo, ysecondo, 2, 2);
-		imp12.getRoi().setStrokeColor(Color.red);
-		over12.addElement(imp12.getRoi());
-
-		// --------DIAGONALE SINISTRA---------------------
-		xcoord[0] = 0;
-		ycoord[0] = 0;
-		xcoord[1] = width;
-		ycoord[1] = height;
-		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
-		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
-		if (step && !test) {
-			imp12.updateAndDraw();
-			over12.addElement(imp12.getRoi());
-		}
-		peaks3 = cannyProfileAnalyzer(imp12, dimPixel,
-				"BISETTRICE DIAGONALE SINISTRA", showProfiles);
 		// PLOTTAGGIO PUNTI
 		xprimo = (int) (peaks3[2][0]);
 		yprimo = (int) (peaks3[3][0]);
@@ -2598,6 +2569,60 @@ public class p12rmn_ implements PlugIn, Measurements {
 		imp12.setRoi(xsecondo, ysecondo, 2, 2);
 		imp12.getRoi().setStrokeColor(Color.red);
 		over12.addElement(imp12.getRoi());
+
+		// -------- INCERTA DX---------------------
+		xcoord[0] = width * 3 / 4;
+		ycoord[0] = 0;
+		xcoord[1] = width / 4;
+		ycoord[1] = height;
+		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		imp12.getRoi().setStrokeWidth(1.1);
+		if (step && !test) {
+			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+		}
+		peaks4 = cannyProfileAnalyzer(imp12, dimPixel, "BISETTRICE INCERTA SX",
+				showProfiles);
+
+		// PLOTTAGGIO PUNTI
+		xprimo = (int) (peaks4[2][0]);
+		yprimo = (int) (peaks4[3][0]);
+		imp12.setRoi(xprimo, yprimo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+
+		xsecondo = (int) (peaks4[2][1]);
+		ysecondo = (int) (peaks4[3][1]);
+		imp12.setRoi(xsecondo, ysecondo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+
+		// --------DIAGONALE SINISTRA---------------------
+		xcoord[0] = 0;
+		ycoord[0] = 0;
+		xcoord[1] = width;
+		ycoord[1] = height;
+		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		imp12.getRoi().setStrokeWidth(1.1);
+		if (step && !test) {
+			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+		}
+		peaks5 = cannyProfileAnalyzer(imp12, dimPixel,
+				"BISETTRICE DIAGONALE SINISTRA", showProfiles);
+		// PLOTTAGGIO PUNTI
+		xprimo = (int) (peaks5[2][0]);
+		yprimo = (int) (peaks5[3][0]);
+		imp12.setRoi(xprimo, yprimo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
+		xsecondo = (int) (peaks5[2][1]);
+		ysecondo = (int) (peaks5[3][1]);
+		imp12.setRoi(xsecondo, ysecondo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.red);
+		over12.addElement(imp12.getRoi());
 		// --------DIAGONALE DESTRA---------------------
 		xcoord[0] = width;
 		ycoord[0] = 0;
@@ -2605,20 +2630,21 @@ public class p12rmn_ implements PlugIn, Measurements {
 		ycoord[1] = height;
 		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
 		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		imp12.getRoi().setStrokeWidth(1.1);
 		if (step && !test) {
 			imp12.updateAndDraw();
 			over12.addElement(imp12.getRoi());
 		}
-		peaks4 = cannyProfileAnalyzer(imp12, dimPixel,
+		peaks6 = cannyProfileAnalyzer(imp12, dimPixel,
 				"BISETTRICE DIAGONALE DESTRA", showProfiles);
 		// PLOTTAGGIO PUNTI
-		xprimo = (int) (peaks4[2][0]);
-		yprimo = (int) (peaks4[3][0]);
+		xprimo = (int) (peaks6[2][0]);
+		yprimo = (int) (peaks6[3][0]);
 		imp12.setRoi(xprimo, yprimo, 2, 2);
 		imp12.getRoi().setStrokeColor(Color.red);
 		over12.addElement(imp12.getRoi());
-		xsecondo = (int) (peaks4[2][1]);
-		ysecondo = (int) (peaks4[3][1]);
+		xsecondo = (int) (peaks6[2][1]);
+		ysecondo = (int) (peaks6[3][1]);
 		imp12.setRoi(xsecondo, ysecondo, 2, 2);
 		imp12.getRoi().setStrokeColor(Color.red);
 		over12.addElement(imp12.getRoi());
@@ -2630,24 +2656,25 @@ public class p12rmn_ implements PlugIn, Measurements {
 		ycoord[1] = height * 3 / 4;
 		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
 		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		imp12.getRoi().setStrokeWidth(1.1);
 		if (step && !test) {
 			imp12.updateAndDraw();
 			over12.addElement(imp12.getRoi());
 		}
-		peaks4 = cannyProfileAnalyzer(imp12, dimPixel,
+		peaks7 = cannyProfileAnalyzer(imp12, dimPixel,
 				"BISETTRICE DIAGONALE DESTRA EXTRA", showProfiles);
 		// PLOTTAGGIO PUNTI
-		xprimo = (int) (peaks4[2][0]);
-		yprimo = (int) (peaks4[3][0]);
+		xprimo = (int) (peaks7[2][0]);
+		yprimo = (int) (peaks7[3][0]);
 		imp12.setRoi(xprimo, yprimo, 2, 2);
 		imp12.getRoi().setStrokeColor(Color.red);
 		over12.addElement(imp12.getRoi());
-		xsecondo = (int) (peaks4[2][1]);
-		ysecondo = (int) (peaks4[3][1]);
+		xsecondo = (int) (peaks7[2][1]);
+		ysecondo = (int) (peaks7[3][1]);
 		imp12.setRoi(xsecondo, ysecondo, 2, 2);
 		imp12.getRoi().setStrokeColor(Color.red);
 		over12.addElement(imp12.getRoi());
-		
+
 		// --------DIAGONALE DESTRA extra---------------------
 		xcoord[0] = 0;
 		ycoord[0] = height * 1 / 4;
@@ -2655,59 +2682,73 @@ public class p12rmn_ implements PlugIn, Measurements {
 		ycoord[1] = height * 3 / 4;
 		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
 		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		imp12.getRoi().setStrokeWidth(1.1);
 		if (step && !test) {
 			imp12.updateAndDraw();
 			over12.addElement(imp12.getRoi());
 		}
-		peaks4 = cannyProfileAnalyzer(imp12, dimPixel,
+		peaks8 = cannyProfileAnalyzer(imp12, dimPixel,
 				"BISETTRICE DIAGONALE DESTRA EXTRA", showProfiles);
 		// PLOTTAGGIO PUNTI
-		xprimo = (int) (peaks4[2][0]);
-		yprimo = (int) (peaks4[3][0]);
+		xprimo = (int) (peaks8[2][0]);
+		yprimo = (int) (peaks8[3][0]);
 		imp12.setRoi(xprimo, yprimo, 2, 2);
 		imp12.getRoi().setStrokeColor(Color.red);
 		over12.addElement(imp12.getRoi());
-		xsecondo = (int) (peaks4[2][1]);
-		ysecondo = (int) (peaks4[3][1]);
+		xsecondo = (int) (peaks8[2][1]);
+		ysecondo = (int) (peaks8[3][1]);
 		imp12.setRoi(xsecondo, ysecondo, 2, 2);
 		imp12.getRoi().setStrokeColor(Color.red);
 		over12.addElement(imp12.getRoi());
 		// /----------------------------------
 
-
-		MyLog.waitHere("VERIFICARE I PUNTI");
-
 		int len3 = peaks1[2].length - 1 + peaks2[2].length - 1
-				+ peaks3[2].length + peaks4[2].length;
+				+ peaks3[2].length + peaks4[2].length + peaks5[2].length
+				+ peaks6[2].length + peaks7[2].length + peaks8[2].length;
 		int[] xPoints3 = new int[len3];
 		int[] yPoints3 = new int[len3];
 		int j1 = -1;
 
 		// della bisettice orizzontale prendo solo il picco di dx
 		j1++;
-		xPoints3[j1] = (int) (peaks1[2][1] / dimPixel);
-		yPoints3[j1] = (int) ((double) (height / 2));
+		xPoints3[j1] = (int) (peaks1[2][1]);
+		yPoints3[j1] = (int) (peaks1[3][1]);
 
 		// della bisettice verticale prendo solo il picco in basso
 		j1++;
-		xPoints3[j1] = (int) ((double) (width / 2));
-		yPoints3[j1] = (int) (peaks2[2][1] / dimPixel);
+		xPoints3[j1] = (int) (peaks2[2][1]);
+		yPoints3[j1] = (int) (peaks2[3][1]);
 
 		for (int i1 = 0; i1 < peaks3[2].length; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks3[2][i1] / dimPixel * Math.sin(Math
-					.toRadians(45 + 90)));
-			yPoints3[j1] = (int) (peaks3[2][i1] / dimPixel * Math.sin(Math
-					.toRadians(45 + 90)));
+			xPoints3[j1] = (int) (peaks3[2][i1]);
+			yPoints3[j1] = (int) (peaks3[3][i1]);
 		}
 		for (int i1 = 0; i1 < peaks4[2].length; i1++) {
 			j1++;
-			xPoints3[j1] = (int) ((peaks4[2][i1] / (dimPixel * Math.sqrt(2))));
-			yPoints3[j1] = (int) ((double) height - peaks4[2][i1]
-					/ (dimPixel * Math.sqrt(2)));
+			xPoints3[j1] = (int) (peaks4[2][i1]);
+			yPoints3[j1] = (int) (peaks4[3][i1]);
 		}
-
-		MyLog.waitHere("AAAAA");
+		for (int i1 = 0; i1 < peaks5[2].length; i1++) {
+			j1++;
+			xPoints3[j1] = (int) (peaks5[2][i1]);
+			yPoints3[j1] = (int) (peaks5[3][i1]);
+		}
+		for (int i1 = 0; i1 < peaks6[2].length; i1++) {
+			j1++;
+			xPoints3[j1] = (int) (peaks6[2][i1]);
+			yPoints3[j1] = (int) (peaks6[3][i1]);
+		}
+		for (int i1 = 0; i1 < peaks7[2].length; i1++) {
+			j1++;
+			xPoints3[j1] = (int) (peaks7[2][i1]);
+			yPoints3[j1] = (int) (peaks7[3][i1]);
+		}
+		for (int i1 = 0; i1 < peaks8[2].length; i1++) {
+			j1++;
+			xPoints3[j1] = (int) (peaks8[2][i1]);
+			yPoints3[j1] = (int) (peaks8[3][i1]);
+		}
 
 		over12.clear();
 
@@ -2723,7 +2764,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				over12.setStrokeColor(Color.red);
 				imp12.setOverlay(over12);
 				imp12.updateAndDraw();
-				new WaitForUserDialog("Premere OK").show();
+		//		new WaitForUserDialog("Premere OK").show();
 			}
 			// eseguo ora fitCircle per trovare centro e dimensione del
 			// fantoccio
@@ -2763,7 +2804,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		}
 
 		if (verbose && !test) {
-			imp12.setRoi(new OvalRoi(xCenterCircle - 4, yCenterCircle - 4, 8, 8));
+			imp12.setRoi(new OvalRoi(xCenterCircle - 1, yCenterCircle - 1, 2, 2));
 			Roi roi1 = imp12.getRoi();
 			if (roi1 == null)
 				IJ.log("roi1==null");
@@ -2773,17 +2814,95 @@ public class p12rmn_ implements PlugIn, Measurements {
 			imp12.killRoi();
 		}
 
-		if (step)
-			MyLog.waitHere("Determinazione dati per la ROI all'80%");
+//		if (step)
+//			MyLog.waitHere("Determinazione dati per la ROI all'80%");
+
+		// traccio due linee, una verticale ed una orizzontale e analizzo ancora
+		// il cerchio, per vedere dove è la bolla e la sua ampiezza
+
+		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
+		imp12.setRoi(new Line(xCenterCircle, 0, xCenterCircle, height));
+		if (step && !test) {
+			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+		}
+//		IJ.wait(1000);
+		
+		// MyLog.waitHere("correzione bolla");
+		peaks9 = cannyProfileAnalyzer(imp12, dimPixel, "BISETTRICE VERTICALE",
+				showProfiles);
+
+		// PLOTTAGGIO PUNTI
+		xprimo = (int) (peaks9[2][0]);
+		yprimo = (int) (peaks9[3][0]);
+		imp12.setRoi(xprimo, yprimo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.green);
+		over12.addElement(imp12.getRoi());
+		xsecondo = (int) (peaks9[2][1]);
+		ysecondo = (int) (peaks9[3][1]);
+		imp12.setRoi(xsecondo, ysecondo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.green);
+		over12.addElement(imp12.getRoi());
+
+		double gapVert = diamCircle / 2 - (yCenterCircle - peaks9[3][0]);
+		IJ.log("gapVert= " + gapVert);
+	//	IJ.wait(1000);
+		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
+		imp12.setRoi(new Line(0, yCenterCircle, width, yCenterCircle));
+		if (step && !test) {
+			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+		}
+		// MyLog.waitHere("correzione bolla");
+		peaks10 = cannyProfileAnalyzer(imp12, dimPixel, "BISETTRICE VERTICALE",
+				showProfiles);
+
+		// PLOTTAGGIO PUNTI
+		xprimo = (int) (peaks10[2][0]);
+		yprimo = (int) (peaks10[3][0]);
+		imp12.setRoi(xprimo, yprimo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.green);
+		over12.addElement(imp12.getRoi());
+		xsecondo = (int) (peaks10[2][1]);
+		ysecondo = (int) (peaks10[3][1]);
+		imp12.setRoi(xsecondo, ysecondo, 2, 2);
+		imp12.getRoi().setStrokeColor(Color.green);
+		over12.addElement(imp12.getRoi());
+
+		// xPoints3[j1] = (int) (peaks7[2][i1]);
+		// yPoints3[j1] = (int) (peaks7[3][i1]);
+
+		double gapOrizz = diamCircle / 2 - (xCenterCircle - peaks10[2][0]);
+
+		int xcorr = 0;
+		int ycorr = 0;
+		if (gapOrizz > gapVert) {
+			xcorr = (int) gapOrizz / 2;
+
+		} else {
+			ycorr = (int) gapVert / 2;
+		}
+		//MyLog.waitHere("gapOrizz= " + gapOrizz);
 
 		int diamRoi2 = (int) Math.round(diamCircle
 				* MyConst.P3_AREA_PERC_80_DIAM);
-		int xRoi2 = xCenterCircle - diamRoi2 / 2;
-		int yRoi2 = yCenterCircle - diamRoi2 / 2;
+
+		int xRoi2 = xCenterCircle + xcorr - diamRoi2 / 2;
+		int yRoi2 = yCenterCircle + ycorr - diamRoi2 / 2;
+
+		// verifico che con questo spostamento il cerchio abbia una certa
+		// distanza sia sotto che sopra
+
+		int d1 = xprimo - (xCenterCircle + xcorr - diamRoi2 / 2);
+		int d2 = xsecondo - (xCenterCircle + xcorr + diamRoi2 / 2);
+		int d3 = yprimo - (yCenterCircle + ycorr - diamRoi2 / 2);
+		int d4 = ysecondo - (yCenterCircle + ycorr + diamRoi2 / 2);
+
+	//	MyLog.waitHere("d1= " + d1 + " d2= " + d2 + " d3=" + d3 + " d4= " + d4);
 
 		imp12.setRoi(new OvalRoi(xRoi2, yRoi2, diamRoi2, diamRoi2));
-		if (step)
-			msgRoi85percPositioning();
+//		if (step)
+//			msgRoi85percPositioning();
 
 		Rectangle boundingRectangle2 = imp12.getProcessor().getRoi();
 		diamRoi2 = (int) boundingRectangle2.width;
@@ -2795,6 +2914,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		out2[3] = xRoi2;
 		out2[4] = yRoi2;
 		out2[5] = diamRoi2;
+		IJ.wait(2000);
 
 		return out2;
 	}

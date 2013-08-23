@@ -8,6 +8,7 @@ import ij.gui.Line;
 import ij.gui.PointRoi;
 import ij.gui.Roi;
 import ij.gui.WaitForUserDialog;
+import ij.io.Opener;
 import ij.measure.Measurements;
 import ij.plugin.PlugIn;
 
@@ -15,18 +16,49 @@ import java.awt.Color;
 
 import utils.InputOutput;
 import utils.MyConst;
+import utils.MyLine;
 import utils.MyLog;
 import utils.ReadDicom;
 import utils.UtilAyv;
+
 /**
- * Questo plugin serve a testare eventuali problemi, prima di segnalarli a Wayne Rasband od altri.
+ * Questo plugin serve a testare eventuali problemi, prima di segnalarli a Wayne
+ * Rasband od altri.
  * 
  * @author alberto
- *
+ * 
  */
 public class demo_ implements PlugIn, Measurements {
 
 	public void run(String args) {
+
+		String home1 = findTestImages();
+		String path1 = home1 + "/HR2A_testP4";
+		ImagePlus imp1 = new Opener().openImage(path1);
+		// IJ.setMinAndMax(imp1, 1, 20);
+		// UtilAyv.showImageMaximized(imp1);
+		//
+		// int[] xcoord = new int[2];
+		// int[] ycoord = new int[2];
+		//
+		// xcoord[0] = imp1.getWidth()*1/8;
+		// ycoord[0] = 0;
+		// xcoord[1] = imp1.getWidth();
+		// ycoord[1] = imp1.getHeight() * 3 / 8+3;
+
+		// xcoord[0] = imp1.getWidth()*1/8;
+		// ycoord[0] = 0;
+		// xcoord[1] = imp1.getWidth()*1/8;
+		// ycoord[1] = imp1.getHeight();
+
+		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
+		// imp1.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+
+		MyLine.decomposer2(imp1);
+
+	}
+
+	public void old(String args) {
 
 		String home1 = findTestImages();
 		String path1 = home1 + "/HR2A2_testP4";
@@ -37,9 +69,6 @@ public class demo_ implements PlugIn, Measurements {
 				.readDouble(ReadDicom.readSubstring(ReadDicom
 						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
 						1));
-		
-		
-	
 
 		// double mag = canvas.getMagnification();
 		// double wid = imp1.getWidth();
@@ -94,7 +123,7 @@ public class demo_ implements PlugIn, Measurements {
 	} // findTestImages
 
 	public void showImages() {
-		
+
 		ImagePlus imp1 = UtilAyv.openImageMaximized("./Test2/B003_TestP2");
 		ImageWindow iw1 = WindowManager.getCurrentWindow();
 		ImagePlus imp2 = UtilAyv.openImageMaximized("./Test2/C001_TestP10");
