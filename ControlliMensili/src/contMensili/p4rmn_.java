@@ -20,7 +20,7 @@ import utils.AboutBox;
 import utils.ButtonMessages;
 import utils.CustomCanvasGeneric;
 import utils.InputOutput;
-import utils.Msg;
+import utils.MyMsg;
 import utils.MyConst;
 import utils.MyLog;
 import utils.ReadDicom;
@@ -191,7 +191,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 		}
 
 		if (nTokens != MyConst.TOKENS1) {
-			Msg.msgParamError();
+			MyMsg.msgParamError();
 			IJ.log("p4rmn ERRORE PARAMETRI CHIAMATA nTokens =" + nTokens
 					+ " invece di 1");
 			return 0;
@@ -567,10 +567,10 @@ public class p4rmn_ implements PlugIn, Measurements {
 				rt.show("Results");
 
 			if (autoCalled && !test) {
-				accetta = Msg.accettaMenu();
+				accetta = MyMsg.accettaMenu();
 			} else {
 				if (!test) {
-					accetta = Msg.msgStandalone();
+					accetta = MyMsg.msgStandalone();
 				} else
 					imp1.close();
 				accetta = test;
@@ -718,9 +718,9 @@ public class p4rmn_ implements PlugIn, Measurements {
 				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 						MyConst.P4_vetName);
 				if (ok)
-					Msg.msgTestPassed();
+					MyMsg.msgTestPassed();
 				else
-					Msg.msgTestFault();
+					MyMsg.msgTestFault();
 				UtilAyv.afterWork();
 				break;
 			}
@@ -752,9 +752,9 @@ public class p4rmn_ implements PlugIn, Measurements {
 				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 						MyConst.P4_vetName);
 				if (ok)
-					Msg.msgTestPassed();
+					MyMsg.msgTestPassed();
 				else
-					Msg.msgTestFault();
+					MyMsg.msgTestFault();
 				UtilAyv.afterWork();
 				break;
 			}

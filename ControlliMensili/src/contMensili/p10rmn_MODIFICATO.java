@@ -30,7 +30,7 @@ import utils.AboutBox;
 import utils.ButtonMessages;
 import utils.ImageUtils;
 import utils.InputOutput;
-import utils.Msg;
+import utils.MyMsg;
 import utils.MyCircleDetector;
 import utils.MyConst;
 import utils.MyFwhm;
@@ -242,7 +242,7 @@ public class p10rmn_MODIFICATO implements PlugIn, Measurements {
 		}
 
 		if ((nTokens != MyConst.TOKENS2) && (nTokens != MyConst.TOKENS4)) {
-			Msg.msgParamError();
+			MyMsg.msgParamError();
 			return 0;
 		}
 
@@ -847,10 +847,10 @@ public class p10rmn_MODIFICATO implements PlugIn, Measurements {
 			if (fast) {
 				accetta = true;
 			} else if (autoCalled && !test) {
-				accetta = Msg.accettaMenu();
+				accetta = MyMsg.accettaMenu();
 			} else {
 				if (!test) {
-					accetta = Msg.msgStandalone();
+					accetta = MyMsg.msgStandalone();
 				} else {
 					accetta = test;
 				}
@@ -880,9 +880,9 @@ public class p10rmn_MODIFICATO implements PlugIn, Measurements {
 				verbose = true;
 				ok = selfTestGe(verbose);
 				if (ok)
-					Msg.msgTestPassed();
+					MyMsg.msgTestPassed();
 				else
-					Msg.msgTestFault();
+					MyMsg.msgTestFault();
 				break;
 
 			case 2:
@@ -890,9 +890,9 @@ public class p10rmn_MODIFICATO implements PlugIn, Measurements {
 				verbose = true;
 				ok = selfTestSiemens(verbose);
 				if (ok)
-					Msg.msgTestPassed();
+					MyMsg.msgTestPassed();
 				else
-					Msg.msgTestFault();
+					MyMsg.msgTestFault();
 				break;
 			}
 		} else {

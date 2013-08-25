@@ -17,7 +17,7 @@ import java.util.StringTokenizer;
 
 import utils.AboutBox;
 import utils.ButtonMessages;
-import utils.Msg;
+import utils.MyMsg;
 import utils.MyConst;
 import utils.CustomCanvasGeneric;
 import utils.InputOutput;
@@ -161,7 +161,7 @@ public class p7rmn_ implements PlugIn, Measurements {
 			return 0;
 		}
 		if (nTokens > 1) {
-			Msg.msgParamError();
+			MyMsg.msgParamError();
 			return 0;
 		}
 		boolean retry = false;
@@ -309,11 +309,11 @@ public class p7rmn_ implements PlugIn, Measurements {
 				msgRedo(nPunti);
 			}
 			if (autoCalled && !test) {
-				accetta = Msg.accettaMenu();
+				accetta = MyMsg.accettaMenu();
 
 			} else {
 				if (!test) {
-					accetta = Msg.msgStandalone();
+					accetta = MyMsg.msgStandalone();
 				} else
 					accetta = test;
 			}
@@ -359,9 +359,9 @@ public class p7rmn_ implements PlugIn, Measurements {
 				int[] vetY = MyConst.P7_Y_POINTS_TESTGE;
 				boolean ok = testExcecution(path1, vetX, vetY, -10, -17, true);
 				if (ok)
-					Msg.msgTestPassed();
+					MyMsg.msgTestPassed();
 				else
-					Msg.msgTestFault();
+					MyMsg.msgTestFault();
 				UtilAyv.afterWork();
 				return;
 			}
@@ -373,9 +373,9 @@ public class p7rmn_ implements PlugIn, Measurements {
 				int[] vetY = MyConst.P7_Y_POINTS_TESTSIEMENS;
 				boolean ok = testExcecution(path1, vetX, vetY, 0, 20, true);
 				if (ok)
-					Msg.msgTestPassed();
+					MyMsg.msgTestPassed();
 				else
-					Msg.msgTestFault();
+					MyMsg.msgTestFault();
 				UtilAyv.afterWork();
 				return;
 			}

@@ -27,7 +27,7 @@ import java.util.StringTokenizer;
 import utils.AboutBox;
 import utils.ButtonMessages;
 import utils.InputOutput;
-import utils.Msg;
+import utils.MyMsg;
 import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyLog;
@@ -189,7 +189,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 		}
 
 		if ((nTokens != MyConst.TOKENS2) && (nTokens != MyConst.TOKENS4)) {
-			Msg.msgParamError();
+			MyMsg.msgParamError();
 			return 0;
 		}
 
@@ -667,10 +667,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 				rt.show("Results");
 
 			if (autoCalled && !test) {
-				accetta = Msg.accettaMenu();
+				accetta = MyMsg.accettaMenu();
 			} else {
 				if (!test) {
-					accetta = Msg.msgStandalone();
+					accetta = MyMsg.msgStandalone();
 				} else {
 					accetta = test;
 				}
@@ -713,9 +713,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 						MyConst.P5_vetName);
 				if (ok)
-					Msg.msgTestPassed();
+					MyMsg.msgTestPassed();
 				else
-					Msg.msgTestFault();
+					MyMsg.msgTestFault();
 				UtilAyv.afterWork();
 				break;
 			}
@@ -747,9 +747,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 						MyConst.P5_vetName);
 				if (ok)
-					Msg.msgTestPassed();
+					MyMsg.msgTestPassed();
 				else
-					Msg.msgTestFault();
+					MyMsg.msgTestFault();
 				UtilAyv.afterWork();
 				break;
 			}

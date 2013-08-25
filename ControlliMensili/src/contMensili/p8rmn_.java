@@ -17,7 +17,7 @@ import utils.AboutBox;
 import utils.ButtonMessages;
 import utils.CustomCanvasGeneric;
 import utils.InputOutput;
-import utils.Msg;
+import utils.MyMsg;
 import utils.MyConst;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
@@ -315,10 +315,10 @@ public class p8rmn_ implements PlugIn, Measurements {
 			}
 
 			if (autoCalled && !test) {
-				accetta = Msg.accettaMenu();
+				accetta = MyMsg.accettaMenu();
 			} else {
 				if (!test) {
-					accetta = Msg.msgStandalone();
+					accetta = MyMsg.msgStandalone();
 				} else
 					accetta = test;
 			}

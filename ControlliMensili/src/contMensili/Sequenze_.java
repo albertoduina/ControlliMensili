@@ -270,6 +270,10 @@ public class Sequenze_ implements PlugIn {
 				MyLog.here("non sono state trovate immagini da analizzare");
 				return;
 			}
+			
+			//
+			// Effettuo il sort della table, secondo il tempo di acquisizione
+			//
 			String[][] tableSequenceSorted = bubbleSortSequenceTable(tableSequenceLoaded);
 			// MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
 			// MyLog.waitHere("salvare il log");

@@ -168,17 +168,16 @@ public class p12rmn_Test {
 
 		// String path1 = "./Test2/HUSA_001testP3";
 
-	//	String path1 = "./data/P12/0001";
+		// String path1 = "./data/P12/0001";
 
 		String path2 = "c:\\dati\\000P12";
 		String[] list = new File(path2).list();
 		if (list == null)
 			return;
 		for (int i1 = 0; i1 < list.length; i1++) {
-			String path1= path2+"\\"+list[i1];
-//			MyLog.waitHere("path1= "+path1);
+			String path1 = path2 + "\\" + list[i1];
 			ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
-			
+
 			boolean autoCalled = false;
 			boolean step = true;
 			boolean verbose = true;
@@ -190,10 +189,10 @@ public class p12rmn_Test {
 
 			MyLog.logVector(out2, "out2");
 
-//			int[] expected = { 126, 115, 172, 126, 39, 153 };
-//			MyLog.logVector(expected, "expected");
-//			boolean ok = UtilAyv.compareVectors(out2, expected, "");
-//			assertTrue(ok);
+			// int[] expected = { 126, 115, 172, 126, 39, 153 };
+			// MyLog.logVector(expected, "expected");
+			// boolean ok = UtilAyv.compareVectors(out2, expected, "");
+			// assertTrue(ok);
 		}
 	}
 
@@ -232,49 +231,39 @@ public class p12rmn_Test {
 	@Test
 	public final void testPositionSearch13() {
 
-		// 16 dic 2011 sistemato, ora funziona in automatico
-
-		String path1 = "./Test2/aaa.tif";
-		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
-		imp11.deleteRoi();
-		ImagePlus imp13 = UtilAyv.openImageNoDisplay(path1, true);
-		imp13.deleteRoi();
 		boolean autoCalled = false;
-		boolean step = false;
+		boolean step = true;
 		boolean verbose = true;
 		boolean test = false;
 		boolean fast = true;
+		boolean demo = true;
 
-		int[] out2 = p12rmn_.positionSearch12(imp11, imp13, "", autoCalled,
-				step, verbose, test, fast);
-		MyLog.logVector(out2, "out2");
-		int[] circleData = out2;
-		int diamGhost = 20;
-		int guard = 10;
-		int[] out3 = p12rmn_.positionSearch13(imp11, circleData, diamGhost,
-				guard, "", autoCalled, step, verbose, test, fast);
-		MyLog.logVector(out3, "out3");
-		MyLog.waitHere();
+		String path2 = "c:\\dati\\000P12";
+		String[] list = new File(path2).list();
+		if (list == null)
+			return;
+		for (int i1 = 0; i1 < list.length; i1++) {
 
-		path1 = "./Test2/bbb.tif";
-		imp11 = UtilAyv.openImageNoDisplay(path1, true);
-		imp11.deleteRoi();
-		imp13 = UtilAyv.openImageNoDisplay(path1, true);
-		imp13.deleteRoi();
+			String path1 = path2 + "\\" + list[i1];
+			ImagePlus imp13 = UtilAyv.openImageNoDisplay(path1, true);
+			imp13.deleteRoi();
 
-		out2 = p12rmn_.positionSearch12(imp11, imp13, "", autoCalled, step,
-				verbose, test, fast);
-		MyLog.logVector(out2, "out2");
-		circleData = out2;
-		out3 = p12rmn_.positionSearch13(imp11, circleData, diamGhost, guard,
-				"", autoCalled, step, verbose, test, fast);
-		MyLog.logVector(out3, "out3");
+			// int[] out2 = p12rmn_.positionSearch12(imp11, imp13, "",
+			// autoCalled,
+			// step, verbose, test, fast);
+			int[] out2 = p12rmn_.positionSearch11(imp13, "", autoCalled, step,
+					verbose, test, fast);
+			// MyLog.logVector(out2, "out2");
+			int[] circleData = out2;
+			int diamGhost = 20;
+			int guard = 10;
+			double[][] out3 = p12rmn_
+					.positionSearch13(imp13, circleData, diamGhost, guard, "",
+							autoCalled, step, verbose, test, fast);
+			// MyLog.logVector(out3, "out3");
+			// MyLog.waitHere();
+		}
 
-		double[] expected = { 159.0, 105.0, 118.0, 133.0, 202.0, 77.0,
-				33.690067525979785 };
-		// MyLog.logVector(out2, "out2");
-		// boolean ok = UtilAyv.verifyResults1(expected, out2, null);
-		// assertTrue(ok);
 	}
 
 	@Test
@@ -287,28 +276,24 @@ public class p12rmn_Test {
 		imp11.deleteRoi();
 		boolean autoCalled = true;
 		boolean step = false;
-		boolean verbose = false;
-		boolean test = false;
+		boolean verbose = true;
+		boolean test = true;
 		boolean fast = true;
 		boolean irraggiungibile = false;
+		boolean debug = true;
 
 		int[] out2 = p12rmn_.positionSearch11(imp11, "", autoCalled, step,
 				verbose, test, fast);
-		MyLog.logVector(out2, "out2");
 		int[] circleData = out2;
 		int diamGhost = 20;
 		int guard = 10;
 		int[] out3 = p12rmn_.positionSearch14(imp11, circleData, diamGhost,
 				guard, "", autoCalled, step, verbose, test, fast,
 				irraggiungibile);
-		MyLog.logVector(out3, "out3");
-		MyLog.waitHere();
-
 		irraggiungibile = true;
-		MyLog.waitHere("irraggiungibile= " + irraggiungibile);
+		MyLog.waitHere(p12rmn_.listaMessaggi(34), debug);
 		out3 = p12rmn_.positionSearch14(imp11, circleData, diamGhost, guard,
 				"", autoCalled, step, verbose, test, fast, irraggiungibile);
-		MyLog.logVector(out3, "out3");
 		MyLog.waitHere();
 
 	}
