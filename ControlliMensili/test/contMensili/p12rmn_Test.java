@@ -78,17 +78,17 @@ public class p12rmn_Test {
 
 		// 16 dec 2011 sistemato, ora funziona in automatico
 
-		String path1 = "./Test2/C001_testP10";
-		String path2 = "./Test2/C002_testP10";
+		String path1 = "./Test2//HUSA_001testP3";
+		String path2 = "./Test2//HUSA_002testP3";
 		String autoArgs = "0";
 		boolean autoCalled = false;
 		boolean step = false;
-		boolean verbose = false;
+		boolean demo = true;
 		boolean test = false;
 		double profond = 30;
 		boolean fast = true;
 		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"info10", autoCalled, step, verbose, test, fast);
+				"info10", autoCalled, step, demo, test, fast);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		double[] vetReference = new p12rmn_().referenceSiemens();
@@ -180,12 +180,12 @@ public class p12rmn_Test {
 
 			boolean autoCalled = false;
 			boolean step = true;
-			boolean verbose = true;
+			boolean demo = false;
 			boolean test = false;
 			boolean fast = false;
 
 			int out2[] = p12rmn_.positionSearch11(imp11, "", autoCalled, step,
-					verbose, test, fast);
+					demo, test, fast);
 
 			MyLog.logVector(out2, "out2");
 

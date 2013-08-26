@@ -36,9 +36,12 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.Window;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
+import org.w3c.dom.css.Rect;
 
 import utils.AboutBox;
 import utils.ArrayUtils;
@@ -371,7 +374,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 *            flag true se chiamato in automatico
 	 * @param step
 	 *            flag true se funzionamento passo-passo
-	 * @param verbose
+	 * @param demo
 	 *            flag true se verbose
 	 * @param test
 	 *            flag true se in modo test
@@ -382,21 +385,18 @@ public class p12rmn_ implements PlugIn, Measurements {
 	@SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String path1, String path2,
 			String autoArgs, double profond, String info10, boolean autoCalled,
-			boolean step, boolean verbose, boolean test, boolean fast) {
+			boolean step, boolean demo, boolean test, boolean fast) {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		double angle = Double.NaN;
-		boolean demo = true;
 
 		//
 		// IL VERBOSE FORZATO A TRUE, QUI DI SEGUITO, SERVE
 		// A MOSTRARE, PER UN ISTANTE, DOVE VIENE POSIZIONATA AUTOMATICAMENTE
 		// LA ROI, anche in FAST.
 		//
-
-		verbose = true;
 
 		do {
 			ImagePlus imp11 = null;
@@ -410,8 +410,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			if (imp13 == null)
 				MyLog.waitHere("Non trovato il file " + path2);
 
-			int out2[] = positionSearch12(imp11, imp13, info10, autoCalled,
-					step, verbose, test, fast);
+			int out2[] = positionSearch11(imp11, info10, autoCalled, step,
+					demo, test, fast);
 			if (out2 == null) {
 				MyLog.waitHere("out2==null");
 				return null;
@@ -427,7 +427,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			// ========================================================================
 			ImagePlus imp1 = null;
 			ImagePlus imp2 = null;
-			if (verbose) {
+			if (demo) {
 				imp1 = UtilAyv.openImageMaximized(path1);
 				imp2 = UtilAyv.openImageNoDisplay(path2, true);
 			} else {
@@ -443,7 +443,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 			// Inizio calcoli Uniformità
 			// ============================================================================
 
-			// Recupero ora i dati di output da PositionSearch12
+			// Recupero ora i dati di output da PositionSearch11
+
+			MyLog.waitHere("DOPO POSITION SEARCH 11");
 
 			int xRoi2 = out2[3];
 			int yRoi2 = out2[4];
@@ -466,14 +468,14 @@ public class p12rmn_ implements PlugIn, Measurements {
 			double uiPerc1 = uiPercCalculation(stat1.max, stat1.min);
 
 			ImagePlus impDiff = UtilAyv.genImaDifference(imp1, imp2);
-			if (verbose)
+			if (demo)
 				UtilAyv.showImageMaximized(impDiff);
 			if (!test)
 				msgElabImaDiff(step);
 			impDiff.setRoi(new OvalRoi(xRoi2, yRoi2, diamRoi2, diamRoi2));
 
 			ImageStatistics statImaDiff = impDiff.getStatistics();
-			if (verbose)
+			if (demo)
 				impDiff.updateAndDraw();
 
 			double meanImaDiff = statImaDiff.mean;
@@ -488,7 +490,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			int xRoi5 = 1;
 			int yRoi5 = height / 2 - MyConst.P3_DIAM_ROI_GHOSTS / 2;
 
-			if (verbose)
+			if (demo)
 				UtilAyv.autoAdjust(imp1, imp1.getProcessor());
 
 			MyLog.waitHere("INIZIO GHOSTS");
@@ -535,7 +537,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 					mean1);
 
 			int[][] classiSimulata = generaSimulata(xRoi2, yRoi2, diamRoi2,
-					imp1, fileDir, step, verbose, test);
+					imp1, fileDir, step, demo, test);
 
 			String[][] tabCodici = TableCode.loadTableCSV(MyConst.CODE_FILE);
 
@@ -980,7 +982,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				rt.addValue(2, classiSimulata[i1][1]);
 			}
 
-			if (verbose && !test && !fast) {
+			if (demo && !test && !fast) {
 				rt.show("Results");
 			}
 
@@ -1861,6 +1863,17 @@ public class p12rmn_ implements PlugIn, Measurements {
 				ready2 = false;
 			}
 		}
+
+		// ----------------------------------------
+		// AGGIUNGO 0.5 AI PUNTI TROVATI
+		// ---------------------------------------
+
+		for (int i1 = 0; i1 < peaks1.length; i1++) {
+			for (int i2 = 0; i2 < peaks1[0].length; i2++)
+				if (peaks1[i1][i2] > 0)
+					peaks1[i1][i2] = peaks1[i1][i2] + 1;
+		}
+
 		if (showProfiles) {
 			double[] bx = new double[line1[2].length];
 			for (int i1 = 0; i1 < line1[2].length; i1++) {
@@ -2470,7 +2483,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 	public static int[] positionSearch11(ImagePlus imp11, String info1,
-			boolean autoCalled, boolean step, boolean verbose, boolean test,
+			boolean autoCalled, boolean step, boolean demo, boolean test,
 			boolean fast) {
 		//
 		// ================================================================================
@@ -2478,8 +2491,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		// ================================================================================
 		//
 
-		boolean demo = true;
-		boolean debug = false;
+		boolean debug = true;
 
 		int xCenterCircle = 0;
 		int yCenterCircle = 0;
@@ -2492,16 +2504,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		int width = imp11.getWidth();
 		int height = imp11.getHeight();
-		String text = "";
-
-		// MyMsg.timedMessage(text, Color.white, Color.red, 3000);
-
-		// ImagePlus imp112 = imp11.duplicate();
+		UtilAyv.showImageMaximized(imp11);
 
 		if (demo) {
-			UtilAyv.showImageMaximized(imp11);
-			// MyLog.waitHere(listaMessaggi(0), debug);
-			MyLog.waitHere(listaMessaggi(0), 1000, debug);
+			MyLog.waitHere(listaMessaggi(0), debug);
+			// MyLog.waitHere(listaMessaggi(0), 1000, debug);
 
 		}
 
@@ -2548,7 +2555,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (strokewidth)
 			imp12.getRoi().setStrokeWidth(strWidth);
 		peaks5 = cannyProfileAnalyzer(imp12, dimPixel,
-				"BISETTRICE DIAGONALE SINISTRA", true, demo, debug);
+				"BISETTRICE DIAGONALE SINISTRA", demo, demo, debug);
 		plotPoints(imp12, over12, peaks5);
 
 		// --------DIAGONALE DESTRA---------------------
@@ -2689,17 +2696,22 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int[] yPoints3 = new int[len3];
 		int j1 = -1;
 
-		MyLog.waitHere(listaMessaggi(4), debug);
+		if (demo)
+			MyLog.waitHere(listaMessaggi(4), debug);
 
 		// della bisettice orizzontale prendo solo il picco di dx
-		j1++;
-		xPoints3[j1] = (int) (peaks1[2][1]);
-		yPoints3[j1] = (int) (peaks1[3][1]);
+		if (peaks1[2].length > 1) {
+			j1++;
+			xPoints3[j1] = (int) (peaks1[2][1]);
+			yPoints3[j1] = (int) (peaks1[3][1]);
+		}
 
 		// della bisettice verticale prendo solo il picco in basso
-		j1++;
-		xPoints3[j1] = (int) (peaks2[2][1]);
-		yPoints3[j1] = (int) (peaks2[3][1]);
+		if (peaks2[2].length > 1) {
+			j1++;
+			xPoints3[j1] = (int) (peaks2[2][1]);
+			yPoints3[j1] = (int) (peaks2[3][1]);
+		}
 
 		for (int i1 = 0; i1 < peaks3[2].length; i1++) {
 			j1++;
@@ -2772,11 +2784,17 @@ public class p12rmn_ implements PlugIn, Measurements {
 			//
 		}
 
-		MyLog.waitHere(listaMessaggi(6), debug);
+		if (demo)
+			MyLog.waitHere(listaMessaggi(6), debug);
+
+		// Rectangle boundRec = imp12.getProcessor().getRoi();
+		// xCenterCircle = Math.round(boundRec.x + boundRec.width / 2);
+		// yCenterCircle = Math.round(boundRec.y + boundRec.height / 2);
+		// int diamCircle = boundRec.width;
 
 		Rectangle boundRec = imp12.getProcessor().getRoi();
-		xCenterCircle = boundRec.x + boundRec.width / 2;
-		yCenterCircle = boundRec.y + boundRec.height / 2;
+		xCenterCircle = Math.round(boundRec.x + boundRec.width / 2);
+		yCenterCircle = Math.round(boundRec.y + boundRec.height / 2);
 		int diamCircle = boundRec.width;
 
 		//
@@ -2798,7 +2816,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			imp12.killRoi();
 		}
-		MyLog.waitHere(listaMessaggi(7), debug);
+		if (demo)
+			MyLog.waitHere(listaMessaggi(7), debug);
 
 		// if (step)
 		// MyLog.waitHere("Determinazione dati per la ROI all'80%");
@@ -2819,16 +2838,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 				showProfiles, false, false);
 
 		// PLOTTAGGIO PUNTI
-		xprimo = (int) (peaks9[2][0]);
-		yprimo = (int) (peaks9[3][0]);
-		imp12.setRoi(xprimo, yprimo, 2, 2);
-		imp12.getRoi().setStrokeColor(Color.green);
-		over12.addElement(imp12.getRoi());
-		xsecondo = (int) (peaks9[2][1]);
-		ysecondo = (int) (peaks9[3][1]);
-		imp12.setRoi(xsecondo, ysecondo, 2, 2);
-		imp12.getRoi().setStrokeColor(Color.green);
-		over12.addElement(imp12.getRoi());
+
+		plotPoints(imp12, over12, peaks9);
 
 		double gapVert = diamCircle / 2 - (yCenterCircle - peaks9[3][0]);
 		// IJ.log("gapVert= " + gapVert);
@@ -2851,22 +2862,25 @@ public class p12rmn_ implements PlugIn, Measurements {
 		// over12.addElement(imp12.getRoi());
 		// xsecondo = (int) (peaks10[2][1]);
 		// ysecondo = (int) (peaks10[3][1]);
-		float[] xpoints = new float[2];
-		float[] ypoints = new float[2];
-		xpoints[0] = (float) peaks10[2][0];
-		ypoints[0] = (float) peaks10[3][0];
-		xpoints[1] = (float) peaks10[2][1];
-		ypoints[1] = (float) peaks10[3][1];
+		// float[] xpoints = new float[2];
+		// float[] ypoints = new float[2];
+		// xpoints[0] = (float) peaks10[2][0];
+		// ypoints[0] = (float) peaks10[3][0];
+		// xpoints[1] = (float) peaks10[2][1];
+		// ypoints[1] = (float) peaks10[3][1];
+		//
+		// PointRoi points = new PointRoi(xpoints, ypoints, 2);
+		//
+		// // imp12.setRoi(xsecondo, ysecondo, 2, 2);
+		// imp12.setRoi(points);
+		// imp12.getRoi().setStrokeColor(Color.green);
+		// imp12.getRoi().setStrokeWidth(2);
+		// over12.addElement(imp12.getRoi());
 
-		PointRoi points = new PointRoi(xpoints, ypoints, 2);
+		plotPoints(imp12, over12, peaks10);
 
-		// imp12.setRoi(xsecondo, ysecondo, 2, 2);
-		imp12.setRoi(points);
-		imp12.getRoi().setStrokeColor(Color.green);
-		imp12.getRoi().setStrokeWidth(2);
-		over12.addElement(imp12.getRoi());
-
-		MyLog.waitHere(listaMessaggi(8), debug);
+		if (demo)
+			MyLog.waitHere(listaMessaggi(8), debug);
 
 		// xPoints3[j1] = (int) (peaks7[2][i1]);
 		// yPoints3[j1] = (int) (peaks7[3][i1]);
@@ -2891,11 +2905,15 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		// verifico che con questo spostamento il cerchio abbia una certa
 		// distanza sia sotto che sopra
+		int d1 = 0;
+		int d2 = 0;
+		int d3 = 0;
+		int d4 = 0;
 
-		int d1 = xprimo - (xCenterCircle + xcorr - diamRoi2 / 2);
-		int d2 = xsecondo - (xCenterCircle + xcorr + diamRoi2 / 2);
-		int d3 = yprimo - (yCenterCircle + ycorr - diamRoi2 / 2);
-		int d4 = ysecondo - (yCenterCircle + ycorr + diamRoi2 / 2);
+		d1 = (int) (peaks9[2][0] - (xCenterCircle + xcorr - diamRoi2 / 2));
+		d2 = (int) (peaks9[2][0] - (xCenterCircle + xcorr + diamRoi2 / 2));
+		d3 = (int) (peaks10[2][0] - (yCenterCircle + ycorr - diamRoi2 / 2));
+		d4 = (int) (peaks10[2][0] - (yCenterCircle + ycorr + diamRoi2 / 2));
 
 		// MyLog.waitHere("d1= " + d1 + " d2= " + d2 + " d3=" + d3 + " d4= " +
 		// d4);
@@ -2915,8 +2933,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 					+ ycorr - 2, 4, 4));
 			Roi roi1 = imp12.getRoi();
 			roi1.setFillColor(Color.green);
-			if (roi1 == null)
-				IJ.log("roi1==null");
 			over12.addElement(imp12.getRoi());
 
 			MyLog.waitHere(listaMessaggi(10), debug);
@@ -2924,6 +2940,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 			// over12.setStrokeColor(Color.green);
 
 		}
+
+		imp11.setRoi(new OvalRoi(xCenterCircle - diamCircle / 2, yCenterCircle
+				- diamCircle / 2, diamCircle, diamCircle));
+		imp11.getRoi().setStrokeColor(Color.red);
+
+		IJ.wait(800);
 
 		imp12.killRoi();
 		Rectangle boundingRectangle2 = imp12.getProcessor().getRoi();
@@ -4647,7 +4669,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		lista[12] = "12";
 		lista[13] = "13";
 		lista[14] = "14";
-		lista[15] = "15";
+		lista[15] = "Verifica posizionamento cerchio";
 		lista[16] = "16";
 		lista[17] = "17";
 		lista[18] = "18";
@@ -4680,13 +4702,19 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 	public static void plotPoints(ImagePlus imp1, Overlay over1,
 			double[][] peaks1) {
-		float[] xPoints = new float[2];
-		float[] yPoints = new float[2];
 
-		xPoints[0] = (float) peaks1[2][0];
-		yPoints[0] = (float) peaks1[3][0];
-		xPoints[1] = (float) peaks1[2][1];
-		yPoints[1] = (float) peaks1[3][1];
+		float[] xPoints = new float[peaks1[0].length];
+		float[] yPoints = new float[peaks1[0].length];
+
+		// xPoints[0] = (float) peaks1[2][0];
+		// yPoints[0] = (float) peaks1[3][0];
+		// xPoints[1] = (float) peaks1[2][1];
+		// yPoints[1] = (float) peaks1[3][1];
+
+		for (int i1 = 0; i1 < peaks1[0].length; i1++) {
+			xPoints[i1] = (float) peaks1[2][i1];
+			yPoints[i1] = (float) peaks1[3][i1];
+		}
 
 		imp1.setRoi(new PointRoi(xPoints, yPoints, xPoints.length));
 		imp1.getRoi().setStrokeColor(Color.green);
