@@ -74,6 +74,36 @@ public class p12rmn_Test {
 	}
 
 	@Test
+	public final void testMainUniforNEW() {
+
+		// 16 dec 2011 sistemato, ora funziona in automatico
+
+		String path1 = "./Test2//HUSA_001testP3";
+		String path2 = "./Test2//HUSA_002testP3";
+		String autoArgs = "0";
+		boolean autoCalled = false;
+		boolean step = false;
+		boolean demo = false;
+		boolean test = false;
+		double profond = 30;
+		boolean fast = true;
+		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
+				autoCalled, step, demo, test, fast);
+
+		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		double[] vetReference = new p12rmn_().referenceSiemens();
+
+		double simul = 0.0;
+
+		String[] vetName = { "simul", "signal", "backNoise", "snRatio", "fwhm",
+				"num1", "num2", "num3", "num4", "num5", "num6", "num7", "num8",
+				"num9", "num10", "num11", "num12" };
+
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, vetName);
+		assertTrue(ok);
+	}
+
+	@Test
 	public final void testMainUniforFast() {
 
 		// 16 dec 2011 sistemato, ora funziona in automatico
@@ -83,12 +113,11 @@ public class p12rmn_Test {
 		String autoArgs = "0";
 		boolean autoCalled = false;
 		boolean step = false;
-		boolean demo = true;
+		boolean demo = false;
 		boolean test = false;
-		double profond = 30;
-		boolean fast = true;
-		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"info10", autoCalled, step, demo, test, fast);
+		boolean fast = false;
+		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
+				autoCalled, step, demo, test, fast);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		double[] vetReference = new p12rmn_().referenceSiemens();
@@ -115,10 +144,9 @@ public class p12rmn_Test {
 		boolean step = false;
 		boolean verbose = false;
 		boolean test = false;
-		double profond = 30;
 		boolean fast = true;
-		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"info10", autoCalled, step, verbose, test, fast);
+		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
+				autoCalled, step, verbose, test, fast);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		double fwhm = vetResults[4];
@@ -144,10 +172,9 @@ public class p12rmn_Test {
 		boolean step = true;
 		boolean verbose = true;
 		boolean test = false;
-		double profond = 30;
 		boolean fast = false;
-		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"info10", autoCalled, step, verbose, test, fast);
+		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
+				autoCalled, step, verbose, test, fast);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		double[] vetReference = new p12rmn_().referenceSiemens();
@@ -232,11 +259,10 @@ public class p12rmn_Test {
 	public final void testPositionSearch13() {
 
 		boolean autoCalled = false;
-		boolean step = true;
-		boolean verbose = true;
+		boolean step = false;
 		boolean test = false;
-		boolean fast = true;
-		boolean demo = true;
+		boolean fast = false;
+		boolean demo = false;
 
 		String path2 = "c:\\dati\\000P12";
 		String[] list = new File(path2).list();
@@ -252,14 +278,13 @@ public class p12rmn_Test {
 			// autoCalled,
 			// step, verbose, test, fast);
 			int[] out2 = p12rmn_.positionSearch11(imp13, "", autoCalled, step,
-					verbose, test, fast);
+					demo, test, fast);
 			// MyLog.logVector(out2, "out2");
 			int[] circleData = out2;
 			int diamGhost = 20;
 			int guard = 10;
-			double[][] out3 = p12rmn_
-					.positionSearch13(imp13, circleData, diamGhost, guard, "",
-							autoCalled, step, verbose, test, fast);
+			double[][] out3 = p12rmn_.positionSearch13(imp13, circleData,
+					diamGhost, guard, "", autoCalled, step, demo, test, fast);
 			// MyLog.logVector(out3, "out3");
 			// MyLog.waitHere();
 		}
@@ -276,25 +301,24 @@ public class p12rmn_Test {
 		imp11.deleteRoi();
 		boolean autoCalled = true;
 		boolean step = false;
-		boolean verbose = true;
-		boolean test = true;
-		boolean fast = true;
+		boolean demo = false;
+		boolean test = false;
+		boolean fast = false;
 		boolean irraggiungibile = false;
 		boolean debug = true;
 
 		int[] out2 = p12rmn_.positionSearch11(imp11, "", autoCalled, step,
-				verbose, test, fast);
+				demo, test, fast);
 		int[] circleData = out2;
 		int diamGhost = 20;
 		int guard = 10;
 		int[] out3 = p12rmn_.positionSearch14(imp11, circleData, diamGhost,
-				guard, "", autoCalled, step, verbose, test, fast,
-				irraggiungibile);
-		irraggiungibile = true;
-		MyLog.waitHere(p12rmn_.listaMessaggi(34), debug);
-		out3 = p12rmn_.positionSearch14(imp11, circleData, diamGhost, guard,
-				"", autoCalled, step, verbose, test, fast, irraggiungibile);
-		MyLog.waitHere();
+				guard, "", autoCalled, step, demo, test, fast, irraggiungibile);
+		// irraggiungibile = true;
+		// MyLog.waitHere(p12rmn_.listaMessaggi(34), debug);
+		// out3 = p12rmn_.positionSearch14(imp11, circleData, diamGhost, guard,
+		// "", autoCalled, step, demo, test, fast, irraggiungibile);
+		// MyLog.waitHere();
 
 	}
 

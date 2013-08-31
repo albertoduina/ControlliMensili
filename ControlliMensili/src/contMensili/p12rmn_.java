@@ -224,8 +224,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 				boolean verbose = true;
 				boolean test = false;
 				double profond = 30;
-				mainUnifor(path1, path2, "0", profond, "", autoCalled, step,
-						verbose, test, fast);
+				mainUnifor(path1, path2, "0", "", autoCalled, step, verbose,
+						test, fast);
 
 				UtilAyv.afterWork();
 				retry = true;
@@ -249,6 +249,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
 				: false;
+
+		fast = false;
 		// IJ.log("p10rmn_.autoMenu fast= " + fast);
 		// IJ.log("p10rmn_.autoMenu autoargs= " + autoArgs);
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
@@ -286,18 +288,16 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		boolean step = false;
 		boolean retry = false;
-		double profond = readDouble(TableSequence.getProfond(iw2ayvTable,
-				vetRiga[0]));
-		if (UtilAyv.isNaN(profond)) {
-			MyLog.logVector(iw2ayvTable[vetRiga[0]], "stringa");
-			MyLog.waitHere();
-		}
+		// double profond = readDouble(TableSequence.getProfond(iw2ayvTable,
+		// vetRiga[0]));
+		// if (UtilAyv.isNaN(profond)) {
+		// MyLog.logVector(iw2ayvTable[vetRiga[0]], "stringa");
+		// MyLog.waitHere();
+		// }
 
 		if (fast) {
 			retry = false;
 			boolean autoCalled = true;
-			// TODO ripristinare verbose=false
-			// boolean verbose = false;
 			boolean verbose = false;
 			boolean test = false;
 
@@ -306,8 +306,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			// + "   " + (vetRiga[0] + 1) + " / "
 			// + TableSequence.getLength(iw2ayvTable));
 
-			mainUnifor(path1, path2, autoArgs, profond, info10, autoCalled,
-					step, verbose, test, fast);
+			mainUnifor(path1, path2, autoArgs, info10, autoCalled, step,
+					verbose, test, fast);
 
 			UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
@@ -338,14 +338,14 @@ public class p12rmn_ implements PlugIn, Measurements {
 				case 4:
 					retry = false;
 					boolean autoCalled = true;
-					boolean verbose = true;
+					boolean verbose = false;
 					boolean test = false;
 
 					// double profond = Double.parseDouble(TableSequence
 					// .getProfond(iw2ayvTable, vetRiga[0]));
 
-					mainUnifor(path1, path2, autoArgs, profond, info10,
-							autoCalled, step, verbose, test, fast);
+					mainUnifor(path1, path2, autoArgs, info10, autoCalled,
+							step, verbose, test, fast);
 
 					UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
@@ -384,21 +384,17 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 */
 	@SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String path1, String path2,
-			String autoArgs, double profond, String info10, boolean autoCalled,
-			boolean step, boolean demo, boolean test, boolean fast) {
+			String autoArgs, String info10, boolean autoCalled, boolean step,
+			boolean demo, boolean test, boolean fast) {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		double angle = Double.NaN;
-
-		//
-		// IL VERBOSE FORZATO A TRUE, QUI DI SEGUITO, SERVE
-		// A MOSTRARE, PER UN ISTANTE, DOVE VIENE POSIZIONATA AUTOMATICAMENTE
-		// LA ROI, anche in FAST.
-		//
+		boolean debug = true;
 
 		do {
+			// ===============================================
 			ImagePlus imp11 = null;
 			if (fast)
 				imp11 = UtilAyv.openImageNoDisplay(path1, true);
@@ -409,21 +405,100 @@ public class p12rmn_ implements PlugIn, Measurements {
 			ImagePlus imp13 = UtilAyv.openImageNoDisplay(path2, true);
 			if (imp13 == null)
 				MyLog.waitHere("Non trovato il file " + path2);
-
 			int out2[] = positionSearch11(imp11, info10, autoCalled, step,
 					demo, test, fast);
 			if (out2 == null) {
 				MyLog.waitHere("out2==null");
 				return null;
 			}
+			Overlay over11 = new Overlay();
+			over11.setStrokeColor(Color.red);
+			imp11.setOverlay(over11);
+			// ---------------------------------
+			int xCenterCircle = out2[0];
+			int yCenterCircle = out2[1];
+			int diamCircle = out2[2];
+			imp11.setRoi(new OvalRoi(xCenterCircle - diamCircle / 2,
+					yCenterCircle - diamCircle / 2, diamCircle, diamCircle));
+			imp11.getRoi().setStrokeColor(Color.green);
+			over11.addElement(imp11.getRoi());
+			int xCenter80 = out2[3];
+			int yCenter80 = out2[4];
+			int diam80 = out2[5];
+			imp11.setRoi(new OvalRoi(xCenter80 - diam80 / 2, yCenter80 - diam80
+					/ 2, diam80, diam80));
+			imp11.getRoi().setStrokeColor(Color.red);
+			over11.addElement(imp11.getRoi());
+			// =========================================
+			int[] circleData = out2;
+			int diamGhost = 20;
+			int guard = 10;
+			double[][] out3 = p12rmn_.positionSearch13(imp13, circleData,
+					diamGhost, guard, "", autoCalled, step, demo, test, fast);
+			if (out3 == null) {
+				MyLog.waitHere("out3==null");
+				return null;
+			}
+			// ---------------------------------
+			double xGhMaxDw = out3[0][0];
+			double yGhMaxDw = out3[1][0];
+			double xGhMaxSx = out3[0][1];
+			double yGhMaxSx = out3[1][1];
+			double xGhMaxDx = out3[0][2];
+			double yGhMaxDx = out3[1][2];
+			double xGhMaxUp = out3[0][3];
+			double yGhMaxUp = out3[1][3];
+			imp11.setRoi(new OvalRoi(xGhMaxDw - diamGhost / 2, yGhMaxDw
+					- diamGhost / 2, diamGhost, diamGhost));
+			imp11.getRoi().setStrokeColor(Color.green);
+			over11.addElement(imp11.getRoi());
+			drawLabel(imp11, "dw");
+			over11.addElement(imp11.getRoi());
+			imp11.setRoi(new OvalRoi(xGhMaxSx - diamGhost / 2, yGhMaxSx
+					- diamGhost / 2, diamGhost, diamGhost));
+			imp11.getRoi().setStrokeColor(Color.green);
+			over11.addElement(imp11.getRoi());
+			drawLabel(imp11, "sx");
+			over11.addElement(imp11.getRoi());
+			imp11.setRoi(new OvalRoi(xGhMaxDx - diamGhost / 2, yGhMaxDx
+					- diamGhost / 2, diamGhost, diamGhost));
+			imp11.getRoi().setStrokeColor(Color.green);
+			over11.addElement(imp11.getRoi());
+			drawLabel(imp11, "dx");
+			over11.addElement(imp11.getRoi());
+
+			imp11.setRoi(new OvalRoi(xGhMaxUp - diamGhost / 2, yGhMaxUp
+					- diamGhost / 2, diamGhost, diamGhost));
+			imp11.getRoi().setStrokeColor(Color.green);
+			over11.addElement(imp11.getRoi());
+			drawLabel(imp11, "up");
+			over11.addElement(imp11.getRoi());
+			// ================================================
+			int diamFondo = 20;
+			boolean irraggiungibile = false;
+			int[] out4 = p12rmn_.positionSearch14(imp11, circleData, diamFondo,
+					guard, "", autoCalled, step, demo, test, fast,
+					irraggiungibile);
+			if (out4 == null) {
+				MyLog.waitHere("out4==null");
+				return null;
+			}
+			// ---------------------------------
+			int xCenterFondo = out4[0];
+			int yCenterFondo = out4[1];
+			imp11.setRoi(new OvalRoi(xCenterFondo - diamFondo / 2, yCenterFondo
+					- diamFondo / 2, diamFondo, diamFondo));
+			imp11.getRoi().setStrokeColor(Color.green);
+			over11.addElement(imp11.getRoi());
+			drawLabel(imp11, "bkg");
+			over11.addElement(imp11.getRoi());
+			// ==========================================================
+
 
 			// ========================================================================
-			// se non ho trovato la posizione mi ritrovo qui senza out2[]
-			// valido
-			//
-			// se anche uno solo dei check limits è fallito si deve tornare qui
-			// ed eseguire il controllo, come minimo senza fast attivo ed in
-			// modalità verbose
+			// se non ho trovato la posizione mi ritrovo qui senza out validi
+			// valido, in tal caso andrebbe attivato automaticamente, sulle
+			// stesse immagini p3rmn_
 			// ========================================================================
 			ImagePlus imp1 = null;
 			ImagePlus imp2 = null;
@@ -444,86 +519,157 @@ public class p12rmn_ implements PlugIn, Measurements {
 			// ============================================================================
 
 			// Recupero ora i dati di output da PositionSearch11
-
-			MyLog.waitHere("DOPO POSITION SEARCH 11");
+			Overlay over2 = new Overlay();
+			Overlay over1 = new Overlay();
+			over1.setStrokeColor(Color.red);
+			imp1.setOverlay(over1);
+			// ---------------------------------
 
 			int xRoi2 = out2[3];
 			int yRoi2 = out2[4];
 			int diamRoi2 = out2[5];
 
-			Overlay over2 = new Overlay();
+			IJ.run(imp2, "Set Scale...",
+					"distance=0 known=0 pixel=1 unit=pixel");
 
 			int height = imp1.getHeight();
 			int width = imp1.getWidth();
+			imp1.setRoi(new OvalRoi(xRoi2 - diamRoi2 / 2, yRoi2 - diamRoi2 / 2,
+					diamRoi2, diamRoi2));
+			if (demo) {
+				imp1.getRoi().setStrokeColor(Color.red);
+				over1.addElement(imp1.getRoi());
+				imp1.getRoi().setStrokeWidth(2);
+				MyLog.waitHere(listaMessaggi(40), debug);
 
-			imp1.setRoi(new OvalRoi(xRoi2, yRoi2, diamRoi2, diamRoi2));
-
-			MyLog.waitHere("BBBBBBBBB");
+			}
 
 			ImageStatistics stat1 = imp1.getStatistics();
 			double mean1 = stat1.mean;
-			if (!test)
+			if (demo)
 				msg85percData(step, mean1);
-
 			double uiPerc1 = uiPercCalculation(stat1.max, stat1.min);
+			if (demo)
+				MyLog.waitHere("uiPerc1= " + uiPerc1);
 
 			ImagePlus impDiff = UtilAyv.genImaDifference(imp1, imp2);
-			if (demo)
+			Overlay overDiff = new Overlay();
+			overDiff.setStrokeColor(Color.red);
+			impDiff.setOverlay(overDiff);
+
+			if (demo) {
 				UtilAyv.showImageMaximized(impDiff);
-			if (!test)
+				MyLog.waitHere(listaMessaggi(41), debug);
 				msgElabImaDiff(step);
-			impDiff.setRoi(new OvalRoi(xRoi2, yRoi2, diamRoi2, diamRoi2));
+			}
+			impDiff.setRoi(new OvalRoi(xRoi2 - diamRoi2 / 2, yRoi2 - diamRoi2
+					/ 2, diamRoi2, diamRoi2));
+			if (demo) {
+				impDiff.getRoi().setStrokeColor(Color.green);
+				impDiff.getRoi().setStrokeWidth(2);
+				// overDiff.addElement(impDiff.getRoi());
+				MyLog.waitHere(listaMessaggi(42), debug);
+
+			}
 
 			ImageStatistics statImaDiff = impDiff.getStatistics();
-			if (demo)
-				impDiff.updateAndDraw();
+
+			// if (demo) {
+			// impDiff.updateAndDraw();}
 
 			double meanImaDiff = statImaDiff.mean;
 			double stdDevImaDiff = statImaDiff.stdDev;
 			if (!test)
 				msgImaDiffData(step, meanImaDiff);
 			double noiseImaDiff = stdDevImaDiff / Math.sqrt(2);
-			double snRatio = Math.sqrt(2) * mean1 / stdDevImaDiff;
-			if (!test)
-				msgSnRatio(step, uiPerc1, snRatio);
 
-			int xRoi5 = 1;
-			int yRoi5 = height / 2 - MyConst.P3_DIAM_ROI_GHOSTS / 2;
+			double snRatio = Math.sqrt(2) * mean1 / stdDevImaDiff;
+			if (demo) {
+				MyLog.waitHere(listaMessaggi(43), debug);
+
+				msgSnRatio(step, uiPerc1, snRatio);
+			}
+
+
+			// iniziamo con il ghost inferiore
+
+			imp1.setRoi(new OvalRoi(xGhMaxDw - diamGhost / 2, yGhMaxDw
+					- diamGhost / 2, diamGhost, diamGhost));
+			imp1.getRoi().setStrokeColor(Color.green);
+			imp1.getRoi().setStrokeWidth(2);
+			over1.addElement(imp1.getRoi());
+			drawLabel(imp1, "dw");
+			over1.addElement(imp1.getRoi());
+
+			imp1.setRoi(new OvalRoi(xGhMaxSx - diamGhost / 2, yGhMaxSx
+					- diamGhost / 2, diamGhost, diamGhost));
+			imp1.getRoi().setStrokeColor(Color.green);
+			imp1.getRoi().setStrokeWidth(2);
+			over1.addElement(imp1.getRoi());
+			drawLabel(imp1, "sx");
+			over1.addElement(imp1.getRoi());
+
+			imp1.setRoi(new OvalRoi(xGhMaxDx - diamGhost / 2, yGhMaxDx
+					- diamGhost / 2, diamGhost, diamGhost));
+			imp1.getRoi().setStrokeColor(Color.green);
+			imp1.getRoi().setStrokeWidth(2);
+			over1.addElement(imp1.getRoi());
+			drawLabel(imp1, "dx");
+			over1.addElement(imp1.getRoi());
+
+			imp1.setRoi(new OvalRoi(xGhMaxUp - diamGhost / 2, yGhMaxUp
+					- diamGhost / 2, diamGhost, diamGhost));
+			imp1.getRoi().setStrokeColor(Color.green);
+			imp1.getRoi().setStrokeWidth(2);
+			over1.addElement(imp1.getRoi());
+			drawLabel(imp1, "up");
+			over1.addElement(imp1.getRoi());
+
+			imp1.setRoi(new OvalRoi(xCenterFondo - diamFondo / 2, yCenterFondo
+					- diamFondo / 2, diamFondo, diamFondo));
+			imp1.getRoi().setStrokeColor(Color.orange);
+			imp1.getRoi().setStrokeWidth(2);
+			over1.addElement(imp1.getRoi());
+			drawLabel(imp1, "bkg");
+			over1.addElement(imp1.getRoi());
+
+			imp1.deleteRoi();
 
 			if (demo)
 				UtilAyv.autoAdjust(imp1, imp1.getProcessor());
 
-			MyLog.waitHere("INIZIO GHOSTS");
-
+			diamGhost = MyConst.P3_DIAM_ROI_GHOSTS;
+			int xRoi5 = (int) Math.round(xGhMaxDw - diamGhost / 2);
+			int yRoi5 = (int) Math.round(yGhMaxDw - diamGhost / 2);
 			ImageStatistics statGh1 = ghostRoi(xRoi5, yRoi5, imp1, 1, step,
 					test);
 			double mediaGhost1 = statGh1.mean;
 
-			int xRoi6 = height / 2 - MyConst.P3_DIAM_ROI_GHOSTS / 2;
-			int yRoi6 = 1;
+			int xRoi6 = (int) Math.round(xGhMaxSx - diamGhost / 2);
+			int yRoi6 = (int) Math.round(yGhMaxSx - diamGhost / 2);
+
 			ImageStatistics statGh2 = ghostRoi(xRoi6, yRoi6, imp1, 2, step,
 					test);
 			double mediaGhost2 = statGh2.mean;
 
-			int xRoi7 = height - MyConst.P3_DIAM_ROI_GHOSTS - 1;
-			int yRoi7 = height / 2 - MyConst.P3_DIAM_ROI_GHOSTS / 2;
+			int xRoi7 = (int) Math.round(xGhMaxDx - diamGhost / 2);
+			int yRoi7 = (int) Math.round(yGhMaxDx - diamGhost / 2);
 			ImageStatistics statGh3 = ghostRoi(xRoi7, yRoi7, imp1, 3, step,
 					test);
 			double mediaGhost3 = statGh3.mean;
 
-			int xRoi8 = height / 2 - MyConst.P3_DIAM_ROI_GHOSTS / 2;
-			int yRoi8 = height - MyConst.P3_DIAM_ROI_GHOSTS - 1;
+			int xRoi8 = (int) Math.round(xGhMaxUp - diamGhost / 2);
+			int yRoi8 = (int) Math.round(yGhMaxUp - diamGhost / 2);
+
 			ImageStatistics statGh4 = ghostRoi(xRoi8, yRoi8, imp1, 4, step,
 					test);
 			double mediaGhost4 = statGh4.mean;
 
-			int xRoi9 = height - MyConst.P3_DIAM_ROI_BACKGROUND - 1;
-			int yRoi9 = width - MyConst.P3_DIAM_ROI_BACKGROUND - 1;
-			if (test)
-				xRoi9 = xRoi9 - 40;
+			int xRoi9 = xCenterFondo - MyConst.P12_DIAM_ROI_BACKGROUND / 2;
+			int yRoi9 = yCenterFondo - MyConst.P12_DIAM_ROI_BACKGROUND / 2;
 
 			ImageStatistics statBkg = UtilAyv.backCalc(xRoi9, yRoi9,
-					MyConst.P3_DIAM_ROI_BACKGROUND, imp1, step, true, test);
+					MyConst.P12_DIAM_ROI_BACKGROUND, imp1, step, true, true);
 			double meanBkg = statBkg.mean;
 
 			double ghostPerc1 = ghostPercCalculation(mediaGhost1, meanBkg,
@@ -535,291 +681,29 @@ public class p12rmn_ implements PlugIn, Measurements {
 					mean1);
 			double ghostPerc4 = ghostPercCalculation(mediaGhost4, meanBkg,
 					mean1);
+			if (demo)
+				MyLog.waitHere(listaMessaggi(44), debug);
 
-			int[][] classiSimulata = generaSimulata(xRoi2, yRoi2, diamRoi2,
-					imp1, fileDir, step, demo, test);
-
+			int[][] classiSimulata = generaSimulata(xCenter80 - diam80 / 2,
+					yCenter80 - diam80 / 2, diam80, imp1, fileDir, step, demo,
+					test);
 			String[][] tabCodici = TableCode.loadTableCSV(MyConst.CODE_FILE);
-
-			// String[][] tabCodici = new InputOutput().readFile1(
-			// MyConst.CODE_FILE, MyConst.TOKENS4);
-
+			if (demo)
+				MyLog.waitHere(listaMessaggi(45), debug);
+			imp1.deleteRoi();
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
 					imp1, tabCodici, VERSION, autoCalled);
-
 			// put values in ResultsTable
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 
-			// int sqNEA = MyConst.P10_NEA_11X11_PIXEL;
-			// // disegno MROI già predeterminata
-			// imp1.setOverlay(over2);
-			// over2.setStrokeColor(Color.red);
-			// int xCenterRoi = (int) out2[0];
-			// int yCenterRoi = (int) out2[1];
-			// int xCenterCircle = (int) out2[2];
-			// int yCenterCircle = (int) out2[3];
-			// int xMaxima = (int) out2[4];
-			// int yMaxima = (int) out2[5];
-			//
-			// // int width = imp1.getWidth();
-			// // int height = imp1.getHeight();
-			// double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
-			// ReadDicom.readDicomParameter(imp1,
-			// MyConst.DICOM_PIXEL_SPACING), 1));
-			//
-			// if (verbose) {
-			// // =================================================
-			// imp1.setRoi(xCenterRoi - 10, yCenterRoi - 10, 20, 20);
+			// // TODO
+			// // =============PROVVISORIO=====================================
 			// over2.addElement(imp1.getRoi());
-			// imp1.killRoi();
-			// imp1.setRoi(new OvalRoi(xCenterCircle - 4, yCenterCircle - 4,
-			// 8, 8));
-			// over2.addElement(imp1.getRoi());
-			// imp1.killRoi();
-			// imp1.setRoi(new OvalRoi(xMaxima - 4, yMaxima - 4, 8, 8));
-			// over2.addElement(imp1.getRoi());
-			// imp1.setRoi(new Line(xCenterCircle, yCenterCircle, xMaxima,
-			// yMaxima));
-			// over2.addElement(imp1.getRoi());
-			// over2.setStrokeColor(Color.green);
 			// imp1.updateAndDraw();
-			// // MyLog.waitHere();
-			// // =================================================
-			// }
-			//
-			// imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
-			// sqNEA,
-			// sqNEA);
-			// if (verbose) {
-			// over2.addElement(imp1.getRoi());
-			// }
-			// imp1.updateAndDraw();
-			// // MyLog.waitHere();
-			// if (step)
-			// new WaitForUserDialog("MROI 11 x 11 Premere  OK").show();
-			// //
-			// // posiziono la ROI 7x7 all'interno di MROI
-			// //
-			// int sq7 = MyConst.P10_MROI_7X7_PIXEL;
-			// imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7,
-			// sq7);
-			// if (verbose) {
-			// over2.addElement(imp1.getRoi());
-			// over2.setStrokeColor(Color.green);
-			// }
-			// imp1.updateAndDraw();
-			// // MyLog.waitHere();
-			// if (step)
-			// new WaitForUserDialog("MROI 7 x 7 Premere  OK").show();
-			//
-			// ImageStatistics stat7x7 = imp1.getStatistics();
-
-			// // =============================================================
-			// // eseguo un controllo di sicurezza sul risultato.
-			// // =============================================================
-			// int userSelection2 = UtilAyv.checkLimits(stat7x7.mean,
-			// vetMinimi[0], vetMaximi[0], "SEGNALE");
-			// if (userSelection2 == 2) {
-			// fast = false;
-			// verbose = true;
-			// continue;
-			// } else if (userSelection2 == 3) {
-			// break;
-			// }
-			// =============================================================
-			int xFondo = MyConst.P10_X_ROI_BACKGROUND;
-			int yFondo = MyConst.P10_Y_ROI_BACKGROUND;
-			int dFondo = MyConst.P10_DIAM_ROI_BACKGROUND;
-			if (step)
-				msgMroi();
-			//
-			// disegno RoiFondo su imp1
-			//
-			Boolean circular = true;
-			ImageStatistics statFondo = UtilAyv.backCalc2(xFondo, yFondo,
-					dFondo, imp1, step, circular, test);
-
-			// TODO
-			// =============PROVVISORIO=====================================
-			over2.addElement(imp1.getRoi());
-			imp1.updateAndDraw();
-			ImagePlus imp8 = imp1.flatten();
-			String newName = path1 + "_flat_p10.jpg";
-			new FileSaver(imp8).saveAsJpeg(newName);
-			MyLog.appendLog(fileDir + "MyLog.txt", "saved: " + newName);
-			// =============================================================
-
-			// MyLog.waitHere();
-			// =============================================================
-			// UtilAyv.checkLimits(statFondo.mean, 0, 50, "statFondo.mean");
-
-			// =============================================================
-			// userSelection2 = UtilAyv.checkLimits(statFondo.mean,
-			// vetMinimi[1],
-			// vetMaximi[1], "RUMORE");
-			// if (userSelection2 == 2) {
-			// fast = false;
-			// verbose = true;
-			// continue;
-			// } else if (userSelection2 == 3) {
-			// break;
-			// }
-			// =============================================================
-
-			//
-			// disegno MROI su imaDiff
-			//
-			// ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
-			// if (verbose && !fast)
-			// UtilAyv.showImageMaximized(imaDiff);
-			// imaDiff.setOverlay(over3);
-			// over3.setStrokeColor(Color.green);
-			//
-			// if (verbose && !fast) {
-			// // =================================================
-			// imaDiff.setRoi(xCenterRoi - 10, yCenterRoi - 10, 20, 20);
-			// over3.addElement(imaDiff.getRoi());
-			// imaDiff.killRoi();
-			// imaDiff.setRoi(new OvalRoi(xCenterCircle - 4,
-			// yCenterCircle - 4, 8, 8));
-			// over3.addElement(imaDiff.getRoi());
-			// imaDiff.killRoi();
-			// imaDiff.setRoi(new OvalRoi(xMaxima - 4, yMaxima - 4, 8, 8));
-			// over3.addElement(imaDiff.getRoi());
-			// imaDiff.setRoi(new Line(xCenterCircle, yCenterCircle, xMaxima,
-			// yMaxima));
-			// over3.addElement(imaDiff.getRoi());
-			// over3.setStrokeColor(Color.green);
-			// imaDiff.updateAndDraw();
-			//
-			// // =================================================
-			// }
-			//
-			// imaDiff.resetDisplayRange();
-			// imaDiff.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7,
-			// sq7);
-			// imaDiff.updateAndDraw();
-			// // ImageStatistics statImaDiff = imaDiff.getStatistics();
-			//
-			// imaDiff.updateAndDraw();
-			// if (imaDiff.isVisible())
-			// imaDiff.getWindow().toFront();
-			//
-			// if (step)
-			// msgMroi();
-			//
-			// if (imaDiff.isVisible())
-			// imaDiff.getWindow().toBack();
-			//
-			// //
-			// // calcolo P su imaDiff
-			// //
-			// double prelimImageNoiseEstimate_MROI = statImaDiff.stdDev
-			// / Math.sqrt(2);
-			//
-			// if (step) {
-			// msgNea(prelimImageNoiseEstimate_MROI);
-			// }
-			// //
-			// // loop di calcolo NEA su imp1
-			// //
-			// imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
-			// sqNEA,
-			// sqNEA);
-			// if (imp1.isVisible())
-			// imp1.getWindow().toFront();
-			//
-			// //
-			// // qui, se il numero dei pixel < 121 dovrò incrementare sqR2 e
-			// // ripetere il loop
-			// //
-			//
-			// double checkPixels = MyConst.P10_CHECK_PIXEL_MULTIPLICATOR
-			// * prelimImageNoiseEstimate_MROI;
-			// int area11x11 = MyConst.P10_NEA_11X11_PIXEL
-			// * MyConst.P10_NEA_11X11_PIXEL;
-			// int enlarge = 0;
-			// int pixx = 0;
-			//
-			// do {
-			//
-			// boolean paintPixels = false;
-			//
-			// pixx = countPixTest(imp1, xCenterRoi, yCenterRoi, sqNEA,
-			// checkPixels, paintPixels);
-			//
-			// imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
-			// sqNEA, sqNEA);
-			// over2.addElement(imp1.getRoi());
-			// over2.setStrokeColor(Color.green);
-			//
-			// imp1.updateAndDraw();
-			//
-			// // imp1.getWindow().toFront();
-			// if (step)
-			// msgDisplayNEA();
-			//
-			// if (pixx < area11x11) {
-			// sqNEA = sqNEA + 2; // accrescimento area
-			// enlarge = enlarge + 1;
-			// }
-			// if (step) {
-			// msgEnlargeRoi(sqNEA);
-			// }
-			//
-			// // verifico che quando cresce il lato del quadrato non si
-			// // esca
-			// // dall'immagine
-			//
-			// if ((xCenterRoi + sqNEA - enlarge) >= width
-			// || (xCenterRoi - enlarge) <= 0) {
-			// msgNot121();
-			// return null;
-			// }
-			// if ((yCenterRoi + sqNEA - enlarge) >= height
-			// || (yCenterRoi - enlarge) <= 0) {
-			// msgNot121();
-			// return null;
-			// }
-			// if (step && pixx >= area11x11)
-			// msgSqr2OK(pixx);
-			//
-			// } while (pixx < area11x11);
-			// // MyLog.waitHere();
-			//
-			// if (imp1.isVisible())
-			// imp1.getWindow().toFront();
-			//
-			// imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
-			// sqNEA,
-			// sqNEA);
-			// imp1.updateAndDraw();
-			//
-			// //
-			// // calcolo SD su imaDiff quando i corrispondenti pixel
-			// // di imp1 passano il test
-			// //
-			// double[] out11 = devStandardNema(imp1, imaDiff, xCenterRoi,
-			// yCenterRoi, sqNEA, checkPixels);
-			// if (step)
-			// msgDisplayMean4(out11[0], out11[1]);
-			// //
-			// // calcolo SNR finale
-			// //
-			// double snr = stat7x7.mean / (out11[1] / Math.sqrt(2));
-			// if (step)
-			// msgSnr(snr);
-
-			// // =============================================================
-			// userSelection2 = UtilAyv.checkLimits(snr, vetMinimi[2],
-			// vetMaximi[2], "SNR");
-			// if (userSelection2 == 2) {
-			// fast = false;
-			// verbose = true;
-			// continue;
-			// } else if (userSelection2 == 3) {
-			// break;
-			// }
+			// ImagePlus imp8 = imp1.flatten();
+			// String newName = path1 + "_flat_p10.jpg";
+			// new FileSaver(imp8).saveAsJpeg(newName);
+			// MyLog.appendLog(fileDir + "MyLog.txt", "saved: " + newName);
 			// // =============================================================
 
 			String patName = ReadDicom.readDicomParameter(imp1,
@@ -830,147 +714,83 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			String codice = UtilAyv.getFiveLetters(codice1);
 
-			// String codice = ReadDicom
-			// .readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION)
-			// .substring(0, 4).trim();
+				simulataName = fileDir + patName + codice + "sim.zip";
 
-			simulataName = fileDir + patName + codice + "sim.zip";
-
-			// int[][] classiSimulata = ImageUtils.generaSimulata12classi(
-			// xCenterRoi, yCenterRoi, sq7, imp1, simulataName, step,
-			// false, test);
-
-			//
-			// calcolo posizione fwhm a metà della MROI
-			//
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
-			//
-			// ----------------------------------------------------------
-			// Calcolo FWHM
-			// la direzione su cui verrà preso il profilo è quella centro
-			// ROI - centro cerchio, il segmento su cui tracciamo il profilo
-			// -----------------------------------------------------------
-			//
-
-			// double[] out3 = crossing(xCenterCircle, yCenterCircle,
-			// xCenterRoi,
-			// yCenterRoi, width, height);
-
-			// double[] out3 = crossing(xCenterRoi, yCenterRoi, xCenterCircle,
-			// yCenterCircle, width, height);
-
-			// // aveva restituito null
-			// if (out3 == null)
-			// MyLog.waitHere("out3==null");
-			//
-			// // ora però devo riordinare i valori restituiti da crossing, in
-			// modo
-			// // che il punto di start del profilo sia quello più vicino al
-			// centro
-			// // ROI.
-			//
-			// double dist1 = MyFwhm.lengthCalculation(out3[0], out3[1],
-			// xCenterRoi, yCenterRoi);
-			// double dist2 = MyFwhm.lengthCalculation(out3[2], out3[3],
-			// xCenterRoi, yCenterRoi);
-			// int xStartProfile = 0;
-			// int yStartProfile = 0;
-			// int xEndProfile = 0;
-			// int yEndProfile = 0;
-			//
-			// if (dist1 <= dist2) {
-			// xStartProfile = (int) Math.round(out3[0]);
-			// yStartProfile = (int) Math.round(out3[1]);
-			// xEndProfile = (int) Math.round(out3[2]);
-			// yEndProfile = (int) Math.round(out3[3]);
-			// } else {
-			// xStartProfile = (int) Math.round(out3[2]);
-			// yStartProfile = (int) Math.round(out3[3]);
-			// xEndProfile = (int) Math.round(out3[0]);
-			// yEndProfile = (int) Math.round(out3[1]);
-			// }
-			//
-			// imp1.setRoi(new Line(xStartProfile, yStartProfile, xEndProfile,
-			// yEndProfile));
-			// imp1.updateAndDraw();
-			//
-			// if (imp1.isVisible())
-			// imp1.getWindow().toFront();
-			//
-			// double[] profile2 = getProfile(imp1, xStartProfile,
-			// yStartProfile,
-			// xEndProfile, yEndProfile, dimPixel, step);
-			//
-			// // step = true;
-			// double[] outFwhm2 = MyFwhm.analyzeProfile(profile2, dimPixel,
-			// codice, false, step);
-
-			// MyLog.waitHere("dimPixel= "+dimPixel+" fwhm= " + outFwhm2[0]);
-			// =============================================================
-			// userSelection2 = UtilAyv.checkLimits(outFwhm2[0], vetMinimi[3],
-			// vetMaximi[3], "FWHM");
-			// if (userSelection2 == 2) {
-			// fast = false;
-			// verbose = true;
-			// continue;
-			// } else if (userSelection2 == 3) {
-			// break;
-			// }
-			// =============================================================
-
-			//
-			// Salvataggio dei risultati nella ResultsTable
-			//
-			// String[][] tabCodici = TableCode.loadTableCSV(MyConst.CODE_FILE);
-			//
-			// String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-			// imp1, tabCodici, VERSION, autoCalled);
-			//
 			//
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 			int col = 2;
 			String t1 = "TESTO          ";
+			// put values in ResultsTable
+			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 			rt.setHeading(++col, "roi_x");
 			rt.setHeading(++col, "roi_y");
 			rt.setHeading(++col, "roi_b");
 			rt.setHeading(++col, "roi_h");
 
-			rt.addLabel(t1, simulataName);
-			rt.incrementCounter();
-
 			rt.addLabel(t1, "Segnale");
-			// rt.addValue(2, stat7x7.mean);
-			// // rt.addValue(3, xCenterRoi);
-			// // rt.addValue(4, yCenterRoi);
-			// rt.addValue(3, stat7x7.roiX);
-			// rt.addValue(4, stat7x7.roiY);
-			// rt.addValue(5, stat7x7.roiWidth);
-			rt.addValue(6, angle);
+			rt.addValue(2, mean1);
+			rt.addValue(3, stat1.roiX);
+			rt.addValue(4, stat1.roiY);
+			rt.addValue(5, stat1.roiWidth);
+			rt.addValue(6, stat1.roiHeight);
 
-			// rt.incrementCounter();
-			// rt.addLabel(t1, "Rumore_Fondo");
-			// rt.addValue(2, (out11[1] / Math.sqrt(2)));
-			// rt.addValue(3, statFondo.roiX);
-			// rt.addValue(4, statFondo.roiY);
-			// rt.addValue(5, statFondo.roiWidth);
-			// rt.addValue(6, statFondo.roiHeight);
-			//
-			// rt.incrementCounter();
-			// rt.addLabel(t1, "SnR");
-			// rt.addValue(2, snr);
-			// rt.addValue(3, stat7x7.roiX);
-			// rt.addValue(4, stat7x7.roiY);
-			// rt.addValue(5, stat7x7.roiWidth);
-			// rt.addValue(6, stat7x7.roiHeight);
-			//
-			// rt.incrementCounter();
-			// rt.addLabel(t1, "FWHM");
-			// rt.addValue(2, outFwhm2[0]);
-			// rt.addValue(3, xStartProfile);
-			// rt.addValue(4, yStartProfile);
-			// rt.addValue(5, xEndProfile);
-			// rt.addValue(6, yEndProfile);
+			rt.incrementCounter();
+			rt.addLabel(t1, "Rumore");
+			rt.addValue(2, noiseImaDiff);
+			rt.addValue(3, stat1.roiX);
+			rt.addValue(4, stat1.roiY);
+			rt.addValue(5, stat1.roiWidth);
+			rt.addValue(6, stat1.roiHeight);
+
+			rt.incrementCounter();
+			rt.addLabel(t1, "SNR");
+			rt.addValue(2, snRatio);
+			rt.addValue(3, stat1.roiX);
+			rt.addValue(4, stat1.roiY);
+			rt.addValue(5, stat1.roiWidth);
+			rt.addValue(6, stat1.roiHeight);
+
+			rt.incrementCounter();
+			rt.addLabel(t1, "Ghost_1");
+			rt.addValue(2, ghostPerc1);
+			rt.addValue(3, statGh1.roiX);
+			rt.addValue(4, statGh1.roiY);
+			rt.addValue(5, statGh1.roiWidth);
+			rt.addValue(6, statGh1.roiHeight);
+
+			rt.incrementCounter();
+			rt.addLabel(t1, "Ghost_2");
+			rt.addValue(2, ghostPerc2);
+			rt.addValue(3, statGh2.roiX);
+			rt.addValue(4, statGh2.roiY);
+			rt.addValue(5, statGh2.roiWidth);
+			rt.addValue(6, statGh2.roiHeight);
+
+			rt.incrementCounter();
+			rt.addLabel(t1, "Ghost_3");
+			rt.addValue(2, ghostPerc3);
+			rt.addValue(3, statGh3.roiX);
+			rt.addValue(4, statGh3.roiY);
+			rt.addValue(5, statGh3.roiWidth);
+			rt.addValue(6, statGh3.roiHeight);
+
+			rt.incrementCounter();
+			rt.addLabel(t1, "Ghost_4");
+			rt.addValue(2, ghostPerc4);
+			rt.addValue(3, statGh4.roiX);
+			rt.addValue(4, statGh4.roiY);
+			rt.addValue(5, statGh4.roiWidth);
+			rt.addValue(6, statGh4.roiHeight);
+
+			rt.incrementCounter();
+			rt.addLabel(t1, "Unif.Integr.%");
+			rt.addValue(2, uiPerc1);
+			rt.addValue(3, stat1.roiX);
+			rt.addValue(4, stat1.roiY);
+			rt.addValue(5, stat1.roiWidth);
+			rt.addValue(6, stat1.roiHeight);
 
 			String[] levelString = { "+20%", "+10%", "-10%", "-10%", "-30%",
 					"-40%", "-50%", "-60%", "-70%", "-80%", "-90%", "fondo" };
@@ -986,9 +806,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 				rt.show("Results");
 			}
 
-			if (fast) {
+			if (fast || autoCalled) {
 				accetta = true;
-			} else if (autoCalled && !test) {
+			} else if (!test) {
 				accetta = MyMsg.accettaMenu();
 			} else {
 				if (!test) {
@@ -1061,11 +881,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 		boolean autoCalled = false;
 		boolean step = true;
 		boolean test = true;
-		double profond = 30;
 		boolean fast = false;
 
-		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, profond, "",
-				autoCalled, step, verbose, test, fast);
+		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, "", autoCalled,
+				step, verbose, test, fast);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 				MyConst.P10_vetName);
@@ -2504,11 +2323,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		int width = imp11.getWidth();
 		int height = imp11.getHeight();
-		UtilAyv.showImageMaximized(imp11);
-
 		if (demo) {
+			UtilAyv.showImageMaximized(imp11);
+
 			MyLog.waitHere(listaMessaggi(0), debug);
-			// MyLog.waitHere(listaMessaggi(0), 1000, debug);
 
 		}
 
@@ -2535,10 +2353,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		boolean showProfiles = false;
 		int[] xcoord = new int[2];
 		int[] ycoord = new int[2];
-		int xprimo;
-		int yprimo;
-		int xsecondo;
-		int ysecondo;
 		boolean strokewidth = true;
 		double strWidth = 1.5;
 
@@ -2808,12 +2622,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			imp12.setRoi(new OvalRoi(xCenterCircle - 2, yCenterCircle - 2, 4, 4));
 			Roi roi1 = imp12.getRoi();
 			roi1.setFillColor(Color.red);
-
-			if (roi1 == null)
-				IJ.log("roi1==null");
 			over12.addElement(imp12.getRoi());
 			over12.setStrokeColor(Color.red);
-
 			imp12.killRoi();
 		}
 		if (demo)
@@ -2947,10 +2757,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		IJ.wait(800);
 
-		imp12.killRoi();
 		Rectangle boundingRectangle2 = imp12.getProcessor().getRoi();
 		diamRoi2 = (int) boundingRectangle2.width;
 		xRoi2 = boundingRectangle2.x + boundingRectangle2.width / 2;
+		yRoi2 = boundingRectangle2.y + boundingRectangle2.height / 2;
+		imp12.killRoi();
+
 		imp12.close();
 		int[] out2 = new int[6];
 		out2[0] = xCenterCircle;
@@ -3219,13 +3031,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 	public static double[][] positionSearch13(ImagePlus imp1, int[] circleData,
 			int diamGhost, int guard, String info1, boolean autoCalled,
-			boolean step, boolean verbose, boolean test, boolean fast) {
+			boolean step, boolean demo, boolean test, boolean fast) {
 
 		// leggo i dati del cerchio "esterno" del fantoccio e li plotto
 		// sull'immagine
 
-		boolean demo = true;
-		boolean demo1 = true;
+		boolean demo1 = demo;
 		boolean debug = true;
 
 		imp1.deleteRoi();
@@ -3249,22 +3060,24 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int diamRoi0 = diamCircle;
 
 		imp2.setRoi(new OvalRoi(xRoi0, yRoi0, diamRoi0, diamRoi0));
+		imp2.getRoi().setStrokeColor(Color.red);
+		over2.addElement(imp2.getRoi());
 		if (demo) {
-			imp2.getRoi().setStrokeColor(Color.red);
-			over2.addElement(imp2.getRoi());
 			MyLog.waitHere(listaMessaggi(20), debug);
 		}
 
 		// marco con un punto il centro del fantoccio
 		imp2.setRoi(new OvalRoi(xCenterCircle - 2, yCenterCircle - 2, 4, 4));
-		UtilAyv.showImageMaximized(imp2);
 		if (demo) {
-			imp2.getRoi().setStrokeColor(Color.red);
-			over2.addElement(imp2.getRoi());
-			MyLog.waitHere(listaMessaggi(21), debug);
+			UtilAyv.showImageMaximized(imp2);
+			if (demo) {
+				imp2.getRoi().setStrokeColor(Color.red);
+				over2.addElement(imp2.getRoi());
+				MyLog.waitHere(listaMessaggi(21), debug);
+			}
 		}
 
-		IJ.setMinAndMax(imp2, 10, 50);
+		IJ.setMinAndMax(imp2, 10, 100);
 
 		// ghost di sinistra
 
@@ -3299,10 +3112,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 				}
 			}
 		}
-		imp2.setRoi(new OvalRoi(xGhMaxSx - diamGhost / 2, yGhMaxSx - diamGhost
-				/ 2, diamGhost, diamGhost));
-		imp2.getRoi().setStrokeColor(Color.red);
-		over2.addElement(imp2.getRoi());
+		if (demo) {
+			imp2.setRoi(new OvalRoi(xGhMaxSx - diamGhost / 2, yGhMaxSx
+					- diamGhost / 2, diamGhost, diamGhost));
+			imp2.getRoi().setStrokeColor(Color.red);
+			over2.addElement(imp2.getRoi());
+		}
 
 		// IJ.log("il massimo del ghost di sinistra si trova a x= " + xGhMaxSx
 		// + " y= " + yGhMaxSx + " mean= " + ghMaxSx);
@@ -3343,11 +3158,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 				}
 			}
 		}
-
-		imp2.setRoi(new OvalRoi(xGhMaxUp - diamGhost / 2, yGhMaxUp - diamGhost
-				/ 2, diamGhost, diamGhost));
-		imp2.getRoi().setStrokeColor(Color.red);
-		over2.addElement(imp2.getRoi());
+		if (demo) {
+			imp2.setRoi(new OvalRoi(xGhMaxUp - diamGhost / 2, yGhMaxUp
+					- diamGhost / 2, diamGhost, diamGhost));
+			imp2.getRoi().setStrokeColor(Color.red);
+			over2.addElement(imp2.getRoi());
+		}
 
 		// ghost di destra (e te pareva che non la buttavano in politica!)
 		// IJ.log("ghost di destra");
@@ -3382,10 +3198,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 			}
 		}
 
-		imp2.setRoi(new OvalRoi(xGhMaxDx - diamGhost / 2, yGhMaxDx - diamGhost
-				/ 2, diamGhost, diamGhost));
-		imp2.getRoi().setStrokeColor(Color.red);
-		over2.addElement(imp2.getRoi());
+		if (demo) {
+			imp2.setRoi(new OvalRoi(xGhMaxDx - diamGhost / 2, yGhMaxDx
+					- diamGhost / 2, diamGhost, diamGhost));
+			imp2.getRoi().setStrokeColor(Color.red);
+			over2.addElement(imp2.getRoi());
+		}
 		// IJ.log("il massimo del ghost di destra si trova a x= " + xGhMaxDx
 		// + " y= " + yGhMaxDx + " mean= " + ghMaxDx);
 		//
@@ -3421,43 +3239,43 @@ public class p12rmn_ implements PlugIn, Measurements {
 			}
 		}
 
-		MyLog.waitHere(listaMessaggi(23), debug);
+		if (demo) {
+			imp2.setRoi(new OvalRoi(xGhMaxDw - diamGhost / 2, yGhMaxDw
+					- diamGhost / 2, diamGhost, diamGhost));
+			imp2.getRoi().setStrokeColor(Color.red);
+			imp2.getRoi().setStrokeWidth(1.5);
+			over2.addElement(imp2.getRoi());
+			drawLabel(imp2, "dw");
+			over2.addElement(imp2.getRoi());
 
-		imp2.setRoi(new OvalRoi(xGhMaxDw - diamGhost / 2, yGhMaxDw - diamGhost
-				/ 2, diamGhost, diamGhost));
-		imp2.getRoi().setStrokeColor(Color.red);
-		imp2.getRoi().setStrokeWidth(1.5);
-		over2.addElement(imp2.getRoi());
-		drawLabel(imp2, "dw");
-		over2.addElement(imp2.getRoi());
+			imp2.setRoi(new OvalRoi(xGhMaxSx - diamGhost / 2, yGhMaxSx
+					- diamGhost / 2, diamGhost, diamGhost));
+			imp2.getRoi().setStrokeColor(Color.red);
+			imp2.getRoi().setStrokeWidth(1.5);
+			over2.addElement(imp2.getRoi());
+			drawLabel(imp2, "sx");
+			over2.addElement(imp2.getRoi());
 
-		imp2.setRoi(new OvalRoi(xGhMaxSx - diamGhost / 2, yGhMaxSx - diamGhost
-				/ 2, diamGhost, diamGhost));
-		imp2.getRoi().setStrokeColor(Color.red);
-		imp2.getRoi().setStrokeWidth(1.5);
-		over2.addElement(imp2.getRoi());
-		drawLabel(imp2, "sx");
-		over2.addElement(imp2.getRoi());
+			imp2.setRoi(new OvalRoi(xGhMaxDx - diamGhost / 2, yGhMaxDx
+					- diamGhost / 2, diamGhost, diamGhost));
+			imp2.getRoi().setStrokeColor(Color.red);
+			imp2.getRoi().setStrokeWidth(1.5);
+			over2.addElement(imp2.getRoi());
+			drawLabel(imp2, "dx");
+			over2.addElement(imp2.getRoi());
 
-		imp2.setRoi(new OvalRoi(xGhMaxDx - diamGhost / 2, yGhMaxDx - diamGhost
-				/ 2, diamGhost, diamGhost));
-		imp2.getRoi().setStrokeColor(Color.red);
-		imp2.getRoi().setStrokeWidth(1.5);
-		over2.addElement(imp2.getRoi());
-		drawLabel(imp2, "dx");
-		over2.addElement(imp2.getRoi());
+			imp2.setRoi(new OvalRoi(xGhMaxUp - diamGhost / 2, yGhMaxUp
+					- diamGhost / 2, diamGhost, diamGhost));
+			imp2.getRoi().setStrokeColor(Color.red);
+			imp2.getRoi().setStrokeWidth(1.5);
+			over2.addElement(imp2.getRoi());
+			drawLabel(imp2, "up");
+			over2.addElement(imp2.getRoi());
 
-		imp2.setRoi(new OvalRoi(xGhMaxUp - diamGhost / 2, yGhMaxUp - diamGhost
-				/ 2, diamGhost, diamGhost));
-		imp2.getRoi().setStrokeColor(Color.red);
-		imp2.getRoi().setStrokeWidth(1.5);
-		over2.addElement(imp2.getRoi());
-		drawLabel(imp2, "up");
-		over2.addElement(imp2.getRoi());
-
-		// IJ.log("il massimo del ghost inferiore si trova a x= " + xGhMaxDw
-		// + " y= " + yGhMaxDw + " mean= " + ghMaxDw);
-		MyLog.waitHere();
+			// IJ.log("il massimo del ghost inferiore si trova a x= " + xGhMaxDw
+			// + " y= " + yGhMaxDw + " mean= " + ghMaxDw);
+			MyLog.waitHere(listaMessaggi(23), debug);
+		}
 
 		double[][] out1 = new double[2][4];
 		out1[0][0] = xGhMaxDw;
@@ -3474,12 +3292,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 	public static int[] positionSearch14(ImagePlus imp1, int[] circleData,
 			int diamGhost, int guard, String info1, boolean autoCalled,
-			boolean step, boolean verbose, boolean test, boolean fast,
+			boolean step, boolean demo, boolean test, boolean fast,
 			boolean irraggiungibile) {
 
 		// leggo i dati del cerchio "esterno" del fantoccio e li plotto
 		// sull'immagine
-		boolean demo = true;
 		boolean debug = true;
 
 		Overlay over2 = new Overlay();
@@ -3488,7 +3305,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		ImagePlus imp2 = imp1.duplicate();
 		imp2.setOverlay(over2);
-		IJ.setMinAndMax(imp2, 10, 50);
+		if (demo) {
+			IJ.setMinAndMax(imp2, 10, 50);
+		}
 
 		IJ.run(imp2, "Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");
 
@@ -3503,8 +3322,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int xRoi0 = xCenterCircle - diamCircle / 2;
 		int yRoi0 = yCenterCircle - diamCircle / 2;
 		int diamRoi0 = diamCircle;
-		UtilAyv.showImageMaximized(imp2);
-		MyLog.waitHere(listaMessaggi(30), debug);
+		if (demo) {
+			UtilAyv.showImageMaximized(imp2);
+			MyLog.waitHere(listaMessaggi(30), debug);
+		}
 
 		imp2.setRoi(new OvalRoi(xRoi0, yRoi0, diamRoi0, diamRoi0));
 		if (demo) {
@@ -3531,13 +3352,15 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int py = 0;
 		int incr = 1;
 		boolean pieno = false;
+		int xcentGhost = 0;
+		int ycentGhost = 0;
 
 		do {
 			incr--;
 			px = width - diamGhost + incr;
 			py = height - diamGhost + incr;
-			int xcentGhost = px + diamGhost / 2;
-			int ycentGhost = py + diamGhost / 2;
+			xcentGhost = px + diamGhost / 2;
+			ycentGhost = py + diamGhost / 2;
 			critic_0 = criticalDistanceCalculation(xcentGhost, ycentGhost,
 					diamGhost / 2, xCenterCircle, yCenterCircle, diamCircle / 2);
 			imp2.setRoi(new OvalRoi(px, py, diamGhost, diamGhost));
@@ -3545,15 +3368,22 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			pieno = verifyCircularRoiPixels(imp2, xcentGhost, ycentGhost,
 					diamGhost, test, demo);
+
 			if (critic_0 < guard) {
 				MyLog.waitHere("Ricerca posizione fondo fallita");
 				return null;
 			}
 		} while (pieno || a > 0);
+		if (demo) {
+			MyLog.waitHere(listaMessaggi(33), debug);
+		}
 
-		MyLog.waitHere(listaMessaggi(33), debug);
+		int[] out1 = new int[3];
+		out1[0] = xcentGhost;
+		out1[1] = ycentGhost;
+		out1[2] = diamGhost;
 
-		return null;
+		return out1;
 	}
 
 	/***
@@ -3620,10 +3450,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 		imp1.setRoi(new OvalRoi(xRoi0, yRoi0, diamRoi0, diamRoi0));
 		imp1.getRoi().setStrokeColor(Color.red);
 
-		if (demo)
+		if (demo) {
 			over2.addElement(imp1.getRoi());
-
-		if (!test) {
 			IJ.setMinAndMax(imp1, 10, 30);
 			UtilAyv.showImageMaximized2(imp1);
 		}
@@ -4462,23 +4290,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 			int count, boolean step, boolean test) {
 
 		ImageStatistics stat = null;
-		boolean redo = true;
-		do {
-			imp.setRoi(new OvalRoi(xRoi, yRoi, MyConst.P3_DIAM_ROI_GHOSTS,
-					MyConst.P3_DIAM_ROI_GHOSTS));
-			if (imp.isVisible())
-				imp.getWindow().toFront();
-			if (!test)
-				msgGhostRoi(count);
-			stat = imp.getStatistics();
-			if (stat.mean == 0)
-				redo = true;
-			else
-				redo = false;
-			if (redo)
-				msgMoveGhostRoi();
-			msgSignalGhostRoi(step, stat.mean);
-		} while (redo);
+		imp.setRoi(new OvalRoi(xRoi, yRoi, MyConst.P3_DIAM_ROI_GHOSTS,
+				MyConst.P3_DIAM_ROI_GHOSTS));
+		if (imp.isVisible())
+			imp.getWindow().toFront();
+		stat = imp.getStatistics();
 		return stat;
 	}
 
@@ -4694,7 +4510,13 @@ public class p12rmn_ implements PlugIn, Measurements {
 		lista[37] = "37";
 		lista[38] = "38";
 		lista[39] = "39";
-		lista[40] = "40";
+		lista[40] = "Il calcolo della unità integrale \npercentualeverrà effettuato sulla prima immagine, nell'area \nevidenziata in rosso";
+		lista[41] = "Calcoliamo la immagine differenza tra \nla prima e la seconda immagine, \ntale immagine doverbbe essere essenzialmente \ncostituita da rumore";
+		lista[42] = "Il calcolo del rumore verrà \neffettuato sulla immagine differenza, \n nell'area evidenziata in verde";
+		lista[43] = "Utilizzando la media del segnale sulla roi \nevidenziata in rosso sulla prima immagine e la deviazione standard"
+				+ " \ndella roi evidenziata in verde sulla immagine differenza, \npossiamo calcolare il rapporto Segnale/Rumore";
+		lista[44] = "Viene generata una immagine a 5 sfumature di grigio, utilizzando come riferimento l'area evidenziata in rosso";
+		lista[45] = "Questa è l'immagine simulata, i gradini di colore evidenziano le aree disuniformi";
 
 		String out = lista[select];
 		return out;
