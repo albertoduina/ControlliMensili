@@ -1,0 +1,40 @@
+dapprima ho creato un account su github
+
+
+--------------------------------------------------------
+CARICAMENTO DEL REPOSITORY LOCALE (COMPLETO) SU GITHUB
+--------------------------------------------------------
+1) Creazione su github di un repository con il medesimo nome
+2) Team / Remote /Push 
+Si apre una finestra di dialogo "PUSH TO ANOTHER REPOSITORY"
+URL: https://github.com/albertoduina/ControlliMensili.git
+Authentication:
+User: albertoduina
+Password: laMia, gne gne gne!!!
+StoreInSecureStore check
+---------------------------------------------------------
+SE VA TUTTO BENE SIATTENDE CHE IL CARICAMENTO VADA A BUON FINE
+-----------------
+ALTRIMENTI
+-----------------
+HO AVUTO IL MESSAGGIO NOT AUTHORIZED
+MA ANCHE UN .............
+IN QUESTO CASO SI DEVE SELEZIONARE UN FORCE PUSH
+------------------------------------------------------------
+------------------------------------------------------------
+SUPPONIAMO ORA CHE QUALCHE SIMPATICO OMETTO A 12 TENTACOLI
+FACCIA DELLE MODIFICHE SU GITHUB, LE DEVO ORA SCARICARE NEL 
+MIO REPOSITORY LOCALE
+------------------------------------------------------------ 
+1) Team/Remote/Fetch
+Si apre una finestra di dialogo "FETCH FROM ANOTHER REPOSITORY"
+URL: https://github.com/albertoduina/ControlliMensili.git
+Si apre una ulteriore finestra di dialogo "FETCH REF SPECIFICATIONS"
+SourceRef:  refs/heads/master
+Destination ref: refs/remote/choose_remote_name/master
+Poi si preme Add Spec e, volendo nella finestra sottostante, 
+in cui sono stati copiati i dati inseriti, possiamo premere FORCE UPDATE
+------------------------------------------------------------ 
+MA NON E'FINITA, DI SEGUITO BISOGNERA' FARE UN MERGE PER ACCETTARE 
+LE MODIFICE IMPORTATE DA GITHUB
+------------------------------------------------------------

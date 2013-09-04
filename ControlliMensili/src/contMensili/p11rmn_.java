@@ -758,7 +758,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				rt.addValue(5, xEndProfile);
 				rt.addValue(6, yEndProfile);
 
-				String[] levelString = { "+20%", "+10%", "-10%", "-10%",
+				String[] levelString = { "+20%", "+10%", "-10%", "-20%",
 						"-30%", "-40%", "-50%", "-60%", "-70%", "-80%", "-90%",
 						"fondo" };
 

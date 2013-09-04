@@ -74,39 +74,9 @@ public class p12rmn_Test {
 	}
 
 	@Test
-	public final void testMainUniforNEW() {
-
-		// 16 dec 2011 sistemato, ora funziona in automatico
-
-		String path1 = "./Test2//HUSA_001testP3";
-		String path2 = "./Test2//HUSA_002testP3";
-		String autoArgs = "0";
-		boolean autoCalled = false;
-		boolean step = false;
-		boolean demo = false;
-		boolean test = false;
-		double profond = 30;
-		boolean fast = true;
-		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
-				autoCalled, step, demo, test, fast);
-
-		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-		double[] vetReference = new p12rmn_().referenceSiemens();
-
-		double simul = 0.0;
-
-		String[] vetName = { "simul", "signal", "backNoise", "snRatio", "fwhm",
-				"num1", "num2", "num3", "num4", "num5", "num6", "num7", "num8",
-				"num9", "num10", "num11", "num12" };
-
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, vetName);
-		assertTrue(ok);
-	}
-
-	@Test
 	public final void testMainUniforFast() {
 
-		// 16 dec 2011 sistemato, ora funziona in automatico
+		// 04 sep 2013 funziona in automatico
 
 		String path1 = "./Test2//HUSA_001testP3";
 		String path2 = "./Test2//HUSA_002testP3";
@@ -115,113 +85,124 @@ public class p12rmn_Test {
 		boolean step = false;
 		boolean demo = false;
 		boolean test = false;
-		boolean fast = false;
-		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
-				autoCalled, step, demo, test, fast);
-
-		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-		double[] vetReference = new p12rmn_().referenceSiemens();
-
-		double simul = 0.0;
-
-		String[] vetName = { "simul", "signal", "backNoise", "snRatio", "fwhm",
-				"num1", "num2", "num3", "num4", "num5", "num6", "num7", "num8",
-				"num9", "num10", "num11", "num12" };
-
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, vetName);
-		assertTrue(ok);
-	}
-
-	@Test
-	public final void testMainUniforFault() {
-
-		// 16 dec 2011 sistemato, ora funziona in automatico
-
-		String path1 = "./data/F001_testP10";
-		String path2 = "./data/F002_testP10";
-		String autoArgs = "0";
-		boolean autoCalled = false;
-		boolean step = false;
-		boolean verbose = false;
-		boolean test = false;
 		boolean fast = true;
 		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
-				autoCalled, step, verbose, test, fast);
-
+				autoCalled, step, demo, test, fast);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-		double fwhm = vetResults[4];
-		MyLog.waitHere("fwhm= " + fwhm);
-
 		double[] vetReference = new p12rmn_().referenceSiemens();
-		String[] vetName = { "simul", "signal", "backNoise", "snRatio", "fwhm",
-				"num1", "num2", "num3", "num4", "num5", "num6", "num7", "num8",
-				"num9", "num10", "num11", "num12" };
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, vetName);
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
+				MyConst.P3_vetName);
 		assertTrue(ok);
 	}
 
 	@Test
 	public final void testMainUniforSlow() {
 
-		// 16 dec 2011 sistemato, ora funziona in automatico
+		// 04 sep 2013 funziona in automatico
 
-		String path1 = "./Test2/C001_testP10";
-		String path2 = "./Test2/C002_testP10";
+		String path1 = "./Test2//HUSA_001testP3";
+		String path2 = "./Test2//HUSA_002testP3";
 		String autoArgs = "0";
 		boolean autoCalled = false;
-		boolean step = true;
-		boolean verbose = true;
+		boolean step = false;
+		boolean demo = true;
 		boolean test = false;
-		boolean fast = false;
+		boolean fast = true;
 		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
-				autoCalled, step, verbose, test, fast);
-
+				autoCalled, step, demo, test, fast);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		double[] vetReference = new p12rmn_().referenceSiemens();
-		MyLog.logVector(vetResults, "vetResults");
-		MyLog.logVector(vetReference, "vetReference");
-		String[] vetName = { "simul", "signal", "backNoise", "snRatio", "fwhm",
-				"num1", "num2", "num3", "num4", "num5", "num6", "num7", "num8",
-				"num9", "num10", "num11", "num12" };
-
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, vetName);
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
+				MyConst.P3_vetName);
 		assertTrue(ok);
 	}
 
 	@Test
-	public final void testPositionSearch11() {
+	public final void testMainUniforFastManual() {
+
+		// 04 sep 2013 funziona in automatico
+		// visto l'intervento manuale richiesto, non ha senso effettuare una
+		// verifica su un set predefinito di dati
+
+		String path1 = "./Test2//HUSA_001testP3";
+		String path2 = "./Test2//HUSA_002testP3";
+		String autoArgs = "0";
+		boolean autoCalled = false;
+		boolean step = false;
+		boolean demo = false;
+		boolean test = true;
+		boolean fast = true;
+		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
+				autoCalled, step, demo, test, fast);
+	}
+
+	@Test
+	public final void testPositionSearch11single() {
 
 		// 16 dic 2011 sistemato, ora funziona in automatico
 
 		// String path1 = "./Test2/HUSA_001testP3";
 
-		// String path1 = "./data/P12/0001";
+		String path1 = "c:\\dati\\000P12\\68_1";
 
-		String path2 = "c:\\dati\\000P12";
-		String[] list = new File(path2).list();
-		if (list == null)
-			return;
-		for (int i1 = 0; i1 < list.length; i1++) {
-			String path1 = path2 + "\\" + list[i1];
-			ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
 
-			boolean autoCalled = false;
-			boolean step = true;
-			boolean demo = false;
-			boolean test = false;
-			boolean fast = false;
+		boolean autoCalled = false;
+		boolean step = true;
+		boolean demo = true;
+		boolean test = false;
+		boolean fast = false;
+		double maxFitError = 5;
 
-			int out2[] = p12rmn_.positionSearch11(imp11, "", autoCalled, step,
-					demo, test, fast);
+		int out2[] = p12rmn_.positionSearch11(imp11, maxFitError, "",
+				autoCalled, step, demo, test, fast);
 
-			MyLog.logVector(out2, "out2");
+		MyLog.logVector(out2, "out2");
+		MyLog.waitHere();
 
-			// int[] expected = { 126, 115, 172, 126, 39, 153 };
-			// MyLog.logVector(expected, "expected");
-			// boolean ok = UtilAyv.compareVectors(out2, expected, "");
-			// assertTrue(ok);
-		}
+		// int[] expected = { 126, 115, 172, 126, 39, 153 };
+		// MyLog.logVector(expected, "expected");
+		// boolean ok = UtilAyv.compareVectors(out2, expected, "");
+		// assertTrue(ok);
+
 	}
+
+	// @Test
+	// public final void testPositionSearch11() {
+	//
+	// // 16 dic 2011 sistemato, ora funziona in automatico
+	//
+	// // String path1 = "./Test2/HUSA_001testP3";
+	//
+	// // String path1 = "./data/P12/0001";
+	//
+	// String path2 = "c:\\dati\\000P12";
+	// String[] list = new File(path2).list();
+	// if (list == null)
+	// return;
+	// for (int i1 = 0; i1 < list.length; i1++) {
+	// String path1 = path2 + "\\" + list[i1];
+	// ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+	//
+	// boolean autoCalled = false;
+	// boolean step = false;
+	// boolean demo = false;
+	// boolean test = true;
+	// boolean fast = false;
+	// double maxFitError = 5;
+	//
+	// int out2[] = p12rmn_.positionSearch11(imp11, maxFitError, "",
+	// autoCalled, step, demo, test, fast);
+	//
+	// MyLog.logVector(out2, "out2");
+	// MyLog.waitHere();
+	//
+	// // int[] expected = { 126, 115, 172, 126, 39, 153 };
+	// // MyLog.logVector(expected, "expected");
+	// // boolean ok = UtilAyv.compareVectors(out2, expected, "");
+	// // assertTrue(ok);
+	// }
+	// }
 
 	@Test
 	public final void testPositionSearch12() {
@@ -263,6 +244,7 @@ public class p12rmn_Test {
 		boolean test = false;
 		boolean fast = false;
 		boolean demo = false;
+		double maxFitError = 5;
 
 		String path2 = "c:\\dati\\000P12";
 		String[] list = new File(path2).list();
@@ -277,8 +259,8 @@ public class p12rmn_Test {
 			// int[] out2 = p12rmn_.positionSearch12(imp11, imp13, "",
 			// autoCalled,
 			// step, verbose, test, fast);
-			int[] out2 = p12rmn_.positionSearch11(imp13, "", autoCalled, step,
-					demo, test, fast);
+			int[] out2 = p12rmn_.positionSearch11(imp13, maxFitError, "",
+					autoCalled, step, demo, test, fast);
 			// MyLog.logVector(out2, "out2");
 			int[] circleData = out2;
 			int diamGhost = 20;
@@ -306,9 +288,10 @@ public class p12rmn_Test {
 		boolean fast = false;
 		boolean irraggiungibile = false;
 		boolean debug = true;
+		double maxFitError = 5;
 
-		int[] out2 = p12rmn_.positionSearch11(imp11, "", autoCalled, step,
-				demo, test, fast);
+		int[] out2 = p12rmn_.positionSearch11(imp11, maxFitError, "",
+				autoCalled, step, demo, test, fast);
 		int[] circleData = out2;
 		int diamGhost = 20;
 		int guard = 10;
