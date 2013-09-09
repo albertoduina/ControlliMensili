@@ -17,6 +17,7 @@ import java.util.StringTokenizer;
 
 import utils.AboutBox;
 import utils.ButtonMessages;
+import utils.MyLog;
 import utils.MyMsg;
 import utils.MyConst;
 import utils.CustomCanvasGeneric;

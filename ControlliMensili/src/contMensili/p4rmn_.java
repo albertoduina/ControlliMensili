@@ -96,7 +96,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 		if (IJ.versionLessThan("1.43k"))
 			return;
-		
+
 		//
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
 		// modo il messaggio viene emesso, altrimenti si ha una eccezione
@@ -107,7 +107,6 @@ public class p4rmn_ implements PlugIn, Measurements {
 			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
 			return;
 		}
-
 
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
@@ -146,8 +145,9 @@ public class p4rmn_ implements PlugIn, Measurements {
 				retry = false;
 				return 0;
 			case 2:
-//				new AboutBox().about("Controllo MTF", this.getClass());
-				new AboutBox().about("Controllo MTF", MyVersion.CURRENT_VERSION);
+				// new AboutBox().about("Controllo MTF", this.getClass());
+				new AboutBox()
+						.about("Controllo MTF", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -179,8 +179,6 @@ public class p4rmn_ implements PlugIn, Measurements {
 		// 2 tokens auto
 		// 4 tokens auto
 		//
-
-		// MyLog.here("aaaa");
 
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
@@ -216,8 +214,9 @@ public class p4rmn_ implements PlugIn, Measurements {
 				new AboutBox().close();
 				return 0;
 			case 2:
-	//			new AboutBox().about("Contollo MTF", this.getClass());
-				new AboutBox().about("Controllo MTF", MyVersion.CURRENT_VERSION);
+				// new AboutBox().about("Contollo MTF", this.getClass());
+				new AboutBox()
+						.about("Controllo MTF", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -252,14 +251,16 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
+
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 
 		do {
 			ImagePlus imp1 = null;
+
 			imp1 = UtilAyv.openImageMaximized(path1);
 			// l'immagine deve esere visualizzata perchè uso RoiManager
 			if (imp1 == null) {
-				IJ.log("Immagine non trovata " + path1);
+				MyLog.waitHere("Immagine non trovata " + path1);
 				return null;
 			}
 			double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
@@ -290,7 +291,6 @@ public class p4rmn_ implements PlugIn, Measurements {
 					yEndRefline = 120.;
 				}
 			}
-			
 
 			double xStartRefline2 = xStartRefline / dimPixel;
 			double yStartRefline2 = yStartRefline / dimPixel;
@@ -424,7 +424,8 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 			RoiManager rm1 = new RoiManager();
 			imp1.setRoi(new OvalRoi(xRoi2mm, yRoi2mm, dRoi2mm, dRoi2mm));
-			rm1.addRoi(imp1.getRoi());
+			Roi r1 = imp1.getRoi();
+			rm1.addRoi(r1);
 			imp1.setRoi(new OvalRoi(xRoi1_5mm, yRoi1_5mm, dRoi1_5mm, dRoi1_5mm));
 			rm1.addRoi(imp1.getRoi());
 			imp1.setRoi(new OvalRoi(xRoi1mm, yRoi1mm, dRoi1mm, dRoi1mm));
@@ -439,10 +440,10 @@ public class p4rmn_ implements PlugIn, Measurements {
 			imp1.setRoi(new OvalRoi(xRoi_plexi, yRoi_plexi, dRoi_plexi,
 					dRoi_plexi));
 			rm1.addRoi(imp1.getRoi());
-	
+
 			// if (verbose) {
 			rm1.runCommand("Combine");
-	
+
 			if (verbose)
 				msgRefinePositioning();
 
@@ -455,7 +456,6 @@ public class p4rmn_ implements PlugIn, Measurements {
 			if (verbose && !test) {
 
 				overlayNumbers(imp1, true);
-				
 
 				visualResolution = msgLastVisiblePositioning();
 			}

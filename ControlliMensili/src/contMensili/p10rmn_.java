@@ -96,15 +96,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		String className = this.getClass().getName();
 
-//		VERSION = className + "_build_"
-//				+ ReadVersion.readVersionInfoInManifest("contMensili")
-//				+ "_iw2ayv_build_"
-//				+ ReadVersion.readVersionInfoInManifest("utils");
-		
-		VERSION = className + "_build_"
-				+ MyVersion.getVersion()
-				+ "_iw2ayv_build_"
-				+ MyVersionUtils.getVersion();
+		// VERSION = className + "_build_"
+		// + ReadVersion.readVersionInfoInManifest("contMensili")
+		// + "_iw2ayv_build_"
+		// + ReadVersion.readVersionInfoInManifest("utils");
+
+		VERSION = className + "_build_" + MyVersion.getVersion()
+				+ "_iw2ayv_build_" + MyVersionUtils.getVersion();
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -143,9 +141,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * TEST SILENT: VIENE ESEGUITO IL MODO FAST SULLA IMMAGINE CAMPIONE
 	 * 
 	 * 
-	 * ****************** QUANTO SCRITTO DI SEGUITO NON E'VALIDO ***********
-	 * A QUESTA DESCRIZIONE VA AGGIUNTO IL MODO DI FUNZIONAMENTO SE ANCHE UNO
-	 * SOLO DEI PARAMETRI VA AL DI FUORI DAI LIMITI DI MASSIMA:
+	 * ****************** QUANTO SCRITTO DI SEGUITO NON E'VALIDO *********** A
+	 * QUESTA DESCRIZIONE VA AGGIUNTO IL MODO DI FUNZIONAMENTO SE ANCHE UNO SOLO
+	 * DEI PARAMETRI VA AL DI FUORI DAI LIMITI DI MASSIMA:
 	 * 
 	 * VIENE PRESENTATO UN MESSAGGIO CHE INDICA CHE VALORE SUPERA I LIMITI, CI
 	 * SONO 3 POSSIBILITA' DI SCELTA: CONTINUA, VISUALIZZA, SUCCESSIVA CONTINUA
@@ -181,12 +179,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 				retry = false;
 				return 0;
 			case 2:
-//				new AboutBox()
-//				.about("Controllo Uniformità, con save UNCOMBINED e immagini circolari",
-//						this.getClass());
+				// new AboutBox()
+				// .about("Controllo Uniformità, con save UNCOMBINED e immagini circolari",
+				// this.getClass());
 				new AboutBox()
-				.about("Controllo Uniformità, con save UNCOMBINED e immagini circolari",
-						MyVersion.CURRENT_VERSION);
+						.about("Controllo Uniformità, con save UNCOMBINED e immagini circolari",
+								MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -208,8 +206,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 				boolean verbose = true;
 				boolean test = false;
 				double profond = 30;
+				boolean silent = false;
 				mainUnifor(path1, path2, "0", profond, "", autoCalled, step,
-						verbose, test, fast);
+						verbose, test, fast, silent);
 
 				UtilAyv.afterWork();
 				retry = true;
@@ -240,7 +239,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		if (vetRiga[0] == -1) {
 			IJ.log("selfTestSilent.p10rmn_");
 			selfTestSilent();
-			return 0;
+				return 0;
 		}
 
 		if ((nTokens != MyConst.TOKENS2) && (nTokens != MyConst.TOKENS4)) {
@@ -284,14 +283,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// boolean verbose = false;
 			boolean verbose = false;
 			boolean test = false;
-
+			boolean silent = false;
 			// MyLog.waitHere(TableSequence.getCode(iw2ayvTable, vetRiga[0])
 			// + "   " + TableSequence.getCoil(iw2ayvTable, vetRiga[0])
 			// + "   " + (vetRiga[0] + 1) + " / "
 			// + TableSequence.getLength(iw2ayvTable));
 
 			mainUnifor(path1, path2, autoArgs, profond, info10, autoCalled,
-					step, verbose, test, fast);
+					step, verbose, test, fast, silent);
 
 			UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
@@ -309,11 +308,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 					new AboutBox().close();
 					return 0;
 				case 2:
-//					new AboutBox()
-//					.about("Controllo Bobine Array, immagine circolare UNCOMBINED",
-//							this.getClass());
+					// new AboutBox()
+					// .about("Controllo Bobine Array, immagine circolare UNCOMBINED",
+					// this.getClass());
 					new AboutBox()
-					.about("Controllo Bobine Array, immagine circolare UNCOMBINED",MyVersion.CURRENT_VERSION);
+							.about("Controllo Bobine Array, immagine circolare UNCOMBINED",
+									MyVersion.CURRENT_VERSION);
 					retry = true;
 					break;
 				case 3:
@@ -323,12 +323,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 					boolean autoCalled = true;
 					boolean verbose = true;
 					boolean test = false;
+					boolean silent = false;
 
 					// double profond = Double.parseDouble(TableSequence
 					// .getProfond(iw2ayvTable, vetRiga[0]));
 
 					mainUnifor(path1, path2, autoArgs, profond, info10,
-							autoCalled, step, verbose, test, fast);
+							autoCalled, step, verbose, test, fast, silent);
 
 					UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
@@ -368,7 +369,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	@SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String path1, String path2,
 			String autoArgs, double profond, String info10, boolean autoCalled,
-			boolean step, boolean verbose, boolean test, boolean fast) {
+			boolean step, boolean verbose, boolean test, boolean fast,
+			boolean silent) {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
@@ -393,7 +395,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// double[] vetMaximi = doubleLimiti(decoderLimiti(limiti, "P10MAX"));
 		do {
 			ImagePlus imp11 = null;
-			if (fast)
+			if (fast || silent)
 				imp11 = UtilAyv.openImageNoDisplay(path1, true);
 			else
 				imp11 = UtilAyv.openImageMaximized(path1);
@@ -417,7 +419,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// ========================================================================
 			ImagePlus imp1 = null;
 			ImagePlus imp2 = null;
-			if (verbose) {
+			if (verbose && !silent) {
 				imp1 = UtilAyv.openImageMaximized(path1);
 				imp2 = UtilAyv.openImageNoDisplay(path2, true);
 			} else {
@@ -941,9 +943,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean test = false;
 		double profond = 30;
 		boolean fast = true;
+		boolean silent = !verbose;
 
 		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, profond, "",
-				autoCalled, step, verbose, test, fast);
+				autoCalled, step, verbose, test, fast, silent);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 				MyConst.P10_vetName);
@@ -959,10 +962,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		double simul = 0.0;
 		double signal = 355.0;
-	//	double backNoise = 12.225;
+		// double backNoise = 12.225;
 		double backNoise = 10.00347735683198;
 		double snRatio = 35.48765967441802;
-	//	double fwhm = 11.43429317989865;
+		// double fwhm = 11.43429317989865;
 		double fwhm = 23.977086148658152;
 		double num1 = 2763.0;
 		double num2 = 1532.0;

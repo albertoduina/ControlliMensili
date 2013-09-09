@@ -39,32 +39,16 @@ public class p12rmn_Test {
 
 	}
 
-	@Test
-	public final void testDecoderLimiti() {
 
-		String[][] limiti = new InputOutput().readFile6("LIMITI.csv");
-		MyLog.logMatrix(limiti, "limiti");
-		MyLog.waitHere();
-		String[] result = p12rmn_.decoderLimiti(limiti, "P10MAX");
-		MyLog.logVector(result, "result");
-
-	}
-
-	@Test
-	public final void testMainUniforTestGe() {
-
-		// 16 dec 2011 sistemato, ora funziona in automatico
-		boolean verbose = true;
-		boolean ok = p12rmn_.selfTestGe(verbose);
-		assertTrue(ok);
-	}
 
 	@Test
 	public final void testMainUniforTestSiemens() {
 
 		// 16 dec 2011 sistemato, ora funziona in automatico
 		boolean verbose = true;
-		boolean ok = p12rmn_.selfTestSiemens(verbose);
+		
+		boolean ok =new p12rmn_().selfTestSiemens(verbose);
+
 		assertTrue(ok);
 	}
 
@@ -86,10 +70,16 @@ public class p12rmn_Test {
 		boolean demo = false;
 		boolean test = false;
 		boolean fast = true;
+		boolean silent=false;
 		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
-				autoCalled, step, demo, test, fast);
+				autoCalled, step, demo, test, fast, silent);
+		rt1.show("Results");
+		MyLog.waitHere();
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		MyLog.logVector(vetResults, "vetResults");
 		double[] vetReference = new p12rmn_().referenceSiemens();
+		MyLog.logVector(vetReference, "vetReference");
+		MyLog.waitHere();
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 				MyConst.P3_vetName);
 		assertTrue(ok);
@@ -108,8 +98,9 @@ public class p12rmn_Test {
 		boolean demo = true;
 		boolean test = false;
 		boolean fast = true;
+		boolean silent=false;
 		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
-				autoCalled, step, demo, test, fast);
+				autoCalled, step, demo, test, fast, silent);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		double[] vetReference = new p12rmn_().referenceSiemens();
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
@@ -132,8 +123,9 @@ public class p12rmn_Test {
 		boolean demo = false;
 		boolean test = true;
 		boolean fast = true;
+		boolean silent=false;
 		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
-				autoCalled, step, demo, test, fast);
+				autoCalled, step, demo, test, fast, silent);
 	}
 
 	@Test
@@ -141,15 +133,15 @@ public class p12rmn_Test {
 
 		// 16 dic 2011 sistemato, ora funziona in automatico
 
-		// String path1 = "./Test2/HUSA_001testP3";
+		String path1 = "./Test2/HUSA_001testP3";
 
-		String path1 = "c:\\dati\\000P12\\68_1";
+	//	String path1 = "c:\\dati\\000P12\\68_1";
 
 		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
 
 		boolean autoCalled = false;
 		boolean step = true;
-		boolean demo = true;
+		boolean demo = false;
 		boolean test = false;
 		boolean fast = false;
 		double maxFitError = 5;
@@ -337,29 +329,29 @@ public class p12rmn_Test {
 
 	}
 
-	@Test
-	public final void testInterpola() {
-		double ax = 117.0;
-		double ay = 45.0;
-		double bx = 70.0;
-		double by = 78.0;
-		double prof = 20.0;
-		double[] out = p12rmn_.interpolaProfondCentroROI(ax, ay, bx, by, prof);
-		MyLog.logVector(out, "out");
+//	@Test
+//	public final void testInterpola() {
+//		double ax = 117.0;
+//		double ay = 45.0;
+//		double bx = 70.0;
+//		double by = 78.0;
+//		double prof = 20.0;
+//		double[] out = p12rmn_.interpolaProfondCentroROI(ax, ay, bx, by, prof);
+//		MyLog.logVector(out, "out");
+//
+//	}
 
-	}
-
-	@Test
-	public final void testAngoloRad() {
-		double ax = 117.0;
-		double ay = 45.0;
-		double bx = 70.0;
-		double by = 78.0;
-		// double prof = 20.0;
-		double out = p12rmn_.angoloRad(ax, ay, bx, by);
-		IJ.log("angoloRad= " + out + " angoloDeg= "
-				+ IJ.d2s(Math.toDegrees(out)));
-	}
+//	@Test
+//	public final void testAngoloRad() {
+//		double ax = 117.0;
+//		double ay = 45.0;
+//		double bx = 70.0;
+//		double by = 78.0;
+//		// double prof = 20.0;
+//		double out = p12rmn_.angoloRad(ax, ay, bx, by);
+//		IJ.log("angoloRad= " + out + " angoloDeg= "
+//				+ IJ.d2s(Math.toDegrees(out)));
+//	}
 
 	@Test
 	public final void testCreateErf() {
@@ -606,105 +598,82 @@ public class p12rmn_Test {
 		assertEquals(pixx, 441);
 	}
 
-	@Test
-	public final void testHorizontalScanLeftBubble() {
 
-		// String path1 = "./Test2/C001_testP10";
-		String path1 = "data/67226879";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+//	@Test
+//	public final void testInsideOutside() {
+//
+//		// String path1 = "./Test2/C001_testP10";
+//		String path1 = "data/P12/0009";
+//		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+//
+//		boolean scan = true;
+//		int low = 100;
+//		int high = 1000;
+//		ImagePlus imp10 = p12rmn_.insideOutside(imp1, low, high, scan);
+//		UtilAyv.showImageMaximized(imp10);
+//
+//		MyLog.waitHere();
+//
+//	}
 
-		boolean scan = true;
-		p12rmn_.horizontalScan(imp1, scan);
+//	@Test
+//	public final void testCanny() {
+//
+//		// // String path1 = "./Test2/C001_testP10";
+//		// String path1 = "data/P12/0009";
+//		// ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+//
+//		String path2 = "data/P12/";
+//		Sequenze_ sq1 = new Sequenze_();
+//		List<File> list1 = sq1.getFileListing((new File(path2)));
+//		String[] list2 = new String[list1.size()];
+//		int j1 = 0;
+//		for (File file : list1) {
+//			list2[j1++] = file.getPath();
+//			ImagePlus imp1 = UtilAyv.openImageMaximized(file.getPath());
+//			float low = 3.01f;
+//			float high = 10.0f;
+//			float radius = 2.0f;
+//			boolean normalized = false;
+//
+//			ImagePlus imp10 = p12rmn_
+//					.canny(imp1, low, high, radius, normalized);
+//			UtilAyv.showImageMaximized(imp10);
+//			MyLog.waitHere();
+//			imp1.close();
+//			imp10.close();
+//		}
+//
+//	}
 
-	}
-
-	@Test
-	public final void testHorizontalScanHighBubble() {
-
-		// String path1 = "./Test2/C001_testP10";
-		String path1 = "data/67226831";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-
-		boolean scan = true;
-		p12rmn_.horizontalScan(imp1, scan);
-
-	}
-
-	@Test
-	public final void testInsideOutside() {
-
-		// String path1 = "./Test2/C001_testP10";
-		String path1 = "data/P12/0009";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-
-		boolean scan = true;
-		int low = 100;
-		int high = 1000;
-		ImagePlus imp10 = p12rmn_.insideOutside(imp1, low, high, scan);
-		UtilAyv.showImageMaximized(imp10);
-
-		MyLog.waitHere();
-
-	}
-
-	@Test
-	public final void testCanny() {
-
-		// // String path1 = "./Test2/C001_testP10";
-		// String path1 = "data/P12/0009";
-		// ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-
-		String path2 = "data/P12/";
-		Sequenze_ sq1 = new Sequenze_();
-		List<File> list1 = sq1.getFileListing((new File(path2)));
-		String[] list2 = new String[list1.size()];
-		int j1 = 0;
-		for (File file : list1) {
-			list2[j1++] = file.getPath();
-			ImagePlus imp1 = UtilAyv.openImageMaximized(file.getPath());
-			float low = 3.01f;
-			float high = 10.0f;
-			float radius = 2.0f;
-			boolean normalized = false;
-
-			ImagePlus imp10 = p12rmn_
-					.canny(imp1, low, high, radius, normalized);
-			UtilAyv.showImageMaximized(imp10);
-			MyLog.waitHere();
-			imp1.close();
-			imp10.close();
-		}
-
-	}
-
-	@Test
-	public final void testCanny2() {
-
-		// String path1 = "./Test2/C001_testP10";
-		String path1 = "data/P12/0010";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-
-		float low = 3.01f;
-		float high = 10.0f;
-		float radius = 2.0f;
-		boolean normalized = false;
-
-		ImagePlus imp10 = p12rmn_.canny(imp1, low, high, radius, normalized);
-		UtilAyv.showImageMaximized(imp10);
-		MyLog.waitHere();
-		imp10.close();
-		ImagePlus imp2 = UtilAyv.openImageNoDisplay(path1, false);
-		ImageProcessor ip2 = imp2.getProcessor();
-		ip2.invert();
-		imp2.updateImage();
-
-		UtilAyv.showImageMaximized(imp2);
-		MyLog.waitHere();
-
-		ImagePlus imp11 = p12rmn_.canny(imp2, low, high, radius, normalized);
-		UtilAyv.showImageMaximized(imp11);
-		MyLog.waitHere();
-
-	}
+//	@Test
+//	public final void testCanny2() {
+//
+//		// String path1 = "./Test2/C001_testP10";
+//		String path1 = "data/P12/0010";
+//		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+//
+//		float low = 3.01f;
+//		float high = 10.0f;
+//		float radius = 2.0f;
+//		boolean normalized = false;
+//
+//		ImagePlus imp10 = p12rmn_.canny(imp1, low, high, radius, normalized);
+//		UtilAyv.showImageMaximized(imp10);
+//		MyLog.waitHere();
+//		imp10.close();
+//		ImagePlus imp2 = UtilAyv.openImageNoDisplay(path1, false);
+//		ImageProcessor ip2 = imp2.getProcessor();
+//		ip2.invert();
+//		imp2.updateImage();
+//
+//		UtilAyv.showImageMaximized(imp2);
+//		MyLog.waitHere();
+//
+//		ImagePlus imp11 = p12rmn_.canny(imp2, low, high, radius, normalized);
+//		UtilAyv.showImageMaximized(imp11);
+//		MyLog.waitHere();
+//
+//	}
 
 }

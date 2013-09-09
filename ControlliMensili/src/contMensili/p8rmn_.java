@@ -17,6 +17,7 @@ import utils.AboutBox;
 import utils.ButtonMessages;
 import utils.CustomCanvasGeneric;
 import utils.InputOutput;
+import utils.MyLog;
 import utils.MyMsg;
 import utils.MyConst;
 import utils.ReadDicom;

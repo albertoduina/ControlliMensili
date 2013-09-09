@@ -140,7 +140,7 @@ public class Sequenze_ implements PlugIn {
 		GenericDialog gd = new GenericDialog("", IJ.getInstance());
 		gd.addCheckbox("Nuovo controllo", false);
 		gd.addCheckbox("SelfTest", false);
-		gd.addCheckbox("p10_ p11_", true);
+		gd.addCheckbox("p10_ p11_ p12_", true);
 		gd.addCheckbox("Fast", true);
 		gd.addCheckbox("Superficiali", false);
 		gd.showDialog();
@@ -174,6 +174,7 @@ public class Sequenze_ implements PlugIn {
 			IJ.runPlugIn("contMensili.p8rmn_", "-1");
 			IJ.runPlugIn("contMensili.p10rmn_", "-1");
 			IJ.runPlugIn("contMensili.p11rmn_", "-1");
+			IJ.runPlugIn("contMensili.p12rmn_", "-1");
 			// IJ.runPlugIn("contMensili.p9rmn_", "-1");
 			ButtonMessages.ModelessMsg(
 					"Sequenze: fine selfTest, vedere Log per risultati",
@@ -381,7 +382,7 @@ public class Sequenze_ implements PlugIn {
 					+ pathList.length);
 			IJ.redirectErrorMessages();
 
-			// boolean questo = false;
+			boolean questo = false;
 
 			int type = (new Opener()).getFileType(pathList[i1]);
 
@@ -394,10 +395,14 @@ public class Sequenze_ implements PlugIn {
 					// " problematic");
 					continue;
 				}
-				// if (imp1.getTitle().equals("27679928")) {
-				// MyLog.waitHere("TROVATO 27679928");
-				// questo = true;
-				// }
+				
+				
+				 if (imp1.getTitle().equals("15_18130558_HE3,4vNE1,2vSP1,2_O12S_")) {
+	//			 MyLog.waitHere("15_18130558_HE3,4vNE1,2vSP1,2_O12S_");
+				 questo = true;
+				 }
+				 
+				 if (questo) MyLog.waitHere("trovato");
 
 				if (!ReadDicom.hasHeader(imp1)) {
 					// IJ.log("" + i1 + " file " + pathList[i1] + " not dicom");
@@ -421,7 +426,8 @@ public class Sequenze_ implements PlugIn {
 						codice = seriesDescription.substring(0, 5).trim();
 					}
 				}
-				String coil = ReadDicom.getFirstCoil(imp1);
+	//			String coil = ReadDicom.getFirstCoil(imp1);
+				String coil = ReadDicom.getAllCoils(imp1);
 
 				if (coil.equals("MISSING")) {
 					coil = new UtilAyv().kludge(pathList[i1]);
@@ -451,9 +457,9 @@ public class Sequenze_ implements PlugIn {
 				for (int j1 = 0; j1 < tableCode2.length; j1++) {
 
 					if (codice.equals(tableCode2[j1][0])) {
-						// if (questo)
-						// MyLog.waitHere("coil= "+ coil + " table code= "
-						// + tableCode2[j1][3]);
+						if (questo)
+						MyLog.waitHere("coil= "+ coil + " table code= "
+								+ tableCode2[j1][3]);
 						if ((tableCode2[j1][3].equals("x"))
 								|| (tableCode2[j1][3].equals("xxx"))
 								|| (coil.equals(tableCode2[j1][3]))) {
@@ -716,6 +722,8 @@ public class Sequenze_ implements PlugIn {
 						plugin = "contMensili.p5rmn_";
 					if (plugin.equals("contMensili.p11rmn_"))
 						plugin = "contMensili.p5rmn_";
+					if (plugin.equals("contMensili.p12rmn_"))
+						plugin = "contMensili.p3rmn_";
 				}
 
 				String argomento = argumentForPluginToBeCalled(j1,

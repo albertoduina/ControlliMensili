@@ -41,9 +41,10 @@ public class p11rmn_Test {
 
 		double profond = 30.0;
 		boolean fast = true;
+		boolean silent=false;
 
 		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, verticalDir,
-				profond, "", autoCalled, step, verbose, test, fast);
+				profond, "", autoCalled, step, verbose, test, fast, silent);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		// MyLog.logVector(vetResults, "vetResults");

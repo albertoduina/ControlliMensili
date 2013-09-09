@@ -486,6 +486,7 @@ public class p10rmn_MODIFICATO implements PlugIn, Measurements {
 			// =============================================================
 			// eseguo un controllo di sicurezza sul risultato.
 			// =============================================================
+		
 			int userSelection2 = UtilAyv.checkLimits(stat7x7.mean,
 					vetMinimi[0], vetMaximi[0], "SEGNALE");
 			if (userSelection2 == 2) {

@@ -178,8 +178,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 				boolean test = false;
 				double profond = 30.0;
 				boolean fast = false;
+				boolean silent=false;
 				ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond,
-						"", autoCalled, step, verbose, test, fast);
+						"", autoCalled, step, verbose, test, fast, silent);
 				if (rt1 == null)
 					return 0;
 
@@ -254,6 +255,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			// boolean verbose = false;
 			boolean verbose = true;
 			boolean test = false;
+			boolean silent=true;
 
 			String info11 = "code= "
 					+ TableSequence.getCode(iw2ayvTable, vetRiga[0])
@@ -263,7 +265,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					+ TableSequence.getLength(iw2ayvTable);
 
 			ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond,
-					info11, autoCalled, step, verbose, test, fast);
+					info11, autoCalled, step, verbose, test, fast, silent);
 			if (rt1 == null)
 				return 0;
 
@@ -301,8 +303,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 					boolean autoCalled = true;
 					boolean verbose = true;
 					boolean test = false;
+					boolean silent=false;
 					ResultsTable rt1 = mainUnifor(path1, path2, direzione,
-							profond, "", autoCalled, step, verbose, test, fast);
+							profond, "", autoCalled, step, verbose, test, fast, false);
 					if (rt1 == null)
 						return 0;
 
@@ -321,7 +324,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	@SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String path1, String path2,
 			int direzione, double profond, String info10, boolean autoCalled,
-			boolean step, boolean verbose, boolean test, boolean fast) {
+			boolean step, boolean verbose, boolean test, boolean fast, boolean silent) {
 		boolean accetta = false;
 		boolean manualRequired2 = false;
 		ResultsTable rt = null;
@@ -338,7 +341,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		do {
 
 			ImagePlus imp11;
-			if (fast && !manualRequired2)
+			if ((fast && !manualRequired2)|| silent)
 				imp11 = UtilAyv.openImageNoDisplay(path1, true);
 			// imp11 = UtilAyv.openImageMaximized(path1);
 			else
@@ -906,8 +909,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 		int verticalDir = 3;
 		double profond = 30.0;
 		boolean fast = true;
+		boolean silent=false;
 		ResultsTable rt1 = mainUnifor(path1, path2, verticalDir, profond, "",
-				autoCalled, step, verbose, test, fast);
+				autoCalled, step, verbose, test, fast, silent);
 		if (rt1 == null) {
 			MyLog.waitHere("rt1==null");
 			return false;
@@ -930,12 +934,13 @@ public class p11rmn_ implements PlugIn, Measurements {
 		boolean step = false;
 		boolean test = true;
 		boolean fast = true;
+		boolean silent=!verbose;
 		// boolean verbose = true;
 		double[] vetReference = referenceSiemens();
 		int verticalDir = 1;
 		double profond = 30.0;
 		ResultsTable rt1 = mainUnifor(path1, path2, verticalDir, profond, "",
-				autoCalled, step, verbose, test, fast);
+				autoCalled, step, verbose, test, fast, silent);
 		if (rt1 == null)
 			return false;
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);

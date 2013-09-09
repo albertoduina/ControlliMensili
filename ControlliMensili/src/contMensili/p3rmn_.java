@@ -19,6 +19,7 @@ import java.util.StringTokenizer;
 import utils.AboutBox;
 import utils.ButtonMessages;
 import utils.InputOutput;
+import utils.MyLog;
 import utils.MyMsg;
 import utils.MyConst;
 import utils.MyFileLogger;
@@ -27,7 +28,6 @@ import utils.ReportStandardInfo;
 import utils.TableCode;
 import utils.TableSequence;
 import utils.UtilAyv;
-
 
 /*
  * Copyright (C) 2007 Alberto Duina, SPEDALI CIVILI DI BRESCIA, Brescia ITALY
@@ -78,7 +78,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 		if (IJ.versionLessThan("1.43k"))
 			return;
-		
+
 		//
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
 		// modo il messaggio viene emesso, altrimenti si ha una eccezione
@@ -121,8 +121,10 @@ public class p3rmn_ implements PlugIn, Measurements {
 				retry = false;
 				return 0;
 			case 2:
-//				new AboutBox().about("Controllo Uniformità", this.getClass());
-				new AboutBox().about("Controllo Uniformità", MyVersion.CURRENT_VERSION);
+				// new AboutBox().about("Controllo Uniformità",
+				// this.getClass());
+				new AboutBox().about("Controllo Uniformità",
+						MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -210,8 +212,10 @@ public class p3rmn_ implements PlugIn, Measurements {
 				new AboutBox().close();
 				return 0;
 			case 2:
-	//			new AboutBox().about("Controllo Uniformità", this.getClass());
-				new AboutBox().about("Controllo Uniformità", MyVersion.CURRENT_VERSION);
+				// new AboutBox().about("Controllo Uniformità",
+				// this.getClass());
+				new AboutBox().about("Controllo Uniformità",
+						MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -373,9 +377,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 			int xRoi5 = 1;
 			int yRoi5 = height / 2 - MyConst.P3_DIAM_ROI_GHOSTS / 2;
 
-			//TODO da provare
+			// TODO da provare
 			IJ.setMinAndMax(imp1, 10, 30);
-			
+
 			// if (verbose)
 			// UtilAyv.autoAdjust(imp1, imp1.getProcessor());
 			ImageStatistics statGh1 = ghostRoi(xRoi5, yRoi5, imp1, 1, step,
@@ -603,7 +607,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * Test images extraction on a temporary directory test2.jar
+	 * Test images extraction on a temporary directory, from test2.jar
 	 * 
 	 * @return path of temporarary directory
 	 */

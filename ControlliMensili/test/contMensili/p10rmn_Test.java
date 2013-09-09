@@ -82,8 +82,9 @@ public class p10rmn_Test {
 		boolean test = false;
 		double profond = 30;
 		boolean fast = true;
+		boolean silent=false;
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"info10", autoCalled, step, verbose, test, fast);
+				"info10", autoCalled, step, verbose, test, fast, silent);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		double[] vetReference = new p10rmn_().referenceSiemens();
@@ -112,8 +113,9 @@ public class p10rmn_Test {
 		boolean test = false;
 		double profond = 30;
 		boolean fast = true;
+		boolean silent=false;
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"info10", autoCalled, step, verbose, test, fast);
+				"info10", autoCalled, step, verbose, test, fast, silent);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		double fwhm = vetResults[4];
@@ -141,8 +143,9 @@ public class p10rmn_Test {
 		boolean test = false;
 		double profond = 30;
 		boolean fast = false;
+		boolean silent=false;
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"info10", autoCalled, step, verbose, test, fast);
+				"info10", autoCalled, step, verbose, test, fast, silent);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		double[] vetReference = new p10rmn_().referenceSiemens();
