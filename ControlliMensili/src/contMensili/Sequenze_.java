@@ -133,8 +133,10 @@ public class Sequenze_ implements PlugIn {
 		String[][] tableCode = TableCode.loadTableCSV(MyConst.CODE_FILE);
 		String[][] tableExpand = TableExpand.loadTableCSV(MyConst.EXPAND_FILE);
 
-	//	new AboutBox().about("Scansione automatica cartelle", this.getClass());
-		new AboutBox().about("Scansione automatica cartelle", MyVersion.CURRENT_VERSION);
+		// new AboutBox().about("Scansione automatica cartelle",
+		// this.getClass());
+		new AboutBox().about("Scansione automatica cartelle",
+				MyVersion.CURRENT_VERSION);
 		IJ.wait(2000);
 		new AboutBox().close();
 		GenericDialog gd = new GenericDialog("", IJ.getInstance());
@@ -259,7 +261,7 @@ public class Sequenze_ implements PlugIn {
 			String[][] tableSequenceLoaded = generateSequenceTable(list,
 					tableCode, tableExpand);
 			// MyLog.logMatrix(tableSequenceLoaded, "tableSequenceLoaded");
-			// MyLog.waitHere("salvare il log");
+			// MyLog.waitHere("salvare il log come TableSequenceLoaded");
 
 			// cancello gli eventuali messaggi di ImageJ dal log
 			// if (WindowManager.getFrame("Log") != null) {
@@ -271,19 +273,19 @@ public class Sequenze_ implements PlugIn {
 				MyLog.here("non sono state trovate immagini da analizzare");
 				return;
 			}
-			
+
 			//
 			// Effettuo il sort della table, secondo il tempo di acquisizione
 			//
 			String[][] tableSequenceSorted = bubbleSortSequenceTable(tableSequenceLoaded);
 			// MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
-			// MyLog.waitHere("salvare il log");
+			// MyLog.waitHere("salvare il log comeT ableSequenceSorted");
 
 			String[][] tableSequenceReordered = reorderSequenceTable(
 					tableSequenceSorted, tableCode);
 			// MyLog.logMatrix(tableSequenceReordered,
 			// "tableSequenceReordered");
-			// MyLog.waitHere("salvare il log");
+			// MyLog.waitHere("salvare il log come TableSequenceReordered");
 
 			String[][] listProblems = verifySequenceTable(
 					tableSequenceReordered, tableCode);
@@ -382,7 +384,7 @@ public class Sequenze_ implements PlugIn {
 					+ pathList.length);
 			IJ.redirectErrorMessages();
 
-			boolean questo = false;
+			// boolean questo = false;
 
 			int type = (new Opener()).getFileType(pathList[i1]);
 
@@ -395,14 +397,15 @@ public class Sequenze_ implements PlugIn {
 					// " problematic");
 					continue;
 				}
-				
-				
-				 if (imp1.getTitle().equals("15_18130558_HE3,4vNE1,2vSP1,2_O12S_")) {
-	//			 MyLog.waitHere("15_18130558_HE3,4vNE1,2vSP1,2_O12S_");
-				 questo = true;
-				 }
-				 
-				 if (questo) MyLog.waitHere("trovato");
+
+				// if (imp1.getTitle().equals(
+				// "15_18130558_HE3,4vNE1,2vSP1,2_O12S_")) {
+				// // MyLog.waitHere("15_18130558_HE3,4vNE1,2vSP1,2_O12S_");
+				// questo = true;
+				// }
+				//
+				// if (questo)
+				// MyLog.waitHere("trovato");
 
 				if (!ReadDicom.hasHeader(imp1)) {
 					// IJ.log("" + i1 + " file " + pathList[i1] + " not dicom");
@@ -426,7 +429,7 @@ public class Sequenze_ implements PlugIn {
 						codice = seriesDescription.substring(0, 5).trim();
 					}
 				}
-	//			String coil = ReadDicom.getFirstCoil(imp1);
+				// String coil = ReadDicom.getFirstCoil(imp1);
 				String coil = ReadDicom.getAllCoils(imp1);
 
 				if (coil.equals("MISSING")) {
@@ -457,12 +460,15 @@ public class Sequenze_ implements PlugIn {
 				for (int j1 = 0; j1 < tableCode2.length; j1++) {
 
 					if (codice.equals(tableCode2[j1][0])) {
-						if (questo)
-						MyLog.waitHere("coil= "+ coil + " table code= "
-								+ tableCode2[j1][3]);
+
 						if ((tableCode2[j1][3].equals("x"))
 								|| (tableCode2[j1][3].equals("xxx"))
-								|| (coil.equals(tableCode2[j1][3]))) {
+								|| (coil.toLowerCase()
+										.contains(tableCode2[j1][3]
+												.toLowerCase()))) {
+							// modifica del 090913 test se la stringa CONTIENE
+							// il nome della bobina
+							// || (coil.equals(tableCode2[j1][3]))) {
 							tableRow = j1;
 							trovato = true;
 							break;
@@ -480,6 +486,7 @@ public class Sequenze_ implements PlugIn {
 					count3++;
 					vetPath.add(path1);
 					vetCodice.add(codice);
+					// if (questo) MyLog.waitHere(""+count3+" coil= "+coil);
 					vetCoil.add(coil);
 					vetImaDaPassare.add(tableCode2[tableRow][1]);
 					vetSerie.add(numSerie);
@@ -518,6 +525,10 @@ public class Sequenze_ implements PlugIn {
 				}
 			}
 		}
+
+		// MyLog.logVectorVertical(ArrayUtils.arrayListToArrayString(vetCoil),
+		// "vetCoil");
+
 		// a questo punto non mi resta che creare la tabella e riversarvi i dati
 		// dagli ArrayList
 		String[][] tableVuota = TableSequence.createEmptyTable(count3,
@@ -530,8 +541,13 @@ public class Sequenze_ implements PlugIn {
 		String[][] tablePass3 = TableSequence.writeColumn(tablePass2,
 				ArrayUtils.arrayListToArrayString(vetCodice),
 				TableSequence.CODE);
+		// MyLog.logVector(ArrayUtils.arrayListToArrayString(vetCoil),
+		// "vetCoil");
+		// MyLog.waitHere();
 		String[][] tablePass4 = TableSequence.writeColumn(tablePass3,
 				ArrayUtils.arrayListToArrayString(vetCoil), TableSequence.COIL);
+		// MyLog.logMatrix(tablePass4, "tablePass4");
+		// MyLog.waitHere("INTERMEDIO");
 		String[][] tablePass5 = TableSequence.writeColumn(tablePass4,
 				ArrayUtils.arrayListToArrayString(vetImaDaPassare),
 				TableSequence.IMA_PASS);
@@ -557,6 +573,8 @@ public class Sequenze_ implements PlugIn {
 
 		String[][] tablePass13 = TableSequence.writeColumn(tablePass12,
 				ArrayUtils.arrayListToArrayString(vetDone), TableSequence.DONE);
+		// MyLog.logMatrix(tablePass13, "tablePass13");
+		// MyLog.waitHere("COMPLETO");
 		return tablePass13;
 	}
 
@@ -1152,7 +1170,10 @@ public class Sequenze_ implements PlugIn {
 		if (codeImaAcq.equals(codeImaReq)) {
 			if (coilImaReq.equals("xxx") || coilImaReq.equals("XXX")) {
 				res1 = true;
-			} else if (coilImaAcq.equals(coilImaReq)) {
+			} else if (coilImaAcq.contains(coilImaReq)) {
+				// modifica del 100913 per poter analizzare bobine multiple,
+				// attivate per errore da autoselectcoil
+				// } else if (coilImaAcq.equals(coilImaReq)) {
 				res1 = true;
 			} else {
 				res1 = false;
@@ -1173,13 +1194,15 @@ public class Sequenze_ implements PlugIn {
 
 		if (tableVerify == null)
 			return;
-		if (!test) IJ.showMessage("Problemi con le immagini, vedere il log");
+		if (!test)
+			IJ.showMessage("Problemi con le immagini, vedere il log");
 
 		// TableUtils.dumpTable(tableVerify, "tableVerify");
 		String codice2 = "";
 		String coil2 = "";
 		boolean stamp = false;
-		if (!test) IJ.log("---------------------------------------------");
+		if (!test)
+			IJ.log("---------------------------------------------");
 		for (int i1 = 0; i1 < tableVerify.length; i1++) {
 			String codice1 = TableVerify.getCode(tableVerify, i1);
 			String coil1 = TableVerify.getCoil(tableVerify, i1);
