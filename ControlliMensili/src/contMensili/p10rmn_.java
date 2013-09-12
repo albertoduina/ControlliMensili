@@ -229,6 +229,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 */
 
 	public int autoMenu(String autoArgs) {
+		MyLog.appendLog(fileDir + "MyLog.txt", "p10 riceve " + autoArgs);
 
 		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
 				: false;
@@ -239,7 +240,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		if (vetRiga[0] == -1) {
 			IJ.log("selfTestSilent.p10rmn_");
 			selfTestSilent();
-				return 0;
+			return 0;
 		}
 
 		if ((nTokens != MyConst.TOKENS2) && (nTokens != MyConst.TOKENS4)) {
@@ -260,11 +261,19 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// TableUtils.dumpTableRow(iw2ayvTable, vetRiga[0]);
 
 		if (nTokens == MyConst.TOKENS2) {
+			UtilAyv.checkImages(vetRiga, iw2ayvTable, 2);
+
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
+			MyLog.logDebug(vetRiga[0], "P10", fileDir);
+			MyLog.logDebug(vetRiga[1], "P10", fileDir);
 		} else {
+			UtilAyv.checkImages(vetRiga, iw2ayvTable, 3);
+
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
+			MyLog.logDebug(vetRiga[0], "P10", fileDir);
+			MyLog.logDebug(vetRiga[2], "P10", fileDir);
 		}
 
 		boolean step = false;
@@ -429,6 +438,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (imp2 == null)
 				MyLog.waitHere("Non trovato il file " + path2);
 			// ImageWindow iw1=WindowManager.getCurrentWindow();
+			
+	
 			angle = out2[6];
 			// ============================================================================
 			// Fine calcoli geometrici
@@ -532,7 +543,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			ImagePlus imp8 = imp1.flatten();
 			String newName = path1 + "_flat_p10.jpg";
 			new FileSaver(imp8).saveAsJpeg(newName);
-			MyLog.appendLog(fileDir + "MyLog.txt", "saved: " + newName);
 			// =============================================================
 
 			// MyLog.waitHere();
@@ -2655,6 +2665,31 @@ public class p10rmn_ implements PlugIn, Measurements {
 			result[i2++] = readDouble(in1[i1]);
 		}
 		return result;
+	}
+	
+	/**
+	 * Per p3rmn le due immagini devono essere identiche, a parte che vengono
+	 * prese una di seguito all'altra. Testiamo seriesDescription e coil
+	 * 
+	 * @param imp1
+	 * @param imp2
+	 * @return
+	 */
+	public static boolean checkImages(ImagePlus imp1, ImagePlus imp2) {
+		boolean ok1 = false;
+		boolean ok2 = false;
+
+		String seriesDescription1 = ReadDicom.readDicomParameter(imp1,
+				MyConst.DICOM_SERIES_DESCRIPTION);
+		String seriesDescription2 = ReadDicom.readDicomParameter(imp2,
+				MyConst.DICOM_SERIES_DESCRIPTION);
+		if (seriesDescription1.equals(seriesDescription2))
+			ok1 = true;
+		String coil1 = ReadDicom.getAllCoils(imp1);
+		String coil2 = ReadDicom.getAllCoils(imp2);
+		if (coil1.equals(coil2))
+			ok2 = true;
+		return ok1 && ok2;
 	}
 
 }

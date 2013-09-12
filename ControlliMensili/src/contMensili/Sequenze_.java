@@ -340,7 +340,7 @@ public class Sequenze_ implements PlugIn {
 
 	/**
 	 * Analizza tutti i file e, se sono compatibili con i codici di sequenza
-	 * elencati in codici.txt, compila i vari campi della tabella dei file da
+	 * elencati in codiciNew.csv, compila i vari campi della tabella dei file da
 	 * analizzare
 	 * 
 	 * @param pathList
@@ -436,6 +436,8 @@ public class Sequenze_ implements PlugIn {
 					coil = new UtilAyv().kludge(pathList[i1]);
 				}
 
+				String[] allCoils = ReadDicom.parseString(coil);
+
 				String numSerie = ReadDicom.readDicomParameter(imp1,
 						MyConst.DICOM_SERIES_NUMBER);
 				String numAcq = ReadDicom.readDicomParameter(imp1,
@@ -463,12 +465,11 @@ public class Sequenze_ implements PlugIn {
 
 						if ((tableCode2[j1][3].equals("x"))
 								|| (tableCode2[j1][3].equals("xxx"))
-								|| (coil.toLowerCase()
-										.contains(tableCode2[j1][3]
-												.toLowerCase()))) {
+								|| coilPresent(allCoils, tableCode2[j1][3])) {
 							// modifica del 090913 test se la stringa CONTIENE
 							// il nome della bobina
 							// || (coil.equals(tableCode2[j1][3]))) {
+							// IJ.log(codice + "find "+tableCode2[j1][3]);
 							tableRow = j1;
 							trovato = true;
 							break;
@@ -576,6 +577,20 @@ public class Sequenze_ implements PlugIn {
 		// MyLog.logMatrix(tablePass13, "tablePass13");
 		// MyLog.waitHere("COMPLETO");
 		return tablePass13;
+	}
+
+	public static boolean coilPresent(String[] allCoils, String coil) {
+		boolean trovato = false;
+		for (int i1 = 0; i1 < allCoils.length; i1++) {
+			if (allCoils[i1].equals(coil))
+				trovato = true;
+		}
+		// if (allCoils.length > 1) {
+		// MyLog.logVector(allCoils, "allCoils");
+		// IJ.log(coil + "  " + trovato);
+		// MyLog.waitHere();
+		// }
+		return trovato;
 	}
 
 	/**
@@ -924,8 +939,8 @@ public class Sequenze_ implements PlugIn {
 
 	/**
 	 * Verifica che il numero di immagini rilevate da scanlist per un certo tipo
-	 * di codice immagine corrisponda al numero previsto in iw2ayv.txt. Se ciò
-	 * non accade viene passata una tabella di warnings a
+	 * di codice immagine corrisponda al numero previsto in codiciNew.csv. Se
+	 * ciò non accade viene passata una tabella di warnings a
 	 * logVerifySequenceTable. Si può comunque continuare a lavorare
 	 * 
 	 * @param tableSequenze6
@@ -1166,13 +1181,16 @@ public class Sequenze_ implements PlugIn {
 	 */
 	public boolean compareAcqReq(String codeImaAcq, String codeImaReq,
 			String coilImaAcq, String coilImaReq) {
+
 		boolean res1;
+		String[] allCoils = ReadDicom.parseString(coilImaAcq);
+
 		if (codeImaAcq.equals(codeImaReq)) {
 			if (coilImaReq.equals("xxx") || coilImaReq.equals("XXX")) {
 				res1 = true;
-			} else if (coilImaAcq.contains(coilImaReq)) {
+			} else if (coilPresent(allCoils, coilImaReq)) {
 				// modifica del 100913 per poter analizzare bobine multiple,
-				// attivate per errore da autoselectcoil
+				// attivate per errore da autoselectcoil FALLITA
 				// } else if (coilImaAcq.equals(coilImaReq)) {
 				res1 = true;
 			} else {
@@ -1181,6 +1199,12 @@ public class Sequenze_ implements PlugIn {
 		} else {
 			res1 = false;
 		}
+		// if (codeImaAcq.equals(codeImaReq)) {
+		// MyLog.logVector(allCoils, "allCoils");
+		// MyLog.waitHere(codeImaAcq + " " + codeImaReq + " " + coilImaAcq
+		// + " " + coilImaReq + " risultato res1= " + res1);
+		// }
+
 		return res1;
 	}
 
@@ -1246,9 +1270,8 @@ public class Sequenze_ implements PlugIn {
 	}
 
 	/**
-	 * effettua il riordino della tabella dati effettuando dapprima un sort in
-	 * base ad AcquisitionTime e poi estraendo il risultato in base all'ordine
-	 * di codici.txt
+	 * Effettua il riordino della tabella dati estraendo il risultato in base
+	 * all'ordine di codici.txt
 	 * 
 	 * @param tableSequenze
 	 *            tabella da riordinare

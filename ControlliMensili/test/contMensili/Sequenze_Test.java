@@ -439,6 +439,22 @@ public class Sequenze_Test {
 	}
 
 	@Test
+	public final void testCoilPresent() {
+		String[] allCoils = { "H31","H11","H21" };
+		String coilImaReq = "H11";
+		boolean res = new Sequenze_().coilPresent(allCoils, coilImaReq);
+		assertTrue(res);
+	}
+	@Test
+	
+	public final void testCoilNOTPresent() {
+		String[] allCoils = { "H31","H12","H21" };
+		String coilImaReq = "H11";
+		boolean res = new Sequenze_().coilPresent(allCoils, coilImaReq);
+		assertFalse(res);
+	}
+
+	@Test
 	public final void testKludge() {
 		String codeIma = "./test2/S12S_MISSING";
 		String coil = new UtilAyv().kludge(codeIma);

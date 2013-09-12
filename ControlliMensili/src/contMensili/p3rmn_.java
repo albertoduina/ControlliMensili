@@ -163,6 +163,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 	public int autoMenu(String autoArgs) {
+		MyLog.appendLog(fileDir + "MyLog.txt", "p3 riceve " + autoArgs);
+
 		// the autoArgs are passed from Sequenze_
 		// possibilities:
 		// 1 token -1 = silentAutoTest
@@ -191,11 +193,18 @@ public class p3rmn_ implements PlugIn, Measurements {
 		String path1 = "";
 		String path2 = "";
 		if (nTokens == MyConst.TOKENS2) {
+			UtilAyv.checkImages(vetRiga, iw2ayvTable, 2);
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
+			MyLog.logDebug(vetRiga[0], "P3", fileDir);
+			MyLog.logDebug(vetRiga[1], "P3", fileDir);
+
 		} else {
+			UtilAyv.checkImages(vetRiga, iw2ayvTable, 3);
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
+			MyLog.logDebug(vetRiga[0], "P3", fileDir);
+			MyLog.logDebug(vetRiga[2], "P3", fileDir);
 		}
 
 		boolean retry = false;
@@ -309,6 +318,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 				imp1 = UtilAyv.openImageNoDisplay(path1, true);
 				imp2 = UtilAyv.openImageNoDisplay(path2, true);
 			}
+
 
 			int height = imp1.getHeight();
 			int width = imp1.getWidth();

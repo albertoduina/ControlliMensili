@@ -173,6 +173,8 @@ public class p4rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 	public int autoMenu(String autoArgs) {
+		MyLog.appendLog(fileDir + "MyLog.txt", "p4 riceve "+autoArgs);
+
 		// the autoArgs are passed from Sequenze_
 		// possibilities:
 		// 1 token -1 = silentAutoTest

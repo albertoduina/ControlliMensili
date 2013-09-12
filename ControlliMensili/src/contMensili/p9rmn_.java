@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 
 import utils.AboutBox;
 import utils.MyConst;
+import utils.MyLog;
 import utils.TableCode;
 import utils.TableSequence;
 import utils.UtilAyv;
@@ -146,6 +147,8 @@ public class p9rmn_ implements PlugIn, Measurements {
 	private final double DIM_PIXEL_FOV_220 = 0.859375;
 
 	public void run(String args) {
+		MyLog.appendLog(fileDir + "MyLog.txt", "p9 riceve "+args);
+
 		//
 		// CNR CON T1
 		// GEL 4,5 deltaT1 10 ms bassissimo contrasto

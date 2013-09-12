@@ -164,6 +164,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 	public int autoMenu(String autoArgs) {
+		MyLog.appendLog(fileDir + "MyLog.txt", "p6 riceve "+autoArgs);
+
 		// the autoArgs are passed from Sequenze_
 		// possibilities:
 		// 1 token -1 = silentAutoTest

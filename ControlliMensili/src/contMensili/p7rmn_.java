@@ -153,6 +153,8 @@ public class p7rmn_ implements PlugIn, Measurements {
 	}
 
 	public int autoMenu(String autoArgs) {
+		MyLog.appendLog(fileDir + "MyLog.txt", "p7 riceve "+autoArgs);
+
 		StringTokenizer st = new StringTokenizer(autoArgs, "#");
 		int nTokens = st.countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);

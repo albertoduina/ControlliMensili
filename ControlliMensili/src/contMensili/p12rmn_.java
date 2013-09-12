@@ -97,7 +97,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 	private static final int ABORT = 1;
 
-	public static String VERSION = "p10_rmn_v1.10_13oct11_";
+	public static String VERSION = "p12_rmn_v1.12_13oct11_";
 
 	private String TYPE = " >> CONTROLLO UNIFORMITA' IMMAGINI CIRCOLARI AUTO";
 
@@ -208,6 +208,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 */
 
 	public int autoMenu(String autoArgs) {
+		MyLog.appendLog(fileDir + "MyLog.txt", "p12 riceve " + autoArgs);
 
 		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
 				: false;
@@ -240,11 +241,18 @@ public class p12rmn_ implements PlugIn, Measurements {
 		String path2 = "";
 
 		if (nTokens == MyConst.TOKENS2) {
+			UtilAyv.checkImages(vetRiga, iw2ayvTable, 2);
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
+			MyLog.logDebug(vetRiga[0], "P12", fileDir);
+			MyLog.logDebug(vetRiga[1], "P12", fileDir);
+
 		} else {
+			UtilAyv.checkImages(vetRiga, iw2ayvTable, 3);
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
+			MyLog.logDebug(vetRiga[0], "P12", fileDir);
+			MyLog.logDebug(vetRiga[1], "P12", fileDir);
 		}
 
 		boolean step = false;
@@ -348,12 +356,13 @@ public class p12rmn_ implements PlugIn, Measurements {
 		// double angle = Double.NaN;
 		boolean debug = true;
 		boolean abort = false;
-
 		// lettura dei limiti da file esterno
 
 		String[][] limiti = new InputOutput().readFile6("LIMITI.csv");
-		double[] vetMinimi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti, "P12MIN"));
-		double[] vetMaximi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti, "P12MAX"));
+		double[] vetMinimi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti,
+				"P12MIN"));
+		double[] vetMaximi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti,
+				"P12MAX"));
 
 		// ===============================================================
 		// Questi sono i valori di default utilizzati in
@@ -407,6 +416,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			if (imp13 == null)
 				MyLog.waitHere("Non trovato il file " + path2);
 
+	
 			int out2[] = positionSearch11(imp11, maxFitError, info10,
 					autoCalled, step, demo, test, fast);
 			if (out2 == null) {
@@ -3278,25 +3288,24 @@ public class p12rmn_ implements PlugIn, Measurements {
 		return dist;
 	}
 
-//	/**
-//	 * Lettura di un valore double da una stringa
-//	 * 
-//	 * @param s1
-//	 *            stringa di input
-//	 * @return double di output
-//	 */
-//	public static double readDouble(String s1) {
-//		double x = 0;
-//		try {
-//			x = (new Double(s1)).doubleValue();
-//		} catch (Exception e) {
-//			// MyLog.waitHere("input non numerico= " + s1);
-//			// MyLog.caller("chiamante=");
-//			x = Double.NaN;
-//		}
-//		return x;
-//	}
-
+	// /**
+	// * Lettura di un valore double da una stringa
+	// *
+	// * @param s1
+	// * stringa di input
+	// * @return double di output
+	// */
+	// public static double readDouble(String s1) {
+	// double x = 0;
+	// try {
+	// x = (new Double(s1)).doubleValue();
+	// } catch (Exception e) {
+	// // MyLog.waitHere("input non numerico= " + s1);
+	// // MyLog.caller("chiamante=");
+	// x = Double.NaN;
+	// }
+	// return x;
+	// }
 
 	/**
 	 * Calculation of Integral Uniformity Percentual
@@ -3729,5 +3738,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		Prefs.set("prefer.p12rmnXRoi1", Integer.toString(boundingRectangle.x));
 		Prefs.set("prefer.p12rmnYRoi1", Integer.toString(boundingRectangle.y));
 	}
+
 
 }

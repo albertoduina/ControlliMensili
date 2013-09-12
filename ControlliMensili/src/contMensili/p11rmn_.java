@@ -104,17 +104,13 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		String className = this.getClass().getName();
 
-//		VERSION = className + "_build_"
-//				+ ReadVersion.readVersionInfoInManifest("contMensili")
-//				+ "_iw2ayv_build_"
-//				+ ReadVersion.readVersionInfoInManifest("utils");
-		
-		VERSION = className + "_build_"
-				+ MyVersion.getVersion()
-				+ "_iw2ayv_build_"
-				+ MyVersionUtils.getVersion();
-	
-		
+		// VERSION = className + "_build_"
+		// + ReadVersion.readVersionInfoInManifest("contMensili")
+		// + "_iw2ayv_build_"
+		// + ReadVersion.readVersionInfoInManifest("utils");
+
+		VERSION = className + "_build_" + MyVersion.getVersion()
+				+ "_iw2ayv_build_" + MyVersionUtils.getVersion();
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -143,8 +139,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 				retry = false;
 				return 0;
 			case 2:
-//				new AboutBox().about("Controllo Bobine Superficiali",
-//						this.getClass());
+				// new AboutBox().about("Controllo Bobine Superficiali",
+				// this.getClass());
 				new AboutBox().about("Controllo Bobine Superficiali",
 						MyVersion.CURRENT_VERSION);
 				retry = true;
@@ -178,7 +174,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				boolean test = false;
 				double profond = 30.0;
 				boolean fast = false;
-				boolean silent=false;
+				boolean silent = false;
 				ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond,
 						"", autoCalled, step, verbose, test, fast, silent);
 				if (rt1 == null)
@@ -198,6 +194,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 	public int autoMenu(String autoArgs) {
 
+		MyLog.appendLog(fileDir + "MyLog.txt", "p11 riceve " + autoArgs);
 		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
 				: false;
 		// IJ.log("p11rmn_.autoMenu fast= " + fast);
@@ -227,11 +224,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 		if (nTokens == MyConst.TOKENS2) {
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
+			MyLog.logDebug(vetRiga[0], "P11", fileDir);
+			MyLog.logDebug(vetRiga[1], "P11", fileDir);
 			// path3 = lr.getPath(strRiga3, riga2);
 		} else {
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
 			path3 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
+			MyLog.logDebug(vetRiga[0], "P11", fileDir);
+			MyLog.logDebug(vetRiga[2], "P11", fileDir);
+			MyLog.logDebug(vetRiga[1], "P11", fileDir);
 		}
 
 		int direzione = decodeDirezione(TableSequence.getDirez(iw2ayvTable,
@@ -255,7 +257,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			// boolean verbose = false;
 			boolean verbose = true;
 			boolean test = false;
-			boolean silent=true;
+			boolean silent = true;
 
 			String info11 = "code= "
 					+ TableSequence.getCode(iw2ayvTable, vetRiga[0])
@@ -287,10 +289,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 					new AboutBox().close();
 					return 0;
 				case 2:
-//					new AboutBox().about("Controllo Bobine Superficiali",
-//					this.getClass());
-			new AboutBox().about("Controllo Bobine Superficiali",
-					MyVersion.CURRENT_VERSION);
+					// new AboutBox().about("Controllo Bobine Superficiali",
+					// this.getClass());
+					new AboutBox().about("Controllo Bobine Superficiali",
+							MyVersion.CURRENT_VERSION);
 					retry = true;
 					break;
 				case 3:
@@ -303,9 +305,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 					boolean autoCalled = true;
 					boolean verbose = true;
 					boolean test = false;
-					boolean silent=false;
+					boolean silent = false;
 					ResultsTable rt1 = mainUnifor(path1, path2, direzione,
-							profond, "", autoCalled, step, verbose, test, fast, false);
+							profond, "", autoCalled, step, verbose, test, fast,
+							false);
 					if (rt1 == null)
 						return 0;
 
@@ -324,7 +327,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 	@SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String path1, String path2,
 			int direzione, double profond, String info10, boolean autoCalled,
-			boolean step, boolean verbose, boolean test, boolean fast, boolean silent) {
+			boolean step, boolean verbose, boolean test, boolean fast,
+			boolean silent) {
 		boolean accetta = false;
 		boolean manualRequired2 = false;
 		ResultsTable rt = null;
@@ -341,7 +345,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		do {
 
 			ImagePlus imp11;
-			if ((fast && !manualRequired2)|| silent)
+			if ((fast && !manualRequired2) || silent)
 				imp11 = UtilAyv.openImageNoDisplay(path1, true);
 			// imp11 = UtilAyv.openImageMaximized(path1);
 			else
@@ -373,6 +377,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 				}
 				int width = imp1.getWidth();
 				int height = imp1.getHeight();
+				
+
 
 				double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
 						ReadDicom.readDicomParameter(imp1,
@@ -501,7 +507,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				ImagePlus imp8 = imp1.flatten();
 				String newName = path1 + "_flat_p11.jpg";
 				new FileSaver(imp8).saveAsJpeg(newName);
-				MyLog.appendLog(fileDir + "MyLog.txt", "saved: " + newName);
+				// MyLog.appendLog(fileDir + "MyLog.txt", "saved: " + newName);
 				// =============================================================
 
 				//
@@ -640,9 +646,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				// ************************ 140812*************
 
-//				IJ.log("" + imp1.getTitle() + " signal1= " + signal1
-//						+ " noise1= " + out1[1] + " snr= " + snr);
-//				MyLog.waitHere();
+				// IJ.log("" + imp1.getTitle() + " signal1= " + signal1
+				// + " noise1= " + out1[1] + " snr= " + snr);
+				// MyLog.waitHere();
 
 				// ********************************************
 
@@ -838,7 +844,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		double simul = 0.0;
 		double signal = 1275.530612244898;
-	//	double backNoise = 7.85;
+		// double backNoise = 7.85;
 		double backNoise = 37.045823571316845;
 		double snRatio = 34.43115820571181;
 		double fwhm = 38.891139825926565;
@@ -909,7 +915,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		int verticalDir = 3;
 		double profond = 30.0;
 		boolean fast = true;
-		boolean silent=false;
+		boolean silent = false;
 		ResultsTable rt1 = mainUnifor(path1, path2, verticalDir, profond, "",
 				autoCalled, step, verbose, test, fast, silent);
 		if (rt1 == null) {
@@ -934,7 +940,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		boolean step = false;
 		boolean test = true;
 		boolean fast = true;
-		boolean silent=!verbose;
+		boolean silent = !verbose;
 		// boolean verbose = true;
 		double[] vetReference = referenceSiemens();
 		int verticalDir = 1;
@@ -2046,4 +2052,30 @@ public class p11rmn_ implements PlugIn, Measurements {
 		// IJ.log("-----------------------------");
 		return out;
 	}
+	
+	/**
+	 * Per p3rmn le due immagini devono essere identiche, a parte che vengono
+	 * prese una di seguito all'altra. Testiamo seriesDescription e coil
+	 * 
+	 * @param imp1
+	 * @param imp2
+	 * @return
+	 */
+	public static boolean checkImages(ImagePlus imp1, ImagePlus imp2) {
+		boolean ok1 = false;
+		boolean ok2 = false;
+
+		String seriesDescription1 = ReadDicom.readDicomParameter(imp1,
+				MyConst.DICOM_SERIES_DESCRIPTION);
+		String seriesDescription2 = ReadDicom.readDicomParameter(imp2,
+				MyConst.DICOM_SERIES_DESCRIPTION);
+		if (seriesDescription1.equals(seriesDescription2))
+			ok1 = true;
+		String coil1 = ReadDicom.getAllCoils(imp1);
+		String coil2 = ReadDicom.getAllCoils(imp2);
+		if (coil1.equals(coil2))
+			ok2 = true;
+		return ok1 && ok2;
+	}
+
 } // p11rmn_

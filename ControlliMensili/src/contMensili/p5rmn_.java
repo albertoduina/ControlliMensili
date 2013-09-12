@@ -124,8 +124,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 				retry = false;
 				return 0;
 			case 2:
-//				new AboutBox().about("Controllo Bobine Superficiali",
-//						this.getClass());
+				// new AboutBox().about("Controllo Bobine Superficiali",
+				// this.getClass());
 				new AboutBox().about("Controllo Bobine Superficiali",
 						MyVersion.CURRENT_VERSION);
 				retry = true;
@@ -178,6 +178,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	}
 
 	public int autoMenu(String autoArgs) {
+		MyLog.appendLog(fileDir + "MyLog.txt", "p5 riceve " + autoArgs);
 
 		// IJ.log("p5rmn_.autoMenu autoargs= " + autoArgs);
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
@@ -200,11 +201,16 @@ public class p5rmn_ implements PlugIn, Measurements {
 		if (nTokens == MyConst.TOKENS2) {
 			path[0] = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path[1] = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
+			MyLog.logDebug(vetRiga[0], "P5", fileDir);
+			MyLog.logDebug(vetRiga[1], "P5", fileDir);
 			// path3 = lr.getPath(strRiga3, riga2);
 		} else {
 			path[0] = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path[1] = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
 			path[2] = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
+			MyLog.logDebug(vetRiga[0], "P5", fileDir);
+			MyLog.logDebug(vetRiga[1], "P5", fileDir);
+			MyLog.logDebug(vetRiga[2], "P5", fileDir);
 		}
 
 		boolean direz = decodeDirez(TableSequence.getDirez(iw2ayvTable,
@@ -224,8 +230,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 				new AboutBox().close();
 				return 0;
 			case 2:
-//				new AboutBox().about("Controllo Bobine Superficiali",
-//						this.getClass());
+				// new AboutBox().about("Controllo Bobine Superficiali",
+				// this.getClass());
 				new AboutBox().about("Controllo Bobine Superficiali",
 						MyVersion.CURRENT_VERSION);
 
@@ -511,8 +517,6 @@ public class p5rmn_ implements PlugIn, Measurements {
 			boolean paintPixels = false;
 			double[] out1 = devStandardNema(imp1, imaDiff, sqX - enlarge, sqY
 					- enlarge, sqNEA, checkPixels, paintPixels);
-			
-
 
 			if (step)
 				msgDisplayMean4(out1[0], out1[1]);
@@ -768,7 +772,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 		double simul = 0.0;
 		double signal = 1538.5714285714287;
-	//	double backNoise = 7.87;
+		// double backNoise = 7.87;
 		double backNoise = 40.21194195114299;
 		double snRatio = 38.26155499878056;
 		double fwhm = 36.56299427908097;
@@ -801,7 +805,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 		double simul = 0.0;
 		double signal = 2045.4897959183672;
-	//	double backNoise = 84.06;
+		// double backNoise = 84.06;
 		double backNoise = 21.947567747419033;
 		double snRatio = 93.19892843975435;
 		double fwhm = 32.93099254935456;
