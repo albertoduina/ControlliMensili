@@ -151,7 +151,7 @@ public class Sequenze_ implements PlugIn {
 		}
 		boolean nuovo1 = gd.getNextBoolean();
 		boolean self1 = gd.getNextBoolean();
-		boolean p10p11 = gd.getNextBoolean();
+		boolean p10p11p12 = gd.getNextBoolean();
 		boolean fast = gd.getNextBoolean();
 		boolean superficiali = gd.getNextBoolean();
 
@@ -306,7 +306,7 @@ public class Sequenze_ implements PlugIn {
 		String[][] tableSequenceReloaded = new TableSequence()
 				.loadTable(startingDir + MyConst.SEQUENZE_FILE);
 		callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false,
-				superficiali, p10p11);
+				superficiali, p10p11p12);
 		MyLog.waitHere("FINE LAVORO");
 	}
 
@@ -695,7 +695,7 @@ public class Sequenze_ implements PlugIn {
 	 */
 	public String[][] callPluginsFromSequenceTable(String[][] tableSequenze5,
 			String[][] tableCode5, boolean test, boolean superficiali,
-			boolean p10p11) {
+			boolean p10p11p12) {
 
 		// Attenzione: contrariamente a quanto scritto più sotto, per
 		// la struttura della tableSequenze è stata creata la classe
@@ -749,7 +749,7 @@ public class Sequenze_ implements PlugIn {
 				// qui altero il plugin per poter chiamare, durante i tests le
 				// vecchie versioni, senza dover modificare i sorgenti
 
-				if (!p10p11) {
+				if (!p10p11p12) {
 					// MyLog.waitHere("MANUALE p10p11= " + p10p11);
 					if (plugin.equals("contMensili.p10rmn_"))
 						plugin = "contMensili.p5rmn_";
@@ -765,6 +765,7 @@ public class Sequenze_ implements PlugIn {
 				if (superficiali) {
 					if ((plugin.equals("contMensili.p10rmn_"))
 							|| (plugin.equals("contMensili.p11rmn_"))
+							|| (plugin.equals("contMensili.p12rmn_"))
 							|| (plugin.equals("contMensili.p5rmn_"))
 							|| (plugin.equals("contMensili.p5rmn_"))) {
 						jump = false;

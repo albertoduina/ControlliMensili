@@ -26,9 +26,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import utils.AboutBox;
+import utils.ArrayUtils;
 import utils.ButtonMessages;
 import utils.CustomCanvasGeneric;
 import utils.ImageUtils;
@@ -377,8 +379,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 				}
 				int width = imp1.getWidth();
 				int height = imp1.getHeight();
-				
-
 
 				double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
 						ReadDicom.readDicomParameter(imp1,
@@ -598,6 +598,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					if (pixx < area11x11) {
 						sqNEA = sqNEA + 2; // accrescimento area
 						enlarge = enlarge + 1;
+						MyLog.waitHere("verificare immagine, insolito accrescimento richiesto");
 					}
 					if (step) {
 						msgEnlargeRoi(sqNEA);
@@ -621,6 +622,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 					if (step && pixx >= area11x11) {
 						msgSqr2OK(pixx);
 					}
+
+					// MyLog.waitHere();
+					IJ.wait(300);
+					IJ.wait(300);
 
 				} while (pixx < area11x11);
 
@@ -1515,6 +1520,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double xMaximum = out1[0];
 		double yMaximum = out1[1];
 
+		direzione = directionFinder(imp11, xMaximum, yMaximum);
+
 		// if (fast && (step || test)) {
 		imp11.setRoi(new OvalRoi((int) xMaximum - 4, (int) yMaximum - 4, 8, 8));
 		over1.addElement(imp11.getRoi());
@@ -1698,6 +1705,143 @@ public class p11rmn_ implements PlugIn, Measurements {
 			return null;
 		else
 			return out;
+	}
+
+	/**
+	 * Cerca la direzione in cui si trova il fantoccio La routine imposta
+	 * quattro ROI attorno al punto di massima. Le medie vengono messe in un
+	 * array ed ordinate. Le medie superiori od uguali all'elemento 2 sono le
+	 * due maggiori. Ciò determina la direzione in cui troviamo il massimo
+	 * segnale e, presumibilmente il fantoccio.
+	 * 
+	 * 1 -
+	 * 
+	 * 
+	 * @param imp1
+	 * @param xMaximum
+	 * @param yMaximum
+	 * @return
+	 */
+	public static int directionFinder(ImagePlus imp1, double xMaximum,
+			double yMaximum) {
+		int width = imp1.getWidth();
+		int height = imp1.getHeight();
+		UtilAyv.showImageMaximized2(imp1);
+		Overlay over1 = new Overlay();
+		ImageStatistics stat1;
+		imp1.setOverlay(over1);
+		// marco il punto di max, per l'overlay
+		imp1.setRoi(new OvalRoi((int) xMaximum - 2, (int) yMaximum - 2, 4, 4));
+		imp1.getRoi().setStrokeColor(Color.red);
+		over1.addElement(imp1.getRoi());
+		// imposto ora quattro Roi quadrate, sceglierò le due con la media più
+		// alta, ed in base a questo deciderò la direzione in cui muovere la
+		// MROI
+		double[] meanx = new double[4];
+
+		int x1 = (int) xMaximum - 8;
+		if (x1 < 0)
+			x1 = x1 + width;
+		if (x1 > width)
+			x1 = x1 - width;
+
+		int y1 = (int) yMaximum - 8;
+		if (y1 < 0)
+			y1 = y1 + height;
+		if (y1 > height)
+			y1 = y1 - height;
+
+		imp1.setRoi(x1, y1, 4, 4);
+		imp1.getRoi().setStrokeColor(Color.green);
+		over1.addElement(imp1.getRoi());
+		stat1 = imp1.getStatistics();
+		double mean1 = stat1.mean;
+		meanx[0] = mean1;
+
+		x1 = (int) xMaximum - 8;
+		if (x1 < 0)
+			x1 = x1 + width;
+		if (x1 > width)
+			x1 = x1 - width;
+
+		y1 = (int) yMaximum + 4;
+		if (y1 < 0)
+			y1 = y1 + height;
+		if (y1 > height)
+			y1 = y1 - height;
+
+		imp1.setRoi(x1, y1, 4, 4);
+		imp1.getRoi().setStrokeColor(Color.red);
+		over1.addElement(imp1.getRoi());
+		stat1 = imp1.getStatistics();
+		double mean2 = stat1.mean;
+		meanx[1] = mean2;
+
+		x1 = (int) xMaximum + 4;
+		if (x1 < 0)
+			x1 = x1 + width;
+		if (x1 > width)
+			x1 = x1 - width;
+
+		y1 = (int) yMaximum - 8;
+		if (y1 < 0)
+			y1 = y1 + height;
+		if (y1 > height)
+			y1 = y1 - height;
+
+		imp1.setRoi(x1, y1, 4, 4);
+		imp1.getRoi().setStrokeColor(Color.yellow);
+		over1.addElement(imp1.getRoi());
+		stat1 = imp1.getStatistics();
+		double mean3 = stat1.mean;
+		meanx[2] = mean3;
+
+		x1 = (int) xMaximum + 4;
+		if (x1 < 0)
+			x1 = x1 + width;
+		if (x1 > width)
+			x1 = x1 - width;
+
+		y1 = (int) yMaximum + 4;
+		if (y1 < 0)
+			y1 = y1 + height;
+		if (y1 > height)
+			y1 = y1 - height;
+
+		imp1.setRoi(x1, y1, 4, 4);
+		imp1.getRoi().setStrokeColor(Color.magenta);
+		over1.addElement(imp1.getRoi());
+		stat1 = imp1.getStatistics();
+		double mean4 = stat1.mean;
+		meanx[3] = mean4;
+		// MyLog.logVector(meanx, "meanx prima di sort");
+		Arrays.sort(meanx);
+		// MyLog.logVector(meanx, "meanx dopo di sort");
+		// MyLog.waitHere();
+
+		// i valori da utilizzare sono >= dell'elemento3
+
+		if (mean1 >= meanx[2] && mean3 >= meanx[2] || UtilAyv.isNaN(mean1)
+				&& UtilAyv.isNaN(mean3)) {
+			// caso UP
+			return 1;
+		}
+		if (mean2 >= meanx[2] && mean4 >= meanx[2] || UtilAyv.isNaN(mean2)
+				&& UtilAyv.isNaN(mean4)) {
+			// caso DW
+			return 2;
+		}
+		if (mean1 >= meanx[2] && mean2 >= meanx[2] || UtilAyv.isNaN(mean1)
+				&& UtilAyv.isNaN(mean2)) {
+			// caso SX
+			return 3;
+		}
+		if (mean3 >= meanx[2] && mean4 >= meanx[2] || UtilAyv.isNaN(mean3)
+				&& UtilAyv.isNaN(mean4)) {
+			// caso DX
+			return 4;
+		}
+		return 0;
 	}
 
 	/***
@@ -2052,7 +2196,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		// IJ.log("-----------------------------");
 		return out;
 	}
-	
+
 	/**
 	 * Per p3rmn le due immagini devono essere identiche, a parte che vengono
 	 * prese una di seguito all'altra. Testiamo seriesDescription e coil

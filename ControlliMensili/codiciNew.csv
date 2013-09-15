@@ -464,10 +464,10 @@ BR1S_;SpinEcho BREAST RIGHT;4;4;xxx;vup;30;p11rmn_
 BR1F_;SpinEcho BREAST RIGHT;4;4;xxx;vup;30;p11rmn_
 //;;;;;;;
 // NECK ARRAY SIMPHONY;;;;;;;
-N1FS_;Flash NECK ARRAY N1;4;4;xxx;hdx;x;p5rmn_
-N1SS_;SpinEcho NECK ARRAY N1;4;4;xxx;hdx;x;p5rmn_
-N2FS_;Flash NECK ARRAY N2;4;4;xxx;hdx;x;p5rmn_
-N2SS_;SpinEcho NECK ARRAY N2;4;4;xxx;hdx;x;p5rmn_
+N1FS_;Flash NECK ARRAY N1;4;4;xxx;hdx;30;p11rmn_
+N1SS_;SpinEcho NECK ARRAY N1;4;4;xxx;hdx;30;p11rmn_
+N2FS_;Flash NECK ARRAY N2;4;4;xxx;hsx;30;p11rmn_
+N2SS_;SpinEcho NECK ARRAY N2;4;4;xxx;hsx;30;p11rmn_
 //;;;;;;;
 // ROVATO;;;;;;;
 N1FE_;Flash NECK ARRAY N1;4;4;xxx;hdx;30;p11rmn_

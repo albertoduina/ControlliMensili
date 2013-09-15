@@ -802,7 +802,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			IJ.wait(1000);
 			// MyLog.waitHere();
 			//
-			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+//			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 			int col = 2;
 			String t1 = "TESTO          ";
 			// put values in ResultsTable
@@ -1937,7 +1937,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int diamMROI = 0;
 		int xcorr = 0;
 		int ycorr = 0;
-		double bubbleGapLimit = +5;
+		double bubbleGapLimit = +2;
 
 		int height = imp11.getHeight();
 		int width = imp11.getWidth();
