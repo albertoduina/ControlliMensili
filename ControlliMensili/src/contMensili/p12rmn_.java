@@ -35,6 +35,7 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -352,6 +353,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
+		Toolkit tk = Toolkit.getDefaultToolkit();
+
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		// double angle = Double.NaN;
 		boolean debug = true;
@@ -376,7 +379,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		double maxSnRatio = +800;
 		double minGhostPerc = -20;
 		double maxGhostPerc = +20;
-		double minUiPerc = +10;
+		double minUiPerc = +5;
 		double maxUiPerc = +100;
 		double minFitError = +0;
 		double maxFitError = +20;
@@ -416,7 +419,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 			if (imp13 == null)
 				MyLog.waitHere("Non trovato il file " + path2);
 
-	
 			int out2[] = positionSearch11(imp11, maxFitError, info10,
 					autoCalled, step, demo, test, fast);
 			if (out2 == null) {
@@ -524,8 +526,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			if (demo)
 				MyLog.waitHere(listaMessaggi(35), debug);
 			// ========================================================================
-			// se non ho trovato la posizione mi ritrovo qui senza out validi
-			// valido, in tal caso andrebbe attivato automaticamente, sulle
+			// se non ho trovato la posizione mi ritrovo qui senza out validi,
+			// in tal caso andrebbe attivato automaticamente, sulle
 			// stesse immagini p3rmn_
 			// ========================================================================
 			ImagePlus imp1 = null;
@@ -596,9 +598,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 			Overlay overDiff = new Overlay();
 			overDiff.setStrokeColor(Color.red);
 			impDiff.setOverlay(overDiff);
+			UtilAyv.showImageMaximized(impDiff);
 
 			if (demo) {
-				UtilAyv.showImageMaximized(impDiff);
 				MyLog.waitHere(listaMessaggi(41), debug);
 			}
 			impDiff.setRoi(new OvalRoi(xRoi2 - diamRoi2 / 2, yRoi2 - diamRoi2
@@ -629,10 +631,47 @@ public class p12rmn_ implements PlugIn, Measurements {
 						debug);
 			}
 
-			// iniziamo con il ghost inferiore
+			// calcolo dapprima il valore del fondo, questo mi servirà per
+			// vedere se per caso ottengo dei valori di ghost estremamente
+			// elevati, in questo caso richiederò la conferma manuale della
+			// posizione trovata, poichè è possibile vi sia, ad esempio un altro
+			// pezzo di fantoccio acquistito (tappo, fantoccio adiacente ecc.)
 
+			int xRoi9 = xCenterFondo - MyConst.P12_DIAM_ROI_BACKGROUND / 2;
+			int yRoi9 = yCenterFondo - MyConst.P12_DIAM_ROI_BACKGROUND / 2;
+
+			ImageStatistics statBkg = UtilAyv.backCalc(xRoi9, yRoi9,
+					MyConst.P12_DIAM_ROI_BACKGROUND, imp1, false, true, true);
+			double mediaBkg = statBkg.mean;
+			double devStBkg = statBkg.stdDev;
+
+			if (demo)
+				UtilAyv.autoAdjust(imp1, imp1.getProcessor());
+
+			if (imp1.isVisible()) {
+				impDiff.getWindow().toBack();
+				IJ.wait(40);
+
+				ImageWindow iw = imp1.getWindow();
+				iw.toFront();
+				IJ.wait(40);				
+			}
+
+			// iniziamo con il ghost inferiore
 			imp1.setRoi(new OvalRoi(xGhMaxDw - diamGhost / 2, yGhMaxDw
 					- diamGhost / 2, diamGhost, diamGhost));
+			ImageStatistics statGh1 = imp1.getStatistics();
+			double mediaGhost1 = statGh1.mean;
+			Rectangle boundRec1 = null;
+			double limitBkg = mediaBkg * 3 + 6 * devStBkg;
+			if (mediaGhost1 > limitBkg) {
+				MyLog.waitHere(listaMessaggi(24) + " mediaGhost= "
+						+ mediaGhost1 + " limitBkg= " + limitBkg, debug);
+				boundRec1 = imp1.getProcessor().getRoi();
+				xGhMaxDw = boundRec1.x;
+				yGhMaxDw = boundRec1.y;
+				statGh1 = imp1.getStatistics();
+			}
 			imp1.getRoi().setStrokeColor(Color.green);
 			if (demo)
 				imp1.getRoi().setStrokeWidth(2);
@@ -640,8 +679,19 @@ public class p12rmn_ implements PlugIn, Measurements {
 			drawLabel(imp1, "dw");
 			over1.addElement(imp1.getRoi());
 
+			// ghost sinistro (simpatico!)
 			imp1.setRoi(new OvalRoi(xGhMaxSx - diamGhost / 2, yGhMaxSx
 					- diamGhost / 2, diamGhost, diamGhost));
+			ImageStatistics statGh2 = imp1.getStatistics();
+			double mediaGhost2 = statGh2.mean;
+			if (mediaGhost2 > limitBkg) {
+				MyLog.waitHere(listaMessaggi(24) + " mediaGhost= "
+						+ mediaGhost2 + " limitBkg= " + limitBkg, debug);
+				boundRec1 = imp1.getProcessor().getRoi();
+				xGhMaxSx = boundRec1.x;
+				yGhMaxSx = boundRec1.y;
+				statGh2 = imp1.getStatistics();
+			}
 			imp1.getRoi().setStrokeColor(Color.green);
 			if (demo)
 				imp1.getRoi().setStrokeWidth(2);
@@ -649,8 +699,19 @@ public class p12rmn_ implements PlugIn, Measurements {
 			drawLabel(imp1, "sx");
 			over1.addElement(imp1.getRoi());
 
+			// ghost destro
 			imp1.setRoi(new OvalRoi(xGhMaxDx - diamGhost / 2, yGhMaxDx
 					- diamGhost / 2, diamGhost, diamGhost));
+			ImageStatistics statGh3 = imp1.getStatistics();
+			double mediaGhost3 = statGh3.mean;
+			if (mediaGhost3 > limitBkg) {
+				MyLog.waitHere(listaMessaggi(24) + " mediaGhost= "
+						+ mediaGhost3 + " limitBkg= " + limitBkg, debug);
+				boundRec1 = imp1.getProcessor().getRoi();
+				xGhMaxDx = boundRec1.x;
+				yGhMaxDx = boundRec1.y;
+				statGh3 = imp1.getStatistics();
+			}
 			imp1.getRoi().setStrokeColor(Color.green);
 			if (demo)
 				imp1.getRoi().setStrokeWidth(2);
@@ -658,9 +719,19 @@ public class p12rmn_ implements PlugIn, Measurements {
 			drawLabel(imp1, "dx");
 			over1.addElement(imp1.getRoi());
 
+			// ghost superiore
 			imp1.setRoi(new OvalRoi(xGhMaxUp - diamGhost / 2, yGhMaxUp
 					- diamGhost / 2, diamGhost, diamGhost));
-
+			ImageStatistics statGh4 = imp1.getStatistics();
+			double mediaGhost4 = statGh4.mean;
+			if (mediaGhost4 > limitBkg) {
+				MyLog.waitHere(listaMessaggi(24) + " mediaGhost= "
+						+ mediaGhost4 + " limitBkg= " + limitBkg, debug);
+				boundRec1 = imp1.getProcessor().getRoi();
+				xGhMaxUp = boundRec1.x;
+				yGhMaxUp = boundRec1.y;
+				statGh3 = imp1.getStatistics();
+			}
 			imp1.getRoi().setStrokeColor(Color.green);
 			if (demo)
 				imp1.getRoi().setStrokeWidth(2);
@@ -679,51 +750,13 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			imp1.deleteRoi();
 
-			if (demo)
-				UtilAyv.autoAdjust(imp1, imp1.getProcessor());
-
-			diamGhost = MyConst.P3_DIAM_ROI_GHOSTS;
-			int xRoi5 = (int) Math.round(xGhMaxDw - diamGhost / 2);
-			int yRoi5 = (int) Math.round(yGhMaxDw - diamGhost / 2);
-			ImageStatistics statGh1 = ghostRoi(xRoi5, yRoi5, imp1, 1, step,
-					test);
-			double mediaGhost1 = statGh1.mean;
-
-			int xRoi6 = (int) Math.round(xGhMaxSx - diamGhost / 2);
-			int yRoi6 = (int) Math.round(yGhMaxSx - diamGhost / 2);
-
-			ImageStatistics statGh2 = ghostRoi(xRoi6, yRoi6, imp1, 2, step,
-					test);
-			double mediaGhost2 = statGh2.mean;
-
-			int xRoi7 = (int) Math.round(xGhMaxDx - diamGhost / 2);
-			int yRoi7 = (int) Math.round(yGhMaxDx - diamGhost / 2);
-			ImageStatistics statGh3 = ghostRoi(xRoi7, yRoi7, imp1, 3, step,
-					test);
-			double mediaGhost3 = statGh3.mean;
-
-			int xRoi8 = (int) Math.round(xGhMaxUp - diamGhost / 2);
-			int yRoi8 = (int) Math.round(yGhMaxUp - diamGhost / 2);
-
-			ImageStatistics statGh4 = ghostRoi(xRoi8, yRoi8, imp1, 4, step,
-					test);
-			double mediaGhost4 = statGh4.mean;
-
-			int xRoi9 = xCenterFondo - MyConst.P12_DIAM_ROI_BACKGROUND / 2;
-			int yRoi9 = yCenterFondo - MyConst.P12_DIAM_ROI_BACKGROUND / 2;
-
-			ImageStatistics statBkg = UtilAyv.backCalc(xRoi9, yRoi9,
-					MyConst.P12_DIAM_ROI_BACKGROUND, imp1, false, true, true);
-			double meanBkg = statBkg.mean;
-
-			double ghostPerc1 = ghostPercCalculation(mediaGhost1, meanBkg,
+			double ghostPerc1 = ghostPercCalculation(mediaGhost1, mediaBkg,
 					mean1);
-
-			double ghostPerc2 = ghostPercCalculation(mediaGhost2, meanBkg,
+			double ghostPerc2 = ghostPercCalculation(mediaGhost2, mediaBkg,
 					mean1);
-			double ghostPerc3 = ghostPercCalculation(mediaGhost3, meanBkg,
+			double ghostPerc3 = ghostPercCalculation(mediaGhost3, mediaBkg,
 					mean1);
-			double ghostPerc4 = ghostPercCalculation(mediaGhost4, meanBkg,
+			double ghostPerc4 = ghostPercCalculation(mediaGhost4, mediaBkg,
 					mean1);
 
 			if (demo) {
@@ -802,7 +835,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			IJ.wait(1000);
 			// MyLog.waitHere();
 			//
-//			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+			// rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 			int col = 2;
 			String t1 = "TESTO          ";
 			// put values in ResultsTable
@@ -2296,6 +2329,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				over12.addElement(imp11.getRoi());
 				imp11.deleteRoi();
 				MyLog.waitHere(listaMessaggi(16), debug);
+				manual=true;
 			}
 
 			//
@@ -3557,7 +3591,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 		lista[22] = "Il centro del fantoccio è contrassegnato dal pallino rosso";
 		lista[23] = "Sono evidenziate le posizioni di massimo segnale medio, per \n"
 				+ "il calcolo dei ghosts";
-		lista[24] = "24";
+		lista[24] = "Valore insolito di segnale del Ghost nella posizione selezionata, \n"
+				+ "modificare eventualmente la posizione \n";
 		lista[25] = "25";
 		lista[26] = "26";
 		lista[27] = "27";
@@ -3738,6 +3773,5 @@ public class p12rmn_ implements PlugIn, Measurements {
 		Prefs.set("prefer.p12rmnXRoi1", Integer.toString(boundingRectangle.x));
 		Prefs.set("prefer.p12rmnYRoi1", Integer.toString(boundingRectangle.y));
 	}
-
 
 }

@@ -99,6 +99,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 											// inutilizzato
 	private static Color color1 = Color.green;
 	private static Color color2 = Color.green;
+	private static final boolean debug = true;
 
 	// private boolean profiVert = false;
 
@@ -336,16 +337,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 		ResultsTable rt = null;
 		boolean fast2 = false;
 
-		// boolean fast = false;
-		// if (Prefs.get("prefer.fast", "false").equals("true")) {
-		// fast = true;
-		// } else {
-		// fast = false;
-		// }
-
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		do {
-
 			ImagePlus imp11;
 			if ((fast && !manualRequired2) || silent)
 				imp11 = UtilAyv.openImageNoDisplay(path1, true);
@@ -578,6 +571,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 						* MyConst.P11_NEA_11X11_PIXEL;
 				int enlarge = 0;
 				int pixx = 0;
+				int loop = 0;
 				do {
 
 					boolean paintPixels = false;
@@ -598,7 +592,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 					if (pixx < area11x11) {
 						sqNEA = sqNEA + 2; // accrescimento area
 						enlarge = enlarge + 1;
-						MyLog.waitHere("verificare immagine, insolito accrescimento richiesto");
+
+						MyLog.waitHere(info10 + "\n \n" + listaMessaggi(1),
+								debug);
+
+						// MyLog.waitHere("verificare immagine, insolito accrescimento richiesto");
 					}
 					if (step) {
 						msgEnlargeRoi(sqNEA);
@@ -626,6 +624,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					// MyLog.waitHere();
 					IJ.wait(300);
 					IJ.wait(300);
+					loop++;
 
 				} while (pixx < area11x11);
 
@@ -1551,6 +1550,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 		//
 
 		String strDirez = "";
+		double ax = Double.NaN;
+		double ay = Double.NaN;
+
+		// MyLog.waitHere("direzione= " + direzione);
 		// vup = 1 vdw = 2 hsx = 3 hdx = 4
 		switch (direzione) {
 		case 1:
@@ -1598,79 +1601,66 @@ public class p11rmn_ implements PlugIn, Measurements {
 			startY = 0;
 			endY = height;
 			break;
-		default:
-			MyLog.waitHere("direzione non prevista !!!!");
+		case 0:
+			manualRequired = true;
+			// MyLog.waitHere("direzione= " + direzione);
 		}
 
 		// MyLog.waitHere("startX= " + startX + " startY= " + startY + " endX= "
 		// + endX + " endY= " + endY);
 
-		imp11.setRoi(new Line(startX, startY, endX, endY));
-		over1.addElement(imp11.getRoi());
-		over1.setStrokeColor(color1);
-		imp11.updateAndDraw();
-		if (step)
-			MyLog.waitHere("selezione automatica direzione = " + strDirez);
-
-		double[] profi1 = ((Line) imp11.getRoi()).getPixels();
-		profi1[0] = 0;
-		profi1[profi1.length - 1] = 0;
-
-		int[] vetHalfPoint = halfPointSearch(profi1);
-
-		double[] xPoints = new double[vetHalfPoint.length];
-		double[] yPoints = new double[vetHalfPoint.length];
-		for (int i1 = 0; i1 < vetHalfPoint.length; i1++) {
-			xPoints[i1] = (double) vetHalfPoint[i1];
-			yPoints[i1] = profi1[vetHalfPoint[i1]];
-		}
-
-		// if (step) {
-		// Plot plot1 = MyPlot.basePlot(profi1, "PROFILO", Color.blue);
-		// plot1.draw();
-		// plot1.setColor(Color.red);
-		// plot1.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
-		// plot1.show();
-		//
-		// plot1.show();
-		// MyLog.waitHere();
-		// }
-
-		double[] fwhm = calcFwhm(vetHalfPoint, profi1, dimPixel);
-		double centro = vetHalfPoint[0] + (fwhm[0] / 2) / dimPixel;
-
-		double xCenter[] = { centro };
-		double yCenter[] = { profi1[(int) centro] };
-
-		if (step) {
-			Plot plot1 = MyPlot.basePlot(profi1, "PROFILO", Color.blue);
-			plot1.draw();
-			plot1.setColor(Color.red);
-			plot1.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
-			plot1.draw();
-			plot1.addPoints(xCenter, yCenter, PlotWindow.BOX);
-			plot1.show();
-		}
-
-		double ax = Double.NaN;
-		double ay = Double.NaN;
-
-		if (direzione < 3) {
-			ax = centro;
-			ay = startY;
-
+		if (direzione == 0) {
+			ax = width / 2;
+			ay = height / 2;
 		} else {
-			ax = startX;
-			ay = centro;
+			imp11.setRoi(new Line(startX, startY, endX, endY));
+			over1.addElement(imp11.getRoi());
+			over1.setStrokeColor(color1);
+			imp11.updateAndDraw();
+			if (step)
+				MyLog.waitHere("selezione automatica direzione = " + strDirez);
 
+			double[] profi1 = ((Line) imp11.getRoi()).getPixels();
+			profi1[0] = 0;
+			profi1[profi1.length - 1] = 0;
+
+			int[] vetHalfPoint = halfPointSearch(profi1);
+
+			double[] xPoints = new double[vetHalfPoint.length];
+			double[] yPoints = new double[vetHalfPoint.length];
+			for (int i1 = 0; i1 < vetHalfPoint.length; i1++) {
+				xPoints[i1] = (double) vetHalfPoint[i1];
+				yPoints[i1] = profi1[vetHalfPoint[i1]];
+			}
+
+			double[] fwhm = calcFwhm(vetHalfPoint, profi1, dimPixel);
+			double centro = vetHalfPoint[0] + (fwhm[0] / 2) / dimPixel;
+
+			double xCenter[] = { centro };
+			double yCenter[] = { profi1[(int) centro] };
+
+			if (step) {
+				Plot plot1 = MyPlot.basePlot(profi1, "PROFILO", Color.blue);
+				plot1.draw();
+				plot1.setColor(Color.red);
+				plot1.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
+				plot1.draw();
+				plot1.addPoints(xCenter, yCenter, PlotWindow.BOX);
+				plot1.show();
+			}
+
+			if (direzione < 3) {
+				ax = centro;
+				ay = startY;
+
+			} else {
+				ax = startX;
+				ay = centro;
+
+			}
 		}
 
-		// if (manualRequired) {
-		// ax = width / 2;
-		// ay = height / 2;
-		// }
-
-		if (!fast && (step || test)) {
+		if (!fast && (step || test || manualRequired)) {
 			imp11.setRoi(new OvalRoi((int) ax - 4, (int) ay - 4, 8, 8));
 			over1.addElement(imp11.getRoi());
 			over1.setStrokeColor(color1);
@@ -1679,11 +1669,14 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 
-		if (!fast) {
+		if (!fast || manualRequired) {
 			// MyLog.waitMessage(info10
 			// + "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI");
-			MyLog.waitHere(info10
-					+ "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI");
+			// MyLog.waitHere(info10
+			// + "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI", debug);
+
+			MyLog.waitHere(info10 + "\n \n" + listaMessaggi(0), debug);
+
 			manualRequired = false;
 		}
 
@@ -1816,8 +1809,19 @@ public class p11rmn_ implements PlugIn, Measurements {
 		meanx[3] = mean4;
 		// MyLog.logVector(meanx, "meanx prima di sort");
 		Arrays.sort(meanx);
-		// MyLog.logVector(meanx, "meanx dopo di sort");
-		// MyLog.waitHere();
+		// MyLog.logVector(meanx, "meanx sortato");
+
+		// regola: mean[2] deve essere almeno > 4*mean[1], questo evita i casi
+		// in cui un solo quadrato ha intercettato il fantoccio, conferma
+		// manuale
+		// regola: dobbiamo avere un max di solo 2 NaN o, meglio, anche se
+		// abbiamo un solo NaN chiediamo la conferma manuale
+		boolean marginal = UtilAyv.isNaN(meanx[2]) && UtilAyv.isNaN(meanx[3]);
+		if (!(meanx[2] > 4 * meanx[1]) && (!marginal)) {
+			MyLog.logVector(meanx, "meanx");
+			MyLog.waitHere("direzione 0 per scarsa differenza");
+			return 0;
+		}
 
 		// i valori da utilizzare sono >= dell'elemento3
 
@@ -1841,6 +1845,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 			// caso DX
 			return 4;
 		}
+		MyLog.logVector(meanx, "meanx");
+		MyLog.waitHere("direzione 0 perchè non entrato nelle altre");
 		return 0;
 	}
 
@@ -2220,6 +2226,106 @@ public class p11rmn_ implements PlugIn, Measurements {
 		if (coil1.equals(coil2))
 			ok2 = true;
 		return ok1 && ok2;
+	}
+
+	/**
+	 * Verifica che nella roi (beh, all'incirca) non sia presente un gruppo di
+	 * 3x3 pixels. Utilizzata per verificare che nella posizione in cui si
+	 * misura il segnale di fondo, non esistano spazi senza segnale (vedi
+	 * immagini di Esine)
+	 * 
+	 * @param imp1
+	 * @param xRoi
+	 * @param yRoi
+	 * @param diamRoi
+	 * @return
+	 */
+	public static boolean verifyBackgroundSquareRoiPixels(ImagePlus imp1,
+			int xRoi, int yRoi, int diamRoi, boolean test, boolean demo) {
+
+		int xRoi0 = xRoi - diamRoi / 2;
+		int yRoi0 = yRoi - diamRoi / 2;
+		int diamRoi0 = diamRoi;
+		// effettua un adjust per esaltare il segnale di fondo
+		Overlay over2 = new Overlay();
+
+		if (demo) {
+			over2.setStrokeColor(Color.red);
+			imp1.setOverlay(over2);
+		}
+
+		imp1.setRoi(xRoi0, yRoi0, diamRoi0, diamRoi0);
+		imp1.getRoi().setStrokeColor(Color.red);
+
+		if (demo) {
+			over2.addElement(imp1.getRoi());
+//			IJ.setMinAndMax(imp1, 10, 30);
+			UtilAyv.showImageMaximized2(imp1);
+		}
+		ImageProcessor ip1 = imp1.getProcessor();
+
+		// prevengo problemi con le immagini calibrate
+		short[] pixels = UtilAyv.truePixels(imp1);
+
+		Rectangle roi2 = ip1.getRoi();
+		int x1 = roi2.x;
+		int y1 = roi2.y;
+		int width = roi2.width;
+		int height = roi2.height;
+		int offset = 0;
+		int[] vet = new int[9];
+		// float[][] result = new float[width][height];
+		ip1.setRoi(imp1.getRoi());
+		int width1 = imp1.getWidth();
+		int sum = 0;
+
+		for (int i1 = 0; i1 < width; i1++) {
+			for (int i2 = 0; i2 < height; i2++) {
+				sum = 0;
+				offset = (y1 + i2) * width1 + (x1 + i1);
+				// se questo pixel fa parte della roi, allora analizzo
+				// l'intorno di 3x3 pixel
+				vet[0] = offset - width1 - 1;
+				vet[1] = offset - width1;
+				vet[2] = offset - width1 + 1;
+				vet[3] = offset - 1;
+				vet[4] = offset;
+				vet[5] = offset + 1;
+				vet[6] = offset + width - 1;
+				vet[7] = offset + width;
+				vet[8] = offset + width + 1;
+				for (int i4 = 0; i4 < 9; i4++) {
+					if (vet[i4] <= pixels.length) {
+						sum = sum + pixels[vet[i4]];
+						if (demo) {
+							imp1.setRoi(x1 + i1, y1 + i2, 1, 1);
+							over2.addElement(imp1.getRoi());
+						}
+					}
+				}
+				if (sum == 0)
+					return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo è
+	 * facilitata la eventuale modifica / traduzione dei messaggi.
+	 * 
+	 * @param select
+	 * @return
+	 */
+	public static String listaMessaggi(int select) {
+		String[] lista = new String[100];
+		// ---------+-----------------------------------------------------------+
+		lista[0] = "Verifica E/O modifica manuale posizione ROI";
+		lista[1] = "Verificare immagine, accrescimento MROI in corso";
+
+		// ---------+-----------------------------------------------------------+
+		String out = lista[select];
+		return out;
 	}
 
 } // p11rmn_

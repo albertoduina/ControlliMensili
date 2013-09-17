@@ -73,13 +73,8 @@ public class p12rmn_Test {
 		boolean silent=false;
 		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
 				autoCalled, step, demo, test, fast, silent);
-		rt1.show("Results");
-		MyLog.waitHere();
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-		MyLog.logVector(vetResults, "vetResults");
-		double[] vetReference = new p12rmn_().referenceSiemens();
-		MyLog.logVector(vetReference, "vetReference");
-		MyLog.waitHere();
+		double[] vetReference = p12rmn_.referenceSiemens();
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 				MyConst.P3_vetName);
 		assertTrue(ok);

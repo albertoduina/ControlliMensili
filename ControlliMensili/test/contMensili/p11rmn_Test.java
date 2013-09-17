@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.gui.OvalRoi;
 import ij.gui.WaitForUserDialog;
 import ij.measure.ResultsTable;
 
@@ -41,7 +42,7 @@ public class p11rmn_Test {
 
 		double profond = 30.0;
 		boolean fast = true;
-		boolean silent=false;
+		boolean silent = false;
 
 		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, verticalDir,
 				profond, "", autoCalled, step, verbose, test, fast, silent);
@@ -61,7 +62,7 @@ public class p11rmn_Test {
 	public final void testMainUniforTestSiemens() {
 
 		// 16 dec 2011 sistemato, ora funziona in automatico
-		boolean verbose= true;
+		boolean verbose = true;
 		boolean ok = p11rmn_.selfTestSiemens(verbose);
 		assertTrue(ok);
 	}
@@ -78,6 +79,37 @@ public class p11rmn_Test {
 	@Test
 	public final void testMainUniforTestSilent() {
 		new p11rmn_().selfTestSilent();
+	}
+
+	@Test
+	public final void testVerifyBackgroundSquareRoiPixels() {
+
+		ImagePlus imp1 = UtilAyv.openImageMaximized(".\\Test2\\S1SA_01testP11");
+		int xRoi = 20;
+		int yRoi = 20;
+		int diamRoi = 20;
+		boolean test = false;
+		boolean demo = true;
+		int incr = 0;
+		int px = 0;
+		int py = 0;
+		int width = imp1.getWidth();
+		int height = imp1.getHeight();
+		int diamGhost = 20;
+		boolean ok = false;
+
+		do {
+			incr++;
+			px = xRoi + diamGhost;
+			py = yRoi + diamGhost + incr;
+			imp1.setRoi(px, py, diamGhost, diamGhost);
+
+			ok = p11rmn_.verifyBackgroundSquareRoiPixels(imp1, px, py, diamRoi,
+					test, demo);
+
+		} while (ok && py < height - diamRoi);
+		MyLog.waitHere();
+
 	}
 
 	@Test
