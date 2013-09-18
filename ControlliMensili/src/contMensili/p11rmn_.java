@@ -478,6 +478,17 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				int xFondo = MyConst.P11_X_ROI_BACKGROUND;
 				int yFondo = MyConst.P11_Y_ROI_BACKGROUND + 5;
+				boolean irraggiungibile = false;
+				int diamGhost = MyConst.P11_DIAM_ROI_BACKGROUND;
+				int guard = 10;
+				boolean demo = false;
+
+				int[] backPos = positionSearch14(imp1, diamGhost, guard,
+						info10, autoCalled, step, demo, test, fast,
+						irraggiungibile);
+				xFondo = backPos[0] - diamGhost / 2;
+				yFondo = backPos[1] - diamGhost / 2;
+
 				//
 				// disegno RoiFondo su imp1
 				//
@@ -1749,6 +1760,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 		over1.addElement(imp1.getRoi());
 		stat1 = imp1.getStatistics();
 		double mean1 = stat1.mean;
+		if (UtilAyv.isNaN(mean1))
+			mean1 = 0;
 		meanx[0] = mean1;
 
 		x1 = (int) xMaximum - 8;
@@ -1768,6 +1781,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 		over1.addElement(imp1.getRoi());
 		stat1 = imp1.getStatistics();
 		double mean2 = stat1.mean;
+		if (UtilAyv.isNaN(mean2))
+			mean2 = 0;
 		meanx[1] = mean2;
 
 		x1 = (int) xMaximum + 4;
@@ -1787,6 +1802,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 		over1.addElement(imp1.getRoi());
 		stat1 = imp1.getStatistics();
 		double mean3 = stat1.mean;
+		if (UtilAyv.isNaN(mean3))
+			mean3 = 0;
+
 		meanx[2] = mean3;
 
 		x1 = (int) xMaximum + 4;
@@ -1806,18 +1824,19 @@ public class p11rmn_ implements PlugIn, Measurements {
 		over1.addElement(imp1.getRoi());
 		stat1 = imp1.getStatistics();
 		double mean4 = stat1.mean;
+		if (UtilAyv.isNaN(mean4))
+			mean4 = 0;
+
 		meanx[3] = mean4;
 		// MyLog.logVector(meanx, "meanx prima di sort");
 		Arrays.sort(meanx);
-		// MyLog.logVector(meanx, "meanx sortato");
 
 		// regola: mean[2] deve essere almeno > 4*mean[1], questo evita i casi
 		// in cui un solo quadrato ha intercettato il fantoccio, conferma
 		// manuale
 		// regola: dobbiamo avere un max di solo 2 NaN o, meglio, anche se
 		// abbiamo un solo NaN chiediamo la conferma manuale
-		boolean marginal = UtilAyv.isNaN(meanx[2]) && UtilAyv.isNaN(meanx[3]);
-		if (!(meanx[2] > 4 * meanx[1]) && (!marginal)) {
+		if (!(meanx[2] > 4 * meanx[1])) {
 			MyLog.logVector(meanx, "meanx");
 			MyLog.waitHere("direzione 0 per scarsa differenza");
 			return 0;
@@ -1825,23 +1844,19 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		// i valori da utilizzare sono >= dell'elemento3
 
-		if (mean1 >= meanx[2] && mean3 >= meanx[2] || UtilAyv.isNaN(mean1)
-				&& UtilAyv.isNaN(mean3)) {
+		if (mean1 >= meanx[2] && mean3 >= meanx[2]) {
 			// caso UP
 			return 1;
 		}
-		if (mean2 >= meanx[2] && mean4 >= meanx[2] || UtilAyv.isNaN(mean2)
-				&& UtilAyv.isNaN(mean4)) {
+		if (mean2 >= meanx[2] && mean4 >= meanx[2]) {
 			// caso DW
 			return 2;
 		}
-		if (mean1 >= meanx[2] && mean2 >= meanx[2] || UtilAyv.isNaN(mean1)
-				&& UtilAyv.isNaN(mean2)) {
+		if (mean1 >= meanx[2] && mean2 >= meanx[2]) {
 			// caso SX
 			return 3;
 		}
-		if (mean3 >= meanx[2] && mean4 >= meanx[2] || UtilAyv.isNaN(mean3)
-				&& UtilAyv.isNaN(mean4)) {
+		if (mean3 >= meanx[2] && mean4 >= meanx[2]) {
 			// caso DX
 			return 4;
 		}
@@ -2259,7 +2274,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		if (demo) {
 			over2.addElement(imp1.getRoi());
-//			IJ.setMinAndMax(imp1, 10, 30);
+			// IJ.setMinAndMax(imp1, 10, 30);
 			UtilAyv.showImageMaximized2(imp1);
 		}
 		ImageProcessor ip1 = imp1.getProcessor();
@@ -2310,6 +2325,82 @@ public class p11rmn_ implements PlugIn, Measurements {
 		return false;
 	}
 
+	public static boolean verifyBackgroundSquareRoiMean(ImagePlus imp1,
+			int xRoi, int yRoi, int diamRoi, boolean test, boolean demo) {
+
+		imp1.setRoi(xRoi - diamRoi / 2, yRoi - diamRoi / 2, diamRoi, diamRoi);
+		ImageStatistics stat1 = imp1.getStatistics();
+		double mean1 = stat1.mean;
+		if (mean1 > 0)
+			return false;
+		return true;
+	}
+
+	public static int[] positionSearch14(ImagePlus imp1, int diamGhost,
+			int guard, String info1, boolean autoCalled, boolean step,
+			boolean demo, boolean test, boolean fast, boolean irraggiungibile) {
+
+		boolean debug = true;
+
+		Overlay over2 = new Overlay();
+		over2.setStrokeColor(Color.red);
+		imp1.deleteRoi();
+
+		ImagePlus imp2 = imp1.duplicate();
+		imp2.setOverlay(over2);
+		if (demo) {
+			IJ.setMinAndMax(imp2, 10, 50);
+		}
+
+		int width = imp1.getWidth();
+		int height = imp1.getHeight();
+		if (demo) {
+			UtilAyv.showImageMaximized(imp2);
+			// MyLog.waitHere(listaMessaggi(30), debug);
+		}
+
+		int a = 0;
+		if (irraggiungibile) {
+			MyLog.waitHere("impostato irraggiungibile");
+			a = 1;
+		}
+		int px = 0;
+		int py = 0;
+		int incr = 0;
+		boolean pieno = false;
+		int xcentGhost = 0;
+		int ycentGhost = 0;
+
+		do {
+			incr++;
+			px = MyConst.P11_X_ROI_BACKGROUND;
+			py = MyConst.P11_Y_ROI_BACKGROUND + incr;
+			xcentGhost = px + diamGhost / 2;
+			ycentGhost = py + diamGhost / 2;
+			// imp2.setRoi(new OvalRoi(px, py, diamGhost, diamGhost));
+			pieno = verifyBackgroundSquareRoiMean(imp2, xcentGhost,
+					ycentGhost, diamGhost, test, demo);
+
+		} while ((pieno || a > 0) && (ycentGhost + diamGhost < height));
+
+		if (incr > 1) {
+			UtilAyv.showImageMaximized(imp2);
+			imp2.setRoi(px, py, diamGhost, diamGhost);
+			MyLog.waitHere("spostata la posizione del fondo incr=" + incr);
+		}
+
+		if (demo) {
+			MyLog.waitHere(listaMessaggi(2), debug);
+		}
+		imp2.close();
+		int[] out1 = new int[3];
+		out1[0] = xcentGhost;
+		out1[1] = ycentGhost;
+		out1[2] = diamGhost;
+
+		return out1;
+	}
+
 	/**
 	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo è
 	 * facilitata la eventuale modifica / traduzione dei messaggi.
@@ -2322,6 +2413,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		// ---------+-----------------------------------------------------------+
 		lista[0] = "Verifica E/O modifica manuale posizione ROI";
 		lista[1] = "Verificare immagine, accrescimento MROI in corso";
+		lista[2] = "Evidenziata la posizione per il calcolo del fondo";
 
 		// ---------+-----------------------------------------------------------+
 		String out = lista[select];

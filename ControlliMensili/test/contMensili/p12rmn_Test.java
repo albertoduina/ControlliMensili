@@ -191,37 +191,6 @@ public class p12rmn_Test {
 	// }
 	// }
 
-	@Test
-	public final void testPositionSearch12() {
-
-		// 16 dic 2011 sistemato, ora funziona in automatico
-
-		String path1 = "./Test2/HUSA_001testP3";
-
-		String path2 = "./Test2/HUSA_002testP3";
-		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
-		imp11.show();
-
-		ImagePlus imp13 = UtilAyv.openImageNoDisplay(path2, true);
-		imp11.show();
-
-		boolean autoCalled = false;
-		boolean step = true;
-		boolean verbose = true;
-		boolean test = false;
-		boolean fast = false;
-
-		int out2[] = p12rmn_.positionSearch12(imp11, imp13, "", autoCalled,
-				step, verbose, test, fast);
-
-		MyLog.logVector(out2, "out2");
-
-		double[] expected = { 159.0, 105.0, 118.0, 133.0, 202.0, 77.0,
-				33.690067525979785 };
-		// MyLog.logVector(out2, "out2");
-		// boolean ok = UtilAyv.verifyResults1(expected, out2, null);
-		// assertTrue(ok);
-	}
 
 	@Test
 	public final void testPositionSearch13() {
