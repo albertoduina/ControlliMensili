@@ -67,6 +67,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 	private static String TYPE = " >> CONTROLLO UNIFORMITA'_____________";
 
 	private static String fileDir = "";
+	private static boolean debug= true;
+
 
 	// ---------------------------"01234567890123456789012345678901234567890"
 
@@ -193,14 +195,14 @@ public class p3rmn_ implements PlugIn, Measurements {
 		String path1 = "";
 		String path2 = "";
 		if (nTokens == MyConst.TOKENS2) {
-			UtilAyv.checkImages(vetRiga, iw2ayvTable, 2);
+			UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
 			MyLog.logDebug(vetRiga[0], "P3", fileDir);
 			MyLog.logDebug(vetRiga[1], "P3", fileDir);
 
 		} else {
-			UtilAyv.checkImages(vetRiga, iw2ayvTable, 3);
+			UtilAyv.checkImages(vetRiga, iw2ayvTable, 3, debug);
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
 			MyLog.logDebug(vetRiga[0], "P3", fileDir);

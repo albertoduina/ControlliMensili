@@ -114,6 +114,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 	@SuppressWarnings("unused")
 	private static boolean pulse = false; // lasciare, serve anche se segnalato
 											// inutilizzato
+	private static final boolean debug = true;
 
 	public void run(String args) {
 
@@ -242,14 +243,14 @@ public class p12rmn_ implements PlugIn, Measurements {
 		String path2 = "";
 
 		if (nTokens == MyConst.TOKENS2) {
-			UtilAyv.checkImages(vetRiga, iw2ayvTable, 2);
+			UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
 			MyLog.logDebug(vetRiga[0], "P12", fileDir);
 			MyLog.logDebug(vetRiga[1], "P12", fileDir);
 
 		} else {
-			UtilAyv.checkImages(vetRiga, iw2ayvTable, 3);
+			UtilAyv.checkImages(vetRiga, iw2ayvTable, 3, debug);
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
 			MyLog.logDebug(vetRiga[0], "P12", fileDir);
@@ -357,7 +358,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		// double angle = Double.NaN;
-		boolean debug = true;
 		boolean abort = false;
 		// lettura dei limiti da file esterno
 
@@ -785,18 +785,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 				MyLog.waitHere(listaMessaggi(45), debug);
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
 					imp1, tabCodici, VERSION, autoCalled);
-			// put values in ResultsTable
-			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
-
-			// String patName = ReadDicom.readDicomParameter(imp1,
-			// MyConst.DICOM_PATIENT_NAME);
-
-			// String codice1 = ReadDicom.readDicomParameter(imp1,
-			// MyConst.DICOM_SERIES_DESCRIPTION);
-
-			// String codice = UtilAyv.getFiveLetters(codice1);
-
-			// simulataName = fileDir + patName + codice + "sim.zip";
 
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
@@ -833,9 +821,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 				return null;
 
 			IJ.wait(1000);
-			// MyLog.waitHere();
-			//
-			// rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 			int col = 2;
 			String t1 = "TESTO          ";
 			// put values in ResultsTable

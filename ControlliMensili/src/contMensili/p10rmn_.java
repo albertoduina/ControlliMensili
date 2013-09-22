@@ -91,6 +91,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	@SuppressWarnings("unused")
 	private static boolean pulse = false; // lasciare, serve anche se segnalato
 											// inutilizzato
+	private static final boolean debug = true;
 
 	public void run(String args) {
 
@@ -261,14 +262,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// TableUtils.dumpTableRow(iw2ayvTable, vetRiga[0]);
 
 		if (nTokens == MyConst.TOKENS2) {
-			UtilAyv.checkImages(vetRiga, iw2ayvTable, 2);
+			UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
 
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
 			MyLog.logDebug(vetRiga[0], "P10", fileDir);
 			MyLog.logDebug(vetRiga[1], "P10", fileDir);
 		} else {
-			UtilAyv.checkImages(vetRiga, iw2ayvTable, 3);
+			UtilAyv.checkImages(vetRiga, iw2ayvTable, 3, debug);
 
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
@@ -438,8 +439,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (imp2 == null)
 				MyLog.waitHere("Non trovato il file " + path2);
 			// ImageWindow iw1=WindowManager.getCurrentWindow();
-			
-	
+
 			angle = out2[6];
 			// ============================================================================
 			// Fine calcoli geometrici
@@ -2666,7 +2666,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Per p3rmn le due immagini devono essere identiche, a parte che vengono
 	 * prese una di seguito all'altra. Testiamo seriesDescription e coil

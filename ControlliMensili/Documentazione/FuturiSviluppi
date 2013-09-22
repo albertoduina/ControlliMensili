@@ -1,5 +1,17 @@
 Futuri sviluppi
 
+
+Agosto - Settembre 2013 Introdotto UtilAyv.checkImages 
+Test sulle immagini ricevute in automatico da Sequenze. In caso di problemi viene dato un messaggio esplicativo e restituito false.
+
+Agosto - Settembre 2013
+Introdotto in P12 un minimo test di accettabilità dei dati (che non siano completamente fuori di melone)
+
+
+
+
+
+
 Sarebbe molto utile diversificare i codici delle sequenze tra le diverse classi di macchine
 Tanto per capirci:
 attualmente il codice BUSA_
@@ -8,6 +20,12 @@ SIMPHONY - SIMPHONY TIM - AERA
 questo impedisce di inserire un controllo di correttezza dei risultati direttamente in Java. Averlo permetterebbe, soprattutto con l'elaborazione 
 fast disponibile, di eseguire l'elaborazione delle misure alla massima velocità, ma di fermarsi subito appena appare una differenza rispetto ai 
 limiti impostati, permettendo così un rapido controllo visuale. 
+
+PARZIALMENTE MESSO IN P12RMN
+
+ERA ANCHE IN P10 MODIFICATO MA NON ATTIVATO
+
+
 <<<< Anzichè aspettare che se ne accorga Lorella e me lo dica, oppure aspettare di elaborare il report in VBA >>>>>
 
 Una possibilità, però ci sarebbe:

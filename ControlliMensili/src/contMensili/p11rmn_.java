@@ -225,12 +225,14 @@ public class p11rmn_ implements PlugIn, Measurements {
 		String path3 = "";
 
 		if (nTokens == MyConst.TOKENS2) {
+			UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
 			MyLog.logDebug(vetRiga[0], "P11", fileDir);
 			MyLog.logDebug(vetRiga[1], "P11", fileDir);
 			// path3 = lr.getPath(strRiga3, riga2);
 		} else {
+			UtilAyv.checkImages(vetRiga, iw2ayvTable, 3, debug);
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
 			path3 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
