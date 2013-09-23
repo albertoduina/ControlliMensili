@@ -533,7 +533,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// disegno RoiFondo su imp1
 			//
 			Boolean circular = true;
-			ImageStatistics statFondo = UtilAyv.backCalc2(xFondo, yFondo,
+			ImageStatistics statBkg = UtilAyv.backCalc2(xFondo, yFondo,
 					dFondo, imp1, step, circular, test);
 
 			// TODO
@@ -841,10 +841,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 			rt.incrementCounter();
 			rt.addLabel(t1, "Rumore_Fondo");
 			rt.addValue(2, (out11[1] / Math.sqrt(2)));
-			rt.addValue(3, statFondo.roiX);
-			rt.addValue(4, statFondo.roiY);
-			rt.addValue(5, statFondo.roiWidth);
-			rt.addValue(6, statFondo.roiHeight);
+			rt.addValue(3, statBkg.roiX);
+			rt.addValue(4, statBkg.roiY);
+			rt.addValue(5, statBkg.roiWidth);
+			rt.addValue(6, statBkg.roiHeight);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "SnR");
@@ -861,6 +861,15 @@ public class p10rmn_ implements PlugIn, Measurements {
 			rt.addValue(4, yStartProfile);
 			rt.addValue(5, xEndProfile);
 			rt.addValue(6, yEndProfile);
+			
+			rt.incrementCounter();
+			rt.addLabel(t1, "Bkg");
+			rt.addValue(2, statBkg.mean);
+			rt.addValue(3, statBkg.roiX);
+			rt.addValue(4, statBkg.roiY);
+			rt.addValue(5, statBkg.roiWidth);
+			rt.addValue(6, statBkg.roiHeight);
+
 
 			String[] levelString = { "+20%", "+10%", "-10%", "-10%", "-30%",
 					"-40%", "-50%", "-60%", "-70%", "-80%", "-90%", "fondo" };

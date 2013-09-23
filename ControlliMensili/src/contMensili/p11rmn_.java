@@ -495,7 +495,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				// disegno RoiFondo su imp1
 				//
 
-				ImageStatistics statFondo = UtilAyv.backCalc2(xFondo, yFondo,
+				ImageStatistics statBkg = UtilAyv.backCalc2(xFondo, yFondo,
 						MyConst.P11_DIAM_ROI_BACKGROUND, imp1, step, false,
 						test);
 
@@ -758,10 +758,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 				rt.addValue(2, (out1[1] / Math.sqrt(2)));
 				// =================================================
 
-				int xRoi = (int) statFondo.roiX;
-				int yRoi = (int) statFondo.roiY;
-				int widthRoi = (int) statFondo.roiWidth;
-				int heightRoi = (int) statFondo.roiHeight;
+				int xRoi = (int) statBkg.roiX;
+				int yRoi = (int) statBkg.roiY;
+				int widthRoi = (int) statBkg.roiWidth;
+				int heightRoi = (int) statBkg.roiHeight;
 
 				rt.addValue(3, xRoi);
 				rt.addValue(4, yRoi);
@@ -783,6 +783,15 @@ public class p11rmn_ implements PlugIn, Measurements {
 				rt.addValue(4, yStartProfile);
 				rt.addValue(5, xEndProfile);
 				rt.addValue(6, yEndProfile);
+				
+				rt.incrementCounter();
+				rt.addLabel(t1, "Bkg");
+				rt.addValue(2, statBkg.mean);
+				rt.addValue(3, statBkg.roiX);
+				rt.addValue(4, statBkg.roiY);
+				rt.addValue(5, statBkg.roiWidth);
+				rt.addValue(6, statBkg.roiHeight);
+
 
 				String[] levelString = { "+20%", "+10%", "-10%", "-20%",
 						"-30%", "-40%", "-50%", "-60%", "-70%", "-80%", "-90%",

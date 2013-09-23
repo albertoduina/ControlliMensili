@@ -517,6 +517,15 @@ public class p3rmn_ implements PlugIn, Measurements {
 			rt.addValue(4, stat1.roiY);
 			rt.addValue(5, stat1.roiWidth);
 			rt.addValue(6, stat1.roiHeight);
+			
+			rt.incrementCounter();
+			rt.addLabel(t1, "Bkg");
+			rt.addValue(2, statBkg.mean);
+			rt.addValue(3, statBkg.roiX);
+			rt.addValue(4, statBkg.roiY);
+			rt.addValue(5, statBkg.roiWidth);
+			rt.addValue(6, statBkg.roiHeight);
+
 
 			String[] levelString = { "+20%", "+10%", "-10%", "-20%", "fondo" };
 

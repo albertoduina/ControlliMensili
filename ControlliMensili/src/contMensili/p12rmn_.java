@@ -86,7 +86,10 @@ import utils.UtilAyv;
  * 
  * Analizza UNIFORMITA', SNR per le bobine superficiali vale per le immagini
  * 
- * circolari NOTA BENE: PLUGIN IN FASE DI SVILUPPO, NON TESTATO A FONDO
+ * circolari NOTA BENE: PLUGIN IN FASE DI SVILUPPO, NON TESTATO A FONDO Aggiunta
+ * al report anche la voce relativa al fondo: segnale medio e posizione della
+ * roi. L'aggiunta è l'ultima voce del report, verrà pertanto semplicementre
+ * ignorata dai vari autoreports e autohistory
  * 
  * +++++++++++++++++ MA A ME SEMBRA CHE FUNZIONI ++++++++++++++++++++++
  * 
@@ -368,7 +371,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				"P12MAX"));
 
 		// ===============================================================
-		// Questi sono i valori di default utilizzati in
+		// ATTENZIONE: questi sono  solo valori di default utilizzati in
 		// assenza di limiti.csv
 		// ================================================================
 		double minMean1 = +10;
@@ -654,7 +657,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 				ImageWindow iw = imp1.getWindow();
 				iw.toFront();
-				IJ.wait(40);				
+				IJ.wait(40);
 			}
 
 			// iniziamo con il ghost inferiore
@@ -892,6 +895,14 @@ public class p12rmn_ implements PlugIn, Measurements {
 			rt.addValue(4, stat1.roiY);
 			rt.addValue(5, stat1.roiWidth);
 			rt.addValue(6, stat1.roiHeight);
+
+			rt.incrementCounter();
+			rt.addLabel(t1, "Bkg");
+			rt.addValue(2, statBkg.mean);
+			rt.addValue(3, statBkg.roiX);
+			rt.addValue(4, statBkg.roiY);
+			rt.addValue(5, statBkg.roiWidth);
+			rt.addValue(6, statBkg.roiHeight);
 
 			String[] levelString = { "+20%", "+10%", "-10%", "-20%", "-30%",
 					"-40%", "-50%", "-60%", "-70%", "-80%", "-90%", "fondo" };
@@ -2251,6 +2262,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		// -------------------------------------------------------------------
 
 		if (xPoints3.length < 3 || test) {
+			UtilAyv.showImageMaximized(imp11);
 			MyLog.waitHere(listaMessaggi(17), debug);
 			manual = true;
 		}
@@ -2314,7 +2326,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				over12.addElement(imp11.getRoi());
 				imp11.deleteRoi();
 				MyLog.waitHere(listaMessaggi(16), debug);
-				manual=true;
+				manual = true;
 			}
 
 			//
@@ -2546,7 +2558,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		out2[5] = diamMROI;
 		return out2;
 	}
-
 
 	/***
 	 * Posizionamento automatico delle roi su cui calcoleremo i ghosts
