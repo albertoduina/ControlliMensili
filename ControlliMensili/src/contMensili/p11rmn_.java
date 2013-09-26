@@ -719,6 +719,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				double[] outFwhm2 = analyzeProfile(imp1, xStartProfile,
 						yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
+				IJ.wait(800);
 
 				//
 				// Salvataggio dei risultati nella ResultsTable
@@ -783,7 +784,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				rt.addValue(4, yStartProfile);
 				rt.addValue(5, xEndProfile);
 				rt.addValue(6, yEndProfile);
-				
+
 				rt.incrementCounter();
 				rt.addLabel(t1, "Bkg");
 				rt.addValue(2, statBkg.mean);
@@ -791,7 +792,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 				rt.addValue(4, statBkg.roiY);
 				rt.addValue(5, statBkg.roiWidth);
 				rt.addValue(6, statBkg.roiHeight);
-
 
 				String[] levelString = { "+20%", "+10%", "-10%", "-20%",
 						"-30%", "-40%", "-50%", "-60%", "-70%", "-80%", "-90%",
@@ -1509,13 +1509,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 	public static double[] positionSearch(ImagePlus imp11, boolean autoCalled,
-			int direzione, double profond, String info10, boolean step,
+			int direzioneTabella, double profond, String info10, boolean step,
 			boolean verbose, boolean test, boolean fast) {
 		//
 		// ================================================================================
 		// Inizio calcoli geometrici
 		// ================================================================================
 		//
+
+		int direzione = 0;
+		boolean manualRequired = false;
 
 		double dimPixel = ReadDicom
 				.readDouble(ReadDicom.readSubstring(
@@ -1543,6 +1546,22 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		direzione = directionFinder(imp11, xMaximum, yMaximum);
 
+		if (direzione != 0 && direzione != direzioneTabella) {
+			MyLog.waitHere("rilevata differenza tra directionFinder e direzioneTabella direzione= "
+					+ direzione + " direzioneTabella= " + direzioneTabella);
+			manualRequired=true;
+			direzione=direzioneTabella;
+
+		}
+
+		if (direzione == 0) {
+			manualRequired=true;
+			direzione = direzioneTabella;
+			// manualRequired = true;
+			// MyLog.waitHere("per direzione=0 adotto direzioneTabella= "
+			// + direzioneTabella);
+		}
+
 		// if (fast && (step || test)) {
 		imp11.setRoi(new OvalRoi((int) xMaximum - 4, (int) yMaximum - 4, 8, 8));
 		over1.addElement(imp11.getRoi());
@@ -1559,7 +1578,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double startY = Double.NaN;
 		double endX = Double.NaN;
 		double endY = Double.NaN;
-		boolean manualRequired = false;
 
 		// TODO cercare di eliminare il problema delle imnmagini col
 		// ribaltamento.
@@ -1624,8 +1642,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			endY = height;
 			break;
 		case 0:
-			manualRequired = true;
-			// MyLog.waitHere("direzione= " + direzione);
+			MyLog.waitHere("caso impossibile, la direzione 0 è gestita in precedenza");
 		}
 
 		// MyLog.waitHere("startX= " + startX + " startY= " + startY + " endX= "
@@ -1849,7 +1866,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		// abbiamo un solo NaN chiediamo la conferma manuale
 		if (!(meanx[2] > 4 * meanx[1])) {
 			MyLog.logVector(meanx, "meanx");
-			MyLog.waitHere("direzione 0 per scarsa differenza");
+			// MyLog.waitHere("direzione 0 per scarsa differenza");
 			return 0;
 		}
 
@@ -2389,8 +2406,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 			xcentGhost = px + diamGhost / 2;
 			ycentGhost = py + diamGhost / 2;
 			// imp2.setRoi(new OvalRoi(px, py, diamGhost, diamGhost));
-			pieno = verifyBackgroundSquareRoiMean(imp2, xcentGhost,
-					ycentGhost, diamGhost, test, demo);
+			pieno = verifyBackgroundSquareRoiMean(imp2, xcentGhost, ycentGhost,
+					diamGhost, test, demo);
 
 		} while ((pieno || a > 0) && (ycentGhost + diamGhost < height));
 

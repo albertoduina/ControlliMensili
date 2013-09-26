@@ -383,6 +383,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			boolean silent) {
 
 		boolean accetta = false;
+		boolean abort=false;
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		double angle = Double.NaN;
@@ -394,6 +395,53 @@ public class p10rmn_ implements PlugIn, Measurements {
 		//
 
 		verbose = true;
+		String[][] limiti = new InputOutput().readFile6("LIMITI.csv");
+		double[] vetMinimi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti,
+				"P10MIN"));
+		double[] vetMaximi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti,
+				"P10MAX"));
+
+		// ===============================================================
+		// ATTENZIONE: questi sono  solo valori di default utilizzati in
+		// assenza di limiti.csv
+		// ================================================================
+		double minMean7x7 = +10;
+		double maxMean7x7 = +4096;
+		double minMeanBkg = -2048;
+		double maxMeanBkg = +2048;	
+		double minSnRatio = +10;
+		double maxSnRatio = +800;
+		
+		
+		double minFWHM = 0;
+		double maxFWHM = +512;
+		double minUiPerc = +5;
+		double maxUiPerc = +100;
+		double minFitError = +0;
+		double maxFitError = +20;
+		// ================================================================
+		if (vetMinimi == null) {
+			MyLog.waitHere(listaMessaggi(65));
+		} else {
+			minMean7x7 = vetMinimi[0];
+			minMeanBkg = vetMinimi[1];
+			minSnRatio = vetMinimi[2];
+			minFWHM = vetMinimi[3];
+			minUiPerc = vetMinimi[4];
+			minFitError = vetMinimi[5];
+		}
+		if (vetMaximi == null) {
+			MyLog.waitHere(listaMessaggi(65));
+		} else {
+			maxMean7x7 = vetMaximi[0];
+			maxMeanBkg = vetMaximi[1];
+			maxSnRatio = vetMaximi[2];
+			maxFWHM = vetMaximi[3];
+			maxUiPerc = vetMaximi[4];
+			maxFitError = vetMaximi[5];
+		}
+
+
 
 		//
 		//
@@ -699,9 +747,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			//
 			// calcolo SNR finale
 			//
-			double snr = stat7x7.mean / (out11[1] / Math.sqrt(2));
+			double finalSnr = stat7x7.mean / (out11[1] / Math.sqrt(2));
 			if (step)
-				msgSnr(snr);
+				msgSnr(finalSnr);
 
 			// // =============================================================
 			// userSelection2 = UtilAyv.checkLimits(snr, vetMinimi[2],
@@ -796,6 +844,54 @@ public class p10rmn_ implements PlugIn, Measurements {
 			double[] outFwhm2 = MyFwhm.analyzeProfile(profile2, dimPixel,
 					codice, false, step);
 
+			
+			// =================================================================
+			// Effettuo dei controlli "di sicurezza" sui valori calcolati,
+			// in modo da evitare possibili sorprese
+			// ================================================================
+			
+			
+			
+
+			if (UtilAyv.checkLimits2(stat7x7.mean,minMean7x7,  maxMean7x7, "SEGNALE ROI 7X7"))
+				abort = true;
+			if (UtilAyv.checkLimits2(statBkg.mean,minMeanBkg,  maxMeanBkg, "RUMORE FONDO"))
+				abort = true;	
+			if (UtilAyv.checkLimits2(finalSnr, minSnRatio, maxSnRatio, "FINAL SNR RATIO"))
+				abort = true;
+			if (UtilAyv.checkLimits2(outFwhm2[0], minFWHM, maxFWHM, "FWHM"))
+				abort = true;
+			
+			IJ.wait(800);
+			
+				
+/*				
+			if (UtilAyv.checkLimits2(noiseImaDiff, minNoiseImaDiff,
+					maxNoiseImaDiff, "noiseImaDiff"))
+				abort = true;
+			if (UtilAyv
+					.checkLimits2(snRatio, minSnRatio, maxSnRatio, "snRatio"))
+				abort = true;
+			if (UtilAyv.checkLimits2(ghostPerc1, minGhostPerc, maxGhostPerc,
+					"ghostPerc1"))
+				abort = true;
+			if (UtilAyv.checkLimits2(ghostPerc2, minGhostPerc, maxGhostPerc,
+					"ghostPerc2"))
+				abort = true;
+			if (UtilAyv.checkLimits2(ghostPerc3, minGhostPerc, maxGhostPerc,
+					"ghostPerc3"))
+				abort = true;
+			if (UtilAyv.checkLimits2(ghostPerc4, minGhostPerc, maxGhostPerc,
+					"ghostPerc4"))
+				abort = true;
+			if (UtilAyv
+					.checkLimits2(uiPerc1, minUiPerc, maxUiPerc, "maxUiPerc"))
+				abort = true;
+			if (abort)
+				return null;
+
+		*/	
+			
 			// MyLog.waitHere("dimPixel= "+dimPixel+" fwhm= " + outFwhm2[0]);
 			// =============================================================
 			// userSelection2 = UtilAyv.checkLimits(outFwhm2[0], vetMinimi[3],
@@ -848,7 +944,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "SnR");
-			rt.addValue(2, snr);
+			rt.addValue(2, finalSnr);
 			rt.addValue(3, stat7x7.roiX);
 			rt.addValue(4, stat7x7.roiY);
 			rt.addValue(5, stat7x7.roiWidth);
@@ -2700,5 +2796,27 @@ public class p10rmn_ implements PlugIn, Measurements {
 			ok2 = true;
 		return ok1 && ok2;
 	}
+	
+	/**
+	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo è
+	 * facilitata la eventuale modifica / traduzione dei messaggi.
+	 * 
+	 * @param select
+	 * @return
+	 */
+	public static String listaMessaggi(int select) {
+		String[] lista = new String[100];
+		// ---------+-----------------------------------------------------------+
+		lista[0] = "spare";
+		// ---------+-----------------------------------------------------------+
+		lista[65] = "vetMinimi==null, verificare esistenza della riga P10MIN nel file limiti.csv";
+		lista[66] = "vetMaximi==null, verificare esistenza della riga P10MAX nel file limiti.csv";
+		// ---------+-----------------------------------------------------------+
+
+		String out = lista[select];
+		return out;
+	}
+	
+
 
 }

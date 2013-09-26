@@ -319,7 +319,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (result1 == null) {
 			MyLog.waitHere("A causa di problemi sulla immagine, \n"
 					+ "viene avviato il programma p3rmn_, che \n"
-					+ "ripete il controllo in maniera manuale");
+					+ "ripete il controllo in maniera manuale", debug, "uno", "due");
 			IJ.runPlugIn("contMensili.p3rmn_", autoArgs);
 		}
 
@@ -398,7 +398,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			minFitError = vetMinimi[5];
 		}
 		if (vetMaximi == null) {
-			MyLog.waitHere(listaMessaggi(66));
+			MyLog.waitHere(listaMessaggi(65));
 		} else {
 			maxMean1 = vetMaximi[0];
 			maxNoiseImaDiff = vetMaximi[1];

@@ -748,6 +748,7 @@ public class Sequenze_ implements PlugIn {
 						tableCode5);
 				// qui altero il plugin per poter chiamare, durante i tests le
 				// vecchie versioni, senza dover modificare i sorgenti
+				if (plugin==null) MyLog.waitHere("plugin == null");
 
 				if (!p10p11p12) {
 					// MyLog.waitHere("MANUALE p10p11= " + p10p11);
