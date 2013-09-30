@@ -748,7 +748,8 @@ public class Sequenze_ implements PlugIn {
 						tableCode5);
 				// qui altero il plugin per poter chiamare, durante i tests le
 				// vecchie versioni, senza dover modificare i sorgenti
-				if (plugin==null) MyLog.waitHere("plugin == null");
+				if (plugin == null)
+					MyLog.waitHere("plugin == null");
 
 				if (!p10p11p12) {
 					// MyLog.waitHere("MANUALE p10p11= " + p10p11);
@@ -876,10 +877,14 @@ public class Sequenze_ implements PlugIn {
 	 */
 	public String pluginToBeCalledWithCoil(int lineNumber,
 			String[][] tableSequenze, String[][] tableCode) {
-		if (tableSequenze == null)
+		if (tableSequenze == null) {
+			MyLog.waitHere("tableSequenze == null");
 			return null;
-		if (tableCode == null)
+		}
+		if (tableCode == null) {
+			MyLog.waitHere("tableCode == null");
 			return null;
+		}
 		String nome = null;
 		if (TableSequence.getDone(tableSequenze, lineNumber).equals("0")) {
 			for (int j2 = 0; j2 < tableCode.length; j2++) {
@@ -889,8 +894,14 @@ public class Sequenze_ implements PlugIn {
 				if (TableCode.getCoil(tableCode, j2).equals("xxx")) {
 					okCoil = true;
 				} else {
-					okCoil = TableSequence.getCoil(tableSequenze, lineNumber)
-							.equals(TableCode.getCoil(tableCode, j2));
+					// in questo modo siamo in grado di confrontare anche bobine
+					// multiple accese per errore
+					String[] allCoils = ReadDicom.parseString(TableSequence
+							.getCoil(tableSequenze, lineNumber));
+					okCoil = coilPresent(allCoils,
+							TableCode.getCoil(tableCode, j2));
+					// okCoil = TableSequence.getCoil(tableSequenze, lineNumber)
+					// .equals(TableCode.getCoil(tableCode, j2));
 				}
 				if (okCode && okCoil) {
 					nome = "contMensili."
@@ -898,6 +909,13 @@ public class Sequenze_ implements PlugIn {
 					break;
 				}
 			}
+		}
+
+		if (nome == null) {
+			MyLog.waitHere("Code= "
+					+ TableSequence.getCode(tableSequenze, lineNumber)
+					+ "  Coil= "
+					+ TableSequence.getCoil(tableSequenze, lineNumber));
 		}
 
 		return nome;
