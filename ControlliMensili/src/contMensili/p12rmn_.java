@@ -319,7 +319,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (result1 == null) {
 			MyLog.waitHere("A causa di problemi sulla immagine, \n"
 					+ "viene avviato il programma p3rmn_, che \n"
-					+ "ripete il controllo in maniera manuale", debug, "uno", "due");
+					+ "ripete il controllo in maniera manuale", debug, "uno",
+					"due");
 			IJ.runPlugIn("contMensili.p3rmn_", autoArgs);
 		}
 
@@ -371,7 +372,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				"P12MAX"));
 
 		// ===============================================================
-		// ATTENZIONE: questi sono  solo valori di default utilizzati in
+		// ATTENZIONE: questi sono solo valori di default utilizzati in
 		// assenza di limiti.csv
 		// ================================================================
 		double minMean1 = +10;
@@ -1290,12 +1291,17 @@ public class p12rmn_ implements PlugIn, Measurements {
 		return out;
 	}
 
-	/***
+	/**
 	 * Riceve una ImagePlus derivante da un CannyEdgeDetector con impostata una
-	 * Line, restituisce le coordinate dei 2 picchi
+	 * Line, restituisce le coordinate dei 2 picchi, se non sono esattamente 2
+	 * restituisce null.
 	 * 
 	 * @param imp1
 	 * @param dimPixel
+	 * @param title
+	 * @param showProfiles
+	 * @param demo
+	 * @param debug
 	 * @return
 	 */
 	public static double[][] cannyProfileAnalyzer(ImagePlus imp1,
@@ -1899,45 +1905,25 @@ public class p12rmn_ implements PlugIn, Measurements {
 		}
 	}
 
-	/***
-	 * * Ricerca della posizione della ROI per il calcolo dell'uniformità,
-	 * utilizzando il Canny Edge Detector
-	 * 
-	 * @param imp11
-	 *            immagine di input
-	 * @param profond
-	 *            profondità ROI
-	 * @param direction
-	 *            direzione in cui eventualmente trovo la bolla (si può ricavare
-	 *            anche dai dati dicom) 0= nessuna, 1= alto 2 sinistra .... poi
-	 *            nin zò
-	 * @param info1
-	 *            messaggio esplicativo
-	 * @param autoCalled
-	 *            flag true se chiamato in automatico
-	 * @param step
-	 *            flag true se funzionamento passo - passo
-	 * @param verbose
-	 *            flag true se funzionamento verbose
-	 * @param test
-	 *            flag true se in test, non vengono visualizzate immagini e non
-	 *            viene chiesta alcuna conferma
-	 * @param fast
-	 *            flag true se modo batch
-	 * @return vettore con dati ROI
-	 */
-
 	/**
 	 * Ricerca posizione ROI per calcolo uniformità. Versione con Canny Edge
 	 * Detector
 	 * 
 	 * @param imp11
+	 *            immagine in input
 	 * @param info1
+	 *            messaggio esplicativo
 	 * @param autoCalled
+	 *            true se chiamato in automatico
 	 * @param step
+	 *            true se in modo passo passo
 	 * @param verbose
+	 *            true se in modo verbose
 	 * @param test
+	 *            true se in test con junit, nessuna visualizzazione e richiesta
+	 *            conferma
 	 * @param fast
+	 *            true se in modo batch
 	 * @return
 	 */
 	public static int[] positionSearch11(ImagePlus imp11, double maxFitError,

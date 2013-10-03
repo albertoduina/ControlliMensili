@@ -32,6 +32,7 @@ import utils.AboutBox;
 import utils.ButtonMessages;
 import utils.ImageUtils;
 import utils.InputOutput;
+import utils.MyLine;
 import utils.MyMsg;
 import utils.MyConst;
 import utils.MyFwhm;
@@ -383,7 +384,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			boolean silent) {
 
 		boolean accetta = false;
-		boolean abort=false;
+		boolean abort = false;
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		double angle = Double.NaN;
@@ -402,17 +403,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 				"P10MAX"));
 
 		// ===============================================================
-		// ATTENZIONE: questi sono  solo valori di default utilizzati in
+		// ATTENZIONE: questi sono solo valori di default utilizzati in
 		// assenza di limiti.csv
 		// ================================================================
 		double minMean7x7 = +10;
 		double maxMean7x7 = +4096;
 		double minMeanBkg = -2048;
-		double maxMeanBkg = +2048;	
+		double maxMeanBkg = +2048;
 		double minSnRatio = +10;
 		double maxSnRatio = +800;
-		
-		
+
 		double minFWHM = 0;
 		double maxFWHM = +512;
 		double minUiPerc = +5;
@@ -440,8 +440,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			maxUiPerc = vetMaximi[4];
 			maxFitError = vetMaximi[5];
 		}
-
-
 
 		//
 		//
@@ -581,8 +579,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// disegno RoiFondo su imp1
 			//
 			Boolean circular = true;
-			ImageStatistics statBkg = UtilAyv.backCalc2(xFondo, yFondo,
-					dFondo, imp1, step, circular, test);
+			ImageStatistics statBkg = UtilAyv.backCalc2(xFondo, yFondo, dFondo,
+					imp1, step, circular, test);
 
 			// TODO
 			// =============PROVVISORIO=====================================
@@ -844,54 +842,40 @@ public class p10rmn_ implements PlugIn, Measurements {
 			double[] outFwhm2 = MyFwhm.analyzeProfile(profile2, dimPixel,
 					codice, false, step);
 
-			
 			// =================================================================
 			// Effettuo dei controlli "di sicurezza" sui valori calcolati,
 			// in modo da evitare possibili sorprese
 			// ================================================================
-			
-			
-			
 
-			if (UtilAyv.checkLimits2(stat7x7.mean,minMean7x7,  maxMean7x7, "SEGNALE ROI 7X7"))
+			if (UtilAyv.checkLimits2(stat7x7.mean, minMean7x7, maxMean7x7,
+					"SEGNALE ROI 7X7"))
 				abort = true;
-			if (UtilAyv.checkLimits2(statBkg.mean,minMeanBkg,  maxMeanBkg, "RUMORE FONDO"))
-				abort = true;	
-			if (UtilAyv.checkLimits2(finalSnr, minSnRatio, maxSnRatio, "FINAL SNR RATIO"))
+			if (UtilAyv.checkLimits2(statBkg.mean, minMeanBkg, maxMeanBkg,
+					"RUMORE FONDO"))
+				abort = true;
+			if (UtilAyv.checkLimits2(finalSnr, minSnRatio, maxSnRatio,
+					"FINAL SNR RATIO"))
 				abort = true;
 			if (UtilAyv.checkLimits2(outFwhm2[0], minFWHM, maxFWHM, "FWHM"))
 				abort = true;
-			
-			IJ.wait(800);
-			
-				
-/*				
-			if (UtilAyv.checkLimits2(noiseImaDiff, minNoiseImaDiff,
-					maxNoiseImaDiff, "noiseImaDiff"))
-				abort = true;
-			if (UtilAyv
-					.checkLimits2(snRatio, minSnRatio, maxSnRatio, "snRatio"))
-				abort = true;
-			if (UtilAyv.checkLimits2(ghostPerc1, minGhostPerc, maxGhostPerc,
-					"ghostPerc1"))
-				abort = true;
-			if (UtilAyv.checkLimits2(ghostPerc2, minGhostPerc, maxGhostPerc,
-					"ghostPerc2"))
-				abort = true;
-			if (UtilAyv.checkLimits2(ghostPerc3, minGhostPerc, maxGhostPerc,
-					"ghostPerc3"))
-				abort = true;
-			if (UtilAyv.checkLimits2(ghostPerc4, minGhostPerc, maxGhostPerc,
-					"ghostPerc4"))
-				abort = true;
-			if (UtilAyv
-					.checkLimits2(uiPerc1, minUiPerc, maxUiPerc, "maxUiPerc"))
-				abort = true;
-			if (abort)
-				return null;
 
-		*/	
-			
+			IJ.wait(800);
+
+			/*
+			 * if (UtilAyv.checkLimits2(noiseImaDiff, minNoiseImaDiff,
+			 * maxNoiseImaDiff, "noiseImaDiff")) abort = true; if (UtilAyv
+			 * .checkLimits2(snRatio, minSnRatio, maxSnRatio, "snRatio")) abort
+			 * = true; if (UtilAyv.checkLimits2(ghostPerc1, minGhostPerc,
+			 * maxGhostPerc, "ghostPerc1")) abort = true; if
+			 * (UtilAyv.checkLimits2(ghostPerc2, minGhostPerc, maxGhostPerc,
+			 * "ghostPerc2")) abort = true; if (UtilAyv.checkLimits2(ghostPerc3,
+			 * minGhostPerc, maxGhostPerc, "ghostPerc3")) abort = true; if
+			 * (UtilAyv.checkLimits2(ghostPerc4, minGhostPerc, maxGhostPerc,
+			 * "ghostPerc4")) abort = true; if (UtilAyv .checkLimits2(uiPerc1,
+			 * minUiPerc, maxUiPerc, "maxUiPerc")) abort = true; if (abort)
+			 * return null;
+			 */
+
 			// MyLog.waitHere("dimPixel= "+dimPixel+" fwhm= " + outFwhm2[0]);
 			// =============================================================
 			// userSelection2 = UtilAyv.checkLimits(outFwhm2[0], vetMinimi[3],
@@ -957,7 +941,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			rt.addValue(4, yStartProfile);
 			rt.addValue(5, xEndProfile);
 			rt.addValue(6, yEndProfile);
-			
+
 			rt.incrementCounter();
 			rt.addLabel(t1, "Bkg");
 			rt.addValue(2, statBkg.mean);
@@ -965,7 +949,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			rt.addValue(4, statBkg.roiY);
 			rt.addValue(5, statBkg.roiWidth);
 			rt.addValue(6, statBkg.roiHeight);
-
 
 			String[] levelString = { "+20%", "+10%", "-10%", "-10%", "-30%",
 					"-40%", "-50%", "-60%", "-70%", "-80%", "-90%", "fondo" };
@@ -1760,6 +1743,32 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	}
 
+	/***
+	 * Effettua lo smooth su 3 pixels di un profilo
+	 * 
+	 * @param profile1
+	 *            profilo
+	 * @param loops
+	 *            numerompassaggi
+	 * @return profilo dopo smooth
+	 */
+	public static double[][] smooth3(double[][] profile1, int loops) {
+
+		double[][] profile2 = new double[profile1.length][profile1[0].length];
+		for (int i1 = 0; i1 < profile1.length; i1++) {
+			for (int j1 = 1; j1 < profile1[0].length - 1; j1++) {
+				profile2[i1][j1] = profile1[i1][j1];
+			}
+		}
+
+		for (int i1 = 0; i1 < loops; i1++) {
+			for (int j1 = 1; j1 < profile1[0].length - 1; j1++)
+				profile2[1][j1] = (profile2[1][j1 - 1] + profile2[1][j1] + profile2[1][j1 + 1]) / 3;
+		}
+		return profile2;
+
+	}
+
 	/**
 	 * Calcolo della Edge Response Function (ERF)
 	 * 
@@ -1811,13 +1820,15 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	/***
 	 * Copied from http://billauer.co.il/peakdet.htm Peak Detection using MATLAB
-	 * Author: Eli Billauer
+	 * Author: Eli Billauer Riceve in input un profilo di una linea, costituito
+	 * da una matrice con i valori x, y , z di ogni punto. Restituisce le
+	 * coordinate x, y, x degli eventuali minimi e maximi
 	 * 
 	 * @param profile
 	 * @param delta
 	 * @return
 	 */
-	public static ArrayList<ArrayList<Double>> peakDet(double[][] profile,
+	public static ArrayList<ArrayList<Double>> peakDet2(double[][] profile,
 			double delta) {
 
 		double max = Double.MIN_VALUE;
@@ -1826,45 +1837,66 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		ArrayList<Double> maxtabx = new ArrayList<Double>();
 		ArrayList<Double> maxtaby = new ArrayList<Double>();
+		ArrayList<Double> maxtabz = new ArrayList<Double>();
 		ArrayList<Double> mintabx = new ArrayList<Double>();
 		ArrayList<Double> mintaby = new ArrayList<Double>();
+		ArrayList<Double> mintabz = new ArrayList<Double>();
 
-		double[] vetx = new double[profile.length];
-		double[] vety = new double[profile.length];
-		for (int i1 = 0; i1 < profile.length; i1++) {
-			vetx[i1] = profile[i1][0];
-			vety[i1] = profile[i1][1];
+		double[] vetx = new double[profile[0].length];
+		double[] vety = new double[profile[0].length];
+		double[] vetz = new double[profile[0].length];
+		for (int i1 = 0; i1 < profile[0].length; i1++) {
+			vetx[i1] = profile[0][i1];
+			vety[i1] = profile[1][i1];
+			vetz[i1] = profile[2][i1];
 		}
-		double maxpos = -1.0;
-		double minpos = -1.0;
-		boolean lookformax = true;
 
-		for (int i1 = 0; i1 < vety.length; i1++) {
-			double valy = vety[i1];
-			if (valy > max) {
-				max = valy;
-				maxpos = vetx[i1];
+		double maxposx = -1.0;
+		double minposx = -1.0;
+		double maxposy = -1.0;
+		double minposy = -1.0;
+		boolean lookformax = true;
+		double mean1 = 0;
+		double sum1 = 0;
+		for (int i1 = 0; i1 < vetz.length; i1++) {
+			sum1 += vetz[i1];
+		}
+		mean1 = sum1 / vetz.length;
+		// MyLog.waitHere("mean1= " + mean1);
+
+		for (int i1 = 0; i1 < vetz.length; i1++) {
+			double valz = vetz[i1];
+			if (valz > max) {
+				max = valz;
+				maxposx = vetx[i1];
+				maxposy = vety[i1];
 			}
-			if (valy < min) {
-				min = valy;
-				minpos = vetx[i1];
+			if (valz < min) {
+				min = valz;
+				minposx = vetx[i1];
+				minposy = vety[i1];
 			}
 			stateChange(lookformax);
 
 			if (lookformax) {
-				if (valy < max - delta) {
-					maxtabx.add((Double) maxpos);
-					maxtaby.add((Double) max);
-					min = valy;
-					minpos = vetx[i1];
+				if (valz < max - delta) {
+					maxtabx.add((Double) maxposx);
+					maxtaby.add((Double) maxposy);
+					maxtabz.add((Double) max);
+					min = valz;
+					minposx = vetx[i1];
+					minposy = vety[i1];
 					lookformax = false;
 				}
 			} else {
-				if (valy > min + delta) {
-					mintabx.add((Double) minpos);
-					mintaby.add((Double) min);
-					max = valy;
-					maxpos = vetx[i1];
+				if (valz > min + delta) {
+					// if (valy > min + delta + mean1 * 10) {
+					mintabx.add((Double) minposx);
+					mintaby.add((Double) minposy);
+					mintabz.add((Double) min);
+					max = valz;
+					maxposx = vetx[i1];
+					maxposy = vety[i1];
 					lookformax = true;
 				}
 			}
@@ -1872,12 +1904,18 @@ public class p10rmn_ implements PlugIn, Measurements {
 		}
 		// MyLog.logArrayList(mintabx, "############## mintabx #############");
 		// MyLog.logArrayList(mintaby, "############## mintaby #############");
+		// MyLog.logArrayList(mintabz, "############## mintabz #############");
 		// MyLog.logArrayList(maxtabx, "############## maxtabx #############");
 		// MyLog.logArrayList(maxtaby, "############## maxtaby #############");
+		// MyLog.logArrayList(maxtabz, "############## maxtabz #############");
+
 		matout.add(mintabx);
 		matout.add(mintaby);
+		matout.add(mintabz);
+
 		matout.add(maxtabx);
 		matout.add(maxtaby);
+		matout.add(maxtabz);
 
 		return matout;
 	}
@@ -1901,50 +1939,64 @@ public class p10rmn_ implements PlugIn, Measurements {
 		return out;
 	}
 
-	/***
+	/**
 	 * Riceve una ImagePlus con impostata una Line, restituisce le coordinate
-	 * dei 2 picchi
+	 * dei 2 picchi. Se i picchi non sono 1 oppure 2, restituisce null.
 	 * 
 	 * @param imp1
 	 * @param dimPixel
+	 * @param title
+	 * @param showProfiles
 	 * @return
 	 */
 	public static double[][] profileAnalyzer(ImagePlus imp1, double dimPixel,
 			String title, boolean showProfiles) {
-		Roi roi11 = imp1.getRoi();
-		double[] profi1 = ((Line) roi11).getPixels();
 
-		double[] profi2y = smooth3(profi1, 1);
+		double[][] profi3 = MyLine.decomposer(imp1);
+		// MyLog.logMatrix(profi3, "profi3");
 
-		double[] profi2x = new double[profi2y.length];
-		double xval = 0.;
-		for (int i1 = 0; i1 < profi2y.length; i1++) {
-			profi2x[i1] = xval;
-			xval += dimPixel;
-		}
-
-		double[][] profi3 = new double[profi2y.length][2];
-		for (int i1 = 0; i1 < profi2y.length; i1++) {
-			profi3[i1][0] = profi2x[i1];
-			profi3[i1][1] = profi2y[i1];
-		}
-		ArrayList<ArrayList<Double>> matOut = peakDet(profi3, 100.);
+		ArrayList<ArrayList<Double>> matOut = peakDet2(profi3, 100.);
 		double[][] peaks1 = new InputOutput()
 				.fromArrayListToDoubleTable(matOut);
-
-		double[] xPoints = new double[peaks1[2].length];
-		double[] yPoints = new double[peaks1[2].length];
-		for (int i1 = 0; i1 < peaks1[2].length; i1++) {
-			xPoints[i1] = peaks1[2][i1];
-			yPoints[i1] = peaks1[3][i1];
-
+		if (peaks1 == null) {
+			MyLog.waitHere("peaks1 == null");
+			return null;
+		}
+		if (peaks1.length == 0) {
+			// MyLog.waitHere("peaks1.length == 0");
+			return null;
+		}
+		if (peaks1[0].length == 0) {
+			MyLog.waitHere("peaks1[0].length == 0");
+			return null;
+		}
+		if (peaks1[0].length > 2) {
+			MyLog.waitHere("peaks1[0].length > 2");
+			return null;
 		}
 
+		// MyLog.logMatrix(peaks1, "peaks1");
+		// MyLog.waitHere();
+
+		double[] xPoints = new double[peaks1[0].length];
+		double[] yPoints = new double[peaks1[0].length];
+		double[] zPoints = new double[peaks1[0].length];
+		for (int i1 = 0; i1 < peaks1[0].length; i1++) {
+			xPoints[i1] = peaks1[3][i1];
+			yPoints[i1] = peaks1[4][i1];
+			zPoints[i1] = peaks1[5][i1];
+		}
+
+		// MyLog.logVector(xPoints, "xPoints");
+		// MyLog.logVector(yPoints, "yPoints");
+		// MyLog.logVector(zPoints, "zPoints");
+		// MyLog.waitHere();
+
 		if (showProfiles) {
-			Plot plot2 = MyPlot.basePlot(profi2x, profi2y, title, Color.GREEN);
+			Plot plot2 = MyPlot.basePlot2(profi3, title, Color.GREEN);
 			plot2.draw();
 			plot2.setColor(Color.red);
-			plot2.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
+			plot2.addPoints(xPoints, zPoints, PlotWindow.CIRCLE);
 			plot2.show();
 			new WaitForUserDialog("002 premere  OK").show();
 		}
@@ -2452,15 +2504,23 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// ================================================================================
 		//
 
+		boolean debug = true;
+		boolean manual = false;
+		boolean showProfiles = false;
+		boolean demo = true;
+
 		double ax = 0;
 		double ay = 0;
 		int xCenterCircle = 0;
 		int yCenterCircle = 0;
+		int diamCircle = 0;
+
 		double xMaxima = 0;
 		double yMaxima = 0;
 		double angle12 = 0;
 		double xCenterRoi = 0;
 		double yCenterRoi = 0;
+		double maxFitError = 30;
 		Overlay over12 = new Overlay();
 
 		double dimPixel = ReadDicom
@@ -2476,9 +2536,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		// if (fast || test) {
 
-		ImagePlus imp12 = imp11.duplicate();
-		if (step)
-			UtilAyv.showImageMaximized(imp12);
+		// ImagePlus imp122 = imp11.duplicate();
+		ImagePlus imp122 = imp11.duplicate();
+		// if (step)
+		// UtilAyv.showImageMaximized(imp122);
 
 		//
 		// -------------------------------------------------
@@ -2487,87 +2548,351 @@ public class p10rmn_ implements PlugIn, Measurements {
 		//
 		// IJ.run(imp12, "Smooth", "");
 
-		ImageProcessor ip12 = imp12.getProcessor();
-		// ip12.setSnapshotCopyMode(true);
-		ip12.smooth();
-		// ip12.setSnapshotCopyMode(false);
-
+		ImageProcessor ip122 = imp122.getProcessor();
+		ip122.setSnapshotCopyMode(true);
+		ip122.smooth();
+		ip122.setSnapshotCopyMode(false);
 		if (step)
 			new WaitForUserDialog("Eseguito SMOOTH").show();
-		// IJ.run(imp12, "Find Edges", "");
-		ip12.findEdges();
-
+		
+		ip122.findEdges();
 		if (step)
 			new WaitForUserDialog("Eseguito FIND EDGES").show();
 
-		imp12.setOverlay(over12);
+//		ImagePlus imp12 = imp122;
+		ImagePlus imp12 = tidalWave(imp122, 200);
+		UtilAyv.showImageMaximized(imp12);
+
+		imp122.setOverlay(over12);
 
 		double[][] peaks1 = new double[4][1];
 		double[][] peaks2 = new double[4][1];
 		double[][] peaks3 = new double[4][1];
 		double[][] peaks4 = new double[4][1];
-		boolean showProfiles = step;
+		double[][] peaks5 = new double[4][1];
+		double[][] peaks6 = new double[4][1];
+		double[][] peaks7 = new double[4][1];
+		double[][] peaks8 = new double[4][1];
+		int[] xcoord = new int[2];
+		int[] ycoord = new int[2];
+		boolean manualOverride = false;
 
-		// IJ.log("BISETTRICE ORIZZONTALE");
-		imp12.setRoi(new Line(0, height / 2, width, height / 2));
-		if (step) {
-			imp12.updateAndDraw();
+		// --------DIAGONALE SINISTRA---------------------
+		xcoord[0] = 0;
+		ycoord[0] = 0;
+		xcoord[1] = width;
+		ycoord[1] = height;
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		if (demo) {
 			over12.addElement(imp12.getRoi());
-			over12.setStrokeColor(Color.red);
 		}
-		peaks1 = profileAnalyzer(imp12, dimPixel, "BISETTRICE ORIZZONTALE",
+		// if (strokewidth)
+		// imp12.getRoi().setStrokeWidth(strWidth);
+		peaks5 = profileAnalyzer(imp12, dimPixel,
+				"BISETTRICE DIAGONALE SINISTRA 2", showProfiles);
+
+		if (peaks5 != null)
+			plotPoints(imp12, over12, peaks5);
+
+		// --------DIAGONALE DESTRA---------------------
+		xcoord[0] = width;
+		ycoord[0] = 0;
+		xcoord[1] = 0;
+		ycoord[1] = height;
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		if (demo) {
+//			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+		}
+		// if (strokewidth)
+		// imp12.getRoi().setStrokeWidth(strWidth);
+		peaks6 = profileAnalyzer(imp12, dimPixel,
+				"BISETTRICE DIAGONALE DESTRA 2", showProfiles);
+		if (peaks6 != null)
+			plotPoints(imp12, over12, peaks6);
+
+		// -------- ORIZZONTALE ---------------------
+		xcoord[0] = 0;
+		ycoord[0] = height / 2;
+		xcoord[1] = width;
+		ycoord[1] = height / 2;
+
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		if (demo) {
+//			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+		}
+		// if (strokewidth)
+		// imp12.getRoi().setStrokeWidth(strWidth);
+
+		peaks1 = profileAnalyzer(imp12, dimPixel, "BISETTRICE ORIZZONTALE 2",
 				showProfiles);
-		// IJ.log("BISETTRICE VERTICALE");
-		imp12.setRoi(new Line(width / 2, 0, width / 2, height));
-		if (step) {
-			imp12.updateAndDraw();
+		// PLOTTAGGIO PUNTI
+		if (peaks1 != null)
+			plotPoints(imp12, over12, peaks1);
+
+		// NOTA BENE: sulla bisettrice (e ricordiamoci, è la bisettrice
+		// dell'immagine) potrebbe esserci la bolla d'aria a sinistra, quindi
+		// non dovrei utilizzare questo punto per la determinazione automatica
+		// del centro, poichè può introdurre un leggero shift del centro
+
+		// -------- VERTICALE ---------------------
+		xcoord[0] = width / 2;
+		ycoord[0] = 0;
+		xcoord[1] = width / 2;
+		ycoord[1] = height;
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		if (demo) {
+//			imp12.updateAndDraw();
 			over12.addElement(imp12.getRoi());
 		}
-		peaks2 = profileAnalyzer(imp12, dimPixel, "BISETTRICE VERTICALE",
+
+		// if (strokewidth)
+		// imp12.getRoi().setStrokeWidth(strWidth);
+		peaks2 = profileAnalyzer(imp12, dimPixel, "BISETTRICE VERTICALE 2",
 				showProfiles);
-		// IJ.log("DIAGONALE 1");
-		imp12.setRoi(new Line(0, 0, width, height));
-		if (step) {
+
+		// PLOTTAGGIO PUNTI
+		if (peaks2 != null)
+			plotPoints(imp12, over12, peaks2);
+		// MyLog.logMatrix(peaks2, "peaks2");
+		// MyLog.waitHere();
+
+		// -------- INCERTA SX---------------------
+		xcoord[0] = width / 4;
+		ycoord[0] = 0;
+		xcoord[1] = width * 3 / 4;
+		ycoord[1] = height;
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		if (demo) {
+//			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+		}
+		// if (strokewidth)
+		// imp12.getRoi().setStrokeWidth(strWidth);
+		peaks3 = profileAnalyzer(imp12, dimPixel, "BISETTRICE INCERTA SX 2",
+				showProfiles);
+		// PLOTTAGGIO PUNTI
+		if (peaks3 != null)
+			plotPoints(imp12, over12, peaks3);
+		// MyLog.logMatrix(peaks3, "peaks3");
+		// MyLog.waitHere();
+
+		// -------- INCERTA DX---------------------
+		xcoord[0] = width * 3 / 4;
+		ycoord[0] = 0;
+		xcoord[1] = width / 4;
+		ycoord[1] = height;
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		if (demo) {
+//			imp12.updateAndDraw();
+			over12.addElement(imp12.getRoi());
+		}
+		// if (strokewidth)
+		// imp12.getRoi().setStrokeWidth(strWidth);
+		peaks4 = profileAnalyzer(imp12, dimPixel, "BISETTRICE INCERTA DX 2",
+				showProfiles);
+		// PLOTTAGGIO PUNTI
+		if (peaks4 != null)
+			plotPoints(imp12, over12, peaks4);
+		// MyLog.logMatrix(peaks4, "peaks4");
+		// MyLog.waitHere();
+
+		// --------DIAGONALE DESTRA extra---------------------
+		xcoord[0] = width;
+		ycoord[0] = height * 1 / 4;
+		xcoord[1] = 0;
+		ycoord[1] = height * 3 / 4;
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		if (demo) {
 			imp12.updateAndDraw();
 			over12.addElement(imp12.getRoi());
 		}
-		peaks3 = profileAnalyzer(imp12, dimPixel,
-				"BISETTRICE DIAGONALE SINISTRA", showProfiles);
-		// IJ.log("DIAGONALE 2");
-		imp12.setRoi(new Line(0, width, height, 0));
-		if (step) {
+		// if (strokewidth)
+		// imp12.getRoi().setStrokeWidth(strWidth);
+		peaks7 = profileAnalyzer(imp12, dimPixel,
+				"BISETTRICE DIAGONALE SINISTRA EXTRA 2", showProfiles);
+		// PLOTTAGGIO PUNTI
+		if (peaks7 != null)
+			plotPoints(imp12, over12, peaks7);
+		// --------DIAGONALE DESTRA extra---------------------
+		xcoord[0] = 0;
+		ycoord[0] = height * 1 / 4;
+		xcoord[1] = width;
+		ycoord[1] = height * 3 / 4;
+		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+		if (demo) {
 			imp12.updateAndDraw();
 			over12.addElement(imp12.getRoi());
 		}
-		peaks4 = profileAnalyzer(imp12, dimPixel,
-				"BISETTRICE DIAGONALE DESTRA", showProfiles);
-		int len3 = peaks1[2].length + peaks2[2].length + peaks3[2].length
-				+ peaks4[2].length;
+		// if (strokewidth)
+		// imp12.getRoi().setStrokeWidth(strWidth);
+		peaks8 = profileAnalyzer(imp12, dimPixel,
+				"BISETTRICE DIAGONALE DESTRA EXTRA 2", showProfiles);
+		// PLOTTAGGIO PUNTI
+		if (peaks8 != null)
+			plotPoints(imp12, over12, peaks8);
+		// MyLog.logMatrix(peaks8, "peaks8");
+		// MyLog.waitHere();
+
+		int npeaks1 = 0;
+		int npeaks2 = 0;
+		int npeaks3 = 0;
+		int npeaks4 = 0;
+		int npeaks5 = 0;
+		int npeaks6 = 0;
+		int npeaks7 = 0;
+		int npeaks8 = 0;
+			
+		if (peaks1 != null) 
+			npeaks1 = peaks1[2].length-1;
+		if (peaks2 != null) 
+			npeaks2 = peaks2[2].length-1;
+		if (peaks3 != null)
+			npeaks3 = peaks3[2].length;
+		if (peaks4 != null)
+			npeaks4 = peaks4[2].length;
+		if (peaks5 != null)
+			npeaks5 = peaks5[2].length;
+		if (peaks6 != null)
+			npeaks6 = peaks6[2].length;
+		if (peaks7 != null)
+			npeaks7 = peaks7[2].length;
+		if (peaks8 != null)
+			npeaks8 = peaks8[2].length;
+		int len3 = npeaks1 + npeaks2 + npeaks3 + npeaks4 + npeaks5 + npeaks6
+				+ npeaks7 + npeaks8;
+		
+		MyLog.waitHere("len3= "+len3);
 		int[] xPoints3 = new int[len3];
 		int[] yPoints3 = new int[len3];
 		int j1 = -1;
-		for (int i1 = 0; i1 < peaks1[2].length; i1++) {
+
+		if (demo)
+			MyLog.waitHere(listaMessaggi(4), debug);
+		// della bisettice orizzontale prendo solo il picco di dx
+		if (npeaks1 == 1) {
 			j1++;
-			xPoints3[j1] = (int) (peaks1[2][i1] / dimPixel);
-			yPoints3[j1] = (int) ((double) (height / 2));
+			xPoints3[j1] = (int) (peaks1[3][1]);
+			yPoints3[j1] = (int) (peaks1[4][1]);
+		}	
+		
+		// della bisettice verticale prendo solo il picco in basso
+		if (npeaks2 == 1) {
+			j1++;
+			xPoints3[j1] = (int) (peaks2[3][1]);
+			yPoints3[j1] = (int) (peaks2[4][1]);
 		}
-		for (int i1 = 0; i1 < peaks2[2].length; i1++) {
+		for (int i1 = 0; i1 < npeaks3; i1++) {
 			j1++;
-			xPoints3[j1] = (int) ((double) (width / 2));
-			yPoints3[j1] = (int) (peaks2[2][i1] / dimPixel);
+			xPoints3[j1] = (int) (peaks3[3][i1]);
+			yPoints3[j1] = (int) (peaks3[4][i1]);
 		}
-		for (int i1 = 0; i1 < peaks3[2].length; i1++) {
+		for (int i1 = 0; i1 < npeaks4; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks3[2][i1] / dimPixel * Math.sin(Math
-					.toRadians(45 + 90)));
-			yPoints3[j1] = (int) (peaks3[2][i1] / dimPixel * Math.sin(Math
-					.toRadians(45 + 90)));
+			xPoints3[j1] = (int) (peaks4[3][i1]);
+			yPoints3[j1] = (int) (peaks4[4][i1]);
 		}
-		for (int i1 = 0; i1 < peaks4[2].length; i1++) {
+		for (int i1 = 0; i1 < npeaks5; i1++) {
 			j1++;
-			xPoints3[j1] = (int) ((peaks4[2][i1] / (dimPixel * Math.sqrt(2))));
-			yPoints3[j1] = (int) ((double) height - peaks4[2][i1]
-					/ (dimPixel * Math.sqrt(2)));
+			xPoints3[j1] = (int) (peaks5[3][i1]);
+			yPoints3[j1] = (int) (peaks5[4][i1]);
+		}
+		for (int i1 = 0; i1 < npeaks6; i1++) {
+			j1++;
+			xPoints3[j1] = (int) (peaks6[3][i1]);
+			yPoints3[j1] = (int) (peaks6[4][i1]);
+		}
+		for (int i1 = 0; i1 < npeaks7; i1++) {
+			j1++;
+			xPoints3[j1] = (int) (peaks7[3][i1]);
+			yPoints3[j1] = (int) (peaks7[4][i1]);
+		}
+		for (int i1 = 0; i1 < npeaks8; i1++) {
+			j1++;
+			xPoints3[j1] = (int) (peaks8[3][i1]);
+			yPoints3[j1] = (int) (peaks8[4][i1]);
+		}
+
+		MyLog.logVector(xPoints3, "xPoints3");
+		MyLog.logVector(yPoints3, "yPoints3");
+		MyLog.waitHere();
+		over12.clear();
+
+		// ----------------------------------------------------------------------
+		// Verifica di avere trovato almeno 3 punti, altrimenti chiede la
+		// selezione manuale del cerchio
+		// -------------------------------------------------------------------
+
+		if (xPoints3.length < 3 || test) {
+			UtilAyv.showImageMaximized(imp11);
+			MyLog.waitHere(listaMessaggi(17), debug);
+			manual = true;
+		}
+
+		if (!manual) {
+			imp12.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
+			if (demo) {
+				imp12.updateAndDraw();
+				over12.addElement(imp12.getRoi());
+				over12.setStrokeColor(Color.green);
+				imp12.setOverlay(over12);
+				imp12.updateAndDraw();
+				MyLog.waitHere(listaMessaggi(5), debug);
+			}
+			// ---------------------------------------------------
+			// eseguo ora fitCircle per trovare centro e dimensione del
+			// fantoccio
+			// ---------------------------------------------------
+			fitCircle(imp12);
+			if (demo) {
+				imp12.getRoi().setStrokeColor(Color.red);
+				over12.addElement(imp12.getRoi());
+			}
+
+			if (demo)
+				MyLog.waitHere(listaMessaggi(6), debug);
+			Rectangle boundRec = imp12.getProcessor().getRoi();
+			xCenterCircle = Math.round(boundRec.x + boundRec.width / 2);
+			yCenterCircle = Math.round(boundRec.y + boundRec.height / 2);
+			diamCircle = boundRec.width;
+			if (!manualOverride)
+				writeStoredRoiData(boundRec);
+
+			drawCenter(imp12, over12, xCenterCircle, yCenterCircle, Color.red);
+
+			// ----------------------------------------------------------
+			// Misuro l'errore sul fit rispetto ai punti imposti
+			// -----------------------------------------------------------
+			double[] vetDist = new double[xPoints3.length];
+			double sumError = 0;
+			for (int i1 = 0; i1 < xPoints3.length; i1++) {
+				vetDist[i1] = pointCirconferenceDistance(xPoints3[i1],
+						yPoints3[i1], xCenterCircle, yCenterCircle,
+						diamCircle / 2);
+				sumError += Math.abs(vetDist[i1]);
+			}
+			MyLog.waitHere();
+			if (sumError > maxFitError) {
+				// -------------------------------------------------------------
+				// disegno il cerchio ed i punti, in modo da date un feedback
+				// grafico al messaggio di eccessivo errore nel fit
+				// -------------------------------------------------------------
+				UtilAyv.showImageMaximized(imp11);
+				over12.clear();
+				imp11.setOverlay(over12);
+				imp11.setRoi(new OvalRoi(xCenterCircle - diamCircle / 2,
+						yCenterCircle - diamCircle / 2, diamCircle, diamCircle));
+				imp11.getRoi().setStrokeColor(Color.red);
+				over12.addElement(imp11.getRoi());
+				imp11.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
+				imp11.getRoi().setStrokeColor(Color.green);
+				over12.addElement(imp11.getRoi());
+				imp11.deleteRoi();
+				MyLog.waitHere(listaMessaggi(16), debug);
+				manual = true;
+			}
+
 		}
 
 		// ----------------------------------------------------------------------
@@ -2604,6 +2929,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			//
 		}
 
+		MyLog.waitHere();
 		Rectangle boundRec = imp12.getProcessor().getRoi();
 
 		// x1 ed y1 sono le due coordinate del centro
@@ -2713,8 +3039,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			Rectangle boundRec3 = imp11.getProcessor().getRoi();
 			xCenterRoi = boundRec3.getCenterX();
 			yCenterRoi = boundRec3.getCenterY();
+	
 		}
-
 		double[] out2 = new double[7];
 		out2[0] = xCenterRoi;
 		out2[1] = yCenterRoi;
@@ -2796,7 +3122,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			ok2 = true;
 		return ok1 && ok2;
 	}
-	
+
 	/**
 	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo è
 	 * facilitata la eventuale modifica / traduzione dei messaggi.
@@ -2808,6 +3134,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 		String[] lista = new String[100];
 		// ---------+-----------------------------------------------------------+
 		lista[0] = "spare";
+		lista[2] = "Si tracciano ulteriori linee, passanti per il centro dell'immagine, \n"
+				+ "su queste linee si cercano le intersezioni con il cerchio";
+		lista[3] = "Analizzando il profilo del segnale lungo la linea si ricavano \n"
+				+ "le coordinate delle due intersezioni con la circonferenza.";
+		lista[4] = "Per tenere conto delle possibili bolle d'aria del fantoccio, si \n"
+				+ "escludono dalla bisettice orizzontale il picco di sinistra e dalla \n"
+				+ "bisettrice verticale il picco superiore ";
+
 		// ---------+-----------------------------------------------------------+
 		lista[65] = "vetMinimi==null, verificare esistenza della riga P10MIN nel file limiti.csv";
 		lista[66] = "vetMaximi==null, verificare esistenza della riga P10MAX nel file limiti.csv";
@@ -2816,7 +3150,206 @@ public class p10rmn_ implements PlugIn, Measurements {
 		String out = lista[select];
 		return out;
 	}
-	
 
+	public static ImagePlus tidalWave(ImagePlus imp1, int level) {
+		ImagePlus imp2 = imp1.duplicate();
+		ImageProcessor ip2 = imp2.getProcessor();
+		short[] pixels = (short[]) ip2.getPixels();
+		for (int i1 = 0; i1 < pixels.length; i1++) {
+			pixels[i1] -= level;
+			if (pixels[i1] < 0)
+				pixels[i1] = 0;
+		}
+		ip2.resetMinAndMax();
+		return imp2;
+	}
+
+	/***
+	 * Riceve una ImagePlus derivante da un CannyEdgeDetector con impostata una
+	 * Line, restituisce le coordinate dei 2 picchi
+	 * 
+	 * @param imp1
+	 * @param dimPixel
+	 * @return
+	 */
+	public static double[][] cannyProfileAnalyzer(ImagePlus imp1,
+			double dimPixel, String title, boolean showProfiles, boolean demo,
+			boolean debug) {
+
+		double[][] line1 = MyLine.decomposer(imp1);
+		int count1 = 0;
+		boolean ready1 = false;
+		double max1 = 0;
+		for (int i1 = 0; i1 < line1[0].length; i1++) {
+
+			if (line1[2][i1] > max1) {
+				max1 = line1[2][i1];
+				ready1 = true;
+			}
+			if ((line1[2][i1] == 0) && ready1) {
+				max1 = 0;
+				count1++;
+				ready1 = false;
+			}
+		}
+		// devo ora contare i pixel a 255 che ho trovato, ne accetterò solo 2,
+		if (count1 != 2) {
+			if (demo)
+				MyLog.waitHere("" + title
+						+ " trovati un numero di punti diverso da 2, count= "
+						+ count1 + " scartiamo questi risultati");
+			return null;
+		}
+
+		// peaks1 viene utilizzato in un altra routine, per cui gli elementi 0
+		// ed 1 sono utilizzati per altro, li lascio a 0
+		double[][] peaks1 = new double[4][count1];
+
+		int count2 = 0;
+		boolean ready2 = false;
+		double max2 = 0;
+		for (int i1 = 0; i1 < line1[0].length; i1++) {
+
+			if (line1[2][i1] > max2) {
+				peaks1[2][count2] = line1[0][i1];
+				peaks1[3][count2] = line1[1][i1];
+				max2 = line1[2][i1];
+				ready2 = true;
+			}
+			if ((line1[2][i1] == 0) && ready2) {
+				max2 = 0;
+				count2++;
+				ready2 = false;
+			}
+		}
+
+		// ----------------------------------------
+		// AGGIUNGO 0.5 AI PUNTI TROVATI
+		// ---------------------------------------
+
+		for (int i1 = 0; i1 < peaks1.length; i1++) {
+			for (int i2 = 0; i2 < peaks1[0].length; i2++)
+				if (peaks1[i1][i2] > 0)
+					peaks1[i1][i2] = peaks1[i1][i2] + 1;
+		}
+
+		if (showProfiles) {
+			double[] bx = new double[line1[2].length];
+			for (int i1 = 0; i1 < line1[2].length; i1++) {
+				bx[i1] = (double) i1;
+			}
+
+			Plot plot4 = new Plot("Profile", "X Axis", "Y Axis", bx, line1[2]);
+			plot4.setLimits(0, bx.length + 10, 0, 300);
+			plot4.setSize(400, 200);
+			plot4.setColor(Color.red);
+			plot4.setLineWidth(2);
+			plot4.show();
+
+			if (demo)
+				MyLog.waitHere(listaMessaggi(3), debug);
+
+			if (WindowManager.getFrame("Profile") != null) {
+				IJ.selectWindow("Profile");
+				IJ.run("Close");
+			}
+
+			// verifico di avere trovato un max di 2 picchi
+			if (peaks1[2].length > 2)
+				MyLog.waitHere("Attenzione trovate troppe intersezioni col cerchio, cioè "
+						+ peaks1[2].length + "  VERIFICARE");
+			if (peaks1[2].length < 2)
+				MyLog.waitHere("Attenzione trovata una sola intersezione col cerchio, cioè "
+						+ peaks1[2].length + "  VERIFICARE");
+
+			// MyLog.logMatrix(peaks1, "peaks1 " + title);
+		}
+		return peaks1;
+	}
+
+	/**
+	 * Disegna una serie di punti nell'overlay di una immagine
+	 * 
+	 * @param imp1
+	 * @param over1
+	 * @param peaks1
+	 */
+	public static void plotPoints(ImagePlus imp1, Overlay over1,
+			double[][] peaks1) {
+		// MyLog.logMatrix(peaks1, "peaks1");
+
+		float[] xPoints = new float[peaks1[0].length];
+		float[] yPoints = new float[peaks1[0].length];
+
+		for (int i1 = 0; i1 < peaks1[0].length; i1++) {
+			xPoints[i1] = (float) peaks1[3][i1];
+			yPoints[i1] = (float) peaks1[4][i1];
+		}
+
+		// MyLog.logVector(xPoints, "xPoints");
+		// MyLog.logVector(yPoints, "yPoints");
+		imp1.setRoi(new PointRoi(xPoints, yPoints, xPoints.length));
+		imp1.getRoi().setStrokeColor(Color.green);
+		over1.addElement(imp1.getRoi());
+		// MyLog.waitHere("Vedi punti");
+	}
+
+	/**
+	 * Imposta una Roi circolare diametro 4 in corrispondenza delle coordinate
+	 * passate, importa la Roi nell'Overlay. La routine è utilizzata per
+	 * disegnare il centro di un cerchio su di un overlay.
+	 * 
+	 * @param imp1
+	 * @param over1
+	 * @param xCenterCircle
+	 * @param yCenterCircle
+	 * @param color1
+	 */
+	public static void drawCenter(ImagePlus imp1, Overlay over1,
+			int xCenterCircle, int yCenterCircle, Color color1) {
+		// imp1.setOverlay(over1);
+		imp1.setRoi(new OvalRoi(xCenterCircle - 2, yCenterCircle - 2, 4, 4));
+		Roi roi1 = imp1.getRoi();
+		roi1.setFillColor(color1);
+		roi1.setStrokeColor(color1);
+		over1.addElement(imp1.getRoi());
+		imp1.killRoi();
+	}
+
+	/**
+	 * Write preferences into IJ_Prefs.txt
+	 * 
+	 * @param boundingRectangle
+	 */
+	public static void writeStoredRoiData(Rectangle boundingRectangle) {
+
+		Prefs.set("prefer.p10rmnDiamFantoc",
+				Integer.toString(boundingRectangle.width));
+		Prefs.set("prefer.p10rmnXRoi1", Integer.toString(boundingRectangle.x));
+		Prefs.set("prefer.p10rmnYRoi1", Integer.toString(boundingRectangle.y));
+	}
+
+	/**
+	 * Calcolo della distanza tra un punto ed una circonferenza
+	 * 
+	 * @param x1
+	 *            coord. x punto
+	 * @param y1
+	 *            coord. y punto
+	 * @param x2
+	 *            coord. x centro
+	 * @param y2
+	 *            coord. y centro
+	 * @param r2
+	 *            raggio
+	 * @return distanza
+	 */
+	public static double pointCirconferenceDistance(int x1, int y1, int x2,
+			int y2, int r2) {
+
+		double dist = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1))
+				- r2;
+		return dist;
+	}
 
 }

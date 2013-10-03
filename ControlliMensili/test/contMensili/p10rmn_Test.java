@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import ij.IJ;
+import ij.ImageJ;
 import ij.ImagePlus;
 import ij.gui.Plot;
 import ij.gui.WaitForUserDialog;
@@ -26,6 +27,7 @@ import utils.UtilAyv;
 public class p10rmn_Test {
 	@Before
 	public void setUp() throws Exception {
+		new ImageJ(ImageJ.NORMAL);
 	}
 
 	@After
@@ -170,7 +172,7 @@ public class p10rmn_Test {
 
 		boolean autoCalled = false;
 		boolean step = false;
-		boolean verbose = false;
+		boolean verbose = true;
 		boolean test = false;
 		boolean fast = true;
 		double profond = 30;
@@ -258,17 +260,16 @@ public class p10rmn_Test {
 //	}
 
 	@Test
-	public final void testPeakDet() {
+	public final void testPeakDet2() {
 
-		// 16 dec 2011 sistemato, ora funziona in automatico senza bisogno di
-		// visualizzare il profilo
+		// ATTENZIONE NECESSITA DI MODIFICHE DOVUTE AL FATTO CHE HO CAMBIATO LA STRUTTURA DELLA MATRICE
 
 		double[][] profile1 = InputOutput
 				.readDoubleMatrixFromFile((new InputOutput()
 						.findResource("/BADProfile.txt")));
 		double delta = 100.0;
 		new p10rmn_();
-		ArrayList<ArrayList<Double>> matOut = p10rmn_.peakDet(profile1, delta);
+		ArrayList<ArrayList<Double>> matOut = p10rmn_.peakDet2(profile1, delta);
 		double[][] out = new InputOutput().fromArrayListToDoubleTable(matOut);
 
 		double[] vetx = new double[profile1.length];

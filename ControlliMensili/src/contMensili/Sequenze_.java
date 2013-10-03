@@ -258,10 +258,20 @@ public class Sequenze_ implements PlugIn {
 			// MyLog.logVectorVertical(list, "list");
 			// MyLog.waitHere();
 
+			// //
+			// // ABILITA E DISABILITA LE STAMPE DI DEBUG
+			// // METTERE debugTables A FALSE PER NON AVERE LE STAMPE
+			// //
+			boolean debugTables = false;
+			// //
+			// //
+
 			String[][] tableSequenceLoaded = generateSequenceTable(list,
 					tableCode, tableExpand);
-			// MyLog.logMatrix(tableSequenceLoaded, "tableSequenceLoaded");
-			// MyLog.waitHere("salvare il log come TableSequenceLoaded");
+			if (debugTables) {
+				MyLog.logMatrix(tableSequenceLoaded, "tableSequenceLoaded");
+				MyLog.waitHere("salvare il log come TableSequenceLoaded");
+			}
 
 			// cancello gli eventuali messaggi di ImageJ dal log
 			// if (WindowManager.getFrame("Log") != null) {
@@ -278,21 +288,28 @@ public class Sequenze_ implements PlugIn {
 			// Effettuo il sort della table, secondo il tempo di acquisizione
 			//
 			String[][] tableSequenceSorted = bubbleSortSequenceTable(tableSequenceLoaded);
-			// MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
-			// MyLog.waitHere("salvare il log comeT ableSequenceSorted");
+			if (debugTables) {
+				MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
+				MyLog.waitHere("salvare il log come TableSequenceSorted");
+			}
 
 			String[][] tableSequenceReordered = reorderSequenceTable(
 					tableSequenceSorted, tableCode);
-			// MyLog.logMatrix(tableSequenceReordered,
-			// "tableSequenceReordered");
-			// MyLog.waitHere("salvare il log come TableSequenceReordered");
+			if (debugTables) {
+				MyLog.logMatrix(tableSequenceReordered,
+						"tableSequenceReordered");
+				MyLog.waitHere("salvare il log come TableSequenceReordered");
+			}
 
 			String[][] listProblems = verifySequenceTable(
 					tableSequenceReordered, tableCode);
-			// MyLog.logMatrix(listProblems, "listProblems");
-			// MyLog.waitHere("salvare il log");
+			if (debugTables) {
+				MyLog.logMatrix(listProblems, "listProblems");
+				MyLog.waitHere("salvare il log come ListProblems");
+			}
 
-			boolean test = true;
+			boolean test = false;
+			// NOTA BENE: lasciare test a false, altrimenti non vengono più stampati gli errori e si hanno problemi in elaborazione!!!
 			logVerifySequenceTable(listProblems, test);
 
 			boolean success = new TableSequence().writeTable(startingDir
