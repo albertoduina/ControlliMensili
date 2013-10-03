@@ -135,6 +135,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (IJ.versionLessThan("1.43k"))
 			return;
 
+		// IJ.run("Colors...",
+		// "foreground=white background=black selection=yellow");
+
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
 			manualMenu(0, "");
@@ -266,12 +269,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (fast) {
 			retry = false;
 			boolean autoCalled = true;
-			boolean demo2 = false;
+			boolean demo = false;
 			boolean test = false;
 			boolean silent = false;
 
 			result1 = mainUnifor(path1, path2, autoArgs, info10, autoCalled,
-					step, demo2, test, fast, silent);
+					step, demo, test, fast, silent);
 
 			UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
 
@@ -298,12 +301,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 				case 4:
 					retry = false;
 					boolean autoCalled = true;
-					boolean verbose = false;
+					boolean demo = step;
 					boolean test = false;
 					boolean silent = false;
 
 					result1 = mainUnifor(path1, path2, autoArgs, info10,
-							autoCalled, step, verbose, test, fast, silent);
+							autoCalled, step, demo, test, fast, silent);
 					if (result1 == null) {
 						break;
 					}
@@ -1967,7 +1970,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 								MyConst.DICOM_PIXEL_SPACING), 1));
 
 		if (demo) {
-			UtilAyv.showImageMaximized(imp11);
+			// UtilAyv.showImageMaximized(imp11);
 
 			MyLog.waitHere(listaMessaggi(0), debug);
 
