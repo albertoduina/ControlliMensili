@@ -2946,9 +2946,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 					200, 200));
 			MyLog.waitHere(listaMessaggi(19), debug);
 
-//			new WaitForUserDialog(
-//					"Non si riescono a determinare le coordinate di almeno 3 punti del cerchio,\nposizionare a mano una ROI circolare di diametro uguale al fantoccio e\npremere  OK")
-//					.show();
+			// new WaitForUserDialog(
+			// "Non si riescono a determinare le coordinate di almeno 3 punti del cerchio,\nposizionare a mano una ROI circolare di diametro uguale al fantoccio e\npremere  OK")
+			// .show();
 			//
 			// Ho così risolto la mancata localizzazione automatica del
 			// fantoccio
@@ -2987,8 +2987,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		//
 
 		// x1 ed y1 sono le due coordinate del punto di maxima
-		
-		
 
 		double[] out10 = UtilAyv.findMaximumPosition(imp12);
 		xMaxima = out10[0];
@@ -2998,7 +2996,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			over12.addElement(imp12.getRoi());
 			over12.setStrokeColor(Color.red);
 			MyLog.waitHere(listaMessaggi(20), debug);
-		
+
 		}
 		imp12.killRoi();
 		//

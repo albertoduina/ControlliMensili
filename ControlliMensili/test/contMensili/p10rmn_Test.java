@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
+import ij.gui.OvalRoi;
 import ij.gui.Plot;
 import ij.gui.WaitForUserDialog;
 import ij.measure.ResultsTable;
@@ -84,7 +85,7 @@ public class p10rmn_Test {
 		boolean test = false;
 		double profond = 30;
 		boolean fast = true;
-		boolean silent=false;
+		boolean silent = false;
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
 				"info10", autoCalled, step, verbose, test, fast, silent);
 
@@ -115,7 +116,7 @@ public class p10rmn_Test {
 		boolean test = false;
 		double profond = 30;
 		boolean fast = true;
-		boolean silent=false;
+		boolean silent = false;
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
 				"info10", autoCalled, step, verbose, test, fast, silent);
 
@@ -145,7 +146,7 @@ public class p10rmn_Test {
 		boolean test = false;
 		double profond = 30;
 		boolean fast = false;
-		boolean silent=false;
+		boolean silent = false;
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
 				"info10", autoCalled, step, verbose, test, fast, silent);
 
@@ -244,25 +245,26 @@ public class p10rmn_Test {
 
 	}
 
-//	@Test
-//	public final void testCreatePlot() {
-//		double[] profile1 = InputOutput
-//				.readDoubleArrayFromFile("./data/vet20.txt");
-//		String sTitolo = "createPlotWork";
-//
-//		int[] vetUpDwPoints = { 63, 62, 131, 132 };
-//		double fwhm2 = 71.8679;
-//
-//		new p10rmn_().createPlot(profile1, sTitolo, vetUpDwPoints, fwhm2);
-//		// MyLog.waitHere();
-//
-//		IJ.wait(1000);
-//	}
+	// @Test
+	// public final void testCreatePlot() {
+	// double[] profile1 = InputOutput
+	// .readDoubleArrayFromFile("./data/vet20.txt");
+	// String sTitolo = "createPlotWork";
+	//
+	// int[] vetUpDwPoints = { 63, 62, 131, 132 };
+	// double fwhm2 = 71.8679;
+	//
+	// new p10rmn_().createPlot(profile1, sTitolo, vetUpDwPoints, fwhm2);
+	// // MyLog.waitHere();
+	//
+	// IJ.wait(1000);
+	// }
 
 	@Test
 	public final void testPeakDet2() {
 
-		// ATTENZIONE NECESSITA DI MODIFICHE DOVUTE AL FATTO CHE HO CAMBIATO LA STRUTTURA DELLA MATRICE
+		// ATTENZIONE NECESSITA DI MODIFICHE DOVUTE AL FATTO CHE HO CAMBIATO LA
+		// STRUTTURA DELLA MATRICE
 
 		double[][] profile1 = InputOutput
 				.readDoubleMatrixFromFile((new InputOutput()
@@ -410,5 +412,6 @@ public class p10rmn_Test {
 		IJ.wait(200);
 		assertEquals(pixx, 441);
 	}
+
 
 }
