@@ -35,6 +35,7 @@ import utils.ButtonMessages;
 import utils.CustomCanvasGeneric;
 import utils.ImageUtils;
 import utils.InputOutput;
+import utils.MyFilter;
 import utils.MyMsg;
 import utils.MyConst;
 import utils.MyFileLogger;
@@ -1540,7 +1541,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		imp11.setOverlay(over1);
 		imp11.updateAndDraw();
 
-		double[] out1 = UtilAyv.findMaximumPosition(imp11);
+		double[] out1 = MyFilter.maxPosition1x1(imp11);
 		double xMaximum = out1[0];
 		double yMaximum = out1[1];
 

@@ -49,6 +49,7 @@ import utils.ArrayUtils;
 import utils.ButtonMessages;
 import utils.ImageUtils;
 import utils.InputOutput;
+import utils.MyCircleDetector;
 import utils.MyMsg;
 import utils.MyConst;
 import utils.MyFwhm;
@@ -1359,7 +1360,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		}
 
 		// ----------------------------------------
-		// AGGIUNGO 0.5 AI PUNTI TROVATI
+		// AGGIUNGO 1 AI PUNTI TROVATI
 		// ---------------------------------------
 
 		for (int i1 = 0; i1 < peaks1.length; i1++) {
@@ -2285,7 +2286,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			if (!manualOverride)
 				writeStoredRoiData(boundRec);
 
-			drawCenter(imp12, over12, xCenterCircle, yCenterCircle, Color.red);
+			MyCircleDetector.drawCenter(imp12, over12, xCenterCircle, yCenterCircle, Color.red);
 
 			// ----------------------------------------------------------
 			// Misuro l'errore sul fit rispetto ai punti imposti
@@ -2325,7 +2326,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			//
 
 			if (demo) {
-				drawCenter(imp12, over12, xCenterCircle, yCenterCircle,
+				MyCircleDetector.drawCenter(imp12, over12, xCenterCircle, yCenterCircle,
 						Color.red);
 				MyLog.waitHere(listaMessaggi(7), debug);
 
@@ -2532,7 +2533,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			imp12.getRoi().setStrokeColor(Color.green);
 			over12.addElement(imp12.getRoi());
 			MyLog.waitHere(listaMessaggi(9), debug);
-			drawCenter(imp12, over12, xCenterCircle + xcorr, yCenterCircle
+			MyCircleDetector.drawCenter(imp12, over12, xCenterCircle + xcorr, yCenterCircle
 					+ ycorr, Color.green);
 			MyLog.waitHere(listaMessaggi(10), debug);
 		}
@@ -2600,7 +2601,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		// marco con un punto il centro del fantoccio
 
 		if (demo)
-			drawCenter(imp2, over2, xCenterCircle, yCenterCircle, Color.red);
+			MyCircleDetector.drawCenter(imp2, over2, xCenterCircle, yCenterCircle, Color.red);
 
 		if (demo)
 			IJ.setMinAndMax(imp2, 10, 100);
@@ -3458,27 +3459,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		imp1.getRoi().setStrokeColor(Color.red);
 	}
 
-	/**
-	 * Imposta una Roi circolare diametro 4 in corrispondenza delle coordinate
-	 * passate, importa la Roi nell'Overlay. La routine è utilizzata per
-	 * disegnare il centro di un cerchio su di un overlay.
-	 * 
-	 * @param imp1
-	 * @param over1
-	 * @param xCenterCircle
-	 * @param yCenterCircle
-	 * @param color1
-	 */
-	public static void drawCenter(ImagePlus imp1, Overlay over1,
-			int xCenterCircle, int yCenterCircle, Color color1) {
-		// imp1.setOverlay(over1);
-		imp1.setRoi(new OvalRoi(xCenterCircle - 2, yCenterCircle - 2, 4, 4));
-		Roi roi1 = imp1.getRoi();
-		roi1.setFillColor(color1);
-		roi1.setStrokeColor(color1);
-		over1.addElement(imp1.getRoi());
-		imp1.killRoi();
-	}
 
 	/**
 	 * Read preferences from IJ_Prefs.txt
