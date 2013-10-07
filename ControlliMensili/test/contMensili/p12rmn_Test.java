@@ -140,8 +140,9 @@ public class p12rmn_Test {
 		boolean test = false;
 		boolean fast = false;
 		double maxFitError = 5;
+		double maxBubbleGapLimit = 2;
 
-		int out2[] = p12rmn_.positionSearch11(imp11, maxFitError, "",
+		int out2[] = p12rmn_.positionSearch11(imp11, maxFitError, maxBubbleGapLimit, "",
 				autoCalled, step, demo, test, fast);
 
 		MyLog.logVector(out2, "out2");
@@ -201,6 +202,7 @@ public class p12rmn_Test {
 		boolean fast = false;
 		boolean demo = false;
 		double maxFitError = 5;
+		double maxBubbleGapLimit = 2;
 
 		String path2 = "c:\\dati\\000P12";
 		String[] list = new File(path2).list();
@@ -215,7 +217,7 @@ public class p12rmn_Test {
 			// int[] out2 = p12rmn_.positionSearch12(imp11, imp13, "",
 			// autoCalled,
 			// step, verbose, test, fast);
-			int[] out2 = p12rmn_.positionSearch11(imp13, maxFitError, "",
+			int[] out2 = p12rmn_.positionSearch11(imp13, maxFitError, maxBubbleGapLimit, "",
 					autoCalled, step, demo, test, fast);
 			// MyLog.logVector(out2, "out2");
 			int[] circleData = out2;
@@ -245,8 +247,9 @@ public class p12rmn_Test {
 		boolean irraggiungibile = false;
 		boolean debug = true;
 		double maxFitError = 5;
+		double maxBubbleGapLimit = 2;
 
-		int[] out2 = p12rmn_.positionSearch11(imp11, maxFitError, "",
+		int[] out2 = p12rmn_.positionSearch11(imp11, maxFitError, maxBubbleGapLimit, "",
 				autoCalled, step, demo, test, fast);
 		int[] circleData = out2;
 		int diamGhost = 20;

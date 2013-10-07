@@ -237,8 +237,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
 				: false;
-		IJ.log("p10rmn_.autoMenu fast= " + fast);
-		IJ.log("p10rmn_.autoMenu autoargs= " + autoArgs);
+		// IJ.log("p10rmn_.autoMenu fast= " + fast);
+		// IJ.log("p10rmn_.autoMenu autoargs= " + autoArgs);
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
 		if (vetRiga[0] == -1) {
@@ -480,8 +480,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (verbose && !silent) {
 				imp1 = UtilAyv.openImageMaximized(path1);
 				iw1 = WindowManager.getCurrentWindow();
-				if (!fast)
-					MyLog.waitHere("imp1Win= " + iw1);
 				imp2 = UtilAyv.openImageNoDisplay(path2, true);
 			} else {
 				imp1 = UtilAyv.openImageNoDisplay(path1, true);
@@ -492,7 +490,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// ImageWindow iw1=WindowManager.getCurrentWindow();
 
 			angle = out2[6];
-			
+
 			// ============================================================================
 			// Fine calcoli geometrici
 			// Inizio calcoli Uniformità
@@ -525,32 +523,27 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp1.getRoi().setStrokeColor(Color.red);
 				over2.addElement(imp1.getRoi());
 				imp1.killRoi();
-				MyLog.waitHere("Mroi");
 				// Centro cerchio
-				MyCircleDetector.drawCenter(imp1, over2,
-						 xCenterCircle,  yCenterCircle, Color.red);
-				
-				
-//				imp1.setRoi(new OvalRoi(xCenterCircle - 2, yCenterCircle - 2,
-//						4, 4));
-				MyLog.waitHere("CentroCerchio");
-				imp1.killRoi();
-				
-//				imp1.setRoi(new OvalRoi(xMaxima - 4, yMaxima - 4, 8, 8));
-//				over2.addElement(imp1.getRoi());
-				
-				MyCircleDetector.drawCenter(imp1, over2,
-						 xMaxima,  yMaxima, Color.green);
+				MyCircleDetector.drawCenter(imp1, over2, xCenterCircle,
+						yCenterCircle, Color.red);
 
-				MyLog.waitHere("Maxima");
+				// imp1.setRoi(new OvalRoi(xCenterCircle - 2, yCenterCircle - 2,
+				// 4, 4));
 				imp1.killRoi();
-				
+
+				// imp1.setRoi(new OvalRoi(xMaxima - 4, yMaxima - 4, 8, 8));
+				// over2.addElement(imp1.getRoi());
+
+				MyCircleDetector.drawCenter(imp1, over2, xMaxima, yMaxima,
+						Color.green);
+
+				imp1.killRoi();
+
 				imp1.setRoi(new Line(xCenterCircle, yCenterCircle, xMaxima,
 						yMaxima));
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(Color.green);
 				imp1.updateAndDraw();
-				MyLog.waitHere("Raggio");
 				// =================================================
 			}
 
@@ -558,9 +551,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 					sqNEA);
 			over2.addElement(imp1.getRoi());
 			imp1.updateAndDraw();
-			 MyLog.waitHere("NEA");
 			if (step)
-				new WaitForUserDialog("MROI 11 x 11 Premere  OK").show();
+				MyLog.waitHere(listaMessaggi(30), debug);
 			//
 			// posiziono la ROI 7x7 all'interno di MROI
 			//
@@ -573,7 +565,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			imp1.updateAndDraw();
 			// MyLog.waitHere();
 			if (step)
-				new WaitForUserDialog("MROI 7 x 7 Premere  OK").show();
+				MyLog.waitHere(listaMessaggi(31), debug);
 
 			ImageStatistics stat7x7 = imp1.getStatistics();
 
@@ -582,13 +574,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 			int yFondo = MyConst.P10_Y_ROI_BACKGROUND;
 			int dFondo = MyConst.P10_DIAM_ROI_BACKGROUND;
 			if (step)
-				msgMroi();
+				MyLog.waitHere(listaMessaggi(33), debug);
 			//
 			// disegno RoiFondo su imp1
 			//
 			Boolean circular = true;
 			ImageStatistics statBkg = UtilAyv.backCalc2(xFondo, yFondo, dFondo,
 					imp1, step, circular, test);
+			MyLog.waitHere(listaMessaggi(26) + statBkg.mean, debug);
 
 			//
 			// =================================================
@@ -631,27 +624,19 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 				// =================================================
 			}
-
+	
 			imaDiff.resetDisplayRange();
 			imaDiff.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7, sq7);
 			imaDiff.updateAndDraw();
 			ImageStatistics statImaDiff = imaDiff.getStatistics();
 
 			imaDiff.updateAndDraw();
-			if (imaDiff.isVisible()) {
-				WindowManager.setCurrentWindow(iwDiff);
-				// WindowManager.setWindow(iwDiff);
-				// imaDiff.getWindow().toFront();
-			}
+			UtilAyv.imageToFront(iwDiff);
 
 			if (step)
-				msgMroi();
+				MyLog.waitHere(listaMessaggi(33), debug);
 
-			if (imp1.isVisible()) {
-				WindowManager.setCurrentWindow(iw1);
-				// WindowManager.setWindow(iw1);
-				// imaDiff.getWindow().toBack();
-			}
+			UtilAyv.imageToFront(iw1);
 
 			//
 			// calcolo P su imaDiff
@@ -659,9 +644,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 			double prelimImageNoiseEstimate_MROI = statImaDiff.stdDev
 					/ Math.sqrt(2);
 
-			if (step) {
-				msgNea(prelimImageNoiseEstimate_MROI);
-			}
+			if (step)
+				MyLog.waitHere(listaMessaggi(34) + "noise= "
+						+ prelimImageNoiseEstimate_MROI, debug);
+
 			//
 			// loop di calcolo NEA su imp1
 			//
@@ -698,15 +684,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 				// imp1.getWindow().toFront();
 				if (step)
-					msgDisplayNEA();
+					MyLog.waitHere(listaMessaggi(25));
 
 				if (pixx < area11x11) {
 					sqNEA = sqNEA + 2; // accrescimento area
 					enlarge = enlarge + 1;
 				}
-				if (step) {
-					msgEnlargeRoi(sqNEA);
-				}
+				if (step)
+					MyLog.waitHere(listaMessaggi(35) + sqNEA, debug);
 
 				// verifico che quando cresce il lato del quadrato non si
 				// esca
@@ -714,16 +699,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 				if ((xCenterRoi + sqNEA - enlarge) >= width
 						|| (xCenterRoi - enlarge) <= 0) {
-					msgNot121();
+					MyLog.waitHere(listaMessaggi(32), debug);
 					return null;
 				}
 				if ((yCenterRoi + sqNEA - enlarge) >= height
 						|| (yCenterRoi - enlarge) <= 0) {
-					msgNot121();
+					MyLog.waitHere(listaMessaggi(32), debug);
 					return null;
 				}
 				if (step && pixx >= area11x11)
-					msgSqr2OK(pixx);
+					MyLog.waitHere(listaMessaggi(22) + pixx, debug);
 
 			} while (pixx < area11x11);
 			// MyLog.waitHere();
@@ -742,13 +727,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 			double[] out11 = devStandardNema(imp1, imaDiff, xCenterRoi,
 					yCenterRoi, sqNEA, checkPixels);
 			if (step)
-				msgDisplayMean4(out11[0], out11[1]);
+				MyLog.waitHere(listaMessaggi(23) + out11[0] + "stdDev4= "
+						+ out11[1], debug);
 			//
 			// calcolo SNR finale
 			//
 			double finalSnr = stat7x7.mean / (out11[1] / Math.sqrt(2));
 			if (step)
-				msgSnr(finalSnr);
+				MyLog.waitHere(listaMessaggi(24) + finalSnr, debug);
 
 			// // =============================================================
 			// userSelection2 = UtilAyv.checkLimits(snr, vetMinimi[2],
@@ -784,13 +770,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// calcolo posizione fwhm a metà della MROI
 			//
 
-			if (imp1.isVisible()) {
-				WindowManager.setWindow(iw1);
-				// imaDiff.getWindow().toBack();
-			}
+			UtilAyv.imageToFront(iw1);
 
-			// if (imp1.isVisible())
-			// imp1.getWindow().toFront();
 			//
 			// ----------------------------------------------------------
 			// Calcolo FWHM
@@ -799,9 +780,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// -----------------------------------------------------------
 			//
 
-			// double[] out3 = crossing(xCenterCircle, yCenterCircle,
-			// xCenterRoi,
-			// yCenterRoi, width, height);
 
 			double[] out3 = crossing(xCenterRoi, yCenterRoi, xCenterCircle,
 					yCenterCircle, width, height);
@@ -842,8 +820,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			}
 
 			IJ.wait(2000);
-		
-			
+
 			// if (imp1.isVisible())
 			// imp1.getWindow().toFront();
 
@@ -1322,43 +1299,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		return defaults;
 	}
 
-	private static void msgNot121() {
-		IJ.showMessage("ATTENZIONE la NEA esce dall'immagine\nsenza"
-				+ " riuscire a trovare 121 pixel che superino il"
-				+ " test\nil programma TERMINA PREMATURAMENTE");
-	}
-
-	private static void msgMroi() {
-		ButtonMessages.ModelessMsg("Disegnata Mroi su imaDiff", "CONTINUA");
-	}
-
-	private static void msgNea(double noise) {
-		ButtonMessages.ModelessMsg("P=" + noise
-				+ "  (Preliminary Noise Estimate MROI ima4)", "CONTINUA");
-	}
-
-	private static void msgEnlargeRoi(int sqNEA) {
-		ButtonMessages.ModelessMsg("Accrescimento MROI lato=" + sqNEA,
-				"CONTINUA");
-	}
-
-	private static void msgSqr2OK(int pixx) {
-		ButtonMessages.ModelessMsg("sqR2 OK  poichè pixx=" + pixx, "CONTINUA");
-	}
-
-	private static void msgSnr(double snr) {
-		ButtonMessages.ModelessMsg("SNR finale=" + snr, "CONTINUA");
-	}
-
-	private static void msgDisplayMean4(double mean, double stdDev) {
-		ButtonMessages.ModelessMsg("mean4= " + mean + " standard_deviation4= "
-				+ stdDev, "CONTINUA");
-	}
-
-	private static void msgDisplayNEA() {
-		ButtonMessages.ModelessMsg("displayNEA", "CONTINUA");
-	}
-
 	// private static void msgSimulata() {
 	// ButtonMessages.ModelessMsg("Immagine Simulata", "CONTINUA");
 	// }
@@ -1667,6 +1607,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	public static double[][] profileAnalyzer(ImagePlus imp1, double dimPixel,
 			String title, boolean showProfiles) {
 
+		// MyLog.waitHere("showProfiles= " + showProfiles);
 		double[][] profi3 = MyLine.decomposer(imp1);
 		// MyLog.logMatrix(profi3, "profi3");
 
@@ -2230,7 +2171,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean debug = true;
 		boolean manual = false;
 		boolean demo = !fast;
-		boolean showProfiles = !fast;
+		boolean showProfiles = demo;
+		// MyLog.waitHere("showProfiles= " + showProfiles);
 
 		double ax = 0;
 		double ay = 0;
@@ -2253,10 +2195,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		ImageWindow iw11 = null;
 		ImageWindow iw12 = null;
-		if (demo) {
+		if (demo)
 			iw11 = imp11.getWindow();
-			MyLog.waitHere("iw11= " + iw11);
-		}
 
 		int width = imp11.getWidth();
 		int height = imp11.getHeight();
@@ -2280,10 +2220,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		ImageProcessor ip12 = imp12.getProcessor();
 		ImageWindow iw122 = null;
-		if (demo) {
+		if (demo)
 			iw12 = UtilAyv.showImageMaximized(imp12);
-			MyLog.waitHere("iw12= " + iw12);
-		}
+
 		ip12.setSnapshotCopyMode(true);
 		ip12.smooth();
 		ip12.setSnapshotCopyMode(false);
@@ -2612,7 +2551,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (!manualOverride)
 				writeStoredRoiData(boundRec);
 
-			MyCircleDetector.drawCenter(imp12, over12, xCenterCircle, yCenterCircle, Color.red);
+			MyCircleDetector.drawCenter(imp12, over12, xCenterCircle,
+					yCenterCircle, Color.red);
+
 			if (demo)
 				MyLog.waitHere(listaMessaggi(17), debug);
 
@@ -2655,14 +2596,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// -------------------------------------------------------------------
 		if (xPoints3.length >= 3) {
 			imp12.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
-			if (step) {
-				imp12.updateAndDraw();
-				over12.addElement(imp12.getRoi());
-				over12.setStrokeColor(Color.red);
-				imp12.setOverlay(over12);
-				imp12.updateAndDraw();
-				new WaitForUserDialog("Premere OK").show();
-			}
+			// if (step) {
+			// imp12.updateAndDraw();
+			// over12.addElement(imp12.getRoi());
+			// over12.setStrokeColor(Color.red);
+			// imp12.setOverlay(over12);
+			// imp12.updateAndDraw();
+			// MyLog.waitHere("manca testo");
+			// }
 			fitCircle(imp12);
 			if (step) {
 				over12.addElement(imp12.getRoi());
@@ -2696,16 +2637,17 @@ public class p10rmn_ implements PlugIn, Measurements {
 		over12.setStrokeColor(Color.red);
 		imp12.setOverlay(over12);
 
-		if (verbose) {
-			imp12.setRoi(new OvalRoi(xCenterCircle - 4, yCenterCircle - 4, 8, 8));
-			Roi roi1 = imp12.getRoi();
-			if (roi1 == null)
-				IJ.log("roi1==null");
-			over12.addElement(imp12.getRoi());
-			over12.setStrokeColor(Color.red);
-
-			imp12.killRoi();
-		}
+		// if (verbose) {
+		// imp12.setRoi(new OvalRoi(xCenterCircle - 4, yCenterCircle - 4, 8,
+		// 8));
+		// Roi roi1 = imp12.getRoi();
+		// if (roi1 == null)
+		// IJ.log("roi1==null");
+		// over12.addElement(imp12.getRoi());
+		// over12.setStrokeColor(Color.red);
+		//
+		// imp12.killRoi();
+		// }
 		//
 		// ----------------------------------------------------------
 		// disegno la ROI del maxima, a solo scopo dimostrativo !
@@ -2720,9 +2662,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 		xMaxima = out10[0];
 		yMaxima = out10[1];
 		if (verbose) {
-			imp12.setRoi(new OvalRoi((int) xMaxima - 4, (int) yMaxima - 4, 8, 8));
-			over12.addElement(imp12.getRoi());
-			over12.setStrokeColor(Color.red);
+			MyCircleDetector.drawCenter(imp12, over12, (int) xMaxima,
+					(int) yMaxima, Color.green);
+
+			// imp12.setRoi(new OvalRoi((int) xMaxima - 4, (int) yMaxima - 4, 8,
+			// 8));
+			// over12.addElement(imp12.getRoi());
+			// over12.setStrokeColor(Color.red);
 			if (demo)
 				MyLog.waitHere(listaMessaggi(20), debug);
 
@@ -2760,6 +2706,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 		imp12.updateAndDraw();
 		over12.addElement(imp12.getRoi());
 		over12.setStrokeColor(Color.red);
+		if (verbose) {
+			MyCircleDetector.drawCenter(imp12, over12, (int) ax, (int) ay,
+					Color.yellow);
+			if (demo)
+				MyLog.waitHere(listaMessaggi(21), debug);
+
+		}
+
 		//
 		// Se non necessito di un intervento manuale, mi limito a leggere le
 		// coordinate della ROI determinata in automatico.
@@ -2773,11 +2727,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		if (!fast && !test) {
 
-			if (iw11 != null) {
-				WindowManager.setCurrentWindow(iw11);
-				WindowManager.setWindow(iw11);
-			} else
-				MyLog.waitHere();
+			UtilAyv.imageToFront(iw11);
 
 			// UtilAyv.showImageMaximized(imp11);
 			imp11.setOverlay(over12);
@@ -2914,7 +2864,35 @@ public class p10rmn_ implements PlugIn, Measurements {
 		lista[19] = "Non si riescono a determinare le coordinate di almeno 3 punti del cerchio \n"
 				+ "posizionare manualmente una ROI circolare di diametro uguale al fantoccio e\n"
 				+ "premere  OK";
-		lista[20] = "Viene determinata la posizione del pixel con il valore maximo nell'immagine";
+		lista[20] = "Analizzando l'intera immagine con una ROI 11x11, viene determinata la \n"
+				+ "posizione con la massima media nell'immagine, la posizione è contrassegnata \n"
+				+ "dal pallino verde";
+		// ---------+-----------------------------------------------------------+
+		lista[21] = "Lungo il segmento che unisce il pallino rosso del centro con il pallino verde \n"
+				+ "del maximo, viene calcolata la posizione del centro MROI, contrassegnato dal \n"
+				+ "pallino giallo,  posto alla profondità impostata nel file codiciNew.csv per \n"
+				+ "il codice di questo controllo";
+		lista[22] = "Accrescimento NEA riuscito, pixels validi= ";
+		lista[23] = "mean4= ";
+		lista[24] = "SNR finale= ";
+		lista[25] = "displayNEA";
+		lista[26] = "Segnale medio fondo= ";
+		lista[27] = "messaggio 27";
+		lista[28] = "messaggio 28";
+		lista[29] = "messaggio 29";
+		// ---------+-----------------------------------------------------------+
+		lista[30] = "MROI 11x11";
+		lista[31] = "MROI 7x7";
+		lista[32] = "ATTENZIONE la NEA esce dall'immagine senza riuscire a \n"
+				+ "trovare 121 pixel che superino il  test il programma \n"
+				+ "TERMINA PREMATURAMENTE";
+		lista[33] = "Disegnata Mroi su imaDiff";
+		lista[34] = "Preliminary Noise Estimate su MROI";
+		lista[35] = "Accrescimento MROI lato= ";
+		lista[36] = "messaggio 36";
+		lista[37] = "messaggio 37";
+		lista[38] = "messaggio 38";
+		lista[39] = "messaggio 39";
 
 		// ---------+-----------------------------------------------------------+
 		lista[65] = "vetMinimi==null, verificare esistenza della riga P10MIN nel file limiti.csv";
@@ -3068,7 +3046,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// MyLog.waitHere("Vedi punti");
 	}
 
-
 	/**
 	 * Write preferences into IJ_Prefs.txt
 	 * 
@@ -3104,7 +3081,5 @@ public class p10rmn_ implements PlugIn, Measurements {
 				- r2;
 		return dist;
 	}
-	
-	
 
 }
