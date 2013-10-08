@@ -465,7 +465,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 				MyLog.waitHere("out2==null");
 				return null;
 			}
-
+			// MyLog.logVector(out2, "out2");
+			// MyLog.waitHere("FINE POSITION SEARCH");
 			// ========================================================================
 			// se non ho trovato la posizione mi ritrovo qui senza out2[]
 			// valido
@@ -489,8 +490,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 				MyLog.waitHere("Non trovato il file " + path2);
 			// ImageWindow iw1=WindowManager.getCurrentWindow();
 
-			angle = out2[6];
-
 			// ============================================================================
 			// Fine calcoli geometrici
 			// Inizio calcoli Uniformità
@@ -509,6 +508,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			int yCenterCircle = (int) out2[3];
 			int xMaxima = (int) out2[4];
 			int yMaxima = (int) out2[5];
+			angle = out2[6];
+			int xBordo = (int) out2[7];
+			int yBordo = (int) out2[8];
 
 			int width = imp1.getWidth();
 			int height = imp1.getHeight();
@@ -527,20 +529,18 @@ public class p10rmn_ implements PlugIn, Measurements {
 				MyCircleDetector.drawCenter(imp1, over2, xCenterCircle,
 						yCenterCircle, Color.red);
 
-				// imp1.setRoi(new OvalRoi(xCenterCircle - 2, yCenterCircle - 2,
-				// 4, 4));
 				imp1.killRoi();
-
-				// imp1.setRoi(new OvalRoi(xMaxima - 4, yMaxima - 4, 8, 8));
-				// over2.addElement(imp1.getRoi());
 
 				MyCircleDetector.drawCenter(imp1, over2, xMaxima, yMaxima,
 						Color.green);
 
+				MyCircleDetector.drawCenter(imp1, over2, xBordo, yBordo,
+						Color.pink);
+
 				imp1.killRoi();
 
-				imp1.setRoi(new Line(xCenterCircle, yCenterCircle, xMaxima,
-						yMaxima));
+				imp1.setRoi(new Line(xCenterCircle, yCenterCircle, xBordo,
+						yBordo));
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(Color.green);
 				imp1.updateAndDraw();
@@ -551,6 +551,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 					sqNEA);
 			over2.addElement(imp1.getRoi());
 			imp1.updateAndDraw();
+			// MyLog.waitHere("Disegnata MROI xCenterRoi = " + xCenterRoi
+			// + " yCenterRoi= " + yCenterRoi);
 			if (step)
 				MyLog.waitHere(listaMessaggi(30), debug);
 			//
@@ -581,7 +583,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			Boolean circular = true;
 			ImageStatistics statBkg = UtilAyv.backCalc2(xFondo, yFondo, dFondo,
 					imp1, step, circular, test);
-			MyLog.waitHere(listaMessaggi(26) + statBkg.mean, debug);
+			if (step)
+				MyLog.waitHere(listaMessaggi(26) + statBkg.mean, debug);
 
 			//
 			// =================================================
@@ -762,9 +765,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			simulataName = fileDir + patName + codice + "sim.zip";
 
+			// passo due volte step (al posto di verbose) per non vedere la
+			// simulata in fast
 			int[][] classiSimulata = ImageUtils.generaSimulata12classi(
 					xCenterRoi, yCenterRoi, sq7, imp1, simulataName, step,
-					verbose, test);
+					step, test);
 
 			//
 			// calcolo posizione fwhm a metà della MROI
@@ -1260,6 +1265,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		}
 		imp1.setRoi(new Line(ax, ay, bx, by));
 		Roi roi1 = imp1.getRoi();
+		imp1.killRoi();
 		double[] profi1 = ((Line) roi1).getPixels(); // profilo non mediato
 		profi1[profi1.length - 1] = 0; // azzero a mano l'ultimo pixel
 		if (step) {
@@ -1623,11 +1629,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 			return null;
 		}
 		if (peaks1[0].length == 0) {
-			MyLog.waitHere("peaks1[0].length == 0");
+		//	MyLog.waitHere("peaks1[0].length == 0");
 			return null;
 		}
 		if (peaks1[0].length > 2) {
-			MyLog.waitHere("peaks1[0].length > 2");
+			// MyLog.waitHere("peaks1[0].length > 2");
 			return null;
 		}
 
@@ -2659,14 +2665,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// -------------------------------------------------------------------
 		if (xPoints3.length >= 3) {
 			imp12.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
-			// if (step) {
-			// imp12.updateAndDraw();
-			// over12.addElement(imp12.getRoi());
-			// over12.setStrokeColor(Color.red);
-			// imp12.setOverlay(over12);
-			// imp12.updateAndDraw();
-			// MyLog.waitHere("manca testo");
-			// }
 			fitCircle(imp12);
 			if (step) {
 				over12.addElement(imp12.getRoi());
@@ -2693,7 +2691,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// ==========================================================================
 		// ==========================================================================
 		imp11.setOverlay(over12);
-		MyLog.waitHere();
 
 		Rectangle boundRec = imp12.getProcessor().getRoi();
 
@@ -2727,31 +2724,36 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		}
 		imp12.killRoi();
-		
-		//===============================================================
+
+		// ===============================================================
 		// intersezioni retta - circonferenza
-		//===============================================================
-		
-		double[] out11 = getCircleLineCrossingPoints(xCenterCircle,yCenterCircle,xMaxima,yMaxima,xCenterCircle,yCenterCircle, diamCircle/2);
+		// ===============================================================
+
+		double[] out11 = getCircleLineCrossingPoints(xCenterCircle,
+				yCenterCircle, xMaxima, yMaxima, xCenterCircle, yCenterCircle,
+				diamCircle / 2);
 		// il punto che ci interesasa sarà quello con minor distanza dal maxima
 		double dx1 = xMaxima - out11[0];
-		double dx2 = xMaxima- out11[2];
+		double dx2 = xMaxima - out11[2];
 		double dy1 = yMaxima - out11[1];
-		double dy2 = yMaxima- out11[3];
-		double lun1 = Math.sqrt(dx1*dx1+dy1*dy1);
-		double lun2 = Math.sqrt(dx2*dx2+dy2*dy2);
-		
-		
-		
-		if (verbose) {
-			MyCircleDetector.drawCenter(imp11, over12, (int) out11[0],
-					(int) out11[1], Color.pink);
-			MyCircleDetector.drawCenter(imp11, over12, (int) out11[2],
-					(int) out11[3], Color.magenta);		
+		double dy2 = yMaxima - out11[3];
+		double lun1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+		double lun2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+
+		double xBordo = 0;
+		double yBordo = 0;
+		if (lun1 < lun2) {
+			xBordo = out11[0];
+			yBordo = out11[1];
+		} else {
+			xBordo = out11[2];
+			yBordo = out11[3];
 		}
-		
-		MyLog.waitHere("lun1= "+lun1+" lun2= "+lun2);
-		
+
+		if (verbose)
+			MyCircleDetector.drawCenter(imp11, over12, (int) xBordo,
+					(int) yBordo, Color.pink);
+
 		//
 		// -----------------------------------------------------------
 		// Calcolo delle effettive coordinate del segmento
@@ -2760,13 +2762,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 		//
 		double xStartRefLine = (double) xCenterCircle;
 		double yStartRefLine = (double) yCenterCircle;
-		double xEndRefLine = out10[0];
-		double yEndRefLine = out10[1];
+		double xEndRefLine = xBordo;
+		double yEndRefLine = yBordo;
 
-		imp11.setRoi(new Line(xCenterCircle, yCenterCircle, (int) out10[0],
-				(int) out10[1]));
+		imp11.setRoi(new Line(xCenterCircle, yCenterCircle, (int) xBordo,
+				(int) yBordo));
 		angle11 = imp11.getRoi().getAngle(xCenterCircle, yCenterCircle,
-				(int) out10[0], (int) out10[1]);
+				(int) xBordo, (int) yBordo);
 
 		over12.addElement(imp11.getRoi());
 		over12.setStrokeColor(Color.red);
@@ -2780,10 +2782,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				xStartRefLine, yStartRefLine, profond / dimPixel);
 		ax = out1[0];
 		ay = out1[1];
-		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
-		imp11.updateAndDraw();
-		over12.addElement(imp11.getRoi());
-		over12.setStrokeColor(Color.red);
+
 		if (verbose) {
 			MyCircleDetector.drawCenter(imp11, over12, (int) ax, (int) ay,
 					Color.yellow);
@@ -2792,16 +2791,23 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		}
 
-		MyLog.waitHere("AAAAA");
+		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
+		imp11.updateAndDraw();
+		over12.addElement(imp11.getRoi());
+		over12.setStrokeColor(Color.red);
+
 		//
 		// Se non necessito di un intervento manuale, mi limito a leggere le
 		// coordinate della ROI determinata in automatico.
 		//
 
-		Rectangle boundRec4 = imp12.getProcessor().getRoi();
+		Rectangle boundRec4 = imp11.getProcessor().getRoi();
 		xCenterRoi = boundRec4.getCenterX();
 		yCenterRoi = boundRec4.getCenterY();
 		imp12.hide();
+
+		// MyLog.waitHere("ax= " + ax + " ay= " + ay + " xCenterRoi= "
+		// + xCenterRoi + " yCenterRoi= " + yCenterRoi);
 		// }
 
 		if (!fast && !test) {
@@ -2828,7 +2834,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		}
 
-		double[] out2 = new double[7];
+		double[] out2 = new double[9];
 		out2[0] = xCenterRoi;
 		out2[1] = yCenterRoi;
 		out2[2] = xCenterCircle;
@@ -2836,6 +2842,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 		out2[4] = xMaxima;
 		out2[5] = yMaxima;
 		out2[6] = angle11;
+		out2[7] = xBordo;
+		out2[8] = yBordo;
+
 		return out2;
 	}
 

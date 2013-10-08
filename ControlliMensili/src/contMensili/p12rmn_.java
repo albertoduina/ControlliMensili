@@ -680,7 +680,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 			if (iw1 != null) {
 				WindowManager.setCurrentWindow(iw1);
 				WindowManager.setWindow(iw1);
-				MyLog.waitHere("iw1 to front!!!");
 			}
 
 			// ---------------------------------
