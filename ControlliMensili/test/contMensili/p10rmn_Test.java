@@ -368,7 +368,7 @@ public class p10rmn_Test {
 		double width = 220;
 		double height = 220;
 
-		double[] out = p10rmn_.crossing(x0, y0, x1, y1, width, height);
+		double[] out = p10rmn_.crossingFrame(x0, y0, x1, y1, width, height);
 		MyLog.logVector(out, "out");
 
 		double[] vetResults1 = { 149.75812158632155, 0.0, 0.0, 156.135540975489 };
@@ -380,7 +380,7 @@ public class p10rmn_Test {
 		x1 = 151.25;
 		y1 = 132.34;
 
-		out = p10rmn_.crossing(x0, y0, x1, y1, width, height);
+		out = p10rmn_.crossingFrame(x0, y0, x1, y1, width, height);
 		MyLog.logVector(out, "out");
 
 		double[] vetResults2 = { 2.0627437110885412E-6, 220.0, 220.0,
