@@ -611,6 +611,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			xBkg = backPos[0] - diamBkg / 2;
 			yBkg = backPos[1] - diamBkg / 2;
+			MyLog.waitHere("WWWW");
 
 			//
 			// disegno RoiFondo su imp1
@@ -2736,6 +2737,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		xCenterCircle = boundRec.x + boundRec.width / 2;
 		yCenterCircle = boundRec.y + boundRec.height / 2;
+		diamCircle= boundRec.width;
 		// over12.setStrokeColor(Color.red);
 		// imp12.setOverlay(over12);
 
@@ -2875,17 +2877,18 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		}
 
-		double[] out2 = new double[9];
+		double[] out2 = new double[10];
 		out2[0] = xCenterRoi;
 		out2[1] = yCenterRoi;
 		out2[2] = xCenterCircle;
 		out2[3] = yCenterCircle;
+		
 		out2[4] = xMaxima;
 		out2[5] = yMaxima;
 		out2[6] = angle11;
 		out2[7] = xBordo;
 		out2[8] = yBordo;
-
+		out2[9] = diamCircle;
 		return out2;
 	}
 
