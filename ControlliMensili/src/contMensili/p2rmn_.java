@@ -81,7 +81,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	public static final int ABORT = 1;
 
-	public static String VERSION = "p2_rmn_v4.10_10dec08_";
+	public static String VERSION = "Verifica T1 e T2";
 
 	private static String TYPE = " >> CONTROLLO T1 / T2_________________";
 

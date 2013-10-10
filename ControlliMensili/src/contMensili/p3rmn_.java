@@ -62,7 +62,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	private static final int ABORT = 1;
 
-	public static String VERSION = "p3_rmn_v5.10_10feb11_";
+	public static String VERSION = "Calcolo manuale uniformità, snr, ghosts con bobina singola";
 
 	private static String TYPE = " >> CONTROLLO UNIFORMITA'_____________";
 

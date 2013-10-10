@@ -61,7 +61,7 @@ import ij.Prefs;
 public class Sequenze_ implements PlugIn {
 	private final static int ABORT = 1;
 
-	public static String VERSION = "Sequenze_v4.10_10dec08_";
+	public static String VERSION = "Programma gestione automatica";
 
 	public int location;
 

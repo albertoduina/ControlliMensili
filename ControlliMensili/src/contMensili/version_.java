@@ -32,7 +32,7 @@ import ij.plugin.PlugIn;
  * 
  */
 public class version_ implements PlugIn {
-	public static String VERSION = "version_v4.10_10dec08_";
+	public static String VERSION = "Stampa lista";
 
 	// static Dialog mioDialogo;
 	public void run(String args) {
@@ -51,12 +51,13 @@ public class version_ implements PlugIn {
 		IJ.log("--------------------------");
 		IJ.log("Package contMensili VERSION "
 				+ new AboutBox().myImplementationVersion(this.getClass()));
-		IJ.log("--------------------------");
-		IJ.log(Sequenze_.VERSION + "                      programma principale");
-		IJ.log(p2rmn_.VERSION + "                         calcolo T1 e T2");
-		IJ.log(p3rmn_.VERSION
-				+ "                         uniformità, snr, ghost su immagini 'tonde'");
-		IJ.log(p4rmn_.VERSION + "                          calcolo mtf");
+		IJ.log("------------+--------------");
+		IJ.log("Sequenze    " + Sequenze_.VERSION);
+		IJ.log("------------+--------------");
+
+		IJ.log("p2_rmn      " + p2rmn_.VERSION);
+		IJ.log("p3_rmn      " + p3rmn_.VERSION);
+		IJ.log("p4_rmn      " + p4rmn_.VERSION);
 		IJ.log(p5rmn_.VERSION
 				+ "                          uniformità immagini 'piatte'");
 		IJ.log(p6rmn_.VERSION

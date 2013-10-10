@@ -142,7 +142,7 @@ public class p12rmn_Test {
 		double maxFitError = 5;
 		double maxBubbleGapLimit = 2;
 
-		int out2[] = p12rmn_.positionSearch11(imp11, maxFitError, maxBubbleGapLimit, "",
+		double out2[] = p12rmn_.positionSearch11(imp11, maxFitError, maxBubbleGapLimit, "",
 				autoCalled, step, demo, test, fast);
 
 		MyLog.logVector(out2, "out2");
@@ -217,10 +217,11 @@ public class p12rmn_Test {
 			// int[] out2 = p12rmn_.positionSearch12(imp11, imp13, "",
 			// autoCalled,
 			// step, verbose, test, fast);
-			int[] out2 = p12rmn_.positionSearch11(imp13, maxFitError, maxBubbleGapLimit, "",
+			
+	
+			double[] circleData = p12rmn_.positionSearch11(imp13, maxFitError, maxBubbleGapLimit, "",
 					autoCalled, step, demo, test, fast);
 			// MyLog.logVector(out2, "out2");
-			int[] circleData = out2;
 			int diamGhost = 20;
 			int guard = 10;
 			double[][] out3 = p12rmn_.positionSearch13(imp13, circleData,
@@ -249,9 +250,8 @@ public class p12rmn_Test {
 		double maxFitError = 5;
 		double maxBubbleGapLimit = 2;
 
-		int[] out2 = p12rmn_.positionSearch11(imp11, maxFitError, maxBubbleGapLimit, "",
+		double[] circleData = p12rmn_.positionSearch11(imp11, maxFitError, maxBubbleGapLimit, "",
 				autoCalled, step, demo, test, fast);
-		int[] circleData = out2;
 		int diamGhost = 20;
 		int guard = 10;
 		int[] out3 = p12rmn_.positionSearch14(imp11, circleData, diamGhost,

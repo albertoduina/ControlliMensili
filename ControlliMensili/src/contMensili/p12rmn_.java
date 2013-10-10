@@ -363,6 +363,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		boolean accetta = false;
 		ResultsTable rt = null;
 		Toolkit tk = Toolkit.getDefaultToolkit();
+		ImageWindow iw1 = null;
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		// double angle = Double.NaN;
@@ -422,9 +423,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 		do {
 			// ===============================================
 			ImagePlus imp11 = null;
-			if (demo)
+			if (demo) {
 				imp11 = UtilAyv.openImageMaximized(path1);
-			else
+				ImageUtils.imageToFront(imp11);
+			} else
 				imp11 = UtilAyv.openImageNoDisplay(path1, true);
 			if (imp11 == null)
 				MyLog.waitHere("Non trovato il file " + path1);
@@ -432,7 +434,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			if (imp13 == null)
 				MyLog.waitHere("Non trovato il file " + path2);
 
-			int out2[] = positionSearch11(imp11, maxFitError,
+			double out2[] = positionSearch11(imp11, maxFitError,
 					maxBubbleGapLimit, info10, autoCalled, step, demo, test,
 					fast);
 			if (out2 == null) {
@@ -445,14 +447,14 @@ public class p12rmn_ implements PlugIn, Measurements {
 			over11.setStrokeColor(Color.red);
 			imp11.setOverlay(over11);
 			// ---------------------------------
-			int xCenterCircle = out2[0];
-			int yCenterCircle = out2[1];
-			int diamCircle = out2[2];
-			int xCenter80 = out2[3];
-			int yCenter80 = out2[4];
-			int diam80 = out2[5];
+			int xCenterCircle = (int) out2[0];
+			int yCenterCircle = (int) out2[1];
+			int diamCircle = (int) out2[2];
+			int xCenter80 = (int) out2[3];
+			int yCenter80 = (int) out2[4];
+			int diam80 = (int) out2[5];
 			// =========================================
-			int[] circleData = out2;
+			double[] circleData = out2;
 			int diamGhost = 20;
 			int guard = 10;
 			double[][] out3 = p12rmn_.positionSearch13(imp11, circleData,
@@ -584,9 +586,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 			over1.addElement(imp1.getRoi());
 			// MyLog.waitHere("cerchio esterno rosso");
 
-			int xRoi2 = out2[3];
-			int yRoi2 = out2[4];
-			int diamRoi2 = out2[5];
+			int xRoi2 = (int) out2[3];
+			int yRoi2 = (int) out2[4];
+			int diamRoi2 = (int) out2[5];
 			// ---------------------------------
 			// Visualizzo sull'immagine il posizionamento che verrà utilizzato
 			// MROI in verde
@@ -676,11 +678,13 @@ public class p12rmn_ implements PlugIn, Measurements {
 			if (demo)
 				UtilAyv.autoAdjust(imp1, imp1.getProcessor());
 
-			ImageWindow iw1 = imp1.getWindow();
-			if (iw1 != null) {
-				WindowManager.setCurrentWindow(iw1);
-				WindowManager.setWindow(iw1);
-			}
+			iw1 = imp1.getWindow();
+			ImageUtils.imageToFront(imp1);
+			//
+			// if (iw1 != null) {
+			// WindowManager.setCurrentWindow(iw1);
+			// WindowManager.setWindow(iw1);
+			// }
 
 			// ---------------------------------
 			// Visualizzo sull'immagine il posizionamento che verrà utilizzato
@@ -795,6 +799,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 					mean1);
 
 			if (demo) {
+				ImageUtils.imageToFront(imp1);
+
 				MyLog.waitHere(
 						listaMessaggi(50) + "  ghostPerc1= "
 								+ UtilAyv.printDoubleDecimals(ghostPerc1, 4)
@@ -1960,9 +1966,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 *            true se in modo batch
 	 * @return
 	 */
-	public static int[] positionSearch11(ImagePlus imp11, double maxFitError,
-			double maxBubbleGapLimit, String info1, boolean autoCalled,
-			boolean step, boolean demo, boolean test, boolean fast) {
+	public static double[] positionSearch11(ImagePlus imp11,
+			double maxFitError, double maxBubbleGapLimit, String info1,
+			boolean autoCalled, boolean step, boolean demo, boolean test,
+			boolean fast) {
 		//
 		// ================================================================================
 		// Inizio calcoli geometrici
@@ -1996,7 +2003,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		ImageWindow iw12 = null;
 		if (demo) {
 			iw11 = imp11.getWindow();
-			MyLog.waitHere("iw11= " + iw11);
 		}
 
 		Overlay over12 = new Overlay();
@@ -2026,8 +2032,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 			UtilAyv.showImageMaximized(imp12);
 			MyLog.waitHere(listaMessaggi(1), debug);
 			iw12 = imp12.getWindow();
-			MyLog.waitHere("iw12= " + iw12);
-
 		}
 
 		double[][] peaks1 = new double[4][1];
@@ -2240,48 +2244,49 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int j1 = -1;
 
 		if (demo)
-			MyLog.waitHere(listaMessaggi(4), debug);
+			MyLog.waitHere(listaMessaggi(14), debug);
 		// della bisettice orizzontale prendo solo il picco di dx
 		if (npeaks1 == 1) {
 			j1++;
-			xPoints3[j1] = (int) (peaks1[2][1]);
-			yPoints3[j1] = (int) (peaks1[3][1]);
+			xPoints3[j1] = (int) (peaks1[3][1]);
+			yPoints3[j1] = (int) (peaks1[4][1]);
 		}
+
 		// della bisettice verticale prendo solo il picco in basso
 		if (npeaks2 == 1) {
 			j1++;
-			xPoints3[j1] = (int) (peaks2[2][1]);
-			yPoints3[j1] = (int) (peaks2[3][1]);
+			xPoints3[j1] = (int) (peaks2[3][1]);
+			yPoints3[j1] = (int) (peaks2[4][1]);
 		}
 		for (int i1 = 0; i1 < npeaks3; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks3[2][i1]);
-			yPoints3[j1] = (int) (peaks3[3][i1]);
+			xPoints3[j1] = (int) (peaks3[3][i1]);
+			yPoints3[j1] = (int) (peaks3[4][i1]);
 		}
 		for (int i1 = 0; i1 < npeaks4; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks4[2][i1]);
-			yPoints3[j1] = (int) (peaks4[3][i1]);
+			xPoints3[j1] = (int) (peaks4[3][i1]);
+			yPoints3[j1] = (int) (peaks4[4][i1]);
 		}
 		for (int i1 = 0; i1 < npeaks5; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks5[2][i1]);
-			yPoints3[j1] = (int) (peaks5[3][i1]);
+			xPoints3[j1] = (int) (peaks5[3][i1]);
+			yPoints3[j1] = (int) (peaks5[4][i1]);
 		}
 		for (int i1 = 0; i1 < npeaks6; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks6[2][i1]);
-			yPoints3[j1] = (int) (peaks6[3][i1]);
+			xPoints3[j1] = (int) (peaks6[3][i1]);
+			yPoints3[j1] = (int) (peaks6[4][i1]);
 		}
 		for (int i1 = 0; i1 < npeaks7; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks7[2][i1]);
-			yPoints3[j1] = (int) (peaks7[3][i1]);
+			xPoints3[j1] = (int) (peaks7[3][i1]);
+			yPoints3[j1] = (int) (peaks7[4][i1]);
 		}
 		for (int i1 = 0; i1 < npeaks8; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks8[2][i1]);
-			yPoints3[j1] = (int) (peaks8[3][i1]);
+			xPoints3[j1] = (int) (peaks8[3][i1]);
+			yPoints3[j1] = (int) (peaks8[4][i1]);
 		}
 		over12.clear();
 
@@ -2580,7 +2585,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		}
 
 		imp12.close();
-		int[] out2 = new int[6];
+		double[] out2 = new double[6];
 		out2[0] = xCenterCircle;
 		out2[1] = yCenterCircle;
 		out2[2] = diamCircle;
@@ -2595,9 +2600,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 * 
 	 */
 
-	public static double[][] positionSearch13(ImagePlus imp1, int[] circleData,
-			int diamGhost, int guard, String info1, boolean autoCalled,
-			boolean step, boolean demo, boolean test, boolean fast) {
+	public static double[][] positionSearch13(ImagePlus imp1,
+			double[] circleData, int diamGhost, int guard, String info1,
+			boolean autoCalled, boolean step, boolean demo, boolean test,
+			boolean fast) {
 
 		// leggo i dati del cerchio "esterno" del fantoccio e li plotto
 		// sull'immagine
@@ -2620,9 +2626,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int width = imp1.getWidth();
 		int height = imp1.getHeight();
 
-		int xCenterCircle = circleData[0];
-		int yCenterCircle = circleData[1];
-		int diamCircle = circleData[2];
+		int xCenterCircle = (int) circleData[0];
+		int yCenterCircle = (int) circleData[1];
+		int diamCircle = (int) circleData[2];
 		// MyLog.waitHere("xCenterCircle= " + xCenterCircle + " yCenterCircle= "
 		// + yCenterCircle + " diamCircle=" + diamCircle);
 
@@ -2844,7 +2850,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		return out1;
 	}
 
-	public static int[] positionSearch14(ImagePlus imp1, int[] circleData,
+	public static int[] positionSearch14(ImagePlus imp1, double[] circleData,
 			int diamGhost, int guard, String info1, boolean autoCalled,
 			boolean step, boolean demo, boolean test, boolean fast,
 			boolean irraggiungibile) {
@@ -2869,9 +2875,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int width = imp1.getWidth();
 		int height = imp1.getHeight();
 
-		int xCenterCircle = circleData[0];
-		int yCenterCircle = circleData[1];
-		int diamCircle = circleData[2];
+		int xCenterCircle = (int) circleData[0];
+		int yCenterCircle = (int) circleData[1];
+		int diamCircle = (int) circleData[2];
 
 		// disegno il perimetro del fantoccio
 		int xRoi0 = xCenterCircle - diamCircle / 2;
@@ -2882,7 +2888,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (demo) {
 			UtilAyv.showImageMaximized(imp2);
 			iw2 = imp2.getWindow();
-			MyLog.waitHere("iw2= " + iw2);
 			// MyLog.waitHere(listaMessaggi(30), debug);
 		}
 
@@ -3004,8 +3009,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		if (demo) {
 			over2.addElement(imp1.getRoi());
-//			IJ.setMinAndMax(imp1, 10, 30);
-//			UtilAyv.showImageMaximized2(imp1);
+			// IJ.setMinAndMax(imp1, 10, 30);
+			// UtilAyv.showImageMaximized2(imp1);
 		}
 		ImageProcessor ip1 = imp1.getProcessor();
 		Roi roi1 = imp1.getRoi();
@@ -3412,7 +3417,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				+ "le due immagini, l'immagine risultante è costituita da rumore \n"
 				+ "più eventuali artefatti";
 		lista[42] = "Il calcolo del rumore viene effettuato sulla immagine differenza, \n"
-				+ "nell'area uguale a MROI, evidenziata in verde, si indica con SD la \n"
+				+ "nell'area uguale a MROI, evidenziata in rosso, si indica con SD la \n"
 				+ "Deviazione Standard di questa area SD1 = ";
 		lista[43] = "Utilizzando la media del segnale sulla MROI evidenziata in verde \n"
 				+ "sulla prima immagine e la deviazione standard di una identica roi evidenziata \n"

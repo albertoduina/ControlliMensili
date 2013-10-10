@@ -475,28 +475,36 @@ public class p11rmn_ implements PlugIn, Measurements {
 				ImageStatistics stat1 = imp1.getStatistics();
 				double signal1 = stat1.mean;
 
-				// TODO bisogna cambiare MyConst.P11_X_ROI_BACKGROUND in modo da
-				// sottrarla a imp.getWidth(), questo per fare in modo che vada
-				// bene con tutte le matrici
-
-				int xFondo = MyConst.P11_X_ROI_BACKGROUND;
-				int yFondo = MyConst.P11_Y_ROI_BACKGROUND + 5;
+				double xFondo = imp1.getWidth() - MyConst.P11_X_ROI_BACKGROUND;
+				double yFondo = MyConst.P11_Y_ROI_BACKGROUND + 5;
 				boolean irraggiungibile = false;
-				int diamGhost = MyConst.P11_DIAM_ROI_BACKGROUND;
+				int diamBkg = MyConst.P11_DIAM_ROI_BACKGROUND;
 				int guard = 10;
 				boolean demo = false;
+				boolean circle = false;
+				double[] circleData=null;
+				int mode=1;
 
-				int[] backPos = positionSearch14(imp1, diamGhost, guard,
-						info10, autoCalled, step, demo, test, fast,
-						irraggiungibile);
-				xFondo = backPos[0] - diamGhost / 2;
-				yFondo = backPos[1] - diamGhost / 2;
+				double[] backPos = UtilAyv.positionSearch15(imp1, circleData ,xFondo, yFondo,
+						diamBkg, guard, mode, info10, circle, autoCalled, step, demo,
+						test, fast, irraggiungibile);
+				
+				
+				
+//				public static double[] positionSearch15(ImagePlus imp1, double[] circleData,
+//						double xBkg, double yBkg, double diamBkg, int guard, int mode, String info1,
+//						boolean circle, boolean autoCalled, boolean step, boolean demo,
+//						boolean test, boolean fast, boolean irraggiungibile) {
+
+				
+				xFondo = backPos[0] - diamBkg / 2;
+				yFondo = backPos[1] - diamBkg / 2;
 
 				//
 				// disegno RoiFondo su imp1
 				//
 
-				ImageStatistics statBkg = UtilAyv.backCalc2(xFondo, yFondo,
+				ImageStatistics statBkg = UtilAyv.backCalc2((int) xFondo,(int) yFondo,
 						MyConst.P11_DIAM_ROI_BACKGROUND, imp1, step, false,
 						test);
 
@@ -506,7 +514,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				// over2.addElement(imp1.getRoi());
 				// over2.setStrokeColor(color2);
 
-				// TODO
+				//
 				// =============PROVVISORIO=====================================
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(color2);
@@ -754,7 +762,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				rt.addLabel(t1, "Rumore_Fondo");
 
 				// =================================================
-				// TODO ERRATO, QUI BISOGNA STAMPARE OUT1[1] ANZICHE'
+				// ERRATO, QUI BISOGNA STAMPARE OUT1[1] ANZICHE'
 				// STATFONDO.MEAN
 				// rt.addValue(2, statFondo.mean);
 				rt.addValue(2, (out1[1] / Math.sqrt(2)));
@@ -1475,7 +1483,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 	public static int decodeDirezione(String in1) {
 		int out = 0;
 
-		// TODO
 		if (in1.compareToIgnoreCase("x") == 0)
 			out = 0;
 
@@ -1550,13 +1557,13 @@ public class p11rmn_ implements PlugIn, Measurements {
 		if (direzione != 0 && direzione != direzioneTabella) {
 			MyLog.waitHere("rilevata differenza tra directionFinder e direzioneTabella direzione= "
 					+ direzione + " direzioneTabella= " + direzioneTabella);
-			manualRequired=true;
-			direzione=direzioneTabella;
+			manualRequired = true;
+			direzione = direzioneTabella;
 
 		}
 
 		if (direzione == 0) {
-			manualRequired=true;
+			manualRequired = true;
 			direzione = direzioneTabella;
 			// manualRequired = true;
 			// MyLog.waitHere("per direzione=0 adotto direzioneTabella= "
@@ -1579,16 +1586,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double startY = Double.NaN;
 		double endX = Double.NaN;
 		double endY = Double.NaN;
-
-		// TODO cercare di eliminare il problema delle imnmagini col
-		// ribaltamento.
-		// ci sono 2 possibilità:
-		// 1) sfruttare il fatto che conosciamo la direzione in cui muoverci,
-		// per cui possiamo riprendere dall'altro lato dell'immagine
-		// 2) richiedere un intervento manuale per il posizionamento (in questo
-		// modo l'operatore può addirittura venire invitato a modificare i
-		// parametri di acquisizione)
-		//
 
 		String strDirez = "";
 		double ax = Double.NaN;
@@ -2354,82 +2351,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		return false;
 	}
 
-	public static boolean verifyBackgroundSquareRoiMean(ImagePlus imp1,
-			int xRoi, int yRoi, int diamRoi, boolean test, boolean demo) {
-
-		imp1.setRoi(xRoi - diamRoi / 2, yRoi - diamRoi / 2, diamRoi, diamRoi);
-		ImageStatistics stat1 = imp1.getStatistics();
-		double mean1 = stat1.mean;
-		if (mean1 > 0)
-			return false;
-		return true;
-	}
-
-	public static int[] positionSearch14(ImagePlus imp1, int diamGhost,
-			int guard, String info1, boolean autoCalled, boolean step,
-			boolean demo, boolean test, boolean fast, boolean irraggiungibile) {
-
-		boolean debug = true;
-
-		Overlay over2 = new Overlay();
-		over2.setStrokeColor(Color.red);
-		imp1.deleteRoi();
-
-		ImagePlus imp2 = imp1.duplicate();
-		imp2.setOverlay(over2);
-		if (demo) {
-			IJ.setMinAndMax(imp2, 10, 50);
-		}
-
-		int width = imp1.getWidth();
-		int height = imp1.getHeight();
-		if (demo) {
-			UtilAyv.showImageMaximized(imp2);
-			// MyLog.waitHere(listaMessaggi(30), debug);
-		}
-
-		int a = 0;
-		if (irraggiungibile) {
-			MyLog.waitHere("impostato irraggiungibile");
-			a = 1;
-		}
-		int px = 0;
-		int py = 0;
-		int incr = 0;
-		boolean pieno = false;
-		int xcentGhost = 0;
-		int ycentGhost = 0;
-
-		do {
-			incr++;
-			px = MyConst.P11_X_ROI_BACKGROUND;
-			py = MyConst.P11_Y_ROI_BACKGROUND + incr;
-			xcentGhost = px + diamGhost / 2;
-			ycentGhost = py + diamGhost / 2;
-			// imp2.setRoi(new OvalRoi(px, py, diamGhost, diamGhost));
-			pieno = verifyBackgroundSquareRoiMean(imp2, xcentGhost, ycentGhost,
-					diamGhost, test, demo);
-
-		} while ((pieno || a > 0) && (ycentGhost + diamGhost < height));
-
-		if (incr > 1) {
-			UtilAyv.showImageMaximized(imp2);
-			imp2.setRoi(px, py, diamGhost, diamGhost);
-			MyLog.waitHere("spostata la posizione del fondo incr=" + incr);
-		}
-
-		if (demo) {
-			MyLog.waitHere(listaMessaggi(2), debug);
-		}
-		imp2.close();
-		int[] out1 = new int[3];
-		out1[0] = xcentGhost;
-		out1[1] = ycentGhost;
-		out1[2] = diamGhost;
-
-		return out1;
-	}
-
 	/**
 	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo è
 	 * facilitata la eventuale modifica / traduzione dei messaggi.
@@ -2442,7 +2363,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		// ---------+-----------------------------------------------------------+
 		lista[0] = "Verifica E/O modifica manuale posizione ROI";
 		lista[1] = "Verificare immagine, accrescimento MROI in corso";
-		lista[2] = "Evidenziata la posizione per il calcolo del fondo";
+		lista[2] = "messaggio 2";
 
 		// ---------+-----------------------------------------------------------+
 		String out = lista[select];

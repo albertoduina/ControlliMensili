@@ -62,7 +62,7 @@ import utils.UtilAyv;
 
 public class p4rmn_ implements PlugIn, Measurements {
 
-	public static String VERSION = "p4_rmn_v5.10_10feb11_";
+	public static String VERSION = "Calcolo MTF";
 
 	private static String TYPE = " >> CONTROLLO MTF_____________________";
 
