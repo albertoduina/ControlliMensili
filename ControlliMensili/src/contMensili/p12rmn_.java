@@ -113,11 +113,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 */
 	private static String fileDir = "";
 
-	private static boolean previous = false;
-	private static boolean init1 = true;
-	@SuppressWarnings("unused")
-	private static boolean pulse = false; // lasciare, serve anche se segnalato
-											// inutilizzato
 	private static final boolean debug = true;
 
 	public void run(String args) {
@@ -1243,88 +1238,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		return y2;
 	}
 
-	/***
-	 * Copied from http://billauer.co.il/peakdet.htm Peak Detection using MATLAB
-	 * Author: Eli Billauer
-	 * 
-	 * @param profile
-	 * @param delta
-	 * @return
-	 */
-	public static ArrayList<ArrayList<Double>> peakDet(double[][] profile,
-			double delta) {
-
-		double max = Double.MIN_VALUE;
-		double min = Double.MAX_VALUE;
-		ArrayList<ArrayList<Double>> matout = new ArrayList<ArrayList<Double>>();
-
-		ArrayList<Double> maxtabx = new ArrayList<Double>();
-		ArrayList<Double> maxtaby = new ArrayList<Double>();
-		ArrayList<Double> mintabx = new ArrayList<Double>();
-		ArrayList<Double> mintaby = new ArrayList<Double>();
-
-		double[] vetx = new double[profile.length];
-		double[] vety = new double[profile.length];
-		for (int i1 = 0; i1 < profile.length; i1++) {
-			vetx[i1] = profile[i1][0];
-			vety[i1] = profile[i1][1];
-		}
-		double maxpos = -1.0;
-		double minpos = -1.0;
-		boolean lookformax = true;
-
-		for (int i1 = 0; i1 < vety.length; i1++) {
-			double valy = vety[i1];
-			if (valy > max) {
-				max = valy;
-				maxpos = vetx[i1];
-			}
-			if (valy < min) {
-				min = valy;
-				minpos = vetx[i1];
-			}
-			stateChange(lookformax);
-
-			if (lookformax) {
-				if (valy < max - delta) {
-					maxtabx.add((Double) maxpos);
-					maxtaby.add((Double) max);
-					min = valy;
-					minpos = vetx[i1];
-					lookformax = false;
-				}
-			} else {
-				if (valy > min + delta) {
-					mintabx.add((Double) minpos);
-					mintaby.add((Double) min);
-					max = valy;
-					maxpos = vetx[i1];
-					lookformax = true;
-				}
-			}
-
-		}
-		matout.add(mintabx);
-		matout.add(mintaby);
-		matout.add(maxtabx);
-		matout.add(maxtaby);
-
-		return matout;
-	}
-
-	/***
-	 * Impulso al fronte di salita
-	 * 
-	 * @param input
-	 */
-	public static void stateChange(boolean input) {
-		pulse = false;
-		if ((input != previous) && !init1)
-			pulse = true;
-		init1 = false;
-		return;
-
-	}
 
 	public static Double toDouble(double in) {
 		Double out = new Double(in);
@@ -1373,19 +1286,22 @@ public class p12rmn_ implements PlugIn, Measurements {
 			return null;
 		}
 
-		// peaks1 viene utilizzato in un altra routine, per cui gli elementi 0
-		// ed 1 sono utilizzati per altro, li lascio a 0
-		double[][] peaks1 = new double[4][count1];
+		// peaks1 viene utilizzato in un altra routine, per cui gli elementi 0, 1 e
+		// ed 2 sono utilizzati per altro, li lascio a 0
+		double[][] peaks1 = new double[6][count1];
 
 		int count2 = 0;
 		boolean ready2 = false;
 		double max2 = 0;
+		
 		for (int i1 = 0; i1 < line1[0].length; i1++) {
 
 			if (line1[2][i1] > max2) {
-				peaks1[2][count2] = line1[0][i1];
-				peaks1[3][count2] = line1[1][i1];
+				peaks1[3][count2] = line1[0][i1];
+				peaks1[4][count2] = line1[1][i1];
 				max2 = line1[2][i1];
+				peaks1[5][count2] = max2;
+
 				ready2 = true;
 			}
 			if ((line1[2][i1] == 0) && ready2) {
@@ -1466,7 +1382,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			profi3[i1][0] = profi2x[i1];
 			profi3[i1][1] = profi2y[i1];
 		}
-		ArrayList<ArrayList<Double>> matOut = peakDet(profi3, 100.);
+		ArrayList<ArrayList<Double>> matOut = ImageUtils.peakDet2(profi3, 100.);
 		double[][] peaks1 = new InputOutput()
 				.fromArrayListToDoubleTable(matOut);
 
@@ -1494,457 +1410,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 		return peaks1;
 	}
 
-	/***
-	 * Questo è il fitCircle preso da ImageJ (ij.plugins.Selection.java, con
-	 * sostituito imp.setRoi a IJ.makeOval
-	 * 
-	 * if selection is closed shape, create a circle with the same area and
-	 * centroid, otherwise use<br>
-	 * the Pratt method to fit a circle to the points that define the line or
-	 * multi-point selection.<br>
-	 * Reference: Pratt V., Direct least-squares fitting of algebraic surfaces",
-	 * Computer Graphics, Vol. 21, pages 145-152 (1987).<br>
-	 * Original code: Nikolai Chernov's MATLAB script for Newton-based Pratt
-	 * fit.<br>
-	 * (http://www.math.uab.edu/~chernov/cl/MATLABcircle.html)<br>
-	 * Java version:
-	 * https://github.com/mdoube/BoneJ/blob/master/src/org/doube/geometry
-	 * /FitCircle.java<br>
-	 * 
-	 * authors: Nikolai Chernov, Michael Doube, Ved Sharma
-	 */
-	public static void fitCircle(ImagePlus imp) {
-		Roi roi = imp.getRoi();
+	
 
-		if (roi == null) {
-			IJ.error("Fit Circle", "Selection required");
-			return;
-		}
-
-		if (roi.isArea()) { // create circle with the same area and centroid
-			ImageProcessor ip = imp.getProcessor();
-			ip.setRoi(roi);
-			ImageStatistics stats = ImageStatistics.getStatistics(ip,
-					Measurements.AREA + Measurements.CENTROID, null);
-			double r = Math.sqrt(stats.pixelCount / Math.PI);
-			imp.killRoi();
-			int d = (int) Math.round(2.0 * r);
-			imp.setRoi(new OvalRoi((int) Math.round(stats.xCentroid - r),
-					(int) Math.round(stats.yCentroid - r), d, d));
-
-			// IJ.makeOval((int) Math.round(stats.xCentroid - r),
-			// (int) Math.round(stats.yCentroid - r), d, d);
-			return;
-		}
-
-		Polygon poly = roi.getPolygon();
-		int n = poly.npoints;
-		int[] x = poly.xpoints;
-		int[] y = poly.ypoints;
-		if (n < 3) {
-			IJ.error("Fit Circle",
-					"At least 3 points are required to fit a circle.");
-			return;
-		}
-
-		// calculate point centroid
-		double sumx = 0, sumy = 0;
-		for (int i = 0; i < n; i++) {
-			sumx = sumx + poly.xpoints[i];
-			sumy = sumy + poly.ypoints[i];
-		}
-		double meanx = sumx / n;
-		double meany = sumy / n;
-
-		// calculate moments
-		double[] X = new double[n], Y = new double[n];
-		double Mxx = 0, Myy = 0, Mxy = 0, Mxz = 0, Myz = 0, Mzz = 0;
-		for (int i = 0; i < n; i++) {
-			X[i] = x[i] - meanx;
-			Y[i] = y[i] - meany;
-			double Zi = X[i] * X[i] + Y[i] * Y[i];
-			Mxy = Mxy + X[i] * Y[i];
-			Mxx = Mxx + X[i] * X[i];
-			Myy = Myy + Y[i] * Y[i];
-			Mxz = Mxz + X[i] * Zi;
-			Myz = Myz + Y[i] * Zi;
-			Mzz = Mzz + Zi * Zi;
-		}
-		Mxx = Mxx / n;
-		Myy = Myy / n;
-		Mxy = Mxy / n;
-		Mxz = Mxz / n;
-		Myz = Myz / n;
-		Mzz = Mzz / n;
-
-		// calculate the coefficients of the characteristic polynomial
-		double Mz = Mxx + Myy;
-		double Cov_xy = Mxx * Myy - Mxy * Mxy;
-		double Mxz2 = Mxz * Mxz;
-		double Myz2 = Myz * Myz;
-		double A2 = 4 * Cov_xy - 3 * Mz * Mz - Mzz;
-		double A1 = Mzz * Mz + 4 * Cov_xy * Mz - Mxz2 - Myz2 - Mz * Mz * Mz;
-		double A0 = Mxz2 * Myy + Myz2 * Mxx - Mzz * Cov_xy - 2 * Mxz * Myz
-				* Mxy + Mz * Mz * Cov_xy;
-		double A22 = A2 + A2;
-		double epsilon = 1e-12;
-		double ynew = 1e+20;
-		int IterMax = 20;
-		double xnew = 0;
-		int iterations = 0;
-
-		// Newton's method starting at x=0
-		for (int iter = 1; iter <= IterMax; iter++) {
-			iterations = iter;
-			double yold = ynew;
-			ynew = A0 + xnew * (A1 + xnew * (A2 + 4. * xnew * xnew));
-			if (Math.abs(ynew) > Math.abs(yold)) {
-				if (IJ.debugMode)
-					IJ.log("Fit Circle: wrong direction: |ynew| > |yold|");
-				xnew = 0;
-				break;
-			}
-			double Dy = A1 + xnew * (A22 + 16 * xnew * xnew);
-			double xold = xnew;
-			xnew = xold - ynew / Dy;
-			if (Math.abs((xnew - xold) / xnew) < epsilon)
-				break;
-			if (iter >= IterMax) {
-				if (IJ.debugMode)
-					IJ.log("Fit Circle: will not converge");
-				xnew = 0;
-			}
-			if (xnew < 0) {
-				if (IJ.debugMode)
-					IJ.log("Fit Circle: negative root:  x = " + xnew);
-				xnew = 0;
-			}
-		}
-		if (IJ.debugMode)
-			IJ.log("Fit Circle: n=" + n + ", xnew=" + IJ.d2s(xnew, 2)
-					+ ", iterations=" + iterations);
-
-		// calculate the circle parameters
-		double DET = xnew * xnew - xnew * Mz + Cov_xy;
-		double CenterX = (Mxz * (Myy - xnew) - Myz * Mxy) / (2 * DET);
-		double CenterY = (Myz * (Mxx - xnew) - Mxz * Mxy) / (2 * DET);
-		double radius = Math.sqrt(CenterX * CenterX + CenterY * CenterY + Mz
-				+ 2 * xnew);
-		if (Double.isNaN(radius)) {
-			IJ.error("Fit Circle", "Points are collinear.");
-			return;
-		}
-
-		CenterX = CenterX + meanx;
-		CenterY = CenterY + meany;
-		imp.killRoi();
-
-		// messo imp.setRoi anzichè IJ.makeOval perchè permette di non mostrare
-		// l'immagine
-		imp.setRoi(new OvalRoi((int) Math.round(CenterX - radius), (int) Math
-				.round(CenterY - radius), (int) Math.round(2 * radius),
-				(int) Math.round(2 * radius)));
-	}
-
-	/***
-	 * Liang-Barsky function by Daniel White
-	 * http://www.skytopia.com/project/articles/compsci/clipping.html .This
-	 * function inputs 8 numbers, and outputs 4 new numbers (plus a boolean
-	 * value to say whether the clipped line is drawn at all). //
-	 * 
-	 * @param edgeLeft
-	 *            lato sinistro, coordinata minima x = 0
-	 * @param edgeRight
-	 *            lato destro, coordinata max x = width
-	 * @param edgeBottom
-	 *            lato inferiore, coordinata max y = height
-	 * @param edgeTop
-	 *            lato superiore, coordinata minima y = 0
-	 * @param x0src
-	 *            punto iniziale segmento
-	 * @param y0src
-	 *            punto iniziale segmento
-	 * @param x1src
-	 *            punto finale segmento
-	 * @param y1src
-	 *            punto finale segmento
-	 * @return
-	 */
-	public static double[] liangBarsky(double edgeLeft, double edgeRight,
-			double edgeBottom, double edgeTop, double x0src, double y0src,
-			double x1src, double y1src) {
-
-		double t0 = 0.0;
-		double t1 = 1.0;
-		double xdelta = x1src - x0src;
-		double ydelta = y1src - y0src;
-		double p = 0;
-		double q = 0;
-		double r = 0;
-		double[] clips = new double[4];
-
-		for (int edge = 0; edge < 4; edge++) { // Traverse through left, right,
-												// bottom, top edges.
-			if (edge == 0) {
-				p = -xdelta;
-				q = -(edgeLeft - x0src);
-			}
-			if (edge == 1) {
-				p = xdelta;
-				q = (edgeRight - x0src);
-			}
-			if (edge == 2) {
-				p = -ydelta;
-				q = -(edgeBottom - y0src);
-			}
-			if (edge == 3) {
-				p = ydelta;
-				q = (edgeTop - y0src);
-			}
-			r = q / p;
-			if (p == 0 && q < 0) {
-				IJ.log("null 001");
-				return null; // Don't draw line at all. (parallel line outside)
-			}
-			if (p < 0) {
-				if (r > t1) {
-					IJ.log("null 002");
-					return null; // Don't draw line at all.
-				} else if (r > t0)
-					t0 = r; // Line is clipped!
-			} else if (p > 0) {
-				if (r < t0) {
-					IJ.log("null 003");
-					return null; // Don't draw line at all.
-				} else if (r < t1)
-					t1 = r; // Line is clipped!
-			}
-		}
-
-		double x0clip = x0src + t0 * xdelta;
-		double y0clip = y0src + t0 * ydelta;
-		double x1clip = x0src + t1 * xdelta;
-		double y1clip = y0src + t1 * ydelta;
-
-		clips[0] = x0clip;
-		clips[1] = y0clip;
-		clips[2] = x1clip;
-		clips[3] = y1clip;
-
-		return clips;
-	}
-
-	/**
-	 * Trasformazione delle coordinate dei punti in equazione esplicita della
-	 * retta
-	 * 
-	 * @param x0
-	 *            coordinata X inizio
-	 * @param y0
-	 *            coordinata Y inizio
-	 * @param x1
-	 *            coordinata X fine
-	 * @param y1
-	 *            coordinata Y fine
-	 * @return vettore con parametri equazione
-	 */
-	public static double[] fromPointsToEquLineExplicit(double x0, double y0,
-			double x1, double y1) {
-		// la formula esplicita è y = mx + b
-		// in cui m è detta anche slope (pendenza) e b intercept (intercetta)
-		// non può rappresentare rette verticali
-		double[] out = new double[2];
-
-		double m = (y1 - y0) / (x1 - x0);
-
-		double b = y0 - m * x0;
-
-		out[0] = m;
-		out[1] = b;
-		return out;
-	}
-
-	/**
-	 * Trasformazione delle coordinate dei punti in equazione implicita della
-	 * retta
-	 * 
-	 * @param x0
-	 *            coordinata X inizio
-	 * @param y0
-	 *            coordinata Y inizio
-	 * @param x1
-	 *            coordinata X fine
-	 * @param y1
-	 *            coordinata Y fine
-	 * @return vettore con parametri equazione
-	 */
-	public static double[] fromPointsToEquLineImplicit(double x0, double y0,
-			double x1, double y1) {
-		// la formula implicita è ax + by + c = 0
-		double[] out = new double[3];
-
-		double a = y0 - y1;
-		double b = x1 - x0;
-		double c = x0 * y1 - x1 * y0;
-
-		out[0] = a;
-		out[1] = b;
-		out[2] = c;
-
-		return out;
-	}
-
-	/**
-	 * Determinazione dei crossing points tra la retta della prosecuzione di un
-	 * segmento ed i lati del frame. ATTENZIONE: si limita a trovare i punti di
-	 * crossing, non li mette in ordine
-	 * 
-	 * @param x0
-	 *            coordinata X inizio
-	 * @param y0
-	 *            coordinata Y inizio
-	 * @param x1
-	 *            coordinata X fine
-	 * @param y1
-	 *            coordinata Y fine
-	 * @param width
-	 *            larghezza immagine
-	 * @param height
-	 *            altezza immagine
-	 * @return vettore con coordinate clipping points
-	 */
-	public static double[] crossing(double x0, double y0, double x1, double y1,
-			double width, double height) {
-
-		double[] out1 = fromPointsToEquLineImplicit(x0, y0, x1, y1);
-
-		// in out1 ottengo i valori di a,b,c da sostituire nella equazione
-		// implicita della retta, nella forma ax+by+c=0
-
-		// determinazione dei crossing points, in questi punti io conosco la x,
-		// per i lati verticali e la y per gli orizzontali
-
-		double tolerance = 1e-6;
-		double a = out1[0];
-		double b = out1[1];
-		double c = out1[2];
-
-		double x;
-		double y;
-		boolean upperLeftVertex = false;
-		boolean upperRightVertex = false;
-		boolean lowerLeftVertex = false;
-		boolean lowerRightVertex = false;
-
-		// MyLog.waitHere("a= " + a + " b= " + b + " c= " + c + " width= " +
-		// width
-		// + " height= " + height);
-
-		double[] clippingPoints = new double[4];
-		int count = 0;
-
-		// ora andrò a calcolare il crossing per i vari lati dell'immagine. Mi
-		// aspetto di avere due soli crossing. Esiste però un eccezione è il
-		// caso particolare in cui il crossing avviene esattamente su di un
-		// angolo dell'immagine: in tal caso avrò che is between mi darà il
-		// crossing sia per il lato orizzontale che per il lato verticale, per
-		// cui mi troverò con 3 crossing. Nel caso ancora più particolare di una
-		// diagonale del quadrato mi troverò con quattro cfrossing, anzichè due.
-		// ed io devo passare ad imageJ le coordinate di solo due punti.
-
-		// lato superiore
-		y = 0;
-		x = -(b * y + c) / a;
-
-		// IJ.log("lato superiore x= " + x + " y= " + y);
-
-		upperLeftVertex = UtilAyv.myTestEquals(x, 0D, tolerance);
-		upperRightVertex = UtilAyv.myTestEquals(x, width, tolerance);
-		if (isBetween(x, 0, width, tolerance)) {
-			if (count <= 2) {
-				clippingPoints[count++] = x;
-				clippingPoints[count++] = y;
-			} else {
-				MyLog.waitHere("001 ERROR count= " + count);
-				return null;
-			}
-		}
-
-		// lato inferiore
-		y = height;
-		x = -(b * y + c) / a;
-		// IJ.log("lato inferiore x= " + x + " y= " + y);
-		lowerLeftVertex = UtilAyv.myTestEquals(x, 0D, tolerance);
-		lowerRightVertex = UtilAyv.myTestEquals(x, width, tolerance);
-
-		if (isBetween(x, 0, width, tolerance)) {
-			if (count <= 2) {
-				clippingPoints[count++] = x;
-				clippingPoints[count++] = y;
-			} else {
-				MyLog.waitHere("002 ERROR count= " + count);
-				return null;
-			}
-		}
-
-		// lato sinistro
-		x = 0;
-		y = -(a * x + c) / b;
-		// IJ.log("lato sinistro x= " + x + " y= " + y);
-		if (isBetween(y, 0, height, tolerance) && (!upperLeftVertex)
-				&& (!lowerLeftVertex)) {
-			// if (isBetween(y, 0, height, tolerance)) {
-			if (count <= 2) {
-				clippingPoints[count++] = x;
-				clippingPoints[count++] = y;
-			} else {
-				MyLog.waitHere("003 ERROR count= " + count);
-				return null;
-			}
-		}
-
-		// lato destro
-		x = width;
-		y = -(a * x + c) / b;
-		// IJ.log("lato destro x= " + x + " y= " + y);
-		if (isBetween(y, 0, height, tolerance) && (!upperRightVertex)
-				&& (!lowerRightVertex)) {
-			// if (isBetween(y, 0, height, tolerance)) {
-			if (count <= 2) {
-				clippingPoints[count++] = x;
-				clippingPoints[count++] = y;
-			} else {
-				MyLog.waitHere("004 ERROR count= " + count);
-				return null;
-			}
-		}
-		return clippingPoints;
-	}
-
-	/**
-	 * Verifica se un valore è all'interno dei limiti assegnati, con una certa
-	 * tolleranza
-	 * 
-	 * @param x1
-	 *            valore calcolato
-	 * @param low
-	 *            limite inferiore
-	 * @param high
-	 *            limite superiore
-	 * @param tolerance
-	 *            tolleranza
-	 * @return true se il valore è valido (entro i limiti)
-	 */
-	public static boolean isBetween(double x1, double low, double high,
-			double tolerance) {
-
-		if (low < high) {
-			return ((x1 >= (low - tolerance)) && (x1 <= (high + tolerance)));
-		} else {
-			return ((x1 >= (high - tolerance)) && (x1 <= (low + tolerance)));
-		}
-	}
-
+	
 	/**
 	 * Ricerca posizione ROI per calcolo uniformità. Versione con Canny Edge
 	 * Detector
@@ -2069,7 +1537,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		peaks5 = cannyProfileAnalyzer(imp12, dimPixel,
 				"BISETTRICE DIAGONALE SINISTRA", demo, demo, debug);
 		if (peaks5 != null)
-			plotPoints(imp12, over12, peaks5);
+			ImageUtils.plotPoints(imp12, over12, peaks5);
 
 		// --------DIAGONALE DESTRA---------------------
 		xcoord[0] = width;
@@ -2086,7 +1554,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		peaks6 = cannyProfileAnalyzer(imp12, dimPixel,
 				"BISETTRICE DIAGONALE DESTRA", false, false, false);
 		if (peaks6 != null)
-			plotPoints(imp12, over12, peaks6);
+			ImageUtils.plotPoints(imp12, over12, peaks6);
 
 		// -------- ORIZZONTALE ---------------------
 		xcoord[0] = 0;
@@ -2106,7 +1574,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				"BISETTRICE ORIZZONTALE", showProfiles, false, false);
 		// PLOTTAGGIO PUNTI
 		if (peaks1 != null)
-			plotPoints(imp12, over12, peaks1);
+			ImageUtils.plotPoints(imp12, over12, peaks1);
 
 		// NOTA BENE: sulla bisettrice (e ricordiamoci, è la bisettrice
 		// dell'immagine) potrebbe esserci la bolla d'aria a sinistra, quindi
@@ -2130,7 +1598,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				showProfiles, false, false);
 		// PLOTTAGGIO PUNTI
 		if (peaks2 != null)
-			plotPoints(imp12, over12, peaks2);
+			ImageUtils.plotPoints(imp12, over12, peaks2);
 
 		// -------- INCERTA SX---------------------
 		xcoord[0] = width / 4;
@@ -2148,7 +1616,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				showProfiles, false, false);
 		// PLOTTAGGIO PUNTI
 		if (peaks3 != null)
-			plotPoints(imp12, over12, peaks3);
+			ImageUtils.plotPoints(imp12, over12, peaks3);
 
 		// -------- INCERTA DX---------------------
 		xcoord[0] = width * 3 / 4;
@@ -2166,7 +1634,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				showProfiles, false, false);
 		// PLOTTAGGIO PUNTI
 		if (peaks4 != null)
-			plotPoints(imp12, over12, peaks4);
+			ImageUtils.plotPoints(imp12, over12, peaks4);
 		// --------DIAGONALE DESTRA extra---------------------
 		xcoord[0] = width;
 		ycoord[0] = height * 1 / 4;
@@ -2183,7 +1651,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				"BISETTRICE DIAGONALE DESTRA EXTRA", showProfiles, false, false);
 		// PLOTTAGGIO PUNTI
 		if (peaks7 != null)
-			plotPoints(imp12, over12, peaks7);
+			ImageUtils.plotPoints(imp12, over12, peaks7);
 		// --------DIAGONALE DESTRA extra---------------------
 		xcoord[0] = 0;
 		ycoord[0] = height * 1 / 4;
@@ -2200,7 +1668,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				"BISETTRICE DIAGONALE DESTRA EXTRA", showProfiles, false, false);
 		// PLOTTAGGIO PUNTI
 		if (peaks8 != null)
-			plotPoints(imp12, over12, peaks8);
+			ImageUtils.plotPoints(imp12, over12, peaks8);
 		// --------------------------------------------
 		if (demo) {
 			MyLog.waitHere(listaMessaggi(2), debug);
@@ -2315,7 +1783,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			// eseguo ora fitCircle per trovare centro e dimensione del
 			// fantoccio
 			// ---------------------------------------------------
-			fitCircle(imp12);
+			ImageUtils.fitCircle(imp12);
 			if (demo) {
 				imp12.getRoi().setStrokeColor(Color.red);
 				over12.addElement(imp12.getRoi());
@@ -2396,12 +1864,15 @@ public class p12rmn_ implements PlugIn, Measurements {
 					"BISETTRICE VERTICALE FANTOCCIO", showProfiles, false,
 					false);
 
+//			MyLog.logMatrix(peaks9, "peaks9");
+//			MyLog.waitHere();
+			
 			// PLOTTAGGIO PUNTI
 
 			double gapVert = 0;
 			if (peaks9 != null) {
-				plotPoints(imp12, over12, peaks9);
-				gapVert = diamCircle / 2 - (yCenterCircle - peaks9[3][0]);
+				ImageUtils.plotPoints(imp12, over12, peaks9);
+				gapVert = diamCircle / 2 - (yCenterCircle - peaks9[4][0]);
 			}
 
 			// BISETTRICE ORIZZONTALE FANTOCCIO
@@ -2417,8 +1888,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			double gapOrizz = 0;
 			if (peaks10 != null) {
-				plotPoints(imp12, over12, peaks10);
-				gapOrizz = diamCircle / 2 - (xCenterCircle - peaks10[2][0]);
+				ImageUtils.plotPoints(imp12, over12, peaks10);
+				gapOrizz = diamCircle / 2 - (xCenterCircle - peaks10[3][0]);
 			}
 
 			if (demo)
@@ -2456,7 +1927,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 					"BISETTRICE VERTICALE MROI", showProfiles, false, false);
 			if (peaks11 != null) {
 				// PLOTTAGGIO PUNTI
-				plotPoints(imp12, over12, peaks11);
+				ImageUtils.plotPoints(imp12, over12, peaks11);
 			}
 
 			imp12.setRoi(new Line(0, yCenterMROI, width, yCenterMROI));
@@ -2468,7 +1939,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 					"BISETTRICE ORIZZONTALE MROI", showProfiles, false, false);
 			if (peaks12 != null) {
 				// PLOTTAGGIO PUNTI
-				plotPoints(imp12, over12, peaks12);
+				ImageUtils.plotPoints(imp12, over12, peaks12);
 			}
 
 			double d1 = maxBubbleGapLimit;
@@ -2479,13 +1950,13 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			// verticale
 			if (peaks11 != null) {
-				d1 = -(peaks11[3][0] - (yCenterMROI - diamMROI / 2));
-				d2 = peaks11[3][1] - (yCenterMROI + diamMROI / 2);
+				d1 = -(peaks11[4][0] - (yCenterMROI - diamMROI / 2));
+				d2 = peaks11[4][1] - (yCenterMROI + diamMROI / 2);
 			}
 			// orizzontale
 			if (peaks12 != null) {
-				d3 = -(peaks12[2][0] - (xCenterMROI - diamMROI / 2));
-				d4 = peaks12[2][1] - (xCenterMROI + diamMROI / 2);
+				d3 = -(peaks12[3][0] - (xCenterMROI - diamMROI / 2));
+				d4 = peaks12[3][1] - (xCenterMROI + diamMROI / 2);
 			}
 
 			dMin = Math.min(dMin, d1);
@@ -2499,7 +1970,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				// disegno il cerchio ed i punti, in modo da date un feedback
 				// grafico al messaggio di eccessivo errore da bolla d'aria
 				// -------------------------------------------------------------
-				UtilAyv.showImageMaximized(imp11);
+	//			UtilAyv.showImageMaximized(imp11);
 				over12.clear();
 				imp11.setOverlay(over12);
 				imp11.setRoi(new OvalRoi(xCenterCircle - diamCircle / 2,
@@ -3464,29 +2935,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		String out = lista[select];
 		return out;
-	}
-
-	/**
-	 * Disegna una serie di punti nell'overlay di una immagine
-	 * 
-	 * @param imp1
-	 * @param over1
-	 * @param peaks1
-	 */
-	public static void plotPoints(ImagePlus imp1, Overlay over1,
-			double[][] peaks1) {
-
-		float[] xPoints = new float[peaks1[0].length];
-		float[] yPoints = new float[peaks1[0].length];
-
-		for (int i1 = 0; i1 < peaks1[0].length; i1++) {
-			xPoints[i1] = (float) peaks1[2][i1];
-			yPoints[i1] = (float) peaks1[3][i1];
-		}
-
-		imp1.setRoi(new PointRoi(xPoints, yPoints, xPoints.length));
-		imp1.getRoi().setStrokeColor(Color.green);
-		over1.addElement(imp1.getRoi());
 	}
 
 	/**

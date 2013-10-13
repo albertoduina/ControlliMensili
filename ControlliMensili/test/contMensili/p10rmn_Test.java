@@ -260,138 +260,11 @@ public class p10rmn_Test {
 	// IJ.wait(1000);
 	// }
 
-	@Test
-	public final void testPeakDet2() {
 
-		// ATTENZIONE NECESSITA DI MODIFICHE DOVUTE AL FATTO CHE HO CAMBIATO LA
-		// STRUTTURA DELLA MATRICE
 
-		double[][] profile1 = InputOutput
-				.readDoubleMatrixFromFile((new InputOutput()
-						.findResource("/BADProfile.txt")));
-		double delta = 100.0;
-		new p10rmn_();
-		ArrayList<ArrayList<Double>> matOut = p10rmn_.peakDet2(profile1, delta);
-		double[][] out = new InputOutput().fromArrayListToDoubleTable(matOut);
-
-		double[] vetx = new double[profile1.length];
-		double[] vety = new double[profile1.length];
-
-		for (int j = 0; j < profile1.length; j++)
-			vetx[j] = profile1[j][0];
-		for (int j = 0; j < profile1.length; j++)
-			vety[j] = profile1[j][1];
-
-		// Plot plot2 = MyPlot.basePlot(vetx, vety, "P R O F I L O",
-		// Color.blue);
-		// plot2.show();
-		// new WaitForUserDialog("Do something, then click OK.").show();
-		// IJ.wait(200);
-
-		double expected = 66.796875;
-		assertEquals(expected, out[0][0], 1e-12);
-		expected = 14.09287783266325;
-		assertEquals(expected, out[1][0], 1e-12);
-		expected = 9.9609375;
-		assertEquals(expected, out[2][0], 1e-12);
-		expected = 128.3203125;
-		assertEquals(expected, out[2][1], 1e-12);
-		expected = 445.2493818993196;
-		assertEquals(expected, out[3][0], 1e-12);
-		expected = 199.34767076939997;
-		assertEquals(expected, out[3][1], 1e-12);
-	}
 
 	@Test
-	public final void testFromPointsToEquLineExplicit() {
-
-		double x1 = 0;
-		double y1 = 0;
-		double x2 = 255;
-		double y2 = 0;
-		double[] out1 = null;
-
-		x1 = 0;
-		y1 = 0;
-		x2 = 0;
-		y2 = 255;
-
-		out1 = p10rmn_.fromPointsToEquLineExplicit(x1, y1, x2, y2);
-
-		MyLog.logVector(out1, "out1");
-	}
-
-	@Test
-	public final void testFromPointsToEquLineImplicit() {
-
-		double x1 = 0;
-		double y1 = 0;
-		double x2 = 255;
-		double y2 = 0;
-		double[] out1 = null;
-
-		x1 = 120;
-		y1 = 30;
-		x2 = 120;
-		y2 = 50;
-
-		out1 = p10rmn_.fromPointsToEquLineImplicit(x1, y1, x2, y2);
-
-		MyLog.logVector(out1, "out1");
-	}
-
-	@Test
-	public final void testLiangBarsky() {
-
-		double edgeLeft = 0.;
-		double edgeRight = 255.;
-		double edgeBottom = 0.;
-		double edgeTop = 255.;
-		double x0src = 20.;
-		double y0src = -30.;
-		double x1src = 200.;
-		double y1src = 290.;
-
-		double[] out = p10rmn_.liangBarsky(edgeLeft, edgeRight, edgeBottom,
-				edgeTop, x0src, y0src, x1src, y1src);
-
-		MyLog.logVector(out, "out");
-	}
-
-	@Test
-	public final void testCrossing() {
-
-		double x0 = 54.14;
-		double y0 = 99.69;
-		double x1 = 94.53;
-		double y1 = 57.58;
-		double width = 220;
-		double height = 220;
-
-		double[] out = p10rmn_.crossingFrame(x0, y0, x1, y1, width, height);
-		MyLog.logVector(out, "out");
-
-		double[] vetResults1 = { 149.75812158632155, 0.0, 0.0, 156.135540975489 };
-		boolean ok = UtilAyv.verifyResults1(vetResults1, out, null);
-		assertTrue(ok);
-
-		x0 = 25.78;
-		y0 = 205.05868;
-		x1 = 151.25;
-		y1 = 132.34;
-
-		out = p10rmn_.crossingFrame(x0, y0, x1, y1, width, height);
-		MyLog.logVector(out, "out");
-
-		double[] vetResults2 = { 2.0627437110885412E-6, 220.0, 220.0,
-				92.49454491113413 };
-		ok = UtilAyv.verifyResults1(vetResults2, out, null);
-		assertTrue(ok);
-
-	}
-
-	@Test
-	public final void testCountPixTest() {
+	public final void testCountPixOverLimit() {
 
 		String path1 = "./Test2/C001_testP10";
 		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
@@ -405,8 +278,8 @@ public class p10rmn_Test {
 		// assolutamente arbitraria, si deve solo vedere un quadrato chiaro, più
 		// o meno al centro dell'immagine
 
-		int pixx = p10rmn_.countPixTest(imp1, xPos, yPos, sqNEA, checkPixels,
-				test);
+		int pixx = p10rmn_.countPixOverLimit(imp1, xPos, yPos, sqNEA, checkPixels,
+				test, null);
 
 		// IJ.log("pixx= " + pixx);
 		IJ.wait(200);
