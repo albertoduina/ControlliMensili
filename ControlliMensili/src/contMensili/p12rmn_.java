@@ -2138,7 +2138,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				int py = i1 + (yCenterCircle - diamCircle / 2);
 				int xcentGhost = px + diamGhost / 2;
 				int ycentGhost = py + diamGhost / 2;
-				critic_0 = criticalDistanceCalculation(xcentGhost, ycentGhost,
+				critic_0 = UtilAyv.criticalDistanceCalculation(xcentGhost, ycentGhost,
 						diamGhost / 2, xCenterCircle, yCenterCircle,
 						diamCircle / 2);
 				if (critic_0 < guard) {
@@ -2175,7 +2175,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				int px = i1 + (xCenterCircle - diamCircle / 2);
 				int xcentGhost = px + diamGhost / 2;
 				int ycentGhost = py + diamGhost / 2;
-				critic_1 = criticalDistanceCalculation(xcentGhost, ycentGhost,
+				critic_1 =  UtilAyv.criticalDistanceCalculation(xcentGhost, ycentGhost,
 						diamGhost / 2, xCenterCircle, yCenterCircle,
 						diamCircle / 2);
 				if (critic_1 < guard) {
@@ -2213,7 +2213,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				int py = i2 + (yCenterCircle - diamCircle / 2);
 				int xcentGhost = px + diamGhost / 2;
 				int ycentGhost = py + diamGhost / 2;
-				critic_2 = criticalDistanceCalculation(xcentGhost, ycentGhost,
+				critic_2 =  UtilAyv.criticalDistanceCalculation(xcentGhost, ycentGhost,
 						diamGhost / 2, xCenterCircle, yCenterCircle,
 						diamCircle / 2);
 				if (critic_2 < guard) {
@@ -2251,7 +2251,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				int px = i1 + (xCenterCircle - diamCircle / 2);
 				int xcentGhost = px + diamGhost / 2;
 				int ycentGhost = py + diamGhost / 2;
-				critic_3 = criticalDistanceCalculation(xcentGhost, ycentGhost,
+				critic_3 =  UtilAyv.criticalDistanceCalculation(xcentGhost, ycentGhost,
 						diamGhost / 2, xCenterCircle, yCenterCircle,
 						diamCircle / 2);
 				if (critic_3 < guard) {
@@ -2388,7 +2388,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			py = height - diamGhost + incr;
 			xcentGhost = px + diamGhost / 2;
 			ycentGhost = py + diamGhost / 2;
-			critic_0 = criticalDistanceCalculation(xcentGhost, ycentGhost,
+			critic_0 =  UtilAyv.criticalDistanceCalculation(xcentGhost, ycentGhost,
 					diamGhost / 2, xCenterCircle, yCenterCircle, diamCircle / 2);
 			imp2.setRoi(new OvalRoi(px, py, diamGhost, diamGhost));
 
@@ -2540,31 +2540,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		return false;
 	}
 
-	/**
-	 * Calcolo delle distanza minima tra due circonferenze esterne
-	 * 
-	 * @param x1
-	 *            coordinata x cerchio 1
-	 * @param y1
-	 *            coordinata y cerchio 1
-	 * @param r1
-	 *            raggio cerchio 1
-	 * @param x2
-	 *            coordinata x cerchio 2
-	 * @param y2
-	 *            coordinata y cerchio 2
-	 * @param r2
-	 *            raggio cerchio 2
-	 * @return distanza minima tra i cechi
-	 */
-	public static int criticalDistanceCalculation(int x1, int y1, int r1,
-			int x2, int y2, int r2) {
-
-		double dCentri = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1)
-				* (y2 - y1));
-		double critical = dCentri - (r1 + r2);
-		return (int) Math.round(critical);
-	}
 
 	/**
 	 */

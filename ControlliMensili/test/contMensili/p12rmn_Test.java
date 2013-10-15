@@ -283,18 +283,18 @@ public class p12rmn_Test {
 
 	}
 
-	@Test
-	public final void testCriticalDistanceCalculation() {
-		int x1 = 55;
-		int y1 = 22;
-		int r1 = 19;
-		int x2 = 129;
-		int y2 = 140;
-		int r2 = 86;
-		int out1 = p12rmn_.criticalDistanceCalculation(x1, y1, r1, x2, y2, r2);
-		MyLog.waitHere("out1= " + out1);
-
-	}
+//	@Test
+//	public final void testCriticalDistanceCalculation() {
+//		int x1 = 55;
+//		int y1 = 22;
+//		int r1 = 19;
+//		int x2 = 129;
+//		int y2 = 140;
+//		int r2 = 86;
+//		int out1 = p12rmn_.criticalDistanceCalculation(x1, y1, r1, x2, y2, r2);
+//		MyLog.waitHere("out1= " + out1);
+//
+//	}
 
 //	@Test
 //	public final void testInterpola() {

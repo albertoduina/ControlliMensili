@@ -385,6 +385,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		boolean accetta = false;
 		boolean abort = false;
+		boolean demo = !fast;
+		
+		
+		MyLog.waitHere("sytep= "+step+" verbose= "+verbose+" test= "+test+" fast= "+fast+" demo= "+demo);
+
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		double angle = Double.NaN;
@@ -594,10 +599,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			double xBkg = imp1.getWidth() - MyConst.P10_X_ROI_BACKGROUND;
 			double yBkg = MyConst.P10_Y_ROI_BACKGROUND;
-			boolean irraggiungibile = true;
+			boolean irraggiungibile = verbose;
 			int diamBkg = MyConst.P10_DIAM_ROI_BACKGROUND;
 			int guard = 10;
-			boolean demo = !fast;
 			boolean circle = true;
 			int mode = 1;
 
@@ -682,7 +686,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			impDiff.getRoi().setStrokeWidth(1.1);
 			over3.addElement(impDiff.getRoi());
 			ImageStatistics statImaDiff = impDiff.getStatistics();
-			ImageUtils.imageToFront(impDiff);
+			if (impDiff.isVisible())
+				ImageUtils.imageToFront(impDiff);
 
 			if (step)
 				MyLog.waitHere(listaMessaggi(33), debug);
@@ -723,7 +728,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			do {
 
-				boolean paintPixels = false;
+				boolean paintPixels = !fast;
 
 				pixx = countPixOverLimit(imp1, xCenterRoi, yCenterRoi, sqNEA,
 						checkPixelsLimit, paintPixels, over2);
@@ -870,7 +875,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp1.updateAndDraw();
 			}
 
-			IJ.wait(2000);
+			IJ.wait(800);
 
 			// if (imp1.isVisible())
 			// imp1.getWindow().toFront();
@@ -882,6 +887,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			double[] outFwhm2 = MyFwhm.analyzeProfile(profile2, dimPixel,
 					codice, false, step);
 
+			MyLog.waitHere(listaMessaggi(28), debug);
+		
+			
 			// =================================================================
 			// Effettuo dei controlli "di sicurezza" sui valori calcolati,
 			// in modo da evitare possibili sorprese
@@ -1191,15 +1199,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		int offset = 0;
 		int w = 0;
 		int count1 = 0;
-		short[] pixels2 = null;
-
-		// ======================================================================
-		// per sicurezza forzo lo switch a false, poi lo toglierò dai parametri
-		// in modo che non venga mai utilizzato, neanche da me, , tutte le
-		// volte che viene attivato crea enormi problemi al funzionamento di
-		// lavoro
-		paintPixels = true;
-		// ======================================================================
 
 		if (imp1 == null) {
 			IJ.error("CountPixTest ricevuto null");
@@ -1209,10 +1208,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// MyLog.waitHere("sqX= "+sqX+" sqY= "+sqY+" sqR= "+sqR);
 		int width = imp1.getWidth();
 		short[] pixels1 = UtilAyv.truePixels(imp1);
-		ImageProcessor ip1 = imp1.getProcessor();
-		if (paintPixels) {
-			pixels2 = (short[]) ip1.getPixels();
-		}
 
 		boolean ok = false;
 		for (int y1 = sqY - sqR / 2; y1 <= (sqY + sqR / 2); y1++) {
@@ -1225,7 +1220,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 					count1++;
 				} else
 					ok = false;
-				setOverlayPixel(over1, imp1, x1, y1, Color.green, Color.red, ok);
+				if (paintPixels) setOverlayPixel(over1, imp1, x1, y1, Color.green, Color.red, ok);
 			}
 		}
 		return count1;
@@ -1669,6 +1664,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// Inizio calcoli geometrici
 		// ================================================================================
 		//
+		
+		
 
 		boolean debug = true;
 		boolean manual = false;
@@ -1676,6 +1673,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean showProfiles = demo;
 		// MyLog.waitHere("showProfiles= " + showProfiles);
 
+		MyLog.waitHere("sytep= "+step+" verbose= "+verbose+" test= "+test+" fast= "+fast+" demo= "+demo);
+		
+		
 		double ax = 0;
 		double ay = 0;
 		int xCenterCircle = 0;
@@ -2397,7 +2397,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		lista[26] = "Viene definita una bkgROI sul fondo, evidenziata in giallo. \n"
 				+ "Segnale medio fondo= ";
 		lista[27] = "Viene calcolata l'immagine differenza";
-		lista[28] = "messaggio 28";
+		lista[28] = "Profilo";
 		lista[29] = "messaggio 29";
 		// ---------+-----------------------------------------------------------+
 		lista[30] = "Viene definita una Noise Estimate Area NEA 11x11 evidenziata in verde";
@@ -2495,7 +2495,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		}
 
 		// ----------------------------------------
-		// AGGIUNGO 0.5 AI PUNTI TROVATI
+		// AGGIUNGO 1 AI PUNTI TROVATI
 		// ---------------------------------------
 
 		for (int i1 = 0; i1 < peaks1.length; i1++) {
@@ -2554,10 +2554,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 	public static void setOverlayPixel(Overlay over1, ImagePlus imp1, int x1,
 			int y1, Color col1, Color col2, boolean ok) {
 		imp1.setRoi(x1, y1, 1, 1);
-		if (ok)
+		if (ok) {
 			imp1.getRoi().setStrokeColor(col1);
-		else
-			imp1.getRoi().setStrokeColor(col2);
+			imp1.getRoi().setFillColor(col1);
+		} else {
+			imp1.getRoi().setStrokeColor(col1);
+			imp1.getRoi().setFillColor(col2);
+		}
 		over1.addElement(imp1.getRoi());
 		imp1.deleteRoi();
 	}
