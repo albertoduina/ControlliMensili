@@ -1918,7 +1918,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			profi3[i1][0] = profi2x[i1];
 			profi3[i1][1] = profi2y[i1];
 		}
-		ArrayList<ArrayList<Double>> matOut = peakDet(profi3, 100.);
+		ArrayList<ArrayList<Double>> matOut = ImageUtils.peakDet(profi3, 100.);
 		double[][] peaks1 = new InputOutput()
 				.fromArrayListToDoubleTable(matOut);
 
@@ -1967,79 +1967,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 	}
 
-	/**
-	 * Copied from http://billauer.co.il/peakdet.htm Peak Detection using MATLAB
-	 * Author: Eli Billauer
-	 * 
-	 * @param profile
-	 *            profilo da analizzare
-	 * @param delta
-	 * @return ArrayList con le posizioni del picco minimo e del picco massimo
-	 */
-	public static ArrayList<ArrayList<Double>> peakDet(double[][] profile,
-			double delta) {
-
-		double max = Double.MIN_VALUE;
-		double min = Double.MAX_VALUE;
-		ArrayList<ArrayList<Double>> matout = new ArrayList<ArrayList<Double>>();
-
-		ArrayList<Double> maxtabx = new ArrayList<Double>();
-		ArrayList<Double> maxtaby = new ArrayList<Double>();
-		ArrayList<Double> mintabx = new ArrayList<Double>();
-		ArrayList<Double> mintaby = new ArrayList<Double>();
-
-		double[] vetx = new double[profile.length];
-		double[] vety = new double[profile.length];
-		for (int i1 = 0; i1 < profile.length; i1++) {
-			vetx[i1] = profile[i1][0];
-			vety[i1] = profile[i1][1];
-		}
-		double maxpos = -1.0;
-		double minpos = -1.0;
-		boolean lookformax = true;
-
-		for (int i1 = 0; i1 < vety.length; i1++) {
-			double valy = vety[i1];
-			if (valy > max) {
-				max = valy;
-				maxpos = vetx[i1];
-			}
-			if (valy < min) {
-				min = valy;
-				minpos = vetx[i1];
-			}
-			stateChange(lookformax);
-
-			if (lookformax) {
-				if (valy < max - delta) {
-					maxtabx.add((Double) maxpos);
-					maxtaby.add((Double) max);
-					min = valy;
-					minpos = vetx[i1];
-					lookformax = false;
-				}
-			} else {
-				if (valy > min + delta) {
-					mintabx.add((Double) minpos);
-					mintaby.add((Double) min);
-					max = valy;
-					maxpos = vetx[i1];
-					lookformax = true;
-				}
-			}
-
-		}
-		// MyLog.logArrayList(mintabx, "############## mintabx #############");
-		// MyLog.logArrayList(mintaby, "############## mintaby #############");
-		// MyLog.logArrayList(maxtabx, "############## maxtabx #############");
-		// MyLog.logArrayList(maxtaby, "############## maxtaby #############");
-		matout.add(mintabx);
-		matout.add(mintaby);
-		matout.add(maxtabx);
-		matout.add(maxtaby);
-
-		return matout;
-	}
 
 	public static double[] maxPeakSearch(double[] profile) {
 
@@ -2069,14 +1996,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		return out;
 	}
 
-	public static void stateChange(boolean input) {
-		pulse = false;
-		if ((input != previous) && !init1)
-			pulse = true;
-		init1 = false;
-		return;
-
-	}
 
 	public static double angoloRad(double ax, double ay, double bx, double by) {
 		//

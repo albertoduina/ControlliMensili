@@ -27,6 +27,7 @@ import java.util.StringTokenizer;
 import utils.AboutBox;
 import utils.ArrayUtils;
 import utils.ButtonMessages;
+import utils.ImageUtils;
 import utils.InputOutput;
 import utils.MyMsg;
 import utils.MyConst;
@@ -126,8 +127,9 @@ public class p6rmn_ implements PlugIn, Measurements {
 				retry = false;
 				return 0;
 			case 2:
-//				new AboutBox().about("Controllo Thickness", this.getClass());
-				new AboutBox().about("Controllo Thickness", MyVersion.CURRENT_VERSION);
+				// new AboutBox().about("Controllo Thickness", this.getClass());
+				new AboutBox().about("Controllo Thickness",
+						MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -164,7 +166,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 	public int autoMenu(String autoArgs) {
-		MyLog.appendLog(fileDir + "MyLog.txt", "p6 riceve "+autoArgs);
+		MyLog.appendLog(fileDir + "MyLog.txt", "p6 riceve " + autoArgs);
 
 		// the autoArgs are passed from Sequenze_
 		// possibilities:
@@ -206,8 +208,9 @@ public class p6rmn_ implements PlugIn, Measurements {
 				new AboutBox().close();
 				return 0;
 			case 2:
-//				new AboutBox().about("Controllo Thickness", this.getClass());
-				new AboutBox().about("Controllo Thickness", MyVersion.CURRENT_VERSION);
+				// new AboutBox().about("Controllo Thickness", this.getClass());
+				new AboutBox().about("Controllo Thickness",
+						MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -1106,7 +1109,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 *            true se da invertire
 	 * @return profilo con ERF
 	 */
-	public double[] createErf(double[] profile1, boolean invert) {
+	public double[] createErfOld(double[] profile1, boolean invert) {
 
 		int len1 = profile1.length;
 		//
@@ -1145,6 +1148,78 @@ public class p6rmn_ implements PlugIn, Measurements {
 				erf[j] = (profile1[j] - profile1[j - 1]) * (-1);
 		}
 		erf[len1 - 1] = erf[len1 - 2];
+		return (erf);
+	} // createErf
+
+	/**
+	 * calcolo ERF
+	 * 
+	 * @param profile1
+	 *            profilo da elaborare
+	 * @param invert
+	 *            true se da invertire
+	 * @return profilo con ERF
+	 */
+	public double[] createErf(double[] profile1, boolean invert) {
+
+		int len1 = profile1.length;
+		//
+		// eseguo tre smooth 07-02-05, questo ci permette di ottenere risultati
+		// affidabili non falsati da spikes
+		//
+		for (int j = 1; j < len1 - 1; j++)
+			profile1[j] = (profile1[j - 1] + profile1[j] + profile1[j + 1]) / 3;
+		for (int j = 1; j < len1 - 1; j++)
+			profile1[j] = (profile1[j - 1] + profile1[j] + profile1[j + 1]) / 3;
+		for (int j = 1; j < len1 - 1; j++)
+			profile1[j] = (profile1[j - 1] + profile1[j] + profile1[j + 1]) / 3;
+		for (int j = 1; j < len1 - 1; j++)
+			profile1[j] = (profile1[j - 1] + profile1[j] + profile1[j + 1]) / 3;
+
+		double[] erf = new double[len1];
+		// if (invert) {
+		for (int j = 0; j < profile1.length - 1; j++)
+			erf[j] = (profile1[j] - profile1[j + 1]) * (-1);
+		// } else {
+		// for (int j = profile1.length - 1; j >= 0; j--)
+		// erf[j] = (profile1[j] - profile1[j - 1]) * (-1);
+		// }
+		erf[len1 - 1] = erf[len1 - 2];
+
+		// Anzichè utilizzare algoritmi di ricerca dei picchi, cerco il minimo
+		// ed il massimo. Il valore assoluto più grande corrisponderà all'angolo
+		// a 90° che non ci interessa. A questo punto posso portare a zero tutti
+		// i valori del medesimo segno. Resterà così solo il
+		// picco meno alto, corrispondente all'erf della rampa del cuneo.
+
+		double[] minMax = Tools.getMinMax(erf);
+		double min = minMax[0];
+		double max = minMax[1];
+
+		if (Math.abs(min) > Math.abs(max) && min < 0) {
+			// se il minimo è di valore assoluto più grande, allora porto a 0
+			// tutti i valori minori di 0
+			for (int i1 = 0; i1 < erf.length; i1++) {
+				if (erf[i1] < 0)
+					erf[i1] = 0;
+			}
+			// e poi cambio il tutto di segno, poichè voglio il picco verso il
+			// basso
+			for (int i1 = 0; i1 < erf.length; i1++) {
+				erf[i1] *= -1;
+			}
+
+		} else if (Math.abs(min) < Math.abs(max) && max > 0) {
+			// se il massimo è di valore assoluto più grande, allora porto a 0
+			// tutti i valori maggiori di 0
+			for (int i1 = 0; i1 < erf.length; i1++) {
+				if (erf[i1] > 0)
+					erf[i1] = 0;
+			}
+
+		} else
+			MyLog.waitHere("QUESTA E'UNA STRANA ERF");
+
 		return (erf);
 	} // createErf
 

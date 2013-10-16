@@ -4,10 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import java.awt.Color;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.Line;
+import ij.gui.Plot;
 import ij.gui.Roi;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
@@ -19,6 +23,7 @@ import org.junit.Test;
 import utils.InputOutput;
 import utils.MyConst;
 import utils.MyLog;
+import utils.MyPlot;
 import utils.ReadDicom;
 import utils.UtilAyv;
 
@@ -263,14 +268,41 @@ public class p6rmn_Test {
 
 		double[] profiB1 = InputOutput
 				.readDoubleArrayFromFile("./data/vet10.txt");
+		Plot p2 = MyPlot.basePlot(profiB1, "title", Color.red);
+		p2.show();
+
 		// test con input numerico, non dipendente da ImageJ
 		boolean invert = true;
 		double[] profiE1 = new p6rmn_().createErf(profiB1, invert);
+		Plot p1 = MyPlot.basePlot(profiE1, "title", Color.red);
+		p1.show();
+		MyLog.waitHere();
 		double[] expectedOutput = InputOutput
 				.readDoubleArrayFromFile("./data/vet11.txt");
 		assertTrue(UtilAyv.compareVectors(expectedOutput, profiE1, 1e-8, ""));
 	}
 
+	
+	@Test
+	public final void testCreateErfReversed() {
+
+		double[] profiA1 = InputOutput
+				.readDoubleArrayFromFile("./data/vet10.txt");
+		double[] profiB1= UtilAyv.reverseVector(profiA1);
+		
+		Plot p2 = MyPlot.basePlot(profiB1, "title", Color.red);
+		p2.show();
+
+		// test con input numerico, non dipendente da ImageJ
+		boolean invert = true;
+		double[] profiE1 = new p6rmn_().createErf(profiB1, invert);
+		Plot p1 = MyPlot.basePlot(profiE1, "title", Color.red);
+		p1.show();
+		MyLog.waitHere();
+		double[] expectedOutput = InputOutput
+				.readDoubleArrayFromFile("./data/vet11.txt");
+		assertTrue(UtilAyv.compareVectors(expectedOutput, profiE1, 1e-8, ""));
+	}
 	@Test
 	public final void testAnalPlot1() {
 		// test con input numerico, non dipendente da ImageJ
