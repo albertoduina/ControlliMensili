@@ -186,6 +186,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	public void run(String args) {
 
+		UtilAyv.setMyPrecision();
 		int userSelection1 = 0;
 		int userSelection2 = 0;
 		int userSelection3 = 0;

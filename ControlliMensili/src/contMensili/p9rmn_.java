@@ -63,7 +63,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 	static final int ABORT = 1;
 
-	public static final String VERSION = "p9_rmn_v4.10_10dec08_";
+	public static final String VERSION = "CNR";
 
 	private static String TYPE = " >>  CONTROLLO CNR____________________";
 
@@ -147,6 +147,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 	private final double DIM_PIXEL_FOV_220 = 0.859375;
 
 	public void run(String args) {
+		
+		UtilAyv.setMyPrecision();
+
 		MyLog.appendLog(fileDir + "MyLog.txt", "p9 riceve "+args);
 
 		//

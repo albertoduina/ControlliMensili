@@ -48,24 +48,25 @@ public class version_ implements PlugIn {
 			return;
 		}
 
-		IJ.log("--------------------------");
+		IJ.log("--------------+--------------");
 		IJ.log("Package contMensili VERSION "
 				+ new AboutBox().myImplementationVersion(this.getClass()));
-		IJ.log("------------+--------------");
+		IJ.log("--------------+--------------");
 		IJ.log("Sequenze    " + Sequenze_.VERSION);
-		IJ.log("------------+--------------");
+		IJ.log("--------------+--------------");
 
-		IJ.log("p2_rmn      " + p2rmn_.VERSION);
-		IJ.log("p3_rmn      " + p3rmn_.VERSION);
-		IJ.log("p4_rmn      " + p4rmn_.VERSION);
-		IJ.log(p5rmn_.VERSION
-				+ "                          uniformità immagini 'piatte'");
-		IJ.log(p6rmn_.VERSION
-				+ "                          calcolo spessore fetta");
-		IJ.log(p7rmn_.VERSION + "                         calcolo warp");
-		IJ.log(p8rmn_.VERSION + "                         calcolo DGP");
-		IJ.log(p9rmn_.VERSION + "                         calcolo CNR");
-		IJ.log("--------------------------");
+		IJ.log("p2_rmn        " + p2rmn_.VERSION);
+		IJ.log("p3_rmn        " + p3rmn_.VERSION);
+		IJ.log("p4_rmn        " + p4rmn_.VERSION);
+		IJ.log("p5_rmn        " + p5rmn_.VERSION);
+		IJ.log("p6_rmn        " + p6rmn_.VERSION);
+		IJ.log("p7_rmn        " + p7rmn_.VERSION);
+		IJ.log("p8_rmn        " + p8rmn_.VERSION);
+		IJ.log("p9_rmn        " + p9rmn_.VERSION);
+		IJ.log("p10_rmn      " + p10rmn_.VERSION);
+		IJ.log("p11_rmn      " + p11rmn_.VERSION);
+		IJ.log("p12_rmn      " + p12rmn_.VERSION);
+		IJ.log("--------------+--------------");
 		findIt("utils.IW2AYV");
 
 	}

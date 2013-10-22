@@ -50,8 +50,6 @@ import utils.UtilAyv;
 /**
  * Analizza UNIFORMITA', SNR, GHOSTS.
  * 
- * Per salvare i dati in formato xls necessita di Excel_Writer.jar nella
- * directory plugins
  * 
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
@@ -62,7 +60,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	private static final int ABORT = 1;
 
-	public static String VERSION = "Calcolo manuale uniformità, snr, ghosts con bobina singola";
+	public static String VERSION = "UNIFORMITA' SNR GHOSTS per bobine circolari manuale";
 
 	private static String TYPE = " >> CONTROLLO UNIFORMITA'_____________";
 
@@ -77,6 +75,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 	 */
 
 	public void run(String args) {
+
+		UtilAyv.setMyPrecision();
 
 		if (IJ.versionLessThan("1.43k"))
 			return;

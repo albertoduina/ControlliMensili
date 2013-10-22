@@ -102,7 +102,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 	private static final int ABORT = 1;
 
-	public static String VERSION = "p12_rmn_v1.12_13oct11_";
+	public static String VERSION = "UNIFORMITA' SNR GHOSTS per bobine circolari automatico";
 
 	private String TYPE = " >> CONTROLLO UNIFORMITA' IMMAGINI CIRCOLARI AUTO";
 
@@ -116,6 +116,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 	private static final boolean debug = true;
 
 	public void run(String args) {
+
+		UtilAyv.setMyPrecision();
 
 		Count c1 = new Count();
 		if (!c1.jarCount("iw2ayv_"))
@@ -821,7 +823,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 				MyLog.waitHere(listaMessaggi(45), debug);
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
 					imp1, tabCodici, VERSION, autoCalled);
-
+			
+			
 			if (iw1 != null) {
 				WindowManager.setCurrentWindow(iw1);
 				WindowManager.setWindow(iw1);

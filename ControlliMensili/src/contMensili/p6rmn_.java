@@ -76,7 +76,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 
 	static final int ABORT = 1;
 
-	public static String VERSION = "p6_rmn_v5.10_10feb11_";
+	public static String VERSION = "SPESSORE FETTA";
 
 	private static String TYPE1 = " >> CONTROLLO THICKNESS______________";
 
@@ -92,6 +92,9 @@ public class p6rmn_ implements PlugIn, Measurements {
 		// peak position is the maximum profile position
 		// manual selection of unaccettable slices (border or center (cross
 		// slabs) slices
+		
+		UtilAyv.setMyPrecision();
+
 		if (IJ.versionLessThan("1.43k"))
 			return;
 		//

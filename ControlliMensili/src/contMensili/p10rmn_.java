@@ -45,6 +45,8 @@ import utils.ReadDicom;
 import utils.ReadVersion;
 import utils.ReportStandardInfo;
 import utils.TableCode;
+import utils.TableExpand;
+import utils.TableLimiti;
 import utils.TableSequence;
 import utils.UtilAyv;
 
@@ -79,7 +81,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	private static final int ABORT = 1;
 
-	public static String VERSION = "p10_rmn_v1.10_13oct11_";
+	public static String VERSION = "UNIFORMITA', SNR, FWHM per le bobine array circolari automatico";
 
 	private String TYPE = " >> CONTROLLO SUPERFICIALI UNCOMBINED_";
 
@@ -97,6 +99,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	private static final boolean debug = true;
 
 	public void run(String args) {
+
+		UtilAyv.setMyPrecision();
 
 		String className = this.getClass().getName();
 
@@ -175,6 +179,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean retry = false;
 		boolean step = false;
 		boolean fast = false;
+		String[] titolo = { "Controllo Uniformità", "con save UNCOMBINED e ",
+				"immagini circolari" };
 		do {
 			int userSelection1 = UtilAyv.userSelectionManual(VERSION, TYPE);
 			switch (userSelection1) {
@@ -186,9 +192,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 				// new AboutBox()
 				// .about("Controllo Uniformità, con save UNCOMBINED e immagini circolari",
 				// this.getClass());
-				new AboutBox()
-						.about("Controllo Uniformità, con save UNCOMBINED e immagini circolari",
-								MyVersion.CURRENT_VERSION);
+				new AboutBox().about(titolo, MyVersion.CURRENT_VERSION);
+
 				retry = true;
 				break;
 			case 3:
@@ -386,9 +391,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean accetta = false;
 		boolean abort = false;
 		boolean demo = !fast;
-		
-		
-		MyLog.waitHere("sytep= "+step+" verbose= "+verbose+" test= "+test+" fast= "+fast+" demo= "+demo);
 
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
@@ -401,7 +403,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 		//
 
 		verbose = true;
-		String[][] limiti = new InputOutput().readFile6("LIMITI.csv");
+		// String[][] limiti = new InputOutput().readFile6("LIMITI.csv");
+
+		String[][] limiti = TableLimiti.loadTableCSV(MyConst.LIMITS_FILE);
+		
 		double[] vetMinimi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti,
 				"P10MIN"));
 		double[] vetMaximi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti,
@@ -415,15 +420,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double maxMean7x7 = +4096;
 		double minMeanBkg = -2048;
 		double maxMeanBkg = +2048;
-		double minSnRatio = +10;
-		double maxSnRatio = +800;
+		double minSnRatio = +333;
+		double maxSnRatio = +444;
 
 		double minFWHM = 0;
 		double maxFWHM = +512;
-		double minUiPerc = +5;
-		double maxUiPerc = +100;
-		double minFitError = +0;
-		double maxFitError = +20;
 		// ================================================================
 		if (vetMinimi == null) {
 			MyLog.waitHere(listaMessaggi(65), debug);
@@ -432,8 +433,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			minMeanBkg = vetMinimi[1];
 			minSnRatio = vetMinimi[2];
 			minFWHM = vetMinimi[3];
-			minUiPerc = vetMinimi[4];
-			minFitError = vetMinimi[5];
 		}
 		if (vetMaximi == null) {
 			MyLog.waitHere(listaMessaggi(66), debug);
@@ -442,8 +441,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			maxMeanBkg = vetMaximi[1];
 			maxSnRatio = vetMaximi[2];
 			maxFWHM = vetMaximi[3];
-			maxUiPerc = vetMaximi[4];
-			maxFitError = vetMaximi[5];
 		}
 
 		//
@@ -540,8 +537,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 				// imp1.killRoi();
 
-				MyCircleDetector.drawCenter(imp1, over2, xMaxima, yMaxima,
-						Color.green);
+				// MyCircleDetector.drawCenter(imp1, over2, xMaxima, yMaxima,
+				// Color.green);
 
 				MyCircleDetector.drawCenter(imp1, over2, xBordo, yBordo,
 						Color.pink);
@@ -665,8 +662,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 				MyCircleDetector.drawCenter(impDiff, over3, xCenterCircle,
 						yCenterCircle, Color.red);
 
-				MyCircleDetector.drawCenter(impDiff, over3, xMaxima, yMaxima,
-						Color.green);
+				// MyCircleDetector.drawCenter(impDiff, over3, xMaxima, yMaxima,
+				// Color.green);
 
 				MyCircleDetector.drawCenter(impDiff, over3, xBordo, yBordo,
 						Color.pink);
@@ -703,7 +700,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 						+ "\npreliminaryNoiseEstimate= stdDev / sqrt(2) = "
 						+ +prelimImageNoiseEstimate_7x7, debug);
 
-			ImageUtils.imageToFront(imp1);
+			if (imp1.isVisible()) ImageUtils.imageToFront(imp1);
 
 			//
 			// loop di calcolo NEA su imp1
@@ -887,9 +884,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			double[] outFwhm2 = MyFwhm.analyzeProfile(profile2, dimPixel,
 					codice, false, step);
 
-			MyLog.waitHere(listaMessaggi(28), debug);
-		
-			
+			if (step)
+				MyLog.waitHere(listaMessaggi(28), debug);
+
 			// =================================================================
 			// Effettuo dei controlli "di sicurezza" sui valori calcolati,
 			// in modo da evitare possibili sorprese
@@ -907,9 +904,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (UtilAyv.checkLimits2(outFwhm2[0], minFWHM, maxFWHM, "FWHM"))
 				abort = true;
 
+			if (UtilAyv.checkLimits2(outFwhm2[0], minFWHM, maxFWHM, "????"))
+				abort = true;
+
+			if (UtilAyv.checkLimits2(outFwhm2[0], minFWHM, maxFWHM, "????"))
+				abort = true;
+
 			//
 			// Salvataggio dei risultati nella ResultsTable
 			//
+
 			String[][] tabCodici = TableCode.loadTableCSV(MyConst.CODE_FILE);
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
@@ -1059,7 +1063,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean test = false;
 		double profond = 30;
 		boolean fast = true;
-		boolean silent = !verbose;
+		boolean silent = true;
 
 		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, profond, "",
 				autoCalled, step, verbose, test, fast, silent);
@@ -1076,27 +1080,32 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 */
 	public static double[] referenceSiemens() {
 
+		// 0.0, 354.16326530612247, 10.224592241325686, 34.638375491852656,
+		// 24.309816136913373, 12.4375, 2818.0, 1526.0, 7834.0, 2607.0, 2568.0,
+		// 2672.0, 2969.0, 3388.0, 3229.0, 1768.0, 341.0, 33816.0,
+
 		double simul = 0.0;
-		double signal = 355.0;
+		double signal = 354.16326530612247;
 		// double backNoise = 12.225;
-		double backNoise = 10.00347735683198;
-		double snRatio = 35.48765967441802;
+		double backNoise = 10.224592241325686;
+		double snRatio = 34.638375491852656;
 		// double fwhm = 11.43429317989865;
-		double fwhm = 23.977086148658152;
-		double num1 = 2763.0;
-		double num2 = 1532.0;
-		double num3 = 7785.0;
-		double num4 = 2634.0;
-		double num5 = 2574.0;
-		double num6 = 2652.0;
-		double num7 = 3054.0;
-		double num8 = 3284.0;
-		double num9 = 3333.0;
-		double num10 = 1755.0;
-		double num11 = 354.0;
+		double fwhm = 24.309816136913373;
+		double bkg = 12.4375;
+		double num1 = 2818.0;
+		double num2 = 1526.0;
+		double num3 = 7834.0;
+		double num4 = 2607.0;
+		double num5 = 2568.0;
+		double num6 = 2672.0;
+		double num7 = 2969.0;
+		double num8 = 3388.0;
+		double num9 = 3229.0;
+		double num10 = 1768.0;
+		double num11 = 341.0;
 		double num12 = 33816.0;
 
-		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
+		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, bkg,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
 				num11, num12 };
 		return vetReference;
@@ -1220,7 +1229,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 					count1++;
 				} else
 					ok = false;
-				if (paintPixels) setOverlayPixel(over1, imp1, x1, y1, Color.green, Color.red, ok);
+				if (paintPixels)
+					setOverlayPixel(over1, imp1, x1, y1, Color.green,
+							Color.red, ok);
 			}
 		}
 		return count1;
@@ -1664,8 +1675,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// Inizio calcoli geometrici
 		// ================================================================================
 		//
-		
-		
 
 		boolean debug = true;
 		boolean manual = false;
@@ -1673,9 +1682,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean showProfiles = demo;
 		// MyLog.waitHere("showProfiles= " + showProfiles);
 
-		MyLog.waitHere("sytep= "+step+" verbose= "+verbose+" test= "+test+" fast= "+fast+" demo= "+demo);
-		
-		
 		double ax = 0;
 		double ay = 0;
 		int xCenterCircle = 0;

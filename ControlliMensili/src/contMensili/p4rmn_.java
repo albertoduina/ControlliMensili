@@ -62,7 +62,7 @@ import utils.UtilAyv;
 
 public class p4rmn_ implements PlugIn, Measurements {
 
-	public static String VERSION = "Calcolo MTF";
+	public static String VERSION = "MTF";
 
 	private static String TYPE = " >> CONTROLLO MTF_____________________";
 
@@ -93,6 +93,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 	public boolean bstep = false;
 
 	public void run(String args) {
+		UtilAyv.setMyPrecision();
 
 		if (IJ.versionLessThan("1.43k"))
 			return;

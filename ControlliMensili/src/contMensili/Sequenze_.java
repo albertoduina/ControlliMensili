@@ -67,6 +67,7 @@ public class Sequenze_ implements PlugIn {
 
 	public void run(String arg) {
 
+		UtilAyv.setMyPrecision();
 		// new ReadVersion().readDateInfoInManifest("contMensili");
 
 		// inizializziamo l'eventuale logger file MyFileLog.txt

@@ -81,7 +81,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 	private static final int ABORT = 1;
 
-	public static String VERSION = "p11_rmn_v1.10_13oct11_";
+	public static String VERSION = "UNIFORMITA', SNR, FWHM per bobine superficiali automatico";
 
 	private String TYPE = " >> CONTROLLO SUPERFICIALI UNCOMBINED_PIATTE";
 
@@ -105,6 +105,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 	// private boolean profiVert = false;
 
 	public void run(String args) {
+
+		UtilAyv.setMyPrecision();
 
 		String className = this.getClass().getName();
 

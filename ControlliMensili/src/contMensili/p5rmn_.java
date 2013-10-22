@@ -72,7 +72,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	private static final int ABORT = 1;
 
-	public static String VERSION = "p5_rmn_v5.10_10feb11_";
+	public static String VERSION = "UNIFORMITA', SNR, FWHM per bobine superficiali manuale";
 
 	private String TYPE = " >> CONTROLLO SUPERFICIALI____________";
 
@@ -83,6 +83,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 	// private boolean profiVert = false;
 
 	public void run(String args) {
+		UtilAyv.setMyPrecision();
+
 
 		//
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo

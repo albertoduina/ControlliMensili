@@ -59,7 +59,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 	static final int ABORT = 1;
 
-	public static String VERSION = "p8_rmn_v5.10_10feb11_";
+	public static String VERSION = "DGP";
 
 	private static String TYPE = " >> CONTROLLO DGP_____________________";
 
@@ -75,6 +75,8 @@ public class p8rmn_ implements PlugIn, Measurements {
 	 */
 
 	public void run(String args) {
+
+		UtilAyv.setMyPrecision();
 
 		if (IJ.versionLessThan("1.43k"))
 			return;

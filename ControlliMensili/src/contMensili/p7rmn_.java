@@ -62,7 +62,7 @@ public class p7rmn_ implements PlugIn, Measurements {
 
 	static final int ABORT = 1;
 
-	public static String VERSION = "p7_rmn_v5.10_10feb11_";
+	public static String VERSION = "WARP";
 
 	private static String TYPE = " >> CONTROLLO WARP____________________";
 
@@ -86,6 +86,9 @@ public class p7rmn_ implements PlugIn, Measurements {
 	double dimPixel2;
 
 	public void run(String args) {
+		
+		UtilAyv.setMyPrecision();
+
 
 		if (IJ.versionLessThan("1.43k"))
 			return;
