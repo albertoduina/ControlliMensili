@@ -5,7 +5,6 @@ import ij.ImagePlus;
 import ij.Prefs;
 import ij.gui.ImageWindow;
 import ij.gui.Line;
-import ij.gui.NewImage;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
 import ij.gui.Plot;
@@ -16,10 +15,8 @@ import ij.io.FileSaver;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
-import ij.plugin.filter.MaximumFinder;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
-import ij.process.ShortProcessor;
 import ij.util.Tools;
 
 import java.awt.Color;
@@ -30,24 +27,21 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import utils.AboutBox;
-import utils.ArrayUtils;
 import utils.ButtonMessages;
 import utils.CustomCanvasGeneric;
 import utils.ImageUtils;
 import utils.InputOutput;
-import utils.MyFilter;
-import utils.MyMsg;
 import utils.MyConst;
 import utils.MyFileLogger;
+import utils.MyFilter;
 import utils.MyLog;
+import utils.MyMsg;
 import utils.MyPlot;
 import utils.MyVersionUtils;
 import utils.ReadDicom;
-import utils.ReadVersion;
 import utils.ReportStandardInfo;
 import utils.TableCode;
 import utils.TableSequence;
-import utils.TableUtils;
 import utils.UtilAyv;
 
 /*

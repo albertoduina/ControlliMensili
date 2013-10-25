@@ -195,45 +195,45 @@ public class Sequenze_Test {
 	// }
 	// }
 
-	@Test
-	public final void testLoadListNull() {
-		// in questo caso ho bisogno di una directory vuota, per cui cancello e
-		// rigenero la /test3
-		String dirTest = "/test3/";
-		if (InputOutput.checkDir(dirTest)) {
-			boolean success3 = InputOutput.deleteDir(new File(dirTest));
-			assertTrue("fallita cancellazione directory", success3);
-		}
-		boolean success4 = InputOutput.createDir(new File(dirTest));
-		assertTrue("fallita creazione directory", success4);
-		assertTrue("verificata presenza directory",
-				InputOutput.checkDir(dirTest));
-		String CODE_FILE = "/codici.txt";
-		int CODE_COLUMNS = 4;
-		String EXPAND_FILE = "/expand.txt";
-		int EXPAND_COLUMNS = 6;
-		// carico da file la tabella codici
-		String[][] tableCode = new InputOutput().readFile1(CODE_FILE,
-				CODE_COLUMNS);
-		String[][] tableExpand = new InputOutput().readFile1(EXPAND_FILE,
-				EXPAND_COLUMNS);
-		// creo la lista utilizzando loadPath
-		List<File> result = new Sequenze_().getFileListing(new File(dirTest));
-		String[] strList = new String[result.size()];
-		int j1 = 0;
-		for (File file : result) {
-			strList[j1++] = file.getPath();
-		}
-		// testo loadList2
-		String[][] res1 = new Sequenze_().generateSequenceTable(null,
-				tableCode, tableExpand);
-		// verifica risultati
-		assertNull(res1);
-		String[][] res2 = new Sequenze_().generateSequenceTable(strList, null,
-				null);
-		// verifica risultati
-		assertNull(res2);
-	}
+//	@Test
+//	public final void testLoadListNull() {
+//		// in questo caso ho bisogno di una directory vuota, per cui cancello e
+//		// rigenero la /test3
+//		String dirTest = "/test3/";
+//		if (InputOutput.checkDir(dirTest)) {
+//			boolean success3 = InputOutput.deleteDir(new File(dirTest));
+//			assertTrue("fallita cancellazione directory", success3);
+//		}
+//		boolean success4 = InputOutput.createDir(new File(dirTest));
+//		assertTrue("fallita creazione directory", success4);
+//		assertTrue("verificata presenza directory",
+//				InputOutput.checkDir(dirTest));
+//		String CODE_FILE = "/codici.txt";
+//		int CODE_COLUMNS = 4;
+//		String EXPAND_FILE = "/expand.txt";
+//		int EXPAND_COLUMNS = 6;
+//		// carico da file la tabella codici
+//		String[][] tableCode = new InputOutput().readFile1(CODE_FILE,
+//				CODE_COLUMNS);
+//		String[][] tableExpand = new InputOutput().readFile1(EXPAND_FILE,
+//				EXPAND_COLUMNS);
+//		// creo la lista utilizzando loadPath
+//		List<File> result = new Sequenze_().getFileListing(new File(dirTest));
+//		String[] strList = new String[result.size()];
+//		int j1 = 0;
+//		for (File file : result) {
+//			strList[j1++] = file.getPath();
+//		}
+//		// testo loadList2
+//		String[][] res1 = new Sequenze_().generateSequenceTable(null,
+//				tableCode, tableExpand);
+//		// verifica risultati
+//		assertNull(res1);
+//		String[][] res2 = new Sequenze_().generateSequenceTable(strList, null,
+//				null);
+//		// verifica risultati
+//		assertNull(res2);
+//	}
 
 	@Test
 	public final void testDuplicateTable() {

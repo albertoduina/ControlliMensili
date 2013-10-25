@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.8.4
 Created-By: 1.6.0_19-b04 (Sun Microsystems Inc.)
 Built-By: AlbertoDuina
-Built-Date: October 22 2013
+Built-Date: October 25 2013
 Main-Class: contMensili.Sequenze_
-Implementation-Version: 2.00-b2446
+Implementation-Version: 2.00-b2462
 

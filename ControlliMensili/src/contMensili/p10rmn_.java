@@ -12,18 +12,14 @@ import ij.gui.Plot;
 import ij.gui.PlotWindow;
 import ij.gui.PointRoi;
 import ij.gui.Roi;
-import ij.gui.WaitForUserDialog;
 import ij.io.FileSaver;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
-import ij.util.Tools;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -33,19 +29,17 @@ import utils.ButtonMessages;
 import utils.ImageUtils;
 import utils.InputOutput;
 import utils.MyCircleDetector;
-import utils.MyFilter;
-import utils.MyLine;
-import utils.MyMsg;
 import utils.MyConst;
+import utils.MyFilter;
 import utils.MyFwhm;
+import utils.MyLine;
 import utils.MyLog;
+import utils.MyMsg;
 import utils.MyPlot;
 import utils.MyVersionUtils;
 import utils.ReadDicom;
-import utils.ReadVersion;
 import utils.ReportStandardInfo;
 import utils.TableCode;
-import utils.TableExpand;
 import utils.TableLimiti;
 import utils.TableSequence;
 import utils.UtilAyv;
@@ -1544,8 +1538,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		// MyLog.waitHere("showProfiles= " + showProfiles);
 		double[][] profi3 = MyLine.decomposer(imp1);
-		// MyLog.logMatrix(profi3, "profi3");
-
+		
+		for (int i1=0; i1<profi3[0].length; i1++){
+			IJ.log(""+profi3[0][i1]+";"+profi3[1][i1]+";"+profi3[2][i1]);
+		}
+		
+		MyLog.waitHere();
+		
+		
 		ArrayList<ArrayList<Double>> matOut = ImageUtils.peakDet2(profi3, 100.);
 		double[][] peaks1 = new InputOutput()
 				.fromArrayListToDoubleTable(matOut);
