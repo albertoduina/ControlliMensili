@@ -366,8 +366,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 		// double angle = Double.NaN;
 		boolean abort = false;
 		// lettura dei limiti da file esterno
-
-		String[][] limiti = new InputOutput().readFile6("LIMITI.csv");
+		boolean absolute=false;
+		String[][] limiti = new InputOutput().readFile6LIKE("LIMITI.csv", absolute);
 		double[] vetMinimi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti,
 				"P12MIN"));
 		double[] vetMaximi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti,
@@ -667,13 +667,13 @@ public class p12rmn_ implements PlugIn, Measurements {
 			int xRoi9 = xCenterFondo - MyConst.P12_DIAM_ROI_BACKGROUND / 2;
 			int yRoi9 = yCenterFondo - MyConst.P12_DIAM_ROI_BACKGROUND / 2;
 
-			ImageStatistics statBkg = UtilAyv.backCalc(xRoi9, yRoi9,
+			ImageStatistics statBkg = ImageUtils.backCalc(xRoi9, yRoi9,
 					MyConst.P12_DIAM_ROI_BACKGROUND, imp1, false, true, true);
 			double mediaBkg = statBkg.mean;
 			double devStBkg = statBkg.stdDev;
 
 			if (demo)
-				UtilAyv.autoAdjust(imp1, imp1.getProcessor());
+				ImageUtils.autoAdjust(imp1, imp1.getProcessor());
 
 			iw1 = imp1.getWindow();
 			ImageUtils.imageToFront(imp1);
@@ -1389,11 +1389,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 		double[][] peaks1 = new InputOutput()
 				.fromArrayListToDoubleTable(matOut);
 
-		double[] xPoints = new double[peaks1[2].length];
-		double[] yPoints = new double[peaks1[2].length];
-		for (int i1 = 0; i1 < peaks1[2].length; i1++) {
-			xPoints[i1] = peaks1[2][i1];
-			yPoints[i1] = peaks1[3][i1];
+		double[] xPoints = new double[peaks1[0].length];
+		double[] yPoints = new double[peaks1[0].length];
+		for (int i1 = 0; i1 < peaks1[0].length; i1++) {
+			xPoints[i1] = peaks1[0][i1];
+			yPoints[i1] = peaks1[1][i1];
 
 		}
 
@@ -2678,7 +2678,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				MyConst.P3_DIAM_FOR_450_PIXELS, imp);
 		if (verbose) {
 			UtilAyv.showImageMaximized(impSimulata);
-			UtilAyv.backgroundEnhancement(0, 0, 10, impSimulata);
+			ImageUtils.backgroundEnhancement(0, 0, 10, impSimulata);
 		}
 		impSimulata.updateAndDraw();
 		int[][] classiSimulata = numeroPixelsClassi(impSimulata);

@@ -32,29 +32,6 @@ public class demo_ implements PlugIn, Measurements {
 
 	public void run(String args) {
 
-		String home1 = findTestImages();
-		String path1 = home1 + "/HR2A_testP4";
-		ImagePlus imp1 = new Opener().openImage(path1);
-		// IJ.setMinAndMax(imp1, 1, 20);
-		// UtilAyv.showImageMaximized(imp1);
-		//
-		// int[] xcoord = new int[2];
-		// int[] ycoord = new int[2];
-		//
-		// xcoord[0] = imp1.getWidth()*1/8;
-		// ycoord[0] = 0;
-		// xcoord[1] = imp1.getWidth();
-		// ycoord[1] = imp1.getHeight() * 3 / 8+3;
-
-		// xcoord[0] = imp1.getWidth()*1/8;
-		// ycoord[0] = 0;
-		// xcoord[1] = imp1.getWidth()*1/8;
-		// ycoord[1] = imp1.getHeight();
-
-		// imp12.setRoi(new PolygonRoi(xcoord, ycoord, 2, Roi.POLYLINE));
-		// imp1.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
-
-		MyLine.decomposer2(imp1);
 
 	}
 

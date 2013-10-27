@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 
 import utils.AboutBox;
 import utils.ButtonMessages;
+import utils.ImageUtils;
 import utils.InputOutput;
 import utils.MyLog;
 import utils.MyMsg;
@@ -421,7 +422,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 			if (test)
 				xRoi9 = xRoi9 - 40;
 
-			ImageStatistics statBkg = UtilAyv.backCalc(xRoi9, yRoi9,
+			ImageStatistics statBkg = ImageUtils.backCalc(xRoi9, yRoi9,
 					MyConst.P3_DIAM_ROI_BACKGROUND, imp1, step, true, test);
 			double meanBkg = statBkg.mean;
 
@@ -672,7 +673,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 				MyConst.P3_DIAM_FOR_450_PIXELS, imp);
 		if (verbose) {
 			UtilAyv.showImageMaximized(impSimulata);
-			UtilAyv.backgroundEnhancement(0, 0, 10, impSimulata);
+			ImageUtils.backgroundEnhancement(0, 0, 10, impSimulata);
 		}
 		// UtilAyv.autoAdjust(impSimulata, impSimulata.getProcessor());
 		impSimulata.updateAndDraw();

@@ -40,7 +40,8 @@ public class p10rmn_Test {
 	@Test
 	public final void testDecoderLimiti() {
 
-		String[][] limiti = new InputOutput().readFile6("LIMITI.csv");
+		boolean absolute=false;
+		String[][] limiti = new InputOutput().readFile6LIKE("LIMITI.csv", absolute);
 		MyLog.logMatrix(limiti, "limiti");
 		MyLog.waitHere();
 		String[] result = p10rmn_.decoderLimiti(limiti, "P10MAX");

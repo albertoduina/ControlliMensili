@@ -1,31 +1,33 @@
 package contMensili;
 
-import java.io.*;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.Prefs;
+import ij.gui.GenericDialog;
+import ij.io.DirectoryChooser;
+import ij.io.Opener;
+import ij.plugin.PlugIn;
+
+import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import utils.AboutBox;
 import utils.ArrayUtils;
 import utils.ButtonMessages;
-import utils.IW2AYV;
+import utils.InputOutput;
 import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyLog;
+import utils.ReadDicom;
 import utils.TableCode;
 import utils.TableExpand;
-import utils.ReadDicom;
-import utils.DirectoryChooser2;
-import utils.InputOutput;
 import utils.TableSequence;
 import utils.TableUtils;
 import utils.TableVerify;
 import utils.UtilAyv;
-
-import ij.*;
-import ij.gui.*;
-import ij.io.*;
-import ij.plugin.*;
-import ij.Prefs;
 
 /*
  * Copyright (C) 2007 Alberto Duina, SPEDALI CIVILI DI BRESCIA, Brescia ITALY
@@ -184,11 +186,14 @@ public class Sequenze_ implements PlugIn {
 					"CONTINUA");
 			return;
 		} else if (nuovo1 || !startingDirExist) {
-			DirectoryChooser2 od2 = new DirectoryChooser2(
-					"SELEZIONARE MA NON APRIRE LA CARTELLA IMMAGINI",
-					startingDir);
+			
+			DirectoryChooser od1 = new DirectoryChooser(
+					"SELEZIONARE MA NON APRIRE LA CARTELLA IMMAGINI");
+			od1.setDefaultDirectory(startingDir);
+			startingDir = od1.getDirectory();
 
-			startingDir = od2.getDirectory();
+			
+			
 			if (startingDir == null)
 				return;
 			Prefs.set("prefer.string1", startingDir);
@@ -1430,12 +1435,13 @@ public class Sequenze_ implements PlugIn {
 	 */
 
 	public void readExperiment(String source) {
+		boolean absolute=false;
 		if (this.getClass().getResource("/" + source) == null) {
-			String[][] mat1 = new InputOutput().readFile6(source);
+			String[][] mat1 = new InputOutput().readFile6LIKE(source, absolute);
 			MyLog.logMatrix(mat1, "mat1");
 			MyLog.waitHere();
 		} else {
-			String[][] mat1 = new InputOutput().readFile6(source);
+			String[][] mat1 = new InputOutput().readFile6LIKE(source, absolute);
 			MyLog.logMatrix(mat1, "mat1");
 			MyLog.waitHere();
 

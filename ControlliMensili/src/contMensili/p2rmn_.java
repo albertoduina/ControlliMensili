@@ -14,7 +14,6 @@ import ij.io.Opener;
 import ij.measure.Calibration;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
-
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
@@ -27,6 +26,7 @@ import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
 import utils.ButtonMessages;
+import utils.ImageUtils;
 import utils.InputOutput;
 import utils.MyConst;
 import utils.MyLog;
@@ -564,7 +564,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 			int xRoiFondo = Rows - DIAM_ROI_FONDO - 1;
 			int yRoiFondo = Columns - DIAM_ROI_FONDO - 1;
-			ImageStatistics statFondo = UtilAyv.backCalc(xRoiFondo, yRoiFondo,
+			ImageStatistics statFondo = ImageUtils.backCalc(xRoiFondo, yRoiFondo,
 					DIAM_ROI_FONDO, imp8, bstep, true, selftest);
 			double mediaFondo = statFondo.mean;
 			double dsFondo = statFondo.stdDev;

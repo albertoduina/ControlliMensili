@@ -400,7 +400,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// String[][] limiti = new InputOutput().readFile6("LIMITI.csv");
 
 		String[][] limiti = TableLimiti.loadTableCSV(MyConst.LIMITS_FILE);
-		
+
 		double[] vetMinimi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti,
 				"P10MIN"));
 		double[] vetMaximi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti,
@@ -694,7 +694,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 						+ "\npreliminaryNoiseEstimate= stdDev / sqrt(2) = "
 						+ +prelimImageNoiseEstimate_7x7, debug);
 
-			if (imp1.isVisible()) ImageUtils.imageToFront(imp1);
+			if (imp1.isVisible())
+				ImageUtils.imageToFront(imp1);
 
 			//
 			// loop di calcolo NEA su imp1
@@ -1538,14 +1539,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		// MyLog.waitHere("showProfiles= " + showProfiles);
 		double[][] profi3 = MyLine.decomposer(imp1);
-		
-		for (int i1=0; i1<profi3[0].length; i1++){
-			IJ.log(""+profi3[0][i1]+";"+profi3[1][i1]+";"+profi3[2][i1]);
-		}
-		
-		MyLog.waitHere();
-		
-		
+
+		// for (int i1=0; i1<profi3[0].length; i1++){
+		// IJ.log(""+profi3[0][i1]+";"+profi3[1][i1]+";"+profi3[2][i1]);
+		// }
+		//
+		// MyLog.waitHere();
+
 		ArrayList<ArrayList<Double>> matOut = ImageUtils.peakDet2(profi3, 100.);
 		double[][] peaks1 = new InputOutput()
 				.fromArrayListToDoubleTable(matOut);
@@ -1574,9 +1574,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double[] yPoints = new double[peaks1[0].length];
 		double[] zPoints = new double[peaks1[0].length];
 		for (int i1 = 0; i1 < peaks1[0].length; i1++) {
-			xPoints[i1] = peaks1[3][i1];
-			yPoints[i1] = peaks1[4][i1];
-			zPoints[i1] = peaks1[5][i1];
+			xPoints[i1] = peaks1[0][i1];
+			yPoints[i1] = peaks1[1][i1];
+			zPoints[i1] = peaks1[2][i1];
 		}
 
 		// MyLog.logVector(xPoints, "xPoints");
@@ -1778,6 +1778,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// imp12.getRoi().setStrokeWidth(strWidth);
 		peaks5 = profileAnalyzer(imp12, dimPixel,
 				"BISETTRICE DIAGONALE SINISTRA 2", showProfiles);
+//		MyLog.logMatrix(peaks5, "peaks5");
 
 		if (peaks5 != null)
 			ImageUtils.plotPoints(imp12, over12, peaks5);
@@ -1965,45 +1966,45 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// della bisettice orizzontale prendo solo il picco di dx
 		if (npeaks1 == 1) {
 			j1++;
-			xPoints3[j1] = (int) (peaks1[3][1]);
-			yPoints3[j1] = (int) (peaks1[4][1]);
+			xPoints3[j1] = (int) (peaks1[0][1]);
+			yPoints3[j1] = (int) (peaks1[1][1]);
 		}
 
 		// della bisettice verticale prendo solo il picco in basso
 		if (npeaks2 == 1) {
 			j1++;
-			xPoints3[j1] = (int) (peaks2[3][1]);
-			yPoints3[j1] = (int) (peaks2[4][1]);
+			xPoints3[j1] = (int) (peaks2[0][1]);
+			yPoints3[j1] = (int) (peaks2[1][1]);
 		}
 		for (int i1 = 0; i1 < npeaks3; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks3[3][i1]);
-			yPoints3[j1] = (int) (peaks3[4][i1]);
+			xPoints3[j1] = (int) (peaks3[0][i1]);
+			yPoints3[j1] = (int) (peaks3[1][i1]);
 		}
 		for (int i1 = 0; i1 < npeaks4; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks4[3][i1]);
-			yPoints3[j1] = (int) (peaks4[4][i1]);
+			xPoints3[j1] = (int) (peaks4[0][i1]);
+			yPoints3[j1] = (int) (peaks4[1][i1]);
 		}
 		for (int i1 = 0; i1 < npeaks5; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks5[3][i1]);
-			yPoints3[j1] = (int) (peaks5[4][i1]);
+			xPoints3[j1] = (int) (peaks5[0][i1]);
+			yPoints3[j1] = (int) (peaks5[1][i1]);
 		}
 		for (int i1 = 0; i1 < npeaks6; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks6[3][i1]);
-			yPoints3[j1] = (int) (peaks6[4][i1]);
+			xPoints3[j1] = (int) (peaks6[0][i1]);
+			yPoints3[j1] = (int) (peaks6[1][i1]);
 		}
 		for (int i1 = 0; i1 < npeaks7; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks7[3][i1]);
-			yPoints3[j1] = (int) (peaks7[4][i1]);
+			xPoints3[j1] = (int) (peaks7[0][i1]);
+			yPoints3[j1] = (int) (peaks7[1][i1]);
 		}
 		for (int i1 = 0; i1 < npeaks8; i1++) {
 			j1++;
-			xPoints3[j1] = (int) (peaks8[3][i1]);
-			yPoints3[j1] = (int) (peaks8[4][i1]);
+			xPoints3[j1] = (int) (peaks8[0][i1]);
+			yPoints3[j1] = (int) (peaks8[1][i1]);
 		}
 
 		// MyLog.logVector(xPoints3, "xPoints3");
@@ -2160,10 +2161,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// ===============================================================
 		// intersezioni retta - circonferenza
 		// ===============================================================
+		
+		
 
 		double[] out11 = ImageUtils.getCircleLineCrossingPoints(xCenterCircle,
 				yCenterCircle, xMaxima, yMaxima, xCenterCircle, yCenterCircle,
 				diamCircle / 2);
+		
 		// il punto che ci interesasa sarà quello con minor distanza dal maxima
 		double dx1 = xMaxima - out11[0];
 		double dx2 = xMaxima - out11[2];

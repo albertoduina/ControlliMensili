@@ -344,7 +344,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 					posY = width / 2;
 				// UtilAyv.autoAdjust(imp1, ip1);
 				if (imp1.isVisible())
-					UtilAyv.backgroundEnhancement(0, 0, 10, imp1);
+					ImageUtils.backgroundEnhancement(0, 0, 10, imp1);
 				int userSelection1 = 0;
 
 				// TODO posizione di test
@@ -404,7 +404,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			//
 			// disegno RoiFondo su imp1
 			//
-			ImageStatistics statBkg = UtilAyv.backCalc(xFondo, yFondo,
+			ImageStatistics statBkg = ImageUtils.backCalc(xFondo, yFondo,
 					MyConst.P5_DIAM_ROI_BACKGROUND, imp1, step, false, test);
 
 			//

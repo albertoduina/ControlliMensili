@@ -500,7 +500,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				// disegno RoiFondo su imp1
 				//
 
-				ImageStatistics statBkg = UtilAyv.backCalc2((int) xFondo,(int) yFondo,
+				ImageStatistics statBkg = ImageUtils.backCalc2((int) xFondo,(int) yFondo,
 						MyConst.P11_DIAM_ROI_BACKGROUND, imp1, step, false,
 						test);
 
@@ -1918,11 +1918,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double[][] peaks1 = new InputOutput()
 				.fromArrayListToDoubleTable(matOut);
 
-		double[] xPoints = new double[peaks1[2].length];
-		double[] yPoints = new double[peaks1[2].length];
+		double[] xPoints = new double[peaks1[0].length];
+		double[] yPoints = new double[peaks1[0].length];
 		for (int i1 = 0; i1 < peaks1[2].length; i1++) {
-			xPoints[i1] = peaks1[2][i1];
-			yPoints[i1] = peaks1[3][i1];
+			xPoints[i1] = peaks1[0][i1];
+			yPoints[i1] = peaks1[1][i1];
 
 		}
 
