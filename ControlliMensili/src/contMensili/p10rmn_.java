@@ -79,6 +79,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	private String TYPE = " >> CONTROLLO SUPERFICIALI UNCOMBINED_";
 
+	
 	/**
 	 * directory dati, dove vengono memorizzati ayv.txt e Results1.txt
 	 */
