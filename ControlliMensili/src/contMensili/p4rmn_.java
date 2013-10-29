@@ -492,7 +492,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 			double mod10 = vetCalc[2];
 			double mod05 = vetCalc[3];
 			double mod03 = vetCalc[4];
-			String[][] tabCodici = TableCode.loadTableCSV(MyConst.CODE_FILE);
+			String[][] tabCodici = TableCode.loadTable(MyConst.CODE_FILE);
 
 			ImagePlus imp2 = UtilAyv.openImageNoDisplay(path1, verbose);
 

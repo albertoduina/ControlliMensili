@@ -210,7 +210,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 //		String[][] tabCodici = new InputOutput().readFile1(MyConst.CODE_FILE,
 //				MyConst.P8_TOKENS4);
 
-		String[][] tabCodici = TableCode.loadTableCSV(MyConst.CODE_FILE);
+		String[][] tabCodici = TableCode.loadTable(MyConst.CODE_FILE);
 
 		
 		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir

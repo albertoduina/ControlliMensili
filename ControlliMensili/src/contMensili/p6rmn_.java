@@ -645,7 +645,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		// String[][] tabCodici = new InputOutput().readFile1(MyConst.CODE_FILE,
 		// MyConst.TOKENS4);
 
-		String[][] tabCodici = TableCode.loadTableCSV(MyConst.CODE_FILE);
+		String[][] tabCodici = TableCode.loadTable(MyConst.CODE_FILE);
 
 		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path[0],
 				impStack, tabCodici, VERSION, autoCalled);

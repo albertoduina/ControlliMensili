@@ -400,7 +400,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		verbose = true;
 		// String[][] limiti = new InputOutput().readFile6("LIMITI.csv");
 
-		String[][] limiti = TableLimiti.loadTableCSV(MyConst.LIMITS_FILE);
+		String[][] limiti = TableLimiti.loadTable(MyConst.LIMITS_FILE);
 
 		double[] vetMinimi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti,
 				"P10MIN"));
@@ -910,7 +910,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// Salvataggio dei risultati nella ResultsTable
 			//
 
-			String[][] tabCodici = TableCode.loadTableCSV(MyConst.CODE_FILE);
+			String[][] tabCodici = TableCode.loadTable(MyConst.CODE_FILE);
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
 					imp1, tabCodici, VERSION, autoCalled);

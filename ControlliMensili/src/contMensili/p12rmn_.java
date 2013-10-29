@@ -818,7 +818,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 					test);
 			imp1.deleteRoi();
 
-			String[][] tabCodici = TableCode.loadTableCSV(MyConst.CODE_FILE);
+			String[][] tabCodici = TableCode.loadTable(MyConst.CODE_FILE);
 			if (demo)
 				MyLog.waitHere(listaMessaggi(45), debug);
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
