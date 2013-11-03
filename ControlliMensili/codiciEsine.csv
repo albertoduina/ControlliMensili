@@ -1,0 +1,57 @@
+// Contiene le regole utilizzate da Sequenze per compilare il file;;;;;;;
+// ayv.txt che verrà poi usato per chiamare il plug-in adatto;;;;;;;
+// ad elaborare una determinata immagine;;;;;;;
+// N.B. si hanno 4 directions vup verticale a crescere, vdw vertivale a scendere ;;;;;;;
+// hsx orizz. verso sx, hdx orizz. verso dx                  ;;;;;;;
+//;;;;;;;
+// ESINE GE ;;;;;;;
+BUSA2;Uniformità Assiale Body;2;2;xxx;x;x;p12rmn_
+BUSS2;Uniformità Sagittale Body;2;2;xxx;x;x;p12rmn_
+BUSC2;Uniformità Coronale Body;2;2;xxx;x;x;p12rmn_
+BDSA2;DGP Single Body;1;1;xxx;x;x;p8rmn_
+BDMA2;DGP Multi Body;1;3;xxx;x;x;p8rmn_
+BWSA2;Warp Assiale Body;1;1;xxx;x;x;p7rmn_
+BT2A2;Thickness 2mm Sing.Body;1;1;xxx;x;x;p6rmn_
+BT5A2;Thickness 5mm Sing.Body;1;1;xxx;x;x;p6rmn_
+BTMA2;Thickness 2mm Multi Body;15;15;xxx;x;x;p6rmn_
+BR5A2;Risoluzione 512 Head;1;1;xxx;x;x;p4rmn_
+HUSA2;Uniformità Assiale Head;2;2;xxx;x;x;p12rmn_
+HUSS2;Uniformità Sagittale Head;2;2;xxx;x;x;p12rmn_
+HUSC2;Uniformità Coronale Head;2;2;xxx;x;x;p12rmn_
+HUT2A;Thickness 2mm Sing.Head;1;1;xxx;x;x;p6rmn_
+HUT5A;Thickness 5mm Sing.Head;1;1;xxx;x;x;p6rmn_
+HUTMA;Thickness 2mm Multi Head;15;15;xxx;x;x;p6rmn_
+HDSA2;DGP Single Head;1;1;xxx;x;x;p8rmn_
+HDMA2;DGP Multi Head;1;3;xxx;x;x;p8rmn_
+HWSA2;Warp Assiale Head;1;1;xxx;x;x;p7rmn_
+HR5A2;Risoluzione 512 Head;1;1;xxx;x;x;p4rmn_
+HR2A2;Risoluzione 256 Head;1;1;xxx;x;x;p4rmn_
+SHFA2;Shoulder;2;2;xxx;x;x;p12rmn_
+OBSA2;Open Body;2;2;xxx;x;x;p12rmn_
+NVSN2;NeurovascularArray Neck;2;2;xxx;x;x;p12rmn_
+NVSH2;NeurovascularArray Sag.Head;2;2;xxx;x;x;p12rmn_
+NVCH2;NeurovascularArray Cor.Head;2;2;xxx;x;x;p12rmn_
+NVAH2;NeurovascularArray Ass.Head;2;2;xxx;x;x;p12rmn_
+9GSA2;9 inch General Purpose;2;2;xxx;x;x;p12rmn_
+LKSA2;Large Knee;2;2;xxx;x;x;p12rmn_
+LKFA2;Large Knee;2;2;xxx;x;x;p12rmn_
+SKSA2;Small Knee;2;2;xxx;x;x;p12rmn_
+FOSA2;Foot;4;4;xxx;hdx;x;p5rmn_
+WRSA2;Wrist;4;4;xxx;hdx;x;p5rmn_
+CVSA2;Spine  Cervical;4;4;xxx;hdx;x;p5rmn_
+CTSA2;Spine  Thoracic;4;4;xxx;hdx;x;p5rmn_
+CLSA2;Spine  Lumbar;4;4;xxx;hdx;x;p5rmn_
+T2MA2;T2 multi SpinEcho Head;4;4;xxx;x;x;p2rmn_
+T2M12;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
+T2M22;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
+T2M32;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
+HT1A2;Head SE pesata T1 ;1;1;xxx;x;x;p9rmn_
+S1AS2;CTL top;4;4;xxx;hdx;x;p5rmn_
+S1AF2;CTL top;4;4;xxx;hdx;x;p5rmn_
+S2AS2;CTL top;4;4;xxx;hdx;x;p5rmn_
+S2AF2;CTL top;4;4;xxx;hdx;x;p5rmn_
+S3AS2;CTL top;4;4;xxx;hdx;x;p5rmn_
+S3AF2;CTL top;4;4;xxx;hdx;x;p5rmn_
+SASH2;Shoulder;2;2;xxx;x;x;p12rmn_
+SAFH2;Shoulder;2;2;xxx;x;x;p12rmn_
+//;;;;;;;

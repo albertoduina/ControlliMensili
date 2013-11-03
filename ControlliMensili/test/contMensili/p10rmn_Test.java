@@ -11,6 +11,7 @@ import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
 import ij.gui.OvalRoi;
+import ij.gui.Overlay;
 import ij.gui.Plot;
 import ij.gui.WaitForUserDialog;
 import ij.measure.ResultsTable;
@@ -40,13 +41,13 @@ public class p10rmn_Test {
 	@Test
 	public final void testDecoderLimiti() {
 
-		boolean absolute=false;
-		String[][] limiti = new InputOutput().readFile6LIKE("LIMITI.csv", absolute);
-		MyLog.logMatrix(limiti, "limiti");
-		MyLog.waitHere();
+		boolean absolute = false;
+		String[][] limiti = new InputOutput().readFile6LIKE("LIMITI.csv",
+				absolute);
 		String[] result = p10rmn_.decoderLimiti(limiti, "P10MAX");
-		MyLog.logVector(result, "result");
-
+		String[] expected = { "P10MAX", "2000", "1000", "800", "512", "1000",
+				"1000", "1000", "1000", "1000", "1000", "1000" };
+		assertTrue(UtilAyv.compareVectors(expected, result, ""));
 	}
 
 	@Test
@@ -91,16 +92,8 @@ public class p10rmn_Test {
 				"info10", autoCalled, step, verbose, test, fast, silent);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-		double[] vetReference = new p10rmn_().referenceSiemens();
-
-		double simul = 0.0;
-
-		String[] vetName = { "simul", "signal", "backNoise", "snRatio", "fwhm",
-				"num1", "num2", "num3", "num4", "num5", "num6", "num7", "num8",
-				"num9", "num10", "num11", "num12" };
-
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, vetName);
-		assertTrue(ok);
+		double[] vetReference = p10rmn_.referenceSiemens();
+		assertTrue(UtilAyv.compareVectors(vetResults, vetReference, 1e-12, ""));
 	}
 
 	@Test
@@ -108,59 +101,25 @@ public class p10rmn_Test {
 
 		// 16 dec 2011 sistemato, ora funziona in automatico
 
+		// String path1 = "./data/F001_testP10";
+		// String path2 = "./data/F002_testP10";
+		String autoArgs = "0";
 		String path1 = "./data/F001_testP10";
 		String path2 = "./data/F002_testP10";
-		String autoArgs = "0";
+
 		boolean autoCalled = false;
 		boolean step = false;
 		boolean verbose = false;
-		boolean test = false;
+		boolean test = true;
 		double profond = 30;
 		boolean fast = true;
 		boolean silent = false;
-		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"info10", autoCalled, step, verbose, test, fast, silent);
 
-		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-		double fwhm = vetResults[4];
-		MyLog.waitHere("fwhm= " + fwhm);
-
-		double[] vetReference = new p10rmn_().referenceSiemens();
-		String[] vetName = { "simul", "signal", "backNoise", "snRatio", "fwhm",
-				"num1", "num2", "num3", "num4", "num5", "num6", "num7", "num8",
-				"num9", "num10", "num11", "num12" };
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, vetName);
-		assertTrue(ok);
-	}
-
-	@Test
-	public final void testMainUniforSlow() {
-
-		// 16 dec 2011 sistemato, ora funziona in automatico
-
-		String path1 = "./Test2/C001_testP10";
-		String path2 = "./Test2/C002_testP10";
-		String autoArgs = "0";
-		boolean autoCalled = false;
-		boolean step = true;
-		boolean verbose = true;
-		boolean test = false;
-		double profond = 30;
-		boolean fast = false;
-		boolean silent = false;
-		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"info10", autoCalled, step, verbose, test, fast, silent);
-
-		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-		double[] vetReference = new p10rmn_().referenceSiemens();
-		MyLog.logVector(vetResults, "vetResults");
-		MyLog.logVector(vetReference, "vetReference");
-		String[] vetName = { "simul", "signal", "backNoise", "snRatio", "fwhm",
-				"num1", "num2", "num3", "num4", "num5", "num6", "num7", "num8",
-				"num9", "num10", "num11", "num12" };
-
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, vetName);
-		assertTrue(ok);
+		p10rmn_.mainUnifor(path1, path2, autoArgs, profond, "info10",
+				autoCalled, step, verbose, test, fast, silent);
+		// in questo caso l'unica cosa che viene testata è l'intervento manuale.
+		// Poichè il posizionamento dipende dall'occhio dell'operatore
+		// non posso fare una verifica dei risultati ottenuti.
 	}
 
 	@Test
@@ -178,15 +137,11 @@ public class p10rmn_Test {
 		boolean test = false;
 		boolean fast = true;
 		double profond = 30;
-
 		double out2[] = p10rmn_.positionSearch(imp11, profond, "", autoCalled,
 				step, verbose, test, fast);
-
-		double[] expected = { 159.0, 105.0, 118.0, 133.0, 202.0, 77.0,
-				33.690067525979785 };
-		// MyLog.logVector(out2, "out2");
-		boolean ok = UtilAyv.verifyResults1(expected, out2, null);
-		assertTrue(ok);
+		double[] expected = { 158.5, 105.5, 119.0, 134.0, 196.0, 78.0,
+				36.40877456777236, 199.87360843031885, 75.18283023249538, 201.0 };
+		assertTrue(UtilAyv.compareVectors(expected, out2, 1e-12, ""));
 	}
 
 	@Test
@@ -197,8 +152,8 @@ public class p10rmn_Test {
 		double by = 78.0;
 		double prof = 20.0;
 		double[] out = p10rmn_.interpolaProfondCentroROI(ax, ay, bx, by, prof);
-		MyLog.logVector(out, "out");
-
+		double[] expected = { 100.63173950947295, 56.492608429518995 };
+		assertTrue(UtilAyv.compareVectors(expected, out, 1e-12, ""));
 	}
 
 	@Test
@@ -211,6 +166,8 @@ public class p10rmn_Test {
 		double out = p10rmn_.angoloRad(ax, ay, bx, by);
 		IJ.log("angoloRad= " + out + " angoloDeg= "
 				+ IJ.d2s(Math.toDegrees(out)));
+		assertTrue(out == 0.6121524969450833);
+
 	}
 
 	@Test
@@ -219,31 +176,15 @@ public class p10rmn_Test {
 		// 16 dec 2011 sistemato, ora funziona in automatico senza bisogno di
 		// visualizzare il profilo
 
-		double[] profile1 = InputOutput
-				.readDoubleArrayFromFile((new InputOutput()
-						.findResource("/002.txt")));
-		MyLog.logVector(profile1, "profile1");
+		String path = InputOutput.findResource("002.txt");
 
+		double[] profile1 = InputOutput.readDoubleArrayFromFile(path);
 		double[] smooth1 = p10rmn_.smooth3(profile1, 3);
-
 		boolean invert = true;
-
 		double[] profile2 = p10rmn_.createErf(smooth1, invert);
-		MyLog.logVector(profile2, "profile2");
-
-		double[] expected = InputOutput
-				.readDoubleArrayFromFile((new InputOutput()
-						.findResource("/003.txt")));
-
-		boolean ok = UtilAyv.verifyResults1(expected, profile2, null);
-		assertTrue(ok);
-
-		// Plot plot2 = MyPlot.basePlot(profile2, "Plot profilo ERF",
-		// Color.blue);
-		// plot2.show();
-		// MyLog.waitHere("display plot, dare OK");
-		// IJ.wait(200);
-
+		String path2 = InputOutput.findResource("003.txt");
+		double[] expected = InputOutput.readDoubleArrayFromFile(path2);
+		assertTrue(UtilAyv.compareVectors(expected, profile2, 1e-12, ""));
 	}
 
 	// @Test
@@ -261,31 +202,29 @@ public class p10rmn_Test {
 	// IJ.wait(1000);
 	// }
 
-
-
-
 	@Test
 	public final void testCountPixOverLimit() {
 
 		String path1 = "./Test2/C001_testP10";
 		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		Overlay over1 = new Overlay();
+		imp1.setOverlay(over1);
 
 		int xPos = 117;
 		int yPos = 117;
 		int sqNEA = 20;
-		double checkPixels = 58.064;
+		// double checkPixels = 58.064;
+		double checkPixels = 300;
 		boolean test = true;
 		// rispetto a questo test ricordarsi che la roi assegnata è
 		// assolutamente arbitraria, si deve solo vedere un quadrato chiaro, più
 		// o meno al centro dell'immagine
 
-		int pixx = p10rmn_.countPixOverLimit(imp1, xPos, yPos, sqNEA, checkPixels,
-				test, null);
+		int pixx = p10rmn_.countPixOverLimit(imp1, xPos, yPos, sqNEA,
+				checkPixels, test, over1);
 
-		// IJ.log("pixx= " + pixx);
-		IJ.wait(200);
-		assertEquals(pixx, 441);
+		IJ.wait(100);
+		assertEquals(pixx, 169);
 	}
-
 
 }

@@ -1,7 +1,6 @@
 package contMensili;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
@@ -40,24 +39,17 @@ public class p11rmn_Test {
 		boolean verbose = false;
 		boolean test = false;
 		int verticalDir = 3;
-		double[] vetReference = new p11rmn_().referenceSiemens();
-
+		double[] vetReference = p11rmn_.referenceSiemens();
 		double profond = 30.0;
 		boolean fast = true;
 		boolean silent = false;
-
 		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, verticalDir,
 				profond, "", autoCalled, step, verbose, test, fast, silent);
-
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-		// MyLog.logVector(vetResults, "vetResults");
-		// MyLog.logVector(vetReference, "vetReference");
-
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, null);
-		assertTrue(ok);
-
-		// MyLog.waitHere("FINE");
-		// IJ.wait(500);
+//		MyLog.logVector(vetResults, "vetResults");
+//		MyLog.logVector(vetReference, "vetReference");
+//		MyLog.waitHere();
+		assertTrue(UtilAyv.compareVectors(vetResults, vetReference, 1e-12, ""));
 	}
 
 	@Test
@@ -95,23 +87,18 @@ public class p11rmn_Test {
 		int incr = 0;
 		int px = 0;
 		int py = 0;
-		int width = imp1.getWidth();
 		int height = imp1.getHeight();
 		int diamGhost = 20;
 		boolean ok = false;
-
 		do {
 			incr++;
 			px = xRoi + diamGhost;
 			py = yRoi + diamGhost + incr;
 			imp1.setRoi(px, py, diamGhost, diamGhost);
-
 			ok = p11rmn_.verifyBackgroundSquareRoiPixels(imp1, px, py, diamRoi,
 					test, demo);
-
-		} while (ok && py < height - diamRoi);
-		MyLog.waitHere();
-
+		} while (ok && (py < (height - diamRoi)));
+		assertFalse(ok);
 	}
 
 	@Test
@@ -127,19 +114,11 @@ public class p11rmn_Test {
 	@Test
 	public final void testMaxPeakSearch() {
 
-		// 16 dec 2011 sistemato, ora funziona in automatico
-
-		double[] profile1 = InputOutput
-				.readDoubleArrayFromFile((new InputOutput()
-						.findResource("/002.txt")));
-		// MyLog.logVector(profile1, "profile1");
+		String path = InputOutput.findResource("002.txt");
+		double[] profile1 = InputOutput.readDoubleArrayFromFile(path);
 		double[] out = p11rmn_.maxPeakSearch(profile1);
-		// MyLog.logVector(out, "out");
-
 		double[] expected = { 96.0, 531.1009869960047 };
-		boolean ok = UtilAyv.verifyResults1(expected, out, null);
-		assertTrue(ok);
-
+		assertTrue(UtilAyv.compareVectors(expected, out, 1e-12, ""));
 	}
 
 	@Test
@@ -155,18 +134,12 @@ public class p11rmn_Test {
 		boolean test = false;
 		boolean fast = true;
 		String path1 = "./Test2/S12S_01testP11";
-
 		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, true);
-
 		double[] out = p11rmn_.positionSearch(imp1, autoCalled, verticalDir,
 				profond, "STRINGA", step, verbose, test, fast);
-
 		double[] expected = { 164.0, 172.0, 164.05714285714285, 0.0,
 				164.05714285714285, 256.0, 186.0, 169.0 };
-		boolean ok = UtilAyv.verifyResults1(expected, out, null);
-		assertTrue(ok);
-		// MyLog.logVector(out, "out");
-
+		assertTrue(UtilAyv.compareVectors(expected, out, 1e-12, ""));
 	}
 
 	@Test

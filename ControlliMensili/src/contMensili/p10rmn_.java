@@ -79,7 +79,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	private String TYPE = " >> CONTROLLO SUPERFICIALI UNCOMBINED_";
 
-	
 	/**
 	 * directory dati, dove vengono memorizzati ayv.txt e Results1.txt
 	 */
@@ -438,14 +437,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			maxFWHM = vetMaximi[3];
 		}
 
-		//
-		//
-		//
-		// String[][] limiti = new InputOutput().readFile7("limiti.csv");
-		// if (limiti == null)
-		// MyLog.waitHere("limiti == null");
-		// double[] vetMinimi = doubleLimiti(decoderLimiti(limiti, "P10MIN"));
-		// double[] vetMaximi = doubleLimiti(decoderLimiti(limiti, "P10MAX"));
 		do {
 			ImagePlus imp11 = null;
 			if (fast || silent)
@@ -498,7 +489,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			Overlay over2 = new Overlay();
 			Overlay over3 = new Overlay();
-			Overlay over4 = new Overlay();
+			// Overlay over4 = new Overlay();
 
 			int sqNEA = MyConst.P10_NEA_11X11_PIXEL;
 			// disegno MROI già predeterminata
@@ -507,8 +498,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			int yCenterRoi = (int) out2[1];
 			int xCenterCircle = (int) out2[2];
 			int yCenterCircle = (int) out2[3];
-			int xMaxima = (int) out2[4];
-			int yMaxima = (int) out2[5];
+			// int xMaxima = (int) out2[4];
+			// int yMaxima = (int) out2[5];
 			angle = out2[6];
 			int xBordo = (int) out2[7];
 			int yBordo = (int) out2[8];
@@ -910,7 +901,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// Salvataggio dei risultati nella ResultsTable
 			//
 
-			String[][] tabCodici = TableCode.loadTable(MyConst.CODE_FILE);
+			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
 					imp1, tabCodici, VERSION, autoCalled);
@@ -1696,6 +1687,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double yCenterRoi = 0;
 		double maxFitError = 30;
 		Overlay over12 = new Overlay();
+		if (imp11 == null)
+			MyLog.waitHere("imp11==null");
 
 		double dimPixel = ReadDicom
 				.readDouble(ReadDicom.readSubstring(
@@ -1710,6 +1703,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 		int height = imp11.getHeight();
 		ImagePlus imp12 = imp11.duplicate();
 		imp12.setTitle("DUP");
+		// ************************************
+		UtilAyv.showImageMaximized(imp12);
+		UtilAyv.showImageMaximized(imp11);
+
+		// ************************************
 
 		//
 		// -------------------------------------------------
@@ -1742,6 +1740,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		// ImagePlus imp12 = imp122;
 		tidalWave(imp12, 200);
+		// in caso di immagini inutilizzabili, applicando il filtro tidalWave,
+		// riempimento con 0 fino al valore 200, possiamo trovarci con la
+		// immagine p12 tutta a 0. Questo non va considerato un errore, così
+		// facendo non verranno trovati punti della circonferenza e si passerà
+		// in manuale.
+
 		imp12.updateAndDraw();
 		if (step)
 			MyLog.waitHere(listaMessaggi(4), debug);
@@ -1779,7 +1783,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// imp12.getRoi().setStrokeWidth(strWidth);
 		peaks5 = profileAnalyzer(imp12, dimPixel,
 				"BISETTRICE DIAGONALE SINISTRA 2", showProfiles);
-//		MyLog.logMatrix(peaks5, "peaks5");
+		// MyLog.logMatrix(peaks5, "peaks5");
 
 		if (peaks5 != null)
 			ImageUtils.plotPoints(imp12, over12, peaks5);
@@ -1924,6 +1928,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			ImageUtils.plotPoints(imp12, over12, peaks8);
 		// MyLog.logMatrix(peaks8, "peaks8");
 		// MyLog.waitHere();
+
 		// --------------------------------------------
 		if (demo) {
 			MyLog.waitHere(listaMessaggi(12), debug);
@@ -2019,8 +2024,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// -------------------------------------------------------------------
 
 		if (xPoints3.length < 3 || test) {
-			UtilAyv.showImageMaximized(imp11);
-			MyLog.waitHere(listaMessaggi(17), debug);
+			// UtilAyv.showImageMaximized(imp11);
+			// MyLog.waitHere(listaMessaggi(19), debug);
 			manual = true;
 		}
 
@@ -2105,11 +2110,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 			}
 
 		} else {
-			fast = false;
-			UtilAyv.showImageMaximized(imp12);
-			imp12.setRoi(new OvalRoi((width / 2) - 100, (height / 2) - 100,
+			if (!test)
+				fast = false;
+			// UtilAyv.showImageMaximized(imp11);
+			ImageUtils.imageToFront(iw11);
+			imp11.setRoi(new OvalRoi((width / 2) - 100, (height / 2) - 100,
 					200, 200));
-			MyLog.waitHere(listaMessaggi(19), debug);
+			if (!test) 
+				MyLog.waitHere(listaMessaggi(19)+"aaaaaa", debug);
 
 			//
 			// Ho così risolto la mancata localizzazione automatica del
@@ -2124,14 +2132,20 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// ==========================================================================
 		// ==========================================================================
 		imp11.setOverlay(over12);
-
-		Rectangle boundRec = imp12.getProcessor().getRoi();
+		Rectangle boundRec = null;
+		if (manual)
+			boundRec = imp11.getProcessor().getRoi();
+		else
+			boundRec = imp12.getProcessor().getRoi();
 
 		// x1 ed y1 sono le due coordinate del centro
 
 		xCenterCircle = boundRec.x + boundRec.width / 2;
 		yCenterCircle = boundRec.y + boundRec.height / 2;
 		diamCircle = boundRec.width;
+		MyCircleDetector.drawCenter(imp11, over12, xCenterCircle,
+				yCenterCircle, Color.red);
+
 		// over12.setStrokeColor(Color.red);
 		// imp12.setOverlay(over12);
 
@@ -2162,13 +2176,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// ===============================================================
 		// intersezioni retta - circonferenza
 		// ===============================================================
-		
-		
 
 		double[] out11 = ImageUtils.getCircleLineCrossingPoints(xCenterCircle,
 				yCenterCircle, xMaxima, yMaxima, xCenterCircle, yCenterCircle,
 				diamCircle / 2);
-		
+
 		// il punto che ci interesasa sarà quello con minor distanza dal maxima
 		double dx1 = xMaxima - out11[0];
 		double dx2 = xMaxima - out11[2];

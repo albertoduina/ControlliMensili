@@ -36,7 +36,6 @@ public class none_ implements PlugIn, Measurements {
 	}
 
 	public void none2 (String msg){
-		IJ.log(msg);
 	}
 	
 

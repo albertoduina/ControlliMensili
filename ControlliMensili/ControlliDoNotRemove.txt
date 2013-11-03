@@ -1,0 +1,1 @@
+Non rimuovere questo file, serve per la ricerca della risorsa nel file JAR

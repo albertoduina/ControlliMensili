@@ -1,0 +1,56 @@
+// Contiene le regole utilizzate da Sequenze per compilare il file;;;;;;;
+// ayv.txt che verrà poi usato per chiamare il plug-in adatto;;;;;;;
+// ad elaborare una determinata immagine;;;;;;;
+// N.B. si hanno 4 directions vup verticale a crescere, vdw vertivale a scendere ;;;;;;;
+// hsx orizz. verso sx, hdx orizz. verso dx                  ;;;;;;;
+// CODICE;COMMENTO;DA PASSARE;TOTALI;COIL;DIRECTION;DEPTH;PLUGIN
+//;;;;;;;
+// DESENZANO APERTO + ECHELON;;;;;;;
+HUSA3;Uniformità Assiale Head;2;2;xxx;x;x;p12rmn_
+HUSS3;Uniformità Sagittale Head;2;2;xxx;x;x;p12rmn_
+HUSC3;Uniformità Coronale Head;2;2;xxx;x;x;p12rmn_
+HDSA3;DGP Single Head;1;1;xxx;x;x;p8rmn_
+HDMA3;DGP Multi Head;1;3;xxx;x;x;p8rmn_
+HT2A3;Thickness 2mm Sing.Head;1;1;xxx;x;x;p6rmn_
+HT5A3;Thickness 5mm Sing.Head;1;1;xxx;x;x;p6rmn_
+HTMA3;Thickness 2mm Multi Head;15;15;xxx;x;x;p6rmn_
+HWSA3;Warp Assiale Head;1;1;xxx;x;x;p7rmn_
+HRKA3;Risoluzione 1024 Head;1;1;xxx;x;x;p4rmn_
+HR5A3;Risoluzione 512 Head;1;1;xxx;x;x;p4rmn_
+HR2A3;Risoluzione 256 Head;1;1;xxx;x;x;p4rmn_
+T2MA3;T2 multi SpinEcho Head;4;4;xxx;x;x;p2rmn_
+T2M13;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
+T2M23;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
+T2M33;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
+B1K03;T1 ir 1000 Head;4;1;xxx;x;x;p2rmn_
+B0503;T1 ir 500 Head;4;1;xxx;x;x;p2rmn_
+B0203;T1 ir 200 Head;4;1;xxx;x;x;p2rmn_
+B0023;T1 ir 20 Head;4;1;xxx;x;x;p2rmn_
+T1AA3;T1 per CNR;1;1;xxx;x;x;p9rmn_
+//----------------------------------------------------------------------------------------------------------;;;;;;;
+// DESENZANO ECHELON;;;;;;;
+BUSA3;Uniformità Assiale Body;2;2;xxx;x;x;p12rmn_
+BUSS3;Uniformità Sagittale Body;2;2;xxx;x;x;p12rmn_
+BUSC3;Uniformità Coronale Body;2;2;xxx;x;x;p12rmn_
+BDSA3;DGP Single Body;1;1;xxx;x;x;p8rmn_
+BDMA3;DGP Multi Body;1;3;xxx;x;x;p8rmn_
+BT2A3;Thickness 2mm Sing.Body;1;1;xxx;x;x;p6rmn_
+BT5A3;Thickness 5mm Sing.Body;1;1;xxx;x;x;p6rmn_
+BTMA3;Thickness 2mm Multi Body;15;15;xxx;x;x;p6rmn_
+BRKA3;Risoluzione 1024 Body;1;1;xxx;x;x;p4rmn_
+BR5A3;Risoluzione 512 Body;1;1;xxx;x;x;p4rmn_
+BR2A3;Risoluzione 256 Body;1;1;xxx;x;x;p4rmn_
+RHCA3;Rapid Head Coil*   2;2;2;xxx;x;x;p12rmn_
+RKCA3;Rapid Knee Coil;2;2;xxx;x;x;p12rmn_
+IBCL3;Breast Coil Left;2;2;xxx;x;x;p12rmn_
+IBCR3;Breast Coil Right;2;2;xxx;x;x;p12rmn_
+MPCC3;Multipurpose coil A;2;2;xxx;x;x;p12rmn_
+MPCD3;Multipurpose coil B;2;2;xxx;x;x;p12rmn_
+NVCN3;Neurovascular Coil NeuroVasc;2;2;xxx;x;x;p12rmn_
+NVCH3;Neurovascular Coil Head;2;2;xxx;x;x;p12rmn_
+RWCA3;Wrist;2;2;xxx;x;x;p12rmn_
+RBCA3;Torso;2;2;xxx;x;x;p12rmn_
+CTLC3;CervicalToracicLumbar Cerv;2;2;xxx;vup;x;p12rmn_
+CTLT3;CervicalToracicLumbar Torac;2;2;xxx;vup;x;p5rmn_
+CTL13;CervicalToracicLumbar Lumb1;2;2;xxx;vup;x;p5rmn_
+CTL23;CervicalToracicLumbar Lumb2;2;2;xxx;vup;x;p5rmn_

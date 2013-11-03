@@ -1,0 +1,60 @@
+// Contiene le regole utilizzate da Sequenze per compilare il file;;;;;;;
+// ayv.txt che verrà poi usato per chiamare il plug-in adatto;;;;;;;
+// ad elaborare una determinata immagine;;;;;;;
+// N.B. si hanno 4 directions vup verticale a crescere, vdw vertivale a scendere ;;;;;;;
+// hsx orizz. verso sx, hdx orizz. verso dx                  ;;;;;;;
+// CODICE;COMMENTO;DA PASSARE;TOTALI;COIL;DIRECTION;DEPTH;PLUGIN
+//;;;;;;;
+// BODY ARRAY 16ch MANERBIO SAVE UNCOMBINED;;;;;;;
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A1A;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A1A;hdx;30;p10rmn_
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A1B;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A1B;hdx;30;p10rmn_
+
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A2A;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A2A;hdx;30;p10rmn_
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A2B;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A2B;hdx;30;p10rmn_
+
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A3A;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A3A;hdx;30;p10rmn_
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A3B;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A3B;hdx;30;p10rmn_
+
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A4A;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A4A;hdx;30;p10rmn_
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A4B;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A4B;hdx;30;p10rmn_
+
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;C:BA1,2;x;x;p12rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;C:BA1,2;x;x;p12rmn_
+
+
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A5A;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A5A;hdx;30;p10rmn_
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A5B;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A5B;hdx;30;p10rmn_
+
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A6A;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A6A;hdx;30;p10rmn_
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A6B;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A6B;hdx;30;p10rmn_
+
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A7A;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A7A;hdx;30;p10rmn_
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A7B;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A7B;hdx;30;p10rmn_
+
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A8A;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A8A;hdx;30;p10rmn_
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A8B;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A8B;hdx;30;p10rmn_
+
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;C:BA3,4;x;x;p12rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;C:BA3,4;x;x;p12rmn_
+
+R1FA_;Flash BODY ARRAY 16CH B1;4;0;xxx;hdx;30;p10rmn_
+R1SA_;SpinEcho BODY ARRAY 16CH B1;4;0;xxx;hdx;30;p10rmn_
+R2FA_;Flash BODY ARRAY 16CH B2;4;0;xxx;hdx;30;p10rmn_
+R2SA_;SpinEcho BODY ARRAY 16CH B2;4;0;xxx;hdx;30;p10rmn_
+//;;;;;;;

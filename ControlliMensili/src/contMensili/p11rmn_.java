@@ -478,21 +478,21 @@ public class p11rmn_ implements PlugIn, Measurements {
 				int guard = 10;
 				boolean demo = false;
 				boolean circle = false;
-				double[] circleData=null;
-				int mode=1;
+				double[] circleData = null;
+				int mode = 1;
 
-				double[] backPos = UtilAyv.positionSearch15(imp1, circleData ,xFondo, yFondo,
-						diamBkg, guard, mode, info10, circle, autoCalled, step, demo,
-						test, fast, irraggiungibile);
-				
-				
-				
-//				public static double[] positionSearch15(ImagePlus imp1, double[] circleData,
-//						double xBkg, double yBkg, double diamBkg, int guard, int mode, String info1,
-//						boolean circle, boolean autoCalled, boolean step, boolean demo,
-//						boolean test, boolean fast, boolean irraggiungibile) {
+				double[] backPos = UtilAyv.positionSearch15(imp1, circleData,
+						xFondo, yFondo, diamBkg, guard, mode, info10, circle,
+						autoCalled, step, demo, test, fast, irraggiungibile);
 
-				
+				// public static double[] positionSearch15(ImagePlus imp1,
+				// double[] circleData,
+				// double xBkg, double yBkg, double diamBkg, int guard, int
+				// mode, String info1,
+				// boolean circle, boolean autoCalled, boolean step, boolean
+				// demo,
+				// boolean test, boolean fast, boolean irraggiungibile) {
+
 				xFondo = backPos[0] - diamBkg / 2;
 				yFondo = backPos[1] - diamBkg / 2;
 
@@ -500,9 +500,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 				// disegno RoiFondo su imp1
 				//
 
-				ImageStatistics statBkg = ImageUtils.backCalc2((int) xFondo,(int) yFondo,
-						MyConst.P11_DIAM_ROI_BACKGROUND, imp1, step, false,
-						test);
+				ImageStatistics statBkg = ImageUtils.backCalc2((int) xFondo,
+						(int) yFondo, MyConst.P11_DIAM_ROI_BACKGROUND, imp1,
+						step, false, test);
 
 				// MyLog.waitHere("Roi Fondo coordinate: x= " + xFondo + " y= "
 				// + yFondo + " statFondo.mean= " + statFondo.mean);
@@ -729,8 +729,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				//
 				// Salvataggio dei risultati nella ResultsTable
 
-				String[][] tabCodici = TableCode
-						.loadTable(MyConst.CODE_FILE);
+				String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
 						path1, imp1, tabCodici, VERSION, autoCalled);
@@ -873,12 +872,17 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 */
 	public static double[] referenceSiemens() {
 
+		// 0.0, 1275.530612244898, 37.045823571316845, 34.43115820571181,
+		// 38.891139825926565, 7.67, 2616.0, 505.0, 1163.0, 661.0, 764.0, 910.0,
+		// 1094.0, 1382.0, 1799.0, 2752.0, 5478.0, 46412.0,
+
 		double simul = 0.0;
 		double signal = 1275.530612244898;
 		// double backNoise = 7.85;
 		double backNoise = 37.045823571316845;
 		double snRatio = 34.43115820571181;
 		double fwhm = 38.891139825926565;
+		double bkg = 7.67;
 		double num1 = 2616.0;
 		double num2 = 505.0;
 		double num3 = 1163.0;
@@ -892,7 +896,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double num11 = 5478.0;
 		double num12 = 46412.0;
 
-		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
+		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, bkg,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
 				num11, num12 };
 		return vetReference;
@@ -1963,7 +1967,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 	}
 
-
 	public static double[] maxPeakSearch(double[] profile) {
 
 		double[] a = Tools.getMinMax(profile);
@@ -1991,7 +1994,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		out[1] = max;
 		return out;
 	}
-
 
 	public static double angoloRad(double ax, double ay, double bx, double by) {
 		//

@@ -272,6 +272,58 @@ D1BF_;Flash BODY ARRAY B02B;4;4;B26;hdx;30;p10rmn_
 D1CS_;SpinEcho BODY ARRAY B03B;4;4;B36;hdx;30;p10rmn_
 D1CF_;Flash BODY ARRAY B03B;4;4;B36;hdx;30;p10rmn_
 //;;;;;;;
+// BODY ARRAY 16ch MANERBIO SAVE UNCOMBINED;;;;;;;
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A1A;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A1A;hdx;30;p10rmn_
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A1B;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A1B;hdx;30;p10rmn_
+
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A2A;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A2A;hdx;30;p10rmn_
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A2B;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A2B;hdx;30;p10rmn_
+
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A3A;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A3A;hdx;30;p10rmn_
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A3B;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A3B;hdx;30;p10rmn_
+
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A4A;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A4A;hdx;30;p10rmn_
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;A4B;hdx;30;p10rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;A4B;hdx;30;p10rmn_
+
+R12F_;Flash BODY ARRAY 16CH BA1-2;4;4;C:BA1,2;x;x;p12rmn_
+R12S_;SpinEcho BODY ARRAY 16CH BA1-2;4;4;C:BA1,2;x;x;p12rmn_
+
+
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A5A;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A5A;hdx;30;p10rmn_
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A5B;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A5B;hdx;30;p10rmn_
+
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A6A;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A6A;hdx;30;p10rmn_
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A6B;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A6B;hdx;30;p10rmn_
+
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A7A;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A7A;hdx;30;p10rmn_
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A7B;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A7B;hdx;30;p10rmn_
+
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A8A;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A8A;hdx;30;p10rmn_
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;A8B;hdx;30;p10rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;A8B;hdx;30;p10rmn_
+
+R34F_;Flash BODY ARRAY 16CH BA3-4;4;4;C:BA3,4;x;x;p12rmn_
+R34S_;SpinEcho BODY ARRAY 16CH BA3-4;4;4;C:BA3,4;x;x;p12rmn_
+
+R1FA_;Flash BODY ARRAY 16CH B1;4;0;xxx;hdx;30;p10rmn_
+R1SA_;SpinEcho BODY ARRAY 16CH B1;4;0;xxx;hdx;30;p10rmn_
+R2FA_;Flash BODY ARRAY 16CH B2;4;0;xxx;hdx;30;p10rmn_
+R2SA_;SpinEcho BODY ARRAY 16CH B2;4;0;xxx;hdx;30;p10rmn_
 //;;;;;;;
 // SPINE AVANTO;;;;;;;
 S1FS_;Flash SPINE S1;4;4;xxx;hsx;30;p11rmn_
@@ -417,6 +469,11 @@ N1SS_;SpinEcho NECK ARRAY N1;4;4;xxx;hdx;30;p11rmn_
 N2FS_;Flash NECK ARRAY N2;4;4;xxx;hsx;30;p11rmn_
 N2SS_;SpinEcho NECK ARRAY N2;4;4;xxx;hsx;30;p11rmn_
 //;;;;;;;
+// ROVATO;;;;;;;
+N1FE_;Flash NECK ARRAY N1;4;4;xxx;hdx;30;p11rmn_
+N1SE_;SpinEcho NECK ARRAY N1;4;4;xxx;hdx;30;p11rmn_
+N2FE_;Flash NECK ARRAY N2;4;4;xxx;hdx ;30;p11rmn_
+N2SE_;SpinEcho NECK ARRAY N2;4;4;xxx;hdx;30;p11rmn_
 //;;;;;;;
 // NECK MATRIX AVANTO;;;;;;;
 N1FA_;Flash NECK ARRAY B1;4;4;NE1;hdx;30;p11rmn_
@@ -618,6 +675,15 @@ PR4S_;SpinEcho PERIF ARRAY PR4;4;4;xxx;x;x;p12rmn_
 PL4F_;Flash PERIF ARRAY PL4;4;4;xxx;x;x;p12rmn_
 PL4S_;SpinEcho PERIF ARRAY PL4;4;4;xxx;x;x;p12rmn_
 //;;;;;;;
+// EXTREMITY COIL;;;;;;;
+EX1F_;Flash EXTREMITY COIL;4;4;xxx;x;x;p12rmn_
+EX1S_;SpinEcho EXTREMITY COIL;4;4;xxx;x;x;p12rmn_
+//;;;;;;;
+// SHOULDER COIL;;;;;;;
+SHLF_;Flash SHOULDER COIL;4;4;xxx;x;x;p12rmn_
+SHLS_;SpinEcho SHOULDER COIL;4;4;xxx;x;x;p12rmn_
+SHSF_;Flash SHOULDER COIL;4;4;xxx;x;x;p12rmn_
+SHSS_;SpinEcho SHOULDER COIL;4;4;xxx;x;x;p12rmn_
 //;;;;;;;
 // T2 AND T1;;;;;;;
 T2MA_;T2 multi SpinEcho Body;20;20;xxx;x;x;p2rmn_
@@ -645,3 +711,115 @@ B005_;T1 ir 50 Body;18;1;xxx;x;x;p2rmn_
 B003_;T1 ir 30 Body;18;1;xxx;x;x;p2rmn_
 C080_;T1 ir 800 Body;1;0;xxx;x;x;p9rmn_
 //;;;;;;;
+// GIORNALIERI;;;;;;;
+D1BC_;Daily Body;4;0;xxx;x;x;p12rmn_
+D2HC_;Daily Head;4;0;xxx;x;x;p12rmn_
+D3S1_;Daily SPINE S1;4;0;xxx;hdx;x;p5rmn_
+D4S5_;Daily SPINE S5;4;0;xxx;hdx;x;p5rmn_
+D5N1_;Daily NECK ARRAY N1;4;0;xxx;hdx;x;p5rmn_
+D5N2_;Daily NECK ARRAY N2;4;0;xxx;hdx;x;p5rmn_
+D3B1_;Daily BODY ARRAY B1;4;0;xxx;hdx;x;p5rmn_
+D3B2_;Daily BODY ARRAY B2;4;0;xxx;hdx;x;p5rmn_
+D4LF_;Daily LARGE FLEXIBLE;4;0;xxx;x;x;p12rmn_
+D5SF_;Daily SMALL FLEXIBLE;4;0;xxx;x;x;p12rmn_
+//;;;;;;;
+// ESINE GE ;;;;;;;
+BUSA2;Uniformità Assiale Body;2;2;xxx;x;x;p12rmn_
+BUSS2;Uniformità Sagittale Body;2;2;xxx;x;x;p12rmn_
+BUSC2;Uniformità Coronale Body;2;2;xxx;x;x;p12rmn_
+BDSA2;DGP Single Body;1;1;xxx;x;x;p8rmn_
+BDMA2;DGP Multi Body;1;3;xxx;x;x;p8rmn_
+BWSA2;Warp Assiale Body;1;1;xxx;x;x;p7rmn_
+BT2A2;Thickness 2mm Sing.Body;1;1;xxx;x;x;p6rmn_
+BT5A2;Thickness 5mm Sing.Body;1;1;xxx;x;x;p6rmn_
+BTMA2;Thickness 2mm Multi Body;15;15;xxx;x;x;p6rmn_
+BR5A2;Risoluzione 512 Head;1;1;xxx;x;x;p4rmn_
+HUSA2;Uniformità Assiale Head;2;2;xxx;x;x;p12rmn_
+HUSS2;Uniformità Sagittale Head;2;2;xxx;x;x;p12rmn_
+HUSC2;Uniformità Coronale Head;2;2;xxx;x;x;p12rmn_
+HUT2A;Thickness 2mm Sing.Head;1;1;xxx;x;x;p6rmn_
+HUT5A;Thickness 5mm Sing.Head;1;1;xxx;x;x;p6rmn_
+HUTMA;Thickness 2mm Multi Head;15;15;xxx;x;x;p6rmn_
+HDSA2;DGP Single Head;1;1;xxx;x;x;p8rmn_
+HDMA2;DGP Multi Head;1;3;xxx;x;x;p8rmn_
+HWSA2;Warp Assiale Head;1;1;xxx;x;x;p7rmn_
+HR5A2;Risoluzione 512 Head;1;1;xxx;x;x;p4rmn_
+HR2A2;Risoluzione 256 Head;1;1;xxx;x;x;p4rmn_
+SHFA2;Shoulder;2;2;xxx;x;x;p12rmn_
+OBSA2;Open Body;2;2;xxx;x;x;p12rmn_
+NVSN2;NeurovascularArray Neck;2;2;xxx;x;x;p12rmn_
+NVSH2;NeurovascularArray Sag.Head;2;2;xxx;x;x;p12rmn_
+NVCH2;NeurovascularArray Cor.Head;2;2;xxx;x;x;p12rmn_
+NVAH2;NeurovascularArray Ass.Head;2;2;xxx;x;x;p12rmn_
+9GSA2;9 inch General Purpose;2;2;xxx;x;x;p12rmn_
+LKSA2;Large Knee;2;2;xxx;x;x;p12rmn_
+LKFA2;Large Knee;2;2;xxx;x;x;p12rmn_
+SKSA2;Small Knee;2;2;xxx;x;x;p12rmn_
+FOSA2;Foot;4;4;xxx;hdx;x;p5rmn_
+WRSA2;Wrist;4;4;xxx;hdx;x;p5rmn_
+CVSA2;Spine  Cervical;4;4;xxx;hdx;x;p5rmn_
+CTSA2;Spine  Thoracic;4;4;xxx;hdx;x;p5rmn_
+CLSA2;Spine  Lumbar;4;4;xxx;hdx;x;p5rmn_
+T2MA2;T2 multi SpinEcho Head;4;4;xxx;x;x;p2rmn_
+T2M12;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
+T2M22;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
+T2M32;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
+HT1A2;Head SE pesata T1 ;1;1;xxx;x;x;p9rmn_
+S1AS2;CTL top;4;4;xxx;hdx;x;p5rmn_
+S1AF2;CTL top;4;4;xxx;hdx;x;p5rmn_
+S2AS2;CTL top;4;4;xxx;hdx;x;p5rmn_
+S2AF2;CTL top;4;4;xxx;hdx;x;p5rmn_
+S3AS2;CTL top;4;4;xxx;hdx;x;p5rmn_
+S3AF2;CTL top;4;4;xxx;hdx;x;p5rmn_
+SASH2;Shoulder;2;2;xxx;x;x;p12rmn_
+SAFH2;Shoulder;2;2;xxx;x;x;p12rmn_
+//;;;;;;;
+// DESENZANO APERTO;;;;;;;
+HUSA3;Uniformità Assiale Head;2;2;xxx;x;x;p12rmn_
+HUSS3;Uniformità Sagittale Head;2;2;xxx;x;x;p12rmn_
+HUSC3;Uniformità Coronale Head;2;2;xxx;x;x;p12rmn_
+HDSA3;DGP Single Head;1;1;xxx;x;x;p8rmn_
+HDMA3;DGP Multi Head;1;3;xxx;x;x;p8rmn_
+HT2A3;Thickness 2mm Sing.Head;1;1;xxx;x;x;p6rmn_
+HT5A3;Thickness 5mm Sing.Head;1;1;xxx;x;x;p6rmn_
+HTMA3;Thickness 2mm Multi Head;15;15;xxx;x;x;p6rmn_
+HWSA3;Warp Assiale Head;1;1;xxx;x;x;p7rmn_
+HRKA3;Risoluzione 1024 Head;1;1;xxx;x;x;p4rmn_
+HR5A3;Risoluzione 512 Head;1;1;xxx;x;x;p4rmn_
+HR2A3;Risoluzione 256 Head;1;1;xxx;x;x;p4rmn_
+T2MA3;T2 multi SpinEcho Head;4;4;xxx;x;x;p2rmn_
+T2M13;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
+T2M23;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
+T2M33;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
+B1K03;T1 ir 1000 Head;4;1;xxx;x;x;p2rmn_
+B0503;T1 ir 500 Head;4;1;xxx;x;x;p2rmn_
+B0203;T1 ir 200 Head;4;1;xxx;x;x;p2rmn_
+B0023;T1 ir 20 Head;4;1;xxx;x;x;p2rmn_
+T1AA3;T1 per CNR;1;1;xxx;x;x;p9rmn_
+//;;;;;;;
+// DESENZANO ECHELON;;;;;;;
+BUSA3;Uniformità Assiale Body;2;2;xxx;x;x;p12rmn_
+BUSS3;Uniformità Sagittale Body;2;2;xxx;x;x;p12rmn_
+BUSC3;Uniformità Coronale Body;2;2;xxx;x;x;p12rmn_
+BDSA3;DGP Single Body;1;1;xxx;x;x;p8rmn_
+BDMA3;DGP Multi Body;1;3;xxx;x;x;p8rmn_
+BT2A3;Thickness 2mm Sing.Body;1;1;xxx;x;x;p6rmn_
+BT5A3;Thickness 5mm Sing.Body;1;1;xxx;x;x;p6rmn_
+BTMA3;Thickness 2mm Multi Body;15;15;xxx;x;x;p6rmn_
+BRKA3;Risoluzione 1024 Body;1;1;xxx;x;x;p4rmn_
+BR5A3;Risoluzione 512 Body;1;1;xxx;x;x;p4rmn_
+BR2A3;Risoluzione 256 Body;1;1;xxx;x;x;p4rmn_
+RHCA3;Rapid Head Coil*   2;2;2;xxx;x;x;p12rmn_
+RKCA3;Rapid Knee Coil;2;2;xxx;x;x;p12rmn_
+IBCL3;Breast Coil Left;2;2;xxx;x;x;p12rmn_
+IBCR3;Breast Coil Right;2;2;xxx;x;x;p12rmn_
+MPCC3;Multipurpose coil A;2;2;xxx;x;x;p12rmn_
+MPCD3;Multipurpose coil B;2;2;xxx;x;x;p12rmn_
+NVCN3;Neurovascular Coil NeuroVasc;2;2;xxx;x;x;p12rmn_
+NVCH3;Neurovascular Coil Head;2;2;xxx;x;x;p12rmn_
+RWCA3;Wrist;2;2;xxx;x;x;p12rmn_
+RBCA3;Torso;2;2;xxx;x;x;p12rmn_
+CTLC3;CervicalToracicLumbar Cerv;2;2;xxx;vup;x;p12rmn_
+CTLT3;CervicalToracicLumbar Torac;2;2;xxx;vup;x;p5rmn_
+CTL13;CervicalToracicLumbar Lumb1;2;2;xxx;vup;x;p5rmn_
+CTL23;CervicalToracicLumbar Lumb2;2;2;xxx;vup;x;p5rmn_

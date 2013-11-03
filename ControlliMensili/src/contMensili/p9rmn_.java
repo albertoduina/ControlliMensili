@@ -218,7 +218,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 		// tabl = io.readFile1(CODE_FILE, TOKENS4);
 
-		tabl = TableCode.loadTable(MyConst.CODE_FILE);
+		tabl = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
 		StringTokenizer strTok = new StringTokenizer(args, "#");
 		int nTokens = strTok.countTokens();
