@@ -318,11 +318,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 		new AboutBox().close();
 		UtilAyv.afterWork();
 		if (result1 == null) {
-			MyLog.waitHere("A causa di problemi sulla immagine, \n"
+			int resp = MyLog.waitHere("A causa di problemi sulla immagine, \n"
 					+ "viene avviato il programma p3rmn_, che \n"
-					+ "ripete il controllo in maniera manuale", debug, "uno",
-					"due");
-			IJ.runPlugIn("contMensili.p3rmn_", autoArgs);
+					+ "ripete il controllo in maniera manuale", debug,
+					"Prosegui", "Annulla");
+			if (resp == 2)
+				IJ.runPlugIn("contMensili.p3rmn_", autoArgs);
 		}
 
 		return 0;
@@ -366,8 +367,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 		// double angle = Double.NaN;
 		boolean abort = false;
 		// lettura dei limiti da file esterno
-		boolean absolute=false;
-		String[][] limiti = new InputOutput().readFile6LIKE("LIMITI.csv", absolute);
+		boolean absolute = false;
+		String[][] limiti = new InputOutput().readFile6LIKE("LIMITI.csv",
+				absolute);
 		double[] vetMinimi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti,
 				"P12MIN"));
 		double[] vetMaximi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti,
@@ -818,13 +820,13 @@ public class p12rmn_ implements PlugIn, Measurements {
 					test);
 			imp1.deleteRoi();
 
-			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+			String[][] tabCodici = TableCode
+					.loadMultipleTable(MyConst.CODE_GROUP);
 			if (demo)
 				MyLog.waitHere(listaMessaggi(45), debug);
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
 					imp1, tabCodici, VERSION, autoCalled);
-			
-			
+
 			if (iw1 != null) {
 				WindowManager.setCurrentWindow(iw1);
 				WindowManager.setWindow(iw1);
@@ -858,8 +860,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 			if (UtilAyv
 					.checkLimits2(uiPerc1, minUiPerc, maxUiPerc, "maxUiPerc"))
 				abort = true;
-			if (abort)
-				return null;
+			if (abort) {
+				int resp= ButtonMessages.ModelessMsg("Accettare il valore fuori range oppure rifare l'elaborazione in manuale", "ACCETTA", "MANUALE");
+				MyLog.waitHere("resp= "+resp);
+				if (resp==1) return null;
+			}
 
 			IJ.wait(1000);
 			int col = 2;
@@ -1241,7 +1246,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		return y2;
 	}
 
-
 	public static Double toDouble(double in) {
 		Double out = new Double(in);
 		return out;
@@ -1289,14 +1293,15 @@ public class p12rmn_ implements PlugIn, Measurements {
 			return null;
 		}
 
-		// peaks1 viene utilizzato in un altra routine, per cui gli elementi 0, 1 e
+		// peaks1 viene utilizzato in un altra routine, per cui gli elementi 0,
+		// 1 e
 		// ed 2 sono utilizzati per altro, li lascio a 0
 		double[][] peaks1 = new double[6][count1];
 
 		int count2 = 0;
 		boolean ready2 = false;
 		double max2 = 0;
-		
+
 		for (int i1 = 0; i1 < line1[0].length; i1++) {
 
 			if (line1[2][i1] > max2) {
@@ -1413,9 +1418,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		return peaks1;
 	}
 
-	
-
-	
 	/**
 	 * Ricerca posizione ROI per calcolo uniformità. Versione con Canny Edge
 	 * Detector
@@ -1867,9 +1869,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 					"BISETTRICE VERTICALE FANTOCCIO", showProfiles, false,
 					false);
 
-//			MyLog.logMatrix(peaks9, "peaks9");
-//			MyLog.waitHere();
-			
+			// MyLog.logMatrix(peaks9, "peaks9");
+			// MyLog.waitHere();
+
 			// PLOTTAGGIO PUNTI
 
 			double gapVert = 0;
@@ -1973,7 +1975,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				// disegno il cerchio ed i punti, in modo da date un feedback
 				// grafico al messaggio di eccessivo errore da bolla d'aria
 				// -------------------------------------------------------------
-	//			UtilAyv.showImageMaximized(imp11);
+				// UtilAyv.showImageMaximized(imp11);
 				over12.clear();
 				imp11.setOverlay(over12);
 				imp11.setRoi(new OvalRoi(xCenterCircle - diamCircle / 2,
@@ -2141,9 +2143,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 				int py = i1 + (yCenterCircle - diamCircle / 2);
 				int xcentGhost = px + diamGhost / 2;
 				int ycentGhost = py + diamGhost / 2;
-				critic_0 = UtilAyv.criticalDistanceCalculation(xcentGhost, ycentGhost,
-						diamGhost / 2, xCenterCircle, yCenterCircle,
-						diamCircle / 2);
+				critic_0 = UtilAyv.criticalDistanceCalculation(xcentGhost,
+						ycentGhost, diamGhost / 2, xCenterCircle,
+						yCenterCircle, diamCircle / 2);
 				if (critic_0 < guard) {
 					break;
 				}
@@ -2178,9 +2180,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 				int px = i1 + (xCenterCircle - diamCircle / 2);
 				int xcentGhost = px + diamGhost / 2;
 				int ycentGhost = py + diamGhost / 2;
-				critic_1 =  UtilAyv.criticalDistanceCalculation(xcentGhost, ycentGhost,
-						diamGhost / 2, xCenterCircle, yCenterCircle,
-						diamCircle / 2);
+				critic_1 = UtilAyv.criticalDistanceCalculation(xcentGhost,
+						ycentGhost, diamGhost / 2, xCenterCircle,
+						yCenterCircle, diamCircle / 2);
 				if (critic_1 < guard) {
 					break;
 				}
@@ -2216,9 +2218,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 				int py = i2 + (yCenterCircle - diamCircle / 2);
 				int xcentGhost = px + diamGhost / 2;
 				int ycentGhost = py + diamGhost / 2;
-				critic_2 =  UtilAyv.criticalDistanceCalculation(xcentGhost, ycentGhost,
-						diamGhost / 2, xCenterCircle, yCenterCircle,
-						diamCircle / 2);
+				critic_2 = UtilAyv.criticalDistanceCalculation(xcentGhost,
+						ycentGhost, diamGhost / 2, xCenterCircle,
+						yCenterCircle, diamCircle / 2);
 				if (critic_2 < guard) {
 					break;
 				}
@@ -2254,9 +2256,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 				int px = i1 + (xCenterCircle - diamCircle / 2);
 				int xcentGhost = px + diamGhost / 2;
 				int ycentGhost = py + diamGhost / 2;
-				critic_3 =  UtilAyv.criticalDistanceCalculation(xcentGhost, ycentGhost,
-						diamGhost / 2, xCenterCircle, yCenterCircle,
-						diamCircle / 2);
+				critic_3 = UtilAyv.criticalDistanceCalculation(xcentGhost,
+						ycentGhost, diamGhost / 2, xCenterCircle,
+						yCenterCircle, diamCircle / 2);
 				if (critic_3 < guard) {
 					break;
 				}
@@ -2391,8 +2393,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 			py = height - diamGhost + incr;
 			xcentGhost = px + diamGhost / 2;
 			ycentGhost = py + diamGhost / 2;
-			critic_0 =  UtilAyv.criticalDistanceCalculation(xcentGhost, ycentGhost,
-					diamGhost / 2, xCenterCircle, yCenterCircle, diamCircle / 2);
+			critic_0 = UtilAyv.criticalDistanceCalculation(xcentGhost,
+					ycentGhost, diamGhost / 2, xCenterCircle, yCenterCircle,
+					diamCircle / 2);
 			imp2.setRoi(new OvalRoi(px, py, diamGhost, diamGhost));
 
 			pieno = verifyCircularRoiPixels(imp2, xcentGhost, ycentGhost,
@@ -2542,7 +2545,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		}
 		return false;
 	}
-
 
 	/**
 	 */
