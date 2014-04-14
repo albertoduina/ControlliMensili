@@ -61,11 +61,12 @@ import utils.ReadDicom;
 import utils.ReadVersion;
 import utils.ReportStandardInfo;
 import utils.TableCode;
+import utils.TableLimiti;
 import utils.TableSequence;
 import utils.UtilAyv;
 
 /*
- * Copyright (C) 2007 Alberto Duina, SPEDALI CIVILI DI BRESCIA, Brescia ITALY
+ * Copyright (C) 2007-2014 Alberto Duina, SPEDALI CIVILI DI BRESCIA, Brescia ITALY
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -93,6 +94,7 @@ import utils.UtilAyv;
  * ignorata dai vari autoreports e autohistory
  * 
  * +++++++++++++++++ MA A ME SEMBRA CHE FUNZIONI ++++++++++++++++++++++
+* +++++++++++++++++ MA A ME SEMBRA CHE FUNZIONI ++++++++++++++++++++++
  * 
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
@@ -368,8 +370,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 		boolean abort = false;
 		// lettura dei limiti da file esterno
 		boolean absolute = false;
-		String[][] limiti = new InputOutput().readFile6LIKE("LIMITI.csv",
-				absolute);
+//		String[][] limiti = new InputOutput().readFile6LIKE("LIMITI.csv",
+//				absolute);
+		
+		
+		String[][] limiti = TableLimiti.loadTable(MyConst.LIMITS_FILE);
+
 		double[] vetMinimi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti,
 				"P12MIN"));
 		double[] vetMaximi = UtilAyv.doubleLimiti(UtilAyv.decoderLimiti(limiti,
@@ -678,7 +684,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				ImageUtils.autoAdjust(imp1, imp1.getProcessor());
 
 			iw1 = imp1.getWindow();
-			ImageUtils.imageToFront(imp1);
+			if (imp1.isVisible()) ImageUtils.imageToFront(imp1);
 			//
 			// if (iw1 != null) {
 			// WindowManager.setCurrentWindow(iw1);

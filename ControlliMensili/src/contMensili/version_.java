@@ -75,7 +75,7 @@ public class version_ implements PlugIn {
 
 		try {
 			String classpath = System.getProperty("java.class.path", "");
-			MyLog.waitHere("classpath= " + classpath);
+		//	MyLog.waitHere("classpath= " + classpath);
 
 		} catch (Exception e) {
 			e.printStackTrace();

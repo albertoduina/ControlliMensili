@@ -67,13 +67,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	private static String fileDir = "";
 	private static boolean debug= true;
+	private static boolean mylogger= true;
 
-
-	// ---------------------------"01234567890123456789012345678901234567890"
-
-	/**
-	 * directory dati, dove vengono memorizzati ayv.txt e Results1.xls
-	 */
 
 	public void run(String args) {
 
@@ -82,21 +77,20 @@ public class p3rmn_ implements PlugIn, Measurements {
 		if (IJ.versionLessThan("1.43k"))
 			return;
 
-		//
+		//---------------------------------------------------------------------------
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
-		// modo il messaggio viene emesso, altrimenti si ha una eccezione
-		//
+		// modo il messaggio "manca il file" viene emesso, altrimenti si ha una eccezione
+		//----------------------------------------------------------------------
 		try {
 			Class.forName("utils.IW2AYV");
 		} catch (ClassNotFoundException e) {
 			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
 			return;
 		}
+		//----------------------------------------------------------------------------
 
 		fileDir = Prefs.get("prefer.string1", "none");
-
-		MyFileLogger.logger.info("p3rmn_>>> fileDir= " + fileDir);
-
+		if (mylogger) MyFileLogger.logger.info("p3rmn_>>> fileDir= " + fileDir);
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
 			manualMenu(0, "");
@@ -177,10 +171,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
+		
 		if (vetRiga[0] == -1) {
-
 			IJ.log("selfTestSilent.p3rmn_");
-
 			selfTestSilent();
 			return 0;
 		}
@@ -850,12 +843,13 @@ public class p3rmn_ implements PlugIn, Measurements {
 		double g7 = -0.3311056141375085;
 		double g8 = -0.08329463941307846;
 		double uiPerc = 89.70727101038716;
+		double bkg = 11.401898734177216;		
 		double c4 = 0;
 		double c3 = 0;
 		double c2 = 22579;
 		double c1 = 358;
 		double c0 = 42599;
-		double[] vetReference = { mean, noise, snRatio, g5, g6, g7, g8, uiPerc,
+		double[] vetReference = { mean, noise, snRatio, g5, g6, g7, g8, uiPerc, bkg,
 				c4, c3, c2, c1, c0 };
 		return vetReference;
 	}
@@ -874,16 +868,19 @@ public class p3rmn_ implements PlugIn, Measurements {
 		double g7 = -0.23138417781017862;
 		double g8 = 0.03211964271989232;
 		double uiPerc = 89.54559898315857;
+		double bkg = 16.79746835443038;
 		double c4 = 22;
 		double c3 = 1136;
 		double c2 = 22000;
 		double c1 = 99;
 		double c0 = 42279;
-		double[] vetReference = { mean, noise, snRatio, g5, g6, g7, g8, uiPerc,
+		double[] vetReference = { mean, noise, snRatio, g5, g6, g7, g8, uiPerc, bkg,
 				c4, c3, c2, c1, c0 };
 		return vetReference;
 	}
 
+	
+	
 	/**
 	 * Self test execution menu
 	 */
@@ -908,6 +905,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 						autoCalled, step, verbose, test);
 				double[] vetResults = UtilAyv.vectorizeResults(rt1);
 
+				
+				
 				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 						MyConst.P3_vetName);
 				if (ok)

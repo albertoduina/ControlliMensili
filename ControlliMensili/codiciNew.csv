@@ -142,16 +142,6 @@ B1SS_;SpinEcho BODY ARRAY B1;4;4;xxx;hdx;x;p5rmn_
 B2FS_;Flash BODY ARRAY B2;4;4;xxx;hdx;x;p5rmn_
 B2SS_;SpinEcho BODY ARRAY B2;4;4;xxx;hdx;x;p5rmn_
 //           ;;;;;;;
-// ROVATO;;;;;;;
-B1FE_;Flash BODY ARRAY EXT B1;4;4;xxx;hdx;30;p11rmn_
-B1SE_;SpinEcho BODY ARRAY EXT B1;4;4;xxx;hdx;30;p11rmn_
-B2FE_;Flash BODY ARRAY EXT B2;4;4;xxx;hdx;30;p11rmn_
-B2SE_;SpinEcho BODY ARRAY EXT B2;4;4;xxx;hdx;30;p11rmn_
-B3FE_;Flash BODY ARRAY EXT B3;4;4;xxx;hdx;30;p11rmn_
-B3SE_;SpinEcho BODY ARRAY EXT B3;4;4;xxx;hdx;30;p11rmn_
-B4FE_;Flash BODY ARRAY EXT B4;4;4;xxx;hdx;30;p11rmn_
-B4SE_;SpinEcho BODY ARRAY EXT B4;4;4;xxx;hdx;30;p11rmn_
-//;;;;;;;
 // BODY ARRAY AVANTO;;;;;;;
 B1FA_;Flash BODY ARRAY B1;4;4;xxx;hdx;30;p11rmn_
 B1SA_;SpinEcho BODY ARRAY B1;4;4;xxx;hdx;30;p11rmn_

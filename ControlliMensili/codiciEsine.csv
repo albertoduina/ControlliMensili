@@ -3,7 +3,7 @@
 // ad elaborare una determinata immagine;;;;;;;
 // N.B. si hanno 4 directions vup verticale a crescere, vdw vertivale a scendere ;;;;;;;
 // hsx orizz. verso sx, hdx orizz. verso dx                  ;;;;;;;
-//;;;;;;;
+// CODICE;COMMENTO;DA PASSARE;TOTALI;COIL;DIRECTION;DEPTH;PLUGIN
 // ESINE GE ;;;;;;;
 BUSA2;Uniformità Assiale Body;2;2;xxx;x;x;p12rmn_
 BUSS2;Uniformità Sagittale Body;2;2;xxx;x;x;p12rmn_
@@ -46,12 +46,12 @@ T2M12;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
 T2M22;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
 T2M32;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
 HT1A2;Head SE pesata T1 ;1;1;xxx;x;x;p9rmn_
-S1AS2;CTL top;4;4;xxx;hdx;x;p5rmn_
-S1AF2;CTL top;4;4;xxx;hdx;x;p5rmn_
-S2AS2;CTL top;4;4;xxx;hdx;x;p5rmn_
-S2AF2;CTL top;4;4;xxx;hdx;x;p5rmn_
-S3AS2;CTL top;4;4;xxx;hdx;x;p5rmn_
-S3AF2;CTL top;4;4;xxx;hdx;x;p5rmn_
+S1AS2;CTL top;2;2;xxx;hdx;x;p12rmn_
+S1AF2;CTL top;2;2;xxx;hdx;x;p12rmn_
+S2AS2;CTL top;2;2;xxx;hdx;x;p5rmn_
+S2AF2;CTL top;2;2;xxx;hdx;x;p5rmn_
+S3AS2;CTL top;2;2;xxx;hdx;x;p5rmn_
+S3AF2;CTL top;2;2;xxx;hdx;x;p5rmn_
 SASH2;Shoulder;2;2;xxx;x;x;p12rmn_
 SAFH2;Shoulder;2;2;xxx;x;x;p12rmn_
 //;;;;;;;

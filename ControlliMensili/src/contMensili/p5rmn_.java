@@ -787,6 +787,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 		double backNoise = 40.21194195114299;
 		double snRatio = 38.26155499878056;
 		double fwhm = 36.56299427908097;
+		double bkg = 7.87;
 		double num1 = 1798.0;
 		double num2 = 527.0;
 		double num3 = 1156.0;
@@ -799,8 +800,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 		double num10 = 2617.0;
 		double num11 = 5287.0;
 		double num12 = 47606.0;
+		
 
-		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
+		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, bkg,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
 				num11, num12 };
 		return vetReference;
@@ -820,6 +822,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 		double backNoise = 21.947567747419033;
 		double snRatio = 93.19892843975435;
 		double fwhm = 32.93099254935456;
+		double bkg =  84.06;
 		double num1 = 2262.0;
 		double num2 = 521.0;
 		double num3 = 1427.0;
@@ -833,7 +836,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 		double num11 = 948.0;
 		double num12 = 45801.0;
 
-		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
+		
+		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, bkg,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
 				num11, num12 };
 		return vetReference;

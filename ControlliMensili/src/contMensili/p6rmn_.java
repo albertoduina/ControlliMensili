@@ -1508,7 +1508,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		double fwhm_cuneo3 = 8.090445406547264;
 		double peak_cuneo3 = 44.53125;
 		double fwhm_cuneo4 = 10.550518461420733;
-		double peak_cuneo4 = 64.84375;
+		double peak_cuneo4 = 64.0625;
 		double S1CorSlab = 2.211326690998348;
 		double S2CorSlab = 2.211326690998348;
 		double ErrSperSlab = 10.830367502157365;
@@ -1545,7 +1545,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		double fwhm_cuneo3 = 23.017457348952945;
 		double peak_cuneo3 = 29.687880516052246;
 		double fwhm_cuneo4 = 22.55055404276223;
-		double peak_cuneo4 = 78.12600135803223;
+		double peak_cuneo4 = 77.3447413444519;
 		double S1CorSlab = 6.933279823491047;
 		double S2CorSlab = 6.933279823491049;
 		double ErrSperSlab = 4.9126882060578065;
