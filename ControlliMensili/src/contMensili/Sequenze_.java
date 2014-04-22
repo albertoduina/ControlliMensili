@@ -436,13 +436,18 @@ public class Sequenze_ implements PlugIn {
 				}
 
 				String path1 = pathList[i1];
-				String fileName = path1.substring(path1.lastIndexOf("/") + 1,
+				// MyLog.waitHere("path1= "+path1);
+
+				String fileName = path1.substring(path1.lastIndexOf("\\") + 1,
 						path1.length());
+				// MyLog.waitHere("fileName= "+fileName);
+
 				String codice = "-----";
 				String subCodice = "-----";
 				if (fileName.length() >= 5) {
 					subCodice = fileName.substring(0, 5).trim();
 				}
+				// MyLog.waitHere("subCodice= "+subCodice);
 				if (InputOutput.isCode(subCodice, tableCode2)) {
 					codice = subCodice;
 				} else {

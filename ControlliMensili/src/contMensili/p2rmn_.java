@@ -949,6 +949,8 @@ public class p2rmn_ implements PlugIn, Measurements {
 				simplexregressor = new SimplexBasedRegressor();
 			} else {
 				tr_vals = getTRVals(stack4, DICOM_ECHO_TIME);
+				MyLog.logVector(tr_vals, "tr_vals");
+				MyLog.waitHere();
 				sn_vals = new double[reps];
 				IJ.showStatus("Calculating T2 map");
 				t1_map = new double[1][slices][width2][height2];
