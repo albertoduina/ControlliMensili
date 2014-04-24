@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Color;
 
 import ij.IJ;
+import ij.ImageJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.Line;
@@ -31,6 +32,7 @@ public class p6rmn_Test {
 
 	@Before
 	public void setUp() throws Exception {
+		new ImageJ(ImageJ.NORMAL);
 	}
 
 	@After
