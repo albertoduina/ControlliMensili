@@ -4,5 +4,5 @@ Created-By: 1.6.0_19-b04 (Sun Microsystems Inc.)
 Built-By: AlbertoDuina
 Built-Date: April 24 2014
 Main-Class: contMensili.Sequenze_
-Implementation-Version: 2.00-b2577
+Implementation-Version: 2.00-b2578
 
