@@ -349,7 +349,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 	 */
 	public int autoMenu(String autoArgs) {
 		MyLog.appendLog(fileDir + "MyLog.txt", "p20 riceve " + autoArgs);
-		boolean bstep = true;
+		boolean bstep = false;
 
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
@@ -398,6 +398,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 				boolean autoCalled = true;
 				ImageStack stack100 = stackOpener1(vetPath, typeT2);
 				ImagePlus imp100 = new ImagePlus("newStack", stack100);
+				UtilAyv.showImageMaximized(imp100);
 
 				Roi[] vetRoi = manualRoiPreparation(imp100);
 
@@ -405,9 +406,22 @@ public class p20rmn_ implements PlugIn, Measurements {
 
 				double filtro = filterPreparation(imp100, vetRoi, bstep);
 
-				int[] imaID = doCalculation(stack100, filtro, bMap, bstep);
+				int[] imaID = doCalculation(stack100, filtro, bMap, typeT2);
 				if (imaID == null)
 					MyLog.waitHere("imaID == null");
+
+				boolean autocalled = false;
+				String[][] tabCodici = TableCode
+						.loadMultipleTable(MyConst.CODE_GROUP);
+
+				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
+						vetPath[0], imp100, tabCodici, VERSION, autocalled);
+
+				ResultsTable rt1 = analyzeResultsImages(vetRoi, imaID, info1,
+						typeT2);
+
+				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable);
+
 				retry = false;
 				break;
 			}
@@ -422,30 +436,53 @@ public class p20rmn_ implements PlugIn, Measurements {
 	 * Automatic silent self test
 	 */
 	public void selfTestSilent() {
-		// Siemens
+
+		String[] list = { "T2MA_01testP2", "T2MA_02testP2", "T2MA_03testP2",
+				"T2MA_04testP2", "T2MA_05testP2", "T2MA_06testP2",
+				"T2MA_07testP2", "T2MA_08testP2", "T2MA_09testP2",
+				"T2MA_10testP2", "T2MA_11testP2", "T2MA_12testP2",
+				"T2MA_13testP2", "T2MA_14testP2", "T2MA_15testP2",
+				"T2MA_16testP2", };
+		String[] vetPath = new InputOutput().findListTestImages2(
+				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
+
+		boolean typeT2 = true;
+		boolean bstep = false;
 		ImageStack stack100 = stackOpener1(vetPath, typeT2);
 		ImagePlus imp100 = new ImagePlus("newStack", stack100);
 
-		Roi[] vetRoi = manualRoiPreparation(imp100);
+		String xpos = MyConst.P20_X_ROI_TESTSIEMENS;
+		String ypos = MyConst.P20_Y_ROI_TESTSIEMENS;
+		int diam = 20;
+
+		Roi[] vetRoi = automaticRoiPreparation(imp100, xpos, ypos, diam);
 
 		int[] bMap = mapPreparation(imp100, vetRoi);
 
 		double filtro = filterPreparation(imp100, vetRoi, bstep);
 
-		int[] imaID = doCalculation(stack100, filtro, bMap, bstep);
+		int[] imaID = doCalculation(stack100, filtro, bMap, typeT2);
 		if (imaID == null)
 			MyLog.waitHere("imaID == null");
 
-		ResultsTable rt = new p6rmn_().mainThickness(path1, autoArgs,
-				vetRefPosition, autoCalled, step, verbose, test);
+		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
-		double[] vetResults = UtilAyv.vectorizeResults(rt);
+		boolean autocalled = false;
+		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(vetPath[0],
+				imp100, tabCodici, VERSION, autocalled);
+
+		ResultsTable rt1 = analyzeResultsImages(vetRoi, imaID, info1, typeT2);
+
+		double[] vetResults = UtilAyv.vectorizeResultsMultiple(rt1, 2);
 		boolean ok = UtilAyv.verifyResults1(vetResults, referenceSiemens(),
-				MyConst.P6_vetName);
+				MyConst.P20_vetName);
 		if (ok)
-			IJ.log("Il test di p6rmn_ THICKNESS è stato SUPERATO");
+			IJ.log("Il test di p20rmn_ T2calculation è stato SUPERATO");
 		else
-			IJ.log("Il test di p6rmn_ THICKNESS evidenzia degli ERRORI");
+			IJ.log("Il test di p20rmn_ T2calculation evidenzia degli ERRORI");
+
+		MyLog.waitHere();
+
 	}
 
 	public static int[] mapPreparation(ImagePlus imp1, Roi[] vetRoi) {
@@ -477,8 +514,11 @@ public class p20rmn_ implements PlugIn, Measurements {
 		int ypos = rec1.y;
 		int diam = rec1.width;
 
+		boolean circular = true;
+		boolean selftest = true;
+
 		ImageStatistics statFondo = ImageUtils.backCalc(xpos, ypos, diam, imp1,
-				bstep, true, true);
+				bstep, circular, selftest);
 
 		double mediaFondo = statFondo.mean;
 		double dsFondo = statFondo.stdDev;
@@ -586,20 +626,36 @@ public class p20rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 	double[] referenceSiemens() {
-		double t1 = 1679.260738831615;
-		double t2 = 5.048954649732993;
-		double t3 = 332.5957263094887;
-		double t4 = -0.3480660610768231;
-		double t5 = -0.1697929188035829;
-		double t6 = -0.3311056141375085;
-		double t7 = -0.08329463941307846;
-		double t8 = 89.70727101038716;
-		double t9 = 11.401898734177216;
-		double t10 = 0;
-		double t11 = 0;
-		double t14 = 0;
-		double[] vetReference = { t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11,
-				t14 };
+		double m1 = 58.592281981359555;
+		double d1 = 3.866370693178298;
+		double m2 = 73.95285294931146;
+		double d2 = 3.6103799208252223;
+		double m3 = 113.45177367970913;
+		double d3 = 4.585334675446435;
+		double m4 = 113.45177367970913;
+		double d4 = 4.585334675446435;
+		double m5 = 113.45177367970913;
+		double d5 = 4.585334675446435;
+		double m6 = 113.45177367970913;
+		double d6 = 4.585334675446435;
+		double m7 = 113.45177367970913;
+		double d7 = 4.585334675446435;
+		double m8 = 113.45177367970913;
+		double d8 = 4.585334675446435;
+		double m9 = 113.45177367970913;
+		double d9 = 4.585334675446435;
+		double m10 = 113.45177367970913;
+		double d10 = 4.585334675446435;
+		double m11 = 113.45177367970913;
+		double d11 = 4.585334675446435;
+		double m12 = 113.45177367970913;
+		double d12 = 4.585334675446435;
+		double m13 = 113.45177367970913;
+		double d13 = 4.585334675446435;
+
+		double[] vetReference = { m1, d1, m2, d2, m3, d3, m4, d4, m5, d5, m6,
+				d6, m7, d7, m8, d8, m9, d9, m10, d10, m11, d11, m12, d12, m13,
+				d13 };
 		return vetReference;
 	}
 
@@ -720,11 +776,20 @@ public class p20rmn_ implements PlugIn, Measurements {
 		int roi_diam2 = (int) ((double) MyConst.P20_DIAM_ROI
 				* MyConst.P20_DIM_PIXEL_FOV_220 / dimPixel);
 
-		imp8.setRoi(new OvalRoi(xRoi2, yRoi2, roi_diam2, roi_diam2));
+		// / NOTA BENE: qui andrebbe messo UtilAyv.backCalc
 
-		imp8.updateAndDraw();
+		boolean bstep = false;
+		boolean circular = true;
+		boolean selftest = false;
 
-		msgBkgRoiPositioning();
+		ImageStatistics statFondo = ImageUtils.backCalc(xRoi2, yRoi2,
+				roi_diam2, imp8, bstep, circular, selftest);
+
+		// imp8.setRoi(new OvalRoi(xRoi2, yRoi2, roi_diam2, roi_diam2));
+
+		// imp8.updateAndDraw();
+
+		// msgBkgRoiPositioning();
 
 		ImageStatistics stat2 = imp8.getStatistics();
 		vetXUpperLeftCornerRoiGels[vetRoi.length - 1] = (int) stat2.roiX;
@@ -742,7 +807,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 		return vetRoi;
 	}
 
-	public static Roi[] automaticRoiPreparation(ImagePlus imp8, String presetX,
+	public static Roi[] automaticRoiPreparation(ImagePlus imp1, String presetX,
 			String presetY, int diam) {
 
 		int[] vetX = UtilAyv.getPos(presetX);
@@ -751,21 +816,22 @@ public class p20rmn_ implements PlugIn, Measurements {
 
 		Roi[] vetRoi = new Roi[len];
 		for (int i1 = 0; i1 < len; i1++) {
-			imp8.setRoi(new OvalRoi(vetX[i1], vetY[i1], diam, diam));
-			vetRoi[i1] = imp8.getRoi();
+			imp1.setRoi(new OvalRoi(vetX[i1], vetY[i1], diam, diam));
+			vetRoi[i1] = imp1.getRoi();
 		}
 		return vetRoi;
 	}
 
-	public static ResultsTable analyzeResultsImages(Roi[] vetRoi, int[] imaID, String[] info1, boolean typeT2) {
-		
+	public static ResultsTable analyzeResultsImages(Roi[] vetRoi, int[] imaID,
+			String[] info1, boolean typeT2) {
+
 		double[] medGels = new double[vetRoi.length];
 		double[] devGels = new double[vetRoi.length];
 
 		for (int i1 = 0; i1 < vetRoi.length; i1++) {
 			ImagePlus imp10 = WindowManager.getImage(imaID[0]);
 			Rectangle rec1 = vetRoi[i1].getBounds();
-			
+
 			imp10.setRoi(new OvalRoi(rec1.x, rec1.y, rec1.width, rec1.height));
 
 			imp10.updateAndDraw();
@@ -776,26 +842,36 @@ public class p20rmn_ implements PlugIn, Measurements {
 		//
 		// qui potrei anche chiudere le immagini
 		//
-		String t1 = "TESTO          ";
-		
+		String t1 = "TESTO";
+
 		ResultsTable rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 
-		
-			int col = 0;
-		rt.setHeading(++col, t1);
-		rt.setHeading(++col, "media");
-		rt.setHeading(++col, "devstan");
-		rt.setHeading(++col, "roi_x");
-		rt.setHeading(++col, "roi_y");
-		rt.setHeading(++col, "roi_b");
-		rt.setHeading(++col, "roi_h");
+//		int col = 0;
+		// rt.setHeading(++col, t1);
+		// rt.setHeading(++col, "media");
+		// rt.setHeading(++col, "devstan");
+		// rt.setHeading(++col, "roi_x");
+		// rt.setHeading(++col, "roi_y");
+		// rt.setHeading(++col, "roi_b");
+		// rt.setHeading(++col, "roi_h");
+
+		// rt.addValue(t1, t1);
+//		rt.addValue("media", 1);
+//		rt.addValue("devstan", 2);
+//		rt.addValue("roi_x", 3);
+//		rt.addValue("roi_y", 4);
+//		rt.addValue("roi_b", 5);
+//		rt.addValue("roi_h", 6);
+//		rt.show("Results");
+//		MyLog.waitHere();
+
 		if (typeT2)
 			rt.setLabel("T2___", 0);
 		else
 			rt.setLabel("T1___", 0);
 
 		int gelNumber = 0;
-		for (int i1 = 0; i1 < vetRoi.length; i1++) {
+		for (int i1 = 0; i1 < vetRoi.length - 1; i1++) {
 			Rectangle rec1 = vetRoi[i1].getBounds();
 
 			gelNumber++;
@@ -805,15 +881,15 @@ public class p20rmn_ implements PlugIn, Measurements {
 				gelNumber = 14; // al posto 12 abbiamo il gel 14
 
 			rt.addLabel(t1, "Gel_" + gelNumber);
-			rt.addValue(2, medGels[i1]);
-			rt.addValue(3, devGels[i1]);
-			rt.addValue(4, rec1.x);
-			rt.addValue(5, rec1.y);
-			rt.addValue(6, rec1.width);
-			rt.addValue(7, rec1.height);
+			rt.addValue("media", medGels[i1]);
+			rt.addValue("devstan", devGels[i1]);
+			rt.addValue("roi_x", rec1.x);
+			rt.addValue("roi_y", rec1.y);
+			rt.addValue("roi_b", rec1.width);
+			rt.addValue("roi_h", rec1.height);
 		}
 		rt.show("Results");
-		return null;
+		return rt;
 	}
 
 	/***
@@ -1444,8 +1520,6 @@ public class p20rmn_ implements PlugIn, Measurements {
 				imaID[1] = takeImage("S0_map", s0_map);
 				imaID[2] = takeImage("R^2_map", r2_map);
 				scan = null;
-				MyLog.waitHere();
-
 				// System.gc();
 			}
 		} catch (Exception e) {

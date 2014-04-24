@@ -100,4 +100,9 @@ public class p20rmn_Test {
 		MyLog.waitHere("filter  aaaaa  = " + filter);
 	}
 
+	@Test
+	public final void testTestSilent() {
+		new p20rmn_().selfTestSilent();
+	}
+
 }

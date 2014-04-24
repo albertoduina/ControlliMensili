@@ -444,81 +444,89 @@ public class p3rmn_ implements PlugIn, Measurements {
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 			int col = 2;
 			String t1 = "TESTO          ";
-			rt.setHeading(++col, "roi_x");
-			rt.setHeading(++col, "roi_y");
-			rt.setHeading(++col, "roi_b");
-			rt.setHeading(++col, "roi_h");
+			String s2 = "VALORE";
+			String s3 = "roi_x";
+			String s4 = "roi_y";
+			String s5 = "roi_b";
+			String s6 = "roi_h";
+			
+			
+			
+//			rt.setHeading(++col, "roi_x");
+//			rt.setHeading(++col, "roi_y");
+//			rt.setHeading(++col, "roi_b");
+//			rt.setHeading(++col, "roi_h");
 
 			rt.addLabel(t1, "Segnale");
-			rt.addValue(2, mean1);
-			rt.addValue(3, stat1.roiX);
-			rt.addValue(4, stat1.roiY);
-			rt.addValue(5, stat1.roiWidth);
-			rt.addValue(6, stat1.roiHeight);
+			rt.addValue(s2, mean1);
+			rt.addValue(s3, stat1.roiX);
+			rt.addValue(s4, stat1.roiY);
+			rt.addValue(s5, stat1.roiWidth);
+			rt.addValue(s6, stat1.roiHeight);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "Rumore");
-			rt.addValue(2, noiseImaDiff);
-			rt.addValue(3, stat1.roiX);
-			rt.addValue(4, stat1.roiY);
-			rt.addValue(5, stat1.roiWidth);
-			rt.addValue(6, stat1.roiHeight);
+			rt.addValue(s2, noiseImaDiff);
+			rt.addValue(s3, stat1.roiX);
+			rt.addValue(s4, stat1.roiY);
+			rt.addValue(s5, stat1.roiWidth);
+			rt.addValue(s6, stat1.roiHeight);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "SNR");
-			rt.addValue(2, snRatio);
-			rt.addValue(3, stat1.roiX);
-			rt.addValue(4, stat1.roiY);
-			rt.addValue(5, stat1.roiWidth);
-			rt.addValue(6, stat1.roiHeight);
+			rt.addValue(s2, snRatio);
+			rt.addValue(s3, stat1.roiX);
+			rt.addValue(s4, stat1.roiY);
+			rt.addValue(s5, stat1.roiWidth);
+			rt.addValue(s6, stat1.roiHeight);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "Ghost_1");
-			rt.addValue(2, ghostPerc1);
-			rt.addValue(3, statGh1.roiX);
-			rt.addValue(4, statGh1.roiY);
-			rt.addValue(5, statGh1.roiWidth);
-			rt.addValue(6, statGh1.roiHeight);
+			rt.addValue(s2, ghostPerc1);
+			rt.addValue(s3, statGh1.roiX);
+			rt.addValue(s4, statGh1.roiY);
+			rt.addValue(s5, statGh1.roiWidth);
+			rt.addValue(s6, statGh1.roiHeight);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "Ghost_2");
-			rt.addValue(2, ghostPerc2);
-			rt.addValue(3, statGh2.roiX);
-			rt.addValue(4, statGh2.roiY);
-			rt.addValue(5, statGh2.roiWidth);
-			rt.addValue(6, statGh2.roiHeight);
+			rt.addValue(s2, ghostPerc2);
+			rt.addValue(s3, statGh2.roiX);
+			rt.addValue(s4, statGh2.roiY);
+			rt.addValue(s5, statGh2.roiWidth);
+			rt.addValue(s6, statGh2.roiHeight);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "Ghost_3");
-			rt.addValue(2, ghostPerc3);
-			rt.addValue(3, statGh3.roiX);
-			rt.addValue(4, statGh3.roiY);
-			rt.addValue(5, statGh3.roiWidth);
-			rt.addValue(6, statGh3.roiHeight);
+			rt.addValue(s2, ghostPerc3);
+			rt.addValue(s3, statGh3.roiX);
+			rt.addValue(s4, statGh3.roiY);
+			rt.addValue(s5, statGh3.roiWidth);
+			rt.addValue(s6, statGh3.roiHeight);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "Ghost_4");
-			rt.addValue(2, ghostPerc4);
-			rt.addValue(3, statGh4.roiX);
-			rt.addValue(4, statGh4.roiY);
-			rt.addValue(5, statGh4.roiWidth);
-			rt.addValue(6, statGh4.roiHeight);
+			rt.addValue(s2, ghostPerc4);
+			rt.addValue(s3, statGh4.roiX);
+			rt.addValue(s4, statGh4.roiY);
+			rt.addValue(s5, statGh4.roiWidth);
+			rt.addValue(s6, statGh4.roiHeight);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "Unif.Integr.%");
-			rt.addValue(2, uiPerc1);
-			rt.addValue(3, stat1.roiX);
-			rt.addValue(4, stat1.roiY);
-			rt.addValue(5, stat1.roiWidth);
-			rt.addValue(6, stat1.roiHeight);
+			rt.addValue(s2, uiPerc1);
+			rt.addValue(s3, stat1.roiX);
+			rt.addValue(s4, stat1.roiY);
+			rt.addValue(s5, stat1.roiWidth);
+			rt.addValue(s6, stat1.roiHeight);
 			
 			rt.incrementCounter();
 			rt.addLabel(t1, "Bkg");
-			rt.addValue(2, statBkg.mean);
-			rt.addValue(3, statBkg.roiX);
-			rt.addValue(4, statBkg.roiY);
-			rt.addValue(5, statBkg.roiWidth);
-			rt.addValue(6, statBkg.roiHeight);
+			rt.addValue(s2, statBkg.mean);
+			rt.addValue(s3, statBkg.roiX);
+			rt.addValue(s4, statBkg.roiY);
+			rt.addValue(s5, statBkg.roiWidth);
+			rt.addValue(s6, statBkg.roiHeight);
 
 
 			String[] levelString = { "+20%", "+10%", "-10%", "-20%", "fondo" };
@@ -527,9 +535,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 				rt.incrementCounter();
 				rt.addLabel(t1, ("Classe" + classiSimulata[i1][0]) + "_"
 						+ levelString[i1]);
-				rt.addValue(2, classiSimulata[i1][1]);
+				rt.addValue(s2, classiSimulata[i1][1]);
 			}
-
+			
 			if (verbose && !test)
 				rt.show("Results");
 
