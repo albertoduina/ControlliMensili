@@ -86,9 +86,8 @@ public class p7rmn_ implements PlugIn, Measurements {
 	double dimPixel2;
 
 	public void run(String args) {
-		
-		UtilAyv.setMyPrecision();
 
+		UtilAyv.setMyPrecision();
 
 		if (IJ.versionLessThan("1.43k"))
 			return;
@@ -126,8 +125,9 @@ public class p7rmn_ implements PlugIn, Measurements {
 				retry = false;
 				return 0;
 			case 2:
-//				new AboutBox().about("Controllo Warp", this.getClass());
-				new AboutBox().about("Controllo Warp", MyVersion.CURRENT_VERSION);
+				// new AboutBox().about("Controllo Warp", this.getClass());
+				new AboutBox().about("Controllo Warp",
+						MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -156,7 +156,7 @@ public class p7rmn_ implements PlugIn, Measurements {
 	}
 
 	public int autoMenu(String autoArgs) {
-		MyLog.appendLog(fileDir + "MyLog.txt", "p7 riceve "+autoArgs);
+		MyLog.appendLog(fileDir + "MyLog.txt", "p7 riceve " + autoArgs);
 
 		StringTokenizer st = new StringTokenizer(autoArgs, "#");
 		int nTokens = st.countTokens();
@@ -184,8 +184,9 @@ public class p7rmn_ implements PlugIn, Measurements {
 				new AboutBox().close();
 				return 0;
 			case 2:
-//				new AboutBox().about("Controllo Warp", this.getClass());
-				new AboutBox().about("Controllo Warp", MyVersion.CURRENT_VERSION);
+				// new AboutBox().about("Controllo Warp", this.getClass());
+				new AboutBox().about("Controllo Warp",
+						MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -197,8 +198,9 @@ public class p7rmn_ implements PlugIn, Measurements {
 				iw2ayvTable = new TableSequence().loadTable(fileDir
 						+ MyConst.SEQUENZE_FILE);
 				String path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
-				mainWarp(path1, vetRiga[0], autoCalled, step, verbose, test);
-				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable);
+				ResultsTable rt = mainWarp(path1, vetRiga[0], autoCalled, step,
+						verbose, test);
+				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 
 				UtilAyv.afterWork();
 				retry = false;
@@ -258,22 +260,22 @@ public class p7rmn_ implements PlugIn, Measurements {
 				// String[][] tabCodici = new InputOutput().readFile1(
 				// MyConst.CODE_FILE, MyConst.TOKENS4);
 
-				String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+				String[][] tabCodici = TableCode
+						.loadMultipleTable(MyConst.CODE_GROUP);
 
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
 						path1, imp1, tabCodici, VERSION, autoCalled);
 				rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
-				String t1 = "TESTO          ";
-				int col = 0;
-				rt.setHeading(++col, t1);
-				rt.setHeading(++col, "coord_x");
-				rt.setHeading(++col, "coord_y");
-				rt.setHeading(++col, "dummy");
-				rt.setHeading(++col, "dummy");
-				rt.setHeading(++col, "dummy");
-				rt.setHeading(++col, "dummy");
+				String t1 = "TESTO";
+				String s2 = "coord_x";
+				String s3 = "coord_y";
+				String s4 = "dummy1";
+				String s5 = "dummy2";
+				String s6 = "dummy3";
+				String s7 = "dummy4";
+
 				rt.addLabel(t1, "ShiftCentrat");
-				rt.addValue(2, UtilAyv.convertToDouble(slicePos));
+				rt.addValue(s2, UtilAyv.convertToDouble(slicePos));
 				String aux1 = "";
 				int aux2 = 0;
 				for (int i2 = 0; i2 < MyConst.P7_NUM_RODS; i2 = i2 + 2) {
@@ -281,21 +283,21 @@ public class p7rmn_ implements PlugIn, Measurements {
 					aux1 = "Rod" + aux2 + "a";
 					rt.incrementCounter();
 					rt.addLabel(t1, aux1);
-					rt.addValue(2, tabPunti[i2][0]);
-					rt.addValue(3, tabPunti[i2][1]);
-					rt.addValue(4, 0);
-					rt.addValue(5, 0);
-					rt.addValue(6, 0);
-					rt.addValue(7, 0);
+					rt.addValue(s2, tabPunti[i2][0]);
+					rt.addValue(s3, tabPunti[i2][1]);
+					rt.addValue(s4, 0);
+					rt.addValue(s5, 0);
+					rt.addValue(s6, 0);
+					rt.addValue(s7, 0);
 					rt.incrementCounter();
 					aux1 = "Rod" + aux2 + "b";
 					rt.addLabel(t1, aux1);
-					rt.addValue(2, tabPunti[i2 + 1][0]);
-					rt.addValue(3, tabPunti[i2 + 1][1]);
-					rt.addValue(4, 0);
-					rt.addValue(5, 0);
-					rt.addValue(6, 0);
-					rt.addValue(7, 0);
+					rt.addValue(s2, tabPunti[i2 + 1][0]);
+					rt.addValue(s3, tabPunti[i2 + 1][1]);
+					rt.addValue(s4, 0);
+					rt.addValue(s5, 0);
+					rt.addValue(s6, 0);
+					rt.addValue(s7, 0);
 				}
 				aux2 = 0;
 				for (int i2 = MyConst.P7_NUM_RODS; i2 < MyConst.P7_TOTAL_NUM_POINTS; i2++) {
@@ -303,12 +305,12 @@ public class p7rmn_ implements PlugIn, Measurements {
 					aux1 = "Cubo" + aux2;
 					rt.incrementCounter();
 					rt.addLabel(t1, aux1);
-					rt.addValue(2, tabPunti[i2][0]);
-					rt.addValue(3, tabPunti[i2][1]);
+					rt.addValue(s2, tabPunti[i2][0]);
+					rt.addValue(s3, tabPunti[i2][1]);
 				}
 				rt.incrementCounter();
 				rt.addLabel(t1, "Spacing");
-				rt.addValue(2, dimPixel2);
+				rt.addValue(s2, dimPixel2);
 				if (verbose && !test)
 					rt.show("Results");
 			} else {

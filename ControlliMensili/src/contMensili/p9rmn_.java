@@ -530,29 +530,30 @@ public class p9rmn_ implements PlugIn, Measurements {
 								+ Math.pow(devGels[pointerGel2[i1]], 2)));
 			}
 
-			String t1 = "TESTO          ";
 			ResultsTable rt = ReportStandardInfo.putStandardInfoRT(info1);
 			int col = 0;
-			rt.setHeading(++col, t1);
-			rt.setHeading(++col, "VALORE      ");
-			rt.setHeading(++col, "roi_x1");
-			rt.setHeading(++col, "roi_y1");
-			rt.setHeading(++col, "roi_r1");
-			rt.setHeading(++col, "roi_x2");
-			rt.setHeading(++col, "roi_y2");
-			rt.setHeading(++col, "roi_r2");
+			
+			
+			String t1 = "TESTO";
+			String s2 =  "VALORE";
+			String s3 =  "roi_x1";
+			String s4 =  "roi_y1";
+			String s5 =  "roi_r1";
+			String s6 =  "roi_x2";
+			String s7 =  "roi_y2";
+			String s8 =  "roi_r2";
 
 			String label;
 			double echo = ReadDicom.readDouble(ReadDicom.readDicomParameter(
 					imp1, DICOM_ECHO_TIME));
 			rt.addLabel(t1, "TE");
-			rt.addValue(2, echo);
+			rt.addValue(s2, echo);
 			rt.incrementCounter();
 
 			double inversion = ReadDicom.readDouble(ReadDicom
 					.readDicomParameter(imp1, DICOM_INVERSION_TIME));
 			rt.addLabel(t1, "TI");
-			rt.addValue(2, inversion);
+			rt.addValue(s2, inversion);
 			if (typeT2 && (inversion > 0))
 				IJ.showMessage("la sequenza di "
 						+ path1
@@ -562,13 +563,13 @@ public class p9rmn_ implements PlugIn, Measurements {
 				label = "gels_" + VET_NUMERI_GEL[pointerGel1[i1]] + "-"
 						+ VET_NUMERI_GEL[pointerGel2[i1]];
 				rt.addLabel(t1, label);
-				rt.addValue(2, vetCNR[i1]);
-				rt.addValue(3, vetXUpperLeftCornerRoiGels[pointerGel1[i1]]);
-				rt.addValue(4, vetYUpperLeftCornerRoiGels[pointerGel1[i1]]);
-				rt.addValue(5, vetRx[pointerGel1[i1]]);
-				rt.addValue(6, vetXUpperLeftCornerRoiGels[pointerGel2[i1]]);
-				rt.addValue(7, vetYUpperLeftCornerRoiGels[pointerGel2[i1]]);
-				rt.addValue(8, vetRx[pointerGel2[i1]]);
+				rt.addValue(s2, vetCNR[i1]);
+				rt.addValue(s3, vetXUpperLeftCornerRoiGels[pointerGel1[i1]]);
+				rt.addValue(s4, vetYUpperLeftCornerRoiGels[pointerGel1[i1]]);
+				rt.addValue(s5, vetRx[pointerGel1[i1]]);
+				rt.addValue(s6, vetXUpperLeftCornerRoiGels[pointerGel2[i1]]);
+				rt.addValue(s7, vetYUpperLeftCornerRoiGels[pointerGel2[i1]]);
+				rt.addValue(s8, vetRx[pointerGel2[i1]]);
 			}
 
 			rt.show("Results");

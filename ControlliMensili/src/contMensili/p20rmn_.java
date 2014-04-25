@@ -420,7 +420,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 				ResultsTable rt1 = analyzeResultsImages(vetRoi, imaID, info1,
 						typeT2);
 
-				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable);
+				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt1);
 
 				retry = false;
 				break;

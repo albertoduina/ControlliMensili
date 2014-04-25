@@ -228,9 +228,9 @@ public class p6rmn_ implements PlugIn, Measurements {
 				String[] path = loadPath(autoArgs);
 				ImagePlus imp0 = UtilAyv.openImageNoDisplay(path[0], true);
 				double[] vetRefPosition = readReferences(imp0);
-				new p6rmn_().wrapThickness(path, autoArgs, vetRefPosition,
+				ResultsTable rt = new p6rmn_().wrapThickness(path, autoArgs, vetRefPosition,
 						autoCalled, step, verbose, test);
-				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable);
+				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 
 				break;
 			}
@@ -396,13 +396,14 @@ public class p6rmn_ implements PlugIn, Measurements {
 		Prefs.set("prefer.p6rmnBy", "" + line1.y2);
 	}
 
-	public void wrapThickness(String[] path, String autoArgs,
+	public ResultsTable wrapThickness(String[] path, String autoArgs,
 			double[] vetRefPosition, boolean autoCalled, boolean step,
 			boolean verbose, boolean test) {
 		boolean accetta = false;
+		ResultsTable rt = null;
 
 		do {
-			ResultsTable rt = mainThickness(path, autoArgs, vetRefPosition,
+			rt = mainThickness(path, autoArgs, vetRefPosition,
 					autoCalled, step, verbose, test);
 			rt.show("Results");
 
@@ -417,6 +418,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 			// MyLog.here();
 
 		} while (!accetta);
+		return rt;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -661,6 +663,9 @@ public class p6rmn_ implements PlugIn, Measurements {
 		rt.setHeading(++col, "seg_ay");
 		rt.setHeading(++col, "seg_bx");
 		rt.setHeading(++col, "seg_by");
+		
+		
+		
 
 		rt.addLabel(t1, " slicePos");
 		for (int j1 = 0; j1 < nFrames; j1++)

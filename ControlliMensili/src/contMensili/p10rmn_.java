@@ -85,16 +85,21 @@ public class p10rmn_ implements PlugIn, Measurements {
 	private static String fileDir = "";
 
 	private static String simulataName = "";
-	private static boolean previous = false;
-	private static boolean init1 = true;
-	@SuppressWarnings("unused")
-	private static boolean pulse = false; // lasciare, serve anche se segnalato
-											// inutilizzato
+	// private static boolean previous = false;
+	// private static boolean init1 = true;
+	// @SuppressWarnings("unused")
+	// private static boolean pulse = false; // lasciare, serve anche se
+	// segnalato
+	// inutilizzato
 	private static final boolean debug = true;
 
 	public void run(String args) {
 
 		UtilAyv.setMyPrecision();
+
+		Count c1 = new Count();
+		if (!c1.jarCount("iw2ayv_"))
+			return;
 
 		String className = this.getClass().getName();
 
@@ -299,10 +304,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// + "   " + (vetRiga[0] + 1) + " / "
 			// + TableSequence.getLength(iw2ayvTable));
 
-			mainUnifor(path1, path2, autoArgs, profond, info10, autoCalled,
-					step, verbose, test, fast, silent);
+			ResultsTable rt = mainUnifor(path1, path2, autoArgs, profond,
+					info10, autoCalled, step, verbose, test, fast, silent);
 
-			UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
+			UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 
 			UtilAyv.afterWork();
 
@@ -338,10 +343,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 					// double profond = Double.parseDouble(TableSequence
 					// .getProfond(iw2ayvTable, vetRiga[0]));
 
-					mainUnifor(path1, path2, autoArgs, profond, info10,
-							autoCalled, step, verbose, test, fast, silent);
+					ResultsTable rt = mainUnifor(path1, path2, autoArgs,
+							profond, info10, autoCalled, step, verbose, test,
+							fast, silent);
 
-					UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
+					UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 
 					UtilAyv.afterWork();
 					break;
@@ -901,7 +907,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// Salvataggio dei risultati nella ResultsTable
 			//
 
-			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+			String[][] tabCodici = TableCode
+					.loadMultipleTable(MyConst.CODE_GROUP);
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
 					imp1, tabCodici, VERSION, autoCalled);
@@ -909,55 +916,57 @@ public class p10rmn_ implements PlugIn, Measurements {
 			//
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 			int col = 2;
-			String t1 = "TESTO          ";
-			rt.setHeading(++col, "roi_x");
-			rt.setHeading(++col, "roi_y");
-			rt.setHeading(++col, "roi_b");
-			rt.setHeading(++col, "roi_h");
+
+			String t1 = "TESTO";
+			String s2 = "VALORE";
+			String s3 = "roi_x";
+			String s4 = "roi_y";
+			String s5 = "roi_b";
+			String s6 = "roi_h";
 
 			rt.addLabel(t1, simulataName);
 			rt.incrementCounter();
 
 			rt.addLabel(t1, "Segnale");
-			rt.addValue(2, stat7x7.mean);
+			rt.addValue(s2, stat7x7.mean);
 			// rt.addValue(3, xCenterRoi);
 			// rt.addValue(4, yCenterRoi);
-			rt.addValue(3, stat7x7.roiX);
-			rt.addValue(4, stat7x7.roiY);
-			rt.addValue(5, stat7x7.roiWidth);
-			rt.addValue(6, angle);
+			rt.addValue(s3, stat7x7.roiX);
+			rt.addValue(s4, stat7x7.roiY);
+			rt.addValue(s5, stat7x7.roiWidth);
+			rt.addValue(s6, angle);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "Rumore_Fondo");
-			rt.addValue(2, (out11[1] / Math.sqrt(2)));
-			rt.addValue(3, statBkg.roiX);
-			rt.addValue(4, statBkg.roiY);
-			rt.addValue(5, statBkg.roiWidth);
-			rt.addValue(6, statBkg.roiHeight);
+			rt.addValue(s2, (out11[1] / Math.sqrt(2)));
+			rt.addValue(s3, statBkg.roiX);
+			rt.addValue(s4, statBkg.roiY);
+			rt.addValue(s5, statBkg.roiWidth);
+			rt.addValue(s6, statBkg.roiHeight);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "SnR");
-			rt.addValue(2, finalSnr);
-			rt.addValue(3, stat7x7.roiX);
-			rt.addValue(4, stat7x7.roiY);
-			rt.addValue(5, stat7x7.roiWidth);
-			rt.addValue(6, stat7x7.roiHeight);
+			rt.addValue(s2, finalSnr);
+			rt.addValue(s3, stat7x7.roiX);
+			rt.addValue(s4, stat7x7.roiY);
+			rt.addValue(s5, stat7x7.roiWidth);
+			rt.addValue(s6, stat7x7.roiHeight);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "FWHM");
-			rt.addValue(2, outFwhm2[0]);
-			rt.addValue(3, xStartProfile);
-			rt.addValue(4, yStartProfile);
-			rt.addValue(5, xEndProfile);
-			rt.addValue(6, yEndProfile);
+			rt.addValue(s2, outFwhm2[0]);
+			rt.addValue(s3, xStartProfile);
+			rt.addValue(s4, yStartProfile);
+			rt.addValue(s5, xEndProfile);
+			rt.addValue(s6, yEndProfile);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "Bkg");
-			rt.addValue(2, statBkg.mean);
-			rt.addValue(3, statBkg.roiX);
-			rt.addValue(4, statBkg.roiY);
-			rt.addValue(5, statBkg.roiWidth);
-			rt.addValue(6, statBkg.roiHeight);
+			rt.addValue(s2, statBkg.mean);
+			rt.addValue(s3, statBkg.roiX);
+			rt.addValue(s4, statBkg.roiY);
+			rt.addValue(s5, statBkg.roiWidth);
+			rt.addValue(s6, statBkg.roiHeight);
 
 			String[] levelString = { "+20%", "+10%", "-10%", "-10%", "-30%",
 					"-40%", "-50%", "-60%", "-70%", "-80%", "-90%", "fondo" };
@@ -966,7 +975,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				rt.incrementCounter();
 				rt.addLabel(t1, ("Classe" + classiSimulata[i1][0]) + "_"
 						+ levelString[i1]);
-				rt.addValue(2, classiSimulata[i1][1]);
+				rt.addValue(s2, classiSimulata[i1][1]);
 			}
 
 			if (verbose && !test && !fast) {
@@ -2116,8 +2125,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			ImageUtils.imageToFront(iw11);
 			imp11.setRoi(new OvalRoi((width / 2) - 100, (height / 2) - 100,
 					200, 200));
-			if (!test) 
-				MyLog.waitHere(listaMessaggi(19)+"aaaaaa", debug);
+			if (!test)
+				MyLog.waitHere(listaMessaggi(19) + "aaaaaa", debug);
 
 			//
 			// Ho così risolto la mancata localizzazione automatica del

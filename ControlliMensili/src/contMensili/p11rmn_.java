@@ -88,10 +88,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 	private static String simulataName = "";
 
-	private static boolean previous = false;
-	private static boolean init1 = true;
-	private static boolean pulse = false; // lasciare, serve anche se segnalato
-											// inutilizzato
+	// private static boolean previous = false;
+	// private static boolean init1 = true;
+	// private static boolean pulse = false; // lasciare, serve anche se
+	// segnalato
+	// inutilizzato
 	private static Color color1 = Color.green;
 	private static Color color2 = Color.green;
 	private static final boolean debug = true;
@@ -100,9 +101,13 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 	public void run(String args) {
 
+		String className = this.getClass().getName();
+
 		UtilAyv.setMyPrecision();
 
-		String className = this.getClass().getName();
+		Count c1 = new Count();
+		if (!c1.jarCount("iw2ayv_"))
+			return;
 
 		// VERSION = className + "_build_"
 		// + ReadVersion.readVersionInfoInManifest("contMensili")
@@ -274,7 +279,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				return 0;
 
 			// rt1.show("Results");
-			UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
+			UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt1);
 
 			UtilAyv.afterWork();
 		} else
@@ -315,7 +320,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 						return 0;
 
 					// rt1.show("Results");
-					UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
+					UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt1);
 
 					UtilAyv.afterWork();
 					break;
@@ -729,7 +734,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 				//
 				// Salvataggio dei risultati nella ResultsTable
 
-				String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+				String[][] tabCodici = TableCode
+						.loadMultipleTable(MyConst.CODE_GROUP);
 
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
 						path1, imp1, tabCodici, VERSION, autoCalled);
@@ -737,21 +743,22 @@ public class p11rmn_ implements PlugIn, Measurements {
 				//
 				rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 				int col = 2;
-				String t1 = "TESTO          ";
-				rt.setHeading(++col, "roi_x");
-				rt.setHeading(++col, "roi_y");
-				rt.setHeading(++col, "roi_b");
-				rt.setHeading(++col, "roi_h");
+				String t1 = "TESTO";
+				String s2 = "VALORE";
+				String s3 = "roi_x";
+				String s4 = "roi_y";
+				String s5 = "roi_b";
+				String s6 = "roi_h";
 
 				rt.addLabel(t1, simulataName);
 				rt.incrementCounter();
 
 				rt.addLabel(t1, "Segnale");
-				rt.addValue(2, signal1);
-				rt.addValue(3, xCenterRoi);
-				rt.addValue(4, yCenterRoi);
-				rt.addValue(5, sqNEA);
-				rt.addValue(6, sqNEA);
+				rt.addValue(s2, signal1);
+				rt.addValue(s3, xCenterRoi);
+				rt.addValue(s4, yCenterRoi);
+				rt.addValue(s5, sqNEA);
+				rt.addValue(s6, sqNEA);
 
 				rt.incrementCounter();
 				rt.addLabel(t1, "Rumore_Fondo");
@@ -760,7 +767,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				// ERRATO, QUI BISOGNA STAMPARE OUT1[1] ANZICHE'
 				// STATFONDO.MEAN
 				// rt.addValue(2, statFondo.mean);
-				rt.addValue(2, (out1[1] / Math.sqrt(2)));
+				rt.addValue(s2, (out1[1] / Math.sqrt(2)));
 				// =================================================
 
 				int xRoi = (int) statBkg.roiX;
@@ -768,34 +775,34 @@ public class p11rmn_ implements PlugIn, Measurements {
 				int widthRoi = (int) statBkg.roiWidth;
 				int heightRoi = (int) statBkg.roiHeight;
 
-				rt.addValue(3, xRoi);
-				rt.addValue(4, yRoi);
-				rt.addValue(5, widthRoi);
-				rt.addValue(6, heightRoi);
+				rt.addValue(s3, xRoi);
+				rt.addValue(s4, yRoi);
+				rt.addValue(s5, widthRoi);
+				rt.addValue(s6, heightRoi);
 
 				rt.incrementCounter();
 				rt.addLabel(t1, "SnR");
-				rt.addValue(2, snr);
-				rt.addValue(3, xCenterRoi);
-				rt.addValue(4, yCenterRoi);
-				rt.addValue(5, sqNEA);
-				rt.addValue(6, sqNEA);
+				rt.addValue(s2, snr);
+				rt.addValue(s3, xCenterRoi);
+				rt.addValue(s4, yCenterRoi);
+				rt.addValue(s5, sqNEA);
+				rt.addValue(s6, sqNEA);
 
 				rt.incrementCounter();
 				rt.addLabel(t1, "FWHM");
-				rt.addValue(2, outFwhm2[0]);
-				rt.addValue(3, xStartProfile);
-				rt.addValue(4, yStartProfile);
-				rt.addValue(5, xEndProfile);
-				rt.addValue(6, yEndProfile);
+				rt.addValue(s2, outFwhm2[0]);
+				rt.addValue(s3, xStartProfile);
+				rt.addValue(s4, yStartProfile);
+				rt.addValue(s5, xEndProfile);
+				rt.addValue(s6, yEndProfile);
 
 				rt.incrementCounter();
 				rt.addLabel(t1, "Bkg");
-				rt.addValue(2, statBkg.mean);
-				rt.addValue(3, statBkg.roiX);
-				rt.addValue(4, statBkg.roiY);
-				rt.addValue(5, statBkg.roiWidth);
-				rt.addValue(6, statBkg.roiHeight);
+				rt.addValue(s2, statBkg.mean);
+				rt.addValue(s3, statBkg.roiX);
+				rt.addValue(s4, statBkg.roiY);
+				rt.addValue(s5, statBkg.roiWidth);
+				rt.addValue(s6, statBkg.roiHeight);
 
 				String[] levelString = { "+20%", "+10%", "-10%", "-20%",
 						"-30%", "-40%", "-50%", "-60%", "-70%", "-80%", "-90%",
@@ -805,7 +812,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					rt.incrementCounter();
 					rt.addLabel(t1, ("Classe" + classiSimulata[i1][0]) + "_"
 							+ levelString[i1]);
-					rt.addValue(2, classiSimulata[i1][1]);
+					rt.addValue(s2, classiSimulata[i1][1]);
 				}
 				if (verbose && !test && !fast) {
 					rt.show("Results");

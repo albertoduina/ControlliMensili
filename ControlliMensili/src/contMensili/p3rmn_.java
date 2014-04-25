@@ -229,9 +229,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 				boolean verbose = true;
 				boolean test = false;
 				boolean autoCalled = true;
-				prepUnifor(path1, path2, autoArgs, autoCalled, step, verbose,
+				ResultsTable rt = prepUnifor(path1, path2, autoArgs, autoCalled, step, verbose,
 						test);
-				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable);
+				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 				retry = false;
 				break;
 			}
@@ -260,7 +260,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 	 * @param test
 	 *            test mode
 	 */
-	public static void prepUnifor(String path1, String path2, String autoArgs,
+	public static ResultsTable  prepUnifor(String path1, String path2, String autoArgs,
 			boolean autoCalled, boolean step, boolean verbose, boolean test) {
 
 		ImagePlus imp0 = UtilAyv.openImageNoDisplay(path1, verbose);
@@ -268,9 +268,10 @@ public class p3rmn_ implements PlugIn, Measurements {
 		int width = imp0.getWidth();
 		int[] roiData = readPreferences(width, height, MyConst.P3_ROI_LIMIT);
 
-		mainUnifor(path1, path2, roiData, autoArgs, autoCalled, step, verbose,
+		ResultsTable rt = mainUnifor(path1, path2, roiData, autoArgs, autoCalled, step, verbose,
 				test);
 
+		return rt;
 	}
 
 	/**
@@ -442,20 +443,12 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 			// put values in ResultsTable
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
-			int col = 2;
 			String t1 = "TESTO          ";
 			String s2 = "VALORE";
 			String s3 = "roi_x";
 			String s4 = "roi_y";
 			String s5 = "roi_b";
 			String s6 = "roi_h";
-			
-			
-			
-//			rt.setHeading(++col, "roi_x");
-//			rt.setHeading(++col, "roi_y");
-//			rt.setHeading(++col, "roi_b");
-//			rt.setHeading(++col, "roi_h");
 
 			rt.addLabel(t1, "Segnale");
 			rt.addValue(s2, mean1);

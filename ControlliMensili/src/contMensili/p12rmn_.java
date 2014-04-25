@@ -276,7 +276,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			result1 = mainUnifor(path1, path2, autoArgs, info10, autoCalled,
 					step, demo, test, fast, silent);
 
-			UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
+			UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, result1);
 
 			UtilAyv.afterWork();
 
@@ -311,7 +311,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 						break;
 					}
 
-					UtilAyv.saveResults3(vetRiga, fileDir, iw2ayvTable);
+					UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, result1);
 
 					UtilAyv.afterWork();
 					break;

@@ -80,7 +80,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 		if (IJ.versionLessThan("1.43k"))
 			return;
-		
+
 		//
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
 		// modo il messaggio viene emesso, altrimenti si ha una eccezione
@@ -92,7 +92,6 @@ public class p8rmn_ implements PlugIn, Measurements {
 			return;
 		}
 
-		
 		fileDir = Prefs.get("prefer.string1", "none");
 
 		// tabl = new InputOutput().readFile1(CODE_FILE, TOKENS4);
@@ -123,8 +122,9 @@ public class p8rmn_ implements PlugIn, Measurements {
 				retry = false;
 				return 0;
 			case 2:
-//				new AboutBox().about("Controllo DGP", this.getClass());
-				new AboutBox().about("Controllo DGP", MyVersion.CURRENT_VERSION);
+				// new AboutBox().about("Controllo DGP", this.getClass());
+				new AboutBox()
+						.about("Controllo DGP", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -148,7 +148,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 	}
 
 	public int autoMenu(String autoArgs) {
-		MyLog.appendLog(fileDir + "MyLog.txt", "p8 riceve "+autoArgs);
+		MyLog.appendLog(fileDir + "MyLog.txt", "p8 riceve " + autoArgs);
 
 		// StringTokenizer st = new StringTokenizer(autoArgs, "#");
 
@@ -177,8 +177,9 @@ public class p8rmn_ implements PlugIn, Measurements {
 				new AboutBox().close();
 				return 0;
 			case 2:
-//				new AboutBox().about("Controllo DGP", this.getClass());
-				new AboutBox().about("Controllo DGP", MyVersion.CURRENT_VERSION);
+				// new AboutBox().about("Controllo DGP", this.getClass());
+				new AboutBox()
+						.about("Controllo DGP", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -188,8 +189,8 @@ public class p8rmn_ implements PlugIn, Measurements {
 				boolean test = false;
 
 				String path1 = TableSequence.getPath(iw2ayvTable, riga1);
-				mainDgp(path1, riga1, autoCalled, step, test);
-				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable);
+				ResultsTable rt = mainDgp(path1, riga1, autoCalled, step, test);
+				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 
 				retry = false;
 				break;
@@ -207,12 +208,11 @@ public class p8rmn_ implements PlugIn, Measurements {
 		ResultsTable rt = null;
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
-//		String[][] tabCodici = new InputOutput().readFile1(MyConst.CODE_FILE,
-//				MyConst.P8_TOKENS4);
+		// String[][] tabCodici = new InputOutput().readFile1(MyConst.CODE_FILE,
+		// MyConst.P8_TOKENS4);
 
 		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
-		
 		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
 				+ MyConst.SEQUENZE_FILE);
 
@@ -253,63 +253,65 @@ public class p8rmn_ implements PlugIn, Measurements {
 				double dgp5 = vetResults[10];
 				double dgp6 = vetResults[11];
 
-				String t1 = "TESTO          ";
 				rt = ReportStandardInfo.putStandardInfoRT(info1);
 				int col = 2;
-				rt.setHeading(++col, "seg_ax");
-				rt.setHeading(++col, "seg_ay");
-				rt.setHeading(++col, "seg_bx");
-				rt.setHeading(++col, "seg_by");
+				String t1 = "TESTO";
+				String s2 = "VALORE";
+
+				String s3 = "seg_ax";
+				String s4 = "seg_ay";
+				String s5 = "seg_bx";
+				String s6 = "seg_by";
 
 				rt.addLabel(t1, " slicePos");
-				rt.addValue(2, UtilAyv.convertToDouble(slicePos));
+				rt.addValue(s2, UtilAyv.convertToDouble(slicePos));
 				rt.incrementCounter();
 				rt.addLabel(t1, "DGP1");
-				rt.addValue(2, dgp1);
-				rt.addValue(3, xPoints[0]);
-				rt.addValue(4, yPoints[0]);
-				rt.addValue(5, xPoints[1]);
-				rt.addValue(6, yPoints[1]);
+				rt.addValue(s2, dgp1);
+				rt.addValue(s3, xPoints[0]);
+				rt.addValue(s4, yPoints[0]);
+				rt.addValue(s5, xPoints[1]);
+				rt.addValue(s6, yPoints[1]);
 
 				rt.incrementCounter();
 				rt.addLabel(t1, "DGP2");
-				rt.addValue(2, dgp2);
-				rt.addValue(3, xPoints[1]);
-				rt.addValue(4, yPoints[1]);
-				rt.addValue(5, xPoints[2]);
-				rt.addValue(6, yPoints[2]);
+				rt.addValue(s2, dgp2);
+				rt.addValue(s3, xPoints[1]);
+				rt.addValue(s4, yPoints[1]);
+				rt.addValue(s5, xPoints[2]);
+				rt.addValue(s6, yPoints[2]);
 
 				rt.incrementCounter();
 				rt.addLabel(t1, "DGP3");
-				rt.addValue(2, dgp3);
-				rt.addValue(3, xPoints[2]);
-				rt.addValue(4, yPoints[2]);
-				rt.addValue(5, xPoints[3]);
-				rt.addValue(6, yPoints[3]);
+				rt.addValue(s2, dgp3);
+				rt.addValue(s3, xPoints[2]);
+				rt.addValue(s4, yPoints[2]);
+				rt.addValue(s5, xPoints[3]);
+				rt.addValue(s6, yPoints[3]);
 
 				rt.incrementCounter();
 				rt.addLabel(t1, "DGP4");
-				rt.addValue(2, dgp4);
-				rt.addValue(3, xPoints[3]);
-				rt.addValue(4, yPoints[3]);
-				rt.addValue(5, xPoints[0]);
-				rt.addValue(6, yPoints[0]);
+				rt.addValue(s2, dgp4);
+				rt.addValue(s3, xPoints[3]);
+				rt.addValue(s4, yPoints[3]);
+				rt.addValue(s5, xPoints[0]);
+				rt.addValue(s6, yPoints[0]);
 
 				rt.incrementCounter();
 				rt.addLabel(t1, "DGP5");
-				rt.addValue(2, dgp5);
-				rt.addValue(3, xPoints[0]);
-				rt.addValue(4, yPoints[0]);
-				rt.addValue(5, xPoints[2]);
-				rt.addValue(6, yPoints[2]);
+				rt.addValue(s2, dgp5);
+				rt.addValue(s3, xPoints[0]);
+				rt.addValue(s4, yPoints[0]);
+				rt.addValue(s5, xPoints[2]);
+				rt.addValue(s6, yPoints[2]);
 
 				rt.incrementCounter();
 				rt.addLabel(t1, "DGP6");
-				rt.addValue(2, dgp6);
-				rt.addValue(3, xPoints[1]);
-				rt.addValue(4, yPoints[1]);
-				rt.addValue(5, xPoints[3]);
-				rt.addValue(6, yPoints[3]);
+				rt.addValue(s2, dgp6);
+				rt.addValue(s3, xPoints[1]);
+				rt.addValue(s4, yPoints[1]);
+				rt.addValue(s5, xPoints[3]);
+				rt.addValue(s6, yPoints[3]);
 
 				rt.show("Results");
 			} else {
@@ -460,7 +462,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 				ButtonMessages.ModelessMsg("Fine SelfTest CON ERRORI  <43>",
 						"CONTINUA");
 		}
-			return testok;
+		return testok;
 	}
 
 	void selfTestMenu() {

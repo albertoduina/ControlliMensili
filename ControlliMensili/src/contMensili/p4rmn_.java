@@ -174,7 +174,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 	public int autoMenu(String autoArgs) {
-		MyLog.appendLog(fileDir + "MyLog.txt", "p4 riceve "+autoArgs);
+		MyLog.appendLog(fileDir + "MyLog.txt", "p4 riceve " + autoArgs);
 
 		// the autoArgs are passed from Sequenze_
 		// possibilities:
@@ -229,8 +229,9 @@ public class p4rmn_ implements PlugIn, Measurements {
 				boolean test = false;
 				boolean autoCalled = true;
 				// double[] roiData = readPreferences();
-				prepMTF(path1, autoArgs, autoCalled, step, verbose, test);
-				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable);
+				ResultsTable rt = prepMTF(path1, autoArgs, autoCalled, step,
+						verbose, test);
+				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 				retry = false;
 				break;
 			}
@@ -240,12 +241,13 @@ public class p4rmn_ implements PlugIn, Measurements {
 		return 0;
 	}
 
-	public static void prepMTF(String path1, String autoArgs,
+	public static ResultsTable prepMTF(String path1, String autoArgs,
 			boolean autoCalled, boolean step, boolean verbose, boolean test) {
 
 		double[] vetPreferences = readPreferences();
-		mainMTF(path1, vetPreferences, autoCalled, step, verbose, test);
-
+		ResultsTable rt = mainMTF(path1, vetPreferences, autoCalled, step,
+				verbose, test);
+		return rt;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -475,7 +477,6 @@ public class p4rmn_ implements PlugIn, Measurements {
 			}
 
 			int nDati = rt1.getCounter();
-			String t1 = "TESTO          ";
 			int[][] tabValori = new int[nDati][2];
 			for (int i2 = 0; i2 < nDati; i2++) {
 
@@ -492,7 +493,8 @@ public class p4rmn_ implements PlugIn, Measurements {
 			double mod10 = vetCalc[2];
 			double mod05 = vetCalc[3];
 			double mod03 = vetCalc[4];
-			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+			String[][] tabCodici = TableCode
+					.loadMultipleTable(MyConst.CODE_GROUP);
 
 			ImagePlus imp2 = UtilAyv.openImageNoDisplay(path1, verbose);
 
@@ -505,66 +507,75 @@ public class p4rmn_ implements PlugIn, Measurements {
 			// put values in ResultsTable
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 
-			int col = 2;
-
-			rt.setHeading(++col, "roi_x");
-			rt.setHeading(++col, "roi_y");
-			rt.setHeading(++col, "roi_b");
-			rt.setHeading(++col, "roi_h");
+			String t1 = "TESTO";
+			String s2 = "VALORE";
+			String s3 = "roi_x";
+			String s4 = "roi_y";
+			String s5 = "roi_b";
+			String s6 = "roi_h";
+			
+			
+			
+			
+//			rt.setHeading(++col, "roi_x");
+//			rt.setHeading(++col, "roi_y");
+//			rt.setHeading(++col, "roi_b");
+//			rt.setHeading(++col, "roi_h");
 			rt.addLabel(t1, "segm_riferim");
-			rt.addValue(3, xStartRefline);
-			rt.addValue(4, yStartRefline);
-			rt.addValue(5, xEndRefline);
-			rt.addValue(6, yEndRefline);
+			rt.addValue(s2, 0);
+			rt.addValue(s3, xStartRefline);
+			rt.addValue(s4, yStartRefline);
+			rt.addValue(s5, xEndRefline);
+			rt.addValue(s6, yEndRefline);
 
 			rt.incrementCounter();
 
 			rt.addLabel(t1, "MTF_2.0_LPmm");
-			rt.addValue(2, mod20);
-			rt.addValue(3, xRoi2mm);
-			rt.addValue(4, yRoi2mm);
-			rt.addValue(5, dRoi2mm);
-			rt.addValue(6, dRoi2mm);
+			rt.addValue(s2, mod20);
+			rt.addValue(s3, xRoi2mm);
+			rt.addValue(s4, yRoi2mm);
+			rt.addValue(s5, dRoi2mm);
+			rt.addValue(s6, dRoi2mm);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "MTF_1.5_LPmm");
-			rt.addValue(2, mod15);
-			rt.addValue(3, xRoi1_5mm);
-			rt.addValue(4, yRoi1_5mm);
-			rt.addValue(5, dRoi1_5mm);
-			rt.addValue(6, dRoi1_5mm);
+			rt.addValue(s2, mod15);
+			rt.addValue(s3, xRoi1_5mm);
+			rt.addValue(s4, yRoi1_5mm);
+			rt.addValue(s5, dRoi1_5mm);
+			rt.addValue(s6, dRoi1_5mm);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "MTF_1.0_LPmm");
-			rt.addValue(2, mod10);
-			rt.addValue(3, xRoi1mm);
-			rt.addValue(4, yRoi1mm);
-			rt.addValue(5, dRoi1mm);
-			rt.addValue(6, dRoi1mm);
+			rt.addValue(s2, mod10);
+			rt.addValue(s3, xRoi1mm);
+			rt.addValue(s4, yRoi1mm);
+			rt.addValue(s5, dRoi1mm);
+			rt.addValue(s6, dRoi1mm);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "MTF_0.5_LPmm");
-			rt.addValue(2, mod05);
-			rt.addValue(3, xRoi_5mm);
-			rt.addValue(4, yRoi_5mm);
-			rt.addValue(5, dRoi_5mm);
-			rt.addValue(6, dRoi_5mm);
+			rt.addValue(s2, mod05);
+			rt.addValue(s3, xRoi_5mm);
+			rt.addValue(s4, yRoi_5mm);
+			rt.addValue(s5, dRoi_5mm);
+			rt.addValue(s6, dRoi_5mm);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "MTF_0.3_LPmm");
-			rt.addValue(2, mod03);
-			rt.addValue(3, xRoi_3mm);
-			rt.addValue(4, yRoi_3mm);
-			rt.addValue(5, dRoi_3mm);
-			rt.addValue(6, dRoi_3mm);
+			rt.addValue(s2, mod03);
+			rt.addValue(s3, xRoi_3mm);
+			rt.addValue(s4, yRoi_3mm);
+			rt.addValue(s5, dRoi_3mm);
+			rt.addValue(s6, dRoi_3mm);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "DimPix");
-			rt.addValue(2, dimPixel);
+			rt.addValue(s2, dimPixel);
 
 			rt.incrementCounter();
 			rt.addLabel(t1, "Visual");
-			rt.addValue(2, visualResolution);
+			rt.addValue(s2, visualResolution);
 
 			if (verbose && !test)
 				rt.show("Results");
