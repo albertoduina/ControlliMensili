@@ -677,7 +677,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 				rt.incrementCounter();
 				rt.addLabel(t1, ("Classe" + classiSimulata[i1][0]) + "_"
 						+ levelString[i1]);
-				rt.addValue(2, classiSimulata[i1][1]);
+				rt.addValue(s2, classiSimulata[i1][1]);
 			}
 			if (verbose && !test)
 				rt.show("Results");

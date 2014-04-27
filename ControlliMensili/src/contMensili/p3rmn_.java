@@ -24,6 +24,7 @@ import utils.MyLog;
 import utils.MyMsg;
 import utils.MyConst;
 import utils.MyFileLogger;
+import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
@@ -66,9 +67,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 	private static String TYPE = " >> CONTROLLO UNIFORMITA'_____________";
 
 	private static String fileDir = "";
-	private static boolean debug= true;
-	private static boolean mylogger= true;
-
+	private static boolean debug = true;
+	private static boolean mylogger = true;
 
 	public void run(String args) {
 
@@ -77,20 +77,22 @@ public class p3rmn_ implements PlugIn, Measurements {
 		if (IJ.versionLessThan("1.43k"))
 			return;
 
-		//---------------------------------------------------------------------------
+		// ---------------------------------------------------------------------------
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
-		// modo il messaggio "manca il file" viene emesso, altrimenti si ha una eccezione
-		//----------------------------------------------------------------------
+		// modo il messaggio "manca il file" viene emesso, altrimenti si ha una
+		// eccezione
+		// ----------------------------------------------------------------------
 		try {
 			Class.forName("utils.IW2AYV");
 		} catch (ClassNotFoundException e) {
 			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
 			return;
 		}
-		//----------------------------------------------------------------------------
+		// ----------------------------------------------------------------------------
 
 		fileDir = Prefs.get("prefer.string1", "none");
-		if (mylogger) MyFileLogger.logger.info("p3rmn_>>> fileDir= " + fileDir);
+		if (mylogger)
+			MyFileLogger.logger.info("p3rmn_>>> fileDir= " + fileDir);
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
 			manualMenu(0, "");
@@ -171,7 +173,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
-		
+
 		if (vetRiga[0] == -1) {
 			IJ.log("selfTestSilent.p3rmn_");
 			selfTestSilent();
@@ -229,8 +231,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 				boolean verbose = true;
 				boolean test = false;
 				boolean autoCalled = true;
-				ResultsTable rt = prepUnifor(path1, path2, autoArgs, autoCalled, step, verbose,
-						test);
+				ResultsTable rt = prepUnifor(path1, path2, autoArgs,
+						autoCalled, step, verbose, test);
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 				retry = false;
 				break;
@@ -260,16 +262,17 @@ public class p3rmn_ implements PlugIn, Measurements {
 	 * @param test
 	 *            test mode
 	 */
-	public static ResultsTable  prepUnifor(String path1, String path2, String autoArgs,
-			boolean autoCalled, boolean step, boolean verbose, boolean test) {
+	public static ResultsTable prepUnifor(String path1, String path2,
+			String autoArgs, boolean autoCalled, boolean step, boolean verbose,
+			boolean test) {
 
 		ImagePlus imp0 = UtilAyv.openImageNoDisplay(path1, verbose);
 		int height = imp0.getHeight();
 		int width = imp0.getWidth();
 		int[] roiData = readPreferences(width, height, MyConst.P3_ROI_LIMIT);
 
-		ResultsTable rt = mainUnifor(path1, path2, roiData, autoArgs, autoCalled, step, verbose,
-				test);
+		ResultsTable rt = mainUnifor(path1, path2, roiData, autoArgs,
+				autoCalled, step, verbose, test);
 
 		return rt;
 	}
@@ -315,7 +318,6 @@ public class p3rmn_ implements PlugIn, Measurements {
 				imp1 = UtilAyv.openImageNoDisplay(path1, true);
 				imp2 = UtilAyv.openImageNoDisplay(path2, true);
 			}
-
 
 			int height = imp1.getHeight();
 			int width = imp1.getWidth();
@@ -433,17 +435,24 @@ public class p3rmn_ implements PlugIn, Measurements {
 			int[][] classiSimulata = generaSimulata(xRoi2, yRoi2, diamRoi2,
 					imp1, fileDir, step, verbose, test);
 
-			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+			String[][] tabCodici = TableCode
+					.loadMultipleTable(MyConst.CODE_GROUP);
 
 			// String[][] tabCodici = new InputOutput().readFile1(
 			// MyConst.CODE_FILE, MyConst.TOKENS4);
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-					imp1, tabCodici, VERSION, autoCalled);
+					imp1, tabCodici, VERSION + "__ContMensili_"
+							+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
+							+ MyVersionUtils.CURRENT_VERSION, autoCalled);
 
 			// put values in ResultsTable
+
+			MyLog.logVector(info1, "info1");
+			MyLog.waitHere();
+
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
-			String t1 = "TESTO          ";
+			String t1 = "TESTO";
 			String s2 = "VALORE";
 			String s3 = "roi_x";
 			String s4 = "roi_y";
@@ -512,7 +521,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 			rt.addValue(s4, stat1.roiY);
 			rt.addValue(s5, stat1.roiWidth);
 			rt.addValue(s6, stat1.roiHeight);
-			
+
 			rt.incrementCounter();
 			rt.addLabel(t1, "Bkg");
 			rt.addValue(s2, statBkg.mean);
@@ -520,7 +529,6 @@ public class p3rmn_ implements PlugIn, Measurements {
 			rt.addValue(s4, statBkg.roiY);
 			rt.addValue(s5, statBkg.roiWidth);
 			rt.addValue(s6, statBkg.roiHeight);
-
 
 			String[] levelString = { "+20%", "+10%", "-10%", "-20%", "fondo" };
 
@@ -530,7 +538,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 						+ levelString[i1]);
 				rt.addValue(s2, classiSimulata[i1][1]);
 			}
-			
+
 			if (verbose && !test)
 				rt.show("Results");
 
@@ -844,14 +852,14 @@ public class p3rmn_ implements PlugIn, Measurements {
 		double g7 = -0.3311056141375085;
 		double g8 = -0.08329463941307846;
 		double uiPerc = 89.70727101038716;
-		double bkg = 11.401898734177216;		
+		double bkg = 11.401898734177216;
 		double c4 = 0;
 		double c3 = 0;
 		double c2 = 22579;
 		double c1 = 358;
 		double c0 = 42599;
-		double[] vetReference = { mean, noise, snRatio, g5, g6, g7, g8, uiPerc, bkg,
-				c4, c3, c2, c1, c0 };
+		double[] vetReference = { mean, noise, snRatio, g5, g6, g7, g8, uiPerc,
+				bkg, c4, c3, c2, c1, c0 };
 		return vetReference;
 	}
 
@@ -875,13 +883,11 @@ public class p3rmn_ implements PlugIn, Measurements {
 		double c2 = 22000;
 		double c1 = 99;
 		double c0 = 42279;
-		double[] vetReference = { mean, noise, snRatio, g5, g6, g7, g8, uiPerc, bkg,
-				c4, c3, c2, c1, c0 };
+		double[] vetReference = { mean, noise, snRatio, g5, g6, g7, g8, uiPerc,
+				bkg, c4, c3, c2, c1, c0 };
 		return vetReference;
 	}
 
-	
-	
 	/**
 	 * Self test execution menu
 	 */
@@ -906,8 +912,6 @@ public class p3rmn_ implements PlugIn, Measurements {
 						autoCalled, step, verbose, test);
 				double[] vetResults = UtilAyv.vectorizeResults(rt1);
 
-				
-				
 				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 						MyConst.P3_vetName);
 				if (ok)

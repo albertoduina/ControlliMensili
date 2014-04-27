@@ -133,10 +133,11 @@ public class p11rmn_Test {
 		boolean verbose = false;
 		boolean test = false;
 		boolean fast = true;
+		boolean silent = false;
 		String path1 = "./Test2/S12S_01testP11";
 		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, true);
 		double[] out = p11rmn_.positionSearch(imp1, autoCalled, verticalDir,
-				profond, "STRINGA", step, verbose, test, fast);
+				profond, "STRINGA", step, verbose, test, fast, silent);
 		double[] expected = { 164.0, 172.0, 164.05714285714285, 0.0,
 				164.05714285714285, 256.0, 186.0, 169.0 };
 		assertTrue(UtilAyv.compareVectors(expected, out, 1e-12, ""));
@@ -163,6 +164,11 @@ public class p11rmn_Test {
 		double expected = 0.9569954129386802;
 		assertEquals(expected, devStand[1], 1e-12);
 
+	}
+
+	@Test
+	public final void testSelfTestSilent() {
+		new p11rmn_().selfTestSilent();
 	}
 
 }

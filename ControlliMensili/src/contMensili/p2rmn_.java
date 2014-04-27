@@ -1229,6 +1229,10 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	private void testSymphony(double medGel1, double devGel1, double medGel2,
 			double devGel2, double medGel3, double devGel3) {
+		
+		
+
+		
 		//
 		// aggiornato 16 aprile 2008 1.40e
 		//

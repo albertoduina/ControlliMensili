@@ -92,7 +92,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		// peak position is the maximum profile position
 		// manual selection of unaccettable slices (border or center (cross
 		// slabs) slices
-		
+
 		UtilAyv.setMyPrecision();
 
 		if (IJ.versionLessThan("1.43k"))
@@ -228,8 +228,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 				String[] path = loadPath(autoArgs);
 				ImagePlus imp0 = UtilAyv.openImageNoDisplay(path[0], true);
 				double[] vetRefPosition = readReferences(imp0);
-				ResultsTable rt = new p6rmn_().wrapThickness(path, autoArgs, vetRefPosition,
-						autoCalled, step, verbose, test);
+				ResultsTable rt = new p6rmn_().wrapThickness(path, autoArgs,
+						vetRefPosition, autoCalled, step, verbose, test);
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 
 				break;
@@ -280,6 +280,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 				boolean test = true;
 				ResultsTable rt = new p6rmn_().mainThickness(path1, autoArgs,
 						vetRefPosition, autoCalled, step, verbose, test);
+				rt.show("Results");
+				MyLog.waitHere("verifica results table");
 				double[] vetResults = UtilAyv.vectorizeResults(rt);
 				boolean ok = UtilAyv.verifyResults1(vetResults, referenceGe(),
 						MyConst.P6_vetName);
@@ -403,8 +405,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 		ResultsTable rt = null;
 
 		do {
-			rt = mainThickness(path, autoArgs, vetRefPosition,
-					autoCalled, step, verbose, test);
+			rt = mainThickness(path, autoArgs, vetRefPosition, autoCalled,
+					step, verbose, test);
 			rt.show("Results");
 
 			if (autoCalled && !test) {
@@ -653,136 +655,138 @@ public class p6rmn_ implements PlugIn, Measurements {
 				impStack, tabCodici, VERSION, autoCalled);
 		rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 
-		int col = 0;
+		String t1 = "TESTO";
+		String s2 = "SLICE";
+		String s3 = "seg_ax";
+		String s4 = "seg_ay";
+		String s5 = "seg_bx";
+		String s6 = "seg_by";
 
-		String t1 = "TESTO          ";
-		rt.setHeading(++col, t1);
-		for (int j1 = 0; j1 < nFrames; j1++)
-			rt.setHeading(++col, "SLICE" + j1);
-		rt.setHeading(++col, "seg_ax");
-		rt.setHeading(++col, "seg_ay");
-		rt.setHeading(++col, "seg_bx");
-		rt.setHeading(++col, "seg_by");
-		
-		
-		
+		// rt.setHeading(++col, t1);
+		// for (int j1 = 0; j1 < nFrames; j1++)
+		// rt.setHeading(++col, "SLICE" + j1);
+		// rt.setHeading(++col, "seg_ax");
+		// rt.setHeading(++col, "seg_ay");
+		// rt.setHeading(++col, "seg_bx");
+		// rt.setHeading(++col, "seg_by");
 
 		rt.addLabel(t1, " slicePos");
 		for (int j1 = 0; j1 < nFrames; j1++)
-			rt.addValue(j1 + 2, UtilAyv.convertToDouble(slicePos2[j1]));
-		rt.addValue(nFrames + 2, vetRefPosition[0]);
-		rt.addValue(nFrames + 3, vetRefPosition[1]);
-		rt.addValue(nFrames + 4, vetRefPosition[2]);
-		rt.addValue(nFrames + 5, vetRefPosition[3]);
+			rt.addValue(s2 + j1, UtilAyv.convertToDouble(slicePos2[j1]));
+		rt.addValue(s3, vetRefPosition[0]);
+		rt.addValue(s4, vetRefPosition[1]);
+		rt.addValue(s5, vetRefPosition[2]);
+		rt.addValue(s6, vetRefPosition[3]);
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "fwhm_slab1");
 		for (int j1 = 0; j1 < nFrames; j1++) {
-			rt.addValue(j1 + 2, fwhmSlice1[j1]);
+			rt.addValue(s2 + j1, fwhmSlice1[j1]);
 		}
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "peak_slab1");
 		for (int j1 = 0; j1 < nFrames; j1++) {
-			rt.addValue(j1 + 2, peakPositionSlice1[j1]);
+			rt.addValue(s2 + j1, peakPositionSlice1[j1]);
 		}
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "fwhm_slab2");
 		for (int j1 = 0; j1 < nFrames; j1++) {
-			rt.addValue(j1 + 2, fwhmSlice2[j1]);
+			rt.addValue(s2 + j1, fwhmSlice2[j1]);
 		}
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "peak_slab2");
 		for (int j1 = 0; j1 < nFrames; j1++) {
-			rt.addValue(j1 + 2, peakPositionSlice2[j1]);
+			rt.addValue(s2 + j1, peakPositionSlice2[j1]);
 		}
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "fwhm_cuneo3");
 		for (int j1 = 0; j1 < nFrames; j1++) {
-			rt.addValue(j1 + 2, fwhmCuneo3[j1]);
+			rt.addValue(s2 + j1, fwhmCuneo3[j1]);
 		}
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "peak_cuneo3");
 		for (int j1 = 0; j1 < nFrames; j1++) {
-			rt.addValue(j1 + 2, peakPositionCuneo3[j1]);
+			rt.addValue(s2 + j1, peakPositionCuneo3[j1]);
 		}
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "fwhm_cuneo4");
 		for (int j1 = 0; j1 < nFrames; j1++) {
-			rt.addValue(j1 + 2, fwhmCuneo4[j1]);
+			rt.addValue(s2 + j1, fwhmCuneo4[j1]);
 		}
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "peak_cuneo4");
 		for (int j1 = 0; j1 < nFrames; j1++) {
-			rt.addValue(j1 + 2, peakPositionCuneo4[j1]);
+			rt.addValue(s2 + j1, peakPositionCuneo4[j1]);
 		}
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "S1CorSlab");
 		for (int j1 = 0; j1 < nFrames; j1++) {
-			rt.addValue(j1 + 2, vetS1CorSlab[j1]);
+			rt.addValue(s2 + j1, vetS1CorSlab[j1]);
 		}
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "S2CorSlab");
 		for (int j1 = 0; j1 < nFrames; j1++) {
-			rt.addValue(j1 + 2, vetS2CorSlab[j1]);
+			rt.addValue(s2 + j1, vetS2CorSlab[j1]);
 		}
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "ErrSperSlab");
 		for (int j1 = 0; j1 < nFrames; j1++)
-			rt.addValue(j1 + 2, vetErrSpessSlab[j1]);
+			rt.addValue(s2 + j1, vetErrSpessSlab[j1]);
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "AccurSpesSlab");
 		for (int j1 = 0; j1 < nFrames; j1++)
-			rt.addValue(j1 + 2, vetAccurSpessSlab[j1]);
+			rt.addValue(s2 + j1, vetAccurSpessSlab[j1]);
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "S1CorCuneo");
 		for (int j1 = 0; j1 < nFrames; j1++) {
-			rt.addValue(j1 + 2, vetS1CorCuneo[j1]);
+			rt.addValue(s2 + j1, vetS1CorCuneo[j1]);
 		}
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "S2CorCuneo");
 		for (int j1 = 0; j1 < nFrames; j1++) {
-			rt.addValue(j1 + 2, vetS2CorCuneo[j1]);
+			rt.addValue(s2 + j1, vetS2CorCuneo[j1]);
 		}
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "ErrSperCuneo");
 		for (int j1 = 0; j1 < nFrames; j1++)
-			rt.addValue(j1 + 2, vetErrSpessCuneo[j1]);
+			rt.addValue(s2 + j1, vetErrSpessCuneo[j1]);
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "AccurSpesCuneo");
 		for (int j1 = 0; j1 < nFrames; j1++)
-			rt.addValue(j1 + 2, vetAccurSpessCuneo[j1]);
+			rt.addValue(s2 + j1, vetAccurSpessCuneo[j1]);
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "Accettab");
 		for (int j1 = 0; j1 < nFrames; j1++)
-			rt.addValue(j1 + 2, vetAccettab[j1]);
+			rt.addValue(s2 + j1, vetAccettab[j1]);
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "DimPix");
-		rt.addValue(2, dimPixel);
+		rt.addValue(s2 + 0, dimPixel);
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "Thick");
-		rt.addValue(2, thick);
+		rt.addValue(s2 + 0, thick);
 
 		rt.incrementCounter();
 		rt.addLabel(t1, "Spacing");
-		rt.addValue(2, spacing);
+		rt.addValue(s2 + 0, spacing);
+		
 
 		return rt;
 	}

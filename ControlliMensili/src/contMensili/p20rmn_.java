@@ -38,6 +38,7 @@ import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyLog;
 import utils.MyMsg;
+import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.SimplexBasedRegressor;
@@ -353,6 +354,11 @@ public class p20rmn_ implements PlugIn, Measurements {
 
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
+		if (vetRiga[0] == -1) {
+			IJ.log("selfTestSilent.p20rmn_");
+			selfTestSilent();
+			return 0;
+		}
 
 		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
 				+ MyConst.SEQUENZE_FILE);
@@ -414,8 +420,15 @@ public class p20rmn_ implements PlugIn, Measurements {
 				String[][] tabCodici = TableCode
 						.loadMultipleTable(MyConst.CODE_GROUP);
 
-				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
-						vetPath[0], imp100, tabCodici, VERSION, autocalled);
+//				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
+//						vetPath[0], imp100, tabCodici, VERSION, autocalled);
+				
+				
+				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(vetPath[0],
+						imp100, tabCodici, VERSION + "__ContMensili_"
+								+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
+								+ MyVersionUtils.CURRENT_VERSION, autocalled);
+
 
 				ResultsTable rt1 = analyzeResultsImages(vetRoi, imaID, info1,
 						typeT2);
@@ -468,20 +481,26 @@ public class p20rmn_ implements PlugIn, Measurements {
 		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
 		boolean autocalled = false;
+//		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(vetPath[0],
+//				imp100, tabCodici, VERSION, autocalled);
+		
 		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(vetPath[0],
-				imp100, tabCodici, VERSION, autocalled);
+				imp100, tabCodici, VERSION + "__ContMensili_"
+						+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
+						+ MyVersionUtils.CURRENT_VERSION, autocalled);
+
+		
 
 		ResultsTable rt1 = analyzeResultsImages(vetRoi, imaID, info1, typeT2);
 
 		double[] vetResults = UtilAyv.vectorizeResultsMultiple(rt1, 2);
+
 		boolean ok = UtilAyv.verifyResults1(vetResults, referenceSiemens(),
 				MyConst.P20_vetName);
 		if (ok)
 			IJ.log("Il test di p20rmn_ T2calculation è stato SUPERATO");
 		else
 			IJ.log("Il test di p20rmn_ T2calculation evidenzia degli ERRORI");
-
-		MyLog.waitHere();
 
 	}
 
@@ -626,36 +645,34 @@ public class p20rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 	double[] referenceSiemens() {
-		double m1 = 58.592281981359555;
-		double d1 = 3.866370693178298;
-		double m2 = 73.95285294931146;
-		double d2 = 3.6103799208252223;
-		double m3 = 113.45177367970913;
-		double d3 = 4.585334675446435;
-		double m4 = 113.45177367970913;
-		double d4 = 4.585334675446435;
-		double m5 = 113.45177367970913;
-		double d5 = 4.585334675446435;
-		double m6 = 113.45177367970913;
-		double d6 = 4.585334675446435;
-		double m7 = 113.45177367970913;
-		double d7 = 4.585334675446435;
-		double m8 = 113.45177367970913;
-		double d8 = 4.585334675446435;
-		double m9 = 113.45177367970913;
-		double d9 = 4.585334675446435;
-		double m10 = 113.45177367970913;
-		double d10 = 4.585334675446435;
-		double m11 = 113.45177367970913;
-		double d11 = 4.585334675446435;
-		double m12 = 113.45177367970913;
-		double d12 = 4.585334675446435;
-		double m13 = 113.45177367970913;
-		double d13 = 4.585334675446435;
+
+		double m1 = 59.100444600551945;
+		double d1 = 4.006797467473977;
+		double m2 = 74.54580205603492;
+		double d2 = 3.364085247976553;
+		double m3 = 114.36426466929761;
+		double d3 = 4.5005298627759895;
+		double m4 = 60.227563109578966;
+		double d4 = 5.267272855422799;
+		double m5 = 93.73661309254321;
+		double d5 = 3.2474484422702092;
+		double m6 = 159.83904633340956;
+		double d6 = 4.476865171725997;
+		double m7 = 97.61412895782084;
+		double d7 = 3.717179436850527;
+		double m8 = 135.96786682515204;
+		double d8 = 4.67662078996066;
+		double m9 = 149.23774178420442;
+		double d9 = 4.384352186469764;
+		double m10 = 215.5765595255019;
+		double d10 = 12.015858262931754;
+		double m11 = 161.73727281787728;
+		double d11 = 7.308885047826907;
+		double m12 = 143.03131499471544;
+		double d12 = 5.11501892964645;
 
 		double[] vetReference = { m1, d1, m2, d2, m3, d3, m4, d4, m5, d5, m6,
-				d6, m7, d7, m8, d8, m9, d9, m10, d10, m11, d11, m12, d12, m13,
-				d13 };
+				d6, m7, d7, m8, d8, m9, d9, m10, d10, m11, d11, m12, d12 };
 		return vetReference;
 	}
 
@@ -843,10 +860,16 @@ public class p20rmn_ implements PlugIn, Measurements {
 		// qui potrei anche chiudere le immagini
 		//
 		String t1 = "TESTO";
+		
+		
 
+		MyLog.logVector(info1, "info1");
+		MyLog.waitHere();
 		ResultsTable rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+		
 
-//		int col = 0;
+
+		// int col = 0;
 		// rt.setHeading(++col, t1);
 		// rt.setHeading(++col, "media");
 		// rt.setHeading(++col, "devstan");
@@ -856,14 +879,14 @@ public class p20rmn_ implements PlugIn, Measurements {
 		// rt.setHeading(++col, "roi_h");
 
 		// rt.addValue(t1, t1);
-//		rt.addValue("media", 1);
-//		rt.addValue("devstan", 2);
-//		rt.addValue("roi_x", 3);
-//		rt.addValue("roi_y", 4);
-//		rt.addValue("roi_b", 5);
-//		rt.addValue("roi_h", 6);
-//		rt.show("Results");
-//		MyLog.waitHere();
+		// rt.addValue("media", 1);
+		// rt.addValue("devstan", 2);
+		// rt.addValue("roi_x", 3);
+		// rt.addValue("roi_y", 4);
+		// rt.addValue("roi_b", 5);
+		// rt.addValue("roi_h", 6);
+		// rt.show("Results");
+		// MyLog.waitHere();
 
 		if (typeT2)
 			rt.setLabel("T2___", 0);

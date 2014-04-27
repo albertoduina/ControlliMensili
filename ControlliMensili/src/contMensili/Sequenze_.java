@@ -170,7 +170,7 @@ public class Sequenze_ implements PlugIn {
 				return;
 			}
 
-			// IJ.runPlugIn("contMensili.p2rmn_", "-1");
+			IJ.runPlugIn("contMensili.p20rmn_", "-1");
 			IJ.runPlugIn("contMensili.p3rmn_", "-1");
 			IJ.runPlugIn("contMensili.p4rmn_", "-1");
 			IJ.runPlugIn("contMensili.p5rmn_", "-1");
@@ -787,6 +787,8 @@ public class Sequenze_ implements PlugIn {
 						plugin = "contMensili.p5rmn_";
 					if (plugin.equals("contMensili.p12rmn_"))
 						plugin = "contMensili.p3rmn_";
+					if (plugin.equals("contMensili.p20rmn_"))
+						plugin = "contMensili.p2rmn_";
 				}
 
 				String argomento = argumentForPluginToBeCalled(j1,

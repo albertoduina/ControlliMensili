@@ -354,9 +354,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 				MyLog.waitHere("Non trovato il file " + path1);
 
 			fast2 = fast && !manualRequired2;
-
+	
 			double out2[] = positionSearch(imp11, autoCalled, direzione,
-					profond, info10, step, verbose, test, fast2);
+					profond, info10, step, verbose, test, fast2, silent);
 
 			if (out2 == null) {
 				manualRequired2 = true;
@@ -367,7 +367,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				Overlay over2 = new Overlay();
 				Overlay over3 = new Overlay();
 
-				if (verbose) {
+				if (verbose && !silent) {
 					imp1 = UtilAyv.openImageMaximized(path1);
 					imp2 = UtilAyv.openImageNoDisplay(path2, true);
 				} else {
@@ -392,7 +392,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				int xCenterRoi = (int) out2[0];
 				int yCenterRoi = (int) out2[1];
 
-				if (verbose) {
+				if (verbose && !silent) {
 
 					// =================================================
 					imp1.setRoi(new OvalRoi(xMaximum - 4, yMaximum - 4, 8, 8));
@@ -416,6 +416,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					// =================================================
 				}
 
+
 				//
 				// disegno MROI su imp1
 				//
@@ -426,7 +427,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				over2.setStrokeColor(color2);
 				imp1.killRoi();
 
-				imp1.updateAndDraw();
+				if (!silent) imp1.updateAndDraw();
 				if (step)
 					MyLog.waitHere();
 
@@ -453,7 +454,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(color2);
-				imp1.updateAndDraw();
+				if (!silent)
+					imp1.updateAndDraw();
 				if (step)
 					MyLog.waitHere();
 
@@ -465,11 +467,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7,
 						sq7);
-				imp1.updateAndDraw();
+				if (!silent) imp1.updateAndDraw();
 
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(color2);
-				imp1.updateAndDraw();
+				if (!silent)
+					imp1.updateAndDraw();
 				if (step)
 					MyLog.waitHere();
 
@@ -486,6 +489,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				double[] circleData = null;
 				int mode = 1;
 
+				
 				double[] backPos = UtilAyv.positionSearch15(imp1, circleData,
 						xFondo, yFondo, diamBkg, guard, mode, info10, circle,
 						autoCalled, step, demo, test, fast, irraggiungibile);
@@ -519,7 +523,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 				// =============PROVVISORIO=====================================
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(color2);
-				imp1.updateAndDraw();
+				if (!silent)
+					imp1.updateAndDraw();
 				ImagePlus imp8 = imp1.flatten();
 				String newName = path1 + "_flat_p11.jpg";
 				new FileSaver(imp8).saveAsJpeg(newName);
@@ -531,7 +536,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 				//
 				ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
 				// ImagePlus imaDiff = UtilAyv.diffIma(imp1, imp2);
-				imaDiff.show();
+				if (!silent)
+					imaDiff.show();
 
 				if (verbose && !fast) {
 					UtilAyv.showImageMaximized(imaDiff);
@@ -576,13 +582,15 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
 						sqNEA, sqNEA);
-				imp1.updateAndDraw();
+				if (!silent)
+					imp1.updateAndDraw();
 
 				imp1.setOverlay(over2);
 
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(color2);
-				imp1.updateAndDraw();
+				if (!silent)
+					imp1.updateAndDraw();
 
 				//
 				// qui, se il numero dei pixel < 121 dovrò incrementare sqR2 e
@@ -604,7 +612,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 					imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
 							sqNEA, sqNEA);
-					imp1.updateAndDraw();
+					if (!silent)
+						imp1.updateAndDraw();
 					over2.addElement(imp1.getRoi());
 					over2.setStrokeColor(color2);
 
@@ -730,6 +739,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				double[] outFwhm2 = analyzeProfile(imp1, xStartProfile,
 						yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
 				IJ.wait(800);
+				
 
 				//
 				// Salvataggio dei risultati nella ResultsTable
@@ -1525,7 +1535,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 */
 	public static double[] positionSearch(ImagePlus imp11, boolean autoCalled,
 			int direzioneTabella, double profond, String info10, boolean step,
-			boolean verbose, boolean test, boolean fast) {
+			boolean verbose, boolean test, boolean fast, boolean silent) {
 		//
 		// ================================================================================
 		// Inizio calcoli geometrici
@@ -1546,6 +1556,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		overlayGrid(imp11, MyConst.P11_GRID_NUMBER, verbose);
 		imp11.updateAndDraw();
 
+
 		if (verbose)
 			imp11.setTitle("DIMENSIONI RETICOLO= "
 					+ (dimPixel * (double) height / (double) MyConst.P11_GRID_NUMBER)
@@ -1559,7 +1570,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double xMaximum = out1[0];
 		double yMaximum = out1[1];
 
-		direzione = directionFinder(imp11, xMaximum, yMaximum);
+		direzione = directionFinder(imp11, xMaximum, yMaximum, silent);
 
 		if (direzione != 0 && direzione != direzioneTabella) {
 			MyLog.waitHere("rilevata differenza tra directionFinder e direzioneTabella direzione= "
@@ -1568,6 +1579,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			direzione = direzioneTabella;
 
 		}
+
 
 		if (direzione == 0) {
 			manualRequired = true;
@@ -1737,6 +1749,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		out[5] = endY;
 		out[6] = xMaximum;
 		out[7] = yMaximum;
+		
 
 		if (manualRequired)
 			return null;
@@ -1760,10 +1773,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 	public static int directionFinder(ImagePlus imp1, double xMaximum,
-			double yMaximum) {
+			double yMaximum, boolean silent) {
 		int width = imp1.getWidth();
 		int height = imp1.getHeight();
-		UtilAyv.showImageMaximized2(imp1);
+		if (!silent) UtilAyv.showImageMaximized2(imp1);
 		Overlay over1 = new Overlay();
 		ImageStatistics stat1;
 		imp1.setOverlay(over1);
