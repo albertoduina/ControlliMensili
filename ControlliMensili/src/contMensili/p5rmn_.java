@@ -3,20 +3,17 @@ package contMensili;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
-
 import ij.gui.ImageWindow;
 import ij.gui.Line;
 import ij.gui.Overlay;
 import ij.gui.Plot;
 import ij.gui.PlotWindow;
 import ij.gui.Roi;
-
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
-
 import ij.util.Tools;
 
 import java.awt.Color;
@@ -31,12 +28,12 @@ import utils.MyMsg;
 import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyLog;
+import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
 import utils.TableSequence;
 import utils.UtilAyv;
-
 import utils.CustomCanvasGeneric;
 import utils.ImageUtils;
 
@@ -608,7 +605,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path[0],
-					imp1, tabCodici, VERSION, autoCalled);
+					imp1, tabCodici, VERSION + "_P5__ContMensili_"
+							+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
+							+ MyVersionUtils.CURRENT_VERSION, autoCalled);
 
 			//
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);

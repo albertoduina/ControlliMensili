@@ -831,7 +831,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 			if (demo)
 				MyLog.waitHere(listaMessaggi(45), debug);
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-					imp1, tabCodici, VERSION, autoCalled);
+					imp1, tabCodici, VERSION + "_P12__ContMensili_"
+							+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
+							+ MyVersionUtils.CURRENT_VERSION, autoCalled);
 
 			if (iw1 != null) {
 				WindowManager.setCurrentWindow(iw1);

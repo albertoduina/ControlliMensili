@@ -22,6 +22,7 @@ import java.util.StringTokenizer;
 import utils.AboutBox;
 import utils.MyConst;
 import utils.MyLog;
+import utils.MyVersionUtils;
 import utils.TableCode;
 import utils.TableSequence;
 import utils.UtilAyv;
@@ -385,7 +386,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 		}
 		int misure1 = UtilAyv.setMeasure(MEAN + STD_DEV);
 		String[][] info1 = ReportStandardInfo.getStandardInfo(strRiga3, riga1,
-				tabl, VERSION, autoCalled);
+				tabl, VERSION + "_P9__ContMensili_"
+						+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
+						+ MyVersionUtils.CURRENT_VERSION, autoCalled);
 
 		//
 		// Qui si torna se la misura è da rifare

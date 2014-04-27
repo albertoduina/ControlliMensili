@@ -442,7 +442,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 			// MyConst.CODE_FILE, MyConst.TOKENS4);
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-					imp1, tabCodici, VERSION + "__ContMensili_"
+					imp1, tabCodici, VERSION + "_P3__ContMensili_"
 							+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
 							+ MyVersionUtils.CURRENT_VERSION, autoCalled);
 

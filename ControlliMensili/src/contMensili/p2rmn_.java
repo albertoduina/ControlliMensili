@@ -435,7 +435,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 		int misure1 = UtilAyv.setMeasure(MEAN + STD_DEV);
 		String[][] info1 = ReportStandardInfo.getStandardInfo(strRiga3,
-				vetRiga1[0], tabl, VERSION, autoCalled);
+				vetRiga1[0], tabl, VERSION+"_P2_", autoCalled);
 
 		//
 		// Qui si torna se la misura è da rifare
@@ -635,6 +635,9 @@ public class p2rmn_ implements PlugIn, Measurements {
 				rt.addValue(7, roi_diam);
 			}
 			rt.show("Results");
+			
+			MyLog.waitHere("85, 29, 20, 20");
+
 
 			if (autoCalled) {
 				userSelection3 = ButtonMessages.ModelessMsg(

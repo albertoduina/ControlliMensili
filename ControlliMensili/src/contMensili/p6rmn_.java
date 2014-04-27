@@ -33,6 +33,7 @@ import utils.MyMsg;
 import utils.MyConst;
 import utils.MyLog;
 import utils.MyStackUtils;
+import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
@@ -652,7 +653,9 @@ public class p6rmn_ implements PlugIn, Measurements {
 		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
 		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path[0],
-				impStack, tabCodici, VERSION, autoCalled);
+				impStack, tabCodici, VERSION + "_P6__ContMensili_"
+						+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
+						+ MyVersionUtils.CURRENT_VERSION, autoCalled);
 		rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 
 		String t1 = "TESTO";

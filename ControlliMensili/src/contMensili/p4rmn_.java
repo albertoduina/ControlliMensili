@@ -23,6 +23,7 @@ import utils.InputOutput;
 import utils.MyMsg;
 import utils.MyConst;
 import utils.MyLog;
+import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
@@ -502,7 +503,9 @@ public class p4rmn_ implements PlugIn, Measurements {
 			// junit test of SelfTestSilent
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-					imp2, tabCodici, VERSION, autoCalled);
+					imp2, tabCodici, VERSION + "_P4__ContMensili_"
+							+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
+							+ MyVersionUtils.CURRENT_VERSION, autoCalled);
 
 			// put values in ResultsTable
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);

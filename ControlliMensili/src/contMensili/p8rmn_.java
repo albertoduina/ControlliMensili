@@ -20,6 +20,7 @@ import utils.InputOutput;
 import utils.MyLog;
 import utils.MyMsg;
 import utils.MyConst;
+import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
@@ -217,7 +218,9 @@ public class p8rmn_ implements PlugIn, Measurements {
 				+ MyConst.SEQUENZE_FILE);
 
 		String[][] info1 = ReportStandardInfo.getStandardInfo(iw2ayvTable,
-				riga1, tabCodici, VERSION, autoCalled);
+				riga1, tabCodici, VERSION + "_P8__ContMensili_"
+						+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
+						+ MyVersionUtils.CURRENT_VERSION, autoCalled);
 		//
 		// Qui si torna se la misura è da rifare
 		//

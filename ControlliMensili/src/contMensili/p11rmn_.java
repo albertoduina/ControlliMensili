@@ -748,7 +748,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 						.loadMultipleTable(MyConst.CODE_GROUP);
 
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
-						path1, imp1, tabCodici, VERSION, autoCalled);
+						path1, imp1, tabCodici, VERSION + "_P11__ContMensili_"
+								+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
+								+ MyVersionUtils.CURRENT_VERSION, autoCalled);
 
 				//
 				rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);

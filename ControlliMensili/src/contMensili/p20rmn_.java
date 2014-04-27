@@ -425,7 +425,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 				
 				
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(vetPath[0],
-						imp100, tabCodici, VERSION + "__ContMensili_"
+						imp100, tabCodici, VERSION + "_P20__ContMensili_"
 								+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
 								+ MyVersionUtils.CURRENT_VERSION, autocalled);
 
@@ -436,6 +436,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt1);
 
 				retry = false;
+				MyLog.waitHere("85, 29, 20, 20");
 				break;
 			}
 		} while (retry);
@@ -485,7 +486,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 //				imp100, tabCodici, VERSION, autocalled);
 		
 		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(vetPath[0],
-				imp100, tabCodici, VERSION + "__ContMensili_"
+				imp100, tabCodici, VERSION + "__P20_ContMensili_"
 						+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
 						+ MyVersionUtils.CURRENT_VERSION, autocalled);
 

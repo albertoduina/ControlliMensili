@@ -22,6 +22,7 @@ import utils.MyMsg;
 import utils.MyConst;
 import utils.CustomCanvasGeneric;
 import utils.InputOutput;
+import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
@@ -264,7 +265,9 @@ public class p7rmn_ implements PlugIn, Measurements {
 						.loadMultipleTable(MyConst.CODE_GROUP);
 
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
-						path1, imp1, tabCodici, VERSION, autoCalled);
+						path1, imp1, tabCodici, VERSION + "_P7__ContMensili_"
+								+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
+								+ MyVersionUtils.CURRENT_VERSION, autoCalled);
 				rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 				String t1 = "TESTO";
 				String s2 = "coord_x";
