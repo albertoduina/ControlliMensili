@@ -178,7 +178,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	public boolean debug1 = false;
 
-	public boolean DEBUG2 = false; // true attiva il debug
+	public boolean DEBUG2 = true; // true attiva il debug
 
 	private boolean selftest = false; // non è bello, lo uso per colpa del
 
@@ -252,7 +252,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 					return;
 				case 2:
 					ab.about("Controllo T1 e  T2", MyVersion.CURRENT_VERSION);
-//					ab.about("Controllo T1 e  T2", this.getClass());
+					// ab.about("Controllo T1 e  T2", this.getClass());
 					retry = true;
 					break;
 				case 3:
@@ -368,7 +368,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 					ab.close();
 					return;
 				case 2:
-//					ab.about("Controllo T1 e  T2", this.getClass());
+					// ab.about("Controllo T1 e  T2", this.getClass());
 					ab.about("Controllo T1 e  T2", MyVersion.CURRENT_VERSION);
 					retry = true;
 					break;
@@ -435,7 +435,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 		int misure1 = UtilAyv.setMeasure(MEAN + STD_DEV);
 		String[][] info1 = ReportStandardInfo.getStandardInfo(strRiga3,
-				vetRiga1[0], tabl, VERSION+"_P2_", autoCalled);
+				vetRiga1[0], tabl, VERSION + "_P2_", autoCalled);
 
 		//
 		// Qui si torna se la misura è da rifare
@@ -564,12 +564,17 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 			int xRoiFondo = Rows - DIAM_ROI_FONDO - 1;
 			int yRoiFondo = Columns - DIAM_ROI_FONDO - 1;
-			ImageStatistics statFondo = ImageUtils.backCalc(xRoiFondo, yRoiFondo,
-					DIAM_ROI_FONDO, imp8, bstep, true, selftest);
+			ImageStatistics statFondo = ImageUtils.backCalc(xRoiFondo,
+					yRoiFondo, DIAM_ROI_FONDO, imp8, bstep, true, selftest);
 			double mediaFondo = statFondo.mean;
 			double dsFondo = statFondo.stdDev;
 			filtroFondo = mediaFondo * kMediaFiltroFondo + dsFondo
 					* kDevStFiltroFondo;
+
+			MyLog.waitHere("xRoiFondo = " + xRoiFondo + " yRoiFondo= "
+					+ yRoiFondo + " diam= " + DIAM_ROI_FONDO + "mediaFondo= "
+					+ mediaFondo + " dsFondo= " + dsFondo + " filtroFondo= "
+					+ filtroFondo);
 
 			bMap = new int[width * height];
 			int offset;
@@ -635,9 +640,8 @@ public class p2rmn_ implements PlugIn, Measurements {
 				rt.addValue(7, roi_diam);
 			}
 			rt.show("Results");
-			
-			MyLog.waitHere("85, 29, 20, 20");
 
+			MyLog.waitHere("85, 29, 20, 20");
 
 			if (autoCalled) {
 				userSelection3 = ButtonMessages.ModelessMsg(
@@ -974,7 +978,8 @@ public class p2rmn_ implements PlugIn, Measurements {
 					IJ.showStatus("riga:" + y);
 					IJ.showProgress(progress);
 					for (int x = 0; x < width2; x++) {
-						if ((x == 108) && (y == 44)) {
+						if ((x == 47 || x == 46 || x == 48)
+								&& (y == 88 || y == 87 || y == 89)) {
 							if (DEBUG2 == true)
 								debug1 = true;
 						} else {
@@ -1044,7 +1049,8 @@ public class p2rmn_ implements PlugIn, Measurements {
 								} else
 									xx = false;
 								xx = false; // debug spento
-								if (xx) {
+								// if (xx) {
+								if (debug1) {
 
 									String aa = "";
 									for (int i1 = 0; i1 < tr_vals.length; i1++) {
@@ -1074,8 +1080,11 @@ public class p2rmn_ implements PlugIn, Measurements {
 								// ... quasi un dissenteria!!
 								//
 								if (cut >= 4) {
+
+									// regressed = simplexregressor.regressT2(
+									// tr2_vals, sn2_vals, 150.0d, debug1);
 									regressed = simplexregressor.regressT2(
-											tr2_vals, sn2_vals, 150.0d, debug1);
+											tr2_vals, sn2_vals, 150.0d, false);
 									if (debug1) {
 										IJ.log("T2calculated= " + regressed[0]);
 										IJ.log("S0calculated= " + regressed[1]);
@@ -1232,10 +1241,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	private void testSymphony(double medGel1, double devGel1, double medGel2,
 			double devGel2, double medGel3, double devGel3) {
-		
-		
 
-		
 		//
 		// aggiornato 16 aprile 2008 1.40e
 		//

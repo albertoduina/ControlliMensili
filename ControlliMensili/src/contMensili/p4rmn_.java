@@ -110,6 +110,11 @@ public class p4rmn_ implements PlugIn, Measurements {
 			return;
 		}
 
+		String className = this.getClass().getName();
+
+		VERSION = className + "_build_" + MyVersion.getVersion()
+				+ "_iw2ayv_build_" + MyVersionUtils.getVersion();
+
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
 			manualMenu(0, "");
@@ -503,9 +508,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 			// junit test of SelfTestSilent
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-					imp2, tabCodici, VERSION + "_P4__ContMensili_"
-							+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
-							+ MyVersionUtils.CURRENT_VERSION, autoCalled);
+					imp2, tabCodici, VERSION , autoCalled);
 
 			// put values in ResultsTable
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);

@@ -95,6 +95,11 @@ public class p5rmn_ implements PlugIn, Measurements {
 			return;
 		}
 
+		String className = this.getClass().getName();
+
+		VERSION = className + "_build_" + MyVersion.getVersion()
+				+ "_iw2ayv_build_" + MyVersionUtils.getVersion();
+ 
 		if (IJ.versionLessThan("1.43k"))
 			return;
 
@@ -605,9 +610,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path[0],
-					imp1, tabCodici, VERSION + "_P5__ContMensili_"
-							+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
-							+ MyVersionUtils.CURRENT_VERSION, autoCalled);
+					imp1, tabCodici, VERSION , autoCalled);
 
 			//
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);

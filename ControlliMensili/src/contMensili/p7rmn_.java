@@ -102,6 +102,12 @@ public class p7rmn_ implements PlugIn, Measurements {
 			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
 			return;
 		}
+		
+		String className = this.getClass().getName();
+
+		VERSION = className + "_build_" + MyVersion.getVersion()
+				+ "_iw2ayv_build_" + MyVersionUtils.getVersion();
+
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -265,9 +271,7 @@ public class p7rmn_ implements PlugIn, Measurements {
 						.loadMultipleTable(MyConst.CODE_GROUP);
 
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
-						path1, imp1, tabCodici, VERSION + "_P7__ContMensili_"
-								+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
-								+ MyVersionUtils.CURRENT_VERSION, autoCalled);
+						path1, imp1, tabCodici, VERSION , autoCalled);
 				rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 				String t1 = "TESTO";
 				String s2 = "coord_x";

@@ -415,10 +415,20 @@ public class p9rmn_ implements PlugIn, Measurements {
 			// codici.txt venga messo p9rmn dopo p2rmn (le immagini in ayv.txt
 			// sono ordinate da sequenze utilizzando codici.txt)
 			//
-			String saveVetXUpperLeftCornerRoiGels = Prefs.get("prefer.p2rmnGx",
+//			String saveVetXUpperLeftCornerRoiGels = Prefs.get("prefer.p2rmnGx",
+//					defaultVetGx);
+//			String saveVetYUpperLeftCornerRoiGels = Prefs.get("prefer.p2rmnGy",
+//					defaultVetGy);
+			
+			String saveVetXUpperLeftCornerRoiGels = Prefs.get("prefer.p20rmnGx",
 					defaultVetGx);
-			String saveVetYUpperLeftCornerRoiGels = Prefs.get("prefer.p2rmnGy",
+			String saveVetYUpperLeftCornerRoiGels = Prefs.get("prefer.p20rmnGy",
 					defaultVetGy);
+			
+			
+			
+			
+			
 			if (selftest) {
 				saveVetXUpperLeftCornerRoiGels = defaultVetGx;
 				saveVetYUpperLeftCornerRoiGels = defaultVetGy;

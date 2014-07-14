@@ -93,6 +93,11 @@ public class p8rmn_ implements PlugIn, Measurements {
 			return;
 		}
 
+		String className = this.getClass().getName();
+
+		VERSION = className + "_build_" + MyVersion.getVersion()
+				+ "_iw2ayv_build_" + MyVersionUtils.getVersion();
+
 		fileDir = Prefs.get("prefer.string1", "none");
 
 		// tabl = new InputOutput().readFile1(CODE_FILE, TOKENS4);
@@ -218,9 +223,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 				+ MyConst.SEQUENZE_FILE);
 
 		String[][] info1 = ReportStandardInfo.getStandardInfo(iw2ayvTable,
-				riga1, tabCodici, VERSION + "_P8__ContMensili_"
-						+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
-						+ MyVersionUtils.CURRENT_VERSION, autoCalled);
+				riga1, tabCodici, VERSION , autoCalled);
 		//
 		// Qui si torna se la misura è da rifare
 		//

@@ -90,6 +90,12 @@ public class p3rmn_ implements PlugIn, Measurements {
 		}
 		// ----------------------------------------------------------------------------
 
+		String className = this.getClass().getName();
+
+		VERSION = className + "_build_" + MyVersion.getVersion()
+				+ "_iw2ayv_build_" + MyVersionUtils.getVersion();
+
+		
 		fileDir = Prefs.get("prefer.string1", "none");
 		if (mylogger)
 			MyFileLogger.logger.info("p3rmn_>>> fileDir= " + fileDir);
@@ -442,9 +448,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 			// MyConst.CODE_FILE, MyConst.TOKENS4);
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-					imp1, tabCodici, VERSION + "_P3__ContMensili_"
-							+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
-							+ MyVersionUtils.CURRENT_VERSION, autoCalled);
+					imp1, tabCodici, VERSION , autoCalled);
 
 			// put values in ResultsTable
 
