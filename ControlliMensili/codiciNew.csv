@@ -409,10 +409,10 @@ N2SS_;SpinEcho NECK ARRAY N2;4;4;xxx;hsx;30;p11rmn_
 //;;;;;;;
 //;;;;;;;
 // NECK MATRIX AVANTO;;;;;;;
-N1FA_;Flash NECK ARRAY B1;4;4;NE1;hdx;30;p11rmn_
-N1SA_;SpinEcho NECK ARRAY B1;4;4;NE1;hdx;30;p11rmn_
-N2FA_;Flash NECK ARRAY B2;4;4;NE2;hsx;30;p11rmn_
-N2SA_;SpinEcho NECK ARRAY B2;4;4;NE2;hsx;30;p11rmn_
+N1FA_;Flash NECK ARRAY B1;4;4;xxx;hdx;30;p11rmn_
+N1SA_;SpinEcho NECK ARRAY B1;4;4;xxx;hdx;30;p11rmn_
+N2FA_;Flash NECK ARRAY B2;4;4;xxx;hsx;30;p11rmn_
+N2SA_;SpinEcho NECK ARRAY B2;4;4;xxx;hsx;30;p11rmn_
 //;;;;;;;
 // NECK MATRIX AVANTO SAVE UNCOMBINED;;;;;;;
 N12S_;SpinEcho NECK ARRAY B1-2;4;4;NE1;hdx;30;p11rmn_

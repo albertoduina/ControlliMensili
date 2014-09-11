@@ -2091,18 +2091,19 @@ public class p10rmn_ implements PlugIn, Measurements {
 				// disegno il cerchio ed i punti, in modo da date un feedback
 				// grafico al messaggio di eccessivo errore nel fit
 				// -------------------------------------------------------------
-				UtilAyv.showImageMaximized(imp11);
-				over12.clear();
-				imp11.setOverlay(over12);
-				imp11.setRoi(new OvalRoi(xCenterCircle - diamCircle / 2,
-						yCenterCircle - diamCircle / 2, diamCircle, diamCircle));
-				imp11.getRoi().setStrokeColor(Color.red);
-				over12.addElement(imp11.getRoi());
-				imp11.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
-				imp11.getRoi().setStrokeColor(Color.green);
-				over12.addElement(imp11.getRoi());
-				imp11.deleteRoi();
-				MyLog.waitHere(listaMessaggi(18), debug);
+				// UtilAyv.showImageMaximized(imp11);
+				// over12.clear();
+				// imp11.setOverlay(over12);
+				// imp11.setRoi(new OvalRoi(xCenterCircle - diamCircle / 2,
+				// yCenterCircle - diamCircle / 2, diamCircle, diamCircle));
+				// imp11.getRoi().setStrokeColor(Color.red);
+				// over12.addElement(imp11.getRoi());
+				// imp11.setRoi(new PointRoi(xPoints3, yPoints3,
+				// xPoints3.length));
+				// imp11.getRoi().setStrokeColor(Color.green);
+				// over12.addElement(imp11.getRoi());
+				// imp11.deleteRoi();
+				// MyLog.waitHere(listaMessaggi(18), debug);
 				manual = true;
 			}
 
@@ -2112,7 +2113,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// Verifica di avere trovato almeno 3 punti, altrimenti chiede la
 		// selezione manuale del cerchio
 		// -------------------------------------------------------------------
-		if (xPoints3.length >= 3) {
+		if (xPoints3.length >= 3 && !manual) {
 			imp12.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
 			ImageUtils.fitCircle(imp12);
 			if (step) {
@@ -2121,14 +2122,27 @@ public class p10rmn_ implements PlugIn, Measurements {
 			}
 
 		} else {
+			// NON SI SONO DETERMINATI 3 PUNTI DEL CERCHIO, SELEZIONE MANUALE
+
 			if (!test)
 				fast = false;
 			// UtilAyv.showImageMaximized(imp11);
 			ImageUtils.imageToFront(iw11);
 			imp11.setRoi(new OvalRoi((width / 2) - 100, (height / 2) - 100,
 					200, 200));
-			if (!test)
-				MyLog.waitHere(listaMessaggi(19) + "aaaaaa", debug);
+			Rectangle boundRec1 = null;
+			Rectangle boundRec2 = null;
+			boundRec1 = imp11.getProcessor().getRoi();
+			// if (!test)
+			MyLog.waitHere(listaMessaggi(19), debug);
+			// OBBLIGO A CAMBIARE QUALCOSA PER PREVENIRE L'OK "DA SUMMIA"
+			boundRec2 = imp11.getProcessor().getRoi();
+
+			while (boundRec1.equals(boundRec2)) {
+				MyLog.waitHere(listaMessaggi(40), debug);
+				boundRec2 = imp11.getProcessor().getRoi();
+
+			}
 
 			//
 			// Ho così risolto la mancata localizzazione automatica del
@@ -2272,7 +2286,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// + xCenterRoi + " yCenterRoi= " + yCenterRoi);
 		// }
 
-		if (!fast && !test) {
+		if (!fast && !test || fast && manual) {
 
 			ImageUtils.imageToFront(iw11);
 
@@ -2412,10 +2426,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 		lista[15] = "Sono mostrati in verde i punti utilizzati per il fit della circonferenza";
 		lista[16] = "La circonferenza risultante dal fit è mostrata in rosso";
 		lista[17] = "Il centro del fantoccio è contrassegnato dal pallino rosso";
-		lista[18] = "Troppa distanza tra i punti forniti ed il fit del cerchio";
-		lista[19] = "Non si riescono a determinare le coordinate di almeno 3 punti del cerchio \n"
+		lista[18] = "<< SELEZIONE MANUALE >>\n "
+				+ "Troppa distanza tra i punti forniti ed il fit del cerchio";
+		lista[19] = "<< SELEZIONE MANUALE >>\n"
+				+ "Non si riescono a determinare le coordinate di almeno 3 punti del cerchio \n"
 				+ "posizionare manualmente una ROI circolare di diametro uguale al fantoccio e\n"
 				+ "premere  OK";
+
 		lista[20] = "Analizzando l'intera immagine con una ROI 11x11, viene determinata la \n"
 				+ "posizione con la massima media nell'immagine, la posizione è contrassegnata \n"
 				+ "dal pallino verde";
@@ -2446,6 +2463,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 		lista[37] = "messaggio 37";
 		lista[38] = "messaggio 38";
 		lista[39] = "messaggio 39";
+		lista[40] = "ATTENZIONE, l'intervento manuale OBBLIGATORIO deve cambiare qualcosa, anche minima, \n"
+				+ "rispetto alla ROI proposta!!!";
+		;
 
 		// ---------+-----------------------------------------------------------+
 		lista[65] = "vetMinimi==null, verificare esistenza della riga P10MIN nel file limiti.csv";

@@ -95,7 +95,6 @@ public class p3rmn_ implements PlugIn, Measurements {
 		VERSION = className + "_build_" + MyVersion.getVersion()
 				+ "_iw2ayv_build_" + MyVersionUtils.getVersion();
 
-		
 		fileDir = Prefs.get("prefer.string1", "none");
 		if (mylogger)
 			MyFileLogger.logger.info("p3rmn_>>> fileDir= " + fileDir);
@@ -448,12 +447,12 @@ public class p3rmn_ implements PlugIn, Measurements {
 			// MyConst.CODE_FILE, MyConst.TOKENS4);
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-					imp1, tabCodici, VERSION , autoCalled);
+					imp1, tabCodici, VERSION, autoCalled);
 
 			// put values in ResultsTable
 
-			MyLog.logVector(info1, "info1");
-			MyLog.waitHere();
+			// MyLog.logVector(info1, "info1");
+			// MyLog.waitHere();
 
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 			String t1 = "TESTO";

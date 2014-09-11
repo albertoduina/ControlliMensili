@@ -264,7 +264,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			// boolean verbose = false;
 			boolean verbose = true;
 			boolean test = false;
-			boolean silent = true;
+			boolean silent = false;
 
 			String info11 = "code= "
 					+ TableSequence.getCode(iw2ayvTable, vetRiga[0])
@@ -354,7 +354,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				MyLog.waitHere("Non trovato il file " + path1);
 
 			fast2 = fast && !manualRequired2;
-	
+
 			double out2[] = positionSearch(imp11, autoCalled, direzione,
 					profond, info10, step, verbose, test, fast2, silent);
 
@@ -416,7 +416,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 					// =================================================
 				}
 
-
 				//
 				// disegno MROI su imp1
 				//
@@ -427,7 +426,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 				over2.setStrokeColor(color2);
 				imp1.killRoi();
 
-				if (!silent) imp1.updateAndDraw();
+				if (!silent)
+					imp1.updateAndDraw();
 				if (step)
 					MyLog.waitHere();
 
@@ -467,7 +467,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7,
 						sq7);
-				if (!silent) imp1.updateAndDraw();
+				if (!silent)
+					imp1.updateAndDraw();
 
 				over2.addElement(imp1.getRoi());
 				over2.setStrokeColor(color2);
@@ -489,7 +490,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 				double[] circleData = null;
 				int mode = 1;
 
-				
 				double[] backPos = UtilAyv.positionSearch15(imp1, circleData,
 						xFondo, yFondo, diamBkg, guard, mode, info10, circle,
 						autoCalled, step, demo, test, fast, irraggiungibile);
@@ -521,13 +521,21 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				//
 				// =============PROVVISORIO=====================================
-				over2.addElement(imp1.getRoi());
-				over2.setStrokeColor(color2);
-				if (!silent)
-					imp1.updateAndDraw();
+
+				if (verbose) {
+					imp1.getRoi().setStrokeColor(Color.yellow);
+					imp1.getRoi().setStrokeWidth(1.1);
+					over2.addElement(imp1.getRoi());
+				}
+
+				// over2.addElement(imp1.getRoi());
+				// over2.setStrokeColor(color2);
+				// if (!silent)
+				imp1.updateAndDraw();
 				ImagePlus imp8 = imp1.flatten();
 				String newName = path1 + "_flat_p11.jpg";
 				new FileSaver(imp8).saveAsJpeg(newName);
+
 				// MyLog.appendLog(fileDir + "MyLog.txt", "saved: " + newName);
 				// =============================================================
 
@@ -739,7 +747,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 				double[] outFwhm2 = analyzeProfile(imp1, xStartProfile,
 						yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
 				IJ.wait(800);
-				
 
 				//
 				// Salvataggio dei risultati nella ResultsTable
@@ -1558,7 +1565,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		overlayGrid(imp11, MyConst.P11_GRID_NUMBER, verbose);
 		imp11.updateAndDraw();
 
-
 		if (verbose)
 			imp11.setTitle("DIMENSIONI RETICOLO= "
 					+ (dimPixel * (double) height / (double) MyConst.P11_GRID_NUMBER)
@@ -1581,7 +1587,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 			direzione = direzioneTabella;
 
 		}
-
 
 		if (direzione == 0) {
 			manualRequired = true;
@@ -1751,7 +1756,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		out[5] = endY;
 		out[6] = xMaximum;
 		out[7] = yMaximum;
-		
 
 		if (manualRequired)
 			return null;
@@ -1778,7 +1782,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 			double yMaximum, boolean silent) {
 		int width = imp1.getWidth();
 		int height = imp1.getHeight();
-		if (!silent) UtilAyv.showImageMaximized2(imp1);
+		if (!silent)
+			UtilAyv.showImageMaximized2(imp1);
 		Overlay over1 = new Overlay();
 		ImageStatistics stat1;
 		imp1.setOverlay(over1);

@@ -41,7 +41,7 @@ WRSA2;Wrist;4;4;xxx;hdx;x;p5rmn_
 CVSA2;Spine  Cervical;4;4;xxx;hdx;x;p5rmn_
 CTSA2;Spine  Thoracic;4;4;xxx;hdx;x;p5rmn_
 CLSA2;Spine  Lumbar;4;4;xxx;hdx;x;p5rmn_
-T2MA2;T2 multi SpinEcho Head;4;4;xxx;x;x;p2rmn_
+T2MA2;T2 multi SpinEcho Head;4;4;xxx;x;x;p20rmn_
 T2M12;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
 T2M22;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
 T2M32;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_

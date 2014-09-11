@@ -263,7 +263,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			MyLog.logDebug(vetRiga[1], "P12", fileDir);
 		}
 
-		boolean step = false;
+		boolean step = true;
 		boolean retry = false;
 
 		if (fast) {
@@ -276,7 +276,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			result1 = mainUnifor(path1, path2, autoArgs, info10, autoCalled,
 					step, demo, test, fast, silent);
 
-			UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, result1);
+			if (!(result1 == null))
+				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, result1);
 
 			UtilAyv.afterWork();
 
@@ -831,7 +832,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			if (demo)
 				MyLog.waitHere(listaMessaggi(45), debug);
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-					imp1, tabCodici, VERSION , autoCalled);
+					imp1, tabCodici, VERSION, autoCalled);
 
 			if (iw1 != null) {
 				WindowManager.setCurrentWindow(iw1);
@@ -871,7 +872,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 						.ModelessMsg(
 								"Accettare il valore fuori range oppure rifare l'elaborazione in manuale",
 								"ACCETTA", "MANUALE");
-				MyLog.waitHere("resp= " + resp);
 				if (resp == 1)
 					return null;
 			}

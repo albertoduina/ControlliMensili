@@ -22,10 +22,10 @@ T2MA3;T2 multi SpinEcho Head;4;4;xxx;x;x;p2rmn_
 T2M13;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
 T2M23;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
 T2M33;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
-B1K03;T1 ir 1000 Head;4;1;xxx;x;x;p2rmn_
-B0503;T1 ir 500 Head;4;1;xxx;x;x;p2rmn_
-B0203;T1 ir 200 Head;4;1;xxx;x;x;p2rmn_
-B0023;T1 ir 20 Head;4;1;xxx;x;x;p2rmn_
+B1K03;T1 ir 1000 Head;4;1;xxx;x;x;p20rmn_
+B0503;T1 ir 500 Head;4;1;xxx;x;x;p20rmn_
+B0203;T1 ir 200 Head;4;1;xxx;x;x;p20rmn_
+B0023;T1 ir 20 Head;4;1;xxx;x;x;p20rmn_
 T1AA3;T1 per CNR;1;1;xxx;x;x;p9rmn_
 //----------------------------------------------------------------------------------------------------------;;;;;;;
 // DESENZANO ECHELON;;;;;;;

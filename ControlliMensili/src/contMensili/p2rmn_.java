@@ -640,6 +640,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 				rt.addValue(7, roi_diam);
 			}
 			rt.show("Results");
+			MyLog.waitHere();
 
 			MyLog.waitHere("85, 29, 20, 20");
 

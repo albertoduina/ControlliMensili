@@ -490,6 +490,7 @@ public class Sequenze_ implements PlugIn {
 				for (int j1 = 0; j1 < tableCode2.length; j1++) {
 
 					if (codice.equals(tableCode2[j1][0])) {
+						// if (codice.equals("N1FA_")) MyLog.waitHere();
 
 						if ((tableCode2[j1][3].equals("x"))
 								|| (tableCode2[j1][3].equals("xxx"))

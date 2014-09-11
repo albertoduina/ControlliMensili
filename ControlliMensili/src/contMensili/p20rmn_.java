@@ -349,12 +349,10 @@ public class p20rmn_ implements PlugIn, Measurements {
 
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
 						vetPath[0], imp100, tabCodici, VERSION, autocalled);
-				
-				 			
 
 				ResultsTable rt1 = analyzeResultsImages(vetRoi, imaID, info1,
-						typeT2 ,autoCalled, verbose, test, fast, silent);
-				
+						typeT2, autoCalled, verbose, test, fast, silent);
+
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt1);
 
 				retry = false;
@@ -372,7 +370,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 	 * Automatic silent self test
 	 */
 	public void selfTestSilent() {
-		
+
 		boolean verbose = true;
 		boolean test = false;
 		boolean autoCalled = true;
@@ -416,13 +414,10 @@ public class p20rmn_ implements PlugIn, Measurements {
 		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(vetPath[0],
 				imp100, tabCodici, VERSION, autocalled);
 
-		ResultsTable rt1 = analyzeResultsImages(vetRoi, imaID, info1, typeT2, autoCalled, verbose, test, fast, silent);
-		
-		
+		ResultsTable rt1 = analyzeResultsImages(vetRoi, imaID, info1, typeT2,
+				autoCalled, verbose, test, fast, silent);
 
 		double[] vetResults = UtilAyv.vectorizeResultsMultiple(rt1, 2);
-		
-		
 
 		boolean ok = UtilAyv.verifyResults1(vetResults, referenceSiemens(),
 				MyConst.P20_vetName);
@@ -432,9 +427,6 @@ public class p20rmn_ implements PlugIn, Measurements {
 			IJ.log("Il test di p20rmn_ T2calculation evidenzia degli ERRORI");
 
 	}
-	
-	
-	
 
 	public static int[] mapPreparation(ImagePlus imp1, Roi[] vetRoi) {
 
@@ -535,7 +527,11 @@ public class p20rmn_ implements PlugIn, Measurements {
 				String[] info1 = { "", "", "", "", "", "", "" };
 				ResultsTable rt1 = analyzeResultsImages(vetRoi, imaID, info1,
 						typeT2, autoCalled, verbose, test, fast, silent);
-
+				
+				rt1.show("Results");
+				MyLog.waitHere();
+				
+				
 				double[] vetResults = UtilAyv.vectorizeResultsMultiple(rt1, 2);
 
 				boolean ok = UtilAyv.verifyResults1(vetResults,
@@ -580,9 +576,13 @@ public class p20rmn_ implements PlugIn, Measurements {
 				if (imaID == null)
 					MyLog.waitHere("imaID == null");
 
-				String[] info1 = { "", "", "", "", "", "", "" };
+				String[] info1 = { "a1", "a2", "a3", "a4", "a5", "a6","a7","a8" };
 				ResultsTable rt1 = analyzeResultsImages(vetRoi, imaID, info1,
 						typeT2, autoCalled, verbose, test, fast, silent);
+				
+				rt1.show("Results");
+				MyLog.waitHere();
+
 
 				double[] vetResults = UtilAyv.vectorizeResultsMultiple(rt1, 2);
 
@@ -602,11 +602,6 @@ public class p20rmn_ implements PlugIn, Measurements {
 		return;
 	}
 
-	
-	
-	
-	
-	
 	/**
 	 * Siemens test image expected results
 	 * 
