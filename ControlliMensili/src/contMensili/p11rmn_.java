@@ -902,25 +902,29 @@ public class p11rmn_ implements PlugIn, Measurements {
 		// 38.891139825926565, 7.67, 2616.0, 505.0, 1163.0, 661.0, 764.0, 910.0,
 		// 1094.0, 1382.0, 1799.0, 2752.0, 5478.0, 46412.0,
 
+		// 0.0, 953.6122448979592, 3.271011755762441, 291.53433741655306,
+		// 51.16454748650474, 3.46, 573.0, 419.0, 1085.0, 689.0, 820.0, 1082.0,
+		// 1386.0, 1890.0, 2681.0, 3981.0, 5089.0, 45841.0,
+
 		double simul = 0.0;
-		double signal = 1275.530612244898;
+		double signal = 953.6122448979592;
 		// double backNoise = 7.85;
-		double backNoise = 37.045823571316845;
-		double snRatio = 34.43115820571181;
-		double fwhm = 38.891139825926565;
-		double bkg = 7.67;
-		double num1 = 2616.0;
-		double num2 = 505.0;
-		double num3 = 1163.0;
-		double num4 = 661.0;
-		double num5 = 764.0;
-		double num6 = 910.0;
-		double num7 = 1094.0;
-		double num8 = 1382.0;
-		double num9 = 1799.0;
-		double num10 = 2752.0;
-		double num11 = 5478.0;
-		double num12 = 46412.0;
+		double backNoise = 3.271011755762441;
+		double snRatio = 291.53433741655306;
+		double fwhm = 51.16454748650474;
+		double bkg = 3.46;
+		double num1 = 573.0;
+		double num2 = 419.0;
+		double num3 = 1085.0;
+		double num4 = 689.0;
+		double num5 = 820.0;
+		double num6 = 1082.0;
+		double num7 = 1386.0;
+		double num8 = 1890.0;
+		double num9 = 2681.0;
+		double num10 = 3981.0;
+		double num11 = 5089.0;
+		double num12 = 45841.0;
 
 		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, bkg,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
@@ -936,11 +940,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 */
 	public static double[] referenceGe() {
 
+		// / 0.0, 2278.4897959183672, 24.209007271217278, 94.11744027303934,
+		// 36.25918394251357, 0.34, 1393.0, 430.0, 1161.0, 816.0, 1159.0,
+		// 1556.0, 2726.0, 3614.0, 2588.0, 2644.0, 1549.0, 45900.0,
+
 		double simul = 0.0;
 		double signal = 2278.4897959183672;
-		double backNoise = 1.66;
+		double backNoise = 24.209007271217278;
 		double snRatio = 94.11744027303934;
 		double fwhm = 36.25918394251357;
+		double bkg = 0.34;
 		double num1 = 1393.0;
 		double num2 = 430.0;
 		double num3 = 1161.0;
@@ -954,7 +963,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double num11 = 1549.0;
 		double num12 = 45900.0;
 
-		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
+		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, bkg,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
 				num11, num12 };
 		return vetReference;
@@ -991,7 +1000,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 	}
 
 	public static boolean selfTestSiemens(boolean verbose) {
-		String[] list = { "S1SA_01testP5", "S1SA_02testP5", "S1SA_03testP5" };
+		// String path1 = "./Test2/S12S_01testP11";
+		// String path2 = "./Test2/S12S_02testP11";
+
+		// String[] list = { "S1SA_01testP5", "S1SA_02testP5", "S1SA_03testP5"
+		// };
+		String[] list = { "S12S_01testP11", "S12S_02testP11" };
 		String[] path = new InputOutput().findListTestImages2(
 				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 		String path1 = path[0];
@@ -1004,13 +1018,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 		boolean silent = !verbose;
 		// boolean verbose = true;
 		double[] vetReference = referenceSiemens();
-		int verticalDir = 1;
+		int verticalDir = 3;
 		double profond = 30.0;
 		ResultsTable rt1 = mainUnifor(path1, path2, verticalDir, profond, "",
 				autoCalled, step, verbose, test, fast, silent);
 		if (rt1 == null)
 			return false;
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		// MyLog.logVector(vetResults, "vetResults");
+		// MyLog.logVector(vetReference, "vetReference");
+		// MyLog.waitHere();
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 				MyConst.P11_vetName);
 		return ok;

@@ -2133,20 +2133,19 @@ public class p10rmn_ implements PlugIn, Measurements {
 			Rectangle boundRec1 = null;
 			Rectangle boundRec2 = null;
 			boundRec1 = imp11.getProcessor().getRoi();
-			// if (!test)
-			MyLog.waitHere(listaMessaggi(19), debug);
+			if (!test)
+				MyLog.waitHere(listaMessaggi(19), debug);
 			// OBBLIGO A CAMBIARE QUALCOSA PER PREVENIRE L'OK "DA SUMMIA"
 			boundRec2 = imp11.getProcessor().getRoi();
 
-			while (boundRec1.equals(boundRec2)) {
+			while (boundRec1.equals(boundRec2) && (!test)) {
 				MyLog.waitHere(listaMessaggi(40), debug);
 				boundRec2 = imp11.getProcessor().getRoi();
-
 			}
 
 			//
 			// Ho così risolto la mancata localizzazione automatica del
-			// fantoccio
+			// fantoccio (messaggi non visualizzati in junit)
 			//
 		}
 
@@ -2295,7 +2294,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			imp11.setRoi((int) ax - sqNEA / 2, (int) ay - sqNEA / 2, sqNEA,
 					sqNEA);
 			imp11.updateAndDraw();
-			MyLog.waitHere(info1 + "\n \nMODIFICA MANUALE POSIZIONE ROI", debug);
+			if (!test)
+				MyLog.waitHere(info1 + "\n \nMODIFICA MANUALE POSIZIONE ROI",
+						debug);
 			//
 			// Vado a rileggere solo le coordinate della ROI, quelle del
 			// cerchio,

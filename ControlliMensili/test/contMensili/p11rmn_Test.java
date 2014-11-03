@@ -46,9 +46,10 @@ public class p11rmn_Test {
 		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, verticalDir,
 				profond, "", autoCalled, step, verbose, test, fast, silent);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-//		MyLog.logVector(vetResults, "vetResults");
-//		MyLog.logVector(vetReference, "vetReference");
-//		MyLog.waitHere();
+		// MyLog.waitHere();
+		// MyLog.logVector(vetResults, "vetResults");
+		// MyLog.logVector(vetReference, "vetReference");
+		// MyLog.waitHere();
 		assertTrue(UtilAyv.compareVectors(vetResults, vetReference, 1e-12, ""));
 	}
 

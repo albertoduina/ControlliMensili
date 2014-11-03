@@ -20,9 +20,9 @@ BR5A_;Risoluzione 512 Body;1;1;xxx;x;x;p4rmn_
 BR2A_;Risoluzione 256 Body;1;1;xxx;x;x;p4rmn_
 //;;;;;;;
 // HEAD;;;;;;;
-HUSA_;Uniformità Assiale Head;2;2;xxx;x;x;p12rmn_
-HUSS_;Uniformità Sagittale Head;2;2;xxx;x;x;p12rmn_
-HUSC_;Uniformità Coronale Head;2;2;xxx;x;x;p12rmn_
+///HUSA_;Uniformità Assiale Head;2;2;xxx;x;x;p12rmn_
+///HUSS_;Uniformità Sagittale Head;2;2;xxx;x;x;p12rmn_
+///HUSC_;Uniformità Coronale Head;2;2;xxx;x;x;p12rmn_
 HDSA_;DGP Single Head;1;1;xxx;x;x;p8rmn_
 HDMA_;DGP Multi Head;1;3;xxx;x;x;p8rmn_
 HTLX_;Localizer Thickness Head;0;0;xxx;x;x;none_
@@ -396,10 +396,10 @@ S8AS_;SpinEcho SPINE S8;4;4;S84;vup;30;p11rmn_
 S8AF_;Flash SPINE S8;4;4;S84;vup;30;p11rmn_
 //;;;;;;;
 // BREAST ;;;;;;;
-BL1S_;Flash BREAST LEFT;4;4;xxx;vup;30;p11rmn_
-BL1F_;Flash BREAST LEFT;4;4;xxx;vup;30;p11rmn_
-BR1S_;SpinEcho BREAST RIGHT;4;4;xxx;vup;30;p11rmn_
-BR1F_;SpinEcho BREAST RIGHT;4;4;xxx;vup;30;p11rmn_
+BL1S_;Flash BREAST LEFT;4;4;xxx;vup;30;p12rmn_
+BL1F_;Flash BREAST LEFT;4;4;xxx;vup;30;p12rmn_
+BR1S_;SpinEcho BREAST RIGHT;4;4;xxx;vup;30;p12rmn_
+BR1F_;SpinEcho BREAST RIGHT;4;4;xxx;vup;30;p12rmn_
 //;;;;;;;
 // NECK ARRAY SIMPHONY;;;;;;;
 N1FS_;Flash NECK ARRAY N1;4;4;xxx;hdx;30;p11rmn_

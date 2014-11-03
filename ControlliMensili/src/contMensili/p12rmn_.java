@@ -50,6 +50,7 @@ import utils.ButtonMessages;
 import utils.ImageUtils;
 import utils.InputOutput;
 import utils.MyCircleDetector;
+import utils.MyInput;
 import utils.MyMsg;
 import utils.MyConst;
 import utils.MyFwhm;
@@ -116,6 +117,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 	private static String fileDir = "";
 
 	private static final boolean debug = true;
+	// private static boolean junitTest = false;
+	private static int timeout = 0;
 
 	public void run(String args) {
 
@@ -176,6 +179,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				retry = true;
 				break;
 			case 3:
+				timeout = MyInput.myIntegerInput("Ritardo avanzamento (0 = infinito)", "      [msec]", 1000, 0);
 				selfTestMenu();
 				retry = true;
 				break;
@@ -195,7 +199,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				boolean test = false;
 				boolean silent = false;
 				mainUnifor(path1, path2, "0", "", autoCalled, step, demo, test,
-						fast, silent);
+						fast, silent, timeout);
 
 				UtilAyv.afterWork();
 				retry = true;
@@ -274,7 +278,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			boolean silent = false;
 
 			result1 = mainUnifor(path1, path2, autoArgs, info10, autoCalled,
-					step, demo, test, fast, silent);
+					step, demo, test, fast, silent, timeout);
 
 			if (!(result1 == null))
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, result1);
@@ -307,7 +311,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 					boolean silent = false;
 
 					result1 = mainUnifor(path1, path2, autoArgs, info10,
-							autoCalled, step, demo, test, fast, silent);
+							autoCalled, step, demo, test, fast, silent, timeout);
 					if (result1 == null) {
 						break;
 					}
@@ -359,9 +363,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 	@SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String path1, String path2,
 			String autoArgs, String info10, boolean autoCalled, boolean step,
-			boolean demo, boolean test, boolean fast, boolean silent) {
+			boolean demo, boolean test, boolean fast, boolean silent,
+			int timeout) {
 
 		boolean accetta = false;
+
 		ResultsTable rt = null;
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		ImageWindow iw1 = null;
@@ -441,7 +447,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			double out2[] = positionSearch11(imp11, maxFitError,
 					maxBubbleGapLimit, info10, autoCalled, step, demo, test,
-					fast);
+					fast, timeout);
 			if (out2 == null) {
 				MyLog.waitHere("out2==null");
 				return null;
@@ -463,7 +469,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			int diamGhost = 20;
 			int guard = 10;
 			double[][] out3 = p12rmn_.positionSearch13(imp11, circleData,
-					diamGhost, guard, "", autoCalled, step, demo, test, fast);
+					diamGhost, guard, "", autoCalled, step, demo, test, fast,
+					timeout);
 			if (out3 == null) {
 				MyLog.waitHere("out3==null");
 				return null;
@@ -520,7 +527,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			int diamFondo = 20;
 			boolean irraggiungibile = false;
 			int[] out4 = positionSearch14(imp11, circleData, diamFondo, guard,
-					"", autoCalled, step, demo, test, fast, irraggiungibile);
+					"", autoCalled, step, demo, test, fast, irraggiungibile,
+					timeout);
 			if (out4 == null) {
 				MyLog.waitHere("out4==null");
 				return null;
@@ -545,7 +553,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			imp11.setOverlay(over11b);
 			imp11.updateAndRepaintWindow();
 			if (demo)
-				MyLog.waitHere(listaMessaggi(35), debug);
+				MyLog.waitHere(listaMessaggi(35), debug, timeout);
 
 			// In FAST arriviamo in questa posizione senza che niente appaia a
 			// video se il posizionamento è andato a buon fine
@@ -615,17 +623,18 @@ public class p12rmn_ implements PlugIn, Measurements {
 				imp1.getRoi().setStrokeWidth(2);
 				MyLog.waitHere(
 						listaMessaggi(40)
-								+ UtilAyv.printDoubleDecimals(mean1, 4), debug);
+								+ UtilAyv.printDoubleDecimals(mean1, 4), debug,
+						timeout);
 				MyLog.waitHere(
 						listaMessaggi(46) + " massimo= "
 								+ UtilAyv.printDoubleDecimals(stat1.max, 4)
 								+ " minimo= "
 								+ UtilAyv.printDoubleDecimals(stat1.min, 4),
-						debug);
+						debug, timeout);
 				MyLog.waitHere(
 						listaMessaggi(47)
-								+ UtilAyv.printDoubleDecimals(uiPerc1, 4)
-								+ "  ", debug);
+								+ UtilAyv.printDoubleDecimals(uiPerc1, 4),
+						debug, timeout);
 			}
 
 			ImagePlus impDiff = UtilAyv.genImaDifference(imp1, imp2);
@@ -636,7 +645,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				UtilAyv.showImageMaximized(impDiff);
 
 			if (demo) {
-				MyLog.waitHere(listaMessaggi(41), debug);
+				MyLog.waitHere(listaMessaggi(41), debug, timeout);
 			}
 			impDiff.setRoi(new OvalRoi(xRoi2 - diamRoi2 / 2, yRoi2 - diamRoi2
 					/ 2, diamRoi2, diamRoi2));
@@ -654,7 +663,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 						listaMessaggi(42) + stdDevImaDiff
 								+ "\n \n  noise= SD / sqrt(2) \n \n  noise= "
 								+ UtilAyv.printDoubleDecimals(noiseImaDiff, 4),
-						debug);
+						debug, timeout);
 
 			}
 
@@ -663,7 +672,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				MyLog.waitHere(
 						listaMessaggi(43)
 								+ UtilAyv.printDoubleDecimals(snRatio, 4),
-						debug);
+						debug, timeout);
 			}
 
 			// calcolo dapprima il valore del fondo, questo mi servirà per
@@ -727,7 +736,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			double mediaGhost2 = statGh2.mean;
 			if (mediaGhost2 > limitBkg) {
 				MyLog.waitHere(listaMessaggi(24) + " mediaGhost= "
-						+ mediaGhost2 + " limitBkg= " + limitBkg, debug);
+						+ mediaGhost2 + " limitBkg= " + limitBkg, debug,
+						timeout);
 				boundRec1 = imp1.getProcessor().getRoi();
 				xGhMaxSx = boundRec1.x;
 				yGhMaxSx = boundRec1.y;
@@ -748,7 +758,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			double mediaGhost3 = statGh3.mean;
 			if (mediaGhost3 > limitBkg) {
 				MyLog.waitHere(listaMessaggi(24) + " mediaGhost= "
-						+ mediaGhost3 + " limitBkg= " + limitBkg, debug);
+						+ mediaGhost3 + " limitBkg= " + limitBkg, debug,
+						timeout);
 				boundRec1 = imp1.getProcessor().getRoi();
 				xGhMaxDx = boundRec1.x;
 				yGhMaxDx = boundRec1.y;
@@ -769,7 +780,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			double mediaGhost4 = statGh4.mean;
 			if (mediaGhost4 > limitBkg) {
 				MyLog.waitHere(listaMessaggi(24) + " mediaGhost= "
-						+ mediaGhost4 + " limitBkg= " + limitBkg, debug);
+						+ mediaGhost4 + " limitBkg= " + limitBkg, debug,
+						timeout);
 				boundRec1 = imp1.getProcessor().getRoi();
 				xGhMaxUp = boundRec1.x;
 				yGhMaxUp = boundRec1.y;
@@ -816,11 +828,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 								+ UtilAyv.printDoubleDecimals(ghostPerc3, 4)
 								+ "\n" + "  ghostPerc4= "
 								+ UtilAyv.printDoubleDecimals(ghostPerc4, 4),
-						debug);
+						debug, timeout);
 			}
 
 			if (demo)
-				MyLog.waitHere(listaMessaggi(44), debug);
+				MyLog.waitHere(listaMessaggi(44), debug, timeout);
 
 			int[][] classiSimulata = generaSimulata(xCenter80 - diam80 / 2,
 					yCenter80 - diam80 / 2, diam80, imp1, fileDir, step, demo,
@@ -830,7 +842,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			String[][] tabCodici = TableCode
 					.loadMultipleTable(MyConst.CODE_GROUP);
 			if (demo)
-				MyLog.waitHere(listaMessaggi(45), debug);
+				MyLog.waitHere(listaMessaggi(45), debug, timeout);
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
 					imp1, tabCodici, VERSION, autoCalled);
 
@@ -1044,16 +1056,18 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		String autoArgs = "0";
 		boolean autoCalled = false;
-		boolean step = true;
+		boolean step = false;
 		boolean test = false;
 		boolean fast = false;
 		boolean silent = true;
 
 		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, "", autoCalled,
-				step, verbose, test, fast, silent);
+				step, verbose, test, fast, silent, timeout);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 				MyConst.P3_vetName);
+		UtilAyv.afterWork();
+
 		return ok;
 	}
 
@@ -1278,7 +1292,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 */
 	public static double[][] cannyProfileAnalyzer(ImagePlus imp1,
 			double dimPixel, String title, boolean showProfiles, boolean demo,
-			boolean debug) {
+			boolean debug, int timeout) {
 
 		double[][] line1 = MyLine.decomposer(imp1);
 		int count1 = 0;
@@ -1353,9 +1367,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			plot4.setColor(Color.red);
 			plot4.setLineWidth(2);
 			plot4.show();
-
 			if (demo)
-				MyLog.waitHere(listaMessaggi(3), debug);
+				MyLog.waitHere(listaMessaggi(3), debug, timeout);
 
 			if (WindowManager.getFrame("Profile") != null) {
 				IJ.selectWindow("Profile");
@@ -1454,14 +1467,13 @@ public class p12rmn_ implements PlugIn, Measurements {
 	public static double[] positionSearch11(ImagePlus imp11,
 			double maxFitError, double maxBubbleGapLimit, String info1,
 			boolean autoCalled, boolean step, boolean demo, boolean test,
-			boolean fast) {
+			boolean fast, int timeout) {
 		//
 		// ================================================================================
 		// Inizio calcoli geometrici
 		// ================================================================================
 		//
-
-		boolean debug = true;
+		boolean debug = false;
 		boolean manual = false;
 
 		int xCenterCircle = 0;
@@ -1499,9 +1511,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		if (demo) {
 			// UtilAyv.showImageMaximized(imp11);
-
-			MyLog.waitHere(listaMessaggi(0), debug);
-
+			MyLog.waitHere(listaMessaggi(0), debug, timeout);
 		}
 
 		MyCannyEdgeDetector mce = new MyCannyEdgeDetector();
@@ -1515,7 +1525,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		if (demo) {
 			UtilAyv.showImageMaximized(imp12);
-			MyLog.waitHere(listaMessaggi(1), debug);
+			MyLog.waitHere(listaMessaggi(1), debug, timeout);
 			iw12 = imp12.getWindow();
 		}
 
@@ -1552,7 +1562,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (strokewidth)
 			imp12.getRoi().setStrokeWidth(strWidth);
 		peaks5 = cannyProfileAnalyzer(imp12, dimPixel,
-				"BISETTRICE DIAGONALE SINISTRA", demo, demo, debug);
+				"BISETTRICE DIAGONALE SINISTRA", demo, demo, debug, timeout);
 		if (peaks5 != null)
 			ImageUtils.plotPoints(imp12, over12, peaks5);
 
@@ -1569,7 +1579,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (strokewidth)
 			imp12.getRoi().setStrokeWidth(strWidth);
 		peaks6 = cannyProfileAnalyzer(imp12, dimPixel,
-				"BISETTRICE DIAGONALE DESTRA", false, false, false);
+				"BISETTRICE DIAGONALE DESTRA", false, false, false, 1);
 		if (peaks6 != null)
 			ImageUtils.plotPoints(imp12, over12, peaks6);
 
@@ -1588,7 +1598,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			imp12.getRoi().setStrokeWidth(strWidth);
 
 		peaks1 = cannyProfileAnalyzer(imp12, dimPixel,
-				"BISETTRICE ORIZZONTALE", showProfiles, false, false);
+				"BISETTRICE ORIZZONTALE", showProfiles, false, false, 1);
 		// PLOTTAGGIO PUNTI
 		if (peaks1 != null)
 			ImageUtils.plotPoints(imp12, over12, peaks1);
@@ -1612,7 +1622,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (strokewidth)
 			imp12.getRoi().setStrokeWidth(strWidth);
 		peaks2 = cannyProfileAnalyzer(imp12, dimPixel, "BISETTRICE VERTICALE",
-				showProfiles, false, false);
+				showProfiles, false, false, 1);
 		// PLOTTAGGIO PUNTI
 		if (peaks2 != null)
 			ImageUtils.plotPoints(imp12, over12, peaks2);
@@ -1630,7 +1640,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (strokewidth)
 			imp12.getRoi().setStrokeWidth(strWidth);
 		peaks3 = cannyProfileAnalyzer(imp12, dimPixel, "BISETTRICE INCERTA SX",
-				showProfiles, false, false);
+				showProfiles, false, false, 1);
 		// PLOTTAGGIO PUNTI
 		if (peaks3 != null)
 			ImageUtils.plotPoints(imp12, over12, peaks3);
@@ -1648,7 +1658,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (strokewidth)
 			imp12.getRoi().setStrokeWidth(strWidth);
 		peaks4 = cannyProfileAnalyzer(imp12, dimPixel, "BISETTRICE INCERTA SX",
-				showProfiles, false, false);
+				showProfiles, false, false, 1);
 		// PLOTTAGGIO PUNTI
 		if (peaks4 != null)
 			ImageUtils.plotPoints(imp12, over12, peaks4);
@@ -1665,7 +1675,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (strokewidth)
 			imp12.getRoi().setStrokeWidth(strWidth);
 		peaks7 = cannyProfileAnalyzer(imp12, dimPixel,
-				"BISETTRICE DIAGONALE DESTRA EXTRA", showProfiles, false, false);
+				"BISETTRICE DIAGONALE DESTRA EXTRA", showProfiles, false,
+				false, 1);
 		// PLOTTAGGIO PUNTI
 		if (peaks7 != null)
 			ImageUtils.plotPoints(imp12, over12, peaks7);
@@ -1682,13 +1693,14 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (strokewidth)
 			imp12.getRoi().setStrokeWidth(strWidth);
 		peaks8 = cannyProfileAnalyzer(imp12, dimPixel,
-				"BISETTRICE DIAGONALE DESTRA EXTRA", showProfiles, false, false);
+				"BISETTRICE DIAGONALE DESTRA EXTRA", showProfiles, false,
+				false, 1);
 		// PLOTTAGGIO PUNTI
 		if (peaks8 != null)
 			ImageUtils.plotPoints(imp12, over12, peaks8);
 		// --------------------------------------------
 		if (demo) {
-			MyLog.waitHere(listaMessaggi(2), debug);
+			MyLog.waitHere(listaMessaggi(2), debug, timeout);
 		}
 		// --------------------------------------------
 		int npeaks1 = 0;
@@ -1729,7 +1741,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int j1 = -1;
 
 		if (demo)
-			MyLog.waitHere(listaMessaggi(14), debug);
+			MyLog.waitHere(listaMessaggi(14), debug, timeout);
 		// della bisettice orizzontale prendo solo il picco di dx
 		if (npeaks1 == 1) {
 			j1++;
@@ -1782,7 +1794,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		if (xPoints3.length < 3 || test) {
 			UtilAyv.showImageMaximized(imp11);
-			MyLog.waitHere(listaMessaggi(17), debug);
+			MyLog.waitHere(listaMessaggi(17), debug, timeout);
 			manual = true;
 		}
 
@@ -1794,7 +1806,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				over12.setStrokeColor(Color.green);
 				imp12.setOverlay(over12);
 				imp12.updateAndDraw();
-				MyLog.waitHere(listaMessaggi(5), debug);
+				MyLog.waitHere(listaMessaggi(5), debug, timeout);
 			}
 			// ---------------------------------------------------
 			// eseguo ora fitCircle per trovare centro e dimensione del
@@ -1807,7 +1819,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			}
 
 			if (demo)
-				MyLog.waitHere(listaMessaggi(6), debug);
+				MyLog.waitHere(listaMessaggi(6), debug, timeout);
 			Rectangle boundRec = imp12.getProcessor().getRoi();
 			xCenterCircle = Math.round(boundRec.x + boundRec.width / 2);
 			yCenterCircle = Math.round(boundRec.y + boundRec.height / 2);
@@ -1845,7 +1857,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				imp11.getRoi().setStrokeColor(Color.green);
 				over12.addElement(imp11.getRoi());
 				imp11.deleteRoi();
-				MyLog.waitHere(listaMessaggi(16), debug);
+				MyLog.waitHere(listaMessaggi(16), debug, timeout);
 				manual = true;
 			}
 
@@ -1858,7 +1870,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			if (demo) {
 				MyCircleDetector.drawCenter(imp12, over12, xCenterCircle,
 						yCenterCircle, Color.red);
-				MyLog.waitHere(listaMessaggi(7), debug);
+				MyLog.waitHere(listaMessaggi(7), debug, timeout);
 
 			}
 
@@ -1879,7 +1891,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			}
 			peaks9 = cannyProfileAnalyzer(imp12, dimPixel,
 					"BISETTRICE VERTICALE FANTOCCIO", showProfiles, false,
-					false);
+					false, 1);
 
 			// MyLog.logMatrix(peaks9, "peaks9");
 			// MyLog.waitHere();
@@ -1901,7 +1913,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			}
 			peaks10 = cannyProfileAnalyzer(imp12, dimPixel,
 					"BISETTRICE ORIZZONTALE FANTOCCIO", showProfiles, false,
-					false);
+					false, 1);
 
 			double gapOrizz = 0;
 			if (peaks10 != null) {
@@ -1910,7 +1922,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			}
 
 			if (demo)
-				MyLog.waitHere(listaMessaggi(8) + maxBubbleGapLimit, debug);
+				MyLog.waitHere(listaMessaggi(8) + maxBubbleGapLimit, debug,
+						timeout);
 
 			// Effettuo in ogni caso la correzione, solo che in assenza di bolla
 			// d'aria la correzione sarà irrisoria, in presenza di bolla la
@@ -1941,7 +1954,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				over12.addElement(imp12.getRoi());
 			}
 			peaks11 = cannyProfileAnalyzer(imp12, dimPixel,
-					"BISETTRICE VERTICALE MROI", showProfiles, false, false);
+					"BISETTRICE VERTICALE MROI", showProfiles, false, false, 1);
 			if (peaks11 != null) {
 				// PLOTTAGGIO PUNTI
 				ImageUtils.plotPoints(imp12, over12, peaks11);
@@ -1953,7 +1966,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 				over12.addElement(imp12.getRoi());
 			}
 			peaks12 = cannyProfileAnalyzer(imp12, dimPixel,
-					"BISETTRICE ORIZZONTALE MROI", showProfiles, false, false);
+					"BISETTRICE ORIZZONTALE MROI", showProfiles, false, false,
+					1);
 			if (peaks12 != null) {
 				// PLOTTAGGIO PUNTI
 				ImageUtils.plotPoints(imp12, over12, peaks12);
@@ -2032,7 +2046,17 @@ public class p12rmn_ implements PlugIn, Measurements {
 				UtilAyv.showImageMaximized(imp11);
 			imp11.setRoi(new OvalRoi(width / 2 - diamRoiMan / 2, height / 2
 					- diamRoiMan / 2, diamRoiMan, diamRoiMan));
-			MyLog.waitHere(listaMessaggi(14), debug);
+			MyLog.waitHere(listaMessaggi(14), debug, timeout);
+
+			if (timeout > 0) {
+				// in questo caso (simulazione in corso) devo simulare
+				// l'intervento manuale dell'operatore. Lo simulo impostando una
+				// nuova posizione della Roi con Roi.setLocation
+				imp11.getRoi().setLocation(40, 29);
+				imp11.updateAndDraw();
+				// MyLog.waitHere();
+			}
+
 			Rectangle boundRec11 = imp11.getProcessor().getRoi();
 			xCenterCircleMan = Math.round(boundRec11.x + boundRec11.width / 2);
 			yCenterCircleMan = Math.round(boundRec11.y + boundRec11.height / 2);
@@ -2042,7 +2066,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			imp11.setRoi(new OvalRoi(xCenterCircleMan - diamCircleMan80 / 2,
 					yCenterCircleMan - diamCircleMan80 / 2, diamCircleMan80,
 					diamCircleMan80));
-			MyLog.waitHere(listaMessaggi(18), debug);
+			MyLog.waitHere(listaMessaggi(18), debug, timeout);
+
 			Rectangle boundRec111 = imp11.getProcessor().getRoi();
 			xCenterCircleMan80 = Math.round(boundRec111.x + boundRec111.width
 					/ 2);
@@ -2066,10 +2091,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 			imp12.updateAndDraw();
 			imp12.getRoi().setStrokeColor(Color.green);
 			over12.addElement(imp12.getRoi());
-			MyLog.waitHere(listaMessaggi(9), debug);
+			MyLog.waitHere(listaMessaggi(9), debug, timeout);
 			MyCircleDetector.drawCenter(imp12, over12, xCenterCircle + xcorr,
 					yCenterCircle + ycorr, Color.green);
-			MyLog.waitHere(listaMessaggi(10), debug);
+			MyLog.waitHere(listaMessaggi(10), debug, timeout);
 		}
 
 		imp12.close();
@@ -2091,14 +2116,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 	public static double[][] positionSearch13(ImagePlus imp1,
 			double[] circleData, int diamGhost, int guard, String info1,
 			boolean autoCalled, boolean step, boolean demo, boolean test,
-			boolean fast) {
+			boolean fast, int timeout) {
 
 		// leggo i dati del cerchio "esterno" del fantoccio e li plotto
 		// sull'immagine
 
 		boolean demo1 = demo;
-		boolean debug = true;
-
 		imp1.deleteRoi();
 
 		ImagePlus imp2 = imp1.duplicate();
@@ -2130,7 +2153,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		over2.addElement(imp2.getRoi());
 
 		if (demo) {
-			MyLog.waitHere(listaMessaggi(20), debug);
+			MyLog.waitHere(listaMessaggi(20), debug, timeout);
 		}
 
 		// marco con un punto il centro del fantoccio
@@ -2320,7 +2343,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			drawLabel(imp2, "up");
 			over2.addElement(imp2.getRoi());
 
-			MyLog.waitHere(listaMessaggi(23), debug);
+			MyLog.waitHere(listaMessaggi(23), debug, timeout);
 		}
 
 		imp2.close();
@@ -2341,7 +2364,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 	public static int[] positionSearch14(ImagePlus imp1, double[] circleData,
 			int diamGhost, int guard, String info1, boolean autoCalled,
 			boolean step, boolean demo, boolean test, boolean fast,
-			boolean irraggiungibile) {
+			boolean irraggiungibile, int timeout) {
 
 		// leggo i dati del cerchio "esterno" del fantoccio e li plotto
 		// sull'immagine
@@ -2383,7 +2406,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (demo) {
 			imp2.getRoi().setStrokeColor(Color.red);
 			over2.addElement(imp2.getRoi());
-			MyLog.waitHere(listaMessaggi(30), debug);
+			MyLog.waitHere(listaMessaggi(30), debug, timeout);
 		}
 
 		// marco con un punto il centro del fantoccio
@@ -2419,7 +2442,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			}
 		} while (pieno || a > 0);
 		if (demo) {
-			MyLog.waitHere(listaMessaggi(33), debug);
+			MyLog.waitHere(listaMessaggi(33), debug, timeout);
 		}
 
 		imp2.close();
