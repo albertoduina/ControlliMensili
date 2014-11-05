@@ -18,7 +18,7 @@ HWSA3;Warp Assiale Head;1;1;xxx;x;x;p7rmn_
 HRKA3;Risoluzione 1024 Head;1;1;xxx;x;x;p4rmn_
 HR5A3;Risoluzione 512 Head;1;1;xxx;x;x;p4rmn_
 HR2A3;Risoluzione 256 Head;1;1;xxx;x;x;p4rmn_
-T2MA3;T2 multi SpinEcho Head;4;4;xxx;x;x;p2rmn_
+T2MA3;T2 multi SpinEcho Head;4;4;xxx;x;x;p20rmn_
 T2M13;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
 T2M23;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_
 T2M33;T2 multi SpinEcho Head;1;0;xxx;x;x;p9rmn_

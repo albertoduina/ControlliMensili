@@ -17,6 +17,7 @@ import ij.measure.Calibration;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
+import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 
@@ -40,6 +41,7 @@ import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyLog;
 import utils.MyMsg;
+import utils.MyStackUtils;
 import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
@@ -154,11 +156,11 @@ public class p20rmn_ implements PlugIn, Measurements {
 	 * @param testDirectory
 	 * @return
 	 */
-	public static int[] manualMenu(int preset, String testDirectory,
+	public static ImagePlus manualMenu(int preset, String testDirectory,
 			boolean testA) {
 		boolean retry = false;
 		boolean step = false;
-		int[] imaID = null;
+		ImagePlus imp111 = null;
 		List<String> listPath = new ArrayList<String>();
 
 		do {
@@ -185,6 +187,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 				boolean autoCalled = false;
 				boolean verbose = true;
 				boolean test = false;
+				boolean silent = false;
 				String[] vetPath = manualImageSelection();
 
 				boolean typeT2 = p20rmn_.msgT1T2();
@@ -200,9 +203,9 @@ public class p20rmn_ implements PlugIn, Measurements {
 				// MyLog.waitHere("imp100= " + imp100);
 				double filtro = filterPreparation(imp100, vetRoi, step);
 
-				imaID = doCalculation(stack100, filtro, bMap, typeT2);
-				if (imaID == null) {
-					MyLog.waitHere("imaID == null");
+				imp111 = doCalculation(stack100, filtro, bMap, typeT2, silent);
+				if (imp111 == null) {
+					MyLog.waitHere("imp111 == null");
 					return null;
 				}
 
@@ -217,7 +220,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 		new AboutBox().close();
 		if (!testA)
 			UtilAyv.afterWork();
-		return imaID;
+		return imp111;
 	}
 
 	/**
@@ -271,6 +274,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 				: false;
 
 		boolean bstep = false;
+		ImagePlus imp111 = null;
 
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
@@ -336,9 +340,9 @@ public class p20rmn_ implements PlugIn, Measurements {
 
 				// MyLog.waitHere("filtro= " + filtro);
 
-				int[] imaID = doCalculation(stack100, filtro, bMap, typeT2);
-				if (imaID == null)
-					MyLog.waitHere("imaID == null");
+				imp111 = doCalculation(stack100, filtro, bMap, typeT2, silent);
+				if (imp111 == null)
+					MyLog.waitHere("imp111 == null");
 
 				boolean autocalled = false;
 				String[][] tabCodici = TableCode
@@ -350,7 +354,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
 						vetPath[0], imp100, tabCodici, VERSION, autocalled);
 
-				ResultsTable rt1 = analyzeResultsImages(vetRoi, imaID, info1,
+				ResultsTable rt1 = analyzeResultsImages(vetRoi, imp111, info1,
 						typeT2, autoCalled, verbose, test, fast, silent);
 
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt1);
@@ -376,6 +380,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 		boolean autoCalled = true;
 		boolean silent = true;
 		boolean fast = true;
+		ImagePlus imp111 = null;
 
 		String[] list = { "T2MA_01testP2", "T2MA_02testP2", "T2MA_03testP2",
 				"T2MA_04testP2", "T2MA_05testP2", "T2MA_06testP2",
@@ -401,9 +406,9 @@ public class p20rmn_ implements PlugIn, Measurements {
 
 		double filtro = filterPreparation(imp100, vetRoi, bstep);
 
-		int[] imaID = doCalculation(stack100, filtro, bMap, typeT2);
-		if (imaID == null)
-			MyLog.waitHere("imaID == null");
+		imp111 = doCalculation(stack100, filtro, bMap, typeT2, silent);
+		if (imp111 == null)
+			MyLog.waitHere("imp111 == null");
 
 		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
@@ -414,7 +419,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(vetPath[0],
 				imp100, tabCodici, VERSION, autocalled);
 
-		ResultsTable rt1 = analyzeResultsImages(vetRoi, imaID, info1, typeT2,
+		ResultsTable rt1 = analyzeResultsImages(vetRoi, imp111, info1, typeT2,
 				autoCalled, verbose, test, fast, silent);
 
 		double[] vetResults = UtilAyv.vectorizeResultsMultiple(rt1, 2);
@@ -493,6 +498,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 			boolean autoCalled = true;
 			boolean silent = false;
 			boolean fast = true;
+			ImagePlus imp111 = null;
 
 			switch (userSelection2) {
 			case 1: {
@@ -520,18 +526,17 @@ public class p20rmn_ implements PlugIn, Measurements {
 
 				double filtro = filterPreparation(imp2, vetRoi, step);
 
-				int[] imaID = doCalculation(stack2, filtro, bMap, typeT2);
-				if (imaID == null)
-					MyLog.waitHere("imaID == null");
+				imp111 = doCalculation(stack2, filtro, bMap, typeT2, silent);
+				if (imp111 == null)
+					MyLog.waitHere("imp111 == null");
 
 				String[] info1 = { "", "", "", "", "", "", "" };
-				ResultsTable rt1 = analyzeResultsImages(vetRoi, imaID, info1,
+				ResultsTable rt1 = analyzeResultsImages(vetRoi, imp111, info1,
 						typeT2, autoCalled, verbose, test, fast, silent);
-				
+
 				rt1.show("Results");
 				MyLog.waitHere();
-				
-				
+
 				double[] vetResults = UtilAyv.vectorizeResultsMultiple(rt1, 2);
 
 				boolean ok = UtilAyv.verifyResults1(vetResults,
@@ -572,17 +577,17 @@ public class p20rmn_ implements PlugIn, Measurements {
 
 				double filtro = filterPreparation(imp2, vetRoi, step);
 
-				int[] imaID = doCalculation(stack2, filtro, bMap, typeT2);
-				if (imaID == null)
-					MyLog.waitHere("imaID == null");
+				imp111 = doCalculation(stack2, filtro, bMap, typeT2, silent);
+				if (imp111 == null)
+					MyLog.waitHere("imp111 == null");
 
-				String[] info1 = { "a1", "a2", "a3", "a4", "a5", "a6","a7","a8" };
-				ResultsTable rt1 = analyzeResultsImages(vetRoi, imaID, info1,
+				String[] info1 = { "a1", "a2", "a3", "a4", "a5", "a6", "a7",
+						"a8" };
+				ResultsTable rt1 = analyzeResultsImages(vetRoi, imp111, info1,
 						typeT2, autoCalled, verbose, test, fast, silent);
-				
+
 				rt1.show("Results");
 				MyLog.waitHere();
-
 
 				double[] vetResults = UtilAyv.vectorizeResultsMultiple(rt1, 2);
 
@@ -609,30 +614,30 @@ public class p20rmn_ implements PlugIn, Measurements {
 	 */
 	public static double[] referenceSiemens() {
 
-		double m1 = 59.100444600551945;
-		double d1 = 4.006797467473977;
-		double m2 = 74.54580205603492;
-		double d2 = 3.364085247976553;
-		double m3 = 114.36426466929761;
-		double d3 = 4.5005298627759895;
-		double m4 = 60.227563109578966;
-		double d4 = 5.267272855422799;
-		double m5 = 93.73661309254321;
-		double d5 = 3.2474484422702092;
-		double m6 = 159.83904633340956;
-		double d6 = 4.476865171725997;
-		double m7 = 97.61412895782084;
-		double d7 = 3.717179436850527;
-		double m8 = 135.96786682515204;
-		double d8 = 4.67662078996066;
-		double m9 = 149.23774178420442;
-		double d9 = 4.384352186469764;
-		double m10 = 215.5765595255019;
-		double d10 = 12.015858262931754;
-		double m11 = 161.73727281787728;
-		double d11 = 7.308885047826907;
-		double m12 = 143.03131499471544;
-		double d12 = 5.11501892964645;
+		double m1 = 59.59740003754821;
+		double d1 = 3.961381020749687;
+		double m2 = 74.93121866636639;
+		double d2 = 3.5595121692227956;
+		double m3 = 114.61472226396391;
+		double d3 = 4.517450908271077;
+		double m4 = 60.73479788816428;
+		double d4 = 5.287766872828344;
+		double m5 = 93.95210439947587;
+		double d5 = 3.368187479134457;
+		double m6 = 160.10322107242632;
+		double d6 = 4.424880716097857;
+		double m7 = 97.85791512984264;
+		double d7 = 3.726849560932785;
+		double m8 = 136.16384392750413;
+		double d8 = 4.704255261848893;
+		double m9 = 149.333523762377;
+		double d9 = 4.115680095831744;
+		double m10 = 215.65120981916596;
+		double d10 = 12.191159135391526;
+		double m11 = 161.92869036710715;
+		double d11 = 7.367099894616932;
+		double m12 = 143.27333520333977;
+		double d12 = 5.046688782226316;
 
 		double[] vetReference = { m1, d1, m2, d2, m3, d3, m4, d4, m5, d5, m6,
 				d6, m7, d7, m8, d8, m9, d9, m10, d10, m11, d11, m12, d12 };
@@ -702,7 +707,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 		String saveVetXUpperLeftCornerRoiGels = Prefs.get("prefer.p20rmnGx",
 				MyConst.P20_DEFAULT);
 
-		String saveVetYUpperLeftCornerRoiGels = Prefs.get("prefer.p20rmnGy",
+		String saveVetYUpperLeftCornerRoiGels = Prefs.get("prefer.p2rmnGy",
 				MyConst.P20_DEFAULT);
 
 		int[] vetXUpperLeftCornerRoiGels = UtilAyv.getPos2(
@@ -808,9 +813,10 @@ public class p20rmn_ implements PlugIn, Measurements {
 		return vetRoi;
 	}
 
-	public static ResultsTable analyzeResultsImages(Roi[] vetRoi, int[] imaID,
-			String[] info1, boolean typeT2, boolean autoCalled,
-			boolean verbose, boolean test, boolean fast, boolean silent) {
+	public static ResultsTable analyzeResultsImages(Roi[] vetRoi,
+			ImagePlus imp111, String[] info1, boolean typeT2,
+			boolean autoCalled, boolean verbose, boolean test, boolean fast,
+			boolean silent) {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
@@ -819,7 +825,8 @@ public class p20rmn_ implements PlugIn, Measurements {
 		double[] devGels = new double[vetRoi.length];
 
 		for (int i1 = 0; i1 < vetRoi.length; i1++) {
-			ImagePlus imp10 = WindowManager.getImage(imaID[0]);
+
+			ImagePlus imp10 = MyStackUtils.imageFromStack(imp111, 1);
 			Rectangle rec1 = vetRoi[i1].getBounds();
 
 			imp10.setRoi(new OvalRoi(rec1.x, rec1.y, rec1.width, rec1.height));
@@ -1313,8 +1320,8 @@ public class p20rmn_ implements PlugIn, Measurements {
 	 * 
 	 *         by Karl Schmidt, (modified version)
 	 */
-	public static int[] doCalculation(ImageStack stack4, double filtroFondo,
-			int[] bMap, boolean typeT2) {
+	public static ImagePlus doCalculation(ImageStack stack4,
+			double filtroFondo, int[] bMap, boolean typeT2, boolean silent) {
 		double[][][][] t1_map = null;
 		double[][][][] s0_map = null;
 		double[][][][] r2_map = null;
@@ -1325,12 +1332,12 @@ public class p20rmn_ implements PlugIn, Measurements {
 		double[] tr2_vals = null;
 		double[] sn2_vals = null;
 
-		int[] imaID = null;
 		int rig = 0;
 		int col = 0;
 		int offset;
 		int shot = 0;
 		int shotInterval = 0;
+		ImageStack newStack = null;
 
 		try {
 			double[][][][] scan = Alimentatore(stack4);
@@ -1507,14 +1514,25 @@ public class p20rmn_ implements PlugIn, Measurements {
 				// send the images back to imagej
 				String name1 = "none";
 
-				imaID = new int[3];
+				// imaID = new int[3];
 				if (!typeT2)
 					name1 = "T1_map_secs";
 				else
 					name1 = "T2_map_secs";
-				imaID[0] = takeImage(name1, t1_map);
-				imaID[1] = takeImage("S0_map", s0_map);
-				imaID[2] = takeImage("R^2_map", r2_map);
+
+				ImagePlus imp100 = takeImage(name1, t1_map);
+				ImagePlus imp101 = takeImage("S0_map", s0_map);
+				ImagePlus imp102 = takeImage("R^2_map", r2_map);
+
+				int width1 = imp100.getWidth();
+				int height1 = imp100.getHeight();
+				newStack = new ImageStack(width1, height1);
+				ImageProcessor ip100 = imp100.getProcessor();
+				newStack.update(ip100);
+				newStack.addSlice(ip100);
+				newStack.addSlice(imp101.getProcessor());
+				newStack.addSlice(imp102.getProcessor());
+
 				scan = null;
 				// System.gc();
 			}
@@ -1525,8 +1543,9 @@ public class p20rmn_ implements PlugIn, Measurements {
 				IJ.log("" + sn_vals[i1]);
 			IJ.log("In DoCalculation eccezione: " + e);
 		}
-		return (imaID);
-	} // doCalculation
+		ImagePlus imp111 = new ImagePlus("", newStack);
+		return imp111;
+	}
 
 	/**
 	 * crea uno stack a 32 bit in cui mette i risultati
@@ -1539,7 +1558,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 	 * 
 	 *         by Karl Schmidt, (modified version)
 	 */
-	public static int takeImage(String name, double[][][][] data4d) {
+	public static ImagePlus takeImage(String name, double[][][][] data4d) {
 		// create a new stack of 32 bit floating point pixels
 		ImagePlus newimp = NewImage.createFloatImage(name, data4d[0][0].length,
 				data4d[0][0][0].length, data4d.length * data4d[0].length,
@@ -1556,7 +1575,8 @@ public class p20rmn_ implements PlugIn, Measurements {
 		}
 
 		newimp.setTitle(name);
-		newimp.show();
+		// if (!silent)
+		// newimp.show();
 
 		// set this images dimensions
 		int[] dims = new int[MyConst.P20_ARRAY_DIMENSIONS];
@@ -1566,10 +1586,10 @@ public class p20rmn_ implements PlugIn, Measurements {
 		dims[3] = data4d.length;
 
 		setImageDims(newimp.getID(), dims);
-		newimp.updateAndDraw();
+		// newimp.updateAndDraw();
 		newimp.getProcessor().resetMinAndMax();
 		// IJ.showMessage("Finito takeImage");
-		return newimp.getID();
+		return newimp;
 	}
 
 	/**
@@ -1633,101 +1653,106 @@ public class p20rmn_ implements PlugIn, Measurements {
 		System.setProperty("imagej.imgslicenum." + id, "" + dims[2]);
 	}
 
-	private void testSymphony(double medGel1, double devGel1, double medGel2,
-			double devGel2, double medGel3, double devGel3) {
-		//
-		// aggiornato 16 aprile 2008 1.40e
-		//
-		boolean testok = true;
-		double rightValue = 58.592281981359555;
-		if (medGel1 != rightValue) {
-			IJ.log("medGel1 ERRATA " + medGel1 + " anzichè " + rightValue);
-			testok = false;
-		}
-		rightValue = 3.866370693178298;
-		if (devGel1 != rightValue) {
-			IJ.log("devGel1 ERRATA " + devGel1 + " anzichè " + rightValue);
-			testok = false;
-		}
-		rightValue = 73.95285294931146;
-		if (medGel2 != rightValue) {
-			IJ.log("medGel2 ERRATA " + medGel2 + " anzichè " + rightValue);
-			testok = false;
-		}
-		rightValue = 3.6103799208252223;
-		if (devGel2 != rightValue) {
-			IJ.log("devGel2 ERRATA " + devGel2 + " anzichè " + rightValue);
-			testok = false;
-		}
-		rightValue = 113.45177367970913;
-		if (medGel3 != rightValue) {
-			IJ.log("medGel3 ERRATA " + medGel3 + " anzichè " + rightValue);
-			testok = false;
-		}
-		rightValue = 4.585334675446435;
-		if (devGel3 != rightValue) {
-			IJ.log("devGel3 ERRATA " + devGel3 + " anzichè " + rightValue);
-			testok = false;
-		}
-
-		if (testok)
-			ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OKEY   <25>",
-					"CONTINUA");
-		else
-			ButtonMessages.ModelessMsg(
-					"Fine SelfTest CON ERRORI, vedi Log   <26>", "CONTINUA");
-		UtilAyv.cleanUp();
-
-	}
-
-	private void testGe(double medGel1, double devGel1, double medGel2,
-			double devGel2, double medGel3, double devGel3) {
-		//
-		// aggiornato 16 aprile 2008 1.40e
-		//
-
-		boolean testok = true;
-
-		double rightValue = 41.12338699871981;
-		if (medGel1 != rightValue) {
-			IJ.log("medGel1 ERRATA " + medGel1 + " anzichè " + rightValue);
-			testok = false;
-		}
-		rightValue = 6.807091233248218;
-		if (devGel1 != rightValue) {
-			IJ.log("devGel1 ERRATA " + devGel1 + " anzichè " + rightValue);
-			testok = false;
-		}
-		rightValue = 47.02839973304845;
-		if (medGel2 != rightValue) {
-			IJ.log("medGel2 ERRATA " + medGel2 + " anzichè " + rightValue);
-			testok = false;
-		}
-		rightValue = 6.160207177522188;
-		if (devGel2 != rightValue) {
-			IJ.log("devGel2 ERRATA " + devGel2 + " anzichè " + rightValue);
-			testok = false;
-		}
-		rightValue = 73.95455746711055;
-		if (medGel3 != rightValue) {
-			IJ.log("medGel3 ERRATA " + medGel3 + " anzichè " + rightValue);
-			testok = false;
-		}
-		rightValue = 5.076411495907888;
-		if (devGel3 != rightValue) {
-			IJ.log("devGel3 ERRATA " + devGel3 + " anzichè " + rightValue);
-			testok = false;
-		}
-
-		if (testok)
-			ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OKEY   <25>",
-					"CONTINUA");
-		else
-			ButtonMessages.ModelessMsg(
-					"Fine SelfTest CON ERRORI, vedi Log   <26>", "CONTINUA");
-		UtilAyv.cleanUp();
-
-	}
+	// private void testSymphony(double medGel1, double devGel1, double medGel2,
+	// double devGel2, double medGel3, double devGel3) {
+	//
+	//
+	//
+	//
+	//
+	// //
+	// // aggiornato 05 novembre 2014
+	// //
+	// boolean testok = true;
+	// double rightValue = 59.59740003754821; // 59.100444600551945;
+	// if (medGel1 != rightValue) {
+	// IJ.log("medGel1 ERRATA " + medGel1 + " anzichè " + rightValue);
+	// testok = false;
+	// }
+	// rightValue = 3.961381020749687; // 4.006797467473977;
+	// if (devGel1 != rightValue) {
+	// IJ.log("devGel1 ERRATA " + devGel1 + " anzichè " + rightValue);
+	// testok = false;
+	// }
+	// rightValue = 74.93121866636639; // 73.95285294931146;
+	// if (medGel2 != rightValue) {
+	// IJ.log("medGel2 ERRATA " + medGel2 + " anzichè " + rightValue);
+	// testok = false;
+	// }
+	// rightValue = 3.5595121692227956; // 3.6103799208252223;
+	// if (devGel2 != rightValue) {
+	// IJ.log("devGel2 ERRATA " + devGel2 + " anzichè " + rightValue);
+	// testok = false;
+	// }
+	// rightValue = 114.61472226396391; // 113.45177367970913;
+	// if (medGel3 != rightValue) {
+	// IJ.log("medGel3 ERRATA " + medGel3 + " anzichè " + rightValue);
+	// testok = false;
+	// }
+	// rightValue = 4.517450908271077; // 4.585334675446435;
+	// if (devGel3 != rightValue) {
+	// IJ.log("devGel3 ERRATA " + devGel3 + " anzichè " + rightValue);
+	// testok = false;
+	// }
+	//
+	// if (testok)
+	// ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OKEY   <25>",
+	// "CONTINUA");
+	// else
+	// ButtonMessages.ModelessMsg(
+	// "Fine SelfTest CON ERRORI, vedi Log   <26>", "CONTINUA");
+	// UtilAyv.cleanUp();
+	//
+	// }
+	//
+	// private void testGe(double medGel1, double devGel1, double medGel2,
+	// double devGel2, double medGel3, double devGel3) {
+	// //
+	// // aggiornato 16 aprile 2008 1.40e
+	// //
+	//
+	// boolean testok = true;
+	//
+	// double rightValue = 41.12338699871981;
+	// if (medGel1 != rightValue) {
+	// IJ.log("medGel1 ERRATA " + medGel1 + " anzichè " + rightValue);
+	// testok = false;
+	// }
+	// rightValue = 6.807091233248218;
+	// if (devGel1 != rightValue) {
+	// IJ.log("devGel1 ERRATA " + devGel1 + " anzichè " + rightValue);
+	// testok = false;
+	// }
+	// rightValue = 47.02839973304845;
+	// if (medGel2 != rightValue) {
+	// IJ.log("medGel2 ERRATA " + medGel2 + " anzichè " + rightValue);
+	// testok = false;
+	// }
+	// rightValue = 6.160207177522188;
+	// if (devGel2 != rightValue) {
+	// IJ.log("devGel2 ERRATA " + devGel2 + " anzichè " + rightValue);
+	// testok = false;
+	// }
+	// rightValue = 73.95455746711055;
+	// if (medGel3 != rightValue) {
+	// IJ.log("medGel3 ERRATA " + medGel3 + " anzichè " + rightValue);
+	// testok = false;
+	// }
+	// rightValue = 5.076411495907888;
+	// if (devGel3 != rightValue) {
+	// IJ.log("devGel3 ERRATA " + devGel3 + " anzichè " + rightValue);
+	// testok = false;
+	// }
+	//
+	// if (testok)
+	// ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OKEY   <25>",
+	// "CONTINUA");
+	// else
+	// ButtonMessages.ModelessMsg(
+	// "Fine SelfTest CON ERRORI, vedi Log   <26>", "CONTINUA");
+	// UtilAyv.cleanUp();
+	//
+	// }
 
 	/**
 	 * genera una directory temporanea e vi estrae le immagini di test da

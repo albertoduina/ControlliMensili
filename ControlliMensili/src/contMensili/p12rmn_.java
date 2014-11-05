@@ -1066,7 +1066,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 				MyConst.P3_vetName);
-		UtilAyv.afterWork();
+		if (verbose) UtilAyv.afterWork();
 
 		return ok;
 	}

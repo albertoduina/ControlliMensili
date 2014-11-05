@@ -28,7 +28,7 @@ public class p20rmn_Test {
 		int preset = 1;
 		String testDirectory = "";
 		boolean testA = true;
-		int[] out = p20rmn_.manualMenu(preset, testDirectory, testA);
+		ImagePlus imp11 = p20rmn_.manualMenu(preset, testDirectory, testA);
 		UtilAyv.afterWork();
 	}
 
@@ -53,6 +53,7 @@ public class p20rmn_Test {
 				".\\Test2\\HT1A2_04testP2" };
 		boolean typeT2 = true;
 		ImagePlus imp1 = p20rmn_.imaPreparation(vetPath, typeT2);
+		UtilAyv.showImageMaximized(imp1);
 		Roi[] pippo = p20rmn_.manualRoiPreparation(imp1);
 		MyLog.waitHere();
 	}
@@ -64,6 +65,7 @@ public class p20rmn_Test {
 				".\\Test2\\HT1A2_04testP2" };
 		boolean typeT2 = true;
 		ImagePlus imp1 = p20rmn_.imaPreparation(vetPath, typeT2);
+		UtilAyv.showImageMaximized(imp1);
 		Roi[] pippo = p20rmn_.automaticRoiPreparation(imp1,
 				MyConst.P20_X_ROI_TESTGE, MyConst.P20_Y_ROI_TESTGE,
 				MyConst.P20_DIAM_ROI);
