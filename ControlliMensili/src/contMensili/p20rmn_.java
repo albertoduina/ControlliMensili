@@ -17,6 +17,7 @@ import ij.measure.Calibration;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
+import ij.plugin.filter.ParticleAnalyzer;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
@@ -37,6 +38,7 @@ import utils.ArrayUtils;
 import utils.ButtonMessages;
 import utils.ImageUtils;
 import utils.InputOutput;
+import utils.MyAutoThreshold;
 import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyLog;
@@ -811,6 +813,110 @@ public class p20rmn_ implements PlugIn, Measurements {
 		}
 		imp1.updateAndDraw();
 		return vetRoi;
+	}
+
+	/***
+	 * Ricerca automatica delle posizioni gels con AutoTreshold ed
+	 * AnalyzeParticles
+	 * 
+	 * @param imp1
+	 * @param diam2
+	 * @param timeout
+	 * @param demo
+	 */
+	public static Roi[] automaticRoiPreparation2(ImagePlus imp1, int diam2,
+			int timeout, boolean demo) {
+
+		Overlay over1 = new Overlay();
+		imp1.setOverlay(over1);
+
+		boolean noBlack = true;
+		boolean noWhite = false;
+		boolean doWhite = true;
+		boolean doSet = false;
+		boolean doLog = false;
+
+		if (demo) {
+			UtilAyv.showImageMaximized(imp1);
+			MyLog.waitHere(listaMessaggi(0), debug, timeout);
+		}
+
+		ImagePlus imp2 = MyAutoThreshold.thresholdMean(imp1, noBlack, noWhite,
+				doWhite, doSet, doLog);
+		if (demo) {
+			UtilAyv.showImageMaximized(imp2);
+			MyLog.waitHere(listaMessaggi(1), debug, timeout);
+		}
+
+		IJ.run(imp2, "Invert", "");
+		if (demo) {
+			// UtilAyv.showImageMaximized(imp2);
+			MyLog.waitHere(listaMessaggi(2), debug, timeout);
+		}
+
+		double dimPixel = ReadDicom
+				.readDouble(ReadDicom.readSubstring(ReadDicom
+						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
+						2));
+		int measCode = 512; // bounding rectangle
+		int oldMeasure = UtilAyv.setMeasure(measCode);
+		if (demo) {
+			IJ.run(imp2, "Analyze Particles...",
+					"size=50-1000 circularity=0.1-1.00 show=Outlines exclude");
+			// String title = "Drawing of "+imp2.getShortTitle();
+			// MyLog.waitHere("title= "+title);
+			WindowManager.getCurrentWindow().maximize();
+
+			// "size=50-1000 circularity=0.1-1.00 show=Outlines display exclude summarize");
+		} else
+			IJ.run(imp2, "Analyze Particles...",
+					"size=50-1000 circularity=0.1-1.00");
+		ResultsTable rt1 = ResultsTable.getResultsTable();
+		if (demo) {
+			MyLog.waitHere(listaMessaggi(3), debug, timeout);
+			rt1.show("Results");
+		}
+
+		int xcol = rt1.getColumnIndex("BX");
+		int ycol = rt1.getColumnIndex("BY");
+		int wcol = rt1.getColumnIndex("Width");
+		int hcol = rt1.getColumnIndex("Height");
+
+		double[] vetX = rt1.getColumnAsDoubles(xcol);
+		// MyLog.logVector(vetX, "vetX");
+
+		double[] vetY = rt1.getColumnAsDoubles(ycol);
+		// MyLog.logVector(vetY, "vetY");
+
+		double[] vetW = rt1.getColumnAsDoubles(wcol);
+		// MyLog.logVector(vetW, "vetW");
+
+		double[] vetH = rt1.getColumnAsDoubles(hcol);
+		// MyLog.logVector(vetH, "vetH");
+
+		// UtilAyv.showImageMaximized(imp1);
+		double[] vetx1 = new double[vetX.length];
+		double[] vety1 = new double[vetX.length];
+		for (int i1 = 0; i1 < vetX.length; i1++) {
+			vetx1[i1] = ((vetX[i1] + vetW[i1] / 2) / dimPixel) - diam2 / 2;
+			vety1[i1] = ((vetY[i1] + vetH[i1] / 2) / dimPixel) - diam2 / 2;
+		}
+
+		Roi[] vetRoi = new Roi[vetX.length];
+		for (int i1 = 0; i1 < vetX.length; i1++) {
+			imp1.setRoi(new OvalRoi(vetx1[i1], vety1[i1], diam2, diam2));
+			vetRoi[vetRoi.length - 1] = imp1.getRoi();
+			imp1.getRoi().setStrokeColor(Color.green);
+			over1.addElement(imp1.getRoi());
+		}
+		if (demo) {
+			imp1.updateAndDraw();
+			imp1.getWindow().toFront();
+			MyLog.waitHere(listaMessaggi(4), debug, timeout);
+			MyLog.waitHere(listaMessaggi(4), debug, timeout);
+		}
+		return vetRoi;
+
 	}
 
 	public static ResultsTable analyzeResultsImages(Roi[] vetRoi,
@@ -1798,6 +1904,28 @@ public class p20rmn_ implements PlugIn, Measurements {
 			return true;
 		else
 			return false;
+	}
+
+	/**
+	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo è
+	 * facilitata la eventuale modifica / traduzione dei messaggi.
+	 * 
+	 * @param select
+	 * @return
+	 */
+	public static String listaMessaggi(int select) {
+		String[] lista = new String[100];
+		// ---------+-----------------------------------------------------------+
+		lista[0] = "L'immagine in input viene processata con AutoThreshold.thresholdMedian";
+		lista[1] = "L'immagine binaria viene invertita";
+		lista[2] = "Viene utilizzato Analyze Particles (size=50-1000 circularity=0.1-1.00)\n "
+				+ "per identificare i gel e misurarne misurare i Bounding Rectangles";
+		lista[3] = "Misurando i BoundingRectangles otteniamo questi risultati";
+		lista[4] = "Posizione ROI in verde";
+
+		// ---------+-----------------------------------------------------------+
+		String out = lista[select];
+		return out;
 	}
 
 } // p2rmn

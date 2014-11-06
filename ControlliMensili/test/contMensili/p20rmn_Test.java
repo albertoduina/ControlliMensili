@@ -1,5 +1,7 @@
 package contMensili;
 
+import static org.junit.Assert.assertTrue;
+import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
 import ij.gui.Roi;
@@ -70,6 +72,45 @@ public class p20rmn_Test {
 				MyConst.P20_X_ROI_TESTGE, MyConst.P20_Y_ROI_TESTGE,
 				MyConst.P20_DIAM_ROI);
 		MyLog.waitHere();
+	}
+
+	@Test
+	public final void testAutomaticRoiPreparationTest2() {
+
+		String path1 = ".\\Test2\\B003_testP2";
+		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, false);
+		boolean demo = true;
+		int diam = 20;
+		int timeout = 2000;
+		Roi[] pippo = p20rmn_.automaticRoiPreparation2(imp1, diam, timeout,
+				demo);
+		
+		String[] expected = { "Roi[Oval, x=97, y=39, width=20, height=20]",
+				"Roi[Oval, x=148, y=41, width=20, height=20]",
+				"Roi[Oval, x=42, y=88, width=20, height=20]",
+				"Roi[Oval, x=94, y=90, width=20, height=20]",
+				"Roi[Oval, x=144, y=92, width=20, height=20]",
+				"Roi[Oval, x=196, y=95, width=20, height=20]",
+				"Roi[Oval, x=40, y=139, width=20, height=20]",
+				"Roi[Oval, x=91, y=143, width=20, height=20]",
+				"Roi[Oval, x=142, y=144, width=20, height=20]",
+				"Roi[Oval, x=194, y=147, width=20, height=20]",
+				"Roi[Oval, x=88, y=194, width=20, height=20]",
+				"Roi[Oval, x=139, y=197, width=20, height=20]" };
+		
+		
+
+		boolean result = true;
+		boolean ok=false;
+		String prima="";
+		String seconda = "";
+		for (int i1 = 0; i1 < pippo.length; i1++) {
+			prima = expected[i1];
+			seconda = pippo[i1].toString();
+			ok=prima.equals(seconda);
+			if (!ok) result=false; 
+		}
+		assertTrue(result);
 	}
 
 	@Test
