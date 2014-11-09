@@ -3,8 +3,10 @@ package contMensili;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
+import ij.WindowManager;
 import ij.gui.ImageWindow;
 import ij.gui.OvalRoi;
+import ij.gui.Overlay;
 import ij.gui.Roi;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
@@ -17,6 +19,7 @@ import java.util.StringTokenizer;
 
 import utils.AboutBox;
 import utils.ButtonMessages;
+import utils.MyAutoThreshold;
 import utils.MyLog;
 import utils.MyMsg;
 import utils.MyConst;
@@ -65,6 +68,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 	private static String TYPE = " >> CONTROLLO WARP____________________";
 
 	// ---------------------------"01234567890123456789012345678901234567890"
+	private static boolean debug = true;
 
 	/**
 	 * directory dati, dove vengono memorizzati ayv.txt e Results1.xls
@@ -80,8 +84,6 @@ public class p17rmn_ implements PlugIn, Measurements {
 	 * immagine da analizzare
 	 */
 	ImagePlus imp1;
-
-	double dimPixel2;
 
 	public void run(String args) {
 
@@ -99,12 +101,11 @@ public class p17rmn_ implements PlugIn, Measurements {
 			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
 			return;
 		}
-		
+
 		String className = this.getClass().getName();
 
 		VERSION = className + "_build_" + MyVersion.getVersion()
 				+ "_iw2ayv_build_" + MyVersionUtils.getVersion();
-
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -148,7 +149,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 				boolean autoCalled = false;
 				boolean verbose = true;
 				boolean test = false;
-				mainWarp(path1, riga1, autoCalled, step, verbose, test);
+				mainWarp(path1, autoCalled, step, verbose, test);
 				UtilAyv.afterWork();
 				retry = false;
 				return 5;
@@ -202,9 +203,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 				iw2ayvTable = new TableSequence().loadTable(fileDir
 						+ MyConst.SEQUENZE_FILE);
 				String path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
-				ResultsTable rt = mainWarp(path1, vetRiga[0], autoCalled, step,
-						verbose, test);
-				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
+				// ResultsTable rt = mainWarp(path1], autoCalled, step, verbose,
+				// test);
+				// UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 
 				UtilAyv.afterWork();
 				retry = false;
@@ -217,116 +218,85 @@ public class p17rmn_ implements PlugIn, Measurements {
 	}
 
 	@SuppressWarnings("deprecation")
-	public ResultsTable mainWarp(String path1, int riga1, boolean autoCalled,
+	public static ResultsTable mainWarp(String path1, boolean autoCalled,
 			boolean step, boolean verbose, boolean test) {
 		boolean accetta = false;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		ResultsTable rt = null;
+		double dimPixel2 = 0;
+		;
+
 		// --------------------------------------------------------------------------------------/
 		// Qui si torna se la misura è da rifare
 		// --------------------------------------------------------------------------------------/
 		do {
-			imp1 = UtilAyv.openImageMaximized(path1);
-			IJ.run(imp1, "Set Scale...",
-					"distance=0 known=0 pixel=1 unit=pixel");
 
-			IJ.run("Enhance Contrast", "saturated=10 normalize ");
+			ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, verbose);
+
+			boolean demo = false;
+			int diam = 10;
+			int timeout = 2000;
+			int[][] tabPunti = p20rmn_.automaticRoiPreparation3(imp1, diam,
+					timeout, demo);
 			dimPixel2 = ReadDicom.readDouble(ReadDicom.readSubstring(ReadDicom
 					.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
 			String slicePos = ReadDicom.readSubstring(ReadDicom
 					.readDicomParameter(imp1, MyConst.DICOM_IMAGE_POSITION), 3);
-			
-			
-			
-			
-			
-			
-			
-			double diamRoi1 = (double) MyConst.P7_DIAM_ROI / dimPixel2;
-			int diamRoi = (int) diamRoi1;
-			boolean circular = true;
-			UtilAyv.presetRoi(imp1, diamRoi, circular);
-			msgPositionRoi();
-			overlayRodNumbers(imp1, diamRoi, true);
-			Polygon poli1 = UtilAyv
-					.selectionPointsClick(
-							imp1,
-							"Cliccare nell'ordine su tutte le RODS, poi premere FINE POSIZIONAMENTO",
-							"FINE POSIZIONAMENTO");
-			int nPunti;
-			if (poli1 == null) {
-				nPunti = 0;
-			} else {
-				nPunti = poli1.npoints;
-			}
+			int nPunti = tabPunti.length;
 
-			if (nPunti == MyConst.P7_TOTAL_NUM_POINTS) {
-				int[] xPoints = poli1.xpoints;
-				int[] yPoints = poli1.ypoints;
-				int[][] tabPunti = new int[nPunti][2];
-				for (int i1 = 0; i1 < nPunti; i1++) {
-					tabPunti[i1][0] = xPoints[i1];
-					tabPunti[i1][1] = yPoints[i1];
-				}
-				// String[][] tabCodici = new InputOutput().readFile1(
-				// MyConst.CODE_FILE, MyConst.TOKENS4);
+			String[][] tabCodici = TableCode
+					.loadMultipleTable(MyConst.CODE_GROUP);
 
-				String[][] tabCodici = TableCode
-						.loadMultipleTable(MyConst.CODE_GROUP);
+			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
+					imp1, tabCodici, VERSION, autoCalled);
+			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+			String t1 = "TESTO";
+			String s2 = "coord_x";
+			String s3 = "coord_y";
+			String s4 = "dummy1";
+			String s5 = "dummy2";
+			String s6 = "dummy3";
+			String s7 = "dummy4";
 
-				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
-						path1, imp1, tabCodici, VERSION , autoCalled);
-				rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
-				String t1 = "TESTO";
-				String s2 = "coord_x";
-				String s3 = "coord_y";
-				String s4 = "dummy1";
-				String s5 = "dummy2";
-				String s6 = "dummy3";
-				String s7 = "dummy4";
-
-				rt.addLabel(t1, "ShiftCentrat");
-				rt.addValue(s2, UtilAyv.convertToDouble(slicePos));
-				String aux1 = "";
-				int aux2 = 0;
-				for (int i2 = 0; i2 < MyConst.P7_NUM_RODS; i2 = i2 + 2) {
-					aux2++;
-					aux1 = "Rod" + aux2 + "a";
-					rt.incrementCounter();
-					rt.addLabel(t1, aux1);
-					rt.addValue(s2, tabPunti[i2][0]);
-					rt.addValue(s3, tabPunti[i2][1]);
-					rt.addValue(s4, 0);
-					rt.addValue(s5, 0);
-					rt.addValue(s6, 0);
-					rt.addValue(s7, 0);
-					rt.incrementCounter();
-					aux1 = "Rod" + aux2 + "b";
-					rt.addLabel(t1, aux1);
-					rt.addValue(s2, tabPunti[i2 + 1][0]);
-					rt.addValue(s3, tabPunti[i2 + 1][1]);
-					rt.addValue(s4, 0);
-					rt.addValue(s5, 0);
-					rt.addValue(s6, 0);
-					rt.addValue(s7, 0);
-				}
-				aux2 = 0;
-				for (int i2 = MyConst.P7_NUM_RODS; i2 < MyConst.P7_TOTAL_NUM_POINTS; i2++) {
-					aux2++;
-					aux1 = "Cubo" + aux2;
-					rt.incrementCounter();
-					rt.addLabel(t1, aux1);
-					rt.addValue(s2, tabPunti[i2][0]);
-					rt.addValue(s3, tabPunti[i2][1]);
-				}
+			rt.addLabel(t1, "ShiftCentrat");
+			rt.addValue(s2, UtilAyv.convertToDouble(slicePos));
+			String aux1 = "";
+			int aux2 = 0;
+			for (int i2 = 0; i2 < MyConst.P7_NUM_RODS; i2 = i2 + 2) {
+				aux2++;
+				aux1 = "Rod" + aux2 + "a";
 				rt.incrementCounter();
-				rt.addLabel(t1, "Spacing");
-				rt.addValue(s2, dimPixel2);
-				if (verbose && !test)
-					rt.show("Results");
-			} else {
-				msgRedo(nPunti);
+				rt.addLabel(t1, aux1);
+				rt.addValue(s2, tabPunti[i2][0]);
+				rt.addValue(s3, tabPunti[i2][1]);
+				rt.addValue(s4, 0);
+				rt.addValue(s5, 0);
+				rt.addValue(s6, 0);
+				rt.addValue(s7, 0);
+				rt.incrementCounter();
+				aux1 = "Rod" + aux2 + "b";
+				rt.addLabel(t1, aux1);
+				rt.addValue(s2, tabPunti[i2 + 1][0]);
+				rt.addValue(s3, tabPunti[i2 + 1][1]);
+				rt.addValue(s4, 0);
+				rt.addValue(s5, 0);
+				rt.addValue(s6, 0);
+				rt.addValue(s7, 0);
 			}
+			aux2 = 0;
+			for (int i2 = MyConst.P7_NUM_RODS; i2 < MyConst.P7_TOTAL_NUM_POINTS; i2++) {
+				aux2++;
+				aux1 = "Cubo" + aux2;
+				rt.incrementCounter();
+				rt.addLabel(t1, aux1);
+				rt.addValue(s2, tabPunti[i2][0]);
+				rt.addValue(s3, tabPunti[i2][1]);
+			}
+			rt.incrementCounter();
+			rt.addLabel(t1, "Spacing");
+			rt.addValue(s2, dimPixel2);
+			if (verbose && !test)
+				rt.show("Results");
 			if (autoCalled && !test) {
 				accetta = MyMsg.accettaMenu();
 
@@ -338,6 +308,164 @@ public class p17rmn_ implements PlugIn, Measurements {
 			}
 		} while (!accetta);
 		return rt;
+	}
+
+	/***
+	 * Ricerca automatica delle posizioni gels con AutoTreshold ed
+	 * AnalyzeParticles
+	 * 
+	 * @param imp1
+	 * @param diam2
+	 * @param timeout
+	 * @param demo
+	 */
+	public static Roi[] automaticRoiPreparation3(ImagePlus imp1, int diam2,
+			int timeout, boolean demo) {
+
+		ImagePlus imp4 = imp1.duplicate();
+		ImagePlus imp5 = imp1.duplicate();
+		Overlay over1 = new Overlay();
+		imp4.setOverlay(over1);
+		Overlay over2 = new Overlay();
+		imp5.setOverlay(over2);
+
+		boolean noBlack = true;
+		boolean noWhite = false;
+		boolean doWhite = true;
+		boolean doSet = false;
+		boolean doLog = false;
+		int numRods1 = 36;
+		ImageWindow cw1 = null;
+		ImageWindow cw2 = null;
+
+		if (demo) {
+			UtilAyv.showImageMaximized(imp4);
+			MyLog.waitHere(listaMessaggi(0), debug, timeout);
+		}
+
+		ImagePlus imp2 = MyAutoThreshold.threshold(imp4, "Mean", noBlack,
+				noWhite, doWhite, doSet, doLog);
+
+		if (demo) {
+			UtilAyv.showImageMaximized(imp2);
+			MyLog.waitHere(listaMessaggi(2), debug, timeout);
+		}
+
+		double dimPixel = ReadDicom
+				.readDouble(ReadDicom.readSubstring(ReadDicom
+						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
+						2));
+		int measCode = 512; // bounding rectangle
+		int oldMeasure = UtilAyv.setMeasure(measCode);
+		if (demo) {
+			IJ.run(imp2, "Analyze Particles...",
+					"size=2-30 circularity=0.3-1.00 show=Outlines exclude");
+			// String title = "Drawing of "+imp2.getShortTitle();
+			// MyLog.waitHere("title= "+title);
+			cw1 = WindowManager.getCurrentWindow();
+			cw1.maximize();
+
+			// "size=50-1000 circularity=0.1-1.00 show=Outlines display exclude summarize");
+		} else
+			IJ.run(imp2, "Analyze Particles...",
+					"size=2-30 circularity=0.3-1.00");
+
+		ResultsTable rt1 = ResultsTable.getResultsTable();
+		int xcol = rt1.getColumnIndex("BX");
+		int ycol = rt1.getColumnIndex("BY");
+		int wcol = rt1.getColumnIndex("Width");
+		int hcol = rt1.getColumnIndex("Height");
+
+		int num1 = rt1.getCounter();
+
+		if (demo) {
+			// UtilAyv.showImageMaximized(imp2);
+			MyLog.waitHere(listaMessaggi(6) + num1, debug, timeout);
+			cw1.close();
+			imp2.flush();
+			UtilAyv.showImageMaximized(imp5);
+			imp5.updateAndRepaintWindow();
+			imp5.getWindow().toFront();
+			MyLog.waitHere(listaMessaggi(5) + " input ", debug, timeout);
+		}
+		ImagePlus imp3 = MyAutoThreshold.threshold(imp5, "Huang", noBlack,
+				noWhite, doWhite, doSet, doLog);
+
+		if (demo) {
+			UtilAyv.showImageMaximized(imp3);
+			MyLog.waitHere(listaMessaggi(2), debug, timeout);
+		}
+
+		IJ.run(imp3, "Invert", "");
+
+		if (demo) {
+			IJ.run(imp3, "Analyze Particles...",
+					"size=5-30 circularity=0.1-1.00 show=Outlines exclude");
+			cw2 = WindowManager.getCurrentWindow();
+			cw2.maximize();
+		} else
+			IJ.run(imp3, "Analyze Particles...",
+					"size=5-30 circularity=0.1-1.00");
+
+		if (demo) {
+			// MyLog.waitHere(listaMessaggi(3), debug, timeout);
+			rt1.show("Results");
+		}
+
+		int num2 = rt1.getCounter() - num1;
+		if (demo) {
+			MyLog.waitHere(listaMessaggi(6) + num2, debug, timeout);
+		}
+
+		double[] vetX = rt1.getColumnAsDoubles(xcol);
+		// MyLog.logVector(vetX, "vetX");
+
+		double[] vetY = rt1.getColumnAsDoubles(ycol);
+		// MyLog.logVector(vetY, "vetY");
+
+		double[] vetW = rt1.getColumnAsDoubles(wcol);
+		// MyLog.logVector(vetW, "vetW");
+
+		double[] vetH = rt1.getColumnAsDoubles(hcol);
+		// MyLog.logVector(vetH, "vetH");
+
+		// UtilAyv.showImageMaximized(imp1);
+		double[] vetx1 = new double[vetX.length];
+		double[] vety1 = new double[vetX.length];
+		for (int i1 = 0; i1 < vetX.length; i1++) {
+			vetx1[i1] = ((vetX[i1] + vetW[i1] / 2) / dimPixel) - diam2 / 2;
+			vety1[i1] = ((vetY[i1] + vetH[i1] / 2) / dimPixel) - diam2 / 2;
+		}
+
+		Roi[] vetRoi = new Roi[vetX.length];
+		for (int i1 = 0; i1 < vetX.length; i1++) {
+			imp4.setRoi(new OvalRoi(vetx1[i1], vety1[i1], diam2, diam2));
+			vetRoi[i1] = imp4.getRoi();
+			imp4.getRoi().setStrokeColor(Color.green);
+			over1.addElement(imp4.getRoi());
+		}
+		if (vetX.length != numRods1) {
+			if (demo)
+				cw2.close();
+			if (demo)
+				imp3.flush();
+			if (!demo)
+				UtilAyv.showImageMaximized(imp4);
+			imp4.updateAndDraw();
+			imp4.getWindow().toFront();
+			MyLog.waitHere(listaMessaggi(7), debug);
+		}
+
+		if (demo) {
+			cw2.close();
+			imp3.flush();
+			// imp3.close();
+			imp4.updateAndDraw();
+			imp4.getWindow().toFront();
+			MyLog.waitHere(listaMessaggi(4), debug, timeout);
+		}
+
+		return vetRoi;
 	}
 
 	public void overlayRodNumbers(ImagePlus imp1, int diamRoi, boolean verbose) {
@@ -468,6 +596,31 @@ public class p17rmn_ implements PlugIn, Measurements {
 		IJ.showMessage("--- A T T E N Z I O N E ---",
 				"Sono stati selezionati solo " + nPunti
 						+ " anzichè 36  punti,\n--- R I F A R E ---");
+	}
+
+	/**
+	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo è
+	 * facilitata la eventuale modifica / traduzione dei messaggi.
+	 * 
+	 * @param select
+	 * @return
+	 */
+	public static String listaMessaggi(int select) {
+		String[] lista = new String[100];
+		// ---------+-----------------------------------------------------------+
+		lista[0] = "L'immagine in input viene processata con AutoThreshold.threshold+Median";
+		lista[1] = "L'immagine binaria viene invertita";
+		lista[2] = "Viene utilizzato Analyze Particles (size=50-1000 circularity=0.1-1.00)\n "
+				+ "per identificare i gel e misurarne misurare i Bounding Rectangles";
+		lista[3] = "Misurando i BoundingRectangles otteniamo questi risultati";
+		lista[4] = "Posizione ROI in verde";
+		lista[5] = "L'immagine in input viene processata con AutoThreshold.threshold+Huang";
+		lista[6] = "Numero nuovi oggetti localizzati= ";
+		lista[7] = "Numero ROI rilevate errato, posizioni ROI in verde";
+
+		// ---------+-----------------------------------------------------------+
+		String out = lista[select];
+		return out;
 	}
 
 }

@@ -7,6 +7,7 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Prefs;
 import ij.WindowManager;
+import ij.gui.ImageWindow;
 import ij.gui.NewImage;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
@@ -835,14 +836,15 @@ public class p20rmn_ implements PlugIn, Measurements {
 		boolean doWhite = true;
 		boolean doSet = false;
 		boolean doLog = false;
+		int numGels = 12;
 
 		if (demo) {
 			UtilAyv.showImageMaximized(imp1);
 			MyLog.waitHere(listaMessaggi(0), debug, timeout);
 		}
 
-		ImagePlus imp2 = MyAutoThreshold.thresholdMean(imp1, noBlack, noWhite,
-				doWhite, doSet, doLog);
+		ImagePlus imp2 = MyAutoThreshold.threshold(imp1, "Mean", noBlack,
+				noWhite, doWhite, doSet, doLog);
 		if (demo) {
 			UtilAyv.showImageMaximized(imp2);
 			MyLog.waitHere(listaMessaggi(1), debug, timeout);
@@ -905,18 +907,180 @@ public class p20rmn_ implements PlugIn, Measurements {
 		Roi[] vetRoi = new Roi[vetX.length];
 		for (int i1 = 0; i1 < vetX.length; i1++) {
 			imp1.setRoi(new OvalRoi(vetx1[i1], vety1[i1], diam2, diam2));
-			vetRoi[vetRoi.length - 1] = imp1.getRoi();
+			vetRoi[i1] = imp1.getRoi();
 			imp1.getRoi().setStrokeColor(Color.green);
 			over1.addElement(imp1.getRoi());
 		}
+		if (vetX.length != numGels)
+			demo = true;
 		if (demo) {
 			imp1.updateAndDraw();
 			imp1.getWindow().toFront();
 			MyLog.waitHere(listaMessaggi(4), debug, timeout);
 			MyLog.waitHere(listaMessaggi(4), debug, timeout);
 		}
+		if (vetX.length != numGels)
+			MyLog.waitHere("problema sul numero gels rilevati");
+
 		return vetRoi;
 
+	}
+
+	/***
+	 * Ricerca automatica delle posizioni gels con AutoTreshold ed
+	 * AnalyzeParticles
+	 * 
+	 * @param imp1
+	 * @param diam2
+	 * @param timeout
+	 * @param demo
+	 */
+	public static int[][] automaticRoiPreparation3(ImagePlus imp1, int diam2,
+			int timeout, boolean demo) {
+
+		ImagePlus imp4 = imp1.duplicate();
+		ImagePlus imp5 = imp1.duplicate();
+		Overlay over1 = new Overlay();
+		imp4.setOverlay(over1);
+		Overlay over2 = new Overlay();
+		imp5.setOverlay(over2);
+
+		boolean noBlack = true;
+		boolean noWhite = false;
+		boolean doWhite = true;
+		boolean doSet = false;
+		boolean doLog = false;
+		int numRods1 = 36;
+		ImageWindow cw1 = null;
+		ImageWindow cw2 = null;
+
+		if (demo) {
+			UtilAyv.showImageMaximized(imp4);
+			MyLog.waitHere(listaMessaggi(0), debug, timeout);
+		}
+
+		ImagePlus imp2 = MyAutoThreshold.threshold(imp4, "Mean", noBlack,
+				noWhite, doWhite, doSet, doLog);
+
+		if (demo) {
+			UtilAyv.showImageMaximized(imp2);
+			MyLog.waitHere(listaMessaggi(2), debug, timeout);
+		}
+
+		double dimPixel = ReadDicom
+				.readDouble(ReadDicom.readSubstring(ReadDicom
+						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
+						2));
+		int measCode = 32; // bounding rectangle
+		int oldMeasure = UtilAyv.setMeasure(measCode);
+		if (demo) {
+			IJ.run(imp2, "Analyze Particles...",
+					"size=2-30 circularity=0.3-1.00 show=Outlines exclude");
+			// String title = "Drawing of "+imp2.getShortTitle();
+			// MyLog.waitHere("title= "+title);
+			cw1 = WindowManager.getCurrentWindow();
+			cw1.maximize();
+
+			// "size=50-1000 circularity=0.1-1.00 show=Outlines display exclude summarize");
+		} else
+			IJ.run(imp2, "Analyze Particles...",
+					"size=2-30 circularity=0.3-1.00");
+
+		ResultsTable rt1 = ResultsTable.getResultsTable();
+		int xcol = rt1.getColumnIndex("X");
+		int ycol = rt1.getColumnIndex("Y");
+
+		int num1 = rt1.getCounter();
+
+		if (demo) {
+			// UtilAyv.showImageMaximized(imp2);
+			MyLog.waitHere(listaMessaggi(6) + num1, debug, timeout);
+			cw1.close();
+			imp2.flush();
+			UtilAyv.showImageMaximized(imp5);
+			imp5.updateAndRepaintWindow();
+			imp5.getWindow().toFront();
+			MyLog.waitHere(listaMessaggi(5) + " input ", debug, timeout);
+		}
+		ImagePlus imp3 = MyAutoThreshold.threshold(imp5, "Huang", noBlack,
+				noWhite, doWhite, doSet, doLog);
+
+		if (demo) {
+			UtilAyv.showImageMaximized(imp3);
+			MyLog.waitHere(listaMessaggi(2), debug, timeout);
+		}
+
+		IJ.run(imp3, "Invert", "");
+
+		if (demo) {
+			IJ.run(imp3, "Analyze Particles...",
+					"size=5-30 circularity=0.1-1.00 show=Outlines exclude");
+			cw2 = WindowManager.getCurrentWindow();
+			cw2.maximize();
+		} else
+			IJ.run(imp3, "Analyze Particles...",
+					"size=5-30 circularity=0.1-1.00");
+
+		if (demo) {
+			// MyLog.waitHere(listaMessaggi(3), debug, timeout);
+			rt1.show("Results");
+		}
+
+		int num2 = rt1.getCounter() - num1;
+		if (demo) {
+			MyLog.waitHere(listaMessaggi(6) + num2, debug, timeout);
+		}
+
+		double[] vetX = rt1.getColumnAsDoubles(xcol);
+		// MyLog.logVector(vetX, "vetX");
+
+		double[] vetY = rt1.getColumnAsDoubles(ycol);
+		// MyLog.logVector(vetY, "vetY");
+
+		// UtilAyv.showImageMaximized(imp1);
+		double[] vetx1 = new double[vetX.length];
+		double[] vety1 = new double[vetX.length];
+		for (int i1 = 0; i1 < vetX.length; i1++) {
+			vetx1[i1] = vetX[i1] / dimPixel;
+			vety1[i1] = vetY[i1] / dimPixel;
+		}
+
+		Roi[] vetRoi = new Roi[vetX.length];
+		for (int i1 = 0; i1 < vetX.length; i1++) {
+			imp4.setRoi(new OvalRoi(vetx1[i1] - diam2 / 2, vety1[i1] - diam2
+					/ 2, diam2, diam2));
+			vetRoi[i1] = imp4.getRoi();
+			imp4.getRoi().setStrokeColor(Color.green);
+			over1.addElement(imp4.getRoi());
+		}
+		if (vetX.length != numRods1) {
+			if (demo)
+				cw2.close();
+			if (demo)
+				imp3.flush();
+			if (!demo)
+				UtilAyv.showImageMaximized(imp4);
+			imp4.updateAndDraw();
+			imp4.getWindow().toFront();
+			MyLog.waitHere(listaMessaggi(7), debug);
+		}
+
+		if (demo) {
+			cw2.close();
+			imp3.flush();
+			// imp3.close();
+			imp4.updateAndDraw();
+			imp4.getWindow().toFront();
+			MyLog.waitHere(listaMessaggi(4), debug, timeout);
+		}
+
+		int[][] tabpunti = new int[vetx1.length][2];
+		for (int i1 = 0; i1 < vetX.length; i1++) {
+			tabpunti[i1][0] = (int) Math.round(vetX[i1] / dimPixel);
+			tabpunti[i1][1] = (int) Math.round(vetY[i1] / dimPixel);
+		}
+
+		return tabpunti;
 	}
 
 	public static ResultsTable analyzeResultsImages(Roi[] vetRoi,
@@ -1916,12 +2080,15 @@ public class p20rmn_ implements PlugIn, Measurements {
 	public static String listaMessaggi(int select) {
 		String[] lista = new String[100];
 		// ---------+-----------------------------------------------------------+
-		lista[0] = "L'immagine in input viene processata con AutoThreshold.thresholdMedian";
+		lista[0] = "L'immagine in input viene processata con AutoThreshold.threshold+Median";
 		lista[1] = "L'immagine binaria viene invertita";
 		lista[2] = "Viene utilizzato Analyze Particles (size=50-1000 circularity=0.1-1.00)\n "
 				+ "per identificare i gel e misurarne misurare i Bounding Rectangles";
 		lista[3] = "Misurando i BoundingRectangles otteniamo questi risultati";
 		lista[4] = "Posizione ROI in verde";
+		lista[5] = "L'immagine in input viene processata con AutoThreshold.threshold+Huang";
+		lista[6] = "Numero nuovi oggetti localizzati= ";
+		lista[7] = "Numero ROI rilevate errato, posizioni ROI in verde";
 
 		// ---------+-----------------------------------------------------------+
 		String out = lista[select];
