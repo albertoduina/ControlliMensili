@@ -27,42 +27,84 @@ public class p17rmn_Test {
 	}
 
 	@Test
-	public final void testAutomaticRoiPreparationTest3() {
+	public final void testAutomaticRoiPreparationTest1_SIEMENS() {
 
 		String path1 = ".\\Test2\\HWSA_testP7";
+		
 		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, false);
 		boolean demo = true;
+		boolean silent= false;
 		int diam = 10;
 		int timeout = 2000;
-		int[][] pippo = p20rmn_.automaticRoiPreparation3(imp1, diam, timeout,
+		int[][] pippo = p17rmn_.automaticRoiPreparation3(imp1, diam, silent, timeout,
+				demo);
+
+		MyLog.waitHere();
+
+	}
+	
+	@Test
+	public final void testAutomaticRoiPreparationTest_HITACHI() {
+
+		String path1 = ".\\Test2\\HWSA3";
+		
+		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, false);
+		boolean demo = true;
+		boolean silent= false;
+		int diam = 10;
+		int timeout = 2000;
+		int[][] pippo = p17rmn_.automaticRoiPreparation3(imp1, diam, silent, timeout,
+				demo);
+
+		MyLog.waitHere();
+
+	}
+	
+	@Test
+	public final void testAutomaticRoiPreparation_GE() {
+
+		String path1 = ".\\Test2\\HWSA2";
+		
+		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, false);
+		boolean demo = true;
+		boolean silent= false;
+		int diam = 10;
+		int timeout = 2000;
+		int[][] pippo = p17rmn_.automaticRoiPreparation3(imp1, diam, silent, timeout,
 				demo);
 
 		MyLog.waitHere();
 
 	}
 
+	
+	
+	
+	
+	
+	
+
 	@Test
 	public final void testMainWarpFast() {
 
 		// 04 sep 2013 funziona in automatico
 
-		String path1 = "./Test2//HUSA_001testP3";
+		String path1 = ".\\Test2\\HWSA_testP7";
 		String autoArgs = "0";
 		boolean autoCalled = false;
 		boolean step = false;
-		boolean demo = false;
+		boolean demo = true;
 		boolean test = false;
 		boolean fast = true;
 		boolean silent = false;
 		boolean verbose = false;
-		int timeout = 100;
+		int timeout = 3000;
 
-		ResultsTable rt1 = p17rmn_.mainWarp(path1, autoCalled, step, verbose,
-				test);
-		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-		double[] vetReference = p12rmn_.referenceSiemens();
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-				MyConst.P3_vetName);
+		ResultsTable rt1 = p17rmn_.mainWarp(path1, autoCalled, step, silent, verbose,
+				test, demo, timeout);
+		int[][] vetResults = UtilAyv.vectorizeResults2(rt1);
+		int[][] vetReference = p17rmn_.referenceSiemens();
+		boolean ok = UtilAyv.verifyResults3(vetResults, vetReference);
 		assertTrue(ok);
 	}
 

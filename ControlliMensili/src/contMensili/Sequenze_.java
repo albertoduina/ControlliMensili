@@ -145,7 +145,7 @@ public class Sequenze_ implements PlugIn {
 		GenericDialog gd = new GenericDialog("", IJ.getInstance());
 		gd.addCheckbox("Nuovo controllo", false);
 		gd.addCheckbox("SelfTest", false);
-		gd.addCheckbox("p10_ p11_ p12_", true);
+		gd.addCheckbox("p10_ p11_ p12_ p17_", true);
 		gd.addCheckbox("Fast", true);
 		gd.addCheckbox("Superficiali", false);
 		gd.showDialog();
@@ -790,6 +790,8 @@ public class Sequenze_ implements PlugIn {
 						plugin = "contMensili.p3rmn_";
 					if (plugin.equals("contMensili.p20rmn_"))
 						plugin = "contMensili.p2rmn_";
+					if (plugin.equals("contMensili.p17rmn_"))
+						plugin = "contMensili.p7rmn_";
 				}
 
 				String argomento = argumentForPluginToBeCalled(j1,

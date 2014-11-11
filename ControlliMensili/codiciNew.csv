@@ -30,7 +30,7 @@ HT2A_;Thickness 2mm Sing.Head;1;1;xxx;x;x;p6rmn_
 HT5A_;Thickness 5mm Sing.Head;1;1;xxx;x;x;p6rmn_
 HTMA_;Thickness 2mm Multi Head;15;15;xxx;x;x;p6rmn_
 HWLX_;Localizer Warp Head;0;0;xxx;x;x;none_
-HWSA_;Warp Assiale Head;1;1;xxx;x;x;p7rmn_
+HWSA_;Warp Assiale Head;1;1;xxx;x;x;p17rmn_
 HRKA_;Risoluzione 1024 Head;1;1;xxx;x;x;p4rmn_
 HR5A_;Risoluzione 512 Head;1;1;xxx;x;x;p4rmn_
 HR2A_;Risoluzione 256 Head;1;1;xxx;x;x;p4rmn_

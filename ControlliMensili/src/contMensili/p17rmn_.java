@@ -7,10 +7,14 @@ import ij.WindowManager;
 import ij.gui.ImageWindow;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
+import ij.gui.PointRoi;
 import ij.gui.Roi;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
+import ij.plugin.filter.ParticleAnalyzer;
+import ij.plugin.frame.RoiManager;
+import ij.util.Tools;
 
 import java.awt.Color;
 import java.awt.Polygon;
@@ -78,7 +82,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 	/**
 	 * tabella coi dati di ayv.txt (generati da Sequenze)
 	 */
-	String[][] iw2ayvTable;
+	// String[][] iw2ayvTable;
 
 	/**
 	 * immagine da analizzare
@@ -149,7 +153,11 @@ public class p17rmn_ implements PlugIn, Measurements {
 				boolean autoCalled = false;
 				boolean verbose = true;
 				boolean test = false;
-				mainWarp(path1, autoCalled, step, verbose, test);
+				boolean demo = true;
+				boolean silent = false;
+				int timeout = 0;
+				mainWarp(path1, autoCalled, step, silent, verbose, test, demo,
+						timeout);
 				UtilAyv.afterWork();
 				retry = false;
 				return 5;
@@ -161,7 +169,14 @@ public class p17rmn_ implements PlugIn, Measurements {
 	}
 
 	public int autoMenu(String autoArgs) {
-		MyLog.appendLog(fileDir + "MyLog.txt", "p7 riceve " + autoArgs);
+		MyLog.appendLog(fileDir + "MyLog.txt", "p17 riceve " + autoArgs);
+
+		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
+				: false;
+
+		ResultsTable result1 = null;
+		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
+				+ MyConst.SEQUENZE_FILE);
 
 		StringTokenizer st = new StringTokenizer(autoArgs, "#");
 		int nTokens = st.countTokens();
@@ -177,41 +192,65 @@ public class p17rmn_ implements PlugIn, Measurements {
 		}
 		boolean retry = false;
 		boolean step = false;
-		do {
-			// int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE);
-			int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
-					TableSequence.getCode(iw2ayvTable, vetRiga[0]),
-					TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
-					vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
+		if (fast) {
+			retry = false;
+			boolean autoCalled = true;
+			boolean demo = false;
+			boolean test = false;
+			boolean silent = false;
+			boolean verbose = true;
+			int timeout = 3000;
 
-			switch (userSelection1) {
-			case ABORT:
-				new AboutBox().close();
-				return 0;
-			case 2:
-				// new AboutBox().about("Controllo Warp", this.getClass());
-				new AboutBox().about("Controllo Warp",
-						MyVersion.CURRENT_VERSION);
-				retry = true;
-				break;
-			case 3:
-				step = true;
-			case 4:
-				boolean verbose = true;
-				boolean test = false;
-				boolean autoCalled = true;
-				iw2ayvTable = new TableSequence().loadTable(fileDir
-						+ MyConst.SEQUENZE_FILE);
-				String path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
-				// ResultsTable rt = mainWarp(path1], autoCalled, step, verbose,
-				// test);
-				// UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
+			String path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 
-				UtilAyv.afterWork();
-				retry = false;
-				break;
-			}
-		} while (retry);
+			result1 = mainWarp(path1, autoCalled, step, silent, verbose, test,
+					demo, timeout);
+
+			if (!(result1 == null))
+				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, result1);
+
+			UtilAyv.afterWork();
+
+		} else {
+			do {
+				// int userSelection1 = UtilAyv.userSelectionAuto(VERSION,
+				// TYPE);
+				int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
+						TableSequence.getCode(iw2ayvTable, vetRiga[0]),
+						TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
+						vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
+
+				switch (userSelection1) {
+				case ABORT:
+					new AboutBox().close();
+					return 0;
+				case 2:
+					// new AboutBox().about("Controllo Warp", this.getClass());
+					new AboutBox().about("Controllo Warp",
+							MyVersion.CURRENT_VERSION);
+					retry = true;
+					break;
+				case 3:
+					step = true;
+				case 4:
+					boolean verbose = true;
+					boolean test = false;
+					boolean autoCalled = true;
+					iw2ayvTable = new TableSequence().loadTable(fileDir
+							+ MyConst.SEQUENZE_FILE);
+					String path1 = TableSequence.getPath(iw2ayvTable,
+							vetRiga[0]);
+					// ResultsTable rt = mainWarp(path1], autoCalled, step,
+					// verbose,
+					// test);
+					// UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
+
+					UtilAyv.afterWork();
+					retry = false;
+					break;
+				}
+			} while (retry);
+		}
 		UtilAyv.afterWork();
 		new AboutBox().close();
 		return 0;
@@ -219,7 +258,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 	@SuppressWarnings("deprecation")
 	public static ResultsTable mainWarp(String path1, boolean autoCalled,
-			boolean step, boolean verbose, boolean test) {
+			boolean step, boolean silent, boolean verbose, boolean test,
+			boolean demo, int timeout) {
 		boolean accetta = false;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		ResultsTable rt = null;
@@ -229,84 +269,77 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// --------------------------------------------------------------------------------------/
 		// Qui si torna se la misura è da rifare
 		// --------------------------------------------------------------------------------------/
-		do {
 
-			ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, verbose);
+		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, verbose);
 
-			boolean demo = false;
-			int diam = 10;
-			int timeout = 2000;
-			int[][] tabPunti = p20rmn_.automaticRoiPreparation3(imp1, diam,
-					timeout, demo);
-			dimPixel2 = ReadDicom.readDouble(ReadDicom.readSubstring(ReadDicom
-					.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
-			String slicePos = ReadDicom.readSubstring(ReadDicom
-					.readDicomParameter(imp1, MyConst.DICOM_IMAGE_POSITION), 3);
-			int nPunti = tabPunti.length;
+		int diam = 10;
+		int[][] tabPunti = p17rmn_.automaticRoiPreparation3(imp1, diam, silent,
+				timeout, demo);
+		if (tabPunti == null) {
+			imp1.show();
+			MyLog.waitHere("tabPunti==null");
+		}
+		dimPixel2 = ReadDicom
+				.readDouble(ReadDicom.readSubstring(ReadDicom
+						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
+						1));
+		String slicePos = ReadDicom.readSubstring(ReadDicom.readDicomParameter(
+				imp1, MyConst.DICOM_IMAGE_POSITION), 3);
+		int nPunti = tabPunti.length;
 
-			String[][] tabCodici = TableCode
-					.loadMultipleTable(MyConst.CODE_GROUP);
+		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
-			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-					imp1, tabCodici, VERSION, autoCalled);
-			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
-			String t1 = "TESTO";
-			String s2 = "coord_x";
-			String s3 = "coord_y";
-			String s4 = "dummy1";
-			String s5 = "dummy2";
-			String s6 = "dummy3";
-			String s7 = "dummy4";
+		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1,
+				tabCodici, VERSION, autoCalled);
+		rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+		String t1 = "TESTO";
+		String s2 = "coord_x";
+		String s3 = "coord_y";
+		String s4 = "dummy1";
+		String s5 = "dummy2";
+		String s6 = "dummy3";
+		String s7 = "dummy4";
 
-			rt.addLabel(t1, "ShiftCentrat");
-			rt.addValue(s2, UtilAyv.convertToDouble(slicePos));
-			String aux1 = "";
-			int aux2 = 0;
-			for (int i2 = 0; i2 < MyConst.P7_NUM_RODS; i2 = i2 + 2) {
-				aux2++;
-				aux1 = "Rod" + aux2 + "a";
-				rt.incrementCounter();
-				rt.addLabel(t1, aux1);
-				rt.addValue(s2, tabPunti[i2][0]);
-				rt.addValue(s3, tabPunti[i2][1]);
-				rt.addValue(s4, 0);
-				rt.addValue(s5, 0);
-				rt.addValue(s6, 0);
-				rt.addValue(s7, 0);
-				rt.incrementCounter();
-				aux1 = "Rod" + aux2 + "b";
-				rt.addLabel(t1, aux1);
-				rt.addValue(s2, tabPunti[i2 + 1][0]);
-				rt.addValue(s3, tabPunti[i2 + 1][1]);
-				rt.addValue(s4, 0);
-				rt.addValue(s5, 0);
-				rt.addValue(s6, 0);
-				rt.addValue(s7, 0);
-			}
-			aux2 = 0;
-			for (int i2 = MyConst.P7_NUM_RODS; i2 < MyConst.P7_TOTAL_NUM_POINTS; i2++) {
-				aux2++;
-				aux1 = "Cubo" + aux2;
-				rt.incrementCounter();
-				rt.addLabel(t1, aux1);
-				rt.addValue(s2, tabPunti[i2][0]);
-				rt.addValue(s3, tabPunti[i2][1]);
-			}
+		rt.addLabel(t1, "ShiftCentrat");
+		rt.addValue(s2, UtilAyv.convertToDouble(slicePos));
+		String aux1 = "";
+		int aux2 = 0;
+		for (int i2 = 0; i2 < MyConst.P7_NUM_RODS; i2 = i2 + 2) {
+			aux2++;
+			aux1 = "Rod" + aux2 + "a";
 			rt.incrementCounter();
-			rt.addLabel(t1, "Spacing");
-			rt.addValue(s2, dimPixel2);
-			if (verbose && !test)
-				rt.show("Results");
-			if (autoCalled && !test) {
-				accetta = MyMsg.accettaMenu();
+			rt.addLabel(t1, aux1);
+			rt.addValue(s2, tabPunti[i2][0]);
+			rt.addValue(s3, tabPunti[i2][1]);
+			rt.addValue(s4, 0);
+			rt.addValue(s5, 0);
+			rt.addValue(s6, 0);
+			rt.addValue(s7, 0);
+			rt.incrementCounter();
+			aux1 = "Rod" + aux2 + "b";
+			rt.addLabel(t1, aux1);
+			rt.addValue(s2, tabPunti[i2 + 1][0]);
+			rt.addValue(s3, tabPunti[i2 + 1][1]);
+			rt.addValue(s4, 0);
+			rt.addValue(s5, 0);
+			rt.addValue(s6, 0);
+			rt.addValue(s7, 0);
+		}
+		aux2 = 0;
+		for (int i2 = MyConst.P7_NUM_RODS; i2 < MyConst.P7_TOTAL_NUM_POINTS; i2++) {
+			aux2++;
+			aux1 = "Cubo" + aux2;
+			rt.incrementCounter();
+			rt.addLabel(t1, aux1);
+			rt.addValue(s2, tabPunti[i2][0]);
+			rt.addValue(s3, tabPunti[i2][1]);
+		}
+		rt.incrementCounter();
+		rt.addLabel(t1, "Spacing");
+		rt.addValue(s2, dimPixel2);
+		if (verbose && !test)
+			rt.show("Results");
 
-			} else {
-				if (!test) {
-					accetta = MyMsg.msgStandalone();
-				} else
-					accetta = test;
-			}
-		} while (!accetta);
 		return rt;
 	}
 
@@ -319,62 +352,138 @@ public class p17rmn_ implements PlugIn, Measurements {
 	 * @param timeout
 	 * @param demo
 	 */
-	public static Roi[] automaticRoiPreparation3(ImagePlus imp1, int diam2,
-			int timeout, boolean demo) {
+	public static int[][] automaticRoiPreparation3(ImagePlus imp1, int diam2,
+			boolean silent, int timeout, boolean demo) {
 
 		ImagePlus imp4 = imp1.duplicate();
 		ImagePlus imp5 = imp1.duplicate();
 		Overlay over1 = new Overlay();
-		imp4.setOverlay(over1);
-		Overlay over2 = new Overlay();
-		imp5.setOverlay(over2);
+		imp1.setOverlay(over1);
+		// Overlay over2 = new Overlay();
+		// imp5.setOverlay(over2);
+		double dimPixel = 0;
+		boolean verbose = false;
 
-		boolean noBlack = true;
-		boolean noWhite = false;
-		boolean doWhite = true;
-		boolean doSet = false;
-		boolean doLog = false;
 		int numRods1 = 36;
 		ImageWindow cw1 = null;
 		ImageWindow cw2 = null;
 
-		if (demo) {
-			UtilAyv.showImageMaximized(imp4);
-			MyLog.waitHere(listaMessaggi(0), debug, timeout);
+		// if (demo) {
+		// UtilAyv.showImageMaximized(imp4);
+		// MyLog.waitHere(listaMessaggi(0), debug, timeout);
+		// }
+
+		ResultsTable rt1 = new ResultsTable();
+
+		int pixelRepresentation = ReadDicom.readInt(ReadDicom
+				.readDicomParameter(imp1, MyConst.DICOM_PIXEL_REPRESENTATION));
+		// -------------------------------------------------------------------
+		// REMEMBER: PER USARE ANALYZE PARTICLES DOBBIAMO
+		// ANALIZZARE OGGETTI NERI SU SFONDO BIANCO
+		// dovrei ottenere per l'esterno 32 oggetti con area
+		// nel range tra 5.0 e 12.0 e per l'interno 4 oggetti
+		// altrimenti effettuerò il threshold manuale
+		// UTILIZZO 5 diverse strategie (in realtà sono un mix tra i settaggi di
+		// MyAutoThreshold e l'uso di invert
+		// -------------------------------------------------------------------
+
+		int[] trovati = new int[5];
+		int[] minArea = new int[5];
+		int[] maxArea = new int[5];
+
+		// creo anche un vettore di ImagePlus (non uno stack)
+		ImagePlus[] vetImp = new ImagePlus[5];
+		vetImp[0] = strategia0(imp4);
+		vetImp[1] = strategia1(imp4);
+		vetImp[2] = strategia2(imp4);
+		vetImp[3] = strategia3(imp4);
+		vetImp[4] = strategia4(imp4);
+		ResultsTable[] vetResults = new ResultsTable[5];
+		ResultsTable rtAux = null;
+		for (int i1 = 0; i1 < 5; i1++) {
+			rtAux = analisi(vetImp[i1], verbose, timeout);
+			vetResults[i1] = rtAux;
+			if (rtAux != null) {
+				trovati[i1] = rtAux.getCounter();
+				if (trovati[i1] > 1) {
+					double[] vetArea11 = rtAux.getColumnAsDoubles(rtAux
+							.getColumnIndex("Area"));
+					double[] lim11 = Tools.getMinMax(vetArea11);
+					minArea[i1] = (int) Math.floor(lim11[0]);
+					maxArea[i1] = (int) Math.ceil(lim11[1]);
+
+				} else {
+					// se la ResultsTable è lunga 0 scrivo tutti 0
+					minArea[i1] = 0;
+					maxArea[i1] = 0;
+				}
+			} else {
+				// se la ResultsTable è null scrivo tutti 0
+				trovati[i1] = 0;
+				minArea[i1] = 0;
+				maxArea[i1] = 0;
+			}
 		}
 
-		ImagePlus imp2 = MyAutoThreshold.threshold(imp4, "Mean", noBlack,
-				noWhite, doWhite, doSet, doLog);
+		// Analizzo i risultati, il primo che raggiunge l'obbiettivo viene
+		// accettato, senza guardare gli altri. Se non si trova niente di
+		// accettabile si passa il tutto all'AMANUENSE
+		//
+		int rodExt = 32;
+		int rodInt = 4;
+		int limMinArea = 5;
+		int limMaxArea = 12;
+		int strategiaOkExt = -1;
+		int strategiaOkInt = -1;
+		boolean trovatoExt = false;
+		boolean trovatoInt = false;
 
-		if (demo) {
-			UtilAyv.showImageMaximized(imp2);
-			MyLog.waitHere(listaMessaggi(2), debug, timeout);
+		for (int i1 = 0; i1 < trovati.length; i1++) {
+			MyLog.waitHere("trovati[" + i1 + "]= " + trovati[i1] + " minArea["
+					+ i1 + "]= " + minArea[i1] + " maxArea[" + i1 + "]= "
+					+ maxArea[i1]);
+
+			if ((trovati[i1] == rodExt) && (minArea[i1] >= limMinArea)
+					&& (maxArea[i1] <= limMaxArea) && !trovatoExt) {
+
+				strategiaOkExt = i1;
+				MyLog.waitHere("strategia ext= " + strategiaOkExt);
+				trovatoExt = true;
+			}
+			if ((trovati[i1] == rodInt) && (minArea[i1] >= limMinArea)
+					&& (maxArea[i1] <= limMaxArea) && !trovatoInt) {
+				MyLog.waitHere("trovati[" + i1 + "]= " + trovati[i1]
+						+ " minArea[" + i1 + "]= " + minArea[i1] + " maxArea["
+						+ i1 + "]= " + maxArea[i1]);
+
+				strategiaOkInt = i1;
+				MyLog.waitHere("strategia int= " + strategiaOkInt);
+				trovatoInt = true;
+			}
+
 		}
 
-		double dimPixel = ReadDicom
-				.readDouble(ReadDicom.readSubstring(ReadDicom
-						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
-						2));
-		int measCode = 512; // bounding rectangle
-		int oldMeasure = UtilAyv.setMeasure(measCode);
-		if (demo) {
-			IJ.run(imp2, "Analyze Particles...",
-					"size=2-30 circularity=0.3-1.00 show=Outlines exclude");
-			// String title = "Drawing of "+imp2.getShortTitle();
-			// MyLog.waitHere("title= "+title);
-			cw1 = WindowManager.getCurrentWindow();
-			cw1.maximize();
+		MyLog.waitHere("(strategiaOkExt= " + strategiaOkExt
+				+ " strategiaOkint= " + strategiaOkInt);
 
-			// "size=50-1000 circularity=0.1-1.00 show=Outlines display exclude summarize");
-		} else
-			IJ.run(imp2, "Analyze Particles...",
-					"size=2-30 circularity=0.3-1.00");
+		if (!trovatoExt) {
 
-		ResultsTable rt1 = ResultsTable.getResultsTable();
-		int xcol = rt1.getColumnIndex("BX");
-		int ycol = rt1.getColumnIndex("BY");
-		int wcol = rt1.getColumnIndex("Width");
-		int hcol = rt1.getColumnIndex("Height");
+			// threshold manuale
+		}
+
+		if (!trovatoInt) {
+			// threshold manuale
+		}
+
+		// ====================== centrale ==================
+
+		// ResultsTable rt1 = ResultsTable.getResultsTable();
+		if (rt1 == null) {
+			MyLog.waitHere("resultsTable==null");
+			return null;
+		}
+		int xcol = rt1.getColumnIndex("X");
+		int ycol = rt1.getColumnIndex("Y");
 
 		int num1 = rt1.getCounter();
 
@@ -382,39 +491,50 @@ public class p17rmn_ implements PlugIn, Measurements {
 			// UtilAyv.showImageMaximized(imp2);
 			MyLog.waitHere(listaMessaggi(6) + num1, debug, timeout);
 			cw1.close();
-			imp2.flush();
+			// imp2.flush();
 			UtilAyv.showImageMaximized(imp5);
 			imp5.updateAndRepaintWindow();
 			imp5.getWindow().toFront();
 			MyLog.waitHere(listaMessaggi(5) + " input ", debug, timeout);
 		}
-		ImagePlus imp3 = MyAutoThreshold.threshold(imp5, "Huang", noBlack,
-				noWhite, doWhite, doSet, doLog);
+
+		ImagePlus imp3 = null;
+		if (pixelRepresentation == 1) {
+			imp3 = strategia2(imp5);
+		} else if (pixelRepresentation == 0) {
+			imp3 = strategia3(imp5);
+		} else
+			MyLog.waitHere("parametro DICOM_PIXEL_REPRESENTATION con valore strano");
 
 		if (demo) {
 			UtilAyv.showImageMaximized(imp3);
 			MyLog.waitHere(listaMessaggi(2), debug, timeout);
 		}
 
-		IJ.run(imp3, "Invert", "");
-
 		if (demo) {
 			IJ.run(imp3, "Analyze Particles...",
-					"size=5-30 circularity=0.1-1.00 show=Outlines exclude");
+					"size=1-30 circularity=0.1-1.00 show=Outlines exclude");
 			cw2 = WindowManager.getCurrentWindow();
 			cw2.maximize();
 		} else
 			IJ.run(imp3, "Analyze Particles...",
-					"size=5-30 circularity=0.1-1.00");
+					"size=1-30 circularity=0.1-1.00 exclude");
 
 		if (demo) {
 			// MyLog.waitHere(listaMessaggi(3), debug, timeout);
 			rt1.show("Results");
 		}
 
-		int num2 = rt1.getCounter() - num1;
+		int num3 = rt1.getCounter();
+		int num2 = num3 - num1;
+
 		if (demo) {
 			MyLog.waitHere(listaMessaggi(6) + num2, debug, timeout);
+		}
+
+		if (rt1.getCounter() == 0) {
+			MyLog.waitHere("Results=0");
+			return null;
 		}
 
 		double[] vetX = rt1.getColumnAsDoubles(xcol);
@@ -423,49 +543,183 @@ public class p17rmn_ implements PlugIn, Measurements {
 		double[] vetY = rt1.getColumnAsDoubles(ycol);
 		// MyLog.logVector(vetY, "vetY");
 
-		double[] vetW = rt1.getColumnAsDoubles(wcol);
-		// MyLog.logVector(vetW, "vetW");
-
-		double[] vetH = rt1.getColumnAsDoubles(hcol);
-		// MyLog.logVector(vetH, "vetH");
-
 		// UtilAyv.showImageMaximized(imp1);
 		double[] vetx1 = new double[vetX.length];
 		double[] vety1 = new double[vetX.length];
 		for (int i1 = 0; i1 < vetX.length; i1++) {
-			vetx1[i1] = ((vetX[i1] + vetW[i1] / 2) / dimPixel) - diam2 / 2;
-			vety1[i1] = ((vetY[i1] + vetH[i1] / 2) / dimPixel) - diam2 / 2;
+			vetx1[i1] = vetX[i1] / dimPixel;
+			vety1[i1] = vetY[i1] / dimPixel;
 		}
 
 		Roi[] vetRoi = new Roi[vetX.length];
 		for (int i1 = 0; i1 < vetX.length; i1++) {
-			imp4.setRoi(new OvalRoi(vetx1[i1], vety1[i1], diam2, diam2));
-			vetRoi[i1] = imp4.getRoi();
-			imp4.getRoi().setStrokeColor(Color.green);
-			over1.addElement(imp4.getRoi());
+			imp1.setRoi(new OvalRoi(vetx1[i1] - diam2 / 2, vety1[i1] - diam2
+					/ 2, diam2, diam2));
+			vetRoi[i1] = imp1.getRoi();
+			imp1.getRoi().setStrokeColor(Color.green);
+			over1.addElement(imp1.getRoi());
 		}
+		imp1.deleteRoi();
+
+		int[] vetx2 = new int[vetx1.length];
+		int[] vety2 = new int[vetx1.length];
+		for (int i1 = 0; i1 < vetx1.length; i1++) {
+			vetx2[i1] = (int) Math.round(vetx1[i1]);
+			vety2[i1] = (int) Math.round(vety1[i1]);
+		}
+		imp1.setRoi(new PointRoi(vetx2, vety2, vetx1.length));
+
 		if (vetX.length != numRods1) {
-			if (demo)
-				cw2.close();
-			if (demo)
+			// if (cw2.running)
+			// cw2.close();
+			if (imp3 != null)
 				imp3.flush();
-			if (!demo)
-				UtilAyv.showImageMaximized(imp4);
-			imp4.updateAndDraw();
-			imp4.getWindow().toFront();
-			MyLog.waitHere(listaMessaggi(7), debug);
+			if (!imp1.isVisible())
+				UtilAyv.showImageMaximized(imp1);
+			imp1.getWindow().toFront();
+			IJ.setTool("multipoint");
+			MyLog.waitHere(listaMessaggi(7), debug, timeout);
+			MyLog.waitHere("Cliccare sulle RODS non selezionate, per annullare le RODS sbagliate,\n"
+					+ "cliccare sul puntino rosso mentre si tiene premuto ALT,\nalla fine premere OK");
 		}
 
-		if (demo) {
-			cw2.close();
-			imp3.flush();
+		if (demo || !silent) {
+			// if (cw2.running)
+			// cw2.close();
+			if (imp3 != null)
+				imp3.flush();
 			// imp3.close();
-			imp4.updateAndDraw();
-			imp4.getWindow().toFront();
-			MyLog.waitHere(listaMessaggi(4), debug, timeout);
+			if (!imp1.isVisible())
+				UtilAyv.showImageMaximized(imp1);
+			imp1.getWindow().toFront();
+			if (demo)
+				MyLog.waitHere(listaMessaggi(4), debug, timeout);
+			else
+				IJ.wait(2000);
 		}
 
-		return vetRoi;
+		if (vetx1.length == 0) {
+			MyLog.waitHere("lunghezza Results=0");
+			return null;
+		}
+
+		Polygon poli1 = imp1.getRoi().getPolygon();
+		int nPunti;
+		if (poli1 == null) {
+			nPunti = 0;
+		} else {
+			nPunti = poli1.npoints;
+		}
+
+		int[] xPoints = poli1.xpoints;
+		int[] yPoints = poli1.ypoints;
+		int[][] tabPunti = new int[nPunti][2];
+		for (int i1 = 0; i1 < nPunti; i1++) {
+			tabPunti[i1][0] = xPoints[i1];
+			tabPunti[i1][1] = yPoints[i1];
+		}
+		return tabPunti;
+	}
+
+	public static ImagePlus strategia0(ImagePlus imp1) {
+
+		boolean noBlack = true;
+		boolean noWhite = false;
+		boolean doWhite = true;
+		boolean doSet = false;
+		boolean doLog = false;
+
+		ImagePlus imp2 = MyAutoThreshold.threshold(imp1, "Mean", noBlack,
+				noWhite, doWhite, doSet, doLog);
+		imp2.setTitle("strategia1: Mean");
+		return imp2;
+	}
+
+	public static ImagePlus strategia1(ImagePlus imp1) {
+
+		boolean noBlack = true;
+		boolean noWhite = false;
+		boolean doWhite = true;
+		boolean doSet = false;
+		boolean doLog = false;
+
+		IJ.run(imp1, "Invert", "");
+		ImagePlus imp2 = MyAutoThreshold.threshold(imp1, "Li", noBlack,
+				noWhite, doWhite, doSet, doLog);
+		IJ.run(imp2, "Invert", "");
+		imp2.setTitle("strategia2: Invert+Li+Inver");
+		return imp2;
+	}
+
+	public static ImagePlus strategia2(ImagePlus imp1) {
+
+		boolean noBlack = true;
+		boolean noWhite = false;
+		boolean doWhite = true;
+		boolean doSet = false;
+		boolean doLog = false;
+
+		ImagePlus imp2 = MyAutoThreshold.threshold(imp1, "Mean", noBlack,
+				noWhite, doWhite, doSet, doLog);
+		IJ.run(imp2, "Invert", "");
+		imp2.setTitle("strategia3: Mean+Invert");
+		return imp2;
+	}
+
+	public static ImagePlus strategia3(ImagePlus imp1) {
+
+		boolean noBlack = false;
+		boolean noWhite = false;
+		boolean doWhite = true;
+		boolean doSet = false;
+		boolean doLog = false;
+
+		ImagePlus imp2 = MyAutoThreshold.threshold(imp1, "Huang", noBlack,
+				noWhite, doWhite, doSet, doLog);
+		IJ.run(imp2, "Invert", "");
+		imp2.setTitle("strategia1: Hunag+Invert");
+		return imp2;
+	}
+
+	public static ImagePlus strategia4(ImagePlus imp1) {
+
+		boolean noBlack = false;
+		boolean noWhite = false;
+		boolean doWhite = false;
+		boolean doSet = false;
+		boolean doLog = false;
+
+		ImagePlus imp2 = MyAutoThreshold.threshold(imp1, "Huang", noBlack,
+				noWhite, doWhite, doSet, doLog);
+		IJ.run(imp2, "Invert", "");
+		imp2.setTitle("strategia1: Hunag+Invert");
+		return imp2;
+	}
+
+	public static ResultsTable analisi(ImagePlus imp1, boolean verbose,
+			int timeout) {
+		int options = ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES
+				+ ParticleAnalyzer.SHOW_OUTLINES;
+		int measurements = Measurements.CENTER_OF_MASS + Measurements.AREA;
+		double minSize = 0.;
+		double maxSize = 100;
+		double minCirc = 0;
+		double maxCirc = 1;
+		ResultsTable rt0 = new ResultsTable();
+
+		ParticleAnalyzer pa1 = new ParticleAnalyzer(options, measurements, rt0,
+				minSize, maxSize, minCirc, maxCirc);
+		pa1.setHideOutputImage(true);
+		boolean ok = pa1.analyze(imp1);
+		if (verbose) {
+			ImagePlus imp100 = pa1.getOutputImage();
+			rt0.show("Results");
+			UtilAyv.showImageMaximized(imp100);
+			MyLog.waitHere("Oggetti trovati", debug, timeout);
+			imp100.close();
+		}
+		return rt0;
+
 	}
 
 	public void overlayRodNumbers(ImagePlus imp1, int diamRoi, boolean verbose) {
@@ -596,6 +850,32 @@ public class p17rmn_ implements PlugIn, Measurements {
 		IJ.showMessage("--- A T T E N Z I O N E ---",
 				"Sono stati selezionati solo " + nPunti
 						+ " anzichè 36  punti,\n--- R I F A R E ---");
+	}
+
+	/**
+	 * Siemens test image expected results
+	 * 
+	 * @return
+	 */
+	/**
+	 * Siemens test image expected results
+	 * 
+	 * @return
+	 */
+	static int[][] referenceSiemens() {
+
+		int[][] vetReference = { { 3, 0 }, { 257, 86 }, { 252, 105 },
+				{ 384, 138 }, { 123, 139 }, { 127, 156 }, { 380, 157 },
+				{ 254, 177 }, { 253, 196 }, { 189, 203 }, { 317, 203 },
+				{ 189, 222 }, { 318, 222 }, { 90, 267 }, { 171, 267 },
+				{ 334, 267 }, { 417, 267 }, { 88, 286 }, { 170, 287 },
+				{ 335, 286 }, { 417, 286 }, { 315, 331 }, { 187, 332 },
+				{ 189, 351 }, { 317, 351 }, { 251, 358 }, { 252, 377 },
+				{ 124, 397 }, { 381, 397 }, { 380, 414 }, { 124, 416 },
+				{ 251, 448 }, { 252, 467 }, { 256, 247 }, { 223, 279 },
+				{ 288, 282 }, { 254, 313 }, { 0, 0 } };
+
+		return vetReference;
 	}
 
 	/**
