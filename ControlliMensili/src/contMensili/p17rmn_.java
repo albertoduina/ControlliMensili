@@ -14,6 +14,7 @@ import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import ij.plugin.filter.ParticleAnalyzer;
 import ij.plugin.frame.RoiManager;
+import ij.process.ImageProcessor;
 import ij.util.Tools;
 
 import java.awt.Color;
@@ -425,13 +426,18 @@ public class p17rmn_ implements PlugIn, Measurements {
 			}
 		}
 
+		MyLog.logVector(trovati, "trovati");
+		MyLog.logVector(minArea, "minArea");
+		MyLog.logVector(maxArea, "maxArea");
+		MyLog.waitHere();
+
 		// Analizzo i risultati, il primo che raggiunge l'obbiettivo viene
 		// accettato, senza guardare gli altri. Se non si trova niente di
 		// accettabile si passa il tutto all'AMANUENSE
 		//
 		int rodExt = 32;
 		int rodInt = 4;
-		int limMinArea = 5;
+		int limMinArea = 3;
 		int limMaxArea = 12;
 		int strategiaOkExt = -1;
 		int strategiaOkInt = -1;
@@ -439,25 +445,15 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean trovatoInt = false;
 
 		for (int i1 = 0; i1 < trovati.length; i1++) {
-			MyLog.waitHere("trovati[" + i1 + "]= " + trovati[i1] + " minArea["
-					+ i1 + "]= " + minArea[i1] + " maxArea[" + i1 + "]= "
-					+ maxArea[i1]);
 
 			if ((trovati[i1] == rodExt) && (minArea[i1] >= limMinArea)
 					&& (maxArea[i1] <= limMaxArea) && !trovatoExt) {
-
 				strategiaOkExt = i1;
-				MyLog.waitHere("strategia ext= " + strategiaOkExt);
 				trovatoExt = true;
 			}
 			if ((trovati[i1] == rodInt) && (minArea[i1] >= limMinArea)
 					&& (maxArea[i1] <= limMaxArea) && !trovatoInt) {
-				MyLog.waitHere("trovati[" + i1 + "]= " + trovati[i1]
-						+ " minArea[" + i1 + "]= " + minArea[i1] + " maxArea["
-						+ i1 + "]= " + maxArea[i1]);
-
 				strategiaOkInt = i1;
-				MyLog.waitHere("strategia int= " + strategiaOkInt);
 				trovatoInt = true;
 			}
 
@@ -621,19 +617,76 @@ public class p17rmn_ implements PlugIn, Measurements {
 		return tabPunti;
 	}
 
+	/***
+	 * La strategia 0 è dedicata al circolo esterno di rods nelle macchine
+	 * Siemens
+	 * 
+	 * @param imp1
+	 * @return
+	 */
 	public static ImagePlus strategia0(ImagePlus imp1) {
 
 		boolean noBlack = true;
-		boolean noWhite = false;
-		boolean doWhite = true;
+		boolean noWhite = true;
+		boolean doWhite = false;
 		boolean doSet = false;
 		boolean doLog = false;
 
-		ImagePlus imp2 = MyAutoThreshold.threshold(imp1, "Mean", noBlack,
+		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Mean", noBlack,
 				noWhite, doWhite, doSet, doLog);
-		imp2.setTitle("strategia1: Mean");
-		return imp2;
+		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
+		// riempirò l'esterno di nero
+		int minSizePixels = 10000;
+		int maxSizePixels = 300000;
+		Roi roi0 = analisi0(imp12, minSizePixels, maxSizePixels);
+		if (roi0 == null)
+			MyLog.waitHere("roi0==null");
+		ImagePlus imp2 = imp12.duplicate();
+		ImageProcessor ip2 = imp2.getProcessor();
+		ip2.setColor(Color.BLACK);
+		ip2.fillOutside(roi0);
+		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
+		// riempirò l'interno di nero
+		ip2.invert();
+		minSizePixels = 1000;
+		maxSizePixels = 30000;
+		Roi roi1 = analisi0(imp2, minSizePixels, maxSizePixels);
+		if (roi1 == null)
+			MyLog.waitHere("roi1==null");
+		ImagePlus imp112 = imp2.duplicate();
+		ImageProcessor ip112 = imp112.getProcessor();
+		ip112.setColor(Color.WHITE);
+		ip112.fill(roi1);
+		return imp112;
 	}
+
+	public static Roi analisi0(ImagePlus imp1, int minSizePixel,
+			int maxSizePixel) {
+		int options = ParticleAnalyzer.SHOW_OUTLINES
+				+ ParticleAnalyzer.ADD_TO_MANAGER;
+		int measurements = 0;
+		ResultsTable rt0 = new ResultsTable();
+		RoiManager rm0 = new RoiManager(false);
+		ParticleAnalyzer pa1 = new ParticleAnalyzer(options, measurements, rt0,
+				minSizePixel, maxSizePixel);
+		ParticleAnalyzer.setRoiManager(rm0);
+		pa1.setHideOutputImage(true);
+		pa1.analyze(imp1);
+		if (rm0.getCount() == 1) {
+			Roi[] vetRoi = rm0.getRoisAsArray();
+			Roi roi0 = vetRoi[0];
+			return roi0;
+		} else
+			return null;
+	}
+
+	/***
+	 * La strategia 1 è dedicata al circolo interno di rods nelle macchine
+	 * Siemens
+	 * 
+	 * @param imp1
+	 * @return
+	 */
 
 	public static ImagePlus strategia1(ImagePlus imp1) {
 
