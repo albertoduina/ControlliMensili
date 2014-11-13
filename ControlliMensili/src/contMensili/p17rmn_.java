@@ -266,7 +266,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		ResultsTable rt = null;
 		double dimPixel2 = 0;
-		;
+		MyLog.waitHere("mainWarp " + path1);
 
 		// --------------------------------------------------------------------------------------/
 		// Qui si torna se la misura è da rifare
@@ -280,6 +280,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		if (tabPunti == null) {
 			imp1.show();
 			MyLog.waitHere("tabPunti==null");
+			return null;
 		}
 		dimPixel2 = ReadDicom
 				.readDouble(ReadDicom.readSubstring(ReadDicom
@@ -358,27 +359,24 @@ public class p17rmn_ implements PlugIn, Measurements {
 			boolean silent, int timeout, boolean demo) {
 
 		ImagePlus imp4 = imp1.duplicate();
-		ImagePlus imp5 = imp1.duplicate();
 		Overlay over1 = new Overlay();
 		imp1.setOverlay(over1);
 		// Overlay over2 = new Overlay();
 		// imp5.setOverlay(over2);
-		double dimPixel = 0;
-		boolean verbose = false;
+		boolean verbose = true;
 
 		int numRods1 = 36;
-		ImageWindow cw1 = null;
-		ImageWindow cw2 = null;
 
 		// if (demo) {
 		// UtilAyv.showImageMaximized(imp4);
 		// MyLog.waitHere(listaMessaggi(0), debug, timeout);
 		// }
 
-		ResultsTable rt1 = new ResultsTable();
+		double dimPixel = ReadDicom
+				.readDouble(ReadDicom.readSubstring(ReadDicom
+						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
+						1));
 
-		int pixelRepresentation = ReadDicom.readInt(ReadDicom
-				.readDicomParameter(imp1, MyConst.DICOM_PIXEL_REPRESENTATION));
 		// -------------------------------------------------------------------
 		// REMEMBER: PER USARE ANALYZE PARTICLES DOBBIAMO
 		// ANALIZZARE OGGETTI NERI SU SFONDO BIANCO
@@ -389,20 +387,31 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// MyAutoThreshold e l'uso di invert
 		// -------------------------------------------------------------------
 
-		int[] trovati = new int[5];
-		int[] minArea = new int[5];
-		int[] maxArea = new int[5];
+		int[] trovati = new int[3];
+		int[] minArea = new int[3];
+		int[] maxArea = new int[3];
 
 		// creo anche un vettore di ImagePlus (non uno stack)
-		ImagePlus[] vetImp = new ImagePlus[5];
-		vetImp[0] = strategia0(imp4);
-		vetImp[1] = strategia1(imp4);
-		vetImp[2] = strategia2(imp4);
-		vetImp[3] = strategia3(imp4);
-		vetImp[4] = strategia4(imp4);
-		ResultsTable[] vetResults = new ResultsTable[5];
+		ImagePlus[] vetImp = new ImagePlus[3];
+
+		// per prima cosa effettuo il threshold "SIEMENS"
+
+		UtilAyv.showImageMaximized(imp1);
+		vetImp[0] = strategiaSIEMENS(imp4);
+		UtilAyv.showImageMaximized(vetImp[0]);
+		vetImp[1] = strategiaHITACHI(imp4);
+		UtilAyv.showImageMaximized(vetImp[1]);
+		vetImp[2] = strategiaGEMS(imp4);
+		UtilAyv.showImageMaximized(vetImp[2]);
+		MyLog.waitHere();
+
+		ImagePlus impX1 = null;
+		ResultsTable[] vetResults = new ResultsTable[vetImp.length];
 		ResultsTable rtAux = null;
-		for (int i1 = 0; i1 < 5; i1++) {
+		for (int i1 = 0; i1 < vetImp.length; i1++) {
+			impX1 = vetImp[i1];
+			if (impX1 == null)
+				continue;
 			rtAux = analisi(vetImp[i1], verbose, timeout);
 			vetResults[i1] = rtAux;
 			if (rtAux != null) {
@@ -427,118 +436,44 @@ public class p17rmn_ implements PlugIn, Measurements {
 			}
 		}
 
-		MyLog.logVector(trovati, "trovati");
-		MyLog.logVector(minArea, "minArea");
-		MyLog.logVector(maxArea, "maxArea");
-		MyLog.waitHere();
+		// MyLog.logVector(trovati, "trovati");
+		// MyLog.logVector(minArea, "minArea");
+		// MyLog.logVector(maxArea, "maxArea");
+		// MyLog.waitHere();
 
 		// Analizzo i risultati, il primo che raggiunge l'obbiettivo viene
 		// accettato, senza guardare gli altri. Se non si trova niente di
 		// accettabile si passa il tutto all'AMANUENSE
 		//
-		int rodExt = 32;
-		int rodInt = 4;
-		int limMinArea = 3;
-		int limMaxArea = 12;
-		int strategiaOkExt = -1;
-		int strategiaOkInt = -1;
-		boolean trovatoExt = false;
-		boolean trovatoInt = false;
+		int rodTot = 36;
+		ResultsTable rt1 = null;
 
 		for (int i1 = 0; i1 < trovati.length; i1++) {
-
-			if ((trovati[i1] == rodExt) && (minArea[i1] >= limMinArea)
-					&& (maxArea[i1] <= limMaxArea) && !trovatoExt) {
-				strategiaOkExt = i1;
-				trovatoExt = true;
+			if ((trovati[i1] > rodTot - 5 && trovati[i1] < rodTot + 5)) {
+				rt1 = vetResults[i1];
+				break;
 			}
-			if ((trovati[i1] == rodInt) && (minArea[i1] >= limMinArea)
-					&& (maxArea[i1] <= limMaxArea) && !trovatoInt) {
-				strategiaOkInt = i1;
-				trovatoInt = true;
-			}
-
 		}
 
-		MyLog.waitHere("(strategiaOkExt= " + strategiaOkExt
-				+ " strategiaOkint= " + strategiaOkInt);
-
-		if (!trovatoExt) {
-
+		if (rt1 == null) {
 			// threshold manuale
-		}
-
-		if (!trovatoInt) {
-			// threshold manuale
+			MyLog.waitHere("funzionamento manuale");
 		}
 
 		// ====================== centrale ==================
 
-		// ResultsTable rt1 = ResultsTable.getResultsTable();
-		if (rt1 == null) {
-			MyLog.waitHere("resultsTable==null");
-			return null;
-		}
-		int xcol = rt1.getColumnIndex("X");
-		int ycol = rt1.getColumnIndex("Y");
+		// rt1.show("Results");
+		// MyLog.waitHere();
 
-		int num1 = rt1.getCounter();
-
-		if (demo) {
-			// UtilAyv.showImageMaximized(imp2);
-			MyLog.waitHere(listaMessaggi(6) + num1, debug, timeout);
-			cw1.close();
-			// imp2.flush();
-			UtilAyv.showImageMaximized(imp5);
-			imp5.updateAndRepaintWindow();
-			imp5.getWindow().toFront();
-			MyLog.waitHere(listaMessaggi(5) + " input ", debug, timeout);
-		}
-
-		ImagePlus imp3 = null;
-		if (pixelRepresentation == 1) {
-			imp3 = strategia2(imp5);
-		} else if (pixelRepresentation == 0) {
-			imp3 = strategia3(imp5);
-		} else
-			MyLog.waitHere("parametro DICOM_PIXEL_REPRESENTATION con valore strano");
-
-		if (demo) {
-			UtilAyv.showImageMaximized(imp3);
-			MyLog.waitHere(listaMessaggi(2), debug, timeout);
-		}
-
-		if (demo) {
-			IJ.run(imp3, "Analyze Particles...",
-					"size=1-30 circularity=0.1-1.00 show=Outlines exclude");
-			cw2 = WindowManager.getCurrentWindow();
-			cw2.maximize();
-		} else
-			IJ.run(imp3, "Analyze Particles...",
-					"size=1-30 circularity=0.1-1.00 exclude");
-
-		if (demo) {
-			// MyLog.waitHere(listaMessaggi(3), debug, timeout);
-			rt1.show("Results");
-		}
-
-		int num3 = rt1.getCounter();
-		int num2 = num3 - num1;
-
-		if (demo) {
-			MyLog.waitHere(listaMessaggi(6) + num2, debug, timeout);
-		}
-
-		if (rt1.getCounter() == 0) {
-			MyLog.waitHere("Results=0");
-			return null;
-		}
+		int xcol = rt1.getColumnIndex("XM");
+		int ycol = rt1.getColumnIndex("YM");
 
 		double[] vetX = rt1.getColumnAsDoubles(xcol);
 		// MyLog.logVector(vetX, "vetX");
 
 		double[] vetY = rt1.getColumnAsDoubles(ycol);
 		// MyLog.logVector(vetY, "vetY");
+		// MyLog.waitHere();
 
 		// UtilAyv.showImageMaximized(imp1);
 		double[] vetx1 = new double[vetX.length];
@@ -569,8 +504,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 		if (vetX.length != numRods1) {
 			// if (cw2.running)
 			// cw2.close();
-			if (imp3 != null)
-				imp3.flush();
+			// if (imp3 != null)
+			// imp3.flush();
 			if (!imp1.isVisible())
 				UtilAyv.showImageMaximized(imp1);
 			imp1.getWindow().toFront();
@@ -583,8 +518,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 		if (demo || !silent) {
 			// if (cw2.running)
 			// cw2.close();
-			if (imp3 != null)
-				imp3.flush();
+			// if (imp3 != null)
+			// imp3.flush();
 			// imp3.close();
 			if (!imp1.isVisible())
 				UtilAyv.showImageMaximized(imp1);
@@ -618,6 +553,39 @@ public class p17rmn_ implements PlugIn, Measurements {
 		return tabPunti;
 	}
 
+	public static ImagePlus strategiaSIEMENS(ImagePlus imp1) {
+		if (imp1 == null) {
+			MyLog.waitHere();
+			return null;
+		}
+		ImagePlus imp2 = p17rmn_.strategia0(imp1);
+		ImagePlus imp3 = p17rmn_.strategia1(imp1);
+		ImagePlus imp4 = p17rmn_.combina(imp2, imp3);
+		return imp4;
+	}
+
+	public static ImagePlus strategiaHITACHI(ImagePlus imp1) {
+		if (imp1 == null) {
+			MyLog.waitHere();
+			return null;
+		}
+		ImagePlus imp2 = p17rmn_.strategia4(imp1);
+		ImagePlus imp3 = p17rmn_.strategia1(imp1);
+		ImagePlus imp4 = p17rmn_.combina(imp2, imp3);
+		return imp4;
+	}
+
+	public static ImagePlus strategiaGEMS(ImagePlus imp1) {
+		if (imp1 == null) {
+			MyLog.waitHere();
+			return null;
+		}
+		ImagePlus imp2 = p17rmn_.strategia0(imp1);
+		ImagePlus imp3 = p17rmn_.strategia1(imp1);
+		ImagePlus imp4 = p17rmn_.combina(imp2, imp3);
+		return imp4;
+	}
+
 	/***
 	 * La strategia 0 è dedicata al circolo esterno di rods nelle macchine
 	 * Siemens
@@ -640,8 +608,13 @@ public class p17rmn_ implements PlugIn, Measurements {
 		int minSizePixels = 10000;
 		int maxSizePixels = 300000;
 		Roi roi0 = analisi0(imp12, minSizePixels, maxSizePixels);
-		if (roi0 == null)
+
+		if (roi0 == null) {
+			UtilAyv.showImageMaximized(imp1);
+			UtilAyv.showImageMaximized(imp12);
 			MyLog.waitHere("roi0==null");
+			return null;
+		}
 		ImagePlus imp2 = imp12.duplicate();
 		ImageProcessor ip2 = imp2.getProcessor();
 		ip2.setColor(Color.BLACK);
@@ -651,9 +624,15 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ip2.invert();
 		minSizePixels = 1000;
 		maxSizePixels = 30000;
+
 		Roi roi1 = analisi0(imp2, minSizePixels, maxSizePixels);
-		if (roi1 == null)
-			MyLog.waitHere("roi1==null");
+
+		if (roi1 == null) {
+			UtilAyv.showImageMaximized(imp1);
+			UtilAyv.showImageMaximized(imp2);
+			MyLog.waitHere("roi0==null");
+			return null;
+		}
 		ImagePlus imp112 = imp2.duplicate();
 		ImageProcessor ip112 = imp112.getProcessor();
 		ip112.setColor(Color.WHITE);
@@ -707,8 +686,10 @@ public class p17rmn_ implements PlugIn, Measurements {
 		int minSizePixels = 1000;
 		int maxSizePixels = 30000;
 		Roi roi1 = analisi0(imp12, minSizePixels, maxSizePixels);
-		if (roi1 == null)
+		if (roi1 == null) {
 			MyLog.waitHere("roi1==null");
+			return null;
+		}
 		ImagePlus imp112 = imp12.duplicate();
 		ImageProcessor ip112 = imp112.getProcessor();
 		ip112.setColor(Color.BLACK);
@@ -716,10 +697,16 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// IJ.run(imp112, "Invert", "");
 
 		imp112.setTitle("strategia2: Li+Invert");
+		if (imp112 == null)
+			MyLog.waitHere("imp112 == null");
 		return imp112;
 	}
 
 	public static ImagePlus combina(ImagePlus imp1, ImagePlus imp2) {
+		if (imp1 == null)
+			return null;
+		if (imp2 == null)
+			return null;
 		ImageCalculator ic1 = new ImageCalculator();
 		ImagePlus imp3 = ic1.run("OR create", imp1, imp2);
 		IJ.run(imp3, "Invert", "");
@@ -764,7 +751,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean doSet = false;
 		boolean doLog = false;
 
-		ImagePlus imp11= imp1.duplicate();
+		ImagePlus imp11 = imp1.duplicate();
 		IJ.run(imp11, "Invert", "");
 		ImagePlus imp2 = MyAutoThreshold.threshold(imp11, "Li", noBlack,
 				noWhite, doWhite, doSet, doLog);
@@ -776,7 +763,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		int maxSizePixels = 300000;
 		Roi roi0 = analisi0(imp2, minSizePixels, maxSizePixels);
 		if (roi0 == null)
-			MyLog.waitHere("roi0==null");
+			return null;
 		ImagePlus imp12 = imp2.duplicate();
 		ImageProcessor ip12 = imp12.getProcessor();
 		ip12.setColor(Color.BLACK);
