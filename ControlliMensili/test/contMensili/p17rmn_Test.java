@@ -30,47 +30,44 @@ public class p17rmn_Test {
 	public final void testAutomaticRoiPreparationTest1_SIEMENS() {
 
 		String path1 = ".\\Test2\\HWSA_testP7";
-		
+
 		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, false);
 		boolean demo = true;
-		boolean silent= false;
+		boolean silent = false;
 		int diam = 10;
 		int timeout = 2000;
-		int[][] pippo = p17rmn_.automaticRoiPreparation3(imp1, diam, silent, timeout,
-				demo);
+		int[][] pippo = p17rmn_.automaticRoiPreparation3(imp1, diam, silent,
+				timeout, demo);
 
 		MyLog.waitHere();
 
 	}
-	
+
 	@Test
 	public final void testAutomaticRoiPreparationTest_HITACHI() {
 
 		String path1 = ".\\Test2\\HWSA3";
-		
+
 		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, false);
 		boolean demo = true;
-		boolean silent= false;
+		boolean silent = false;
 		int diam = 10;
 		int timeout = 2000;
-		int[][] pippo = p17rmn_.automaticRoiPreparation3(imp1, diam, silent, timeout,
-				demo);
+		int[][] pippo = p17rmn_.automaticRoiPreparation3(imp1, diam, silent,
+				timeout, demo);
 
 		MyLog.waitHere();
 
 	}
-	
 
-	
 	@Test
 	public final void testStrategia0() {
 
 		String path1 = ".\\Test2\\HWSA_testP7";
 		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		ImagePlus imp2= p17rmn_.strategia0(imp1);
+		ImagePlus imp2 = p17rmn_.strategia0(imp1);
 		UtilAyv.showImageMaximized(imp2);
 		MyLog.waitHere();
-
 	}
 
 	@Test
@@ -78,37 +75,83 @@ public class p17rmn_Test {
 
 		String path1 = ".\\Test2\\HWSA_testP7";
 		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		ImagePlus imp2= p17rmn_.strategia1(imp1);
+		ImagePlus imp2 = p17rmn_.strategia1(imp1);
+		UtilAyv.showImageMaximized(imp2);
+		MyLog.waitHere();
+	}
+	
+	@Test
+	public final void testStrategia2() {
+
+		String path1 = ".\\Test2\\HWSA2";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		ImagePlus imp2 = p17rmn_.strategia1(imp1);
 		UtilAyv.showImageMaximized(imp2);
 		MyLog.waitHere();
 
 	}
+
 	
-	
+
+	@Test
+	public final void testStrategiaSiemens() {
+
+		String path1 = ".\\Test2\\HWSA_testP7";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		ImagePlus imp2 = p17rmn_.strategia0(imp1);
+		ImagePlus imp3 = p17rmn_.strategia1(imp1);
+		ImagePlus imp4 =  p17rmn_.combina(imp2, imp3);
+		
+		UtilAyv.showImageMaximized(imp4);
+		MyLog.waitHere();
+
+	}
 	
 	@Test
-	public final void testAutomaticRoiPreparation_GE() {
+	public final void testStrategiaEsine() {
 
 		String path1 = ".\\Test2\\HWSA2";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		ImagePlus imp2 = p17rmn_.strategia0(imp1);
+		ImagePlus imp3 = p17rmn_.strategia1(imp1);
+		ImagePlus imp4 =  p17rmn_.combina(imp2, imp3);
 		
-		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, false);
-		boolean demo = true;
-		boolean silent= false;
-		int diam = 10;
-		int timeout = 2000;
-		int[][] pippo = p17rmn_.automaticRoiPreparation3(imp1, diam, silent, timeout,
-				demo);
-
+		UtilAyv.showImageMaximized(imp4);
 		MyLog.waitHere();
 
 	}
 
+	@Test
+	public final void testStrategiaDesenzano() {
+
+		String path1 = ".\\Test2\\HWSA3";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		ImagePlus imp2 = p17rmn_.strategia4(imp1);
+		ImagePlus imp3 = p17rmn_.strategia1(imp1);
+		ImagePlus imp4 =  p17rmn_.combina(imp2, imp3);
+		
+		UtilAyv.showImageMaximized(imp4);
+		MyLog.waitHere();
+
+	}
 	
-	
-	
-	
-	
-	
+
+	@Test
+	public final void testAutomaticRoiPreparation_GE() {
+
+		String path1 = ".\\Test2\\HWSA2";
+
+		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, false);
+		boolean demo = true;
+		boolean silent = false;
+		int diam = 10;
+		int timeout = 2000;
+		int[][] pippo = p17rmn_.automaticRoiPreparation3(imp1, diam, silent,
+				timeout, demo);
+
+		MyLog.waitHere();
+
+	}
 
 	@Test
 	public final void testMainWarpFast() {
@@ -126,8 +169,8 @@ public class p17rmn_Test {
 		boolean verbose = false;
 		int timeout = 3000;
 
-		ResultsTable rt1 = p17rmn_.mainWarp(path1, autoCalled, step, silent, verbose,
-				test, demo, timeout);
+		ResultsTable rt1 = p17rmn_.mainWarp(path1, autoCalled, step, silent,
+				verbose, test, demo, timeout);
 		int[][] vetResults = UtilAyv.vectorizeResults2(rt1);
 		int[][] vetReference = p17rmn_.referenceSiemens();
 		boolean ok = UtilAyv.verifyResults3(vetResults, vetReference);

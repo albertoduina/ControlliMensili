@@ -11,6 +11,7 @@ import ij.gui.PointRoi;
 import ij.gui.Roi;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
+import ij.plugin.ImageCalculator;
 import ij.plugin.PlugIn;
 import ij.plugin.filter.ParticleAnalyzer;
 import ij.plugin.frame.RoiManager;
@@ -657,6 +658,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ImageProcessor ip112 = imp112.getProcessor();
 		ip112.setColor(Color.WHITE);
 		ip112.fill(roi1);
+		IJ.run(imp112, "Invert", "");
+
 		return imp112;
 	}
 
@@ -696,12 +699,31 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean doSet = false;
 		boolean doLog = false;
 
-		IJ.run(imp1, "Invert", "");
-		ImagePlus imp2 = MyAutoThreshold.threshold(imp1, "Li", noBlack,
+		// IJ.run(imp1, "Invert", "");
+		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Li", noBlack,
 				noWhite, doWhite, doSet, doLog);
-		IJ.run(imp2, "Invert", "");
-		imp2.setTitle("strategia2: Invert+Li+Inver");
-		return imp2;
+		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
+		// riempirò l'esterno di nero
+		int minSizePixels = 1000;
+		int maxSizePixels = 30000;
+		Roi roi1 = analisi0(imp12, minSizePixels, maxSizePixels);
+		if (roi1 == null)
+			MyLog.waitHere("roi1==null");
+		ImagePlus imp112 = imp12.duplicate();
+		ImageProcessor ip112 = imp112.getProcessor();
+		ip112.setColor(Color.BLACK);
+		ip112.fillOutside(roi1);
+		// IJ.run(imp112, "Invert", "");
+
+		imp112.setTitle("strategia2: Li+Invert");
+		return imp112;
+	}
+
+	public static ImagePlus combina(ImagePlus imp1, ImagePlus imp2) {
+		ImageCalculator ic1 = new ImageCalculator();
+		ImagePlus imp3 = ic1.run("OR create", imp1, imp2);
+		IJ.run(imp3, "Invert", "");
+		return imp3;
 	}
 
 	public static ImagePlus strategia2(ImagePlus imp1) {
@@ -742,11 +764,37 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean doSet = false;
 		boolean doLog = false;
 
-		ImagePlus imp2 = MyAutoThreshold.threshold(imp1, "Huang", noBlack,
+		ImagePlus imp11= imp1.duplicate();
+		IJ.run(imp11, "Invert", "");
+		ImagePlus imp2 = MyAutoThreshold.threshold(imp11, "Li", noBlack,
 				noWhite, doWhite, doSet, doLog);
 		IJ.run(imp2, "Invert", "");
-		imp2.setTitle("strategia1: Hunag+Invert");
-		return imp2;
+		imp2.setTitle("strategia1: Invert+Li+Invert");
+		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
+		// riempirò l'esterno di nero
+		int minSizePixels = 10000;
+		int maxSizePixels = 300000;
+		Roi roi0 = analisi0(imp2, minSizePixels, maxSizePixels);
+		if (roi0 == null)
+			MyLog.waitHere("roi0==null");
+		ImagePlus imp12 = imp2.duplicate();
+		ImageProcessor ip12 = imp12.getProcessor();
+		ip12.setColor(Color.BLACK);
+		ip12.fillOutside(roi0);
+		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
+		// riempirò l'interno di nero
+		ip12.invert();
+		minSizePixels = 1000;
+		maxSizePixels = 30000;
+		Roi roi1 = analisi0(imp12, minSizePixels, maxSizePixels);
+		if (roi1 == null)
+			MyLog.waitHere("roi1==null");
+		ImagePlus imp112 = imp12.duplicate();
+		ImageProcessor ip112 = imp112.getProcessor();
+		ip112.setColor(Color.WHITE);
+		ip112.fill(roi1);
+		IJ.run(imp112, "Invert", "");
+		return imp112;
 	}
 
 	public static ResultsTable analisi(ImagePlus imp1, boolean verbose,
