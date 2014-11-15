@@ -61,9 +61,19 @@ public class p17rmn_Test {
 	}
 
 	@Test
-	public final void testStrategia0() {
+	public final void testNuovaStrategia() {
 
 		String path1 = ".\\Test2\\HWSA_testP7";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		ImagePlus imp2 = p17rmn_.nuovaStrategia(imp1);
+		MyLog.waitHere();
+	}
+
+	@Test
+	public final void testStrategia0() {
+
+//		String path1 = ".\\Test2\\HWSA_testP7";
+		String path1 = "C:\\Dati\\_____P17\\29_71193075_HE1-4_HWSA_";
 		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
 		ImagePlus imp2 = p17rmn_.strategia0(imp1);
 		UtilAyv.showImageMaximized(imp2);
@@ -79,31 +89,47 @@ public class p17rmn_Test {
 		UtilAyv.showImageMaximized(imp2);
 		MyLog.waitHere();
 	}
-	
+
 	@Test
 	public final void testStrategia2() {
 
-		String path1 = ".\\Test2\\HWSA2";
+//		String path1 = ".\\Test2\\HWSA2";
+		String path1 = "C:\\Dati\\_____P17\\FALLATA\\21_DESENZANO2_MISS_HWSA3";
+		
 		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		ImagePlus imp2 = p17rmn_.strategia1(imp1);
+		ImagePlus imp2 = p17rmn_.strategia2(imp1);
+		UtilAyv.showImageMaximized(imp2);
+		MyLog.waitHere();
+
+	}
+
+	@Test
+	public final void testStrategia5() {
+
+//		String path1 = "C:\\Dati\\_____P17\\DESENZANO\\NUOVA\\Series_22_HWSA3-2MISS\\22_HWSA3";
+		String path1 = "C:\\Dati\\_____P17\\FALLATA\\21_DESENZANO2_MISS_HWSA3";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		ImagePlus imp2 = p17rmn_.strategia5(imp1);
 		UtilAyv.showImageMaximized(imp2);
 		MyLog.waitHere();
 
 	}
 
 	
-
 	@Test
 	public final void testStrategiaSIEMENS() {
 
-		String path1 = ".\\Test2\\HWSA_testP7";
+		// String path1 = ".\\Test2\\HWSA_testP7";
+
+		// String path1 = "C:\\Dati\\_____P17\\AERA\\Series_22_HWSA\\22_74845920_HE1-4_HWSA_";
+		String path1 = "C:\\Dati\\_____P17\\29_71193075_HE1-4_HWSA_";
 		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		ImagePlus imp2 = p17rmn_.strategiaSIEMENS(imp1);		
+		ImagePlus imp2 = p17rmn_.strategiaSIEMENS(imp1);
 		UtilAyv.showImageMaximized(imp2);
 		MyLog.waitHere();
 
 	}
-	
+
 	@Test
 	public final void testStrategiaGEMS() {
 
@@ -111,8 +137,8 @@ public class p17rmn_Test {
 		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
 		ImagePlus imp2 = p17rmn_.strategia0(imp1);
 		ImagePlus imp3 = p17rmn_.strategia1(imp1);
-		ImagePlus imp4 =  p17rmn_.combina(imp2, imp3);
-		
+		ImagePlus imp4 = p17rmn_.combina(imp2, imp3);
+
 		UtilAyv.showImageMaximized(imp4);
 		MyLog.waitHere();
 
@@ -121,14 +147,26 @@ public class p17rmn_Test {
 	@Test
 	public final void testStrategiaHITACHI() {
 
-		String path1 = ".\\Test2\\HWSA3";
+//		String path1 = ".\\Test2\\HWSA3";
+		String path1 = "C:\\Dati\\_____P17\\FALLATA\\21_DESENZANO2_MISS_HWSA3";
 		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
 		ImagePlus imp2 = p17rmn_.strategiaHITACHI(imp1);
 		UtilAyv.showImageMaximized(imp2);
 		MyLog.waitHere();
 
 	}
-	
+
+	@Test
+	public final void testStrategiaHITACHI2() {
+
+//		String path1 = ".\\Test2\\HWSA3";
+		String path1 = "C:\\Dati\\_____P17\\FALLATA\\21_DESENZANO2_MISS_HWSA3";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		ImagePlus imp2 = p17rmn_.strategiaHITACHI2(imp1);
+		UtilAyv.showImageMaximized(imp2);
+		MyLog.waitHere();
+
+	}
 
 	@Test
 	public final void testAutomaticRoiPreparation_GE() {

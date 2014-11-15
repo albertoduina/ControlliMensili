@@ -13,6 +13,7 @@ import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.ImageCalculator;
 import ij.plugin.PlugIn;
+import ij.plugin.Thresholder;
 import ij.plugin.filter.ParticleAnalyzer;
 import ij.plugin.frame.RoiManager;
 import ij.process.ImageProcessor;
@@ -266,7 +267,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		ResultsTable rt = null;
 		double dimPixel2 = 0;
-		MyLog.waitHere("mainWarp " + path1);
+		// MyLog.waitHere("mainWarp " + path1);
 
 		// --------------------------------------------------------------------------------------/
 		// Qui si torna se la misura è da rifare
@@ -391,90 +392,131 @@ public class p17rmn_ implements PlugIn, Measurements {
 		int[] minArea = new int[3];
 		int[] maxArea = new int[3];
 
+		ImagePlus imp10 = null;
+		ImagePlus imp11 = null;
+		ImagePlus imp12 = null;
+		ImagePlus imp13 = null;
+		ResultsTable rt10 = null;
+		ResultsTable rt11 = null;
+		ResultsTable rt12 = null;
+		ResultsTable rt13 = null;
+		int trovati10 = -1;
+		int trovati11 = -1;
+		int trovati12 = -1;
+		int trovati13 = -1;
+		ImagePlus impOut = null;
+		ResultsTable rtOut = null;
+
+		boolean cerca = true;
 		// creo anche un vettore di ImagePlus (non uno stack)
-		ImagePlus[] vetImp = new ImagePlus[3];
 
 		// per prima cosa effettuo il threshold "SIEMENS"
 
 		UtilAyv.showImageMaximized(imp1);
-		vetImp[0] = strategiaSIEMENS(imp4);
-		UtilAyv.showImageMaximized(vetImp[0]);
-		vetImp[1] = strategiaHITACHI(imp4);
-		UtilAyv.showImageMaximized(vetImp[1]);
-		vetImp[2] = strategiaGEMS(imp4);
-		UtilAyv.showImageMaximized(vetImp[2]);
-		MyLog.waitHere();
-
-		ImagePlus impX1 = null;
-		ResultsTable[] vetResults = new ResultsTable[vetImp.length];
-		ResultsTable rtAux = null;
-		for (int i1 = 0; i1 < vetImp.length; i1++) {
-			impX1 = vetImp[i1];
-			if (impX1 == null)
-				continue;
-			rtAux = analisi(vetImp[i1], verbose, timeout);
-			vetResults[i1] = rtAux;
-			if (rtAux != null) {
-				trovati[i1] = rtAux.getCounter();
-				if (trovati[i1] > 1) {
-					double[] vetArea11 = rtAux.getColumnAsDoubles(rtAux
-							.getColumnIndex("Area"));
-					double[] lim11 = Tools.getMinMax(vetArea11);
-					minArea[i1] = (int) Math.floor(lim11[0]);
-					maxArea[i1] = (int) Math.ceil(lim11[1]);
-
-				} else {
-					// se la ResultsTable è lunga 0 scrivo tutti 0
-					minArea[i1] = 0;
-					maxArea[i1] = 0;
-				}
-			} else {
-				// se la ResultsTable è null scrivo tutti 0
-				trovati[i1] = 0;
-				minArea[i1] = 0;
-				maxArea[i1] = 0;
+		if (cerca) {
+			imp10 = strategiaSIEMENS(imp4);
+			rt10 = analisi(imp10, verbose, timeout, numRods1);
+			if (rt10 != null) {
+				trovati10 = rt10.getCounter();
+				// UtilAyv.showImageMaximized(imp10);
+				// rt10.show("Results");
+			}
+			// MyLog.waitHere("trovati10= " + trovati10);
+			if (trovati10 == numRods1) {
+				cerca = false;
+				impOut = imp10;
+				rtOut = rt10;
+				// MyLog.waitHere("sufficiente strategia SIEMENS");
 			}
 		}
 
-		// MyLog.logVector(trovati, "trovati");
-		// MyLog.logVector(minArea, "minArea");
-		// MyLog.logVector(maxArea, "maxArea");
-		// MyLog.waitHere();
+		if (cerca) {
+			imp11 = strategiaHITACHI(imp4);
+			rt11 = analisi(imp11, verbose, timeout, numRods1);
+			if (rt11 != null)
+				trovati11 = rt11.getCounter();
+			if (trovati11 == numRods1) {
+				cerca = false;
+				impOut = imp11;
+				rtOut = rt11;
+				// MyLog.waitHere("sufficiente strategia HITACHI");
+			}
+		}
 
-		// Analizzo i risultati, il primo che raggiunge l'obbiettivo viene
-		// accettato, senza guardare gli altri. Se non si trova niente di
-		// accettabile si passa il tutto all'AMANUENSE
+		if (cerca) {
+			imp12 = strategiaGEMS(imp4);
+			rt12 = analisi(imp12, verbose, timeout, numRods1);
+			if (rt12 != null)
+				trovati12 = rt12.getCounter();
+			if (trovati12 == numRods1) {
+				cerca = false;
+				impOut = imp12;
+				rtOut = rt12;
+				// MyLog.waitHere("sufficiente strategia HITACHI");
+			}
+		}
+
+		if (cerca) {
+			imp11 = strategiaHITACHI2(imp4);
+			rt13 = analisi(imp11, verbose, timeout, numRods1);
+			if (rt13 != null)
+				trovati13 = rt13.getCounter();
+			if (trovati13 == numRods1) {
+				cerca = false;
+				impOut = imp13;
+				rtOut = rt13;
+				// MyLog.waitHere("sufficiente strategia HITACHI");
+			}
+		}
+
+		// se nessuna delle strategie ha trovato tutte le roi, accetto la
+		// strategia migliore, poi interverrà l'operatore a correggere e/o
+		// completare le ROI
+
+		int[] array1 = new int[4];
+		array1[0] = Math.abs(trovati10 - numRods1);
+		array1[1] = Math.abs(trovati11 - numRods1);
+		array1[2] = Math.abs(trovati12 - numRods1);
+		array1[3] = Math.abs(trovati13 - numRods1);
+		int posMin = posMinValue(array1);
+
+		switch (posMin) {
+		case 0:
+			impOut = imp10;
+			rtOut = rt10;
+			break;
+		case 1:
+			impOut = imp11;
+			rtOut = rt11;
+			break;
+		case 2:
+			impOut = imp12;
+			rtOut = rt12;
+			break;
+		case 3:
+			impOut = imp13;
+			rtOut = rt13;
+			break;
+		}
+
+		if (rtOut == null)
+			MyLog.waitHere(">>>> INFERNAL ERROR <<<<<");
+
+		// // ====================== centrale ==================
 		//
-		int rodTot = 36;
-		ResultsTable rt1 = null;
-
-		for (int i1 = 0; i1 < trovati.length; i1++) {
-			if ((trovati[i1] > rodTot - 5 && trovati[i1] < rodTot + 5)) {
-				rt1 = vetResults[i1];
-				break;
-			}
-		}
-
-		if (rt1 == null) {
-			// threshold manuale
-			MyLog.waitHere("funzionamento manuale");
-		}
-
-		// ====================== centrale ==================
-
-		// rt1.show("Results");
+		// rtOut.show("Results");
 		// MyLog.waitHere();
-
-		int xcol = rt1.getColumnIndex("XM");
-		int ycol = rt1.getColumnIndex("YM");
-
-		double[] vetX = rt1.getColumnAsDoubles(xcol);
+		//
+		int xcol = rtOut.getColumnIndex("XM");
+		int ycol = rtOut.getColumnIndex("YM");
+		//
+		double[] vetX = rtOut.getColumnAsDoubles(xcol);
 		// MyLog.logVector(vetX, "vetX");
-
-		double[] vetY = rt1.getColumnAsDoubles(ycol);
+		//
+		double[] vetY = rtOut.getColumnAsDoubles(ycol);
 		// MyLog.logVector(vetY, "vetY");
 		// MyLog.waitHere();
-
+		//
 		// UtilAyv.showImageMaximized(imp1);
 		double[] vetx1 = new double[vetX.length];
 		double[] vety1 = new double[vetX.length];
@@ -500,6 +542,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 			vety2[i1] = (int) Math.round(vety1[i1]);
 		}
 		imp1.setRoi(new PointRoi(vetx2, vety2, vetx1.length));
+		if (vetX.length == numRods1) {
+			IJ.wait(3000);
+		}
 
 		if (vetX.length != numRods1) {
 			// if (cw2.running)
@@ -515,38 +560,39 @@ public class p17rmn_ implements PlugIn, Measurements {
 					+ "cliccare sul puntino rosso mentre si tiene premuto ALT,\nalla fine premere OK");
 		}
 
-		if (demo || !silent) {
-			// if (cw2.running)
-			// cw2.close();
-			// if (imp3 != null)
-			// imp3.flush();
-			// imp3.close();
-			if (!imp1.isVisible())
-				UtilAyv.showImageMaximized(imp1);
-			imp1.getWindow().toFront();
-			if (demo)
-				MyLog.waitHere(listaMessaggi(4), debug, timeout);
-			else
-				IJ.wait(2000);
-		}
-
-		if (vetx1.length == 0) {
-			MyLog.waitHere("lunghezza Results=0");
-			return null;
-		}
-
+		//
+		// if (demo || !silent) {
+		// // if (cw2.running)
+		// // cw2.close();
+		// // if (imp3 != null)
+		// // imp3.flush();
+		// // imp3.close();
+		// if (!imp1.isVisible())
+		// UtilAyv.showImageMaximized(imp1);
+		// imp1.getWindow().toFront();
+		// if (demo)
+		// MyLog.waitHere(listaMessaggi(4), debug, timeout);
+		// else
+		// IJ.wait(2000);
+		// }
+		//
+		// if (vetx1.length == 0) {
+		// MyLog.waitHere("lunghezza Results=0");
+		// return null;
+		// }
+		//
 		Polygon poli1 = imp1.getRoi().getPolygon();
-		int nPunti;
-		if (poli1 == null) {
-			nPunti = 0;
-		} else {
-			nPunti = poli1.npoints;
-		}
+		// int nPunti1=0;
+		// if (poli1 == null) {
+		// nPunti1 = 0;
+		// } else {
+		// nPunti1 = poli1.npoints;
+		// }
 
 		int[] xPoints = poli1.xpoints;
 		int[] yPoints = poli1.ypoints;
-		int[][] tabPunti = new int[nPunti][2];
-		for (int i1 = 0; i1 < nPunti; i1++) {
+		int[][] tabPunti = new int[xPoints.length][2];
+		for (int i1 = 0; i1 < xPoints.length; i1++) {
 			tabPunti[i1][0] = xPoints[i1];
 			tabPunti[i1][1] = yPoints[i1];
 		}
@@ -558,9 +604,16 @@ public class p17rmn_ implements PlugIn, Measurements {
 			MyLog.waitHere();
 			return null;
 		}
+		// MyLog.waitHere("strategiaSIEMENS");
 		ImagePlus imp2 = p17rmn_.strategia0(imp1);
+		// imp2.show();
+		// MyLog.waitHere();
 		ImagePlus imp3 = p17rmn_.strategia1(imp1);
+		// imp3.show();
+		// MyLog.waitHere();
 		ImagePlus imp4 = p17rmn_.combina(imp2, imp3);
+		// imp4.show();
+		// MyLog.waitHere();
 		return imp4;
 	}
 
@@ -569,9 +622,32 @@ public class p17rmn_ implements PlugIn, Measurements {
 			MyLog.waitHere();
 			return null;
 		}
-		ImagePlus imp2 = p17rmn_.strategia4(imp1);
+		// MyLog.waitHere("strategiaHITACHI");
+		// ImagePlus imp2 = p17rmn_.strategia4(imp1);
+		// ImagePlus imp2 = p17rmn_.strategia5(imp1);
+		ImagePlus imp2 = p17rmn_.strategia5(imp1);
 		ImagePlus imp3 = p17rmn_.strategia1(imp1);
 		ImagePlus imp4 = p17rmn_.combina(imp2, imp3);
+		return imp4;
+	}
+
+	public static ImagePlus strategiaHITACHI2(ImagePlus imp1) {
+		if (imp1 == null) {
+			MyLog.waitHere();
+			return null;
+		}
+		// MyLog.waitHere("strategiaHITACHI");
+		// ImagePlus imp2 = p17rmn_.strategia4(imp1);
+		// ImagePlus imp2 = p17rmn_.strategia5(imp1);
+		ImagePlus imp2 = p17rmn_.strategia2(imp1);
+		// imp2.show();
+		// MyLog.waitHere("esterno");
+		ImagePlus imp3 = p17rmn_.strategia1(imp1);
+		// imp3.show("interno");
+		// MyLog.waitHere();
+		ImagePlus imp4 = p17rmn_.combina(imp2, imp3);
+		// imp4.show("tutto");
+		// MyLog.waitHere();
 		return imp4;
 	}
 
@@ -580,10 +656,113 @@ public class p17rmn_ implements PlugIn, Measurements {
 			MyLog.waitHere();
 			return null;
 		}
+		// MyLog.waitHere("strategiaGEMS");
 		ImagePlus imp2 = p17rmn_.strategia0(imp1);
 		ImagePlus imp3 = p17rmn_.strategia1(imp1);
 		ImagePlus imp4 = p17rmn_.combina(imp2, imp3);
 		return imp4;
+	}
+
+	public static ImagePlus nuovaStrategia(ImagePlus imp1) {
+
+		boolean noBlack = true;
+		boolean noWhite = true;
+		boolean doWhite = false;
+		boolean doSet = false;
+		boolean doLog = false;
+
+		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Huang", noBlack,
+				noWhite, doWhite, doSet, doLog);
+		// UtilAyv.showImageMaximized(imp12);
+		// MyLog.waitHere();
+
+		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
+		int minSizePixels = 10000;
+		int maxSizePixels = 300000;
+		boolean excludeEdges = false;
+		Roi roiCerchio = analisi0(imp12, minSizePixels, maxSizePixels,
+				excludeEdges);
+		if (roiCerchio == null) {
+			MyLog.waitHere("roiCerchio==null");
+			return null;
+		}
+		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
+		ImageProcessor ip12 = imp12.getProcessor();
+		ip12.invert();
+		minSizePixels = 1000;
+		maxSizePixels = 30000;
+		excludeEdges = true;
+		Roi roiQuadrato = analisi0(imp12, minSizePixels, maxSizePixels,
+				excludeEdges);
+
+		if (roiQuadrato == null) {
+			MyLog.waitHere("roiQuadrato==null");
+			return null;
+		}
+		ImagePlus imp112 = imp1.duplicate();
+		ImageProcessor ip112 = imp112.getProcessor();
+		//
+		// Ora, sulla copia dell'immagine originale, annerisco l'esterno del
+		// cerchio e l'interno del quadrato
+		//
+		//
+
+		ip112.setColor(Color.BLACK);
+		ip112.fillOutside(roiCerchio);
+		ip112.fill(roiQuadrato);
+		UtilAyv.showImageMaximized(imp112);
+
+		short[] pixels = (short[]) ip112.getPixels();
+		double[] dpixels = new double[pixels.length];
+		for (int i1 = 0; i1 < pixels.length; i1++) {
+			dpixels[i1] = (double) pixels[i1];
+		}
+		double maxThreshold = Tools.getMinMax(dpixels)[1];
+		double minThreshold = Tools.getMinMax(dpixels)[0];
+		minSizePixels = 50;
+		maxSizePixels = 150;
+		int lutUpdate = ImageProcessor.RED_LUT;
+		int trovati = 0;
+		do {
+			maxThreshold = maxThreshold - 1;
+			ImageProcessor ip1122 = imp112.getProcessor();
+			ip1122.setThreshold(minThreshold, maxThreshold, lutUpdate);
+			ip1122.setBinaryThreshold();
+			imp112.updateAndRepaintWindow();
+			ResultsTable rt1 = analisi1(imp112, minSizePixels, maxSizePixels,
+					0, 1);
+			if (rt1 == null)
+				return null;
+			trovati = rt1.getCounter();
+			// MyLog.waitHere("threshold= " + minThreshold + " , " +
+			// maxThreshold
+			// + " trovati= " + trovati);
+		} while (trovati < 32);
+		MyLog.waitHere("TROVATI= " + trovati);
+
+		return imp112;
+	}
+
+	public static int getMinValue(int[] array) {
+		int minValue = array[0];
+		for (int i = 1; i < array.length; i++) {
+			if (array[i] < minValue) {
+				minValue = array[i];
+			}
+		}
+		return minValue;
+	}
+
+	public static int posMinValue(int[] array) {
+		int minValue = array[0];
+		int posMinValue = 0;
+		for (int i = 1; i < array.length; i++) {
+			if (array[i] < minValue) {
+				minValue = array[i];
+				posMinValue = i;
+			}
+		}
+		return posMinValue;
 	}
 
 	/***
@@ -601,13 +780,15 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean doSet = false;
 		boolean doLog = false;
 
+		// MyLog.waitHere("strategia 0");
 		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Mean", noBlack,
 				noWhite, doWhite, doSet, doLog);
 		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
 		// riempirò l'esterno di nero
 		int minSizePixels = 10000;
 		int maxSizePixels = 300000;
-		Roi roi0 = analisi0(imp12, minSizePixels, maxSizePixels);
+		boolean excludeEdges = false;
+		Roi roi0 = analisi0(imp12, minSizePixels, maxSizePixels, excludeEdges);
 
 		if (roi0 == null) {
 			UtilAyv.showImageMaximized(imp1);
@@ -624,13 +805,13 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ip2.invert();
 		minSizePixels = 1000;
 		maxSizePixels = 30000;
-
-		Roi roi1 = analisi0(imp2, minSizePixels, maxSizePixels);
+		excludeEdges = true;
+		Roi roi1 = analisi0(imp2, minSizePixels, maxSizePixels, excludeEdges);
 
 		if (roi1 == null) {
 			UtilAyv.showImageMaximized(imp1);
 			UtilAyv.showImageMaximized(imp2);
-			MyLog.waitHere("roi0==null");
+			MyLog.waitHere("roi1==null");
 			return null;
 		}
 		ImagePlus imp112 = imp2.duplicate();
@@ -638,14 +819,20 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ip112.setColor(Color.WHITE);
 		ip112.fill(roi1);
 		IJ.run(imp112, "Invert", "");
+		imp112.setTitle("ROI interne");
 
 		return imp112;
 	}
 
 	public static Roi analisi0(ImagePlus imp1, int minSizePixel,
-			int maxSizePixel) {
+			int maxSizePixel, boolean excludeEdges) {
 		int options = ParticleAnalyzer.SHOW_OUTLINES
 				+ ParticleAnalyzer.ADD_TO_MANAGER;
+		if (excludeEdges)
+			options = ParticleAnalyzer.SHOW_OUTLINES
+					+ ParticleAnalyzer.ADD_TO_MANAGER
+					+ ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES;
+
 		int measurements = 0;
 		ResultsTable rt0 = new ResultsTable();
 		RoiManager rm0 = new RoiManager(false);
@@ -677,29 +864,25 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean doWhite = true;
 		boolean doSet = false;
 		boolean doLog = false;
-
-		// IJ.run(imp1, "Invert", "");
-		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Li", noBlack,
+		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Huang", noBlack,
 				noWhite, doWhite, doSet, doLog);
+		ImageProcessor ip12 = imp12.getProcessor();
+		ip12.setColor(Color.BLACK);
 		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
 		// riempirò l'esterno di nero
-		int minSizePixels = 1000;
-		int maxSizePixels = 30000;
-		Roi roi1 = analisi0(imp12, minSizePixels, maxSizePixels);
+		int minSizePixels = 100;
+		int maxSizePixels = 10000;
+		// importante exclude edges true!!!
+		boolean excludeEdges = true;
+		Roi roi1 = analisi0(imp12, minSizePixels, maxSizePixels, excludeEdges);
 		if (roi1 == null) {
-			MyLog.waitHere("roi1==null");
+			// MyLog.waitHere("roi1==null");
 			return null;
 		}
-		ImagePlus imp112 = imp12.duplicate();
-		ImageProcessor ip112 = imp112.getProcessor();
-		ip112.setColor(Color.BLACK);
-		ip112.fillOutside(roi1);
-		// IJ.run(imp112, "Invert", "");
-
-		imp112.setTitle("strategia2: Li+Invert");
-		if (imp112 == null)
-			MyLog.waitHere("imp112 == null");
-		return imp112;
+		ip12.setColor(Color.BLACK);
+		ip12.fillOutside(roi1);
+		imp12.setTitle("ROI interne");
+		return imp12;
 	}
 
 	public static ImagePlus combina(ImagePlus imp1, ImagePlus imp2) {
@@ -721,11 +904,39 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean doSet = false;
 		boolean doLog = false;
 
-		ImagePlus imp2 = MyAutoThreshold.threshold(imp1, "Mean", noBlack,
+		ImagePlus imp2 = MyAutoThreshold.threshold(imp1, "Moments", noBlack,
 				noWhite, doWhite, doSet, doLog);
 		IJ.run(imp2, "Invert", "");
-		imp2.setTitle("strategia3: Mean+Invert");
-		return imp2;
+
+		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
+		// riempirò l'esterno di nero
+		int minSizePixels = 10000;
+		int maxSizePixels = 300000;
+		boolean excludeEdges = false;
+
+		Roi roi0 = analisi0(imp2, minSizePixels, maxSizePixels, excludeEdges);
+		if (roi0 == null)
+			return null;
+		ImagePlus imp12 = imp2.duplicate();
+		ImageProcessor ip12 = imp12.getProcessor();
+		ip12.setColor(Color.BLACK);
+		ip12.fillOutside(roi0);
+		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
+		// riempirò l'interno di nero
+		ip12.invert();
+		minSizePixels = 1000;
+		maxSizePixels = 30000;
+		excludeEdges = true;
+		Roi roi1 = analisi0(imp12, minSizePixels, maxSizePixels, excludeEdges);
+		if (roi1 == null)
+			return null;
+		ImagePlus imp112 = imp12.duplicate();
+		ImageProcessor ip112 = imp112.getProcessor();
+		ip112.setColor(Color.WHITE);
+		ip112.fill(roi1);
+		ip112.invert();
+		imp112.setTitle("strategia2: Moments+Invert");
+		return imp112;
 	}
 
 	public static ImagePlus strategia3(ImagePlus imp1) {
@@ -736,6 +947,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean doSet = false;
 		boolean doLog = false;
 
+		// MyLog.waitHere("strategia 3");
 		ImagePlus imp2 = MyAutoThreshold.threshold(imp1, "Huang", noBlack,
 				noWhite, doWhite, doSet, doLog);
 		IJ.run(imp2, "Invert", "");
@@ -751,6 +963,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean doSet = false;
 		boolean doLog = false;
 
+		// MyLog.waitHere("strategia 4");
 		ImagePlus imp11 = imp1.duplicate();
 		IJ.run(imp11, "Invert", "");
 		ImagePlus imp2 = MyAutoThreshold.threshold(imp11, "Li", noBlack,
@@ -761,7 +974,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// riempirò l'esterno di nero
 		int minSizePixels = 10000;
 		int maxSizePixels = 300000;
-		Roi roi0 = analisi0(imp2, minSizePixels, maxSizePixels);
+		boolean excludeEdges = false;
+
+		Roi roi0 = analisi0(imp2, minSizePixels, maxSizePixels, excludeEdges);
 		if (roi0 == null)
 			return null;
 		ImagePlus imp12 = imp2.duplicate();
@@ -773,9 +988,10 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ip12.invert();
 		minSizePixels = 1000;
 		maxSizePixels = 30000;
-		Roi roi1 = analisi0(imp12, minSizePixels, maxSizePixels);
+		excludeEdges = true;
+		Roi roi1 = analisi0(imp12, minSizePixels, maxSizePixels, excludeEdges);
 		if (roi1 == null)
-			MyLog.waitHere("roi1==null");
+			return null;
 		ImagePlus imp112 = imp12.duplicate();
 		ImageProcessor ip112 = imp112.getProcessor();
 		ip112.setColor(Color.WHITE);
@@ -784,26 +1000,110 @@ public class p17rmn_ implements PlugIn, Measurements {
 		return imp112;
 	}
 
-	public static ResultsTable analisi(ImagePlus imp1, boolean verbose,
-			int timeout) {
-		int options = ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES
-				+ ParticleAnalyzer.SHOW_OUTLINES;
+	public static ResultsTable analisi1(ImagePlus imp1, double minSize,
+			double maxSize, double minCirc, double maxCirc) {
+		int options = ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES;
 		int measurements = Measurements.CENTER_OF_MASS + Measurements.AREA;
-		double minSize = 0.;
-		double maxSize = 100;
-		double minCirc = 0;
-		double maxCirc = 1;
+
 		ResultsTable rt0 = new ResultsTable();
 
 		ParticleAnalyzer pa1 = new ParticleAnalyzer(options, measurements, rt0,
 				minSize, maxSize, minCirc, maxCirc);
 		pa1.setHideOutputImage(true);
-		boolean ok = pa1.analyze(imp1);
+		pa1.analyze(imp1);
+		return rt0;
+
+	}
+
+	/***
+	 * La strategia 0 è dedicata al circolo esterno di rods nelle macchine
+	 * HITACHI
+	 * 
+	 * @param imp1
+	 * @return
+	 */
+	public static ImagePlus strategia5(ImagePlus imp1) {
+
+		boolean noBlack = true;
+		boolean noWhite = true;
+		boolean doWhite = false;
+		boolean doSet = false;
+		boolean doLog = false;
+
+		// MyLog.waitHere("strategia 5");
+		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "RenyiEntropy",
+				noBlack, noWhite, doWhite, doSet, doLog);
+		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
+		// riempirò l'esterno di nero
+		// UtilAyv.showImageMaximized(imp12);
+		// MyLog.waitHere();
+		int minSizePixels = 10000;
+		int maxSizePixels = 300000;
+		boolean excludeEdges = false;
+		Roi roi0 = analisi0(imp12, minSizePixels, maxSizePixels, excludeEdges);
+
+		if (roi0 == null) {
+			// UtilAyv.showImageMaximized(imp1);
+			// UtilAyv.showImageMaximized(imp12);
+			// MyLog.waitHere("roi0==null");
+			return null;
+		}
+		ImagePlus imp2 = imp12.duplicate();
+		ImageProcessor ip2 = imp2.getProcessor();
+		ip2.setColor(Color.BLACK);
+		ip2.fillOutside(roi0);
+		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
+		// riempirò l'interno di nero
+		ip2.invert();
+		minSizePixels = 1000;
+		maxSizePixels = 30000;
+		excludeEdges = true;
+		Roi roi1 = analisi0(imp2, minSizePixels, maxSizePixels, excludeEdges);
+
+		if (roi1 == null) {
+			// UtilAyv.showImageMaximized(imp1);
+			// UtilAyv.showImageMaximized(imp2);
+			// MyLog.waitHere("roi1==null");
+			return null;
+		}
+		ImagePlus imp112 = imp2.duplicate();
+		ImageProcessor ip112 = imp112.getProcessor();
+		ip112.setColor(Color.WHITE);
+		ip112.fill(roi1);
+		IJ.run(imp112, "Invert", "");
+		imp112.setTitle("ROI interne");
+
+		return imp112;
+	}
+
+	public static ResultsTable analisi(ImagePlus imp1, boolean verbose,
+			int timeout, int numRoi) {
+
+		if (imp1 == null)
+			return null;
+		int options = ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES
+				+ ParticleAnalyzer.SHOW_OUTLINES;
+		int measurements = Measurements.CENTER_OF_MASS + Measurements.AREA;
+		double minSize = 0;
+		double maxSize = 100;
+		double minCirc = 0;
+		double maxCirc = 1;
+		ResultsTable rt0 = new ResultsTable();
+		ParticleAnalyzer pa1 = null;
+		do {
+			rt0.reset();
+			pa1 = new ParticleAnalyzer(options, measurements, rt0, minSize,
+					maxSize, minCirc, maxCirc);
+			pa1.setHideOutputImage(true);
+			boolean ok = pa1.analyze(imp1);
+			minSize++;
+		} while ((rt0.getCounter() > 36) && (minSize < maxSize - 1));
+
 		if (verbose) {
 			ImagePlus imp100 = pa1.getOutputImage();
-			rt0.show("Results");
+			// rt0.show("Results");
 			UtilAyv.showImageMaximized(imp100);
-			MyLog.waitHere("Oggetti trovati", debug, timeout);
+			// MyLog.waitHere("Oggetti trovati", debug, timeout);
 			imp100.close();
 		}
 		return rt0;
