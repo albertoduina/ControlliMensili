@@ -32,6 +32,7 @@ import utils.MyMsg;
 import utils.MyConst;
 import utils.CustomCanvasGeneric;
 import utils.InputOutput;
+import utils.MyRats;
 import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
@@ -599,6 +600,25 @@ public class p17rmn_ implements PlugIn, Measurements {
 		return tabPunti;
 	}
 
+	public static ImagePlus strategiaGENERALE(ImagePlus imp1) {
+		if (imp1 == null) {
+			MyLog.waitHere();
+			return null;
+		}
+		// MyLog.waitHere("strategiaSIEMENS");
+		ImagePlus imp2 = p17rmn_.strategia3(imp1);
+
+		// imp2.show();
+		// MyLog.waitHere();
+		ImagePlus imp3 = p17rmn_.strategia1(imp1);
+		// imp3.show();
+		// MyLog.waitHere();
+		ImagePlus imp4 = p17rmn_.combina(imp2, imp3);
+		// imp4.show();
+		// MyLog.waitHere();
+		return imp4;
+	}
+
 	public static ImagePlus strategiaSIEMENS(ImagePlus imp1) {
 		if (imp1 == null) {
 			MyLog.waitHere();
@@ -941,18 +961,119 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 	public static ImagePlus strategia3(ImagePlus imp1) {
 
+		// MyLog.waitHere("strategia 3");
+
+		MyRats rat1 = new MyRats();
+		ImagePlus imp2 = rat1.execute(imp1, null);
+		imp2.setTitle("strategia3: MyRATS are beautiful");
+		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
+		// riempirò l'esterno di nero prima di ricercare nuovamente i RATS
+		imp2.show();
+		MyLog.waitHere();
+		// ImageProcessor ip2 = imp2.getProcessor();
+		// ip2.invert();
 		boolean noBlack = false;
 		boolean noWhite = false;
 		boolean doWhite = true;
 		boolean doSet = false;
 		boolean doLog = false;
-
-		// MyLog.waitHere("strategia 3");
-		ImagePlus imp2 = MyAutoThreshold.threshold(imp1, "Huang", noBlack,
+		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Moments", noBlack,
 				noWhite, doWhite, doSet, doLog);
 		IJ.run(imp2, "Invert", "");
-		imp2.setTitle("strategia1: Hunag+Invert");
-		return imp2;
+
+		int minSizePixels = 1000;
+		int maxSizePixels = 30000;
+		boolean excludeEdges = true;
+		Roi roi1 = analisi0(imp12, minSizePixels, maxSizePixels, excludeEdges);
+		if (roi1 == null)
+			return null;
+		ImagePlus imp11 = imp1.duplicate();
+
+		imp11.setRoi(roi1);
+		imp11.show();
+		MyLog.waitHere();
+		ImageProcessor ip11 = imp11.getProcessor();
+		ip11.setColor(Color.BLACK);
+		// ip11.setLineWidth(2);
+
+		ip11.draw(roi1);
+
+		ip11.fillOutside(roi1);
+		// ip11.drawRoi(roi1);
+		imp11.updateAndDraw();
+		MyLog.waitHere();
+		ImagePlus imp3 = rat1.execute(imp11, null);
+		imp3.show();
+		MyLog.waitHere();
+
+		return imp3;
+	}
+
+	public static ImagePlus strategia31(ImagePlus imp1) {
+
+		// MyLog.waitHere("strategia 31");
+
+		// Questa potrebbe essere la strategia generale. Nel proimo passaggio
+		// viene effettuato il threshold automatico con RATS. Otterrò il cerchio
+		// esterno, le RODS esterne ed il quadrato interno.
+
+		MyRats rat1 = new MyRats();
+		ImagePlus imp2 = rat1.execute(imp1, null);
+		imp2.setTitle("strategia31: MyRATS are beautiful");
+		ImageProcessor ip2 = imp2.getProcessor();
+		ip2.invert();
+		UtilAyv.showImageMaximized(imp2);
+		// MyLog.waitHere();
+		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
+		// riempirò l'esterno di nero
+		int minSizePixels = 10000;
+		int maxSizePixels = 300000;
+		boolean excludeEdges = false;
+		Roi roi0 = analisi0(imp2, minSizePixels, maxSizePixels, excludeEdges);
+		if (roi0 == null) {
+			// UtilAyv.showImageMaximized(imp1);
+			// UtilAyv.showImageMaximized(imp2);
+			MyLog.waitHere("roi0==null");
+			return null;
+		}
+		ip2.setColor(Color.BLACK);
+		ip2.fillOutside(roi0);
+		ip2.invert();
+		imp2.updateAndDraw();
+		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
+		// riempirò l'interno di bianco
+		minSizePixels = 1000;
+		maxSizePixels = 30000;
+		excludeEdges = true;
+		Roi roi1 = analisi0(imp2, minSizePixels, maxSizePixels, excludeEdges);
+		if (roi1 == null)
+			return null;
+		ip2.setColor(Color.WHITE);
+		ip2.fill(roi1);
+		ip2.invert();
+		imp2.updateAndDraw();
+		MyLog.waitHere("ESTERNO");
+		// faccio un duplicato di imp1, a questo applico la roi quadrata e
+		// cancello tutto l'esterno
+		ImagePlus imp11 = imp1.duplicate();
+		imp11.setRoi(roi1);
+		UtilAyv.showImageMaximized(imp11);
+		MyLog.waitHere();
+		ImageProcessor ip11 = imp11.getProcessor();
+		ip11.setColor(Color.BLACK);	
+		ip11.setLineWidth(2);
+		ip11.draw(roi1);
+		ip11.fillOutside(roi1);
+		imp11.updateAndDraw();;
+		ImagePlus imp3 = rat1.execute(imp11, null);
+		UtilAyv.showImageMaximized(imp3);
+		MyLog.waitHere("INTERNO");
+		// ora combino le due immagini, in modo da avere tutti i 36 oggetti
+		ImagePlus imp4 = p17rmn_.combina(imp2, imp3);
+		UtilAyv.showImageMaximized(imp4);
+		MyLog.waitHere("COMBINATA");
+
+		return imp4;
 	}
 
 	public static ImagePlus strategia4(ImagePlus imp1) {

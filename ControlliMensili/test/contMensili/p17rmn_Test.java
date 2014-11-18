@@ -104,6 +104,23 @@ public class p17rmn_Test {
 	}
 
 	@Test
+	public final void testStrategia31() {
+
+		// RATS
+		
+//		String path1 = ".\\Test2\\HWSA2";
+		String path1 = "C:\\Dati\\_____P17\\FALLATA\\21_DESENZANO2_MISS_HWSA3";
+		
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		ImagePlus imp2 = p17rmn_.strategia31(imp1);
+		UtilAyv.showImageMaximized(imp2);
+		MyLog.waitHere();
+
+	}
+
+	
+	
+	@Test
 	public final void testStrategia5() {
 
 //		String path1 = "C:\\Dati\\_____P17\\DESENZANO\\NUOVA\\Series_22_HWSA3-2MISS\\22_HWSA3";
