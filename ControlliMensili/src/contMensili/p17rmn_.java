@@ -365,7 +365,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		imp1.setOverlay(over1);
 		// Overlay over2 = new Overlay();
 		// imp5.setOverlay(over2);
-		boolean verbose = true;
+		boolean verbose = false;
 
 		int numRods1 = 36;
 
@@ -389,18 +389,17 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// MyAutoThreshold e l'uso di invert
 		// -------------------------------------------------------------------
 
-		int[] trovati = new int[3];
-		int[] minArea = new int[3];
-		int[] maxArea = new int[3];
-
+		ImagePlus imp9 = null;
 		ImagePlus imp10 = null;
 		ImagePlus imp11 = null;
 		ImagePlus imp12 = null;
 		ImagePlus imp13 = null;
+		ResultsTable rt9 = null;
 		ResultsTable rt10 = null;
 		ResultsTable rt11 = null;
 		ResultsTable rt12 = null;
 		ResultsTable rt13 = null;
+		int trovati9 = -1;
 		int trovati10 = -1;
 		int trovati11 = -1;
 		int trovati12 = -1;
@@ -411,9 +410,27 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean cerca = true;
 		// creo anche un vettore di ImagePlus (non uno stack)
 
-		// per prima cosa effettuo il threshold "SIEMENS"
+		// per prima cosa effettuo il threshold "GENERALE"
 
 		UtilAyv.showImageMaximized(imp1);
+
+		if (cerca) {
+			imp9 = strategiaGENERALE(imp4);
+			rt9 = analisi(imp9, verbose, timeout, numRods1);
+			if (rt9 != null) {
+				trovati9 = rt9.getCounter();
+				// UtilAyv.showImageMaximized(imp9);
+				// rt9.show("Results");
+			}
+			// MyLog.waitHere("trovati9= " + trovati9);
+			if (trovati9 == numRods1) {
+				cerca = false;
+				impOut = imp9;
+				rtOut = rt9;
+				// MyLog.waitHere("sufficiente strategia generale");
+			}
+		}
+
 		if (cerca) {
 			imp10 = strategiaSIEMENS(imp4);
 			rt10 = analisi(imp10, verbose, timeout, numRods1);
@@ -474,27 +491,34 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// strategia migliore, poi interverrà l'operatore a correggere e/o
 		// completare le ROI
 
-		int[] array1 = new int[4];
-		array1[0] = Math.abs(trovati10 - numRods1);
-		array1[1] = Math.abs(trovati11 - numRods1);
-		array1[2] = Math.abs(trovati12 - numRods1);
-		array1[3] = Math.abs(trovati13 - numRods1);
+		int[] array1 = new int[5];
+		array1[0] = Math.abs(trovati9 - numRods1);
+		array1[1] = Math.abs(trovati10 - numRods1);
+		array1[2] = Math.abs(trovati11 - numRods1);
+		array1[3] = Math.abs(trovati12 - numRods1);
+		array1[4] = Math.abs(trovati13 - numRods1);
 		int posMin = posMinValue(array1);
+		if (posMin > 0)
+			MyLog.waitHere("posMin=" + posMin);
 
 		switch (posMin) {
 		case 0:
+			impOut = imp9;
+			rtOut = rt9;
+			break;
+		case 1:
 			impOut = imp10;
 			rtOut = rt10;
 			break;
-		case 1:
+		case 2:
 			impOut = imp11;
 			rtOut = rt11;
 			break;
-		case 2:
+		case 3:
 			impOut = imp12;
 			rtOut = rt12;
 			break;
-		case 3:
+		case 4:
 			impOut = imp13;
 			rtOut = rt13;
 			break;
@@ -544,6 +568,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 		}
 		imp1.setRoi(new PointRoi(vetx2, vety2, vetx1.length));
 		if (vetX.length == numRods1) {
+			// if (!imp1.isVisible())
+			// UtilAyv.showImageMaximized(imp1);
 			IJ.wait(3000);
 		}
 
@@ -600,24 +626,24 @@ public class p17rmn_ implements PlugIn, Measurements {
 		return tabPunti;
 	}
 
-	public static ImagePlus strategiaGENERALE(ImagePlus imp1) {
-		if (imp1 == null) {
-			MyLog.waitHere();
-			return null;
-		}
-		// MyLog.waitHere("strategiaSIEMENS");
-		ImagePlus imp2 = p17rmn_.strategia3(imp1);
-
-		// imp2.show();
-		// MyLog.waitHere();
-		ImagePlus imp3 = p17rmn_.strategia1(imp1);
-		// imp3.show();
-		// MyLog.waitHere();
-		ImagePlus imp4 = p17rmn_.combina(imp2, imp3);
-		// imp4.show();
-		// MyLog.waitHere();
-		return imp4;
-	}
+	// public static ImagePlus strategiaGENERALE(ImagePlus imp1) {
+	// if (imp1 == null) {
+	// MyLog.waitHere();
+	// return null;
+	// }
+	// // MyLog.waitHere("strategiaSIEMENS");
+	// ImagePlus imp2 = p17rmn_.strategia3(imp1);
+	//
+	// // imp2.show();
+	// // MyLog.waitHere();
+	// ImagePlus imp3 = p17rmn_.strategia1(imp1);
+	// // imp3.show();
+	// // MyLog.waitHere();
+	// ImagePlus imp4 = p17rmn_.combina(imp2, imp3);
+	// // imp4.show();
+	// // MyLog.waitHere();
+	// return imp4;
+	// }
 
 	public static ImagePlus strategiaSIEMENS(ImagePlus imp1) {
 		if (imp1 == null) {
@@ -1009,9 +1035,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		return imp3;
 	}
 
-	public static ImagePlus strategia31(ImagePlus imp1) {
-
-		// MyLog.waitHere("strategia 31");
+	public static ImagePlus strategiaGENERALE(ImagePlus imp1) {
 
 		// Questa potrebbe essere la strategia generale. Nel proimo passaggio
 		// viene effettuato il threshold automatico con RATS. Otterrò il cerchio
@@ -1019,10 +1043,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		MyRats rat1 = new MyRats();
 		ImagePlus imp2 = rat1.execute(imp1, null);
-		imp2.setTitle("strategia31: MyRATS are beautiful");
 		ImageProcessor ip2 = imp2.getProcessor();
 		ip2.invert();
-		UtilAyv.showImageMaximized(imp2);
+		// UtilAyv.showImageMaximized(imp2);
 		// MyLog.waitHere();
 		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
 		// riempirò l'esterno di nero
@@ -1052,26 +1075,33 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ip2.fill(roi1);
 		ip2.invert();
 		imp2.updateAndDraw();
-		MyLog.waitHere("ESTERNO");
+		// MyLog.waitHere("ESTERNO");
 		// faccio un duplicato di imp1, a questo applico la roi quadrata e
 		// cancello tutto l'esterno
 		ImagePlus imp11 = imp1.duplicate();
 		imp11.setRoi(roi1);
-		UtilAyv.showImageMaximized(imp11);
-		MyLog.waitHere();
+		// UtilAyv.showImageMaximized(imp11);
+		// MyLog.waitHere();
 		ImageProcessor ip11 = imp11.getProcessor();
-		ip11.setColor(Color.BLACK);	
+		ip11.setColor(Color.BLACK);
 		ip11.setLineWidth(2);
 		ip11.draw(roi1);
 		ip11.fillOutside(roi1);
-		imp11.updateAndDraw();;
+		imp11.updateAndDraw();
+		;
 		ImagePlus imp3 = rat1.execute(imp11, null);
-		UtilAyv.showImageMaximized(imp3);
-		MyLog.waitHere("INTERNO");
+		// UtilAyv.showImageMaximized(imp3);
+		// MyLog.waitHere("INTERNO");
 		// ora combino le due immagini, in modo da avere tutti i 36 oggetti
 		ImagePlus imp4 = p17rmn_.combina(imp2, imp3);
-		UtilAyv.showImageMaximized(imp4);
-		MyLog.waitHere("COMBINATA");
+		// la strategia GENERALE restituirebbe una immagine in pixel, cosa
+		// differente dalle altre strategie, allora cerco di riportarmi nelle
+		// medesimne condizioni
+		imp4.copyScale(imp1);
+
+		imp4.setTitle("strategiaGENERALE: MyRATS are beautiful");
+		// UtilAyv.showImageMaximized(imp4);
+		// MyLog.waitHere("COMBINATA");
 
 		return imp4;
 	}
@@ -1205,9 +1235,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 		int options = ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES
 				+ ParticleAnalyzer.SHOW_OUTLINES;
 		int measurements = Measurements.CENTER_OF_MASS + Measurements.AREA;
-		double minSize = 0;
+		double minSize = 2;
 		double maxSize = 100;
-		double minCirc = 0;
+		double minCirc = 0.5;
 		double maxCirc = 1;
 		ResultsTable rt0 = new ResultsTable();
 		ParticleAnalyzer pa1 = null;
@@ -1224,7 +1254,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 			ImagePlus imp100 = pa1.getOutputImage();
 			// rt0.show("Results");
 			UtilAyv.showImageMaximized(imp100);
-			// MyLog.waitHere("Oggetti trovati", debug, timeout);
+			MyLog.waitHere("Oggetti trovati", debug, timeout);
 			imp100.close();
 		}
 		return rt0;

@@ -104,7 +104,7 @@ public class p17rmn_Test {
 	}
 
 	@Test
-	public final void testStrategia31() {
+	public final void testStrategiaGENERALE() {
 
 		// RATS
 		
@@ -112,7 +112,7 @@ public class p17rmn_Test {
 		String path1 = "C:\\Dati\\_____P17\\FALLATA\\21_DESENZANO2_MISS_HWSA3";
 		
 		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		ImagePlus imp2 = p17rmn_.strategia31(imp1);
+		ImagePlus imp2 = p17rmn_.strategiaGENERALE(imp1);
 		UtilAyv.showImageMaximized(imp2);
 		MyLog.waitHere();
 
