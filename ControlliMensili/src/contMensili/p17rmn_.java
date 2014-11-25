@@ -286,9 +286,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, verbose);
 
 		int diam = 10;
-		int[][] tabPunti = p17rmn_.automaticRoiPreparation3(imp1, diam, silent,
+		ResultsTable rt1 = p17rmn_.automaticRoiPreparation3(imp1, diam, silent,
 				timeout, demo);
-		if (tabPunti == null) {
+		if (rt1 == null) {
 			imp1.show();
 			MyLog.waitHere("tabPunti==null");
 			return null;
@@ -299,7 +299,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 						1));
 		String slicePos = ReadDicom.readSubstring(ReadDicom.readDicomParameter(
 				imp1, MyConst.DICOM_IMAGE_POSITION), 3);
-		int nPunti = tabPunti.length;
+		int nPunti = rt1.getCounter();
 
 		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
@@ -323,8 +323,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 			aux1 = "Rod" + aux2 + "a";
 			rt.incrementCounter();
 			rt.addLabel(t1, aux1);
-			rt.addValue(s2, tabPunti[i2][0]);
-			rt.addValue(s3, tabPunti[i2][1]);
+			// rt.addValue(s2, tabPunti[i2][0]);
+			// rt.addValue(s3, tabPunti[i2][1]);
 			rt.addValue(s4, 0);
 			rt.addValue(s5, 0);
 			rt.addValue(s6, 0);
@@ -332,8 +332,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 			rt.incrementCounter();
 			aux1 = "Rod" + aux2 + "b";
 			rt.addLabel(t1, aux1);
-			rt.addValue(s2, tabPunti[i2 + 1][0]);
-			rt.addValue(s3, tabPunti[i2 + 1][1]);
+			// rt.addValue(s2, tabPunti[i2 + 1][0]);
+			// rt.addValue(s3, tabPunti[i2 + 1][1]);
 			rt.addValue(s4, 0);
 			rt.addValue(s5, 0);
 			rt.addValue(s6, 0);
@@ -345,8 +345,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 			aux1 = "Cubo" + aux2;
 			rt.incrementCounter();
 			rt.addLabel(t1, aux1);
-			rt.addValue(s2, tabPunti[i2][0]);
-			rt.addValue(s3, tabPunti[i2][1]);
+			// rt.addValue(s2, tabPunti[i2][0]);
+			// rt.addValue(s3, tabPunti[i2][1]);
 		}
 		rt.incrementCounter();
 		rt.addLabel(t1, "Spacing");
@@ -366,8 +366,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 	 * @param timeout
 	 * @param demo
 	 */
-	public static int[][] automaticRoiPreparation3(ImagePlus imp1, int diam2,
-			boolean silent, int timeout, boolean demo) {
+	public static ResultsTable automaticRoiPreparation3(ImagePlus imp1,
+			int diam2, boolean silent, int timeout, boolean demo) {
 
 		ImagePlus imp4 = imp1.duplicate();
 		Overlay over1 = new Overlay();
@@ -651,7 +651,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 			tabPunti[i1][0] = xPoints[i1];
 			tabPunti[i1][1] = yPoints[i1];
 		}
-		return tabPunti;
+		return rtOut;
 	}
 
 	// public static ImagePlus strategiaGENERALE(ImagePlus imp1) {
@@ -1032,36 +1032,18 @@ public class p17rmn_ implements PlugIn, Measurements {
 		return imp112;
 	}
 
-	public static ImagePlus strategia3(ImagePlus imp1) {
+	public static ImagePlus filtroRisultati(ImagePlus imp1, ResultsTable rt1) {
 
 		// MyLog.waitHere("strategia 3");
 
-		ImageProcessor ip1 = imp1.getProcessor();
-		ip1.rotate(30);
-		imp1.updateAndDraw();
+		// ImageProcessor ip1 = imp1.getProcessor();
+
 		MyRats rat1 = new MyRats();
 		ImagePlus imp2 = rat1.execute(imp1, null);
-		imp2.setTitle("strategia3: MyRATS are beautiful");
 		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
 		// riempirò l'esterno di nero prima di ricercare nuovamente i RATS
 		UtilAyv.showImageMaximized(imp2);
-		// MyLog.waitHere();
-		//
-		// o di usa RATS o si usa autoThreshold
-		//
-		// ImageProcessor ip2 = imp2.getProcessor();
-		// ip2.invert();
-		// boolean noBlack = false;
-		// boolean noWhite = false;
-		// boolean doWhite = true;
-		// boolean doSet = false;
-		// boolean doLog = false;
-		// ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Moments", noBlack,
-		// noWhite, doWhite, doSet, doLog);
-		// UtilAyv.showImageMaximized(imp2);
-		// MyLog.waitHere();
-		// IJ.run(imp2, "Invert", "");
-
+		// ricerca del quadrato interno
 		int minSizePixels = 1000;
 		int maxSizePixels = 30000;
 		boolean excludeEdges = true;
@@ -1093,13 +1075,13 @@ public class p17rmn_ implements PlugIn, Measurements {
 		PointRoi pr22 = hcd.returnCorners();
 		imp11.setRoi(pr22);
 		imp11.updateAndDraw();
-		Roi roi11 = divideBrain(imp11, pr22, 1, imp1);
+		Roi roi11 = analizzaRisultati(imp11, pr22, 1, imp1, rt1);
 
 		return imp11;
 	}
 
-	public static Roi divideBrain(ImagePlus imp1, PointRoi pr1, int quadrant,
-			ImagePlus imp2) {
+	public static Roi analizzaRisultati(ImagePlus imp1, PointRoi pr1,
+			int quadrant, ImagePlus imp2, ResultsTable rt1) {
 
 		double dimPixel = ReadDicom
 				.readDouble(ReadDicom.readSubstring(ReadDicom

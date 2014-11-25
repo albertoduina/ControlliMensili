@@ -37,15 +37,9 @@ public class p17rmn_Test {
 		boolean silent = false;
 		int diam = 10;
 		int timeout = 2000;
-		int[][] pippo = p17rmn_.automaticRoiPreparation3(imp1, diam, silent,
+		ResultsTable rt1 = p17rmn_.automaticRoiPreparation3(imp1, diam, silent,
 				timeout, demo);
 
-		
-		
-		
-		
-		
-		
 		MyLog.waitHere();
 
 	}
@@ -60,7 +54,7 @@ public class p17rmn_Test {
 		boolean silent = false;
 		int diam = 10;
 		int timeout = 2000;
-		int[][] pippo = p17rmn_.automaticRoiPreparation3(imp1, diam, silent,
+		ResultsTable rt1 = p17rmn_.automaticRoiPreparation3(imp1, diam, silent,
 				timeout, demo);
 
 		MyLog.waitHere();
@@ -119,8 +113,15 @@ public class p17rmn_Test {
 
 		String path1 = "C:\\Dati\\_____P17\\AERA\\11_AERA_HWSA_";
 		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		ImagePlus imp2 = p17rmn_.strategia3(imp1);
-		UtilAyv.showImageMaximized(imp2);
+		boolean demo = true;
+		boolean silent = false;
+		int diam = 10;
+		int timeout = 2000;
+		ResultsTable rt1 = p17rmn_.automaticRoiPreparation3(imp1, diam, silent,
+				timeout, demo);
+
+		ImagePlus imp2 = p17rmn_.filtroRisultati(imp1, rt1);
+
 		MyLog.waitHere();
 
 	}
@@ -219,7 +220,7 @@ public class p17rmn_Test {
 		boolean silent = false;
 		int diam = 10;
 		int timeout = 2000;
-		int[][] pippo = p17rmn_.automaticRoiPreparation3(imp1, diam, silent,
+		ResultsTable rt1 = p17rmn_.automaticRoiPreparation3(imp1, diam, silent,
 				timeout, demo);
 
 		MyLog.waitHere();
