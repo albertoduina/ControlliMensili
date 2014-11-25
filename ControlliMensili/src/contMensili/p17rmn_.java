@@ -5,9 +5,11 @@ import ij.ImagePlus;
 import ij.Prefs;
 import ij.WindowManager;
 import ij.gui.ImageWindow;
+import ij.gui.Line;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
 import ij.gui.PointRoi;
+import ij.gui.PolygonRoi;
 import ij.gui.Roi;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
@@ -22,11 +24,18 @@ import ij.util.Tools;
 import java.awt.Color;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import utils.AboutBox;
+import utils.ArrayUtils;
 import utils.ButtonMessages;
+import utils.HarrisCornerDetector;
+import utils.ImageUtils;
 import utils.MyAutoThreshold;
+import utils.MyCircleDetector;
+import utils.MyGeometry;
+import utils.MyHarris;
 import utils.MyLog;
 import utils.MyMsg;
 import utils.MyConst;
@@ -389,17 +398,19 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// MyAutoThreshold e l'uso di invert
 		// -------------------------------------------------------------------
 
-		ImagePlus imp9 = null;
+		ImagePlus[] imp9 = null;
 		ImagePlus imp10 = null;
 		ImagePlus imp11 = null;
 		ImagePlus imp12 = null;
 		ImagePlus imp13 = null;
 		ResultsTable rt9 = null;
+		ResultsTable rt19 = null;
 		ResultsTable rt10 = null;
 		ResultsTable rt11 = null;
 		ResultsTable rt12 = null;
 		ResultsTable rt13 = null;
 		int trovati9 = -1;
+		int trovati19 = -1;
 		int trovati10 = -1;
 		int trovati11 = -1;
 		int trovati12 = -1;
@@ -416,20 +427,25 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		if (cerca) {
 			imp9 = strategiaGENERALE(imp4);
-			rt9 = analisi(imp9, verbose, timeout, numRods1);
+			rt9 = analisi(imp9[0], verbose, timeout, 32);
+			rt19 = analisi(imp9[0], verbose, timeout, 4);
 			if (rt9 != null) {
 				trovati9 = rt9.getCounter();
+				trovati19 = rt19.getCounter();
 				// UtilAyv.showImageMaximized(imp9);
-				// rt9.show("Results");
+				rt9.show("Results");
+				MyLog.waitHere();
 			}
 			// MyLog.waitHere("trovati9= " + trovati9);
-			if (trovati9 == numRods1) {
+			if ((trovati9 == 32) && (trovati19 == 4)) {
 				cerca = false;
-				impOut = imp9;
+				// impOut = imp9;
 				rtOut = rt9;
 				// MyLog.waitHere("sufficiente strategia generale");
 			}
 		}
+
+		MyLog.waitHere();
 
 		if (cerca) {
 			imp10 = strategiaSIEMENS(imp4);
@@ -503,31 +519,39 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		switch (posMin) {
 		case 0:
-			impOut = imp9;
+			impOut = imp9[0];
 			rtOut = rt9;
 			break;
 		case 1:
 			impOut = imp10;
 			rtOut = rt10;
+			UtilAyv.showImageMaximized(impOut);
+			MyLog.waitHere();
 			break;
 		case 2:
 			impOut = imp11;
 			rtOut = rt11;
+			UtilAyv.showImageMaximized(impOut);
+			MyLog.waitHere();
 			break;
 		case 3:
 			impOut = imp12;
 			rtOut = rt12;
+			UtilAyv.showImageMaximized(impOut);
+			MyLog.waitHere();
 			break;
 		case 4:
 			impOut = imp13;
 			rtOut = rt13;
+			UtilAyv.showImageMaximized(impOut);
+			MyLog.waitHere();
 			break;
 		}
 
 		if (rtOut == null)
 			MyLog.waitHere(">>>> INFERNAL ERROR <<<<<");
 
-		// // ====================== centrale ==================
+		// ====================== centrale ==================
 		//
 		// rtOut.show("Results");
 		// MyLog.waitHere();
@@ -583,7 +607,11 @@ public class p17rmn_ implements PlugIn, Measurements {
 			imp1.getWindow().toFront();
 			IJ.setTool("multipoint");
 			MyLog.waitHere(listaMessaggi(7), debug, timeout);
-			MyLog.waitHere("Cliccare sulle RODS non selezionate, per annullare le RODS sbagliate,\n"
+			MyLog.waitHere("Sono state trovate "
+					+ vetX.length
+					+ " RODS anzichè "
+					+ numRods1
+					+ "\nCliccare sulle RODS non selezionate, per annullare le RODS sbagliate,\n"
 					+ "cliccare sul puntino rosso mentre si tiene premuto ALT,\nalla fine premere OK");
 		}
 
@@ -645,6 +673,25 @@ public class p17rmn_ implements PlugIn, Measurements {
 	// return imp4;
 	// }
 
+	public static int[][] riordina(ResultsTable rt1) {
+		rt1.show("Results");
+		MyLog.waitHere();
+
+		int xcol = rt1.getColumnIndex("XM");
+		int ycol = rt1.getColumnIndex("YM");
+		//
+		double[] vetX = rt1.getColumnAsDoubles(xcol);
+		double[] vetY = rt1.getColumnAsDoubles(ycol);
+
+		double[][] matRods = new double[2][vetX.length];
+		for (int i1 = 0; i1 < vetX.length; i1++) {
+			matRods[0][i1] = vetX[i1];
+			matRods[1][i1] = vetY[i1];
+		}
+
+		return null;
+	}
+
 	public static ImagePlus strategiaSIEMENS(ImagePlus imp1) {
 		if (imp1 == null) {
 			MyLog.waitHere();
@@ -699,7 +746,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 	public static ImagePlus strategiaGEMS(ImagePlus imp1) {
 		if (imp1 == null) {
-			MyLog.waitHere();
+			MyLog.waitHere("imp1==null");
 			return null;
 		}
 		// MyLog.waitHere("strategiaGEMS");
@@ -989,53 +1036,290 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		// MyLog.waitHere("strategia 3");
 
+		ImageProcessor ip1 = imp1.getProcessor();
+		ip1.rotate(30);
+		imp1.updateAndDraw();
 		MyRats rat1 = new MyRats();
 		ImagePlus imp2 = rat1.execute(imp1, null);
 		imp2.setTitle("strategia3: MyRATS are beautiful");
 		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
 		// riempirò l'esterno di nero prima di ricercare nuovamente i RATS
-		imp2.show();
-		MyLog.waitHere();
+		UtilAyv.showImageMaximized(imp2);
+		// MyLog.waitHere();
+		//
+		// o di usa RATS o si usa autoThreshold
+		//
 		// ImageProcessor ip2 = imp2.getProcessor();
 		// ip2.invert();
-		boolean noBlack = false;
-		boolean noWhite = false;
-		boolean doWhite = true;
-		boolean doSet = false;
-		boolean doLog = false;
-		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Moments", noBlack,
-				noWhite, doWhite, doSet, doLog);
-		IJ.run(imp2, "Invert", "");
+		// boolean noBlack = false;
+		// boolean noWhite = false;
+		// boolean doWhite = true;
+		// boolean doSet = false;
+		// boolean doLog = false;
+		// ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Moments", noBlack,
+		// noWhite, doWhite, doSet, doLog);
+		// UtilAyv.showImageMaximized(imp2);
+		// MyLog.waitHere();
+		// IJ.run(imp2, "Invert", "");
 
 		int minSizePixels = 1000;
 		int maxSizePixels = 30000;
 		boolean excludeEdges = true;
-		Roi roi1 = analisi0(imp12, minSizePixels, maxSizePixels, excludeEdges);
-		if (roi1 == null)
+		Roi roi1 = analisi0(imp2, minSizePixels, maxSizePixels, excludeEdges);
+		if (roi1 == null) {
+			MyLog.waitHere("roi1==null");
 			return null;
+		}
 		ImagePlus imp11 = imp1.duplicate();
 
 		imp11.setRoi(roi1);
-		imp11.show();
-		MyLog.waitHere();
 		ImageProcessor ip11 = imp11.getProcessor();
-		ip11.setColor(Color.BLACK);
+		ip11.setColor(Color.WHITE);
 		// ip11.setLineWidth(2);
-
 		ip11.draw(roi1);
-
 		ip11.fillOutside(roi1);
-		// ip11.drawRoi(roi1);
-		imp11.updateAndDraw();
-		MyLog.waitHere();
-		ImagePlus imp3 = rat1.execute(imp11, null);
-		imp3.show();
-		MyLog.waitHere();
+		ip11.setColor(Color.BLACK);
+		ip11.fill(roi1);
+		imp11.deleteRoi();
+		UtilAyv.showImageMaximized(imp11);
 
-		return imp3;
+		HarrisCornerDetector.Parameters params = new HarrisCornerDetector.Parameters();
+		params.alpha = 0.2;
+		params.threshold = 15000;
+		params.doCleanUp = true;
+		// int nmax = 0;
+		HarrisCornerDetector hcd = new HarrisCornerDetector(ip11, params);
+		hcd.findCorners();
+		PointRoi pr22 = hcd.returnCorners();
+		imp11.setRoi(pr22);
+		imp11.updateAndDraw();
+		Roi roi11 = divideBrain(imp11, pr22, 1, imp1);
+
+		return imp11;
 	}
 
-	public static ImagePlus strategiaGENERALE(ImagePlus imp1) {
+	public static Roi divideBrain(ImagePlus imp1, PointRoi pr1, int quadrant,
+			ImagePlus imp2) {
+
+		double dimPixel = ReadDicom
+				.readDouble(ReadDicom.readSubstring(ReadDicom
+						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
+						1));
+
+		Overlay over2 = new Overlay();
+		imp2.setOverlay(over2);
+		int dia1 = 8;
+
+		// la pointRoi ricevuta ha i dati <ben disordinati>, per
+		// mettere in corretto ordine i vertici utilizzo il getConvexHull
+		Polygon p2 = pr1.getPolygon();
+		PolygonRoi pol2 = new PolygonRoi(p2, PolygonRoi.POLYGON);
+		PolygonRoi pol3 = new PolygonRoi(pol2.getConvexHull(),
+				PolygonRoi.POLYGON);
+		Polygon p3 = pol3.getPolygon();
+
+		int[] vetxp = p3.xpoints;
+		int[] vetyp = p3.ypoints;
+
+		// trasformo le coordinate da integer a double
+		double[] vetx = new double[vetxp.length];
+		double[] vety = new double[vetxp.length];
+
+		for (int i1 = 0; i1 < vetxp.length; i1++) {
+			vetx[i1] = (double) vetxp[i1];
+			vety[i1] = (double) vetyp[i1];
+		}
+
+		// marco i vertici ma solo per vedere se sono in ordine
+
+		double lato = (new Line(vetxp[0], vetyp[0], vetxp[1], vetyp[1]))
+				.getLength();
+
+		imp2.setRoi(new OvalRoi(vetxp[0] - dia1 / 2, vetyp[0] - dia1 / 2, dia1,
+				dia1));
+		imp2.getRoi().setStrokeColor(Color.red);
+		over2.addElement(imp2.getRoi());
+		imp2.setRoi(new OvalRoi(vetxp[1] - dia1 / 2, vetyp[1] - dia1 / 2, dia1,
+				dia1));
+		imp2.getRoi().setStrokeColor(Color.green);
+		over2.addElement(imp2.getRoi());
+		imp2.setRoi(new OvalRoi(vetxp[2] - dia1 / 2, vetyp[2] - dia1 / 2, dia1,
+				dia1));
+		imp2.getRoi().setStrokeColor(Color.blue);
+		over2.addElement(imp2.getRoi());
+		imp2.setRoi(new OvalRoi(vetxp[3] - dia1 / 2, vetyp[3] - dia1 / 2, dia1,
+				dia1));
+		imp2.getRoi().setStrokeColor(Color.yellow);
+		over2.addElement(imp2.getRoi());
+
+		// prolungo i lati del quadrato fino ai bordi dell'immagine, creo una
+		// PolygonRoi
+		double[] cross1 = ImageUtils.crossingFrame(vetx[0], vety[0], vetx[1],
+				vety[1], imp1.getWidth(), imp1.getHeight());
+		Line linea1 = new Line(cross1[0], cross1[1], cross1[2], cross1[3]);
+		imp2.setRoi(linea1);
+		imp2.updateAndDraw();
+		imp2.getRoi().setStrokeColor(Color.red);
+		over2.addElement(imp2.getRoi());
+
+		double[] cross2 = ImageUtils.crossingFrame(vetx[2], vety[2], vetx[3],
+				vety[3], imp1.getWidth(), imp1.getHeight());
+		Line linea2 = new Line(cross2[0], cross2[1], cross2[2], cross2[3]);
+		imp2.setRoi(linea2);
+		imp2.updateAndDraw();
+		imp2.getRoi().setStrokeColor(Color.red);
+		over2.addElement(imp2.getRoi());
+
+		double[] cross3 = ImageUtils.crossingFrame(vetx[1], vety[1], vetx[2],
+				vety[2], imp1.getWidth(), imp1.getHeight());
+		Line linea3 = new Line(cross3[0], cross3[1], cross3[2], cross3[3]);
+		imp2.setRoi(linea3);
+		imp2.updateAndDraw();
+		imp2.getRoi().setStrokeColor(Color.green);
+		over2.addElement(imp2.getRoi());
+
+		double[] cross4 = ImageUtils.crossingFrame(vetx[0], vety[0], vetx[3],
+				vety[3], imp1.getWidth(), imp1.getHeight());
+		Line linea4 = new Line(cross4[0], cross4[1], cross4[2], cross4[3]);
+		imp2.setRoi(linea4);
+		imp2.updateAndDraw();
+		imp2.getRoi().setStrokeColor(Color.green);
+		over2.addElement(imp2.getRoi());
+		imp2.deleteRoi();
+
+		// identifico il primo cerchio
+
+		imp2.setRoi(new PointRoi(vetxp, vetyp, vetxp.length));
+
+		MyCircleDetector.fitCircle(imp2);
+		imp2.getRoi().setStrokeColor(Color.green);
+		over2.addElement(imp2.getRoi());
+
+		Rectangle boundingRectangle2 = imp2.getProcessor().getRoi();
+		// imp2.setRoi(boundingRectangle2);
+		// imp2.getRoi().setStrokeColor(Color.blue);
+		// over2.addElement(imp2.getRoi());
+
+		int diamRoi = (int) boundingRectangle2.width;
+		int xRoi = boundingRectangle2.x + boundingRectangle2.width / 2;
+		int yRoi = boundingRectangle2.y + boundingRectangle2.height / 2;
+		// xRoi += 1;
+		// yRoi += 1;
+		//
+
+		imp2.setRoi(new OvalRoi(xRoi - dia1 / 2, yRoi - dia1 / 2, dia1, dia1));
+		imp2.getRoi().setStrokeColor(Color.red);
+		over2.addElement(imp2.getRoi());
+		imp2.deleteRoi();
+
+		// ora disegno un cerchio di diametro doppio
+
+		int diamRoi3 = (int) Math.round(diamRoi * 2.5);
+
+		imp2.setRoi(new OvalRoi(xRoi - diamRoi3 / 2, yRoi - diamRoi3 / 2,
+				diamRoi3, diamRoi3));
+		imp2.getRoi().setStrokeColor(Color.red);
+		over2.addElement(imp2.getRoi());
+		imp2.deleteRoi();
+
+		// ================================
+		// penzo ad un altra strategia: faccio le bisettrici dei lati del
+		// quadrato e le diagonali, prolungandole fino al bordo immagine. Posso
+		// calcolare la distanza dei risultati della ResultsTable da ogni linea,
+		// identificando così i punti con la minore distanza
+		// ================================
+
+		double alfa1 = (new Line(vetx[0], vety[0], vetx[1], vety[1]).getAngle());
+
+		// IMPORTANTE non ho capito perchè ho dovuto sottrarre 6 per andare
+		// bene in centro (trovato in pratica). La prossima volta che nasco
+		// studierò un pò di più trigonometria, promesso. (HAHAHAHA)
+		double lato1 = (lato / 2 * Math.cos(alfa1)) - 6;
+
+		IJ.log("lato/2= " + lato / 2 + " lato1= " + lato1);
+
+		double[] cross5 = ImageUtils.crossingFrame(vetx[0] - lato1, vety[0],
+				vetx[1] - lato1, vety[1], imp1.getWidth(), imp1.getHeight());
+		Line linea5 = new Line(cross5[0], cross5[1], cross5[2], cross5[3]);
+		imp2.setRoi(linea5);
+		imp2.updateAndDraw();
+		imp2.getRoi().setStrokeColor(Color.yellow);
+		over2.addElement(imp2.getRoi());
+
+		imp2.getWindow().toFront();
+
+		MyLog.waitHere();
+
+		// //============================ prima strategia testata, creazione di
+		// poligoni con lato parallelo ai lati del quadrato
+		// double lato1 = 1.3 * (new Line(vetx[0], vety[0], vetx[1], vety[1]))
+		// .getLength();
+		// double alfa1 = (new Line(vetx[0], vety[0], vetx[1],
+		// vety[1]).getAngle());
+		//
+		// double punto1[] = MyGeometry.traslateRotatePoint(vetx[0], vety[0], 0,
+		// lato1, alfa1);
+		// double punto2[] = MyGeometry.traslateRotatePoint(vetx[1], vety[1], 0,
+		// lato1, alfa1);
+		//
+		// float[] vet2x = new float[4];
+		// float[] vet2y = new float[4];
+		// vet2x[0] = (float) vetx[1];
+		// vet2x[1] = (float) vetx[0];
+		// vet2x[2] = (float) punto1[0];
+		// vet2x[3] = (float) punto2[0];
+		//
+		// vet2y[0] = (float) vety[1];
+		// vet2y[1] = (float) vety[0];
+		// vet2y[2] = (float) punto1[1];
+		// vet2y[3] = (float) punto2[1];
+		//
+		// imp2.setRoi(new PolygonRoi(vet2x, vet2y, Roi.POLYGON));
+		// imp2.updateAndDraw();
+		// imp2.getRoi().setStrokeColor(Color.green);
+		// over2.addElement(imp2.getRoi());
+		//
+		// imp2.setRoi(new OvalRoi(vetx[1] - dia1 / 2, vety[1] - dia1 / 2, dia1,
+		// dia1));
+		// imp2.getRoi().setStrokeColor(Color.green);
+		// over2.addElement(imp2.getRoi());
+		// imp2.setRoi(new OvalRoi(vetx[3] - dia1 / 2, vety[3] - dia1 / 2, dia1,
+		// dia1));
+		// imp2.getRoi().setStrokeColor(Color.green);
+		// over2.addElement(imp2.getRoi());
+		//
+		// double punto3[] = MyGeometry.traslateRotatePoint(vetx[1], vety[1],
+		// lato1, 0, alfa1);
+		// double punto4[] = MyGeometry.traslateRotatePoint(vetx[3], vety[3],
+		// lato1, 0, alfa1);
+		//
+		// MyLog.logVector(vetx, "vetx");
+		// MyLog.logVector(vety, "vety");
+		//
+		// float[] vet3x = new float[4];
+		// float[] vet3y = new float[4];
+		// vet3x[0] = (float) vetx[3];
+		// vet3x[1] = (float) vetx[1];
+		// vet3x[2] = (float) punto3[0];
+		// vet3x[3] = (float) punto4[0];
+		//
+		// vet3y[0] = (float) vety[3];
+		// vet3y[1] = (float) vety[1];
+		// vet3y[2] = (float) punto3[1];
+		// vet3y[3] = (float) punto4[1];
+		//
+		// imp2.setRoi(new PolygonRoi(vet3x, vet3y, Roi.POLYGON));
+		// imp2.updateAndDraw();
+		// imp2.getRoi().setStrokeColor(Color.red);
+		// over2.addElement(imp2.getRoi());
+
+		imp2.getWindow().toFront();
+		MyLog.waitHere();
+
+		return null;
+	}
+
+	public static ImagePlus[] strategiaGENERALE(ImagePlus imp1) {
 
 		// Questa potrebbe essere la strategia generale. Nel proimo passaggio
 		// viene effettuato il threshold automatico con RATS. Otterrò il cerchio
@@ -1045,8 +1329,6 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ImagePlus imp2 = rat1.execute(imp1, null);
 		ImageProcessor ip2 = imp2.getProcessor();
 		ip2.invert();
-		// UtilAyv.showImageMaximized(imp2);
-		// MyLog.waitHere();
 		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
 		// riempirò l'esterno di nero
 		int minSizePixels = 10000;
@@ -1054,9 +1336,6 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean excludeEdges = false;
 		Roi roi0 = analisi0(imp2, minSizePixels, maxSizePixels, excludeEdges);
 		if (roi0 == null) {
-			// UtilAyv.showImageMaximized(imp1);
-			// UtilAyv.showImageMaximized(imp2);
-			MyLog.waitHere("roi0==null");
 			return null;
 		}
 		ip2.setColor(Color.BLACK);
@@ -1073,37 +1352,37 @@ public class p17rmn_ implements PlugIn, Measurements {
 			return null;
 		ip2.setColor(Color.WHITE);
 		ip2.fill(roi1);
-		ip2.invert();
+		// ip2.invert();
 		imp2.updateAndDraw();
+		imp2.copyScale(imp1);
+		// UtilAyv.showImageMaximized(imp2);
 		// MyLog.waitHere("ESTERNO");
+		// ===========================================================================
 		// faccio un duplicato di imp1, a questo applico la roi quadrata e
 		// cancello tutto l'esterno
 		ImagePlus imp11 = imp1.duplicate();
 		imp11.setRoi(roi1);
-		// UtilAyv.showImageMaximized(imp11);
-		// MyLog.waitHere();
 		ImageProcessor ip11 = imp11.getProcessor();
 		ip11.setColor(Color.BLACK);
 		ip11.setLineWidth(2);
 		ip11.draw(roi1);
 		ip11.fillOutside(roi1);
 		imp11.updateAndDraw();
-		;
+		// UtilAyv.showImageMaximized(imp11);
+		// MyLog.waitHere();
 		ImagePlus imp3 = rat1.execute(imp11, null);
+		ImageProcessor ip3 = imp3.getProcessor();
+		ip3.invert();
+		imp3.updateAndDraw();
+		imp3.copyScale(imp1);
 		// UtilAyv.showImageMaximized(imp3);
 		// MyLog.waitHere("INTERNO");
-		// ora combino le due immagini, in modo da avere tutti i 36 oggetti
-		ImagePlus imp4 = p17rmn_.combina(imp2, imp3);
-		// la strategia GENERALE restituirebbe una immagine in pixel, cosa
-		// differente dalle altre strategie, allora cerco di riportarmi nelle
-		// medesimne condizioni
-		imp4.copyScale(imp1);
+		// ===========================================================================
+		ImagePlus[] vetImp = new ImagePlus[2];
+		vetImp[0] = imp2;
+		vetImp[1] = imp3;
 
-		imp4.setTitle("strategiaGENERALE: MyRATS are beautiful");
-		// UtilAyv.showImageMaximized(imp4);
-		// MyLog.waitHere("COMBINATA");
-
-		return imp4;
+		return vetImp;
 	}
 
 	public static ImagePlus strategia4(ImagePlus imp1) {
@@ -1235,7 +1514,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		int options = ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES
 				+ ParticleAnalyzer.SHOW_OUTLINES;
 		int measurements = Measurements.CENTER_OF_MASS + Measurements.AREA;
-		double minSize = 2;
+		double minSize = 50;
 		double maxSize = 100;
 		double minCirc = 0.5;
 		double maxCirc = 1;
@@ -1247,8 +1526,13 @@ public class p17rmn_ implements PlugIn, Measurements {
 					maxSize, minCirc, maxCirc);
 			pa1.setHideOutputImage(true);
 			boolean ok = pa1.analyze(imp1);
-			minSize++;
-		} while ((rt0.getCounter() > 36) && (minSize < maxSize - 1));
+			minSize--;
+			// if (minSize <= 3) {
+			// ImagePlus imp100 = pa1.getOutputImage();
+			// UtilAyv.showImageMaximized(imp100);
+			// MyLog.waitHere("GULP");
+			// }
+		} while ((rt0.getCounter() < numRoi) && (minSize > 3));
 
 		if (verbose) {
 			ImagePlus imp100 = pa1.getOutputImage();

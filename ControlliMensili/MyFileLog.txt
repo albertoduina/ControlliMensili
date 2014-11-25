@@ -1,0 +1,26 @@
+20-mar-2013 14.35.31 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+20-mar-2013 14.39.36 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+21-mar-2013 10.02.01 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+21-mar-2013 10.16.58 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+21-mar-2013 10.17.28 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+21-mar-2013 10.19.27 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+24-lug-2013 11.22.05 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+24-lug-2013 11.30.35 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+24-lug-2013 11.30.47 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+24-lug-2013 11.31.19 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+24-lug-2013 11.31.40 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+24-lug-2013 11.34.18 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+24-lug-2013 11.34.40 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
