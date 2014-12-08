@@ -11,6 +11,7 @@ import ij.gui.Overlay;
 import ij.gui.PointRoi;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
+import ij.measure.Calibration;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.ImageCalculator;
@@ -366,17 +367,15 @@ public class p17rmn_ implements PlugIn, Measurements {
 	 * @param timeout
 	 * @param demo
 	 */
-	public static ResultsTable automaticRoiPreparation3(ImagePlus imp1,
+	public static ResultsTable automaticRoiPreparation4(ImagePlus imp1,
 			int diam2, boolean silent, int timeout, boolean demo) {
 
 		ImagePlus imp4 = imp1.duplicate();
 		Overlay over1 = new Overlay();
 		imp1.setOverlay(over1);
-		// Overlay over2 = new Overlay();
-		// imp5.setOverlay(over2);
 		boolean verbose = false;
 
-		int numRods1 = 36;
+		int numRods1 = 32;
 
 		// if (demo) {
 		// UtilAyv.showImageMaximized(imp4);
@@ -423,7 +422,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		// per prima cosa effettuo il threshold "GENERALE"
 
-		UtilAyv.showImageMaximized(imp1);
+		if (!imp1.isVisible())
+			UtilAyv.showImageMaximized(imp1);
 
 		if (cerca) {
 			imp9 = strategiaGENERALE(imp4);
@@ -434,10 +434,10 @@ public class p17rmn_ implements PlugIn, Measurements {
 				trovati19 = rt19.getCounter();
 				// UtilAyv.showImageMaximized(imp9);
 				rt9.show("Results");
-				MyLog.waitHere();
+				// MyLog.waitHere();
 			}
 			// MyLog.waitHere("trovati9= " + trovati9);
-			if ((trovati9 == 32) && (trovati19 == 4)) {
+			if (trovati9 == numRods1) {
 				cerca = false;
 				// impOut = imp9;
 				rtOut = rt9;
@@ -445,7 +445,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 			}
 		}
 
-		MyLog.waitHere();
+		// MyLog.waitHere();
 
 		if (cerca) {
 			imp10 = strategiaSIEMENS(imp4);
@@ -503,6 +503,177 @@ public class p17rmn_ implements PlugIn, Measurements {
 			}
 		}
 
+		if (cerca)
+			MyLog.waitHere("trovato un Kaiser");
+
+		Calibration cal = imp1.getCalibration();
+		if (rtOut == null)
+			MyLog.waitHere("rtOut==null");
+		int xcol = rtOut.getColumnIndex("XM");
+		int ycol = rtOut.getColumnIndex("YM");
+		//
+		double[] vetX = rtOut.getColumnAsDoubles(xcol);
+		// MyLog.logVector(vetX, "vetX");
+		double[] vetY = rtOut.getColumnAsDoubles(ycol);
+		// MyLog.logVector(vetX, "vetX");
+
+		// accorcio il risultato eliminando gli ultimi 4 valori, che fanno parte
+		// del cubo centrale
+		MyLog.waitHere("trovati: " + vetX.length);
+
+		MyLog.waitHere("questi sono i 32 esterni");
+		return rtOut;
+	}
+
+	/***
+	 * Ricerca automatica delle posizioni gels con AutoTreshold ed
+	 * AnalyzeParticles
+	 * 
+	 * @param imp1
+	 * @param diam2
+	 * @param timeout
+	 * @param demo
+	 */
+	public static ResultsTable automaticRoiPreparation3(ImagePlus imp1,
+			int diam2, boolean silent, int timeout, boolean demo) {
+
+		ImagePlus imp4 = imp1.duplicate();
+		Overlay over1 = new Overlay();
+		imp1.setOverlay(over1);
+		// Overlay over2 = new Overlay();
+		// imp5.setOverlay(over2);
+		boolean verbose = false;
+
+		int numRods1 = 36;
+
+		// if (demo) {
+		// UtilAyv.showImageMaximized(imp4);
+		// MyLog.waitHere(listaMessaggi(0), debug, timeout);
+		// }
+
+		double dimPixel = ReadDicom
+				.readDouble(ReadDicom.readSubstring(ReadDicom
+						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
+						1));
+
+		// -------------------------------------------------------------------
+		// REMEMBER: PER USARE ANALYZE PARTICLES DOBBIAMO
+		// ANALIZZARE OGGETTI NERI SU SFONDO BIANCO
+		// dovrei ottenere per l'esterno 32 oggetti con area
+		// nel range tra 5.0 e 12.0 e per l'interno 4 oggetti
+		// altrimenti effettuerò il threshold manuale
+		// UTILIZZO 5 diverse strategie (in realtà sono un mix tra i settaggi di
+		// MyAutoThreshold e l'uso di invert
+		// -------------------------------------------------------------------
+
+		ImagePlus[] imp9 = null;
+		ImagePlus imp10 = null;
+		ImagePlus imp11 = null;
+		ImagePlus imp12 = null;
+		ImagePlus imp13 = null;
+		ResultsTable rt9 = null;
+		ResultsTable rt19 = null;
+		ResultsTable rt10 = null;
+		ResultsTable rt11 = null;
+		ResultsTable rt12 = null;
+		ResultsTable rt13 = null;
+		int trovati9 = -1;
+		int trovati19 = -1;
+		int trovati10 = -1;
+		int trovati11 = -1;
+		int trovati12 = -1;
+		int trovati13 = -1;
+		ImagePlus impOut = null;
+		ResultsTable rtOut = null;
+
+		boolean cerca = true;
+		// creo anche un vettore di ImagePlus (non uno stack)
+
+		// per prima cosa effettuo il threshold "GENERALE"
+
+		if (!imp1.isVisible())
+			UtilAyv.showImageMaximized(imp1);
+
+		if (cerca) {
+			imp9 = strategiaGENERALE(imp4);
+			rt9 = analisi(imp9[0], verbose, timeout, 32);
+			rt19 = analisi(imp9[0], verbose, timeout, 4);
+			if (rt9 != null) {
+				trovati9 = rt9.getCounter();
+				trovati19 = rt19.getCounter();
+				// UtilAyv.showImageMaximized(imp9);
+				rt9.show("Results");
+				// MyLog.waitHere();
+			}
+			// MyLog.waitHere("trovati9= " + trovati9);
+			if ((trovati9 == 32) && (trovati19 == 4)) {
+				cerca = false;
+				// impOut = imp9;
+				rtOut = rt9;
+				// MyLog.waitHere("sufficiente strategia generale");
+			}
+		}
+
+		// MyLog.waitHere();
+
+		if (cerca) {
+			imp10 = strategiaSIEMENS(imp4);
+			rt10 = analisi(imp10, verbose, timeout, numRods1);
+			if (rt10 != null) {
+				trovati10 = rt10.getCounter();
+				// UtilAyv.showImageMaximized(imp10);
+				// rt10.show("Results");
+			}
+			// MyLog.waitHere("trovati10= " + trovati10);
+			if (trovati10 == numRods1) {
+				cerca = false;
+				impOut = imp10;
+				rtOut = rt10;
+				// MyLog.waitHere("sufficiente strategia SIEMENS");
+			}
+		}
+
+		if (cerca) {
+			imp11 = strategiaHITACHI(imp4);
+			rt11 = analisi(imp11, verbose, timeout, numRods1);
+			if (rt11 != null)
+				trovati11 = rt11.getCounter();
+			if (trovati11 == numRods1) {
+				cerca = false;
+				impOut = imp11;
+				rtOut = rt11;
+				// MyLog.waitHere("sufficiente strategia HITACHI");
+			}
+		}
+
+		if (cerca) {
+			imp12 = strategiaGEMS(imp4);
+			rt12 = analisi(imp12, verbose, timeout, numRods1);
+			if (rt12 != null)
+				trovati12 = rt12.getCounter();
+			if (trovati12 == numRods1) {
+				cerca = false;
+				impOut = imp12;
+				rtOut = rt12;
+				// MyLog.waitHere("sufficiente strategia HITACHI");
+			}
+		}
+
+		if (cerca) {
+			imp11 = strategiaHITACHI2(imp4);
+			rt13 = analisi(imp11, verbose, timeout, numRods1);
+			if (rt13 != null)
+				trovati13 = rt13.getCounter();
+			if (trovati13 == numRods1) {
+				cerca = false;
+				impOut = imp13;
+				rtOut = rt13;
+				// MyLog.waitHere("sufficiente strategia HITACHI");
+			}
+		}
+
+		MyLog.waitHere("questi sono i 32 esterni");
+
 		// se nessuna delle strategie ha trovato tutte le roi, accetto la
 		// strategia migliore, poi interverrà l'operatore a correggere e/o
 		// completare le ROI
@@ -514,8 +685,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 		array1[3] = Math.abs(trovati12 - numRods1);
 		array1[4] = Math.abs(trovati13 - numRods1);
 		int posMin = posMinValue(array1);
-		if (posMin > 0)
-			MyLog.waitHere("posMin=" + posMin);
+		// if (posMin > 0)
+		// MyLog.waitHere("posMin=" + posMin);
 
 		switch (posMin) {
 		case 0:
@@ -526,25 +697,25 @@ public class p17rmn_ implements PlugIn, Measurements {
 			impOut = imp10;
 			rtOut = rt10;
 			UtilAyv.showImageMaximized(impOut);
-			MyLog.waitHere();
+			// MyLog.waitHere();
 			break;
 		case 2:
 			impOut = imp11;
 			rtOut = rt11;
 			UtilAyv.showImageMaximized(impOut);
-			MyLog.waitHere();
+			// MyLog.waitHere();
 			break;
 		case 3:
 			impOut = imp12;
 			rtOut = rt12;
 			UtilAyv.showImageMaximized(impOut);
-			MyLog.waitHere();
+			// MyLog.waitHere();
 			break;
 		case 4:
 			impOut = imp13;
 			rtOut = rt13;
 			UtilAyv.showImageMaximized(impOut);
-			MyLog.waitHere();
+			// MyLog.waitHere();
 			break;
 		}
 
@@ -553,8 +724,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		// ====================== centrale ==================
 		//
-		// rtOut.show("Results");
-		// MyLog.waitHere();
+		rtOut.show("Results");
+		MyLog.waitHere("verificare ResultsTable");
+
 		//
 		int xcol = rtOut.getColumnIndex("XM");
 		int ycol = rtOut.getColumnIndex("YM");
@@ -566,7 +738,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// MyLog.logVector(vetY, "vetY");
 		// MyLog.waitHere();
 		//
-		// UtilAyv.showImageMaximized(imp1);
+
 		double[] vetx1 = new double[vetX.length];
 		double[] vety1 = new double[vetX.length];
 		for (int i1 = 0; i1 < vetX.length; i1++) {
@@ -596,6 +768,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 			// UtilAyv.showImageMaximized(imp1);
 			IJ.wait(3000);
 		}
+		MyLog.waitHere();
 
 		if (vetX.length != numRods1) {
 			// if (cw2.running)
@@ -651,6 +824,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 			tabPunti[i1][0] = xPoints[i1];
 			tabPunti[i1][1] = yPoints[i1];
 		}
+		over1.clear();
 		return rtOut;
 	}
 
@@ -1117,57 +1291,61 @@ public class p17rmn_ implements PlugIn, Measurements {
 		double lato = (new Line(vetxp[0], vetyp[0], vetxp[1], vetyp[1]))
 				.getLength();
 
-		imp2.setRoi(new OvalRoi(vetxp[0] - dia1 / 2, vetyp[0] - dia1 / 2, dia1,
-				dia1));
-		imp2.getRoi().setStrokeColor(Color.red);
-		over2.addElement(imp2.getRoi());
-		imp2.setRoi(new OvalRoi(vetxp[1] - dia1 / 2, vetyp[1] - dia1 / 2, dia1,
-				dia1));
-		imp2.getRoi().setStrokeColor(Color.green);
-		over2.addElement(imp2.getRoi());
-		imp2.setRoi(new OvalRoi(vetxp[2] - dia1 / 2, vetyp[2] - dia1 / 2, dia1,
-				dia1));
-		imp2.getRoi().setStrokeColor(Color.blue);
-		over2.addElement(imp2.getRoi());
-		imp2.setRoi(new OvalRoi(vetxp[3] - dia1 / 2, vetyp[3] - dia1 / 2, dia1,
-				dia1));
-		imp2.getRoi().setStrokeColor(Color.yellow);
-		over2.addElement(imp2.getRoi());
+		if (true) {
+			imp2.setRoi(new PointRoi(vetxp, vetyp, vetxp.length));
+
+			// imp2.setRoi(new OvalRoi(vetxp[0] - dia1 / 2, vetyp[0] - dia1 / 2,
+			// dia1, dia1));
+			// imp2.getRoi().setStrokeColor(Color.red);
+			// over2.addElement(imp2.getRoi());
+			// imp2.setRoi(new OvalRoi(vetxp[1] - dia1 / 2, vetyp[1] - dia1 / 2,
+			// dia1, dia1));
+			// imp2.getRoi().setStrokeColor(Color.green);
+			// over2.addElement(imp2.getRoi());
+			// imp2.setRoi(new OvalRoi(vetxp[2] - dia1 / 2, vetyp[2] - dia1 / 2,
+			// dia1, dia1));
+			// imp2.getRoi().setStrokeColor(Color.blue);
+			// over2.addElement(imp2.getRoi());
+			// imp2.setRoi(new OvalRoi(vetxp[3] - dia1 / 2, vetyp[3] - dia1 / 2,
+			// dia1, dia1));
+			imp2.getRoi().setStrokeColor(Color.yellow);
+			over2.addElement(imp2.getRoi());
+		}
 
 		// prolungo i lati del quadrato fino ai bordi dell'immagine, creo una
 		// PolygonRoi
 		double[] cross1 = ImageUtils.crossingFrame(vetx[0], vety[0], vetx[1],
 				vety[1], imp1.getWidth(), imp1.getHeight());
-		Line linea1 = new Line(cross1[0], cross1[1], cross1[2], cross1[3]);
-		imp2.setRoi(linea1);
-		imp2.updateAndDraw();
-		imp2.getRoi().setStrokeColor(Color.red);
-		over2.addElement(imp2.getRoi());
+		// Line linea1 = new Line(cross1[0], cross1[1], cross1[2], cross1[3]);
+		// imp2.setRoi(linea1);
+		// imp2.updateAndDraw();
+		// imp2.getRoi().setStrokeColor(Color.red);
+		// over2.addElement(imp2.getRoi());
 
 		double[] cross2 = ImageUtils.crossingFrame(vetx[2], vety[2], vetx[3],
 				vety[3], imp1.getWidth(), imp1.getHeight());
-		Line linea2 = new Line(cross2[0], cross2[1], cross2[2], cross2[3]);
-		imp2.setRoi(linea2);
-		imp2.updateAndDraw();
-		imp2.getRoi().setStrokeColor(Color.red);
-		over2.addElement(imp2.getRoi());
+		// Line linea2 = new Line(cross2[0], cross2[1], cross2[2], cross2[3]);
+		// imp2.setRoi(linea2);
+		// imp2.updateAndDraw();
+		// imp2.getRoi().setStrokeColor(Color.red);
+		// over2.addElement(imp2.getRoi());
 
 		double[] cross3 = ImageUtils.crossingFrame(vetx[1], vety[1], vetx[2],
 				vety[2], imp1.getWidth(), imp1.getHeight());
-		Line linea3 = new Line(cross3[0], cross3[1], cross3[2], cross3[3]);
-		imp2.setRoi(linea3);
-		imp2.updateAndDraw();
-		imp2.getRoi().setStrokeColor(Color.green);
-		over2.addElement(imp2.getRoi());
+		// Line linea3 = new Line(cross3[0], cross3[1], cross3[2], cross3[3]);
+		// imp2.setRoi(linea3);
+		// imp2.updateAndDraw();
+		// imp2.getRoi().setStrokeColor(Color.green);
+		// over2.addElement(imp2.getRoi());
 
 		double[] cross4 = ImageUtils.crossingFrame(vetx[0], vety[0], vetx[3],
 				vety[3], imp1.getWidth(), imp1.getHeight());
-		Line linea4 = new Line(cross4[0], cross4[1], cross4[2], cross4[3]);
-		imp2.setRoi(linea4);
-		imp2.updateAndDraw();
-		imp2.getRoi().setStrokeColor(Color.green);
-		over2.addElement(imp2.getRoi());
-		imp2.deleteRoi();
+		// Line linea4 = new Line(cross4[0], cross4[1], cross4[2], cross4[3]);
+		// imp2.setRoi(linea4);
+		// imp2.updateAndDraw();
+		// imp2.getRoi().setStrokeColor(Color.green);
+		// over2.addElement(imp2.getRoi());
+		// imp2.deleteRoi();
 
 		// identifico il primo cerchio
 
@@ -1213,15 +1391,13 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		double alfa1 = (new Line(vetx[0], vety[0], vetx[1], vety[1]).getAngle());
 
-		// IMPORTANTE non ho capito perchè ho dovuto sottrarre 6 per andare
-		// bene in centro (trovato in pratica). La prossima volta che nasco
-		// studierò un pò di più trigonometria, promesso. (HAHAHAHA)
-		double lato1 = (lato / 2 * Math.cos(alfa1)) - 6;
+		double lato1 = (lato / 2 * Math.cos(alfa1));
 
 		IJ.log("lato/2= " + lato / 2 + " lato1= " + lato1);
 
 		double[] cross5 = ImageUtils.crossingFrame(vetx[0] - lato1, vety[0],
 				vetx[1] - lato1, vety[1], imp1.getWidth(), imp1.getHeight());
+
 		Line linea5 = new Line(cross5[0], cross5[1], cross5[2], cross5[3]);
 		imp2.setRoi(linea5);
 		imp2.updateAndDraw();
@@ -1294,6 +1470,60 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// imp2.updateAndDraw();
 		// imp2.getRoi().setStrokeColor(Color.red);
 		// over2.addElement(imp2.getRoi());
+
+		// analizzo la ResultsTable
+		Calibration cal = imp2.getCalibration();
+
+		int xcol = rt1.getColumnIndex("XM");
+		int ycol = rt1.getColumnIndex("YM");
+		//
+		double[] vetX = rt1.getColumnAsDoubles(xcol);
+		// MyLog.logVector(vetX, "vetX");
+		double[] vetY = rt1.getColumnAsDoubles(ycol);
+		// MyLog.logVector(vetX, "vetX");
+
+		// accorcio il risultato eliminando gli ultimi 4 valori, che fanno parte
+		// del cubo centrale
+
+		double[] vetX3 = new double[vetX.length];
+		double[] vetY3 = new double[vetY.length];
+		for (int i1 = 0; i1 < vetX3.length; i1++) {
+			vetX3[i1] = vetX[i1];
+			vetY3[i1] = vetY[i1];
+		}
+
+		double[] vetX2 = new double[vetX3.length];
+		double[] vetY2 = new double[vetY3.length];
+		for (int i1 = 0; i1 < vetX3.length; i1++) {
+			vetX2[i1] = cal.getRawX(vetX3[i1]);
+			vetY2[i1] = cal.getRawY(vetY3[i1]);
+		}
+
+		float[] vetXf = UtilAyv.toFloat(vetX2);
+		float[] vetYf = UtilAyv.toFloat(vetY2);
+
+		imp2.setRoi(new PointRoi(vetXf, vetYf, vetXf.length));
+		imp2.getRoi().setStrokeColor(Color.red);
+		over2.addElement(imp2.getRoi());
+		imp2.deleteRoi();
+
+		double[] vetDist = new double[vetX.length];
+		double[] vetOrder = new double[vetX.length];
+
+		for (int i1 = 0; i1 < vetX.length; i1++) {
+			vetDist[i1] = MyGeometry.pointToLineDistance(cal.getX(cross5[0]),
+					cal.getY(cross5[1]), cal.getX(cross5[2]),
+					cal.getY(cross5[3]), vetX[i1], vetY[i1]);
+			vetOrder[i1] = (double) i1;
+		}
+
+		UtilAyv.minsort(vetDist, vetOrder);
+
+		for (int i1 = 0; i1 < vetX.length; i1++) {
+			IJ.log("" + vetOrder[i1] + "  " + vetDist[i1]);
+		}
+		MyLog.logVector(vetDist, "vetDist");
+		MyLog.waitHere("verificare VetDist nel log");
 
 		imp2.getWindow().toFront();
 		MyLog.waitHere();
@@ -1486,6 +1716,30 @@ public class p17rmn_ implements PlugIn, Measurements {
 		imp112.setTitle("ROI interne");
 
 		return imp112;
+	}
+
+	/***
+	 * calcola il punto centrale tra due rods, verrà utilizzato per la selezione
+	 * dei risultati
+	 * 
+	 * @param x1
+	 *            coordinata rod1
+	 * @param y1
+	 *            coordinata rod1
+	 * @param x2
+	 *            coordinata rod2
+	 * @param y2
+	 *            coordinata rod1
+	 * @return vettore [x, y]
+	 */
+	public static double[] posizioneCentrale(double x1, double y1, double x2,
+			double y2) {
+		double[] out = new double[2];
+		::::::
+			
+		out[0] = (x1 + x2) / 2.0;
+		out[1] = (y1 + y2) / 2.0;
+		return out;
 	}
 
 	public static ResultsTable analisi(ImagePlus imp1, boolean verbose,

@@ -18,6 +18,8 @@
 	<property name="productDir" location="${disk}/Programmi/ImageJ/Plugins/ContMensili2" />
 	<property name="productDir1" location="${disk}/Programmi/ImageJ/Plugins/ContMensili2" />
 	<property name="productDir2" location="${disk}/Programmi2/ImageJ/Plugins/ContMensili2" />
+	<property name="productDir3" location="${disk}/Programmi2/FIJI/fiji-win64/Fiji.app/Plugins/ContMensili2" />
+	
 
 	<property name="pluginsDir" location="${disk}/Repository/git/imagej/plugins/ContMensili2" />
 	<echo message="pluginsDir= ${pluginsDir}" />
@@ -65,7 +67,7 @@
 
 
 	<!-- ##############			MAIN ROUTINE 		############## -->
-	<target name="main" depends="init, libraries, compile, move1, jar, zipp, wipe, zipp2, cond_INS, cond_OLD, cond_WIN7" />
+	<target name="main" depends="init, libraries, compile, move1, jar, zipp, wipe, zipp2, cond_INS, cond_OLD, cond_WIN7, cond_FIJI" />
 	<!--target name="main" depends="init, libraries, compile, move1, jar, zipp, wipe, move2, zipp2, installXp, installOthers" /-->
 	<!--target name="main" depends="init, libraries, compile, move1, jar, zipp, wipe, move2, zipp2, installXp, installOthers" /-->
 
@@ -91,6 +93,10 @@
 		<property name="productDirWIN7" location="${disk}/Programmi2\ImageJ\plugins" />
 		<available file="${productDirWIN7}" type="dir" property="win7" />
 		<echo message="win7=${win7}" />
+
+		<property name="productDirFIJI" location="${disk}/Programmi2\FIJI\fiji-win64\Fiji.app\plugins" />
+		<available file="${productDirFIJI}" type="dir" property="win7" />
+		<echo message="FIJI=${win7}" />
 
 	</target>
 
@@ -204,6 +210,15 @@
 		<delete dir="${productDirWIN7}/ContMensili" />
 		<mkdir dir="${productDirWIN7}/ContMensili" />
 		<copy todir="${productDirWIN7}/ContMensili">
+			<fileset dir="${dist}" includes="*.jar" />
+			<fileset dir="${output}" includes="*.jar" />
+		</copy>
+	</target>
+	<target name="cond_FIJI" depends="init" if="win7">
+		<echo message="Eseguo cond_FIJI" />
+		<delete dir="${productDirFIJI}/ContMensili" />
+		<mkdir dir="${productDirFIJI}/ContMensili" />
+		<copy todir="${productDirFIJI}/ContMensili">
 			<fileset dir="${dist}" includes="*.jar" />
 			<fileset dir="${output}" includes="*.jar" />
 		</copy>
