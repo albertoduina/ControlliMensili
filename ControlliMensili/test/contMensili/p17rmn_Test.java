@@ -6,6 +6,7 @@ import ij.ImageJ;
 import ij.ImagePlus;
 import ij.gui.Roi;
 import ij.measure.ResultsTable;
+import ij.process.ImageProcessor;
 
 import org.junit.After;
 import org.junit.Before;
@@ -134,7 +135,12 @@ public class p17rmn_Test {
 		// "C:\\Dati\\_____P17\\DESENZANO\\NUOVA\\17_DESENZANO_NUOVA_HWSA3";
 
 		String path1 = "C:\\Dati\\_____P17\\AERA\\11_AERA_HWSA_";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, false);
+
+		ImageProcessor ip1 = imp1.getProcessor();
+		ip1.rotate(-5.0);
+		UtilAyv.showImageMaximized(imp1);
+
 		boolean demo = true;
 		boolean silent = false;
 		int diam = 10;

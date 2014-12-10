@@ -3,7 +3,6 @@ package contMensili;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
-import ij.WindowManager;
 import ij.gui.ImageWindow;
 import ij.gui.Line;
 import ij.gui.OvalRoi;
@@ -16,32 +15,29 @@ import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.ImageCalculator;
 import ij.plugin.PlugIn;
-import ij.plugin.Thresholder;
 import ij.plugin.filter.ParticleAnalyzer;
 import ij.plugin.frame.RoiManager;
 import ij.process.ImageProcessor;
 import ij.util.Tools;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import utils.AboutBox;
-import utils.ArrayUtils;
 import utils.ButtonMessages;
+import utils.CustomCanvasGeneric;
 import utils.HarrisCornerDetector;
 import utils.ImageUtils;
+import utils.InputOutput;
 import utils.MyAutoThreshold;
 import utils.MyCircleDetector;
+import utils.MyConst;
 import utils.MyGeometry;
-import utils.MyHarris;
 import utils.MyLog;
 import utils.MyMsg;
-import utils.MyConst;
-import utils.CustomCanvasGeneric;
-import utils.InputOutput;
 import utils.MyRats;
 import utils.MyVersionUtils;
 import utils.ReadDicom;
@@ -97,6 +93,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 	 * tabella coi dati di ayv.txt (generati da Sequenze)
 	 */
 	// String[][] iw2ayvTable;
+
+	private static Color[] c1 = { Color.red, Color.orange, Color.yellow,
+			Color.green, Color.cyan, Color.blue, Color.magenta, Color.pink };
 
 	/**
 	 * immagine da analizzare
@@ -359,8 +358,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 	}
 
 	/***
-	 * Ricerca automatica delle posizioni gels con AutoTreshold ed
-	 * AnalyzeParticles
+	 * Ricerca automatica delle posizioni rods con AutoTreshold ed
+	 * AnalyzeParticles, può utilizzare diverse strategie (valori di preset) se
+	 * la prima dovesse fallire
 	 * 
 	 * @param imp1
 	 * @param diam2
@@ -441,7 +441,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 				cerca = false;
 				// impOut = imp9;
 				rtOut = rt9;
-				// MyLog.waitHere("sufficiente strategia generale");
+				MyLog.waitHere("sufficiente strategia generale");
 			}
 		}
 
@@ -506,22 +506,33 @@ public class p17rmn_ implements PlugIn, Measurements {
 		if (cerca)
 			MyLog.waitHere("trovato un Kaiser");
 
+		// / ora marco le posizioni delle 32 ROI
+
 		Calibration cal = imp1.getCalibration();
-		if (rtOut == null)
-			MyLog.waitHere("rtOut==null");
+
 		int xcol = rtOut.getColumnIndex("XM");
 		int ycol = rtOut.getColumnIndex("YM");
 		//
 		double[] vetX = rtOut.getColumnAsDoubles(xcol);
-		// MyLog.logVector(vetX, "vetX");
 		double[] vetY = rtOut.getColumnAsDoubles(ycol);
-		// MyLog.logVector(vetX, "vetX");
 
-		// accorcio il risultato eliminando gli ultimi 4 valori, che fanno parte
-		// del cubo centrale
-		MyLog.waitHere("trovati: " + vetX.length);
+		double[] vetX2 = new double[vetX.length];
+		double[] vetY2 = new double[vetY.length];
+		for (int i1 = 0; i1 < vetX.length; i1++) {
+			vetX2[i1] = cal.getRawX(vetX[i1]);
+			vetY2[i1] = cal.getRawY(vetY[i1]);
+		}
 
-		MyLog.waitHere("questi sono i 32 esterni");
+		float[] vetXf = UtilAyv.toFloat(vetX2);
+		float[] vetYf = UtilAyv.toFloat(vetY2);
+
+		imp1.setRoi(new PointRoi(vetXf, vetYf, vetXf.length));
+		imp1.getRoi().setStrokeColor(Color.yellow);
+		over1.addElement(imp1.getRoi());
+		imp1.deleteRoi();
+
+		MyLog.waitHere("rod esterne trovate= " + rtOut.getCounter());
+
 		return rtOut;
 	}
 
@@ -1206,16 +1217,22 @@ public class p17rmn_ implements PlugIn, Measurements {
 		return imp112;
 	}
 
+	/***
+	 * Analizza i dati delle 32 rods forniti da automatiCRoiPreparation,
+	 * prefiggendosi di identificare le diverse coppie di rods, in modo da
+	 * poterle scrivere nelle posizioni corrette del report finale
+	 * 
+	 * @param imp1
+	 * @param rt1
+	 * @return
+	 */
 	public static ImagePlus filtroRisultati(ImagePlus imp1, ResultsTable rt1) {
-
-		// MyLog.waitHere("strategia 3");
-
-		// ImageProcessor ip1 = imp1.getProcessor();
 
 		MyRats rat1 = new MyRats();
 		ImagePlus imp2 = rat1.execute(imp1, null);
 		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
-		// riempirò l'esterno di nero prima di ricercare nuovamente i RATS
+		// riempirò l'esterno di nero prima di ricercare nuovamente i RATS. I
+		// dati geometrici dell'inserto
 		UtilAyv.showImageMaximized(imp2);
 		// ricerca del quadrato interno
 		int minSizePixels = 1000;
@@ -1240,13 +1257,14 @@ public class p17rmn_ implements PlugIn, Measurements {
 		UtilAyv.showImageMaximized(imp11);
 
 		HarrisCornerDetector.Parameters params = new HarrisCornerDetector.Parameters();
-		params.alpha = 0.2;
-		params.threshold = 15000;
+		params.alpha = 0.2001;
+		params.threshold = 25000;
 		params.doCleanUp = true;
 		// int nmax = 0;
 		HarrisCornerDetector hcd = new HarrisCornerDetector(ip11, params);
 		hcd.findCorners();
 		PointRoi pr22 = hcd.returnCorners();
+
 		imp11.setRoi(pr22);
 		imp11.updateAndDraw();
 		Roi roi11 = analizzaRisultati(imp11, pr22, 1, imp1, rt1);
@@ -1293,53 +1311,46 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		if (true) {
 			imp2.setRoi(new PointRoi(vetxp, vetyp, vetxp.length));
-
-			// imp2.setRoi(new OvalRoi(vetxp[0] - dia1 / 2, vetyp[0] - dia1 / 2,
-			// dia1, dia1));
-			// imp2.getRoi().setStrokeColor(Color.red);
-			// over2.addElement(imp2.getRoi());
-			// imp2.setRoi(new OvalRoi(vetxp[1] - dia1 / 2, vetyp[1] - dia1 / 2,
-			// dia1, dia1));
-			// imp2.getRoi().setStrokeColor(Color.green);
-			// over2.addElement(imp2.getRoi());
-			// imp2.setRoi(new OvalRoi(vetxp[2] - dia1 / 2, vetyp[2] - dia1 / 2,
-			// dia1, dia1));
-			// imp2.getRoi().setStrokeColor(Color.blue);
-			// over2.addElement(imp2.getRoi());
-			// imp2.setRoi(new OvalRoi(vetxp[3] - dia1 / 2, vetyp[3] - dia1 / 2,
-			// dia1, dia1));
-			imp2.getRoi().setStrokeColor(Color.yellow);
+			imp2.getRoi().setStrokeColor(Color.white);
 			over2.addElement(imp2.getRoi());
+
+			for (int i1 = 0; i1 < vetxp.length; i1++) {
+				imp2.setRoi(new OvalRoi(vetxp[i1] - dia1 / 2, vetyp[i1] - dia1
+						/ 2, dia1, dia1));
+				imp2.getRoi().setStrokeColor(c1[i1]);
+				over2.addElement(imp2.getRoi());
+				imp2.deleteRoi();
+			}
 		}
 
 		// prolungo i lati del quadrato fino ai bordi dell'immagine, creo una
 		// PolygonRoi
-		double[] cross1 = ImageUtils.crossingFrame(vetx[0], vety[0], vetx[1],
-				vety[1], imp1.getWidth(), imp1.getHeight());
+		// double[] cross1 = ImageUtils.crossingFrame(vetx[0], vety[0], vetx[1],
+		// vety[1], imp1.getWidth(), imp1.getHeight());
 		// Line linea1 = new Line(cross1[0], cross1[1], cross1[2], cross1[3]);
 		// imp2.setRoi(linea1);
 		// imp2.updateAndDraw();
 		// imp2.getRoi().setStrokeColor(Color.red);
 		// over2.addElement(imp2.getRoi());
 
-		double[] cross2 = ImageUtils.crossingFrame(vetx[2], vety[2], vetx[3],
-				vety[3], imp1.getWidth(), imp1.getHeight());
+		// double[] cross2 = ImageUtils.crossingFrame(vetx[2], vety[2], vetx[3],
+		// vety[3], imp1.getWidth(), imp1.getHeight());
 		// Line linea2 = new Line(cross2[0], cross2[1], cross2[2], cross2[3]);
 		// imp2.setRoi(linea2);
 		// imp2.updateAndDraw();
 		// imp2.getRoi().setStrokeColor(Color.red);
 		// over2.addElement(imp2.getRoi());
 
-		double[] cross3 = ImageUtils.crossingFrame(vetx[1], vety[1], vetx[2],
-				vety[2], imp1.getWidth(), imp1.getHeight());
+		// double[] cross3 = ImageUtils.crossingFrame(vetx[1], vety[1], vetx[2],
+		// vety[2], imp1.getWidth(), imp1.getHeight());
 		// Line linea3 = new Line(cross3[0], cross3[1], cross3[2], cross3[3]);
 		// imp2.setRoi(linea3);
 		// imp2.updateAndDraw();
 		// imp2.getRoi().setStrokeColor(Color.green);
 		// over2.addElement(imp2.getRoi());
 
-		double[] cross4 = ImageUtils.crossingFrame(vetx[0], vety[0], vetx[3],
-				vety[3], imp1.getWidth(), imp1.getHeight());
+		// double[] cross4 = ImageUtils.crossingFrame(vetx[0], vety[0], vetx[3],
+		// vety[3], imp1.getWidth(), imp1.getHeight());
 		// Line linea4 = new Line(cross4[0], cross4[1], cross4[2], cross4[3]);
 		// imp2.setRoi(linea4);
 		// imp2.updateAndDraw();
@@ -1384,27 +1395,78 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		// ================================
 		// penzo ad un altra strategia: faccio le bisettrici dei lati del
-		// quadrato e le diagonali, prolungandole fino al bordo immagine. Posso
-		// calcolare la distanza dei risultati della ResultsTable da ogni linea,
-		// identificando così i punti con la minore distanza
+		// quadrato e le diagonali, prolungandole fino al bordo immagine.
 		// ================================
 
 		double alfa1 = (new Line(vetx[0], vety[0], vetx[1], vety[1]).getAngle());
 
 		double lato1 = (lato / 2 * Math.cos(alfa1));
 
+		// la prima bisettrice dovrebbe avere le seguenti coordinate
+
+		double halfX1 = 0;
+		if (vetx[0] <= vetx[1])
+			halfX1 = (vetx[1] - vetx[0]) / 2 + vetx[0];
+		else
+			halfX1 = (vetx[0] - vetx[1]) / 2 + vetx[1];
+		double halfY1 = 0;
+		if (vety[0] <= vety[1])
+			halfY1 = (vety[1] - vety[0]) / 2 + vety[0];
+		else
+			halfY1 = (vety[0] - vety[1]) / 2 + vety[1];
+
+		double halfX2 = 0;
+		if (vetx[2] <= vetx[3])
+			halfX2 = (vetx[3] - vetx[2]) / 2 + vetx[2];
+		else
+			halfX2 = (vetx[2] - vetx[3]) / 2 + vetx[3];
+
+		double halfY2 = 0;
+		if (vety[2] <= vety[3])
+			halfY2 = (vety[3] - vety[2]) / 2 + vety[2];
+		else
+			halfY2 = (vety[2] - vety[3]) / 2 + vety[3];
+
 		IJ.log("lato/2= " + lato / 2 + " lato1= " + lato1);
 
-		double[] cross5 = ImageUtils.crossingFrame(vetx[0] - lato1, vety[0],
-				vetx[1] - lato1, vety[1], imp1.getWidth(), imp1.getHeight());
-
+		double[] cross5 = ImageUtils.crossingFrame(halfX1, halfY1, halfX2,
+				halfY2, imp1.getWidth(), imp1.getHeight());
 		Line linea5 = new Line(cross5[0], cross5[1], cross5[2], cross5[3]);
 		imp2.setRoi(linea5);
 		imp2.updateAndDraw();
-		imp2.getRoi().setStrokeColor(Color.yellow);
+		imp2.getRoi().setStrokeColor(c1[0]);
 		over2.addElement(imp2.getRoi());
-
+		imp2.deleteRoi();
 		imp2.getWindow().toFront();
+		
+		
+		// la bisettrice opposta sarà:
+		if (vetx[0] <= vetx[3])
+			halfX1 = (vetx[3] - vetx[0]) / 2 + vetx[0];
+		else
+			halfX1 = (vetx[0] - vetx[3]) / 2 + vetx[3];
+		if (vety[0] <= vety[3])
+			halfY1 = (vety[3] - vety[0]) / 2 + vety[0];
+		else
+			halfY1 = (vety[0] - vety[3]) / 2 + vety[3];
+
+		if (vetx[1] <= vetx[2])
+			halfX2 = (vetx[2] - vetx[1]) / 2 + vetx[1];
+		else
+			halfX2 = (vetx[1] - vetx[2]) / 2 + vetx[2];
+
+		if (vety[1] <= vety[2])
+			halfY2 = (vety[2] - vety[1]) / 2 + vety[1];
+		else
+			halfY2 = (vety[1] - vety[2]) / 2 + vety[2];
+		
+		double[] cross6 = ImageUtils.crossingFrame(halfX1, halfY1, halfX2,
+				halfY2, imp1.getWidth(), imp1.getHeight());
+		Line linea6 = new Line(cross6[0], cross6[1], cross6[2], cross6[3]);
+		imp2.setRoi(linea6);
+		imp2.updateAndDraw();
+		imp2.getRoi().setStrokeColor(c1[1]);
+		over2.addElement(imp2.getRoi());
 
 		MyLog.waitHere();
 
@@ -1482,9 +1544,6 @@ public class p17rmn_ implements PlugIn, Measurements {
 		double[] vetY = rt1.getColumnAsDoubles(ycol);
 		// MyLog.logVector(vetX, "vetX");
 
-		// accorcio il risultato eliminando gli ultimi 4 valori, che fanno parte
-		// del cubo centrale
-
 		double[] vetX3 = new double[vetX.length];
 		double[] vetY3 = new double[vetY.length];
 		for (int i1 = 0; i1 < vetX3.length; i1++) {
@@ -1503,7 +1562,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		float[] vetYf = UtilAyv.toFloat(vetY2);
 
 		imp2.setRoi(new PointRoi(vetXf, vetYf, vetXf.length));
-		imp2.getRoi().setStrokeColor(Color.red);
+		imp2.getRoi().setStrokeColor(Color.yellow);
 		over2.addElement(imp2.getRoi());
 		imp2.deleteRoi();
 
@@ -1523,7 +1582,43 @@ public class p17rmn_ implements PlugIn, Measurements {
 			IJ.log("" + vetOrder[i1] + "  " + vetDist[i1]);
 		}
 		MyLog.logVector(vetDist, "vetDist");
-		MyLog.waitHere("verificare VetDist nel log");
+		MyLog.waitHere("le prime 8 distanze sono quelle bbone");
+		// metto le coordinate delle prime 8 distanze in due vettori. Ora ne
+		// calcolo la proiezione sulla retta e andrò a vedere la distanza della
+		// proiezione dal punto di partenza. Questo mi dovrebbe identificare le
+		// diverse rod e la loro appartenenza ad una determinata coppia. ABBIAMO
+		// QUASI FINITO
+
+		double[] newX = new double[8];
+		double[] newY = new double[8];
+		double[] newD = new double[8];
+
+		for (int i1 = 0; i1 < 8; i1++) {
+			newX[i1] = vetX[(int) vetOrder[i1]];
+			newY[i1] = vetY[(int) vetOrder[i1]];
+
+			Point p1 = new Point((int) Math.round(newX[i1]),
+					(int) Math.round(newY[i1]));
+			Point a1 = new Point((int) Math.round(cross5[0]),
+					(int) Math.round(cross5[1]));
+			Point a2 = new Point((int) Math.round(cross5[2]),
+					(int) Math.round(cross5[3]));
+
+			Point p4 = MyGeometry.getProjectedPointOnLineFast(a1, a2, p1);
+			double d1 = MyGeometry.pointsDistance(a1, p4);
+			newD[i1] = d1;
+		}
+
+		UtilAyv.minsort(newD, newX, newY);
+		int i2 = 0;
+		for (int i1 = 0; i1 < 8; i1++) {
+			i2 = i1 / 2;
+			imp2.setRoi(new PointRoi(cal.getRawX(newX[i1]), cal
+					.getRawY(newY[i1])));
+			imp2.getRoi().setStrokeColor(c1[i2]);
+			over2.addElement(imp2.getRoi());
+			imp2.deleteRoi();
+		}
 
 		imp2.getWindow().toFront();
 		MyLog.waitHere();
@@ -1716,30 +1811,6 @@ public class p17rmn_ implements PlugIn, Measurements {
 		imp112.setTitle("ROI interne");
 
 		return imp112;
-	}
-
-	/***
-	 * calcola il punto centrale tra due rods, verrà utilizzato per la selezione
-	 * dei risultati
-	 * 
-	 * @param x1
-	 *            coordinata rod1
-	 * @param y1
-	 *            coordinata rod1
-	 * @param x2
-	 *            coordinata rod2
-	 * @param y2
-	 *            coordinata rod1
-	 * @return vettore [x, y]
-	 */
-	public static double[] posizioneCentrale(double x1, double y1, double x2,
-			double y2) {
-		double[] out = new double[2];
-		::::::
-			
-		out[0] = (x1 + x2) / 2.0;
-		out[1] = (y1 + y2) / 2.0;
-		return out;
 	}
 
 	public static ResultsTable analisi(ImagePlus imp1, boolean verbose,
