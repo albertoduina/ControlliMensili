@@ -286,7 +286,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, verbose);
 
 		int diam = 10;
-		ResultsTable rt1 = p17rmn_.automaticRoiPreparation3(imp1, diam, silent,
+		ResultsTable rt1 = p17rmn_.automaticRoiPreparation4(imp1, diam, silent,
 				timeout, demo);
 		if (rt1 == null) {
 			imp1.show();
@@ -443,6 +443,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 				rtOut = rt9;
 				MyLog.waitHere("sufficiente strategia generale");
 			}
+			if(cerca) MyLog.waitHere("fallita strategia generale");
 		}
 
 		// MyLog.waitHere();
@@ -462,6 +463,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 				rtOut = rt10;
 				// MyLog.waitHere("sufficiente strategia SIEMENS");
 			}
+			if(cerca) MyLog.waitHere("fallita strategia SIEMENS");
 		}
 
 		if (cerca) {
@@ -475,6 +477,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 				rtOut = rt11;
 				// MyLog.waitHere("sufficiente strategia HITACHI");
 			}
+			if(cerca) MyLog.waitHere("fallita strategia HITACHI");
 		}
 
 		if (cerca) {
@@ -486,8 +489,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 				cerca = false;
 				impOut = imp12;
 				rtOut = rt12;
-				// MyLog.waitHere("sufficiente strategia HITACHI");
+				// MyLog.waitHere("sufficiente strategia GEMS");
 			}
+			if(cerca) MyLog.waitHere("fallita strategia GEMS");
 		}
 
 		if (cerca) {
@@ -499,8 +503,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 				cerca = false;
 				impOut = imp13;
 				rtOut = rt13;
-				// MyLog.waitHere("sufficiente strategia HITACHI");
+				// MyLog.waitHere("sufficiente strategia HITACHI2");
 			}
+			if(cerca) MyLog.waitHere("fallita strategia HITACHI2");
 		}
 
 		if (cerca)

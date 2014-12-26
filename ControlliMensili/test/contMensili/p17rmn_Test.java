@@ -138,7 +138,7 @@ public class p17rmn_Test {
 		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, false);
 
 		ImageProcessor ip1 = imp1.getProcessor();
-		ip1.rotate(-5.0);
+		ip1.rotate(15.0);
 		UtilAyv.showImageMaximized(imp1);
 
 		boolean demo = true;

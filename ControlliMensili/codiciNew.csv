@@ -635,3 +635,208 @@ B005_;T1 ir 50 Body;18;1;xxx;x;x;p20rmn_
 B003_;T1 ir 30 Body;18;1;xxx;x;x;p20rmn_
 C080_;T1 ir 800 Body;1;0;xxx;x;x;p9rmn_
 //;;;;;;;
+// BREAST AERA NORMALE;;;;;;;
+BL2F_;Flash BREAST LEFT;4;4;LH;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;Lo;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;LS;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;LD;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;Ri;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;RF;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;L8;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;R8;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;LF;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;Li;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;RD;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;RS;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;LN;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;LT;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;RT;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;RN;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;Ro;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;RH;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;4;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
+//;;;;;;;
+BR2F_;Flash BREAST RIGHT;4;4;LH;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;Lo;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;LS;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;LD;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;Ri;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;RF;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;L8;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;R8;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;LF;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;Li;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;RD;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;RS;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;LN;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;LT;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;RT;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;RN;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;Ro;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;RH;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;4;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
+//;;;;;;;
+BL2S_;Spineco BREAST LEFT;4;4;LH;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;Lo;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;LS;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;LD;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;Ri;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;RF;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;L8;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;R8;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;LF;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;Li;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;RD;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;RS;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;LN;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;LT;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;RT;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;RN;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;Ro;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;RH;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;4;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
+//;;;;;;;
+BR2S_;Spineco BREAST RIGHT;4;4;LH;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;Lo;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;LS;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;LD;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;Ri;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;RF;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;L8;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;R8;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;LF;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;Li;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;RD;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;RS;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;LN;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;LT;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;RT;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;RN;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;Ro;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;RH;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;4;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
+//;;;;;;;
+// BREAST AERA BIOPSY;;;;;;;
+YL2F_;Flash BREAST LEFT;4;4;BL1;x;x;p12rmn_
+YL2F_;Flash BREAST LEFT;4;4;BL2;x;x;p12rmn_
+YL2F_;Flash BREAST LEFT;4;4;2BL;x;x;p12rmn_
+//;;;;;;;
+YR2F_;Flash BREAST RIGHT;4;4;BR1;x;x;p12rmn_
+YR2F_;Flash BREAST RIGHT;4;4;BR2;x;x;p12rmn_
+YR2F_;Flash BREAST RIGHT;4;4;2BR;x;x;p12rmn_
+//;;;;;;;
+YL2S_;Spineco BREAST LEFT;4;4;BL1;x;x;p12rmn_
+YL2S_;Spineco BREAST LEFT;4;4;BL2;x;x;p12rmn_
+YL2S_;Spineco BREAST LEFT;4;4;2BL;x;x;p12rmn_
+//;;;;;;;
+YR2S_;Spineco BREAST LEFT;4;4;BR1;x;x;p12rmn_
+YR2S_;Spineco BREAST LEFT;4;4;BR2;x;x;p12rmn_
+YR2S_;Spineco BREAST LEFT;4;4;2BR;x;x;p12rmn_
+//;;;;;;;
+// ENDORECTAL AERA;;;;;;;
+ERAF_;Flash ENDORECTAL;4;4;EN;x;x;p12rmn_
+ERAS_;Spineco ENDORECTAL;4;4;EN;x;x;p12rmn_
+//;;;;;;;
+// KNEE AERA;;;;;;;
+KNEF_;Flash KNEE;4;4;K1;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;K2;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;K3;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;K4;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;K5;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;K6;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;K7;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;K8;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;K9;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;K10;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;K11;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;K12;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;K13;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;K14;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;K15;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;15K;x;x;p12rmn_
+//;;;;;;;
+KNES_;Spineco KNEE;4;4;K1;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;K2;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;K3;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;K4;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;K5;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;K6;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;K7;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;K8;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;K9;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;K10;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;K11;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;K12;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;K13;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;K14;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;K15;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;15K;x;x;p12rmn_
+//;;;;;;;
+// SHOULDER AERA;;;;;;;
+SS2F_;Flash SHOULDER SMALL;4;4;SHS1;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;SHS2;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;SHS3;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;SHS4;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;SHS5;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;SHS6;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;SHS7;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;SHS8;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;SHS9;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;SHS10;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;SHS11;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;SHS12;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;SHS13;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;SHS14;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;SHS15;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;SHS16;x;x;p12rmn_
+//;;;;;;;
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS1;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS2;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS3;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS4;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS5;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS6;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS7;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS8;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS9;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS10;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS11;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS12;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS13;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS14;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS15;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;SHS16;x;x;p12rmn_
+//;;;;;;;
+SL2F_;Flash SHOULDER LARGE;4;4;SHL1;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;SHL2;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;SHL3;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;SHL4;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;SHL5;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;SHL6;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;SHL7;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;SHL8;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;SHL9;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;SHL10;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;SHL11;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;SHL12;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;SHL13;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;SHL14;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;SHL15;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;SHL16;x;x;p12rmn_
+//;;;;;;;
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL1;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL2;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL3;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL4;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL5;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL6;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL7;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL8;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL9;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL10;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL11;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL12;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL13;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL14;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL15;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;SHL16;x;x;p12rmn_
