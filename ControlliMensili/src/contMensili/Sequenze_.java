@@ -186,14 +186,12 @@ public class Sequenze_ implements PlugIn {
 					"CONTINUA");
 			return;
 		} else if (nuovo1 || !startingDirExist) {
-			
+
 			DirectoryChooser od1 = new DirectoryChooser(
 					"SELEZIONARE MA NON APRIRE LA CARTELLA IMMAGINI");
 			od1.setDefaultDirectory(startingDir);
 			startingDir = od1.getDirectory();
 
-			
-			
 			if (startingDir == null)
 				return;
 			Prefs.set("prefer.string1", startingDir);
@@ -268,7 +266,7 @@ public class Sequenze_ implements PlugIn {
 			// // ABILITA E DISABILITA LE STAMPE DI DEBUG
 			// // METTERE debugTables A FALSE PER NON AVERE LE STAMPE
 			// //
-			boolean debugTables = false;
+			boolean debugTables = true;
 			// //
 			// //
 
@@ -293,7 +291,7 @@ public class Sequenze_ implements PlugIn {
 			//
 			// Effettuo il sort della table, secondo il tempo di acquisizione
 			//
-			String[][] tableSequenceSorted = bubbleSortSequenceTable(tableSequenceLoaded);
+			String[][] tableSequenceSorted = bubbleSortSequenceTable2(tableSequenceLoaded);
 			if (debugTables) {
 				MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
 				MyLog.waitHere("salvare il log come TableSequenceSorted");
@@ -315,7 +313,8 @@ public class Sequenze_ implements PlugIn {
 			}
 
 			boolean test = false;
-			// NOTA BENE: lasciare test a false, altrimenti non vengono più stampati gli errori e si hanno problemi in elaborazione!!!
+			// NOTA BENE: lasciare test a false, altrimenti non vengono più
+			// stampati gli errori e si hanno problemi in elaborazione!!!
 			logVerifySequenceTable(listProblems, test);
 
 			boolean success = new TableSequence().writeTable(startingDir
@@ -389,9 +388,11 @@ public class Sequenze_ implements PlugIn {
 		List<String> vetIma = new ArrayList<String>();
 		List<String> vetAcqTime = new ArrayList<String>();
 		List<String> vetEchoTime = new ArrayList<String>();
+		List<String> vetSlicePosition = new ArrayList<String>();
 		List<String> vetDone = new ArrayList<String>();
 		List<String> vetDirez = new ArrayList<String>();
 		List<String> vetProfond = new ArrayList<String>();
+		
 
 		if (pathList == null) {
 			IJ.log("loadList2.pathList = null");
@@ -484,6 +485,9 @@ public class Sequenze_ implements PlugIn {
 						MyConst.DICOM_ECHO_TIME);
 				if (echoTime.compareTo("") == 0)
 					echoTime = "0";
+				String slicePosition = ReadDicom.readDicomParameter(imp1,
+						MyConst.DICOM_SLICE_LOCATION); 
+				
 				String done = "0";
 				boolean trovato = false;
 				int tableRow = 0;
@@ -524,6 +528,7 @@ public class Sequenze_ implements PlugIn {
 					vetIma.add(numIma);
 					vetAcqTime.add(acqTime);
 					vetEchoTime.add(echoTime);
+					vetSlicePosition.add(slicePosition);
 					vetDirez.add(tableCode2[tableRow][4]);
 					vetProfond.add(tableCode2[tableRow][5]);
 					vetDone.add(done);
@@ -544,6 +549,7 @@ public class Sequenze_ implements PlugIn {
 						vetIma.add(numIma);
 						vetAcqTime.add(acqTime);
 						vetEchoTime.add(echoTime);
+						vetSlicePosition.add(slicePosition);
 						vetDirez.add(tableCode2[tableRow][4]);
 						vetProfond.add(tableCode2[tableRow][5]);
 						vetDone.add(done);
@@ -595,17 +601,20 @@ public class Sequenze_ implements PlugIn {
 				ArrayUtils.arrayListToArrayString(vetEchoTime),
 				TableSequence.ECHO);
 		String[][] tablePass11 = TableSequence.writeColumn(tablePass10,
+				ArrayUtils.arrayListToArrayString(vetSlicePosition),
+				TableSequence.ECHO);
+		String[][] tablePass12 = TableSequence.writeColumn(tablePass11,
 				ArrayUtils.arrayListToArrayString(vetDirez),
 				TableSequence.DIREZ);
-		String[][] tablePass12 = TableSequence.writeColumn(tablePass11,
+		String[][] tablePass13 = TableSequence.writeColumn(tablePass12,
 				ArrayUtils.arrayListToArrayString(vetProfond),
 				TableSequence.PROFOND);
 
-		String[][] tablePass13 = TableSequence.writeColumn(tablePass12,
+		String[][] tablePass14 = TableSequence.writeColumn(tablePass13,
 				ArrayUtils.arrayListToArrayString(vetDone), TableSequence.DONE);
 		// MyLog.logMatrix(tablePass13, "tablePass13");
 		// MyLog.waitHere("COMPLETO");
-		return tablePass13;
+		return tablePass14;
 	}
 
 	public static boolean coilPresent(String[] allCoils, String coil) {
@@ -1414,6 +1423,71 @@ public class Sequenze_ implements PlugIn {
 		return tableOut;
 	}
 
+	/**
+	 * Effettua il bubble sort della tabella delle sequenze, utilizza
+	 * l'algoritmo bubblesort
+	 * 
+	 * @param tableIn
+	 * @return
+	 */
+	public String[][] bubbleSortSequenceTable2(String[][] tableIn) {
+
+		if (tableIn == null) {
+			IJ.log("bubbleSortTable.tableIn == null");
+			return null;
+		}
+		long[] bubblesort1 = new long[tableIn.length];
+		int[] bubblesort2 = new int[tableIn.length];
+		String[][] tableOut = new TableUtils().duplicateTable(tableIn);
+		for (int i1 = 0; i1 < tableOut.length; i1++) {
+			String acqTime = TableSequence.getAcqTime(tableOut, i1);
+			if (acqTime == null)
+				acqTime = "9999999999999999";
+			bubblesort1[i1] = Long.parseLong(acqTime);
+		}
+		for (int i1 = 0; i1 < tableOut.length; i1++) {
+			String numIma = TableSequence.getNumIma(tableOut, i1);
+			bubblesort2[i1] = ReadDicom.readInt(numIma);
+		}
+
+		String[] tempRiga = new String[tableOut[0].length];
+		boolean sorted = false;
+		while (!sorted) {
+			sorted = true;
+			for (int i1 = 0; i1 < (bubblesort1.length - 1); i1++) {
+				if (bubblesort1[i1] > bubblesort1[i1 + 1]) {
+					long temp = bubblesort1[i1];
+					// N.B. i2 in questo caso partirà da 1, poichè la colonna 0
+					// che contiene il numero della riga NON deve venire sortata
+					for (int i2 = 1; i2 < tableOut[0].length; i2++)
+						tempRiga[i2] = tableOut[i1][i2];
+					bubblesort1[i1] = bubblesort1[i1 + 1];
+					for (int i2 = 1; i2 < tableOut[0].length; i2++)
+						tableOut[i1][i2] = tableOut[i1 + 1][i2];
+					bubblesort1[i1 + 1] = temp;
+					for (int i2 = 1; i2 < tableOut[0].length; i2++)
+						tableOut[i1 + 1][i2] = tempRiga[i2];
+					sorted = false;
+				} else if ((bubblesort1[i1] == bubblesort1[i1 + 1])
+						&& (bubblesort2[i1] > bubblesort2[i1 + 1])) {
+					int temp2 = bubblesort2[i1];
+					// N.B. i2 in questo caso partirà da 1, poichè la colonna 0
+					// che contiene il numero della riga NON deve venire sortata
+					for (int i2 = 1; i2 < tableOut[0].length; i2++)
+						tempRiga[i2] = tableOut[i1][i2];
+					bubblesort2[i1] = bubblesort2[i1 + 1];
+					for (int i2 = 1; i2 < tableOut[0].length; i2++)
+						tableOut[i1][i2] = tableOut[i1 + 1][i2];
+					bubblesort2[i1 + 1] = temp2;
+					for (int i2 = 1; i2 < tableOut[0].length; i2++)
+						tableOut[i1 + 1][i2] = tempRiga[i2];
+					sorted = false;
+				}
+			}
+		}
+		return tableOut;
+	}
+
 	public boolean checkSequenceTable(String source) {
 		URL url1 = this.getClass().getResource("/" + source);
 		if (url1 != null)
@@ -1445,7 +1519,7 @@ public class Sequenze_ implements PlugIn {
 	 */
 
 	public void readExperiment(String source) {
-		boolean absolute=false;
+		boolean absolute = false;
 		if (this.getClass().getResource("/" + source) == null) {
 			String[][] mat1 = new InputOutput().readFile6LIKE(source, absolute);
 			MyLog.logMatrix(mat1, "mat1");

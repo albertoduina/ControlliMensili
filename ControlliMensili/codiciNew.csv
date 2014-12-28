@@ -636,102 +636,102 @@ B003_;T1 ir 30 Body;18;1;xxx;x;x;p20rmn_
 C080_;T1 ir 800 Body;1;0;xxx;x;x;p9rmn_
 //;;;;;;;
 // BREAST AERA NORMALE;;;;;;;
-BL2F_;Flash BREAST LEFT;4;4;LH;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;Lo;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;LS;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;LD;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;Ri;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;RF;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;L8;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;R8;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;LF;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;Li;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;RD;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;RS;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;LN;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;LT;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;RT;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;RN;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;Ro;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;RH;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;4;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;LH;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;Lo;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;LS;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;LD;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;Ri;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;RF;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;L8;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;R8;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;LF;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;Li;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;RD;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;RS;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;LN;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;LT;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;RT;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;RN;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;Ro;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;RH;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;6;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
 //;;;;;;;
-BR2F_;Flash BREAST RIGHT;4;4;LH;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;Lo;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;LS;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;LD;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;Ri;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;RF;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;L8;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;R8;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;LF;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;Li;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;RD;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;RS;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;LN;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;LT;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;RT;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;RN;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;Ro;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;RH;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;4;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;LH;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;Lo;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;LS;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;LD;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;Ri;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;RF;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;L8;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;R8;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;LF;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;Li;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;RD;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;RS;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;LN;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;LT;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;RT;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;RN;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;Ro;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;RH;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;6;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
 //;;;;;;;
-BL2S_;Spineco BREAST LEFT;4;4;LH;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;Lo;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;LS;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;LD;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;Ri;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;RF;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;L8;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;R8;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;LF;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;Li;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;RD;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;RS;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;LN;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;LT;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;RT;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;RN;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;Ro;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;RH;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;4;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;LH;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;Lo;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;LS;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;LD;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;Ri;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;RF;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;L8;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;R8;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;LF;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;Li;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;RD;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;RS;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;LN;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;LT;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;RT;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;RN;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;Ro;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;RH;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
 //;;;;;;;
-BR2S_;Spineco BREAST RIGHT;4;4;LH;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;Lo;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;LS;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;LD;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;Ri;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;RF;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;L8;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;R8;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;LF;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;Li;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;RD;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;RS;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;LN;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;LT;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;RT;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;RN;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;Ro;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;RH;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;4;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;LH;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;Lo;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;LS;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;LD;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;Ri;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;RF;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;L8;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;R8;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;LF;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;Li;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;RD;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;RS;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;LN;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;LT;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;RT;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;RN;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;Ro;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;RH;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
 //;;;;;;;
 // BREAST AERA BIOPSY;;;;;;;
-YL2F_;Flash BREAST LEFT;4;4;BL1;x;x;p12rmn_
-YL2F_;Flash BREAST LEFT;4;4;BL2;x;x;p12rmn_
-YL2F_;Flash BREAST LEFT;4;4;2BL;x;x;p12rmn_
+YL2F_;Flash BREAST LEFT;4;6;BL1;x;x;p12rmn_
+YL2F_;Flash BREAST LEFT;4;6;BL2;x;x;p12rmn_
+YL2F_;Flash BREAST LEFT;4;6;2BL;x;x;p12rmn_
 //;;;;;;;
-YR2F_;Flash BREAST RIGHT;4;4;BR1;x;x;p12rmn_
-YR2F_;Flash BREAST RIGHT;4;4;BR2;x;x;p12rmn_
-YR2F_;Flash BREAST RIGHT;4;4;2BR;x;x;p12rmn_
+YR2F_;Flash BREAST RIGHT;4;6;BR1;x;x;p12rmn_
+YR2F_;Flash BREAST RIGHT;4;6;BR2;x;x;p12rmn_
+YR2F_;Flash BREAST RIGHT;4;6;2BR;x;x;p12rmn_
 //;;;;;;;
-YL2S_;Spineco BREAST LEFT;4;4;BL1;x;x;p12rmn_
-YL2S_;Spineco BREAST LEFT;4;4;BL2;x;x;p12rmn_
-YL2S_;Spineco BREAST LEFT;4;4;2BL;x;x;p12rmn_
+YL2S_;Spineco BREAST LEFT;4;12;BL1;x;x;p12rmn_
+YL2S_;Spineco BREAST LEFT;4;12;BL2;x;x;p12rmn_
+YL2S_;Spineco BREAST LEFT;4;12;2BL;x;x;p12rmn_
 //;;;;;;;
-YR2S_;Spineco BREAST LEFT;4;4;BR1;x;x;p12rmn_
-YR2S_;Spineco BREAST LEFT;4;4;BR2;x;x;p12rmn_
-YR2S_;Spineco BREAST LEFT;4;4;2BR;x;x;p12rmn_
+YR2S_;Spineco BREAST LEFT;4;12;BR1;x;x;p12rmn_
+YR2S_;Spineco BREAST LEFT;4;12;BR2;x;x;p12rmn_
+YR2S_;Spineco BREAST LEFT;4;12;2BR;x;x;p12rmn_
 //;;;;;;;
 // ENDORECTAL AERA;;;;;;;
 ERAF_;Flash ENDORECTAL;4;4;EN;x;x;p12rmn_

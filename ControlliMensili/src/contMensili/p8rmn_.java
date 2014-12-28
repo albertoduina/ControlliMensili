@@ -223,12 +223,13 @@ public class p8rmn_ implements PlugIn, Measurements {
 				+ MyConst.SEQUENZE_FILE);
 
 		String[][] info1 = ReportStandardInfo.getStandardInfo(iw2ayvTable,
-				riga1, tabCodici, VERSION , autoCalled);
+				riga1, tabCodici, VERSION, autoCalled);
 		//
 		// Qui si torna se la misura è da rifare
 		//
 		do {
 			UtilAyv.closeResultsWindow();
+
 			ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
 
 			String slicePos = ReadDicom.readSubstring(ReadDicom
@@ -237,6 +238,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 			overlayNumbers(imp1, true);
 
 			imp1.updateAndDraw();
+
 			double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
 					ReadDicom.readDicomParameter(imp1,
 							MyConst.DICOM_PIXEL_SPACING), 1));
@@ -247,6 +249,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 							"Cliccare nell'ordine sui 4 angoli del quadrato, poi premere FINE POSIZIONAMENTO",
 							"FINE POSIZIONAMENTO");
 			if (howmanyPoints(poli1) == MyConst.P8_NUM_POINTS4) {
+				IJ.log("009");
 				double[] vetResults = mainCalculation(poli1, dimPixel);
 
 				// Salvataggio dei risultati nella ResultsTable
@@ -388,7 +391,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 	}
 
 	public void overlayNumbers(ImagePlus imp1, boolean verbose) {
-		imp1.setRoi(new OvalRoi(0, 0, 0, 0));
+		// imp1.setRoi(new OvalRoi(0, 0, 0, 0));
 		CustomCanvasGeneric ccg1 = new CustomCanvasGeneric(imp1);
 		double[] cx1 = { 49, 212, 212, 49 };
 		double[] cy1 = { 54, 54, 222, 222 };
