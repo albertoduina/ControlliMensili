@@ -1755,7 +1755,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			// MyLog.waitHere(info10
 			// + "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI", debug);
 
-			MyLog.waitHere(info10 + "\n \n" + listaMessaggi(0), debug);
+		//	MyLog.waitHere(info10 + "\n \n" + listaMessaggi(0), debug);
 
 			manualRequired = false;
 		}

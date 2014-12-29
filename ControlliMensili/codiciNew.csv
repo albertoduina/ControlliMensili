@@ -30,7 +30,7 @@ HT2A_;Thickness 2mm Sing.Head;1;1;xxx;x;x;p6rmn_
 HT5A_;Thickness 5mm Sing.Head;1;1;xxx;x;x;p6rmn_
 HTMA_;Thickness 2mm Multi Head;15;15;xxx;x;x;p6rmn_
 HWLX_;Localizer Warp Head;0;0;xxx;x;x;none_
-HWSA_;Warp Assiale Head;1;1;xxx;x;x;p17rmn_
+HWSA_;Warp Assiale Head;1;1;xxx;x;x;p7rmn_
 HRKA_;Risoluzione 1024 Head;1;1;xxx;x;x;p4rmn_
 HR5A_;Risoluzione 512 Head;1;1;xxx;x;x;p4rmn_
 HR2A_;Risoluzione 256 Head;1;1;xxx;x;x;p4rmn_
@@ -636,45 +636,45 @@ B003_;T1 ir 30 Body;18;1;xxx;x;x;p20rmn_
 C080_;T1 ir 800 Body;1;0;xxx;x;x;p9rmn_
 //;;;;;;;
 // BREAST AERA NORMALE;;;;;;;
-BL2F_;Flash BREAST LEFT;4;6;LH;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;Lo;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;LS;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;LD;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;Ri;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;RF;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;L8;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;R8;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;LF;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;Li;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;RD;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;RS;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;LN;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;LT;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;RT;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;RN;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;Ro;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;RH;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;6;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;LH;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;Lo;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;LS;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;LD;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;Ri;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;RF;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;L8;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;R8;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;LF;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;Li;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;RD;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;RS;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;LN;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;LT;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;RT;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;RN;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;Ro;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;RH;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
 //;;;;;;;
-BR2F_;Flash BREAST RIGHT;4;6;LH;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;Lo;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;LS;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;LD;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;Ri;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;RF;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;L8;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;R8;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;LF;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;Li;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;RD;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;RS;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;LN;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;LT;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;RT;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;RN;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;Ro;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;RH;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;6;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;LH;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;Lo;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;LS;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;LD;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;Ri;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;RF;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;L8;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;R8;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;LF;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;Li;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;RD;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;RS;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;LN;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;LT;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;RT;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;RN;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;Ro;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;RH;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
 //;;;;;;;
 BL2S_;Spineco BREAST LEFT;4;12;LH;x;x;p12rmn_
 BL2S_;Spineco BREAST LEFT;4;12;Lo;x;x;p12rmn_
@@ -717,13 +717,13 @@ BR2S_;Spineco BREAST RIGHT;4;12;RH;x;x;p12rmn_
 BR2S_;Spineco BREAST RIGHT;4;12;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
 //;;;;;;;
 // BREAST AERA BIOPSY;;;;;;;
-YL2F_;Flash BREAST LEFT;4;6;BL1;x;x;p12rmn_
-YL2F_;Flash BREAST LEFT;4;6;BL2;x;x;p12rmn_
-YL2F_;Flash BREAST LEFT;4;6;2BL;x;x;p12rmn_
+YL2F_;Flash BREAST LEFT;4;12;BL1;x;x;p12rmn_
+YL2F_;Flash BREAST LEFT;4;12;BL2;x;x;p12rmn_
+YL2F_;Flash BREAST LEFT;4;12;2BL;x;x;p12rmn_
 //;;;;;;;
-YR2F_;Flash BREAST RIGHT;4;6;BR1;x;x;p12rmn_
-YR2F_;Flash BREAST RIGHT;4;6;BR2;x;x;p12rmn_
-YR2F_;Flash BREAST RIGHT;4;6;2BR;x;x;p12rmn_
+YR2F_;Flash BREAST RIGHT;4;12;BR1;x;x;p12rmn_
+YR2F_;Flash BREAST RIGHT;4;12;BR2;x;x;p12rmn_
+YR2F_;Flash BREAST RIGHT;4;12;2BR;x;x;p12rmn_
 //;;;;;;;
 YL2S_;Spineco BREAST LEFT;4;12;BL1;x;x;p12rmn_
 YL2S_;Spineco BREAST LEFT;4;12;BL2;x;x;p12rmn_

@@ -25,6 +25,7 @@ import utils.ReadDicom;
 import utils.TableCode;
 import utils.TableExpand;
 import utils.TableSequence;
+import utils.TableSorter;
 import utils.TableUtils;
 import utils.TableVerify;
 import utils.UtilAyv;
@@ -66,6 +67,13 @@ public class Sequenze_ implements PlugIn {
 	public static String VERSION = "Programma gestione automatica";
 
 	public int location;
+	
+	// //
+	// // ABILITA E DISABILITA LE STAMPE DI DEBUG
+	// // METTERE debugTables A FALSE PER NON AVERE LE STAMPE
+	// //
+	public boolean debugTables = true;
+
 
 	public void run(String arg) {
 
@@ -99,7 +107,7 @@ public class Sequenze_ implements PlugIn {
 			return;
 		}
 
-		MyFileLogger.logger.info("-----INIZIO Sequenze----");
+	//	MyFileLogger.logger.info("-----INIZIO Sequenze----");
 
 		new InputOutput().findCSV(MyConst.CODE_FILE);
 		new InputOutput().findCSV(MyConst.LIMITS_FILE);
@@ -122,6 +130,8 @@ public class Sequenze_ implements PlugIn {
 				MyConst.DEFAULT_PATH);
 		MyFileLogger.logger.info("Sequenze_>>> startingDir letta= "
 				+ startingDir);
+		
+		UtilAyv.logResizer();
 
 		boolean startingDirExist = new File(startingDir).exists();
 
@@ -263,11 +273,6 @@ public class Sequenze_ implements PlugIn {
 			// MyLog.waitHere();
 
 			// //
-			// // ABILITA E DISABILITA LE STAMPE DI DEBUG
-			// // METTERE debugTables A FALSE PER NON AVERE LE STAMPE
-			// //
-			boolean debugTables = true;
-			// //
 			// //
 
 			String[][] tableSequenceLoaded = generateSequenceTable(list,
@@ -288,14 +293,56 @@ public class Sequenze_ implements PlugIn {
 				return;
 			}
 
+			
+			//=============================================================
+			// VECCHIA CAZZATA FUNZIONANTE
+			//=============================================================
+			
 			//
 			// Effettuo il sort della table, secondo il tempo di acquisizione
 			//
-			String[][] tableSequenceSorted = bubbleSortSequenceTable2(tableSequenceLoaded);
+//			String[][] tableSequenceSorted = bubbleSortSequenceTable2(tableSequenceLoaded);
+//			if (debugTables) {
+//				MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
+//				MyLog.waitHere("salvare il log come TableSequenceSorted");
+//			}
+			
+		
+			
+			//=============================================================
+			// NUOVA CAZZATA INEDITA
+			//=============================================================
+			
+
+			String[][] tableSequenceSorted1 = TableSorter.minsort(tableSequenceLoaded, TableSequence.POSIZ);
+			if (debugTables) {
+				MyLog.logMatrix(tableSequenceSorted1, "tableSequenceSorted1");
+				MyLog.waitHere("salvare il log come TableSequenceSorted1");
+			}
+
+			
+			
+			
+			String[][] tableSequenceSorted = TableSorter.minsort(tableSequenceSorted1, TableSequence.TIME);
 			if (debugTables) {
 				MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
 				MyLog.waitHere("salvare il log come TableSequenceSorted");
 			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 
 			String[][] tableSequenceReordered = reorderSequenceTable(
 					tableSequenceSorted, tableCode);
@@ -602,7 +649,7 @@ public class Sequenze_ implements PlugIn {
 				TableSequence.ECHO);
 		String[][] tablePass11 = TableSequence.writeColumn(tablePass10,
 				ArrayUtils.arrayListToArrayString(vetSlicePosition),
-				TableSequence.ECHO);
+				TableSequence.POSIZ);
 		String[][] tablePass12 = TableSequence.writeColumn(tablePass11,
 				ArrayUtils.arrayListToArrayString(vetDirez),
 				TableSequence.DIREZ);
