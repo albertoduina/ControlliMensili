@@ -1,842 +1,842 @@
-// Contiene le regole utilizzate da Sequenze per compilare il file;;;;;;;
-// ayv.txt che verrà poi usato per chiamare il plug-in adatto;;;;;;;
-// ad elaborare una determinata immagine;;;;;;;
-// N.B. si hanno 4 directions vup verticale a crescere, vdw vertivale a scendere ;;;;;;;
-// hsx orizz. verso sx, hdx orizz. verso dx                  ;;;;;;;
-// CODICE;COMMENTO;DA PASSARE;TOTALI;COIL;DIRECTION;DEPTH;PLUGIN
-//SIEMENS SIMPHONY +  AVANTO;;;;;;;
-// BODY;;;;;;;
-BUSA_;Uniformità Assiale Body;2;2;xxx;x;x;p12rmn_
-BUSS_;Uniformità Sagittale Body;2;2;xxx;x;x;p12rmn_
-BUSC_;Uniformità Coronale Body;2;2;xxx;x;x;p12rmn_
-BDSA_;DGP Single Body;1;1;xxx;x;x;p8rmn_
-BDMA_;DGP Multi Body;1;3;xxx;x;x;p8rmn_
-BTLX_;Localizer Thickness Body;0;0;xxx;x;x;none_
-BT2A_;Thickness 2mm Sing.Body;1;1;xxx;x;x;p6rmn_
-BT5A_;Thickness 5mm Sing.Body;1;1;xxx;x;x;p6rmn_
-BTMA_;Thickness 2mm Multi Body;15;15;xxx;x;x;p6rmn_
-BRKA_;Risoluzione 1024 Body;1;1;xxx;x;x;p4rmn_
-BR5A_;Risoluzione 512 Body;1;1;xxx;x;x;p4rmn_
-BR2A_;Risoluzione 256 Body;1;1;xxx;x;x;p4rmn_
-//;;;;;;;
-// HEAD;;;;;;;
-///HUSA_;Uniformità Assiale Head;2;2;xxx;x;x;p12rmn_
-///HUSS_;Uniformità Sagittale Head;2;2;xxx;x;x;p12rmn_
-///HUSC_;Uniformità Coronale Head;2;2;xxx;x;x;p12rmn_
-HDSA_;DGP Single Head;1;1;xxx;x;x;p8rmn_
-HDMA_;DGP Multi Head;1;3;xxx;x;x;p8rmn_
-HTLX_;Localizer Thickness Head;0;0;xxx;x;x;none_
-HT2A_;Thickness 2mm Sing.Head;1;1;xxx;x;x;p6rmn_
-HT5A_;Thickness 5mm Sing.Head;1;1;xxx;x;x;p6rmn_
-HTMA_;Thickness 2mm Multi Head;15;15;xxx;x;x;p6rmn_
-HWLX_;Localizer Warp Head;0;0;xxx;x;x;none_
-HWSA_;Warp Assiale Head;1;1;xxx;x;x;p7rmn_
-HRKA_;Risoluzione 1024 Head;1;1;xxx;x;x;p4rmn_
-HR5A_;Risoluzione 512 Head;1;1;xxx;x;x;p4rmn_
-HR2A_;Risoluzione 256 Head;1;1;xxx;x;x;p4rmn_
-//;;;;;;;
-// HEAD ARRAY AERA SAVE UNCOMBINED;;;;;;;
-// DA LUGLIO 2012 ANCHE HEAD ARRAY AVANTO SAVE UNCOMBINED;;;;;;;
-// RISERVIAMO IL CODICE HVSA_ HVSS_ HVSC_ perchè sostituito in vba a questi;;;;;;;
-// IN FUTURO CAMBIEREMO IL CODICE NELLA SEQUENZA AERA;;;;;;;
-// --------------------------------------;;;;;;;
-HUSAA;Uniformità Assiale Head;2;2;H11;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;H12;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;H13;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;H14;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;H21;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;H22;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;H23;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;H24;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;H31;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;H32;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;H33;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;H34;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;H41;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;H42;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;H43;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;H44;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;HE1-4;x;30;p12rmn_
-
-HUSSA;Uniformità Sagittale Head;2;2;H11;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;H12;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;H13;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;H14;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;H21;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;H22;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;H23;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;H24;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;H31;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;H32;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;H33;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;H34;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;H41;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;H42;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;H43;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;H44;x;30;p10rmn_
-HUSSA;Uniformità Sagittale Head;2;2;HE1-4;x;30;p12rmn_
-
-HUSCA;Uniformità Coronale Head;2;2;H11;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;H12;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;H13;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;H14;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;H21;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;H22;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;H23;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;H24;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;H31;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;H32;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;H33;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;H34;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;H41;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;H42;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;H43;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;H44;x;30;p10rmn_
-HUSCA;Uniformità Coronale Head;2;2;HE1-4;x;30;p12rmn_
-//;;;;;;;
-// AVANTO SAVE UNCOMBINED;;;;;;;
-// RISERVIAMO IL CODICE HXSA_ HXSS_ HXSC_ perchè sostituito in vba a questi;;;;;;;
-HUSAA;Uniformità Assiale Head;2;2;HE1;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;HE2;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;HE3;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;HE4;x;30;p10rmn_
-HUSAA;Uniformità Assiale Head;2;2;C:HE1-4;x;30;p12rmn_
-
-HUSSA;Uniformità Assiale Head;2;2;HE1;x;30;p10rmn_
-HUSSA;Uniformità Assiale Head;2;2;HE2;x;30;p10rmn_
-HUSSA;Uniformità Assiale Head;2;2;HE3;x;30;p10rmn_
-HUSSA;Uniformità Assiale Head;2;2;HE4;x;30;p10rmn_
-HUSSA;Uniformità Assiale Head;2;2;C:HE1-4;x;30;p12rmn_
-
-HUSCA;Uniformità Assiale Head;2;2;HE1;x;30;p10rmn_
-HUSCA;Uniformità Assiale Head;2;2;HE2;x;30;p10rmn_
-HUSCA;Uniformità Assiale Head;2;2;HE3;x;30;p10rmn_
-HUSCA;Uniformità Assiale Head;2;2;HE4;x;30;p10rmn_
-HUSCA;Uniformità Assiale Head;2;2;C:HE1-4;x;30;p12rmn_
-
-// SYMPHONY SAVE UNCOMBINED;;;;;;;
-// RISERVIAMO IL CODICE HXSA_ HXSS_ HXSC_ perchè sostituito in vba a questi;;;;;;;
-//  per i clusters separati  abbiamo lo stesso codice dll'AVANTO (HE1 HE2 HE3 HE4);;;;;;;
-HUSAA;Uniformità Assiale Head;2;2;t:HE1-4;x;30;p12rmn_
-HUSSA;Uniformità Assiale Head;2;2;t:HE1-4;x;30;p12rmn_
-HUSCA;Uniformità Assiale Head;2;2;t:HE1-4;x;30;p12rmn_
-
-//;;;;;;;
-// SPINE SIMPHONY;;;;;;;
-S1FA_;Flash SPINE S1;4;4;xxx;vup;30;p11rmn_
-S1SA_;SpinEcho SPINE S1;4;4;xxx;vup;30;p11rmn_
-S2FA_;Flash SPINE S2;4;4;xxx;vup;30;p11rmn_
-S2SA_;SpinEcho SPINE S2;4;4;xxx;vup;30;p11rmn_
-S3FA_;Flash SPINE S3;4;4;xxx;vup;30;p11rmn_
-S3SA_;SpinEcho SPINE S3;4;4;xxx;vup;30;p11rmn_
-S4FA_;Flash SPINE S4;4;4;xxx;vup;30;p11rmn_
-S4SA_;SpinEcho SPINE S4;4;4;xxx;vup;30;p11rmn_
-S5FA_;Flash SPINE S5;4;4;xxx;vup;30;p11rmn_
-S5SA_;SpinEcho SPINE S5;4;4;xxx;vup;30;p11rmn_
-S6FA_;Flash SPINE S6;4;4;xxx;vup;30;p11rmn_
-S6SA_;SpinEcho SPINE S6;4;4;xxx;vup;30;p11rmn_
-//               ;;;;;;;
-// BODY ARRAY SIMPHONY;;;;;;;
-B1FS_;Flash BODY ARRAY B1;4;4;xxx;hdx;x;p5rmn_
-B1SS_;SpinEcho BODY ARRAY B1;4;4;xxx;hdx;x;p5rmn_
-B2FS_;Flash BODY ARRAY B2;4;4;xxx;hdx;x;p5rmn_
-B2SS_;SpinEcho BODY ARRAY B2;4;4;xxx;hdx;x;p5rmn_
-//           ;;;;;;;
-// BODY ARRAY AVANTO;;;;;;;
-B1FA_;Flash BODY ARRAY B1;4;4;xxx;hdx;30;p11rmn_
-B1SA_;SpinEcho BODY ARRAY B1;4;4;xxx;hdx;30;p11rmn_
-B2FA_;Flash BODY ARRAY B2;4;4;xxx;hdx;30;p11rmn_
-B2SA_;SpinEcho BODY ARRAY B2;4;4;xxx;hdx;30;p11rmn_
-B1FB_;Flash BODY ARRAY B1;4;4;xxx;hdx;30;p11rmn_
-B1SB_;SpinEcho BODY ARRAY B1;4;4;xxx;hdx;30;p11rmn_
-B2FB_;Flash BODY ARRAY B2;4;4;xxx;hdx;30;p11rmn_
-B2SB_;SpinEcho BODY ARRAY B2;4;4;xxx;hdx;30;p11rmn_
-//;;;;;;;
-// BODY ARRAY AVANTO SAVE UNCOMBINED;;;;;;;
-A12S_;SpinEcho BODY ARRAY B1;4;4;BO1;hdx;30;p11rmn_
-A12F_;Flash BODY ARRAY B1;4;4;BO1;hdx;30;p11rmn_
-A12S_;SpinEcho BODY ARRAY B2;4;4;BO2;hdx;30;p11rmn_
-A12F_;Flash BODY ARRAY B2;4;4;BO2;hdx;30;p11rmn_
-B12S_;SpinEcho BODY ARRAY B1;4;4;BO1;hdx;30;p11rmn_
-B12F_;Flash BODY ARRAY B1;4;4;BO1;hdx;30;p11rmn_
-B12S_;SpinEcho BODY ARRAY B2;4;4;BO2;hdx;30;p11rmn_ 
-B12F_;Flash BODY ARRAY B2;4;4;BO2;hdx;30;p11rmn_
-//;;;;;;;
-// BODY ARRAY AERA SAVE UNCOMBINED;;;;;;;
-C1AS_;SpinEcho BODY ARRAY B01A;4;4;BO1;hdx;30;p12rmn_
-C1AF_;Flash BODY ARRAY B01A;4;4;BO1;hdx;30;p12rmn_
-C1BS_;SpinEcho BODY ARRAY B02A;4;4;BO2;hdx;30;p12rmn_
-C1BF_;Flash BODY ARRAY B02A;4;4;BO2;hdx;30;p12rmn_
-C1CS_;SpinEcho BODY ARRAY B03A;4;4;BO3;hdx;30;p12rmn_
-C1CF_;Flash BODY ARRAY B03A;4;4;BO3;hdx;30;p12rmn_
-
-C1AS_;SpinEcho BODY ARRAY B01A;4;4;B11;hdx;30;p10rmn_
-C1AF_;Flash BODY ARRAY B01A;4;4;B11;hdx;30;p10rmn_
-C1BS_;SpinEcho BODY ARRAY B02A;4;4;B21;hdx;30;p10rmn_
-C1BF_;Flash BODY ARRAY B02A;4;4;B21;hdx;30;p10rmn_
-C1CS_;SpinEcho BODY ARRAY B03A;4;4;B31;hdx;30;p10rmn_
-C1CF_;Flash BODY ARRAY B03A;4;4;B31;hdx;30;p10rmn_
-
-C1AS_;SpinEcho BODY ARRAY B01A;4;4;B12;hdx;30;p10rmn_
-C1AF_;Flash BODY ARRAY B01A;4;4;B12;hdx;30;p10rmn_
-C1BS_;SpinEcho BODY ARRAY B02A;4;4;B22;hdx;30;p10rmn_
-C1BF_;Flash BODY ARRAY B02A;4;4;B22;hdx;30;p10rmn_
-C1CS_;SpinEcho BODY ARRAY B03A;4;4;B32;hdx;30;p10rmn_
-C1CF_;Flash BODY ARRAY B03A;4;4;B32;hdx;30;p10rmn_
-
-C1AS_;SpinEcho BODY ARRAY B01A;4;4;B13;hdx;30;p10rmn_
-C1AF_;Flash BODY ARRAY B01A;4;4;B13;hdx;30;p10rmn_
-C1BS_;SpinEcho BODY ARRAY B02A;4;4;B23;hdx;30;p10rmn_
-C1BF_;Flash BODY ARRAY B02A;4;4;B23;hdx;30;p10rmn_
-C1CS_;SpinEcho BODY ARRAY B03A;4;4;B33;hdx;30;p10rmn_
-C1CF_;Flash BODY ARRAY B03A;4;4;B33;hdx;30;p10rmn_
-
-C1AS_;SpinEcho BODY ARRAY B01A;4;4;B14;hdx;30;p10rmn_
-C1AF_;Flash BODY ARRAY B01A;4;4;B14;hdx;30;p10rmn_
-C1BS_;SpinEcho BODY ARRAY B02A;4;4;B24;hdx;30;p10rmn_
-C1BF_;Flash BODY ARRAY B02A;4;4;B24;hdx;30;p10rmn_
-C1CS_;SpinEcho BODY ARRAY B03A;4;4;B34;hdx;30;p10rmn_
-C1CF_;Flash BODY ARRAY B03A;4;4;B34;hdx;30;p10rmn_
-
-C1AS_;SpinEcho BODY ARRAY B01A;4;4;B15;hdx;30;p10rmn_
-C1AF_;Flash BODY ARRAY B01A;4;4;B15;hdx;30;p10rmn_
-C1BS_;SpinEcho BODY ARRAY B02A;4;4;B25;hdx;30;p10rmn_
-C1BF_;Flash BODY ARRAY B02A;4;4;B25;hdx;30;p10rmn_
-C1CS_;SpinEcho BODY ARRAY B03A;4;4;B35;hdx;30;p10rmn_
-C1CF_;Flash BODY ARRAY B03A;4;4;B35;hdx;30;p10rmn_
-
-C1AS_;SpinEcho BODY ARRAY B01A;4;4;B16;hdx;30;p10rmn_
-C1AF_;Flash BODY ARRAY B01A;4;4;B16;hdx;30;p10rmn_
-C1BS_;SpinEcho BODY ARRAY B02A;4;4;B26;hdx;30;p10rmn_
-C1BF_;Flash BODY ARRAY B02A;4;4;B26;hdx;30;p10rmn_
-C1CS_;SpinEcho BODY ARRAY B03A;4;4;B36;hdx;30;p10rmn_
-C1CF_;Flash BODY ARRAY B03A;4;4;B36;hdx;30;p10rmn_
-//;;;;;;;
-//;;;;;;;
-D1AS_;SpinEcho BODY ARRAY B01B;4;4;BO1;hdx;30;p12rmn_
-D1AF_;Flash BODY ARRAY B01B;4;4;BO1;hdx;30;p12rmn_
-D1BS_;SpinEcho BODY ARRAY B02B;4;4;BO2;hdx;30;p12rmn_
-D1BF_;Flash BODY ARRAY B02B;4;4;BO2;hdx;30;p12rmn_
-D1CS_;SpinEcho BODY ARRAY B03B;4;4;BO3;hdx;30;p12rmn_
-D1CF_;Flash BODY ARRAY B03B;4;4;BO3;hdx;30;p12rmn_
-
-D1AS_;SpinEcho BODY ARRAY B01B;4;4;B11;hdx;30;p10rmn_
-D1AF_;Flash BODY ARRAY B01B;4;4;B11;hdx;30;p10rmn_
-D1BS_;SpinEcho BODY ARRAY B02B;4;4;B21;hdx;30;p10rmn_
-D1BF_;Flash BODY ARRAY B02B;4;4;B21;hdx;30;p10rmn_
-D1CS_;SpinEcho BODY ARRAY B03B;4;4;B31;hdx;30;p10rmn_
-D1CF_;Flash BODY ARRAY B03B;4;4;B31;hdx;30;p10rmn_
-
-D1AS_;SpinEcho BODY ARRAY B01B;4;4;B12;hdx;30;p10rmn_
-D1AF_;Flash BODY ARRAY B01B;4;4;B12;hdx;30;p10rmn_
-D1BS_;SpinEcho BODY ARRAY B02B;4;4;B22;hdx;30;p10rmn_
-D1BF_;Flash BODY ARRAY B02B;4;4;B22;hdx;30;p10rmn_
-D1CS_;SpinEcho BODY ARRAY B03B;4;4;B32;hdx;30;p10rmn_
-D1CF_;Flash BODY ARRAY B03B;4;4;B32;hdx;30;p10rmn_
-
-D1AS_;SpinEcho BODY ARRAY B01B;4;4;B13;hdx;30;p10rmn_
-D1AF_;Flash BODY ARRAY B01B;4;4;B13;hdx;30;p10rmn_
-D1BS_;SpinEcho BODY ARRAY B02B;4;4;B23;hdx;30;p10rmn_
-D1BF_;Flash BODY ARRAY B02B;4;4;B23;hdx;30;p10rmn_
-D1CS_;SpinEcho BODY ARRAY B03B;4;4;B33;hdx;30;p10rmn_
-D1CF_;Flash BODY ARRAY B03B;4;4;B33;hdx;30;p10rmn_
-
-D1AS_;SpinEcho BODY ARRAY B01B;4;4;B14;hdx;30;p10rmn_
-D1AF_;Flash BODY ARRAY B01B;4;4;B14;hdx;30;p10rmn_
-D1BS_;SpinEcho BODY ARRAY B02B;4;4;B24;hdx;30;p10rmn_
-D1BF_;Flash BODY ARRAY B02B;4;4;B24;hdx;30;p10rmn_
-D1CS_;SpinEcho BODY ARRAY B03B;4;4;B34;hdx;30;p10rmn_
-D1CF_;Flash BODY ARRAY B03B;4;4;B34;hdx;30;p10rmn_
-
-D1AS_;SpinEcho BODY ARRAY B01B;4;4;B15;hdx;30;p10rmn_
-D1AF_;Flash BODY ARRAY B01B;4;4;B15;hdx;30;p10rmn_
-D1BS_;SpinEcho BODY ARRAY B02B;4;4;B25;hdx;30;p10rmn_
-D1BF_;Flash BODY ARRAY B02B;4;4;B25;hdx;30;p10rmn_
-D1CS_;SpinEcho BODY ARRAY B03B;4;4;B35;hdx;30;p10rmn_
-D1CF_;Flash BODY ARRAY B03B;4;4;B35;hdx;30;p10rmn_
-
-D1AS_;SpinEcho BODY ARRAY B01B;4;4;B16;hdx;30;p10rmn_
-D1AF_;Flash BODY ARRAY B01B;4;4;B16;hdx;30;p10rmn_
-D1BS_;SpinEcho BODY ARRAY B02B;4;4;B26;hdx;30;p10rmn_
-D1BF_;Flash BODY ARRAY B02B;4;4;B26;hdx;30;p10rmn_
-D1CS_;SpinEcho BODY ARRAY B03B;4;4;B36;hdx;30;p10rmn_
-D1CF_;Flash BODY ARRAY B03B;4;4;B36;hdx;30;p10rmn_
-//;;;;;;;
-//;;;;;;;
-// SPINE AVANTO;;;;;;;
-S1FS_;Flash SPINE S1;4;4;xxx;hsx;30;p11rmn_
-S1SS_;SpinEcho SPINE S1;4;4;xxx;hsx;30;p11rmn_
-S2FS_;Flash SPINE S2;4;4;xxx;hsx;30;p11rmn_
-S2SS_;SpinEcho SPINE S2;4;4;xxx;hsx;30;p11rmn_
-S3FS_;Flash SPINE S3;4;4;xxx;hsx;30;p11rmn_
-S3SS_;SpinEcho SPINE S3;4;4;xxx;hsx;30;p11rmn_
-S4FS_;Flash SPINE S4;4;4;xxx;hsx;30;p11rmn_
-S4SS_;SpinEcho SPINE S4;4;4;xxx;hsx;30;p11rmn_
-S5FS_;Flash SPINE S5;4;4;xxx;hsx;30;p11rmn_
-S5SS_;SpinEcho SPINE S5;4;4;xxx;hsx;30;p11rmn_
-S6FS_;Flash SPINE S6;4;4;xxx;hsx;30;p11rmn_
-S6SS_;SpinEcho SPINE S6;4;4;xxx;hsx;30;p11rmn_
-S7FS_;Flash SPINE S7;4;4;xxx;hsx;30;p11rmn_
-S7SS_;SpinEcho SPINE S7;4;4;xxx;hsx;30;p11rmn_
-S8FS_;Flash SPINE S8;4;4;xxx;hsx;30;p11rmn_
-S8SS_;SpinEcho SPINE S8;4;4;xxx;hsx;30;p11rmn_
-//;;;;;;;
-// SPINE AVANTO SAVE UNCOMBINED;;;;;;;
-S12S_;SpinEcho SPINE S1-2;4;4;SP1;hsx;30;p11rmn_
-S12F_;Flash SPINE S1-2;4;4;SP1;hsx;30;p11rmn_
-S34S_;SpinEcho SPINE S3-4;4;4;SP3;hsx;30;p11rmn_
-S34F_;Flash SPINE S3-4;4;4;SP3;hsx;30;p11rmn_
-S56S_;SpinEcho SPINE S5-6;4;4;SP5;hsx;30;p11rmn_
-S56F_;Flash SPINE S5-6;4;4;SP5;hsx;30;p11rmn_
-S78S_;SpinEcho SPINE S7-8;4;4;SP7;hsx;30;p11rmn_
-S78F_;Flash SPINE S7-8;4;4;SP7;hsx;30;p11rmn_
-
-S12S_;SpinEcho SPINE S1-2;4;4;SP2;hsx;30;p11rmn_
-S12F_;Flash SPINE S1-2;4;4;SP2;hsx;30;p11rmn_
-S34F_;Flash SPINE S3-4;4;4;SP4;hsx;30;p11rmn_
-S34S_;SpinEcho SPINE S3-4;4;4;SP4;hsx;30;p11rmn_
-S56S_;SpinEcho SPINE S5-6;4;4;SP6;hsx;30;p11rmn_
-S56F_;Flash SPINE S5-6;4;4;SP6;hsx;30;p11rmn_
-S78S_;SpinEcho SPINE S7-8;4;4;SP8;hsx;30;p11rmn_
-S78F_;Flash SPINE S7-8;4;4;SP8;hsx;30;p11rmn_
-
-//S12S_;SpinEcho SPINE S1-2;4;4;C:SP1,2;hsx;30;p11rmn_
-//S12F_;Flash SPINE S1-2;4;4;C:SP1,2;hsx;30;p11rmn_
-//S34F_;Flash SPINE S3-4;4;4;C:SP3,4;hsx;30;p11rmn_
-//S34S_;SpinEcho SPINE S3-4;4;4;C:SP3,4;hsx;30;p11rmn_
-//S56S_;SpinEcho SPINE S5-6;4;4;C:SP5,6;hsx;30;p11rmn_
-//S56F_;Flash SPINE S5-6;4;4;C:SP5,6;hsx;30;p11rmn_
-//S78F_;Flash SPINE S7-8;4;4;C:SP7,8;hsx;30;p11rmn_
-//S78S_;SpinEcho SPINE S7-8;4;4;C:SP7,8;hsx;30;p11rmn_
-//;;;;;;;
-// SPINE AERA SAVE UNCOMBINED;;;;;;;
-S1AS_;SpinEcho SPINE S1;4;4;SP1;vup;30;p11rmn_
-S1AF_;Flash SPINE S1;4;4;SP1;vup;30;p11rmn_
-S2AS_;SpinEcho SPINE S2;4;4;SP2;vup;30;p11rmn_
-S2AF_;Flash SPINE S2;4;4;SP2;vup;30;p11rmn_
-S3AS_;SpinEcho SPINE S3;4;4;SP3;vup;30;p11rmn_
-S3AF_;Flash SPINE S3;4;4;SP3;vup;30;p11rmn_
-S4AS_;SpinEcho SPINE S4;4;4;SP4;vup;30;p11rmn_
-S4AF_;Flash SPINE S4;4;4;SP4;vup;30;p11rmn_
-S5AS_;SpinEcho SPINE S5;4;4;SP5;vup;30;p11rmn_
-S5AF_;Flash SPINE S5;4;4;SP5;vup;30;p11rmn_
-S6AS_;SpinEcho SPINE S6;4;4;SP6;vup;30;p11rmn_
-S6AF_;Flash SPINE S6;4;4;SP6;vup;30;p11rmn_
-S7AS_;SpinEcho SPINE S7;4;4;SP7;vup;30;p11rmn_
-S7AF_;Flash SPINE S7;4;4;SP7;vup;30;p11rmn_
-S8AS_;SpinEcho SPINE S8;4;4;SP8;vup;30;p11rmn_
-S8AF_;Flash SPINE S8;4;4;SP8;vup;30;p11rmn_
-
-S1AS_;SpinEcho SPINE S1;4;4;S11;vup;30;p11rmn_
-S1AF_;Flash SPINE S1;4;4;S11;vup;30;p11rmn_
-S2AS_;SpinEcho SPINE S2;4;4;S21;vup;30;p11rmn_
-S2AF_;Flash SPINE S2;4;4;S21;vup;30;p11rmn_
-S3AS_;SpinEcho SPINE S3;4;4;S31;vup;30;p11rmn_
-S3AF_;Flash SPINE S3;4;4;S31;vup;30;p11rmn_
-S4AS_;SpinEcho SPINE S4;4;4;S41;vup;30;p11rmn_
-S4AF_;Flash SPINE S4;4;4;S41;vup;30;p11rmn_
-S5AS_;SpinEcho SPINE S5;4;4;S51;vup;30;p11rmn_
-S5AF_;Flash SPINE S5;4;4;S51;vup;30;p11rmn_
-S6AS_;SpinEcho SPINE S6;4;4;S61;vup;30;p11rmn_
-S6AF_;Flash SPINE S6;4;4;S61;vup;30;p11rmn_
-S7AS_;SpinEcho SPINE S7;4;4;S71;vup;30;p11rmn_
-S7AF_;Flash SPINE S7;4;4;S71;vup;30;p11rmn_
-S8AS_;SpinEcho SPINE S8;4;4;S81;vup;30;p11rmn_
-S8AF_;Flash SPINE S8;4;4;S81;vup;30;p11rmn_
-
-S1AS_;SpinEcho SPINE S1;4;4;S12;vup;30;p11rmn_
-S1AF_;Flash SPINE S1;4;4;S12;vup;30;p11rmn_
-S2AS_;SpinEcho SPINE S2;4;4;S22;vup;30;p11rmn_
-S2AF_;Flash SPINE S2;4;4;S22;vup;30;p11rmn_
-S3AS_;SpinEcho SPINE S3;4;4;S32;vup;30;p11rmn_
-S3AF_;Flash SPINE S3;4;4;S32;vup;30;p11rmn_
-S4AS_;SpinEcho SPINE S4;4;4;S42;vup;30;p11rmn_
-S4AF_;Flash SPINE S4;4;4;S42;vup;30;p11rmn_
-S5AS_;SpinEcho SPINE S5;4;4;S52;vup;30;p11rmn_
-S5AF_;Flash SPINE S5;4;4;S52;vup;30;p11rmn_
-S6AS_;SpinEcho SPINE S6;4;4;S62;vup;30;p11rmn_
-S6AF_;Flash SPINE S6;4;4;S62;vup;30;p11rmn_
-S7AS_;SpinEcho SPINE S7;4;4;S72;vup;30;p11rmn_
-S7AF_;Flash SPINE S7;4;4;S72;vup;30;p11rmn_
-S8AS_;SpinEcho SPINE S8;4;4;S82;vup;30;p11rmn_
-S8AF_;Flash SPINE S8;4;4;S82;vup;30;p11rmn_
-
-S1AS_;SpinEcho SPINE S1;4;4;S13;vup;30;p11rmn_
-S1AF_;Flash SPINE S1;4;4;S13;vup;30;p11rmn_
-S2AS_;SpinEcho SPINE S2;4;4;S23;vup;30;p11rmn_
-S2AF_;Flash SPINE S2;4;4;S23;vup;30;p11rmn_
-S3AS_;SpinEcho SPINE S3;4;4;S33;vup;30;p11rmn_
-S3AF_;Flash SPINE S3;4;4;S33;vup;30;p11rmn_
-S4AS_;SpinEcho SPINE S4;4;4;S43;vup;30;p11rmn_
-S4AF_;Flash SPINE S4;4;4;S43;vup;30;p11rmn_
-S5AS_;SpinEcho SPINE S5;4;4;S53;vup;30;p11rmn_
-S5AF_;Flash SPINE S5;4;4;S53;vup;30;p11rmn_
-S6AS_;SpinEcho SPINE S6;4;4;S63;vup;30;p11rmn_
-S6AF_;Flash SPINE S6;4;4;S63;vup;30;p11rmn_
-S7AS_;SpinEcho SPINE S7;4;4;S73;vup;30;p11rmn_
-S7AF_;Flash SPINE S7;4;4;S73;vup;30;p11rmn_
-S8AS_;SpinEcho SPINE S8;4;4;S83;vup;30;p11rmn_
-S8AF_;Flash SPINE S8;4;4;S83;vup;30;p11rmn_
-
-S1AS_;SpinEcho SPINE S1;4;4;S14;vup;30;p11rmn_
-S1AF_;Flash SPINE S1;4;4;S14;vup;30;p11rmn_
-S2AS_;SpinEcho SPINE S2;4;4;S24;vup;30;p11rmn_
-S2AF_;Flash SPINE S2;4;4;S24;vup;30;p11rmn_
-S3AS_;SpinEcho SPINE S3;4;4;S34;vup;30;p11rmn_
-S3AF_;Flash SPINE S3;4;4;S34;vup;30;p11rmn_
-S4AS_;SpinEcho SPINE S4;4;4;S44;vup;30;p11rmn_
-S4AF_;Flash SPINE S4;4;4;S44;vup;30;p11rmn_
-S5AS_;SpinEcho SPINE S5;4;4;S54;vup;30;p11rmn_
-S5AF_;Flash SPINE S5;4;4;S54;vup;30;p11rmn_
-S6AS_;SpinEcho SPINE S6;4;4;S64;vup;30;p11rmn_
-S6AF_;Flash SPINE S6;4;4;S64;vup;30;p11rmn_
-S7AS_;SpinEcho SPINE S7;4;4;S74;vup;30;p11rmn_
-S7AF_;Flash SPINE S7;4;4;S74;vup;30;p11rmn_
-S8AS_;SpinEcho SPINE S8;4;4;S84;vup;30;p11rmn_
-S8AF_;Flash SPINE S8;4;4;S84;vup;30;p11rmn_
-//;;;;;;;
-// BREAST ;;;;;;;
-BL1S_;Flash BREAST LEFT;4;4;xxx;vup;30;p12rmn_
-BL1F_;Flash BREAST LEFT;4;4;xxx;vup;30;p12rmn_
-BR1S_;SpinEcho BREAST RIGHT;4;4;xxx;vup;30;p12rmn_
-BR1F_;SpinEcho BREAST RIGHT;4;4;xxx;vup;30;p12rmn_
-//;;;;;;;
-// NECK ARRAY SIMPHONY;;;;;;;
-N1FS_;Flash NECK ARRAY N1;4;4;xxx;hdx;30;p11rmn_
-N1SS_;SpinEcho NECK ARRAY N1;4;4;xxx;hdx;30;p11rmn_
-N2FS_;Flash NECK ARRAY N2;4;4;xxx;hsx;30;p11rmn_
-N2SS_;SpinEcho NECK ARRAY N2;4;4;xxx;hsx;30;p11rmn_
-//;;;;;;;
-//;;;;;;;
-// NECK MATRIX AVANTO;;;;;;;
-N1FA_;Flash NECK ARRAY B1;4;4;xxx;hdx;30;p11rmn_
-N1SA_;SpinEcho NECK ARRAY B1;4;4;xxx;hdx;30;p11rmn_
-N2FA_;Flash NECK ARRAY B2;4;4;xxx;hsx;30;p11rmn_
-N2SA_;SpinEcho NECK ARRAY B2;4;4;xxx;hsx;30;p11rmn_
-//;;;;;;;
-// NECK MATRIX AVANTO SAVE UNCOMBINED;;;;;;;
-N12S_;SpinEcho NECK ARRAY B1-2;4;4;NE1;hdx;30;p11rmn_
-N12F_;Flash NECK ARRAY B1-2;4;4;NE1;hdx;30;p11rmn_
-N12S_;SpinEcho NECK ARRAY B1-2;4;4;NE2;hsx;30;p11rmn_
-N12F_;Flash NECK ARRAY B1-2;4;4;NE2;hsx;30;p11rmn_
-//N12S_;SpinEcho NECK ARRAY B1-2;4;4;C:NE1,2;hdx;30;p11rmn_
-//N12F_;Flash NECK ARRAY B1-2;4;4;C:NE1,2;hdx;30;p11rmn_
-//;;;;;;;
-// NECK MATRIX AERA SAVE UNCOMBINED;;;;;;;
-O12S_;SpinEcho NECK ARRAY ;4;4;N11;hdx;30;p11rmn_
-O12S_;SpinEcho NECK ARRAY ;4;4;N12;hdx;30;p11rmn_
-O12S_;SpinEcho NECK ARRAY ;4;4;N21;hsx;30;p11rmn_
-O12S_;SpinEcho NECK ARRAY ;4;4;N22;hsx;30;p11rmn_
-O12S_;SpinEcho NECK ARRAY ;4;4;NE1,2;hsx;30;p11rmn_
-O12F_;Flash NECK ARRAY;4;4;N11;hdx;30;p11rmn_
-O12F_;Flash NECK ARRAY;4;4;N12;hdx;30;p11rmn_
-O12F_;Flash NECK ARRAY;4;4;N21;hsx;30;p11rmn_
-O12F_;Flash NECK ARRAY;4;4;N22;hsx;30;p11rmn_
-O12F_;Flash NECK ARRAY;4;4;NE1,2;hsx;30;p11rmn_
-//;;;;;;;
-// LOOP AND FLEXIBLE;;;;;;;
-LLFS_;Flash LARGE LOOP;4;4;xxx;x;x;p12rmn_
-LLSS_;SpinEcho LARGE LOOP;4;4;xxx;x;x;p12rmn_
-SLFS_;Flash SMALL LOOP;4;4;xxx;vup;30;p11rmn_
-SLSS_;SpinEcho SMALL LOOP;4;4;xxx;vup;30;p11rmn_
-LFFS_;Flash LARGE FLEXIBLE;4;4;xxx;x;x;p12rmn_
-LFSS_;SpinEcho LARGE FLEXIBLE;4;4;xxx;x;x;p12rmn_
-SFFS_;Flash SMALL FLEXIBLE;4;4;xxx;x;x;p12rmn_
-SFSS_;SpinEcho SMALL FLEXIBLE;4;4;xxx;x;x;p12rmn_
-//;;;;;;;
-// SMALL LOOP AERA ;;;;;;;
-TLFS_;Flash SMALL LOOP;4;4;L4;vup;30;p11rmn_
-TLSS_;SpinEcho SMALL LOOP;4;4;L4;vup;30;p11rmn_
-ULFS_;Flash SMALL LOOPB;4;4;L4;vup;30;p11rmn_
-ULSS_;SpinEcho SMALL LOOPB;4;4;L4;vup;30;p11rmn_
-//;;;;;;;
-// FLEXIBLE AERA SAVE UNCOMBINED;;;;;;;
-LBFS_;Flash LARGE FLEXIBLE;4;4;FL;x;x;p12rmn_
-LBSS_;SpinEcho LARGE FLEXIBLE;4;4;FL;x;x;p12rmn_
-LBFS_;Flash LARGE FLEXIBLE;4;4;FL1;x;30;p10rmn_
-LBSS_;SpinEcho LARGE FLEXIBLE;4;4;FL1;x;30;p10rmn_
-LBFS_;Flash LARGE FLEXIBLE;4;4;FL2;x;30;p10rmn_
-LBSS_;SpinEcho LARGE FLEXIBLE;4;4;FL2;x;30;p10rmn_
-LBFS_;Flash LARGE FLEXIBLE;4;4;FL3;x;30;p10rmn_
-LBSS_;SpinEcho LARGE FLEXIBLE;4;4;FL3;x;30;p10rmn_
-LBFS_;Flash LARGE FLEXIBLE;4;4;FL4;x;30;p10rmn_
-LBSS_;SpinEcho LARGE FLEXIBLE;4;4;FL4;x;30;p10rmn_
-SBFS_;Flash SMALL FLEXIBLE;4;4;FS;x;x;p12rmn_
-SBSS_;SpinEcho SMALL FLEXIBLE;4;4;FS;x;x;p12rmn_
-SBFS_;Flash SMALL FLEXIBLE;4;4;FS1;x;30;p10rmn_
-SBSS_;SpinEcho SMALL FLEXIBLE;4;4;FS1;x;30;p10rmn_
-SBFS_;Flash SMALL FLEXIBLE;4;4;FS2;x;30;p10rmn_
-SBSS_;SpinEcho SMALL FLEXIBLE;4;4;FS2;x;30;p10rmn_
-SBFS_;Flash SMALL FLEXIBLE;4;4;FS3;x;30;p10rmn_
-SBSS_;SpinEcho SMALL FLEXIBLE;4;4;FS3;x;30;p10rmn_
-SBFS_;Flash SMALL FLEXIBLE;4;4;FS4;x;30;p10rmn_
-SBSS_;SpinEcho SMALL FLEXIBLE;4;4;FS4;x;30;p10rmn_
-//;;;;;;;
-// MATRIX PERIPHERIC ANGIO AERA SAVE UNCOMBINED;;;;;;;
-PA1F_;Flash PERIF ARRAY PA1;4;4;xxx;x;x;p12rmn_
-PA1S_;SpinEcho PERIF ARRAY PA1;4;4;xxx;x;x;p12rmn_
-PA2F_;Flash PERIF ARRAY PA2;4;4;xxx;x;x;p12rmn_
-PA2S_;SpinEcho PERIF ARRAY PA2;4;4;xxx;x;x;p12rmn_
-PA3F_;Flash PERIF ARRAY PA3;4;4;xxx;x;x;p12rmn_
-PA3S_;SpinEcho PERIF ARRAY PA3;4;4;xxx;x;x;p12rmn_
-PA4F_;Flash PERIF ARRAY PA4;4;4;xxx;x;x;p12rmn_
-PA4S_;SpinEcho PERIF ARRAY PA4;4;4;xxx;x;x;p12rmn_
-PA5F_;Flash PERIF ARRAY PA5;4;4;xxx;x;x;p12rmn_
-PA5S_;SpinEcho PERIF ARRAY PA5;4;4;xxx;x;x;p12rmn_
-PA6F_;Flash PERIF ARRAY PA6;4;4;xxx;x;x;p12rmn_
-PA6S_;SpinEcho PERIF ARRAY PA6;4;4;xxx;x;x;p12rmn_
-//;;;;;;;
-// MATRIX PERIPHERIC ANGIO AERA SAVE UNCOMBINED;NUOVE NB: DX SU DX E SX SU SX;;;;;;
-QR1F_;Flash PERIF ARRAY PA1;4;4;PA1;x;30;p10rmn_
-QR1S_;SpinEcho PERIF ARRAY PA1;4;4;PA1;x;30;p10rmn_
-QL1F_;Flash PERIF ARRAY PA1;4;4;PA1;x;30;p10rmn_
-QL1S_;SpinEcho PERIF ARRAY PA1;4;4;PA1;x;30;p10rmn_
-QR2F_;Flash PERIF ARRAY PA2;4;4;PA2;x;30;p10rmn_
-QR2S_;SpinEcho PERIF ARRAY PA2;4;4;PA2;x;30;p10rmn_
-QL2F_;Flash PERIF ARRAY PA2;4;4;PA2;x;30;p10rmn_
-QL2S_;SpinEcho PERIF ARRAY PA2;4;4;PA2;x;30;p10rmn_
-QR3F_;Flash PERIF ARRAY PA3;4;4;PA3;x;30;p10rmn_
-QR3S_;SpinEcho PERIF ARRAY PA3;4;4;PA3;x;30;p10rmn_
-QL3F_;Flash PERIF ARRAY PA3;4;4;PA3;x;30;p10rmn_
-QL3S_;SpinEcho PERIF ARRAY PA3;4;4;PA3;x;30;p10rmn_
-QR4F_;Flash PERIF ARRAY PA4;4;4;PA4;x;30;p10rmn_
-QR4S_;SpinEcho PERIF ARRAY PA4;4;4;PA4;x;30;p10rmn_
-QL4F_;Flash PERIF ARRAY PA4;4;4;PA4;x;30;p10rmn_
-QL4S_;SpinEcho PERIF ARRAY PA4;4;4;PA4;x;30;p10rmn_
-QR5F_;Flash PERIF ARRAY PA5;4;4;PA5;x;30;p10rmn_
-QR5S_;SpinEcho PERIF ARRAY PA5;4;4;PA5;x;30;p10rmn_
-QL5F_;Flash PERIF ARRAY PA5;4;4;PA5;x;30;p10rmn_
-QL5S_;SpinEcho PERIF ARRAY PA5;4;4;PA5;x;30;p10rmn_
-QR6F_;Flash PERIF ARRAY PA6;4;4;PA6;x;30;p10rmn_
-QR6S_;SpinEcho PERIF ARRAY PA6;4;4;PA6;x;30;p10rmn_
-QL6F_;Flash PERIF ARRAY PA6;4;4;PA6;x;30;p10rmn_
-QL6S_;SpinEcho PERIF ARRAY PA6;4;4;PA6;x;30;p10rmn_
-
-QR1F_;Flash PERIF ARRAY PA1;4;4;PR11;x;30;p10rmn_
-QR1S_;SpinEcho PERIF ARRAY PA1;4;4;PR11;x;30;p10rmn_
-QR2F_;Flash PERIF ARRAY PA2;4;4;PR21;x;30;p10rmn_
-QR2S_;SpinEcho PERIF ARRAY PA2;4;4;PR21;x;30;p10rmn_
-QR3F_;Flash PERIF ARRAY PA3;4;4;PR31;x;30;p10rmn_
-QR3S_;SpinEcho PERIF ARRAY PA3;4;4;PR31;x;30;p10rmn_
-QR4F_;Flash PERIF ARRAY PA4;4;4;PR41;x;30;p10rmn_
-QR4S_;SpinEcho PERIF ARRAY PA4;4;4;PR41;x;30;p10rmn_
-QR5F_;Flash PERIF ARRAY PA5;4;4;PR51;x;30;p10rmn_
-QR5S_;SpinEcho PERIF ARRAY PA5;4;4;PR51;x;30;p10rmn_
-QR6F_;Flash PERIF ARRAY PA6;4;4;PR61;x;30;p10rmn_
-QR6S_;SpinEcho PERIF ARRAY PA6;4;4;PR61;x;30;p10rmn_
-
-QR1F_;Flash PERIF ARRAY PA1;4;4;PR12;x;30;p10rmn_
-QR1S_;SpinEcho PERIF ARRAY PA1;4;4;PR12;x;30;p10rmn_
-QR2F_;Flash PERIF ARRAY PA2;4;4;PR22;x;30;p10rmn_
-QR2S_;SpinEcho PERIF ARRAY PA2;4;4;PR22;x;30;p10rmn_
-QR3F_;Flash PERIF ARRAY PA3;4;4;PR32;x;30;p10rmn_
-QR3S_;SpinEcho PERIF ARRAY PA3;4;4;PR32;x;30;p10rmn_
-QR4F_;Flash PERIF ARRAY PA4;4;4;PR42;x;30;p10rmn_
-QR4S_;SpinEcho PERIF ARRAY PA4;4;4;PR42;x;30;p10rmn_
-QR5F_;Flash PERIF ARRAY PA5;4;4;PR52;x;30;p10rmn_
-QR5S_;SpinEcho PERIF ARRAY PA5;4;4;PR52;x;30;p10rmn_
-QR6F_;Flash PERIF ARRAY PA6;4;4;PR62;x;30;p10rmn_
-QR6S_;SpinEcho PERIF ARRAY PA6;4;4;PR62;x;30;p10rmn_
-
-QR1F_;Flash PERIF ARRAY PA1;4;4;PR13;x;30;p10rmn_
-QR1S_;SpinEcho PERIF ARRAY PA1;4;4;PR13;x;30;p10rmn_
-QR2F_;Flash PERIF ARRAY PA2;4;4;PR23;x;30;p10rmn_
-QR2S_;SpinEcho PERIF ARRAY PA2;4;4;PR23;x;30;p10rmn_
-QR3F_;Flash PERIF ARRAY PA3;4;4;PR33;x;30;p10rmn_
-QR3S_;SpinEcho PERIF ARRAY PA3;4;4;PR33;x;30;p10rmn_
-QR4F_;Flash PERIF ARRAY PA4;4;4;PR43;x;30;p10rmn_
-QR4S_;SpinEcho PERIF ARRAY PA4;4;4;PR43;x;30;p10rmn_
-QR5F_;Flash PERIF ARRAY PA5;4;4;PR53;x;30;p10rmn_
-QR5S_;SpinEcho PERIF ARRAY PA5;4;4;PR53;x;30;p10rmn_
-QR6F_;Flash PERIF ARRAY PA6;4;4;PR63;x;30;p10rmn_
-QR6S_;SpinEcho PERIF ARRAY PA6;4;4;PR63;x;30;p10rmn_
-
-QL1F_;Flash PERIF ARRAY PA1;4;4;PL11;x;30;p10rmn_
-QL1S_;SpinEcho PERIF ARRAY PA1;4;4;PL11;x;30;p10rmn_
-QL2F_;Flash PERIF ARRAY PA2;4;4;PL21;x;30;p10rmn_
-QL2S_;SpinEcho PERIF ARRAY PA2;4;4;PL21;x;30;p10rmn_
-QL3F_;Flash PERIF ARRAY PA3;4;4;PL31;x;30;p10rmn_
-QL3S_;SpinEcho PERIF ARRAY PA3;4;4;PL31;x;30;p10rmn_
-QL4F_;Flash PERIF ARRAY PA4;4;4;PL41;x;30;p10rmn_
-QL4S_;SpinEcho PERIF ARRAY PA4;4;4;PL41;x;30;p10rmn_
-QL5F_;Flash PERIF ARRAY PA5;4;4;PL51;x;30;p10rmn_
-QL5S_;SpinEcho PERIF ARRAY PA5;4;4;PL51;x;30;p10rmn_
-QL6F_;Flash PERIF ARRAY PA6;4;4;PL61;x;30;p10rmn_
-QL6S_;SpinEcho PERIF ARRAY PA6;4;4;PL61;x;30;p10rmn_
-
-QL1F_;Flash PERIF ARRAY PA1;4;4;PL12;x;30;p10rmn_
-QL1S_;SpinEcho PERIF ARRAY PA1;4;4;PL12;x;30;p10rmn_
-QL2F_;Flash PERIF ARRAY PA2;4;4;PL22;x;30;p10rmn_
-QL2S_;SpinEcho PERIF ARRAY PA2;4;4;PL22;x;30;p10rmn_
-QL3F_;Flash PERIF ARRAY PA3;4;4;PL32;x;30;p10rmn_
-QL3S_;SpinEcho PERIF ARRAY PA3;4;4;PL32;x;30;p10rmn_
-QL4F_;Flash PERIF ARRAY PA4;4;4;PL42;x;30;p10rmn_
-QL4S_;SpinEcho PERIF ARRAY PA4;4;4;PL42;x;30;p10rmn_
-QL5F_;Flash PERIF ARRAY PA5;4;4;PL52;x;30;p10rmn_
-QL5S_;SpinEcho PERIF ARRAY PA5;4;4;PL52;x;30;p10rmn_
-QL6F_;Flash PERIF ARRAY PA6;4;4;PL62;x;30;p10rmn_
-QL6S_;SpinEcho PERIF ARRAY PA6;4;4;PL62;x;30;p10rmn_
-
-QL1F_;Flash PERIF ARRAY PA1;4;4;PL13;x;30;p10rmn_
-QL1S_;SpinEcho PERIF ARRAY PA1;4;4;PL13;x;30;p10rmn_
-QL2F_;Flash PERIF ARRAY PA2;4;4;PL23;x;30;p10rmn_
-QL2S_;SpinEcho PERIF ARRAY PA2;4;4;PL23;x;30;p10rmn_
-QL3F_;Flash PERIF ARRAY PA3;4;4;PL33;x;30;p10rmn_
-QL3S_;SpinEcho PERIF ARRAY PA3;4;4;PL33;x;30;p10rmn_
-QL4F_;Flash PERIF ARRAY PA4;4;4;PL43;x;30;p10rmn_
-QL4S_;SpinEcho PERIF ARRAY PA4;4;4;PL43;x;30;p10rmn_
-QL5F_;Flash PERIF ARRAY PA5;4;4;PL53;x;30;p10rmn_
-QL5S_;SpinEcho PERIF ARRAY PA5;4;4;PL53;x;30;p10rmn_
-QL6F_;Flash PERIF ARRAY PA6;4;4;PL63;x;30;p10rmn_
-QL6S_;SpinEcho PERIF ARRAY PA6;4;4;PL63;x;30;p10rmn_
-//;;;;;;;
-// MATRIX PERIPHERIC ANGIO AVANTO;;;;;;;
-PR1F_;Flash PERIF ARRAY PR1;4;4;xxx;x;x;p12rmn_
-PR1S_;SpinEcho PERIF ARRAY PR1;4;4;xxx;x;x;p12rmn_
-PL1F_;Flash PERIF ARRAY PL1;4;4;xxx;x;x;p12rmn_
-PL1S_;SpinEcho PERIF ARRAY PL1;4;4;xxx;x;x;p12rmn_
-PR2F_;Flash PERIF ARRAY PR2;4;4;xxx;x;x;p12rmn_
-PR2S_;SpinEcho PERIF ARRAY PR2;4;4;xxx;x;x;p12rmn_
-PL2F_;Flash PERIF ARRAY PL2;4;4;xxx;x;x;p12rmn_
-PL2S_;SpinEcho PERIF ARRAY PL2;4;4;xxx;x;x;p12rmn_
-PR3F_;Flash PERIF ARRAY PR3;4;4;xxx;x;x;p12rmn_
-PR3S_;SpinEcho PERIF ARRAY PR3;4;4;xxx;x;x;p12rmn_
-PL3F_;Flash PERIF ARRAY PL3;4;4;xxx;x;x;p12rmn_
-PL3S_;SpinEcho PERIF ARRAY PL3;4;4;xxx;x;x;p12rmn_
-PR4F_;Flash PERIF ARRAY PR4;4;4;xxx;x;x;p12rmn_
-PR4S_;SpinEcho PERIF ARRAY PR4;4;4;xxx;x;x;p12rmn_
-PL4F_;Flash PERIF ARRAY PL4;4;4;xxx;x;x;p12rmn_
-PL4S_;SpinEcho PERIF ARRAY PL4;4;4;xxx;x;x;p12rmn_
-//;;;;;;;
-//;;;;;;;
-// T2 AND T1;;;;;;;
-T2MA_;T2 multi SpinEcho Body;20;20;xxx;x;x;p20rmn_
-T2MB_;T2 multi SpinEcho Body;32;32;xxx;x;x;p20rmn_
-T2M1_;T2 multi SpinEcho Body;1;0;xxx;x;x;p9rmn_
-T2M2_;T2 multi SpinEcho Body;1;0;xxx;x;x;p9rmn_
-T2M3_;T2 multi SpinEcho Body;1;0;xxx;x;x;p9rmn_
-B2K0_;T1 ir 2000 Body;18;1;xxx;x;x;p20rmn_
-B1K8_;T1 ir 1800 Body;18;1;xxx;x;x;p20rmn_
-B1K6_;T1 ir 1600 Body;18;1;xxx;x;x;p20rmn_
-B1K4_;T1 ir 1400 Body;18;1;xxx;x;x;p20rmn_
-B1K2_;T1 ir 1200 Body;18;1;xxx;x;x;p20rmn_
-B1K0_;T1 ir 1000 Body;18;1;xxx;x;x;p20rmn_
-B090_;T1 ir 900 Body;18;1;xxx;x;x;p20rmn_
-B080_;T1 ir 800 Body;18;1;xxx;x;x;p20rmn_
-B070_;T1 ir 700 Body;18;1;xxx;x;x;p20rmn_
-B060_;T1 ir 600 Body;18;1;xxx;x;x;p20rmn_
-B050_;T1 ir 500 Body;18;1;xxx;x;x;p20rmn_
-B040_;T1 ir 400 Body;18;1;xxx;x;x;p20rmn_
-B030_;T1 ir 300 Body;18;1;xxx;x;x;p20rmn_
-B020_;T1 ir 200 Body;18;1;xxx;x;x;p20rmn_
-B010_;T1 ir 100 Body;18;1;xxx;x;x;p20rmn_
-B008_;T1 ir 80 Body;18;1;xxx;x;x;p20rmn_
-B005_;T1 ir 50 Body;18;1;xxx;x;x;p20rmn_
-B003_;T1 ir 30 Body;18;1;xxx;x;x;p20rmn_
-C080_;T1 ir 800 Body;1;0;xxx;x;x;p9rmn_
-//;;;;;;;
-// BREAST AERA NORMALE;;;;;;;
-BL2F_;Flash BREAST LEFT;4;12;LH;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;Lo;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;LS;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;LD;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;Ri;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;RF;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;L8;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;R8;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;LF;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;Li;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;RD;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;RS;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;LN;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;LT;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;RT;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;RN;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;Ro;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;RH;x;x;p12rmn_
-BL2F_;Flash BREAST LEFT;4;12;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
-//;;;;;;;
-BR2F_;Flash BREAST RIGHT;4;12;LH;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;Lo;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;LS;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;LD;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;Ri;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;RF;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;L8;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;R8;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;LF;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;Li;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;RD;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;RS;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;LN;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;LT;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;RT;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;RN;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;Ro;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;RH;x;x;p12rmn_
-BR2F_;Flash BREAST RIGHT;4;12;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
-//;;;;;;;
-BL2S_;Spineco BREAST LEFT;4;12;LH;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;Lo;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;LS;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;LD;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;Ri;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;RF;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;L8;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;R8;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;LF;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;Li;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;RD;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;RS;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;LN;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;LT;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;RT;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;RN;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;Ro;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;RH;x;x;p12rmn_
-BL2S_;Spineco BREAST LEFT;4;12;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
-//;;;;;;;
-BR2S_;Spineco BREAST RIGHT;4;12;LH;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;Lo;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;LS;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;LD;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;Ri;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;RF;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;L8;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;R8;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;LF;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;Li;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;RD;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;RS;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;LN;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;LT;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;RT;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;RN;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;Ro;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;RH;x;x;p12rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
-//;;;;;;;
-// BREAST AERA BIOPSY;;;;;;;
-YL2F_;Flash BREAST LEFT;4;12;BL1;x;x;p12rmn_
-YL2F_;Flash BREAST LEFT;4;12;BL2;x;x;p12rmn_
-YL2F_;Flash BREAST LEFT;4;12;2BL;x;x;p12rmn_
-//;;;;;;;
-YR2F_;Flash BREAST RIGHT;4;12;BR1;x;x;p12rmn_
-YR2F_;Flash BREAST RIGHT;4;12;BR2;x;x;p12rmn_
-YR2F_;Flash BREAST RIGHT;4;12;2BR;x;x;p12rmn_
-//;;;;;;;
-YL2S_;Spineco BREAST LEFT;4;12;BL1;x;x;p12rmn_
-YL2S_;Spineco BREAST LEFT;4;12;BL2;x;x;p12rmn_
-YL2S_;Spineco BREAST LEFT;4;12;2BL;x;x;p12rmn_
-//;;;;;;;
-YR2S_;Spineco BREAST LEFT;4;12;BR1;x;x;p12rmn_
-YR2S_;Spineco BREAST LEFT;4;12;BR2;x;x;p12rmn_
-YR2S_;Spineco BREAST LEFT;4;12;2BR;x;x;p12rmn_
-//;;;;;;;
-// ENDORECTAL AERA;;;;;;;
-ERAF_;Flash ENDORECTAL;4;4;EN;x;x;p12rmn_
-ERAS_;Spineco ENDORECTAL;4;4;EN;x;x;p12rmn_
-//;;;;;;;
-// KNEE AERA;;;;;;;
-KNEF_;Flash KNEE;4;4;K1;x;x;p12rmn_
-KNEF_;Flash KNEE;4;4;K2;x;x;p12rmn_
-KNEF_;Flash KNEE;4;4;K3;x;x;p12rmn_
-KNEF_;Flash KNEE;4;4;K4;x;x;p12rmn_
-KNEF_;Flash KNEE;4;4;K5;x;x;p12rmn_
-KNEF_;Flash KNEE;4;4;K6;x;x;p12rmn_
-KNEF_;Flash KNEE;4;4;K7;x;x;p12rmn_
-KNEF_;Flash KNEE;4;4;K8;x;x;p12rmn_
-KNEF_;Flash KNEE;4;4;K9;x;x;p12rmn_
-KNEF_;Flash KNEE;4;4;K10;x;x;p12rmn_
-KNEF_;Flash KNEE;4;4;K11;x;x;p12rmn_
-KNEF_;Flash KNEE;4;4;K12;x;x;p12rmn_
-KNEF_;Flash KNEE;4;4;K13;x;x;p12rmn_
-KNEF_;Flash KNEE;4;4;K14;x;x;p12rmn_
-KNEF_;Flash KNEE;4;4;K15;x;x;p12rmn_
-KNEF_;Flash KNEE;4;4;15K;x;x;p12rmn_
-//;;;;;;;
-KNES_;Spineco KNEE;4;4;K1;x;x;p12rmn_
-KNES_;Spineco KNEE;4;4;K2;x;x;p12rmn_
-KNES_;Spineco KNEE;4;4;K3;x;x;p12rmn_
-KNES_;Spineco KNEE;4;4;K4;x;x;p12rmn_
-KNES_;Spineco KNEE;4;4;K5;x;x;p12rmn_
-KNES_;Spineco KNEE;4;4;K6;x;x;p12rmn_
-KNES_;Spineco KNEE;4;4;K7;x;x;p12rmn_
-KNES_;Spineco KNEE;4;4;K8;x;x;p12rmn_
-KNES_;Spineco KNEE;4;4;K9;x;x;p12rmn_
-KNES_;Spineco KNEE;4;4;K10;x;x;p12rmn_
-KNES_;Spineco KNEE;4;4;K11;x;x;p12rmn_
-KNES_;Spineco KNEE;4;4;K12;x;x;p12rmn_
-KNES_;Spineco KNEE;4;4;K13;x;x;p12rmn_
-KNES_;Spineco KNEE;4;4;K14;x;x;p12rmn_
-KNES_;Spineco KNEE;4;4;K15;x;x;p12rmn_
-KNES_;Spineco KNEE;4;4;15K;x;x;p12rmn_
-//;;;;;;;
-// SHOULDER AERA;;;;;;;
-SS2F_;Flash SHOULDER SMALL;4;4;SHS1;x;x;p12rmn_
-SS2F_;Flash SHOULDER SMALL;4;4;SHS2;x;x;p12rmn_
-SS2F_;Flash SHOULDER SMALL;4;4;SHS3;x;x;p12rmn_
-SS2F_;Flash SHOULDER SMALL;4;4;SHS4;x;x;p12rmn_
-SS2F_;Flash SHOULDER SMALL;4;4;SHS5;x;x;p12rmn_
-SS2F_;Flash SHOULDER SMALL;4;4;SHS6;x;x;p12rmn_
-SS2F_;Flash SHOULDER SMALL;4;4;SHS7;x;x;p12rmn_
-SS2F_;Flash SHOULDER SMALL;4;4;SHS8;x;x;p12rmn_
-SS2F_;Flash SHOULDER SMALL;4;4;SHS9;x;x;p12rmn_
-SS2F_;Flash SHOULDER SMALL;4;4;SHS10;x;x;p12rmn_
-SS2F_;Flash SHOULDER SMALL;4;4;SHS11;x;x;p12rmn_
-SS2F_;Flash SHOULDER SMALL;4;4;SHS12;x;x;p12rmn_
-SS2F_;Flash SHOULDER SMALL;4;4;SHS13;x;x;p12rmn_
-SS2F_;Flash SHOULDER SMALL;4;4;SHS14;x;x;p12rmn_
-SS2F_;Flash SHOULDER SMALL;4;4;SHS15;x;x;p12rmn_
-SS2F_;Flash SHOULDER SMALL;4;4;SHS16;x;x;p12rmn_
-//;;;;;;;
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS1;x;x;p12rmn_
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS2;x;x;p12rmn_
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS3;x;x;p12rmn_
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS4;x;x;p12rmn_
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS5;x;x;p12rmn_
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS6;x;x;p12rmn_
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS7;x;x;p12rmn_
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS8;x;x;p12rmn_
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS9;x;x;p12rmn_
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS10;x;x;p12rmn_
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS11;x;x;p12rmn_
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS12;x;x;p12rmn_
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS13;x;x;p12rmn_
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS14;x;x;p12rmn_
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS15;x;x;p12rmn_
-SS2S_;Spineco SHOULDER SMALL;4;4;SHS16;x;x;p12rmn_
-//;;;;;;;
-SL2F_;Flash SHOULDER LARGE;4;4;SHL1;x;x;p12rmn_
-SL2F_;Flash SHOULDER LARGE;4;4;SHL2;x;x;p12rmn_
-SL2F_;Flash SHOULDER LARGE;4;4;SHL3;x;x;p12rmn_
-SL2F_;Flash SHOULDER LARGE;4;4;SHL4;x;x;p12rmn_
-SL2F_;Flash SHOULDER LARGE;4;4;SHL5;x;x;p12rmn_
-SL2F_;Flash SHOULDER LARGE;4;4;SHL6;x;x;p12rmn_
-SL2F_;Flash SHOULDER LARGE;4;4;SHL7;x;x;p12rmn_
-SL2F_;Flash SHOULDER LARGE;4;4;SHL8;x;x;p12rmn_
-SL2F_;Flash SHOULDER LARGE;4;4;SHL9;x;x;p12rmn_
-SL2F_;Flash SHOULDER LARGE;4;4;SHL10;x;x;p12rmn_
-SL2F_;Flash SHOULDER LARGE;4;4;SHL11;x;x;p12rmn_
-SL2F_;Flash SHOULDER LARGE;4;4;SHL12;x;x;p12rmn_
-SL2F_;Flash SHOULDER LARGE;4;4;SHL13;x;x;p12rmn_
-SL2F_;Flash SHOULDER LARGE;4;4;SHL14;x;x;p12rmn_
-SL2F_;Flash SHOULDER LARGE;4;4;SHL15;x;x;p12rmn_
-SL2F_;Flash SHOULDER LARGE;4;4;SHL16;x;x;p12rmn_
-//;;;;;;;
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL1;x;x;p12rmn_
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL2;x;x;p12rmn_
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL3;x;x;p12rmn_
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL4;x;x;p12rmn_
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL5;x;x;p12rmn_
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL6;x;x;p12rmn_
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL7;x;x;p12rmn_
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL8;x;x;p12rmn_
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL9;x;x;p12rmn_
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL10;x;x;p12rmn_
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL11;x;x;p12rmn_
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL12;x;x;p12rmn_
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL13;x;x;p12rmn_
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL14;x;x;p12rmn_
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL15;x;x;p12rmn_
-SL2S_;Spineco SHOULDER LARGE;4;4;SHL16;x;x;p12rmn_
+// Contiene le regole utilizzate da Sequenze per compilare il file;;;;;;;;
+// ayv.txt che verrà poi usato per chiamare il plug-in adatto;;;;;;;;
+// ad elaborare una determinata immagine;;;;;;;;
+// N.B. si hanno 4 directions vup verticale a crescere, vdw vertivale a scendere ;;;;;;;;
+// hsx orizz. verso sx, hdx orizz. verso dx                  ;;;;;;;;
+// CODICE;COMMENTO;DA PASSARE;TOTALI;GROUP;COIL;DIRECTION;DEPTH;PLUGIN
+//SIEMENS SIMPHONY +  AVANTO;;;;;;;;
+// BODY;;;;;;;;
+BUSA_;Uniformità Assiale Body;2;2;0;xxx;x;x;p12rmn_
+BUSS_;Uniformità Sagittale Body;2;2;0;xxx;x;x;p12rmn_
+BUSC_;Uniformità Coronale Body;2;2;0;xxx;x;x;p12rmn_
+BDSA_;DGP Single Body;1;1;0;xxx;x;x;p8rmn_
+BDMA_;DGP Multi Body;1;3;0;xxx;x;x;p8rmn_
+BTLX_;Localizer Thickness Body;0;0;0;xxx;x;x;none_
+BT2A_;Thickness 2mm Sing.Body;1;1;0;xxx;x;x;p6rmn_
+BT5A_;Thickness 5mm Sing.Body;1;1;0;xxx;x;x;p6rmn_
+BTMA_;Thickness 2mm Multi Body;15;15;0;xxx;x;x;p6rmn_
+BRKA_;Risoluzione 1024 Body;1;1;0;xxx;x;x;p4rmn_
+BR5A_;Risoluzione 512 Body;1;1;0;xxx;x;x;p4rmn_
+BR2A_;Risoluzione 256 Body;1;1;0;xxx;x;x;p4rmn_
+//;;;;;;;;
+// HEAD;;;;;;;;
+///HUSA_;Uniformità Assiale Head;2;2;0;xxx;x;x;p12rmn_
+///HUSS_;Uniformità Sagittale Head;2;2;0;xxx;x;x;p12rmn_
+///HUSC_;Uniformità Coronale Head;2;2;0;xxx;x;x;p12rmn_
+HDSA_;DGP Single Head;1;1;0;xxx;x;x;p8rmn_
+HDMA_;DGP Multi Head;1;3;0;xxx;x;x;p8rmn_
+HTLX_;Localizer Thickness Head;0;0;0;xxx;x;x;none_
+HT2A_;Thickness 2mm Sing.Head;1;1;0;xxx;x;x;p6rmn_
+HT5A_;Thickness 5mm Sing.Head;1;1;0;xxx;x;x;p6rmn_
+HTMA_;Thickness 2mm Multi Head;15;15;0;xxx;x;x;p6rmn_
+HWLX_;Localizer Warp Head;0;0;0;xxx;x;x;none_
+HWSA_;Warp Assiale Head;1;1;0;xxx;x;x;p7rmn_
+HRKA_;Risoluzione 1024 Head;1;1;0;xxx;x;x;p4rmn_
+HR5A_;Risoluzione 512 Head;1;1;0;xxx;x;x;p4rmn_
+HR2A_;Risoluzione 256 Head;1;1;0;xxx;x;x;p4rmn_
+//;;;;;;;;
+// HEAD ARRAY AERA SAVE UNCOMBINED;;;;;;;;
+// DA LUGLIO 2012 ANCHE HEAD ARRAY AVANTO SAVE UNCOMBINED;;;;;;;;
+// RISERVIAMO IL CODICE HVSA_ HVSS_ HVSC_ perchè sostituito in vba a questi;;;;;;;;
+// IN FUTURO CAMBIEREMO IL CODICE NELLA SEQUENZA AERA;;;;;;;;
+// --------------------------------------;;;;;;;;
+HUSAA;Uniformità Assiale Head;2;2;0;H11;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;H12;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;H13;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;H14;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;H21;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;H22;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;H23;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;H24;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;H31;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;H32;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;H33;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;H34;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;H41;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;H42;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;H43;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;H44;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;HE1-4;x;30;p12rmn_
+//;;;;;;;;
+HUSSA;Uniformità Sagittale Head;2;2;0;H11;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;H12;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;H13;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;H14;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;H21;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;H22;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;H23;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;H24;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;H31;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;H32;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;H33;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;H34;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;H41;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;H42;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;H43;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;H44;x;30;p10rmn_
+HUSSA;Uniformità Sagittale Head;2;2;0;HE1-4;x;30;p12rmn_
+//;;;;;;;;
+HUSCA;Uniformità Coronale Head;2;2;0;H11;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;H12;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;H13;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;H14;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;H21;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;H22;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;H23;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;H24;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;H31;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;H32;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;H33;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;H34;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;H41;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;H42;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;H43;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;H44;x;30;p10rmn_
+HUSCA;Uniformità Coronale Head;2;2;0;HE1-4;x;30;p12rmn_
+//;;;;;;;;
+// AVANTO SAVE UNCOMBINED;;;;;;;;
+// RISERVIAMO IL CODICE HXSA_ HXSS_ HXSC_ perchè sostituito in vba a questi;;;;;;;;
+HUSAA;Uniformità Assiale Head;2;2;0;HE1;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;HE2;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;HE3;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;HE4;x;30;p10rmn_
+HUSAA;Uniformità Assiale Head;2;2;0;C:HE1-4;x;30;p12rmn_
+//;;;;;;;;
+HUSSA;Uniformità Assiale Head;2;2;0;HE1;x;30;p10rmn_
+HUSSA;Uniformità Assiale Head;2;2;0;HE2;x;30;p10rmn_
+HUSSA;Uniformità Assiale Head;2;2;0;HE3;x;30;p10rmn_
+HUSSA;Uniformità Assiale Head;2;2;0;HE4;x;30;p10rmn_
+HUSSA;Uniformità Assiale Head;2;2;0;C:HE1-4;x;30;p12rmn_
+//;;;;;;;;
+HUSCA;Uniformità Assiale Head;2;2;0;HE1;x;30;p10rmn_
+HUSCA;Uniformità Assiale Head;2;2;0;HE2;x;30;p10rmn_
+HUSCA;Uniformità Assiale Head;2;2;0;HE3;x;30;p10rmn_
+HUSCA;Uniformità Assiale Head;2;2;0;HE4;x;30;p10rmn_
+HUSCA;Uniformità Assiale Head;2;2;0;C:HE1-4;x;30;p12rmn_
+//;;;;;;;;
+// SYMPHONY SAVE UNCOMBINED;;;;;;;;
+// RISERVIAMO IL CODICE HXSA_ HXSS_ HXSC_ perchè sostituito in vba a questi;;;;;;;;
+//  per i clusters separati  abbiamo lo stesso codice dll'AVANTO (HE1 HE2 HE3 HE4);;;;;;;;
+HUSAA;Uniformità Assiale Head;2;2;0;t:HE1-4;x;30;p12rmn_
+HUSSA;Uniformità Assiale Head;2;2;0;t:HE1-4;x;30;p12rmn_
+HUSCA;Uniformità Assiale Head;2;2;0;t:HE1-4;x;30;p12rmn_
+//;;;;;;;;
+//;;;;;;;;
+// SPINE SIMPHONY;;;;;;;;
+S1FA_;Flash SPINE S1;4;4;0;xxx;vup;30;p11rmn_
+S1SA_;SpinEcho SPINE S1;4;4;0;xxx;vup;30;p11rmn_
+S2FA_;Flash SPINE S2;4;4;0;xxx;vup;30;p11rmn_
+S2SA_;SpinEcho SPINE S2;4;4;0;xxx;vup;30;p11rmn_
+S3FA_;Flash SPINE S3;4;4;0;xxx;vup;30;p11rmn_
+S3SA_;SpinEcho SPINE S3;4;4;0;xxx;vup;30;p11rmn_
+S4FA_;Flash SPINE S4;4;4;0;xxx;vup;30;p11rmn_
+S4SA_;SpinEcho SPINE S4;4;4;0;xxx;vup;30;p11rmn_
+S5FA_;Flash SPINE S5;4;4;0;xxx;vup;30;p11rmn_
+S5SA_;SpinEcho SPINE S5;4;4;0;xxx;vup;30;p11rmn_
+S6FA_;Flash SPINE S6;4;4;0;xxx;vup;30;p11rmn_
+S6SA_;SpinEcho SPINE S6;4;4;0;xxx;vup;30;p11rmn_
+//               ;;;;;;;;
+// BODY ARRAY SIMPHONY;;;;;;;;
+B1FS_;Flash BODY ARRAY B1;4;4;0;xxx;hdx;x;p5rmn_
+B1SS_;SpinEcho BODY ARRAY B1;4;4;0;xxx;hdx;x;p5rmn_
+B2FS_;Flash BODY ARRAY B2;4;4;0;xxx;hdx;x;p5rmn_
+B2SS_;SpinEcho BODY ARRAY B2;4;4;0;xxx;hdx;x;p5rmn_
+//           ;;;;;;;;
+// BODY ARRAY AVANTO;;;;;;;;
+B1FA_;Flash BODY ARRAY B1;4;4;0;xxx;hdx;30;p11rmn_
+B1SA_;SpinEcho BODY ARRAY B1;4;4;0;xxx;hdx;30;p11rmn_
+B2FA_;Flash BODY ARRAY B2;4;4;0;xxx;hdx;30;p11rmn_
+B2SA_;SpinEcho BODY ARRAY B2;4;4;0;xxx;hdx;30;p11rmn_
+B1FB_;Flash BODY ARRAY B1;4;4;0;xxx;hdx;30;p11rmn_
+B1SB_;SpinEcho BODY ARRAY B1;4;4;0;xxx;hdx;30;p11rmn_
+B2FB_;Flash BODY ARRAY B2;4;4;0;xxx;hdx;30;p11rmn_
+B2SB_;SpinEcho BODY ARRAY B2;4;4;0;xxx;hdx;30;p11rmn_
+//;;;;;;;;
+// BODY ARRAY AVANTO SAVE UNCOMBINED;;;;;;;;
+A12S_;SpinEcho BODY ARRAY B1;4;4;0;BO1;hdx;30;p11rmn_
+A12F_;Flash BODY ARRAY B1;4;4;0;BO1;hdx;30;p11rmn_
+A12S_;SpinEcho BODY ARRAY B2;4;4;0;BO2;hdx;30;p11rmn_
+A12F_;Flash BODY ARRAY B2;4;4;0;BO2;hdx;30;p11rmn_
+B12S_;SpinEcho BODY ARRAY B1;4;4;0;BO1;hdx;30;p11rmn_
+B12F_;Flash BODY ARRAY B1;4;4;0;BO1;hdx;30;p11rmn_
+B12S_;SpinEcho BODY ARRAY B2;4;4;0;BO2;hdx;30;p11rmn_ 
+B12F_;Flash BODY ARRAY B2;4;4;0;BO2;hdx;30;p11rmn_
+//;;;;;;;;
+// BODY ARRAY AERA SAVE UNCOMBINED;;;;;;;;
+C1AS_;SpinEcho BODY ARRAY B01A;4;4;0;BO1;hdx;30;p12rmn_
+C1AF_;Flash BODY ARRAY B01A;4;4;0;BO1;hdx;30;p12rmn_
+C1BS_;SpinEcho BODY ARRAY B02A;4;4;0;BO2;hdx;30;p12rmn_
+C1BF_;Flash BODY ARRAY B02A;4;4;0;BO2;hdx;30;p12rmn_
+C1CS_;SpinEcho BODY ARRAY B03A;4;4;0;BO3;hdx;30;p12rmn_
+C1CF_;Flash BODY ARRAY B03A;4;4;0;BO3;hdx;30;p12rmn_
+//;;;;;;;;
+C1AS_;SpinEcho BODY ARRAY B01A;4;4;0;B11;hdx;30;p10rmn_
+C1AF_;Flash BODY ARRAY B01A;4;4;0;B11;hdx;30;p10rmn_
+C1BS_;SpinEcho BODY ARRAY B02A;4;4;0;B21;hdx;30;p10rmn_
+C1BF_;Flash BODY ARRAY B02A;4;4;0;B21;hdx;30;p10rmn_
+C1CS_;SpinEcho BODY ARRAY B03A;4;4;0;B31;hdx;30;p10rmn_
+C1CF_;Flash BODY ARRAY B03A;4;4;0;B31;hdx;30;p10rmn_
+//;;;;;;;;
+C1AS_;SpinEcho BODY ARRAY B01A;4;4;0;B12;hdx;30;p10rmn_
+C1AF_;Flash BODY ARRAY B01A;4;4;0;B12;hdx;30;p10rmn_
+C1BS_;SpinEcho BODY ARRAY B02A;4;4;0;B22;hdx;30;p10rmn_
+C1BF_;Flash BODY ARRAY B02A;4;4;0;B22;hdx;30;p10rmn_
+C1CS_;SpinEcho BODY ARRAY B03A;4;4;0;B32;hdx;30;p10rmn_
+C1CF_;Flash BODY ARRAY B03A;4;4;0;B32;hdx;30;p10rmn_
+//;;;;;;;;
+C1AS_;SpinEcho BODY ARRAY B01A;4;4;0;B13;hdx;30;p10rmn_
+C1AF_;Flash BODY ARRAY B01A;4;4;0;B13;hdx;30;p10rmn_
+C1BS_;SpinEcho BODY ARRAY B02A;4;4;0;B23;hdx;30;p10rmn_
+C1BF_;Flash BODY ARRAY B02A;4;4;0;B23;hdx;30;p10rmn_
+C1CS_;SpinEcho BODY ARRAY B03A;4;4;0;B33;hdx;30;p10rmn_
+C1CF_;Flash BODY ARRAY B03A;4;4;0;B33;hdx;30;p10rmn_
+//;;;;;;;;
+C1AS_;SpinEcho BODY ARRAY B01A;4;4;0;B14;hdx;30;p10rmn_
+C1AF_;Flash BODY ARRAY B01A;4;4;0;B14;hdx;30;p10rmn_
+C1BS_;SpinEcho BODY ARRAY B02A;4;4;0;B24;hdx;30;p10rmn_
+C1BF_;Flash BODY ARRAY B02A;4;4;0;B24;hdx;30;p10rmn_
+C1CS_;SpinEcho BODY ARRAY B03A;4;4;0;B34;hdx;30;p10rmn_
+C1CF_;Flash BODY ARRAY B03A;4;4;0;B34;hdx;30;p10rmn_
+//;;;;;;;;
+C1AS_;SpinEcho BODY ARRAY B01A;4;4;0;B15;hdx;30;p10rmn_
+C1AF_;Flash BODY ARRAY B01A;4;4;0;B15;hdx;30;p10rmn_
+C1BS_;SpinEcho BODY ARRAY B02A;4;4;0;B25;hdx;30;p10rmn_
+C1BF_;Flash BODY ARRAY B02A;4;4;0;B25;hdx;30;p10rmn_
+C1CS_;SpinEcho BODY ARRAY B03A;4;4;0;B35;hdx;30;p10rmn_
+C1CF_;Flash BODY ARRAY B03A;4;4;0;B35;hdx;30;p10rmn_
+//;;;;;;;;
+C1AS_;SpinEcho BODY ARRAY B01A;4;4;0;B16;hdx;30;p10rmn_
+C1AF_;Flash BODY ARRAY B01A;4;4;0;B16;hdx;30;p10rmn_
+C1BS_;SpinEcho BODY ARRAY B02A;4;4;0;B26;hdx;30;p10rmn_
+C1BF_;Flash BODY ARRAY B02A;4;4;0;B26;hdx;30;p10rmn_
+C1CS_;SpinEcho BODY ARRAY B03A;4;4;0;B36;hdx;30;p10rmn_
+C1CF_;Flash BODY ARRAY B03A;4;4;0;B36;hdx;30;p10rmn_
+//;;;; ;;;;
+//;;;; ;;;;
+D1AS_;SpinEcho BODY ARRAY B01B;4;4;0;BO1;hdx;30;p12rmn_
+D1AF_;Flash BODY ARRAY B01B;4;4;0;BO1;hdx;30;p12rmn_
+D1BS_;SpinEcho BODY ARRAY B02B;4;4;0;BO2;hdx;30;p12rmn_
+D1BF_;Flash BODY ARRAY B02B;4;4;0;BO2;hdx;30;p12rmn_
+D1CS_;SpinEcho BODY ARRAY B03B;4;4;0;BO3;hdx;30;p12rmn_
+D1CF_;Flash BODY ARRAY B03B;4;4;0;BO3;hdx;30;p12rmn_
+//;;;;;;;;
+D1AS_;SpinEcho BODY ARRAY B01B;4;4;0;B11;hdx;30;p10rmn_
+D1AF_;Flash BODY ARRAY B01B;4;4;0;B11;hdx;30;p10rmn_
+D1BS_;SpinEcho BODY ARRAY B02B;4;4;0;B21;hdx;30;p10rmn_
+D1BF_;Flash BODY ARRAY B02B;4;4;0;B21;hdx;30;p10rmn_
+D1CS_;SpinEcho BODY ARRAY B03B;4;4;0;B31;hdx;30;p10rmn_
+D1CF_;Flash BODY ARRAY B03B;4;4;0;B31;hdx;30;p10rmn_
+//;;;;;;;;
+D1AS_;SpinEcho BODY ARRAY B01B;4;4;0;B12;hdx;30;p10rmn_
+D1AF_;Flash BODY ARRAY B01B;4;4;0;B12;hdx;30;p10rmn_
+D1BS_;SpinEcho BODY ARRAY B02B;4;4;0;B22;hdx;30;p10rmn_
+D1BF_;Flash BODY ARRAY B02B;4;4;0;B22;hdx;30;p10rmn_
+D1CS_;SpinEcho BODY ARRAY B03B;4;4;0;B32;hdx;30;p10rmn_
+D1CF_;Flash BODY ARRAY B03B;4;4;0;B32;hdx;30;p10rmn_
+//;;;;;;;;
+D1AS_;SpinEcho BODY ARRAY B01B;4;4;0;B13;hdx;30;p10rmn_
+D1AF_;Flash BODY ARRAY B01B;4;4;0;B13;hdx;30;p10rmn_
+D1BS_;SpinEcho BODY ARRAY B02B;4;4;0;B23;hdx;30;p10rmn_
+D1BF_;Flash BODY ARRAY B02B;4;4;0;B23;hdx;30;p10rmn_
+D1CS_;SpinEcho BODY ARRAY B03B;4;4;0;B33;hdx;30;p10rmn_
+D1CF_;Flash BODY ARRAY B03B;4;4;0;B33;hdx;30;p10rmn_
+//;;;;;;;;
+D1AS_;SpinEcho BODY ARRAY B01B;4;4;0;B14;hdx;30;p10rmn_
+D1AF_;Flash BODY ARRAY B01B;4;4;0;B14;hdx;30;p10rmn_
+D1BS_;SpinEcho BODY ARRAY B02B;4;4;0;B24;hdx;30;p10rmn_
+D1BF_;Flash BODY ARRAY B02B;4;4;0;B24;hdx;30;p10rmn_
+D1CS_;SpinEcho BODY ARRAY B03B;4;4;0;B34;hdx;30;p10rmn_
+D1CF_;Flash BODY ARRAY B03B;4;4;0;B34;hdx;30;p10rmn_
+//;;;;;;;;
+D1AS_;SpinEcho BODY ARRAY B01B;4;4;0;B15;hdx;30;p10rmn_
+D1AF_;Flash BODY ARRAY B01B;4;4;0;B15;hdx;30;p10rmn_
+D1BS_;SpinEcho BODY ARRAY B02B;4;4;0;B25;hdx;30;p10rmn_
+D1BF_;Flash BODY ARRAY B02B;4;4;0;B25;hdx;30;p10rmn_
+D1CS_;SpinEcho BODY ARRAY B03B;4;4;0;B35;hdx;30;p10rmn_
+D1CF_;Flash BODY ARRAY B03B;4;4;0;B35;hdx;30;p10rmn_
+//;;;;;;;;
+D1AS_;SpinEcho BODY ARRAY B01B;4;4;0;B16;hdx;30;p10rmn_
+D1AF_;Flash BODY ARRAY B01B;4;4;0;B16;hdx;30;p10rmn_
+D1BS_;SpinEcho BODY ARRAY B02B;4;4;0;B26;hdx;30;p10rmn_
+D1BF_;Flash BODY ARRAY B02B;4;4;0;B26;hdx;30;p10rmn_
+D1CS_;SpinEcho BODY ARRAY B03B;4;4;0;B36;hdx;30;p10rmn_
+D1CF_;Flash BODY ARRAY B03B;4;4;0;B36;hdx;30;p10rmn_
+//;;;;;;;;
+//;;;;;;;;
+// SPINE AVANTO;;;;;;;;
+S1FS_;Flash SPINE S1;4;4;0;xxx;hsx;30;p11rmn_
+S1SS_;SpinEcho SPINE S1;4;4;0;xxx;hsx;30;p11rmn_
+S2FS_;Flash SPINE S2;4;4;0;xxx;hsx;30;p11rmn_
+S2SS_;SpinEcho SPINE S2;4;4;0;xxx;hsx;30;p11rmn_
+S3FS_;Flash SPINE S3;4;4;0;xxx;hsx;30;p11rmn_
+S3SS_;SpinEcho SPINE S3;4;4;0;xxx;hsx;30;p11rmn_
+S4FS_;Flash SPINE S4;4;4;0;xxx;hsx;30;p11rmn_
+S4SS_;SpinEcho SPINE S4;4;4;0;xxx;hsx;30;p11rmn_
+S5FS_;Flash SPINE S5;4;4;0;xxx;hsx;30;p11rmn_
+S5SS_;SpinEcho SPINE S5;4;4;0;xxx;hsx;30;p11rmn_
+S6FS_;Flash SPINE S6;4;4;0;xxx;hsx;30;p11rmn_
+S6SS_;SpinEcho SPINE S6;4;4;0;xxx;hsx;30;p11rmn_
+S7FS_;Flash SPINE S7;4;4;0;xxx;hsx;30;p11rmn_
+S7SS_;SpinEcho SPINE S7;4;4;0;xxx;hsx;30;p11rmn_
+S8FS_;Flash SPINE S8;4;4;0;xxx;hsx;30;p11rmn_
+S8SS_;SpinEcho SPINE S8;4;4;0;xxx;hsx;30;p11rmn_
+//;;;;;;;;
+// SPINE AVANTO SAVE UNCOMBINED;;;;;;;;
+S12S_;SpinEcho SPINE S1-2;4;4;0;SP1;hsx;30;p11rmn_
+S12F_;Flash SPINE S1-2;4;4;0;SP1;hsx;30;p11rmn_
+S34S_;SpinEcho SPINE S3-4;4;4;0;SP3;hsx;30;p11rmn_
+S34F_;Flash SPINE S3-4;4;4;0;SP3;hsx;30;p11rmn_
+S56S_;SpinEcho SPINE S5-6;4;4;0;SP5;hsx;30;p11rmn_
+S56F_;Flash SPINE S5-6;4;4;0;SP5;hsx;30;p11rmn_
+S78S_;SpinEcho SPINE S7-8;4;4;0;SP7;hsx;30;p11rmn_
+S78F_;Flash SPINE S7-8;4;4;0;SP7;hsx;30;p11rmn_
+//;;;;;;;;
+S12S_;SpinEcho SPINE S1-2;4;4;0;SP2;hsx;30;p11rmn_
+S12F_;Flash SPINE S1-2;4;4;0;SP2;hsx;30;p11rmn_
+S34F_;Flash SPINE S3-4;4;4;0;SP4;hsx;30;p11rmn_
+S34S_;SpinEcho SPINE S3-4;4;4;0;SP4;hsx;30;p11rmn_
+S56S_;SpinEcho SPINE S5-6;4;4;0;SP6;hsx;30;p11rmn_
+S56F_;Flash SPINE S5-6;4;4;0;SP6;hsx;30;p11rmn_
+S78S_;SpinEcho SPINE S7-8;4;4;0;SP8;hsx;30;p11rmn_
+S78F_;Flash SPINE S7-8;4;4;0;SP8;hsx;30;p11rmn_
+//;;;;;;;;
+//S12S_;SpinEcho SPINE S1-2;4;4;0;C:SP1,2;hsx;30;p11rmn_
+//S12F_;Flash SPINE S1-2;4;4;0;C:SP1,2;hsx;30;p11rmn_
+//S34F_;Flash SPINE S3-4;4;4;0;C:SP3,4;hsx;30;p11rmn_
+//S34S_;SpinEcho SPINE S3-4;4;4;0;C:SP3,4;hsx;30;p11rmn_
+//S56S_;SpinEcho SPINE S5-6;4;4;0;C:SP5,6;hsx;30;p11rmn_
+//S56F_;Flash SPINE S5-6;4;4;0;C:SP5,6;hsx;30;p11rmn_
+//S78F_;Flash SPINE S7-8;4;4;0;C:SP7,8;hsx;30;p11rmn_
+//S78S_;SpinEcho SPINE S7-8;4;4;0;C:SP7,8;hsx;30;p11rmn_
+//;;;;;;;;
+// SPINE AERA SAVE UNCOMBINED;;;;;;;;
+S1AS_;SpinEcho SPINE S1;4;4;0;SP1;vup;30;p11rmn_
+S1AF_;Flash SPINE S1;4;4;0;SP1;vup;30;p11rmn_
+S2AS_;SpinEcho SPINE S2;4;4;0;SP2;vup;30;p11rmn_
+S2AF_;Flash SPINE S2;4;4;0;SP2;vup;30;p11rmn_
+S3AS_;SpinEcho SPINE S3;4;4;0;SP3;vup;30;p11rmn_
+S3AF_;Flash SPINE S3;4;4;0;SP3;vup;30;p11rmn_
+S4AS_;SpinEcho SPINE S4;4;4;0;SP4;vup;30;p11rmn_
+S4AF_;Flash SPINE S4;4;4;0;SP4;vup;30;p11rmn_
+S5AS_;SpinEcho SPINE S5;4;4;0;SP5;vup;30;p11rmn_
+S5AF_;Flash SPINE S5;4;4;0;SP5;vup;30;p11rmn_
+S6AS_;SpinEcho SPINE S6;4;4;0;SP6;vup;30;p11rmn_
+S6AF_;Flash SPINE S6;4;4;0;SP6;vup;30;p11rmn_
+S7AS_;SpinEcho SPINE S7;4;4;0;SP7;vup;30;p11rmn_
+S7AF_;Flash SPINE S7;4;4;0;SP7;vup;30;p11rmn_
+S8AS_;SpinEcho SPINE S8;4;4;0;SP8;vup;30;p11rmn_
+S8AF_;Flash SPINE S8;4;4;0;SP8;vup;30;p11rmn_
+//;;;;;;;;
+S1AS_;SpinEcho SPINE S1;4;4;0;S11;vup;30;p11rmn_
+S1AF_;Flash SPINE S1;4;4;0;S11;vup;30;p11rmn_
+S2AS_;SpinEcho SPINE S2;4;4;0;S21;vup;30;p11rmn_
+S2AF_;Flash SPINE S2;4;4;0;S21;vup;30;p11rmn_
+S3AS_;SpinEcho SPINE S3;4;4;0;S31;vup;30;p11rmn_
+S3AF_;Flash SPINE S3;4;4;0;S31;vup;30;p11rmn_
+S4AS_;SpinEcho SPINE S4;4;4;0;S41;vup;30;p11rmn_
+S4AF_;Flash SPINE S4;4;4;0;S41;vup;30;p11rmn_
+S5AS_;SpinEcho SPINE S5;4;4;0;S51;vup;30;p11rmn_
+S5AF_;Flash SPINE S5;4;4;0;S51;vup;30;p11rmn_
+S6AS_;SpinEcho SPINE S6;4;4;0;S61;vup;30;p11rmn_
+S6AF_;Flash SPINE S6;4;4;0;S61;vup;30;p11rmn_
+S7AS_;SpinEcho SPINE S7;4;4;0;S71;vup;30;p11rmn_
+S7AF_;Flash SPINE S7;4;4;0;S71;vup;30;p11rmn_
+S8AS_;SpinEcho SPINE S8;4;4;0;S81;vup;30;p11rmn_
+S8AF_;Flash SPINE S8;4;4;0;S81;vup;30;p11rmn_
+//;;;;;;;;
+S1AS_;SpinEcho SPINE S1;4;4;0;S12;vup;30;p11rmn_
+S1AF_;Flash SPINE S1;4;4;0;S12;vup;30;p11rmn_
+S2AS_;SpinEcho SPINE S2;4;4;0;S22;vup;30;p11rmn_
+S2AF_;Flash SPINE S2;4;4;0;S22;vup;30;p11rmn_
+S3AS_;SpinEcho SPINE S3;4;4;0;S32;vup;30;p11rmn_
+S3AF_;Flash SPINE S3;4;4;0;S32;vup;30;p11rmn_
+S4AS_;SpinEcho SPINE S4;4;4;0;S42;vup;30;p11rmn_
+S4AF_;Flash SPINE S4;4;4;0;S42;vup;30;p11rmn_
+S5AS_;SpinEcho SPINE S5;4;4;0;S52;vup;30;p11rmn_
+S5AF_;Flash SPINE S5;4;4;0;S52;vup;30;p11rmn_
+S6AS_;SpinEcho SPINE S6;4;4;0;S62;vup;30;p11rmn_
+S6AF_;Flash SPINE S6;4;4;0;S62;vup;30;p11rmn_
+S7AS_;SpinEcho SPINE S7;4;4;0;S72;vup;30;p11rmn_
+S7AF_;Flash SPINE S7;4;4;0;S72;vup;30;p11rmn_
+S8AS_;SpinEcho SPINE S8;4;4;0;S82;vup;30;p11rmn_
+S8AF_;Flash SPINE S8;4;4;0;S82;vup;30;p11rmn_
+//;;;;;;;;
+S1AS_;SpinEcho SPINE S1;4;4;0;S13;vup;30;p11rmn_
+S1AF_;Flash SPINE S1;4;4;0;S13;vup;30;p11rmn_
+S2AS_;SpinEcho SPINE S2;4;4;0;S23;vup;30;p11rmn_
+S2AF_;Flash SPINE S2;4;4;0;S23;vup;30;p11rmn_
+S3AS_;SpinEcho SPINE S3;4;4;0;S33;vup;30;p11rmn_
+S3AF_;Flash SPINE S3;4;4;0;S33;vup;30;p11rmn_
+S4AS_;SpinEcho SPINE S4;4;4;0;S43;vup;30;p11rmn_
+S4AF_;Flash SPINE S4;4;4;0;S43;vup;30;p11rmn_
+S5AS_;SpinEcho SPINE S5;4;4;0;S53;vup;30;p11rmn_
+S5AF_;Flash SPINE S5;4;4;0;S53;vup;30;p11rmn_
+S6AS_;SpinEcho SPINE S6;4;4;0;S63;vup;30;p11rmn_
+S6AF_;Flash SPINE S6;4;4;0;S63;vup;30;p11rmn_
+S7AS_;SpinEcho SPINE S7;4;4;0;S73;vup;30;p11rmn_
+S7AF_;Flash SPINE S7;4;4;0;S73;vup;30;p11rmn_
+S8AS_;SpinEcho SPINE S8;4;4;0;S83;vup;30;p11rmn_
+S8AF_;Flash SPINE S8;4;4;0;S83;vup;30;p11rmn_
+//;;;;;;;;
+S1AS_;SpinEcho SPINE S1;4;4;0;S14;vup;30;p11rmn_
+S1AF_;Flash SPINE S1;4;4;0;S14;vup;30;p11rmn_
+S2AS_;SpinEcho SPINE S2;4;4;0;S24;vup;30;p11rmn_
+S2AF_;Flash SPINE S2;4;4;0;S24;vup;30;p11rmn_
+S3AS_;SpinEcho SPINE S3;4;4;0;S34;vup;30;p11rmn_
+S3AF_;Flash SPINE S3;4;4;0;S34;vup;30;p11rmn_
+S4AS_;SpinEcho SPINE S4;4;4;0;S44;vup;30;p11rmn_
+S4AF_;Flash SPINE S4;4;4;0;S44;vup;30;p11rmn_
+S5AS_;SpinEcho SPINE S5;4;4;0;S54;vup;30;p11rmn_
+S5AF_;Flash SPINE S5;4;4;0;S54;vup;30;p11rmn_
+S6AS_;SpinEcho SPINE S6;4;4;0;S64;vup;30;p11rmn_
+S6AF_;Flash SPINE S6;4;4;0;S64;vup;30;p11rmn_
+S7AS_;SpinEcho SPINE S7;4;4;0;S74;vup;30;p11rmn_
+S7AF_;Flash SPINE S7;4;4;0;S74;vup;30;p11rmn_
+S8AS_;SpinEcho SPINE S8;4;4;0;S84;vup;30;p11rmn_
+S8AF_;Flash SPINE S8;4;4;0;S84;vup;30;p11rmn_
+//;;;;;;;;
+// BREAST ;;;;;;;;
+BL1S_;Flash BREAST LEFT;4;4;0;xxx;vup;30;p12rmn_
+BL1F_;Flash BREAST LEFT;4;4;0;xxx;vup;30;p12rmn_
+BR1S_;SpinEcho BREAST RIGHT;4;4;0;xxx;vup;30;p12rmn_
+BR1F_;SpinEcho BREAST RIGHT;4;4;0;xxx;vup;30;p12rmn_
+//;;;;;;;;
+// NECK ARRAY SIMPHONY;;;;;;;;
+N1FS_;Flash NECK ARRAY N1;4;4;0;xxx;hdx;30;p11rmn_
+N1SS_;SpinEcho NECK ARRAY N1;4;4;0;xxx;hdx;30;p11rmn_
+N2FS_;Flash NECK ARRAY N2;4;4;0;xxx;hsx;30;p11rmn_
+N2SS_;SpinEcho NECK ARRAY N2;4;4;0;xxx;hsx;30;p11rmn_
+//;;;;;;;;
+//;;;;;;;;
+// NECK MATRIX AVANTO;;;;;;;;
+N1FA_;Flash NECK ARRAY B1;4;4;0;xxx;hdx;30;p11rmn_
+N1SA_;SpinEcho NECK ARRAY B1;4;4;0;xxx;hdx;30;p11rmn_
+N2FA_;Flash NECK ARRAY B2;4;4;0;xxx;hsx;30;p11rmn_
+N2SA_;SpinEcho NECK ARRAY B2;4;4;0;xxx;hsx;30;p11rmn_
+//;;;;;;;;
+// NECK MATRIX AVANTO SAVE UNCOMBINED;;;;;;;;
+N12S_;SpinEcho NECK ARRAY B1-2;4;4;0;NE1;hdx;30;p11rmn_
+N12F_;Flash NECK ARRAY B1-2;4;4;0;NE1;hdx;30;p11rmn_
+N12S_;SpinEcho NECK ARRAY B1-2;4;4;0;NE2;hsx;30;p11rmn_
+N12F_;Flash NECK ARRAY B1-2;4;4;0;NE2;hsx;30;p11rmn_
+//N12S_;SpinEcho NECK ARRAY B1-2;4;4;0;C:NE1,2;hdx;30;p11rmn_
+//N12F_;Flash NECK ARRAY B1-2;4;4;0;C:NE1,2;hdx;30;p11rmn_
+//;;;;;;;;
+// NECK MATRIX AERA SAVE UNCOMBINED;;;;;;;;
+O12S_;SpinEcho NECK ARRAY ;4;4;0;N11;hdx;30;p11rmn_
+O12S_;SpinEcho NECK ARRAY ;4;4;0;N12;hdx;30;p11rmn_
+O12S_;SpinEcho NECK ARRAY ;4;4;0;N21;hsx;30;p11rmn_
+O12S_;SpinEcho NECK ARRAY ;4;4;0;N22;hsx;30;p11rmn_
+O12S_;SpinEcho NECK ARRAY ;4;4;0;NE1,2;hsx;30;p11rmn_
+O12F_;Flash NECK ARRAY;4;4;0;N11;hdx;30;p11rmn_
+O12F_;Flash NECK ARRAY;4;4;0;N12;hdx;30;p11rmn_
+O12F_;Flash NECK ARRAY;4;4;0;N21;hsx;30;p11rmn_
+O12F_;Flash NECK ARRAY;4;4;0;N22;hsx;30;p11rmn_
+O12F_;Flash NECK ARRAY;4;4;0;NE1,2;hsx;30;p11rmn_
+//;;;;;;;;
+// LOOP AND FLEXIBLE;;;;;;;;
+LLFS_;Flash LARGE LOOP;4;4;0;xxx;x;x;p12rmn_
+LLSS_;SpinEcho LARGE LOOP;4;4;0;xxx;x;x;p12rmn_
+SLFS_;Flash SMALL LOOP;4;4;0;xxx;vup;30;p11rmn_
+SLSS_;SpinEcho SMALL LOOP;4;4;0;xxx;vup;30;p11rmn_
+LFFS_;Flash LARGE FLEXIBLE;4;4;0;xxx;x;x;p12rmn_
+LFSS_;SpinEcho LARGE FLEXIBLE;4;4;0;xxx;x;x;p12rmn_
+SFFS_;Flash SMALL FLEXIBLE;4;4;0;xxx;x;x;p12rmn_
+SFSS_;SpinEcho SMALL FLEXIBLE;4;4;0;xxx;x;x;p12rmn_
+//;;;;;;;;
+// SMALL LOOP AERA ;;;;;;;;
+TLFS_;Flash SMALL LOOP;4;4;0;L4;vup;30;p11rmn_
+TLSS_;SpinEcho SMALL LOOP;4;4;0;L4;vup;30;p11rmn_
+ULFS_;Flash SMALL LOOPB;4;4;0;L4;vup;30;p11rmn_
+ULSS_;SpinEcho SMALL LOOPB;4;4;0;L4;vup;30;p11rmn_
+//;;;;;;;;
+// FLEXIBLE AERA SAVE UNCOMBINED;;;;;;;;
+LBFS_;Flash LARGE FLEXIBLE;4;4;0;FL;x;x;p12rmn_
+LBSS_;SpinEcho LARGE FLEXIBLE;4;4;0;FL;x;x;p12rmn_
+LBFS_;Flash LARGE FLEXIBLE;4;4;0;FL1;x;30;p10rmn_
+LBSS_;SpinEcho LARGE FLEXIBLE;4;4;0;FL1;x;30;p10rmn_
+LBFS_;Flash LARGE FLEXIBLE;4;4;0;FL2;x;30;p10rmn_
+LBSS_;SpinEcho LARGE FLEXIBLE;4;4;0;FL2;x;30;p10rmn_
+LBFS_;Flash LARGE FLEXIBLE;4;4;0;FL3;x;30;p10rmn_
+LBSS_;SpinEcho LARGE FLEXIBLE;4;4;0;FL3;x;30;p10rmn_
+LBFS_;Flash LARGE FLEXIBLE;4;4;0;FL4;x;30;p10rmn_
+LBSS_;SpinEcho LARGE FLEXIBLE;4;4;0;FL4;x;30;p10rmn_
+SBFS_;Flash SMALL FLEXIBLE;4;4;0;FS;x;x;p12rmn_
+SBSS_;SpinEcho SMALL FLEXIBLE;4;4;0;FS;x;x;p12rmn_
+SBFS_;Flash SMALL FLEXIBLE;4;4;0;FS1;x;30;p10rmn_
+SBSS_;SpinEcho SMALL FLEXIBLE;4;4;0;FS1;x;30;p10rmn_
+SBFS_;Flash SMALL FLEXIBLE;4;4;0;FS2;x;30;p10rmn_
+SBSS_;SpinEcho SMALL FLEXIBLE;4;4;0;FS2;x;30;p10rmn_
+SBFS_;Flash SMALL FLEXIBLE;4;4;0;FS3;x;30;p10rmn_
+SBSS_;SpinEcho SMALL FLEXIBLE;4;4;0;FS3;x;30;p10rmn_
+SBFS_;Flash SMALL FLEXIBLE;4;4;0;FS4;x;30;p10rmn_
+SBSS_;SpinEcho SMALL FLEXIBLE;4;4;0;FS4;x;30;p10rmn_
+//;;;;;;;;
+// MATRIX PERIPHERIC ANGIO AERA SAVE UNCOMBINED;;;;;;;;
+PA1F_;Flash PERIF ARRAY PA1;4;4;0;xxx;x;x;p12rmn_
+PA1S_;SpinEcho PERIF ARRAY PA1;4;4;0;xxx;x;x;p12rmn_
+PA2F_;Flash PERIF ARRAY PA2;4;4;0;xxx;x;x;p12rmn_
+PA2S_;SpinEcho PERIF ARRAY PA2;4;4;0;xxx;x;x;p12rmn_
+PA3F_;Flash PERIF ARRAY PA3;4;4;0;xxx;x;x;p12rmn_
+PA3S_;SpinEcho PERIF ARRAY PA3;4;4;0;xxx;x;x;p12rmn_
+PA4F_;Flash PERIF ARRAY PA4;4;4;0;xxx;x;x;p12rmn_
+PA4S_;SpinEcho PERIF ARRAY PA4;4;4;0;xxx;x;x;p12rmn_
+PA5F_;Flash PERIF ARRAY PA5;4;4;0;xxx;x;x;p12rmn_
+PA5S_;SpinEcho PERIF ARRAY PA5;4;4;0;xxx;x;x;p12rmn_
+PA6F_;Flash PERIF ARRAY PA6;4;4;0;xxx;x;x;p12rmn_
+PA6S_;SpinEcho PERIF ARRAY PA6;4;4;0;xxx;x;x;p12rmn_
+//;;;;;;;;
+// MATRIX PERIPHERIC ANGIO AERA SAVE UNCOMBINED;NUOVE NB: DX SU DX E SX SU SX;;;;;;;
+QR1F_;Flash PERIF ARRAY PA1;4;4;0;PA1;x;30;p10rmn_
+QR1S_;SpinEcho PERIF ARRAY PA1;4;4;0;PA1;x;30;p10rmn_
+QL1F_;Flash PERIF ARRAY PA1;4;4;0;PA1;x;30;p10rmn_
+QL1S_;SpinEcho PERIF ARRAY PA1;4;4;0;PA1;x;30;p10rmn_
+QR2F_;Flash PERIF ARRAY PA2;4;4;0;PA2;x;30;p10rmn_
+QR2S_;SpinEcho PERIF ARRAY PA2;4;4;0;PA2;x;30;p10rmn_
+QL2F_;Flash PERIF ARRAY PA2;4;4;0;PA2;x;30;p10rmn_
+QL2S_;SpinEcho PERIF ARRAY PA2;4;4;0;PA2;x;30;p10rmn_
+QR3F_;Flash PERIF ARRAY PA3;4;4;0;PA3;x;30;p10rmn_
+QR3S_;SpinEcho PERIF ARRAY PA3;4;4;0;PA3;x;30;p10rmn_
+QL3F_;Flash PERIF ARRAY PA3;4;4;0;PA3;x;30;p10rmn_
+QL3S_;SpinEcho PERIF ARRAY PA3;4;4;0;PA3;x;30;p10rmn_
+QR4F_;Flash PERIF ARRAY PA4;4;4;0;PA4;x;30;p10rmn_
+QR4S_;SpinEcho PERIF ARRAY PA4;4;4;0;PA4;x;30;p10rmn_
+QL4F_;Flash PERIF ARRAY PA4;4;4;0;PA4;x;30;p10rmn_
+QL4S_;SpinEcho PERIF ARRAY PA4;4;4;0;PA4;x;30;p10rmn_
+QR5F_;Flash PERIF ARRAY PA5;4;4;0;PA5;x;30;p10rmn_
+QR5S_;SpinEcho PERIF ARRAY PA5;4;4;0;PA5;x;30;p10rmn_
+QL5F_;Flash PERIF ARRAY PA5;4;4;0;PA5;x;30;p10rmn_
+QL5S_;SpinEcho PERIF ARRAY PA5;4;4;0;PA5;x;30;p10rmn_
+QR6F_;Flash PERIF ARRAY PA6;4;4;0;PA6;x;30;p10rmn_
+QR6S_;SpinEcho PERIF ARRAY PA6;4;4;0;PA6;x;30;p10rmn_
+QL6F_;Flash PERIF ARRAY PA6;4;4;0;PA6;x;30;p10rmn_
+QL6S_;SpinEcho PERIF ARRAY PA6;4;4;0;PA6;x;30;p10rmn_
+//;;;;;;;;
+QR1F_;Flash PERIF ARRAY PA1;4;4;0;PR11;x;30;p10rmn_
+QR1S_;SpinEcho PERIF ARRAY PA1;4;4;0;PR11;x;30;p10rmn_
+QR2F_;Flash PERIF ARRAY PA2;4;4;0;PR21;x;30;p10rmn_
+QR2S_;SpinEcho PERIF ARRAY PA2;4;4;0;PR21;x;30;p10rmn_
+QR3F_;Flash PERIF ARRAY PA3;4;4;0;PR31;x;30;p10rmn_
+QR3S_;SpinEcho PERIF ARRAY PA3;4;4;0;PR31;x;30;p10rmn_
+QR4F_;Flash PERIF ARRAY PA4;4;4;0;PR41;x;30;p10rmn_
+QR4S_;SpinEcho PERIF ARRAY PA4;4;4;0;PR41;x;30;p10rmn_
+QR5F_;Flash PERIF ARRAY PA5;4;4;0;PR51;x;30;p10rmn_
+QR5S_;SpinEcho PERIF ARRAY PA5;4;4;0;PR51;x;30;p10rmn_
+QR6F_;Flash PERIF ARRAY PA6;4;4;0;PR61;x;30;p10rmn_
+QR6S_;SpinEcho PERIF ARRAY PA6;4;4;0;PR61;x;30;p10rmn_
+//;;;;;;;;
+QR1F_;Flash PERIF ARRAY PA1;4;4;0;PR12;x;30;p10rmn_
+QR1S_;SpinEcho PERIF ARRAY PA1;4;4;0;PR12;x;30;p10rmn_
+QR2F_;Flash PERIF ARRAY PA2;4;4;0;PR22;x;30;p10rmn_
+QR2S_;SpinEcho PERIF ARRAY PA2;4;4;0;PR22;x;30;p10rmn_
+QR3F_;Flash PERIF ARRAY PA3;4;4;0;PR32;x;30;p10rmn_
+QR3S_;SpinEcho PERIF ARRAY PA3;4;4;0;PR32;x;30;p10rmn_
+QR4F_;Flash PERIF ARRAY PA4;4;4;0;PR42;x;30;p10rmn_
+QR4S_;SpinEcho PERIF ARRAY PA4;4;4;0;PR42;x;30;p10rmn_
+QR5F_;Flash PERIF ARRAY PA5;4;4;0;PR52;x;30;p10rmn_
+QR5S_;SpinEcho PERIF ARRAY PA5;4;4;0;PR52;x;30;p10rmn_
+QR6F_;Flash PERIF ARRAY PA6;4;4;0;PR62;x;30;p10rmn_
+QR6S_;SpinEcho PERIF ARRAY PA6;4;4;0;PR62;x;30;p10rmn_
+//;;;;;;;;
+QR1F_;Flash PERIF ARRAY PA1;4;4;0;PR13;x;30;p10rmn_
+QR1S_;SpinEcho PERIF ARRAY PA1;4;4;0;PR13;x;30;p10rmn_
+QR2F_;Flash PERIF ARRAY PA2;4;4;0;PR23;x;30;p10rmn_
+QR2S_;SpinEcho PERIF ARRAY PA2;4;4;0;PR23;x;30;p10rmn_
+QR3F_;Flash PERIF ARRAY PA3;4;4;0;PR33;x;30;p10rmn_
+QR3S_;SpinEcho PERIF ARRAY PA3;4;4;0;PR33;x;30;p10rmn_
+QR4F_;Flash PERIF ARRAY PA4;4;4;0;PR43;x;30;p10rmn_
+QR4S_;SpinEcho PERIF ARRAY PA4;4;4;0;PR43;x;30;p10rmn_
+QR5F_;Flash PERIF ARRAY PA5;4;4;0;PR53;x;30;p10rmn_
+QR5S_;SpinEcho PERIF ARRAY PA5;4;4;0;PR53;x;30;p10rmn_
+QR6F_;Flash PERIF ARRAY PA6;4;4;0;PR63;x;30;p10rmn_
+QR6S_;SpinEcho PERIF ARRAY PA6;4;4;0;PR63;x;30;p10rmn_
+//;;;;;;;;
+QL1F_;Flash PERIF ARRAY PA1;4;4;0;PL11;x;30;p10rmn_
+QL1S_;SpinEcho PERIF ARRAY PA1;4;4;0;PL11;x;30;p10rmn_
+QL2F_;Flash PERIF ARRAY PA2;4;4;0;PL21;x;30;p10rmn_
+QL2S_;SpinEcho PERIF ARRAY PA2;4;4;0;PL21;x;30;p10rmn_
+QL3F_;Flash PERIF ARRAY PA3;4;4;0;PL31;x;30;p10rmn_
+QL3S_;SpinEcho PERIF ARRAY PA3;4;4;0;PL31;x;30;p10rmn_
+QL4F_;Flash PERIF ARRAY PA4;4;4;0;PL41;x;30;p10rmn_
+QL4S_;SpinEcho PERIF ARRAY PA4;4;4;0;PL41;x;30;p10rmn_
+QL5F_;Flash PERIF ARRAY PA5;4;4;0;PL51;x;30;p10rmn_
+QL5S_;SpinEcho PERIF ARRAY PA5;4;4;0;PL51;x;30;p10rmn_
+QL6F_;Flash PERIF ARRAY PA6;4;4;0;PL61;x;30;p10rmn_
+QL6S_;SpinEcho PERIF ARRAY PA6;4;4;0;PL61;x;30;p10rmn_
+//;;;;;;;;
+QL1F_;Flash PERIF ARRAY PA1;4;4;0;PL12;x;30;p10rmn_
+QL1S_;SpinEcho PERIF ARRAY PA1;4;4;0;PL12;x;30;p10rmn_
+QL2F_;Flash PERIF ARRAY PA2;4;4;0;PL22;x;30;p10rmn_
+QL2S_;SpinEcho PERIF ARRAY PA2;4;4;0;PL22;x;30;p10rmn_
+QL3F_;Flash PERIF ARRAY PA3;4;4;0;PL32;x;30;p10rmn_
+QL3S_;SpinEcho PERIF ARRAY PA3;4;4;0;PL32;x;30;p10rmn_
+QL4F_;Flash PERIF ARRAY PA4;4;4;0;PL42;x;30;p10rmn_
+QL4S_;SpinEcho PERIF ARRAY PA4;4;4;0;PL42;x;30;p10rmn_
+QL5F_;Flash PERIF ARRAY PA5;4;4;0;PL52;x;30;p10rmn_
+QL5S_;SpinEcho PERIF ARRAY PA5;4;4;0;PL52;x;30;p10rmn_
+QL6F_;Flash PERIF ARRAY PA6;4;4;0;PL62;x;30;p10rmn_
+QL6S_;SpinEcho PERIF ARRAY PA6;4;4;0;PL62;x;30;p10rmn_
+//;;;;;;;;
+QL1F_;Flash PERIF ARRAY PA1;4;4;0;PL13;x;30;p10rmn_
+QL1S_;SpinEcho PERIF ARRAY PA1;4;4;0;PL13;x;30;p10rmn_
+QL2F_;Flash PERIF ARRAY PA2;4;4;0;PL23;x;30;p10rmn_
+QL2S_;SpinEcho PERIF ARRAY PA2;4;4;0;PL23;x;30;p10rmn_
+QL3F_;Flash PERIF ARRAY PA3;4;4;0;PL33;x;30;p10rmn_
+QL3S_;SpinEcho PERIF ARRAY PA3;4;4;0;PL33;x;30;p10rmn_
+QL4F_;Flash PERIF ARRAY PA4;4;4;0;PL43;x;30;p10rmn_
+QL4S_;SpinEcho PERIF ARRAY PA4;4;4;0;PL43;x;30;p10rmn_
+QL5F_;Flash PERIF ARRAY PA5;4;4;0;PL53;x;30;p10rmn_
+QL5S_;SpinEcho PERIF ARRAY PA5;4;4;0;PL53;x;30;p10rmn_
+QL6F_;Flash PERIF ARRAY PA6;4;4;0;PL63;x;30;p10rmn_
+QL6S_;SpinEcho PERIF ARRAY PA6;4;4;0;PL63;x;30;p10rmn_
+//;;;;;;;;
+// MATRIX PERIPHERIC ANGIO AVANTO;;;;;;;;
+PR1F_;Flash PERIF ARRAY PR1;4;4;0;xxx;x;x;p12rmn_
+PR1S_;SpinEcho PERIF ARRAY PR1;4;4;0;xxx;x;x;p12rmn_
+PL1F_;Flash PERIF ARRAY PL1;4;4;0;xxx;x;x;p12rmn_
+PL1S_;SpinEcho PERIF ARRAY PL1;4;4;0;xxx;x;x;p12rmn_
+PR2F_;Flash PERIF ARRAY PR2;4;4;0;xxx;x;x;p12rmn_
+PR2S_;SpinEcho PERIF ARRAY PR2;4;4;0;xxx;x;x;p12rmn_
+PL2F_;Flash PERIF ARRAY PL2;4;4;0;xxx;x;x;p12rmn_
+PL2S_;SpinEcho PERIF ARRAY PL2;4;4;0;xxx;x;x;p12rmn_
+PR3F_;Flash PERIF ARRAY PR3;4;4;0;xxx;x;x;p12rmn_
+PR3S_;SpinEcho PERIF ARRAY PR3;4;4;0;xxx;x;x;p12rmn_
+PL3F_;Flash PERIF ARRAY PL3;4;4;0;xxx;x;x;p12rmn_
+PL3S_;SpinEcho PERIF ARRAY PL3;4;4;0;xxx;x;x;p12rmn_
+PR4F_;Flash PERIF ARRAY PR4;4;4;0;xxx;x;x;p12rmn_
+PR4S_;SpinEcho PERIF ARRAY PR4;4;4;0;xxx;x;x;p12rmn_
+PL4F_;Flash PERIF ARRAY PL4;4;4;0;xxx;x;x;p12rmn_
+PL4S_;SpinEcho PERIF ARRAY PL4;4;4;0;xxx;x;x;p12rmn_
+//;;;;;;;;
+//;;;;;;;;
+// T2 AND T1;;;;;;;;
+T2MA_;T2 multi SpinEcho Body;20;20;0;xxx;x;x;p20rmn_
+T2MB_;T2 multi SpinEcho Body;32;32;0;xxx;x;x;p20rmn_
+T2M1_;T2 multi SpinEcho Body;1;0;0;xxx;x;x;p9rmn_
+T2M2_;T2 multi SpinEcho Body;1;0;0;xxx;x;x;p9rmn_
+T2M3_;T2 multi SpinEcho Body;1;0;0;xxx;x;x;p9rmn_
+B2K0_;T1 ir 2000 Body;18;1;0;xxx;x;x;p20rmn_
+B1K8_;T1 ir 1800 Body;18;1;0;xxx;x;x;p20rmn_
+B1K6_;T1 ir 1600 Body;18;1;0;xxx;x;x;p20rmn_
+B1K4_;T1 ir 1400 Body;18;1;0;xxx;x;x;p20rmn_
+B1K2_;T1 ir 1200 Body;18;1;0;xxx;x;x;p20rmn_
+B1K0_;T1 ir 1000 Body;18;1;0;xxx;x;x;p20rmn_
+B090_;T1 ir 900 Body;18;1;0;xxx;x;x;p20rmn_
+B080_;T1 ir 800 Body;18;1;0;xxx;x;x;p20rmn_
+B070_;T1 ir 700 Body;18;1;0;xxx;x;x;p20rmn_
+B060_;T1 ir 600 Body;18;1;0;xxx;x;x;p20rmn_
+B050_;T1 ir 500 Body;18;1;0;xxx;x;x;p20rmn_
+B040_;T1 ir 400 Body;18;1;0;xxx;x;x;p20rmn_
+B030_;T1 ir 300 Body;18;1;0;xxx;x;x;p20rmn_
+B020_;T1 ir 200 Body;18;1;0;xxx;x;x;p20rmn_
+B010_;T1 ir 100 Body;18;1;0;xxx;x;x;p20rmn_
+B008_;T1 ir 80 Body;18;1;0;xxx;x;x;p20rmn_
+B005_;T1 ir 50 Body;18;1;0;xxx;x;x;p20rmn_
+B003_;T1 ir 30 Body;18;1;0;xxx;x;x;p20rmn_
+C080_;T1 ir 800 Body;1;0;0;xxx;x;x;p9rmn_
+//;;;;;;;;
+// BREAST AERA NORMALE;;;;;;;;
+BL2F_;Flash BREAST LEFT;4;12;0;LH;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;Lo;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;LS;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;LD;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;Ri;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;RF;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;L8;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;R8;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;LF;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;Li;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;RD;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;RS;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;LN;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;LT;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;RT;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;RN;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;Ro;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;RH;x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
+//;;;;;;;;
+BR2F_;Flash BREAST RIGHT;4;12;0;LH;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;Lo;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;LS;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;LD;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;Ri;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;RF;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;L8;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;R8;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;LF;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;Li;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;RD;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;RS;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;LN;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;LT;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;RT;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;RN;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;Ro;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;RH;x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
+//;;;;;;;;
+BL2S_;Spineco BREAST LEFT;4;12;0;LH;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;Lo;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;LS;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;LD;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;Ri;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;RF;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;L8;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;R8;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;LF;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;Li;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;RD;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;RS;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;LN;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;LT;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;RT;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;RN;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;Ro;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;RH;x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
+//;;;;;;;;
+BR2S_;Spineco BREAST RIGHT;4;12;0;LH;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;Lo;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;LS;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;LD;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;Ri;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;RF;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;L8;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;R8;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;LF;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;Li;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;RD;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;RS;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;LN;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;LT;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;RT;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;RN;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;Ro;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;RH;x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;"BAL;BAR;BCL;BCR ";x;x;p12rmn_
+//;;;;0;;;;
+// BREAST AERA BIOPSY;;;;0;;;;
+YL2F_;Flash BREAST LEFT;4;12;0;BL1;x;x;p12rmn_
+YL2F_;Flash BREAST LEFT;4;12;0;BL2;x;x;p12rmn_
+YL2F_;Flash BREAST LEFT;4;12;0;2BL;x;x;p12rmn_
+//;;;;0;;;;
+YR2F_;Flash BREAST RIGHT;4;12;0;BR1;x;x;p12rmn_
+YR2F_;Flash BREAST RIGHT;4;12;0;BR2;x;x;p12rmn_
+YR2F_;Flash BREAST RIGHT;4;12;0;2BR;x;x;p12rmn_
+//;;;;0;;;;
+YL2S_;Spineco BREAST LEFT;4;12;0;BL1;x;x;p12rmn_
+YL2S_;Spineco BREAST LEFT;4;12;0;BL2;x;x;p12rmn_
+YL2S_;Spineco BREAST LEFT;4;12;0;2BL;x;x;p12rmn_
+//;;;;0;;;;
+YR2S_;Spineco BREAST LEFT;4;12;0;BR1;x;x;p12rmn_
+YR2S_;Spineco BREAST LEFT;4;12;0;BR2;x;x;p12rmn_
+YR2S_;Spineco BREAST LEFT;4;12;0;2BR;x;x;p12rmn_
+//;;;;0;;;;
+// ENDORECTAL AERA;;;;0;;;;
+ERAF_;Flash ENDORECTAL;4;4;0;EN;x;x;p12rmn_
+ERAS_;Spineco ENDORECTAL;4;4;0;EN;x;x;p12rmn_
+//;;;;0;;;;
+// KNEE AERA;;;;0;;;;
+KNEF_;Flash KNEE;4;4;0;K1;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;0;K2;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;0;K3;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;0;K4;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;0;K5;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;0;K6;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;0;K7;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;0;K8;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;0;K9;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;0;K10;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;0;K11;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;0;K12;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;0;K13;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;0;K14;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;0;K15;x;x;p12rmn_
+KNEF_;Flash KNEE;4;4;0;15K;x;x;p12rmn_
+//;;;;0;;;;
+KNES_;Spineco KNEE;4;4;0;K1;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;0;K2;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;0;K3;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;0;K4;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;0;K5;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;0;K6;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;0;K7;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;0;K8;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;0;K9;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;0;K10;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;0;K11;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;0;K12;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;0;K13;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;0;K14;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;0;K15;x;x;p12rmn_
+KNES_;Spineco KNEE;4;4;0;15K;x;x;p12rmn_
+//;;;;0;;;;
+// SHOULDER AERA;;;;0;;;;
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS1;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS2;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS3;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS4;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS5;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS6;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS7;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS8;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS9;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS10;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS11;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS12;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS13;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS14;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS15;x;x;p12rmn_
+SS2F_;Flash SHOULDER SMALL;4;4;0;SHS16;x;x;p12rmn_
+//;;;;0;;;;
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS1;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS2;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS3;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS4;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS5;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS6;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS7;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS8;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS9;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS10;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS11;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS12;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS13;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS14;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS15;x;x;p12rmn_
+SS2S_;Spineco SHOULDER SMALL;4;4;0;SHS16;x;x;p12rmn_
+//;;;;0;;;;
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL1;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL2;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL3;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL4;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL5;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL6;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL7;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL8;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL9;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL10;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL11;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL12;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL13;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL14;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL15;x;x;p12rmn_
+SL2F_;Flash SHOULDER LARGE;4;4;0;SHL16;x;x;p12rmn_
+//;;;;0;;;;
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL1;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL2;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL3;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL4;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL5;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL6;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL7;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL8;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL9;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL10;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL11;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL12;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL13;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL14;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL15;x;x;p12rmn_
+SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL16;x;x;p12rmn_

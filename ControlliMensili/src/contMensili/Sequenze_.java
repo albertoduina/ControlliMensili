@@ -67,13 +67,12 @@ public class Sequenze_ implements PlugIn {
 	public static String VERSION = "Programma gestione automatica";
 
 	public int location;
-	
+
 	// //
 	// // ABILITA E DISABILITA LE STAMPE DI DEBUG
 	// // METTERE debugTables A FALSE PER NON AVERE LE STAMPE
 	// //
-	public boolean debugTables = true;
-
+	public boolean debugTables = false;
 
 	public void run(String arg) {
 
@@ -107,7 +106,7 @@ public class Sequenze_ implements PlugIn {
 			return;
 		}
 
-	//	MyFileLogger.logger.info("-----INIZIO Sequenze----");
+		// MyFileLogger.logger.info("-----INIZIO Sequenze----");
 
 		new InputOutput().findCSV(MyConst.CODE_FILE);
 		new InputOutput().findCSV(MyConst.LIMITS_FILE);
@@ -130,7 +129,7 @@ public class Sequenze_ implements PlugIn {
 				MyConst.DEFAULT_PATH);
 		MyFileLogger.logger.info("Sequenze_>>> startingDir letta= "
 				+ startingDir);
-		
+
 		UtilAyv.logResizer();
 
 		boolean startingDirExist = new File(startingDir).exists();
@@ -293,56 +292,37 @@ public class Sequenze_ implements PlugIn {
 				return;
 			}
 
-			
-			//=============================================================
+			// =============================================================
 			// VECCHIA CAZZATA FUNZIONANTE
-			//=============================================================
-			
+			// =============================================================
+
 			//
 			// Effettuo il sort della table, secondo il tempo di acquisizione
 			//
-//			String[][] tableSequenceSorted = bubbleSortSequenceTable2(tableSequenceLoaded);
-//			if (debugTables) {
-//				MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
-//				MyLog.waitHere("salvare il log come TableSequenceSorted");
-//			}
-			
-		
-			
-			//=============================================================
-			// NUOVA CAZZATA INEDITA
-			//=============================================================
-			
+			// String[][] tableSequenceSorted =
+			// bubbleSortSequenceTable2(tableSequenceLoaded);
+			// if (debugTables) {
+			// MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
+			// MyLog.waitHere("salvare il log come TableSequenceSorted");
+			// }
 
-			String[][] tableSequenceSorted1 = TableSorter.minsort(tableSequenceLoaded, TableSequence.POSIZ);
+			// =============================================================
+			// NUOVA CAZZATA INEDITA
+			// =============================================================
+
+			String[][] tableSequenceSorted1 = TableSorter.minsort(
+					tableSequenceLoaded, TableSequence.POSIZ);
 			if (debugTables) {
 				MyLog.logMatrix(tableSequenceSorted1, "tableSequenceSorted1");
 				MyLog.waitHere("salvare il log come TableSequenceSorted1");
 			}
 
-			
-			
-			
-			String[][] tableSequenceSorted = TableSorter.minsort(tableSequenceSorted1, TableSequence.TIME);
+			String[][] tableSequenceSorted = TableSorter.minsort(
+					tableSequenceSorted1, TableSequence.TIME);
 			if (debugTables) {
 				MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
 				MyLog.waitHere("salvare il log come TableSequenceSorted");
 			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 
 			String[][] tableSequenceReordered = reorderSequenceTable(
 					tableSequenceSorted, tableCode);
@@ -430,6 +410,7 @@ public class Sequenze_ implements PlugIn {
 		List<String> vetCodice = new ArrayList<String>();
 		List<String> vetCoil = new ArrayList<String>();
 		List<String> vetImaDaPassare = new ArrayList<String>();
+		List<String> vetImaGruppo = new ArrayList<String>();
 		List<String> vetSerie = new ArrayList<String>();
 		List<String> vetAcq = new ArrayList<String>();
 		List<String> vetIma = new ArrayList<String>();
@@ -439,7 +420,6 @@ public class Sequenze_ implements PlugIn {
 		List<String> vetDone = new ArrayList<String>();
 		List<String> vetDirez = new ArrayList<String>();
 		List<String> vetProfond = new ArrayList<String>();
-		
 
 		if (pathList == null) {
 			IJ.log("loadList2.pathList = null");
@@ -533,25 +513,28 @@ public class Sequenze_ implements PlugIn {
 				if (echoTime.compareTo("") == 0)
 					echoTime = "0";
 				String slicePosition = ReadDicom.readDicomParameter(imp1,
-						MyConst.DICOM_SLICE_LOCATION); 
-				
+						MyConst.DICOM_SLICE_LOCATION);
+
 				String done = "0";
 				boolean trovato = false;
 				int tableRow = 0;
 				for (int j1 = 0; j1 < tableCode2.length; j1++) {
 
-					if (codice.equals(tableCode2[j1][0])) {
+					if (codice.equals(tableCode2[j1][TableCode.CODE])) {
 						// if (codice.equals("N1FA_")) MyLog.waitHere();
 
-						if ((tableCode2[j1][3].equals("x"))
-								|| (tableCode2[j1][3].equals("xxx"))
-								|| coilPresent(allCoils, tableCode2[j1][3])) {
+						if ((tableCode2[j1][TableCode.COIL].equals("x"))
+								|| (tableCode2[j1][TableCode.COIL]
+										.equals("xxx"))
+								|| coilPresent(allCoils,
+										tableCode2[j1][TableCode.COIL])) {
 							// modifica del 090913 test se la stringa CONTIENE
 							// il nome della bobina
 							// || (coil.equals(tableCode2[j1][3]))) {
 							// IJ.log(codice + "find "+tableCode2[j1][3]);
 							tableRow = j1;
 							trovato = true;
+
 							break;
 						}
 					}
@@ -569,15 +552,17 @@ public class Sequenze_ implements PlugIn {
 					vetCodice.add(codice);
 					// if (questo) MyLog.waitHere(""+count3+" coil= "+coil);
 					vetCoil.add(coil);
-					vetImaDaPassare.add(tableCode2[tableRow][1]);
+					vetImaDaPassare
+							.add(tableCode2[tableRow][TableCode.IMA_PASS]);
+					vetImaGruppo.add(tableCode2[tableRow][TableCode.IMA_GROUP]);
 					vetSerie.add(numSerie);
 					vetAcq.add(numAcq);
 					vetIma.add(numIma);
 					vetAcqTime.add(acqTime);
 					vetEchoTime.add(echoTime);
 					vetSlicePosition.add(slicePosition);
-					vetDirez.add(tableCode2[tableRow][4]);
-					vetProfond.add(tableCode2[tableRow][5]);
+					vetDirez.add(tableCode2[tableRow][TableCode.DIREZ]);
+					vetProfond.add(tableCode2[tableRow][TableCode.PROFOND]);
 					vetDone.add(done);
 					String[] espansione;
 					// vedo se occorre espandere
@@ -591,14 +576,15 @@ public class Sequenze_ implements PlugIn {
 						vetCodice.add(espansione[2]);
 						vetCoil.add(coil);
 						vetImaDaPassare.add(espansione[3]);
+						vetImaGruppo.add(tableCode2[tableRow][TableCode.IMA_GROUP]);
 						vetSerie.add(numSerie);
 						vetAcq.add(numAcq);
 						vetIma.add(numIma);
 						vetAcqTime.add(acqTime);
 						vetEchoTime.add(echoTime);
 						vetSlicePosition.add(slicePosition);
-						vetDirez.add(tableCode2[tableRow][4]);
-						vetProfond.add(tableCode2[tableRow][5]);
+						vetDirez.add(tableCode2[tableRow][TableCode.DIREZ]);
+						vetProfond.add(tableCode2[tableRow][TableCode.PROFOND]);
 						vetDone.add(done);
 					}
 				} else {
@@ -624,13 +610,8 @@ public class Sequenze_ implements PlugIn {
 		String[][] tablePass3 = TableSequence.writeColumn(tablePass2,
 				ArrayUtils.arrayListToArrayString(vetCodice),
 				TableSequence.CODE);
-		// MyLog.logVector(ArrayUtils.arrayListToArrayString(vetCoil),
-		// "vetCoil");
-		// MyLog.waitHere();
 		String[][] tablePass4 = TableSequence.writeColumn(tablePass3,
 				ArrayUtils.arrayListToArrayString(vetCoil), TableSequence.COIL);
-		// MyLog.logMatrix(tablePass4, "tablePass4");
-		// MyLog.waitHere("INTERMEDIO");
 		String[][] tablePass5 = TableSequence.writeColumn(tablePass4,
 				ArrayUtils.arrayListToArrayString(vetImaDaPassare),
 				TableSequence.IMA_PASS);
@@ -656,11 +637,8 @@ public class Sequenze_ implements PlugIn {
 		String[][] tablePass13 = TableSequence.writeColumn(tablePass12,
 				ArrayUtils.arrayListToArrayString(vetProfond),
 				TableSequence.PROFOND);
-
 		String[][] tablePass14 = TableSequence.writeColumn(tablePass13,
 				ArrayUtils.arrayListToArrayString(vetDone), TableSequence.DONE);
-		// MyLog.logMatrix(tablePass13, "tablePass13");
-		// MyLog.waitHere("COMPLETO");
 		return tablePass14;
 	}
 
@@ -869,6 +847,10 @@ public class Sequenze_ implements PlugIn {
 				if ((plugin == null) || (argomento == null) || jump) {
 					j1++;
 				} else {
+					// qui è dove vengono passate al plugin le righe delle
+					// immagini da analizzare. Il problema è effettuare la
+					// modifica se devo passare linee che non riesco a sortare a
+					// dovere, quindi non saranno adiacenti.
 					new TableSequence();
 					int numImaDaPassare = Integer.parseInt(TableSequence
 							.getImaPass(tableSequenze5, j1));
@@ -1062,7 +1044,7 @@ public class Sequenze_ implements PlugIn {
 		// IJ.log("------- TableSequenze6 ------------");
 		// TableUtils.dumpTable(tableSequenze6);
 		// IJ.log("------- TableCode6 ------------");
-		// TableUtils.dumpTable(tableCode6);
+		// TableUtils.dumpTable2(tableCode6);
 
 		if (tableSequenze6 == null) {
 			MyLog.here("verifyList2.tableSequenze6 = null");
@@ -1083,8 +1065,13 @@ public class Sequenze_ implements PlugIn {
 		String codiceBobinaAcquisito = "";
 		for (int j1 = 0; j1 < tableCode6.length; j1++) {
 			int numeroImaAcquisite = 0;
-			int numeroImaRichieste = Integer.parseInt(TableCode.getImaTotal(
-					tableCode6, j1));
+			int numeroImaRichieste = 0;
+			if (UtilAyv.isNumeric(TableCode.getImaTotal(tableCode6, j1))) {
+
+				numeroImaRichieste = Integer.parseInt(TableCode.getImaTotal(
+						tableCode6, j1));
+			} else
+				MyLog.waitHere("errore foprmato a j1= " + j1);
 			String codiceImaRichieste = TableCode.getCode(tableCode6, j1);
 			if (codiceImaRichieste == null)
 				break;
