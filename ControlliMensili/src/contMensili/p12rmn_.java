@@ -87,12 +87,10 @@ import utils.UtilAyv;
 /**
  * AUTOMATIZZAZIONE del programma manuale esistente, p3 rmn che diventa p12rmn
  * 
- * Analizza UNIFORMITA', SNR per le bobine superficiali vale per le immagini
- * 
- * circolari NOTA BENE: PLUGIN IN FASE DI SVILUPPO, NON TESTATO A FONDO Aggiunta
- * al report anche la voce relativa al fondo: segnale medio e posizione della
- * roi. L'aggiunta è l'ultima voce del report, verrà pertanto semplicementre
- * ignorata dai vari autoreports e autohistory
+ * Analizza UNIFORMITA', SNR per le bobine circolari vale per le immagini
+ * Aggiunta al report anche la voce relativa al fondo: segnale medio e posizione
+ * della roi. L'aggiunta è l'ultima voce del report, verrà pertanto
+ * semplicementre ignorata dai vari autoreports e autohistory
  * 
  * +++++++++++++++++ MA A ME SEMBRA CHE FUNZIONI ++++++++++++++++++++++
  * +++++++++++++++++ MA A ME SEMBRA CHE FUNZIONI ++++++++++++++++++++++
@@ -179,7 +177,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 				retry = true;
 				break;
 			case 3:
-				timeout = MyInput.myIntegerInput("Ritardo avanzamento (0 = infinito)", "      [msec]", 1000, 0);
+				timeout = MyInput.myIntegerInput(
+						"Ritardo avanzamento (0 = infinito)", "      [msec]",
+						1000, 0);
 				selfTestMenu();
 				retry = true;
 				break;
@@ -1066,7 +1066,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 				MyConst.P3_vetName);
-		if (verbose) UtilAyv.afterWork();
+		if (verbose)
+			UtilAyv.afterWork();
 
 		return ok;
 	}

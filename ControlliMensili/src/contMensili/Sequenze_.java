@@ -338,19 +338,30 @@ public class Sequenze_ implements PlugIn {
 				MyLog.logMatrix(listProblems, "listProblems");
 				MyLog.waitHere("salvare il log come ListProblems");
 			}
+			
+			
+			String[] myCode= {"BL2F_","BL2S_", "BR2F_", "BR2S_"};
+			int[] myNum= {4};
+			String[] myCoil= {"LH","Lo","LS","LD","L8","LF","Li","LN","LT"};
+			String[] myPosiz= {"-45","0","45"};
 
+			String[][] tableSequenceReordered2 =  TableSorter.tableModifier(tableSequenceReordered, myCode,
+					myNum, myCoil, myPosiz);
+
+			
 			boolean test = false;
 			// NOTA BENE: lasciare test a false, altrimenti non vengono più
 			// stampati gli errori e si hanno problemi in elaborazione!!!
 			logVerifySequenceTable(listProblems, test);
 
 			boolean success = new TableSequence().writeTable(startingDir
-					+ MyConst.SEQUENZE_FILE, tableSequenceReordered);
+					+ MyConst.SEQUENZE_FILE, tableSequenceReordered2);
 			if (!success)
 				IJ.log("Problemi creazione file iw2ayv.txt");
 		}
 		// MyLog.here();
 		// IJ.log("startingDir=" + startingDir);
+		
 
 		String[][] tableSequenceReloaded = new TableSequence()
 				.loadTable(startingDir + MyConst.SEQUENZE_FILE);
@@ -576,7 +587,8 @@ public class Sequenze_ implements PlugIn {
 						vetCodice.add(espansione[2]);
 						vetCoil.add(coil);
 						vetImaDaPassare.add(espansione[3]);
-						vetImaGruppo.add(tableCode2[tableRow][TableCode.IMA_GROUP]);
+						vetImaGruppo
+								.add(tableCode2[tableRow][TableCode.IMA_GROUP]);
 						vetSerie.add(numSerie);
 						vetAcq.add(numAcq);
 						vetIma.add(numIma);
@@ -595,8 +607,6 @@ public class Sequenze_ implements PlugIn {
 			}
 		}
 
-		// MyLog.logVectorVertical(ArrayUtils.arrayListToArrayString(vetCoil),
-		// "vetCoil");
 
 		// a questo punto non mi resta che creare la tabella e riversarvi i dati
 		// dagli ArrayList
@@ -616,9 +626,12 @@ public class Sequenze_ implements PlugIn {
 				ArrayUtils.arrayListToArrayString(vetImaDaPassare),
 				TableSequence.IMA_PASS);
 		String[][] tablePass6 = TableSequence.writeColumn(tablePass5,
+				ArrayUtils.arrayListToArrayString(vetImaGruppo),
+				TableSequence.IMA_GROUP);
+		String[][] tablePass16 = TableSequence.writeColumn(tablePass6,
 				ArrayUtils.arrayListToArrayString(vetSerie),
 				TableSequence.SERIE);
-		String[][] tablePass7 = TableSequence.writeColumn(tablePass6,
+		String[][] tablePass7 = TableSequence.writeColumn(tablePass16,
 				ArrayUtils.arrayListToArrayString(vetAcq), TableSequence.ACQ);
 		String[][] tablePass8 = TableSequence.writeColumn(tablePass7,
 				ArrayUtils.arrayListToArrayString(vetIma), TableSequence.IMA);
@@ -854,17 +867,36 @@ public class Sequenze_ implements PlugIn {
 					new TableSequence();
 					int numImaDaPassare = Integer.parseInt(TableSequence
 							.getImaPass(tableSequenze5, j1));
+
+					int numImaGruppo = Integer.parseInt(TableSequence
+							.getImaGroup(tableSequenze5, j1));
+
 					if (numImaDaPassare == 0) {
 						j1++;
 					} else {
-						MyFileLogger.logger
-								.info("Sequenze.callPluginFromSequenceTable >>> plugin= "
-										+ plugin + " argomento= " + argomento);
+						if (numImaGruppo == 0) {
+							MyFileLogger.logger
+									.info("Sequenze.callPluginFromSequenceTable >>> plugin= "
+											+ plugin
+											+ " argomento= "
+											+ argomento);
 
-						pluginRunner(plugin, argomento, test);
-						vetPlugin.add(plugin);
-						vetArgomento.add(argomento);
-						j1 = j1 + numImaDaPassare;
+							pluginRunner(plugin, argomento, test);
+							vetPlugin.add(plugin);
+							vetArgomento.add(argomento);
+							j1 = j1 + numImaDaPassare;
+						} else {	
+							MyFileLogger.logger
+							.info("Sequenze.callPluginFromSequenceTable >>> plugin= "
+									+ plugin
+									+ " argomento= "
+									+ argomento);
+
+					pluginRunner(plugin, argomento, test);
+					vetPlugin.add(plugin);
+					vetArgomento.add(argomento);
+					j1 = j1 + numImaDaPassare;			
+						}
 					}
 				}
 			} else {
@@ -994,7 +1026,7 @@ public class Sequenze_ implements PlugIn {
 
 	/**
 	 * Cerca in tabella il numero delle linee in cui sono elencate le immagini
-	 * da elaborare da parte del plugine e le mette in una stringa da passare
+	 * da elaborare da parte del plugin e le mette in una stringa da passare
 	 * come argomento al plugin. Potremo avere ad esempio 12#13#14#15 , se è
 	 * previsto che quel determinato plugin processi 4 immagini
 	 * 
@@ -1014,15 +1046,42 @@ public class Sequenze_ implements PlugIn {
 		new TableSequence();
 		int numImaDaPassare = Integer.parseInt(TableSequence.getImaPass(
 				tableSequenze5, lineNumber));
+
+		int numImaGruppo = Integer.parseInt(TableSequence.getImaGroup(
+				tableSequenze5, lineNumber));
+
 		if (numImaDaPassare == 0) {
 			return null;
 		} else {
-			for (int j2 = 0; j2 < numImaDaPassare; j2++) {
-				if ((lineNumber + j2) >= tableSequenze5.length)
-					return null;
+			if (numImaGruppo > 0 && numImaDaPassare == 4) {
+				// se numImaGruppo >0 è il caso della bobina breast, in questo
+				// caso abbiamo 2 immagini successive (i 2 echi), separate da
+				// numImaGruppo dalle restanti
+
 				new TableSequence();
 				argomento = argomento + "#"
-						+ TableSequence.getRow(tableSequenze5, lineNumber + j2);
+						+ TableSequence.getRow(tableSequenze5, lineNumber + 0);
+				argomento = argomento + "#"
+						+ TableSequence.getRow(tableSequenze5, lineNumber + 1);
+				argomento = argomento
+						+ "#"
+						+ TableSequence.getRow(tableSequenze5, lineNumber + 0 
+								+ numImaGruppo);
+				argomento = argomento
+						+ "#"
+						+ TableSequence.getRow(tableSequenze5, lineNumber + 1
+								+ numImaGruppo);
+
+			} else {
+				for (int j2 = 0; j2 < numImaDaPassare; j2++) {
+					if ((lineNumber + j2) >= tableSequenze5.length)
+						return null;
+					new TableSequence();
+					argomento = argomento
+							+ "#"
+							+ TableSequence.getRow(tableSequenze5, lineNumber
+									+ j2);
+				}
 			}
 		}
 		return argomento;
