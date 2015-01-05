@@ -306,6 +306,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			ResultsTable rt = mainUnifor(path1, path2, autoArgs, profond,
 					info10, autoCalled, step, verbose, test, fast, silent);
+			if (rt == null)
+				MyLog.waitHere("ResultsTable == null");
 
 			UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 
@@ -391,7 +393,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean accetta = false;
 		boolean abort = false;
 		boolean demo = !fast;
-
+		boolean broken = false;
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		double angle = Double.NaN;
@@ -487,6 +489,17 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (imp2 == null)
 				MyLog.waitHere("Non trovato il file " + path2);
 			// ImageWindow iw1=WindowManager.getCurrentWindow();
+
+			String[][] tabCodici = TableCode
+					.loadMultipleTable(MyConst.CODE_GROUP);
+
+			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
+					imp1, tabCodici, VERSION + "_P10__ContMensili_"
+							+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
+							+ MyVersionUtils.CURRENT_VERSION, autoCalled);
+
+			//
+			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 
 			// ============================================================================
 			// Fine calcoli geometrici
@@ -745,12 +758,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 				if ((xCenterRoi + sqNEA - enlarge) >= width
 						|| (xCenterRoi - enlarge) <= 0) {
 					MyLog.waitHere(listaMessaggi(32), debug);
-					return null;
+					// return null;
+					broken = true;
+					return rt;
 				}
 				if ((yCenterRoi + sqNEA - enlarge) >= height
 						|| (yCenterRoi - enlarge) <= 0) {
 					MyLog.waitHere(listaMessaggi(32), debug);
-					return null;
+					// return null;
+					broken = true;
+					return rt;
 				}
 				if (step && pixx >= area11x11)
 					MyLog.waitHere(listaMessaggi(22) + pixx, debug);
@@ -879,6 +896,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			if (step)
 				MyLog.waitHere(listaMessaggi(28), debug);
+			
+			// =================================================================
+			String slicePosition = ReadDicom.readDicomParameter(imp1,
+					MyConst.DICOM_SLICE_LOCATION);
+			
+			
 
 			// =================================================================
 			// Effettuo dei controlli "di sicurezza" sui valori calcolati,
@@ -907,16 +930,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// Salvataggio dei risultati nella ResultsTable
 			//
 
-			String[][] tabCodici = TableCode
-					.loadMultipleTable(MyConst.CODE_GROUP);
-
-			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-					imp1, tabCodici, VERSION + "_P10__ContMensili_"
-							+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
-							+ MyVersionUtils.CURRENT_VERSION, autoCalled);
-
-			//
-			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 			int col = 2;
 
 			String t1 = "TESTO";
@@ -969,7 +982,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 			rt.addValue(s4, statBkg.roiY);
 			rt.addValue(s5, statBkg.roiWidth);
 			rt.addValue(s6, statBkg.roiHeight);
-
+			
+			rt.incrementCounter();
+			rt.addLabel(t1, "Pos");
+			rt.addValue(s2, slicePosition);
+		
 			String[] levelString = { "+20%", "+10%", "-10%", "-10%", "-30%",
 					"-40%", "-50%", "-60%", "-70%", "-80%", "-90%", "fondo" };
 
@@ -1275,6 +1292,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 		for (int y1 = sqY; y1 < (sqY + sqR); y1++) {
 			for (int x1 = sqX; x1 < (sqX + sqR); x1++) {
 				offset = y1 * width + x1;
+				// IJ.log("offset= " + offset + " y1= " + y1 + " width= " +
+				// width
+				// + " x1= " + x1);
 				if (pixels1[offset] > limit) {
 					pixelCount++;
 					value4 = pixels4[offset];

@@ -108,9 +108,9 @@ public class Sequenze_ implements PlugIn {
 
 		// MyFileLogger.logger.info("-----INIZIO Sequenze----");
 
-		new InputOutput().findCSV(MyConst.CODE_FILE);
-		new InputOutput().findCSV(MyConst.LIMITS_FILE);
-		new InputOutput().findCSV(MyConst.EXPAND_FILE);
+		// new InputOutput().findCSV(MyConst.CODE_FILE);
+		// new InputOutput().findCSV(MyConst.LIMITS_FILE);
+		// new InputOutput().findCSV(MyConst.EXPAND_FILE);
 
 		// IJ.log(ReadVersion.readVersionInfoInManifest("utils"));
 		// IJ.log(ReadVersion.readVersionInfoInManifest("pippo"));
@@ -338,17 +338,16 @@ public class Sequenze_ implements PlugIn {
 				MyLog.logMatrix(listProblems, "listProblems");
 				MyLog.waitHere("salvare il log come ListProblems");
 			}
-			
-			
-			String[] myCode= {"BL2F_","BL2S_", "BR2F_", "BR2S_"};
-			int[] myNum= {4};
-			String[] myCoil= {"LH","Lo","LS","LD","L8","LF","Li","LN","LT"};
-			String[] myPosiz= {"-45","0","45"};
 
-			String[][] tableSequenceReordered2 =  TableSorter.tableModifier(tableSequenceReordered, myCode,
-					myNum, myCoil, myPosiz);
+			String[] myCode = { "BL2F_", "BL2S_", "BR2F_", "BR2S_" };
+			int[] myNum = { 4 };
+			String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li", "LN",
+					"LT" };
+			String[] myPosiz = { "-45", "0", "45" };
 
-			
+			String[][] tableSequenceReordered2 = TableSorter.tableModifier(
+					tableSequenceReordered, myCode, myNum, myCoil, myPosiz);
+
 			boolean test = false;
 			// NOTA BENE: lasciare test a false, altrimenti non vengono più
 			// stampati gli errori e si hanno problemi in elaborazione!!!
@@ -361,10 +360,10 @@ public class Sequenze_ implements PlugIn {
 		}
 		// MyLog.here();
 		// IJ.log("startingDir=" + startingDir);
-		
 
 		String[][] tableSequenceReloaded = new TableSequence()
 				.loadTable(startingDir + MyConst.SEQUENZE_FILE);
+
 		callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false,
 				superficiali, p10p11p12);
 		MyLog.waitHere("FINE LAVORO");
@@ -606,7 +605,6 @@ public class Sequenze_ implements PlugIn {
 				}
 			}
 		}
-
 
 		// a questo punto non mi resta che creare la tabella e riversarvi i dati
 		// dagli ArrayList
@@ -868,8 +866,16 @@ public class Sequenze_ implements PlugIn {
 					int numImaDaPassare = Integer.parseInt(TableSequence
 							.getImaPass(tableSequenze5, j1));
 
-					int numImaGruppo = Integer.parseInt(TableSequence
-							.getImaGroup(tableSequenze5, j1));
+					String theCode = TableSequence.getCode(tableSequenze5, j1);
+					String theCoil = TableSequence.getCoil(tableSequenze5, j1);
+
+					// int numImaGruppo = Integer.parseInt(TableSequence
+					// .getImaGroup(tableSequenze5, j1));
+					int numImaGruppo = 0;
+
+					MyFileLogger.logger.info("<<< RIGA " + j1 + " / "
+							+ tableSequenze5.length + " " + theCode + " "
+							+ theCoil + " >>>");
 
 					if (numImaDaPassare == 0) {
 						j1++;
@@ -885,17 +891,17 @@ public class Sequenze_ implements PlugIn {
 							vetPlugin.add(plugin);
 							vetArgomento.add(argomento);
 							j1 = j1 + numImaDaPassare;
-						} else {	
+						} else {
 							MyFileLogger.logger
-							.info("Sequenze.callPluginFromSequenceTable >>> plugin= "
-									+ plugin
-									+ " argomento= "
-									+ argomento);
+									.info("Sequenze.callPluginFromSequenceTable >>> plugin= "
+											+ plugin
+											+ " argomento= "
+											+ argomento);
 
-					pluginRunner(plugin, argomento, test);
-					vetPlugin.add(plugin);
-					vetArgomento.add(argomento);
-					j1 = j1 + numImaDaPassare;			
+							pluginRunner(plugin, argomento, test);
+							vetPlugin.add(plugin);
+							vetArgomento.add(argomento);
+							j1 = j1 + numImaDaPassare;
 						}
 					}
 				}
@@ -1065,7 +1071,7 @@ public class Sequenze_ implements PlugIn {
 						+ TableSequence.getRow(tableSequenze5, lineNumber + 1);
 				argomento = argomento
 						+ "#"
-						+ TableSequence.getRow(tableSequenze5, lineNumber + 0 
+						+ TableSequence.getRow(tableSequenze5, lineNumber + 0
 								+ numImaGruppo);
 				argomento = argomento
 						+ "#"

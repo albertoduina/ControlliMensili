@@ -815,6 +815,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 					mean1);
 			double ghostPerc4 = ghostPercCalculation(mediaGhost4, mediaBkg,
 					mean1);
+			
+			String slicePosition = ReadDicom.readDicomParameter(imp1,
+					MyConst.DICOM_SLICE_LOCATION);
+			
+
 
 			if (demo) {
 				ImageUtils.imageToFront(imp1);
@@ -970,6 +975,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 			rt.addValue(s4, statBkg.roiY);
 			rt.addValue(s5, statBkg.roiWidth);
 			rt.addValue(s6, statBkg.roiHeight);
+			
+			rt.incrementCounter();
+			rt.addLabel(t1, "Pos");
+			rt.addValue(s2, slicePosition);
+
 
 			String[] levelString = { "+20%", "+10%", "-10%", "-20%", "-30%",
 					"-40%", "-50%", "-60%", "-70%", "-80%", "-90%", "fondo" };
