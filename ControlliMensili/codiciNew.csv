@@ -1,6 +1,7 @@
 // Contiene le regole utilizzate da Sequenze per compilare il file;;;;;;;;
 // ayv.txt che verrà poi usato per chiamare il plug-in adatto;;;;;;;;
 // ad elaborare una determinata immagine;;;;;;;;
+// al posto del punto e virgola metto il carattere §;;;;;;;;
 // N.B. si hanno 4 directions vup verticale a crescere, vdw vertivale a scendere ;;;;;;;;
 // hsx orizz. verso sx, hdx orizz. verso dx                  ;;;;;;;;
 // CODICE;COMMENTO;DA PASSARE;TOTALI;GROUP;COIL;DIRECTION;DEPTH;PLUGIN
@@ -635,7 +636,7 @@ B005_;T1 ir 50 Body;18;1;0;xxx;x;x;p20rmn_
 B003_;T1 ir 30 Body;18;1;0;xxx;x;x;p20rmn_
 C080_;T1 ir 800 Body;1;0;0;xxx;x;x;p9rmn_
 //;;;;;;;;
-// BREAST AERA NORMALE;;;;;;;;
+// BREAST AERA 18 NORMALE;;;;;;;;
 BL2F_;Flash BREAST LEFT;4;12;0;LS;x;30;p10rmn_
 BL2F_;Flash BREAST LEFT;4;12;0;LD;x;30;p10rmn_
 BL2F_;Flash BREAST LEFT;4;12;0;LF;x;30;p10rmn_
@@ -645,7 +646,7 @@ BL2F_;Flash BREAST LEFT;4;12;0;LN;x;30;p10rmn_
 BL2F_;Flash BREAST LEFT;4;12;0;LT;x;30;p10rmn_
 BL2F_;Flash BREAST LEFT;4;12;0;LH;x;30;p10rmn_
 BL2F_;Flash BREAST LEFT;4;12;0;Lo;x;30;p10rmn_
-BL2F_;Flash BREAST LEFT;4;12;0;"BAL;BCL";x;x;p12rmn_
+BL2F_;Flash BREAST LEFT;4;12;0;BAL§BCL;x;x;p12rmn_
 //;;;;;;;;
 BR2F_;Flash BREAST RIGHT;4;12;0;RS;x;30;p10rmn_
 BR2F_;Flash BREAST RIGHT;4;12;0;RD;x;30;p10rmn_
@@ -656,7 +657,7 @@ BR2F_;Flash BREAST RIGHT;4;12;0;RN;x;30;p10rmn_
 BR2F_;Flash BREAST RIGHT;4;12;0;RT;x;30;p10rmn_
 BR2F_;Flash BREAST RIGHT;4;12;0;RH;x;30;p10rmn_
 BR2F_;Flash BREAST RIGHT;4;12;0;Ro;x;30;p10rmn_
-BR2F_;Flash BREAST RIGHT;4;12;0;"BAR;BCR ";x;x;p12rmn_
+BR2F_;Flash BREAST RIGHT;4;12;0;BAR§BCR ;x;x;p12rmn_
 //;;;;;;;;
 // BREAST AERA 18 NORMALE;;;;;;;;
 BL2S_;Spineco BREAST LEFT;4;12;0;LS;x;30;p10rmn_
@@ -668,7 +669,7 @@ BL2S_;Spineco BREAST LEFT;4;12;0;LN;x;30;p10rmn_
 BL2S_;Spineco BREAST LEFT;4;12;0;LT;x;30;p10rmn_
 BL2S_;Spineco BREAST LEFT;4;12;0;LH;x;30;p10rmn_
 BL2S_;Spineco BREAST LEFT;4;12;0;Lo;x;30;p10rmn_
-BL2S_;Spineco BREAST LEFT;4;12;0;"BAL;BCL";x;x;p12rmn_
+BL2S_;Spineco BREAST LEFT;4;12;0;BAL§BCL;x;x;p12rmn_
 //;;;;;;;;
 BR2S_;Spineco BREAST RIGHT;4;12;0;RS;x;30;p10rmn_
 BR2S_;Spineco BREAST RIGHT;4;12;0;RD;x;30;p10rmn_
@@ -679,7 +680,7 @@ BR2S_;Spineco BREAST RIGHT;4;12;0;RN;x;30;p10rmn_
 BR2S_;Spineco BREAST RIGHT;4;12;0;RT;x;30;p10rmn_
 BR2S_;Spineco BREAST RIGHT;4;12;0;RH;x;30;p10rmn_
 BR2S_;Spineco BREAST RIGHT;4;12;0;Ro;x;30;p10rmn_
-BR2S_;Spineco BREAST RIGHT;4;12;0;"BAR;BCR ";x;x;p12rmn_
+BR2S_;Spineco BREAST RIGHT;4;12;0;BAR§BCR ;x;x;p12rmn_
 //;;;;;;;;
 //;;;;;;;;
 // BREAST AERA BIOPSY;;;;;;;;
@@ -810,3 +811,17 @@ SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL14;x;30;p10rmn_
 SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL15;x;30;p10rmn_
 SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL16;x;30;p10rmn_
 SL2S_;Spineco SHOULDER LARGE;4;4;0;SHL;x;x;p12rmn_
+//;;;;;;;;
+// AERA NEURO;;;;;;;;
+//;;;;;;;;
+PS4F_;Flash SPECIAL COIL;4;4;0;SC1;x;30;p10rmn_
+PS4F_;Flash SPECIAL COIL;4;4;0;SC2;x;30;p10rmn_
+PS4F_;Flash SPECIAL COIL;4;4;0;SC3;x;30;p10rmn_
+PS4F_;Flash SPECIAL COIL;4;4;0;SC4;x;30;p10rmn_
+PS4F_;Flash SPECIAL COIL;4;4;0;SC;x;x;p12rmn_
+//;;;;;;;;
+PS4S_;Flash SPECIAL COIL;4;4;0;SC1;x;30;p10rmn_
+PS4S_;Flash SPECIAL COIL;4;4;0;SC2;x;30;p10rmn_
+PS4S_;Flash SPECIAL COIL;4;4;0;SC3;x;30;p10rmn_
+PS4S_;Flash SPECIAL COIL;4;4;0;SC4;x;30;p10rmn_
+PS4S_;Flash SPECIAL COIL;4;4;0;SC;x;x;p12rmn_

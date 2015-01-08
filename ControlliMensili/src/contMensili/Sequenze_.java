@@ -143,6 +143,11 @@ public class Sequenze_ implements PlugIn {
 		// String[][] tableCode = TableCode.loadTable(MyConst.CODE_FILE);
 
 		String[][] tableCode = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		if (debugTables) {
+			MyLog.logMatrix(tableCode, "tableCode");
+			MyLog.waitHere("salvare il log come tableCodeLoaded");
+		}
+
 		String[][] tableExpand = TableExpand.loadTable(MyConst.EXPAND_FILE);
 
 		// new AboutBox().about("Scansione automatica cartelle",
@@ -313,6 +318,7 @@ public class Sequenze_ implements PlugIn {
 			String[][] tableSequenceSorted1 = TableSorter.minsort(
 					tableSequenceLoaded, TableSequence.POSIZ);
 			if (debugTables) {
+				IJ.log("\\Clear");
 				MyLog.logMatrix(tableSequenceSorted1, "tableSequenceSorted1");
 				MyLog.waitHere("salvare il log come TableSequenceSorted1");
 			}
@@ -320,6 +326,7 @@ public class Sequenze_ implements PlugIn {
 			String[][] tableSequenceSorted = TableSorter.minsort(
 					tableSequenceSorted1, TableSequence.TIME);
 			if (debugTables) {
+				IJ.log("\\Clear");
 				MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
 				MyLog.waitHere("salvare il log come TableSequenceSorted");
 			}
@@ -327,6 +334,7 @@ public class Sequenze_ implements PlugIn {
 			String[][] tableSequenceReordered = reorderSequenceTable(
 					tableSequenceSorted, tableCode);
 			if (debugTables) {
+				IJ.log("\\Clear");
 				MyLog.logMatrix(tableSequenceReordered,
 						"tableSequenceReordered");
 				MyLog.waitHere("salvare il log come TableSequenceReordered");
@@ -339,14 +347,16 @@ public class Sequenze_ implements PlugIn {
 				MyLog.waitHere("salvare il log come ListProblems");
 			}
 
-			String[] myCode = { "BL2F_", "BL2S_", "BR2F_", "BR2S_" };
-			int[] myNum = { 4 };
-			String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li", "LN",
-					"LT" };
-			String[] myPosiz = { "-45", "0", "45" };
+			String[] myCode = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_",
+					"YL2S_", "YR2F_", "YR2S_" };
+			// int[] myNum = { 4 };
+			// String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li",
+			// "LN",
+			// "LT" };
+			// String[] myPosiz = { "-45", "0", "45" };
 
-			String[][] tableSequenceReordered2 = TableSorter.tableModifier(
-					tableSequenceReordered, myCode, myNum, myCoil, myPosiz);
+			String[][] tableSequenceReordered2 = TableSorter
+					.tableModifierSmart(tableSequenceReordered, myCode);
 
 			boolean test = false;
 			// NOTA BENE: lasciare test a false, altrimenti non vengono più
@@ -363,6 +373,7 @@ public class Sequenze_ implements PlugIn {
 
 		String[][] tableSequenceReloaded = new TableSequence()
 				.loadTable(startingDir + MyConst.SEQUENZE_FILE);
+		// MyLog.waitHere();
 
 		callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false,
 				superficiali, p10p11p12);
@@ -439,6 +450,7 @@ public class Sequenze_ implements PlugIn {
 			IJ.log("loadList2.tableCode2 = null");
 			return null;
 		}
+
 		int count3 = 0;
 		for (int i1 = 0; i1 < pathList.length; i1++) {
 			IJ.showStatus("generateSequenceTable " + i1 + " / "
@@ -531,12 +543,13 @@ public class Sequenze_ implements PlugIn {
 				for (int j1 = 0; j1 < tableCode2.length; j1++) {
 
 					if (codice.equals(tableCode2[j1][TableCode.CODE])) {
-						// if (codice.equals("N1FA_")) MyLog.waitHere();
 
 						if ((tableCode2[j1][TableCode.COIL].equals("x"))
 								|| (tableCode2[j1][TableCode.COIL]
 										.equals("xxx"))
 								|| coilPresent(allCoils,
+										tableCode2[j1][TableCode.COIL])
+								|| coilPresent2(coil,
 										tableCode2[j1][TableCode.COIL])) {
 							// modifica del 090913 test se la stringa CONTIENE
 							// il nome della bobina
@@ -664,6 +677,17 @@ public class Sequenze_ implements PlugIn {
 		// IJ.log(coil + "  " + trovato);
 		// MyLog.waitHere();
 		// }
+		return trovato;
+	}
+
+	public static boolean coilPresent2(String coil, String coilCode) {
+		boolean trovato;
+		if (coil.equals(coilCode))
+			trovato = true;
+		else
+			trovato = false;
+		// IJ.log("coil= " + coil + " coilCode= " + coilCode + " trovato= "
+		// + trovato);
 		return trovato;
 	}
 
@@ -1008,7 +1032,10 @@ public class Sequenze_ implements PlugIn {
 					String[] allCoils = ReadDicom.parseString(TableSequence
 							.getCoil(tableSequenze, lineNumber));
 					okCoil = coilPresent(allCoils,
-							TableCode.getCoil(tableCode, j2));
+							TableCode.getCoil(tableCode, j2))
+							|| coilPresent2(TableSequence.getCoil(
+									tableSequenze, lineNumber),
+									TableCode.getCoil(tableCode, j2));
 					// okCoil = TableSequence.getCoil(tableSequenze, lineNumber)
 					// .equals(TableCode.getCoil(tableCode, j2));
 				}
@@ -1106,6 +1133,7 @@ public class Sequenze_ implements PlugIn {
 	public String[][] verifySequenceTable(String[][] tableSequenze6,
 			String[][] tableCode6) {
 
+		// IJ.log("\\Clear");
 		// IJ.log("------- TableSequenze6 ------------");
 		// TableUtils.dumpTable(tableSequenze6);
 		// IJ.log("------- TableCode6 ------------");
@@ -1128,6 +1156,8 @@ public class Sequenze_ implements PlugIn {
 		List<String> vetAcqImaAcquisite = new ArrayList<String>();
 		List<String> vetImaImaAcquisite = new ArrayList<String>();
 		String codiceBobinaAcquisito = "";
+		// boolean trigger = true;
+
 		for (int j1 = 0; j1 < tableCode6.length; j1++) {
 			int numeroImaAcquisite = 0;
 			int numeroImaRichieste = 0;
@@ -1136,29 +1166,38 @@ public class Sequenze_ implements PlugIn {
 				numeroImaRichieste = Integer.parseInt(TableCode.getImaTotal(
 						tableCode6, j1));
 			} else
-				MyLog.waitHere("errore foprmato a j1= " + j1);
+				MyLog.waitHere("errore formato a j1= " + j1);
 			String codiceImaRichieste = TableCode.getCode(tableCode6, j1);
 			if (codiceImaRichieste == null)
 				break;
 			if (numeroImaRichieste == 0)
 				continue;
 			String codiceBobinaRichiesto = TableCode.getCoil(tableCode6, j1);
-
+			// IJ.log("codiceBobinaRichiesto= "+codiceBobinaRichiesto);
+			// codiceBobinaRichiesto = codiceBobinaRichiesto.replaceAll("§",
+			// ";");
+			// IJ.log("codiceBobinaRichiesto= "+codiceBobinaRichiesto);
 			for (int j2 = 0; j2 < tableSequenze6.length; j2++) {
 				new TableSequence();
 				String codiceImaAcquisite = TableSequence.getCode(
 						tableSequenze6, j2);
 				codiceBobinaAcquisito = TableSequence.getCoil(tableSequenze6,
 						j2);
+				// if (trigger)
+				// IJ.log("codiceBobinaAcquisito= " + codiceBobinaAcquisito);
+
 				if (codiceImaAcquisite == null)
 					break;
 				if (compareAcqReq(codiceImaAcquisite, codiceImaRichieste,
 						codiceBobinaAcquisito, codiceBobinaRichiesto)) {
-					// MyLog.here("codiceAcquisito="+codiceBobinaAcquisito+" codiceRichiesto="+codiceBobinaRichiesto);
+					// IJ.log("codiceAcquisito=" + codiceBobinaAcquisito
+					// + " codiceRichiesto=" + codiceBobinaRichiesto);
 					numeroImaAcquisite++;
 
 				}
+
 			}
+			// trigger = false;
 			if ((numeroImaAcquisite > 0)
 					&& (numeroImaAcquisite != numeroImaRichieste)) {
 				for (int j3 = 0; j3 < tableSequenze6.length; j3++) {
@@ -1369,6 +1408,34 @@ public class Sequenze_ implements PlugIn {
 		return res1;
 	}
 
+	public boolean compareAcqReq2(String codeImaAcq, String codeImaReq,
+			String coilImaAcq, String coilImaReq) {
+
+		boolean res1;
+
+		if (codeImaAcq.equals(codeImaReq)) {
+			if (coilImaReq.equals("xxx") || coilImaReq.equals("XXX")) {
+				res1 = true;
+			} else if (coilImaAcq.equals(coilImaReq)) {
+				// modifica del 100913 per poter analizzare bobine multiple,
+				// attivate per errore da autoselectcoil FALLITA
+				// } else if (coilImaAcq.equals(coilImaReq)) {
+				res1 = true;
+			} else {
+				res1 = false;
+			}
+		} else {
+			res1 = false;
+		}
+		// if (codeImaAcq.equals(codeImaReq)) {
+		// MyLog.logVector(allCoils, "allCoils");
+		// MyLog.waitHere(codeImaAcq + " " + codeImaReq + " " + coilImaAcq
+		// + " " + coilImaReq + " risultato res1= " + res1);
+		// }
+
+		return res1;
+	}
+
 	/**
 	 * Riceve da verifySequenceTable una tabella di codici a cui non corrisponde
 	 * l'esatto numero di immagini previste. Stampa a log i warnings.
@@ -1441,6 +1508,10 @@ public class Sequenze_ implements PlugIn {
 	public String[][] reorderSequenceTable(String[][] tableSequenze,
 			String[][] tableCodici) {
 
+		// MyLog.logMatrix(tableSequenze, "tableSequenze");
+		// MyLog.logMatrix(tableCodici, "tableCodici");
+		// MyLog.waitHere("salvare il log");
+
 		ArrayList<ArrayList<String>> matrixTableReordered = new ArrayList<ArrayList<String>>();
 
 		if (tableSequenze == null) {
@@ -1461,7 +1532,12 @@ public class Sequenze_ implements PlugIn {
 				else if (compareAcqReq(tableSequenze[i2][TableSequence.CODE],
 						tableCodici[i1][TableCode.CODE],
 						tableSequenze[i2][TableSequence.COIL],
-						tableCodici[i1][TableCode.COIL])) {
+						tableCodici[i1][TableCode.COIL])
+						|| compareAcqReq2(
+								tableSequenze[i2][TableSequence.CODE],
+								tableCodici[i1][TableCode.CODE],
+								tableSequenze[i2][TableSequence.COIL],
+								tableCodici[i1][TableCode.COIL])) {
 					count++;
 					ArrayList<String> row = new ArrayList<String>();
 					row.add("" + count);
