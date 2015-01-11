@@ -548,9 +548,14 @@ public class Sequenze_ implements PlugIn {
 								|| (tableCode2[j1][TableCode.COIL]
 										.equals("xxx"))
 								|| coilPresent(allCoils,
-										tableCode2[j1][TableCode.COIL])
-								|| coilPresent2(coil,
 										tableCode2[j1][TableCode.COIL])) {
+							// if ((tableCode2[j1][TableCode.COIL].equals("x"))
+							// || (tableCode2[j1][TableCode.COIL]
+							// .equals("xxx"))
+							// || coilPresent(allCoils,
+							// tableCode2[j1][TableCode.COIL])
+							// || coilPresent2(coil,
+							// tableCode2[j1][TableCode.COIL])) {
 							// modifica del 090913 test se la stringa CONTIENE
 							// il nome della bobina
 							// || (coil.equals(tableCode2[j1][3]))) {
@@ -680,16 +685,16 @@ public class Sequenze_ implements PlugIn {
 		return trovato;
 	}
 
-	public static boolean coilPresent2(String coil, String coilCode) {
-		boolean trovato;
-		if (coil.equals(coilCode))
-			trovato = true;
-		else
-			trovato = false;
-		// IJ.log("coil= " + coil + " coilCode= " + coilCode + " trovato= "
-		// + trovato);
-		return trovato;
-	}
+	// public static boolean coilPresent2(String coil, String coilCode) {
+	// boolean trovato;
+	// if (coil.equals(coilCode))
+	// trovato = true;
+	// else
+	// trovato = false;
+	// // IJ.log("coil= " + coil + " coilCode= " + coilCode + " trovato= "
+	// // + trovato);
+	// return trovato;
+	// }
 
 	/**
 	 * Espande i codici delle immagini, utilizzando il file expand.txt
@@ -1032,10 +1037,11 @@ public class Sequenze_ implements PlugIn {
 					String[] allCoils = ReadDicom.parseString(TableSequence
 							.getCoil(tableSequenze, lineNumber));
 					okCoil = coilPresent(allCoils,
-							TableCode.getCoil(tableCode, j2))
-							|| coilPresent2(TableSequence.getCoil(
-									tableSequenze, lineNumber),
-									TableCode.getCoil(tableCode, j2));
+							TableCode.getCoil(tableCode, j2));
+					// TableCode.getCoil(tableCode, j2))
+					// || coilPresent2(TableSequence.getCoil(
+					// tableSequenze, lineNumber),
+					// TableCode.getCoil(tableCode, j2));
 					// okCoil = TableSequence.getCoil(tableSequenze, lineNumber)
 					// .equals(TableCode.getCoil(tableCode, j2));
 				}

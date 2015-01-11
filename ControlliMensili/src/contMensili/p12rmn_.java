@@ -893,7 +893,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 					return null;
 			}
 
-			IJ.wait(1000);
+			IJ.wait(MyConst.TEMPO_VISUALIZZ);
 			// int col = 2;
 			String t1 = "TESTO";
 			String s2 = "VALORE";

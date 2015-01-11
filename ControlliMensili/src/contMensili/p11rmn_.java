@@ -746,7 +746,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				double[] outFwhm2 = analyzeProfile(imp1, xStartProfile,
 						yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
-				IJ.wait(800);
+				IJ.wait(MyConst.TEMPO_VISUALIZZ);
 
 				//
 				// Salvataggio dei risultati nella ResultsTable

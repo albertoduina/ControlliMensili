@@ -882,7 +882,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp1.updateAndDraw();
 			}
 
-			IJ.wait(800);
+			IJ.wait(MyConst.TEMPO_VISUALIZZ);
 
 			// if (imp1.isVisible())
 			// imp1.getWindow().toFront();
