@@ -3,11 +3,15 @@ package contMensili;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
+import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.io.DirectoryChooser;
 import ij.io.Opener;
 import ij.plugin.PlugIn;
+import ij.text.TextPanel;
+import ij.text.TextWindow;
 
+import java.awt.Frame;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -106,7 +110,13 @@ public class Sequenze_ implements PlugIn {
 			return;
 		}
 
-		// MyFileLogger.logger.info("-----INIZIO Sequenze----");
+		MyFileLogger.logger.info("-----INIZIO Sequenze----");
+		TextWindow tw = new TextWindow("Sequenze", "-----INIZIO Sequenze----", 300,400);
+		Frame lw = WindowManager.getFrame("Sequenze");
+		if (lw == null)
+			return;
+		lw.setLocation(10, 10);
+
 
 		// new InputOutput().findCSV(MyConst.CODE_FILE);
 		// new InputOutput().findCSV(MyConst.LIMITS_FILE);
@@ -374,9 +384,10 @@ public class Sequenze_ implements PlugIn {
 		String[][] tableSequenceReloaded = new TableSequence()
 				.loadTable(startingDir + MyConst.SEQUENZE_FILE);
 		// MyLog.waitHere();
-
+		
+	
 		callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false,
-				superficiali, p10p11p12);
+				superficiali, p10p11p12,tw);
 		MyLog.waitHere("FINE LAVORO");
 	}
 
@@ -798,7 +809,7 @@ public class Sequenze_ implements PlugIn {
 	 */
 	public String[][] callPluginsFromSequenceTable(String[][] tableSequenze5,
 			String[][] tableCode5, boolean test, boolean superficiali,
-			boolean p10p11p12) {
+			boolean p10p11p12, TextWindow tw) {
 
 		// Attenzione: contrariamente a quanto scritto più sotto, per
 		// la struttura della tableSequenze è stata creata la classe
@@ -905,7 +916,12 @@ public class Sequenze_ implements PlugIn {
 					MyFileLogger.logger.info("<<< RIGA " + j1 + " / "
 							+ tableSequenze5.length + " " + theCode + " "
 							+ theCoil + " >>>");
+					tw.append("<<< RIGA " + j1 + " / "
+							+ tableSequenze5.length + " " + theCode + " "
+							+ theCoil + " >>>");
 
+				
+					
 					if (numImaDaPassare == 0) {
 						j1++;
 					} else {

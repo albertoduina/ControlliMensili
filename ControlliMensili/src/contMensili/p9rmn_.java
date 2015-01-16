@@ -148,10 +148,10 @@ public class p9rmn_ implements PlugIn, Measurements {
 	private final double DIM_PIXEL_FOV_220 = 0.859375;
 
 	public void run(String args) {
-		
+
 		UtilAyv.setMyPrecision();
 
-		MyLog.appendLog(fileDir + "MyLog.txt", "p9 riceve "+args);
+		MyLog.appendLog(fileDir + "MyLog.txt", "p9 riceve " + args);
 
 		//
 		// CNR CON T1
@@ -186,6 +186,10 @@ public class p9rmn_ implements PlugIn, Measurements {
 		double[] medGels = null;
 		double[] devGels = null;
 		double[] vetCNR = null;
+		String strTR1 = "";
+		String strTE1 = "";
+		String strTI1 = "";
+
 		double dimPixel = 0;
 
 		boolean typeT2 = false;
@@ -250,7 +254,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 					retry = false;
 					return;
 				case 2:
-//					ab.about("Controllo CNR", this.getClass());
+					// ab.about("Controllo CNR", this.getClass());
 					ab.about("Controllo CNR", MyVersion.CURRENT_VERSION);
 					retry = true;
 					break;
@@ -342,7 +346,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 					ab.close();
 					return;
 				case 2:
-//					ab.about("Contollo CNR", this.getClass());
+					// ab.about("Contollo CNR", this.getClass());
 					ab.about("Controllo CNR", MyVersion.CURRENT_VERSION);
 					retry = true;
 					break;
@@ -386,21 +390,37 @@ public class p9rmn_ implements PlugIn, Measurements {
 		}
 		int misure1 = UtilAyv.setMeasure(MEAN + STD_DEV);
 		String[][] info1 = ReportStandardInfo.getStandardInfo(strRiga3, riga1,
-				tabl, VERSION + "_P9__ContMensili_"
-						+ MyVersion.CURRENT_VERSION + "__iw2ayv_"
-						+ MyVersionUtils.CURRENT_VERSION, autoCalled);
+				tabl, VERSION + "_P9__ContMensili_" + MyVersion.CURRENT_VERSION
+						+ "__iw2ayv_" + MyVersionUtils.CURRENT_VERSION,
+				autoCalled);
 
 		//
 		// Qui si torna se la misura è da rifare
 		//
 		do {
 			UtilAyv.closeResultsWindow();
+
 			ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
 
 			int Rows = ReadDicom.readInt(ReadDicom.readDicomParameter(imp1,
 					DICOM_ROWS));
 			int Columns = ReadDicom.readInt(ReadDicom.readDicomParameter(imp1,
 					DICOM_COLUMNS));
+
+			strTR1 = ReadDicom.readDicomParameter(imp1,
+					MyConst.DICOM_REPETITION_TIME);
+
+			strTE1 = ReadDicom
+					.readDicomParameter(imp1, MyConst.DICOM_ECHO_TIME);
+			strTI1 = ReadDicom.readDicomParameter(imp1,
+					MyConst.DICOM_INVERSION_TIME);
+
+			MyLog.appendLog(fileDir + "MyLog.txt", "p9 TR= " + strTR1
+					+ " [mSec]");
+			MyLog.appendLog(fileDir + "MyLog.txt", "p9 TE= " + strTE1
+					+ " [mSec]");
+			MyLog.appendLog(fileDir + "MyLog.txt", "p9 TI= " + strTI1
+					+ " [mSec]");
 
 			dimPixel = ReadDicom
 					.readDouble(ReadDicom.readSubstring(ReadDicom
@@ -415,20 +435,18 @@ public class p9rmn_ implements PlugIn, Measurements {
 			// codici.txt venga messo p9rmn dopo p2rmn (le immagini in ayv.txt
 			// sono ordinate da sequenze utilizzando codici.txt)
 			//
-//			String saveVetXUpperLeftCornerRoiGels = Prefs.get("prefer.p2rmnGx",
-//					defaultVetGx);
-//			String saveVetYUpperLeftCornerRoiGels = Prefs.get("prefer.p2rmnGy",
-//					defaultVetGy);
-			
-			String saveVetXUpperLeftCornerRoiGels = Prefs.get("prefer.p20rmnGx",
-					defaultVetGx);
-			String saveVetYUpperLeftCornerRoiGels = Prefs.get("prefer.p20rmnGy",
-					defaultVetGy);
-			
-			
-			
-			
-			
+			// String saveVetXUpperLeftCornerRoiGels =
+			// Prefs.get("prefer.p2rmnGx",
+			// defaultVetGx);
+			// String saveVetYUpperLeftCornerRoiGels =
+			// Prefs.get("prefer.p2rmnGy",
+			// defaultVetGy);
+
+			String saveVetXUpperLeftCornerRoiGels = Prefs.get(
+					"prefer.p20rmnGx", defaultVetGx);
+			String saveVetYUpperLeftCornerRoiGels = Prefs.get(
+					"prefer.p20rmnGy", defaultVetGy);
+
 			if (selftest) {
 				saveVetXUpperLeftCornerRoiGels = defaultVetGx;
 				saveVetYUpperLeftCornerRoiGels = defaultVetGy;
@@ -501,6 +519,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 				medGels[i1] = stat1.mean;
 				devGels[i1] = stat1.stdDev;
+				MyLog.appendLog(fileDir + "MyLog.txt", "p9 GEL " + i1
+						+ " media= " + stat1.mean + " devstan= " + stat1.stdDev);
+
 			}
 
 			// saveVetXUpperLeftCornerRoiGels = "";
@@ -533,6 +554,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 				pointerGel2 = POINTER_GEL2_T1;
 			}
 			for (int i1 = 0; i1 < pointerGel1.length; i1++) {
+
 				// /////////////
 				// MAIN_FORMULA
 				// /////////////
@@ -541,20 +563,23 @@ public class p9rmn_ implements PlugIn, Measurements {
 				vetCNR[i1] = (medGels[pointerGel1[i1]] - medGels[pointerGel2[i1]])
 						/ (Math.sqrt(Math.pow(devGels[pointerGel1[i1]], 2)
 								+ Math.pow(devGels[pointerGel2[i1]], 2)));
+				if (!typeT2) {
+
+				}
+
 			}
 
 			ResultsTable rt = ReportStandardInfo.putStandardInfoRT(info1);
 			int col = 0;
-			
-			
+
 			String t1 = "TESTO";
-			String s2 =  "VALORE";
-			String s3 =  "roi_x1";
-			String s4 =  "roi_y1";
-			String s5 =  "roi_r1";
-			String s6 =  "roi_x2";
-			String s7 =  "roi_y2";
-			String s8 =  "roi_r2";
+			String s2 = "VALORE";
+			String s3 = "roi_x1";
+			String s4 = "roi_y1";
+			String s5 = "roi_r1";
+			String s6 = "roi_x2";
+			String s7 = "roi_y2";
+			String s8 = "roi_r2";
 
 			String label;
 			double echo = ReadDicom.readDouble(ReadDicom.readDicomParameter(

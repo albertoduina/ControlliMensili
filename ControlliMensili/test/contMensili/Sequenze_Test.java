@@ -4,10 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import ij.IJ;
 import ij.ImagePlus;
 import ij.io.Opener;
+import ij.text.TextWindow;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -279,8 +279,9 @@ public class Sequenze_Test {
 		boolean superficiali = false;
 		boolean p10p11 = true;
 
+		TextWindow tw = new TextWindow("Sequenze", "Sequenze", 200,200);
 		String[][] chiamate = new Sequenze_().callPluginsFromSequenceTable(
-				iw2ayvTable, codeTable, test, superficiali, p10p11);
+				iw2ayvTable, codeTable, test, superficiali, p10p11, tw);
 
 		TableUtils.dumpTable(chiamate, "chiamate");
 		assertTrue(TableUtils.compareTable(expected, chiamate));
