@@ -235,6 +235,7 @@ public class p12rmn_Test {
 			double[][] out3 = p12rmn_.positionSearch13(imp13, circleData,
 					diamGhost, guard, "", autoCalled, step, demo, test, fast,
 					timeout);
+			// MyLog.waitHere();
 			double[][] expected = { { 156.0, 12.0, 204.0, 156.0 },
 					{ 246.0, 189.0, 189.0, 10.0 } };
 			boolean ok = UtilAyv.compareMatrix(out3, expected, "");

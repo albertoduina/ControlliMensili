@@ -27,6 +27,7 @@ import java.awt.Rectangle;
 import java.util.StringTokenizer;
 
 import utils.AboutBox;
+import utils.ArrayUtils;
 import utils.ButtonMessages;
 import utils.CustomCanvasGeneric;
 import utils.HarrisCornerDetector;
@@ -94,8 +95,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 	 */
 	// String[][] iw2ayvTable;
 
-	private static Color[] c1 = { Color.red, Color.orange, Color.yellow,
-			Color.green, Color.cyan, Color.blue, Color.magenta, Color.pink };
+	private static Color[] c1 = { Color.red, Color.orange, Color.blue,
+			Color.green, Color.cyan, Color.yellow, Color.magenta, Color.pink };
 
 	/**
 	 * immagine da analizzare
@@ -443,7 +444,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 				rtOut = rt9;
 				MyLog.waitHere("sufficiente strategia generale");
 			}
-			if(cerca) MyLog.waitHere("fallita strategia generale");
+			if (cerca)
+				MyLog.waitHere("fallita strategia generale");
 		}
 
 		// MyLog.waitHere();
@@ -463,7 +465,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 				rtOut = rt10;
 				// MyLog.waitHere("sufficiente strategia SIEMENS");
 			}
-			if(cerca) MyLog.waitHere("fallita strategia SIEMENS");
+			if (cerca)
+				MyLog.waitHere("fallita strategia SIEMENS");
 		}
 
 		if (cerca) {
@@ -477,7 +480,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 				rtOut = rt11;
 				// MyLog.waitHere("sufficiente strategia HITACHI");
 			}
-			if(cerca) MyLog.waitHere("fallita strategia HITACHI");
+			if (cerca)
+				MyLog.waitHere("fallita strategia HITACHI");
 		}
 
 		if (cerca) {
@@ -491,7 +495,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 				rtOut = rt12;
 				// MyLog.waitHere("sufficiente strategia GEMS");
 			}
-			if(cerca) MyLog.waitHere("fallita strategia GEMS");
+			if (cerca)
+				MyLog.waitHere("fallita strategia GEMS");
 		}
 
 		if (cerca) {
@@ -505,7 +510,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 				rtOut = rt13;
 				// MyLog.waitHere("sufficiente strategia HITACHI2");
 			}
-			if(cerca) MyLog.waitHere("fallita strategia HITACHI2");
+			if (cerca)
+				MyLog.waitHere("fallita strategia HITACHI2");
 		}
 
 		if (cerca)
@@ -1222,6 +1228,159 @@ public class p17rmn_ implements PlugIn, Measurements {
 		return imp112;
 	}
 
+	public static ImagePlus localizzaCuboCentrale(ImagePlus imp1) {
+
+		MyRats rat1 = new MyRats();
+		ImagePlus imp2 = rat1.execute(imp1, null);
+		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
+		// riempirò l'esterno di nero, in modo da cercare una seconda volta
+		// l'inserto senza oggetti di disturbo
+		UtilAyv.showImageMaximized(imp2);
+		// ricerca del quadrato interno
+		int minSizePixels = 1000;
+		int maxSizePixels = 30000;
+		boolean excludeEdges = true;
+		Roi roi1 = analisi0(imp2, minSizePixels, maxSizePixels, excludeEdges);
+		if (roi1 == null) {
+			MyLog.waitHere("roi1==null");
+			return null;
+		}
+		ImagePlus imp11 = imp1.duplicate();
+
+		// MyLog.waitHere("prima localizzazione cubo");
+
+		imp11.setRoi(roi1);
+		ImageProcessor ip11 = imp11.getProcessor();
+		ip11.setColor(Color.WHITE);
+		// ip11.setLineWidth(2);
+		ip11.draw(roi1);
+		ip11.fillOutside(roi1);
+		ip11.setColor(Color.BLACK);
+		ip11.fill(roi1);
+		imp11.deleteRoi();
+		UtilAyv.showImageMaximized(imp11);
+		// MyLog.waitHere("esterno rimosso");
+
+		HarrisCornerDetector.Parameters params = new HarrisCornerDetector.Parameters();
+		params.alpha = 0.2001;
+		params.threshold = 25000;
+		params.doCleanUp = true;
+		// int nmax = 0;
+		HarrisCornerDetector hcd = new HarrisCornerDetector(ip11, params);
+		hcd.findCorners();
+		PointRoi pr22 = hcd.returnCorners();
+
+		imp11.setRoi(pr22);
+		imp11.updateAndDraw();
+		Overlay over11 = new Overlay();
+		imp11.setOverlay(over11);
+
+		MyLog.waitHere("vertici identificati");
+
+		imp11.deleteRoi();
+		// Roi roi11 = analizzaRisultati(imp11, pr22, 1, imp1, rt1);
+
+		// la pointRoi ricevuta ha i dati <ben disordinati>, per
+		// mettere in corretto ordine i vertici utilizzo il getConvexHull
+		Polygon p2 = pr22.getPolygon();
+		PolygonRoi pol2 = new PolygonRoi(p2, PolygonRoi.POLYGON);
+		PolygonRoi pol3 = new PolygonRoi(pol2.getConvexHull(),
+				PolygonRoi.POLYGON);
+		Polygon p3 = pol3.getPolygon();
+
+		int[] vetxp = p3.xpoints;
+		int[] vetyp = p3.ypoints;
+
+		// trasformo le coordinate da integer a double
+		double[] vetx1 = new double[vetxp.length];
+		double[] vety1 = new double[vetxp.length];
+		double[] vetx;
+		double[] vety;
+		double[] vetdist= new double[vetxp.length];;
+		double min = 99999;
+		int minPos = 9999;
+		double aux1 = 0;
+
+		for (int i1 = 0; i1 < vetxp.length; i1++) {
+			vetx1[i1] = (double) vetxp[i1];
+			vety1[i1] = (double) vetyp[i1];
+			aux1 = MyGeometry.pointsDistance(0., vety1[i1], vetx1[i1], 0.);
+			vetdist[i1]=aux1;
+			if (aux1 < min) {
+				min = aux1;
+				minPos = i1;
+			}
+		}
+
+		MyLog.logVector(vetx1, "vetx1");
+		MyLog.logVector(vety1, "vety1");
+		MyLog.logVector(vetdist, "vetdist");
+		
+		IJ.log("minPos= "+minPos);
+		MyLog.waitHere();
+		
+		
+		// ruoto le coordinate per portare la minPos al vertice iniziale
+		
+		if (minPos>0)
+
+		do {
+			MyLog.logVector(vetx1, "vetx1");
+			MyLog.logVector(vety1, "vety1");
+			MyLog.waitHere("prima minPos= "+minPos);
+
+			vetx = ArrayUtils.rotateArrayLeft(vetx1);
+			vety = ArrayUtils.rotateArrayLeft(vety1);
+			vetx1 = vetx;
+			vety1 = vety;
+			min = 99999;
+			minPos = 999;
+			for (int i1 = 0; i1 < vetx1.length; i1++) {
+				aux1 = vetx1[i1] + vety1[i1];
+				if (aux1 < min) {
+					min = aux1;
+					minPos = i1;
+				}
+			}
+			
+			IJ.log("-----------------");
+			IJ.log("rotazione vertici");
+			MyLog.logVector(vetx1, "vetx1");
+			MyLog.logVector(vety1, "vety1");
+			IJ.log("dopo minPos= "+minPos);
+			
+		} while (minPos>0);
+		MyLog.logVector(vetx1, "vetx1");
+		MyLog.logVector(vety1, "vety1");
+		MyLog.waitHere("finale minPos= "+minPos);
+
+		// marco i vertici ma solo per vedere se sono in ordine
+
+		double lato = (new Line(vetxp[0], vetyp[0], vetxp[1], vetyp[1]))
+				.getLength();
+		int dia1 = 10;
+
+		if (true) {
+			imp11.setRoi(new PointRoi(vetxp, vetyp, vetxp.length));
+			imp11.getRoi().setStrokeColor(Color.red);
+			over11.addElement(imp11.getRoi());
+
+			// NB: il red è il primo vertice
+
+			for (int i1 = 0; i1 < vetxp.length; i1++) {
+				imp11.setRoi(new OvalRoi(vetxp[i1] - dia1 / 2, vetyp[i1] - dia1
+						/ 2, dia1, dia1));
+				imp11.getRoi().setStrokeColor(c1[i1]);
+				over11.addElement(imp11.getRoi());
+				imp11.deleteRoi();
+			}
+		}
+
+		MyLog.waitHere("FINALE");
+
+		return imp11;
+	}
+
 	/***
 	 * Analizza i dati delle 32 rods forniti da automatiCRoiPreparation,
 	 * prefiggendosi di identificare le diverse coppie di rods, in modo da
@@ -1443,8 +1602,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		over2.addElement(imp2.getRoi());
 		imp2.deleteRoi();
 		imp2.getWindow().toFront();
-		
-		
+
 		// la bisettrice opposta sarà:
 		if (vetx[0] <= vetx[3])
 			halfX1 = (vetx[3] - vetx[0]) / 2 + vetx[0];
@@ -1464,7 +1622,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 			halfY2 = (vety[2] - vety[1]) / 2 + vety[1];
 		else
 			halfY2 = (vety[1] - vety[2]) / 2 + vety[2];
-		
+
 		double[] cross6 = ImageUtils.crossingFrame(halfX1, halfY1, halfX2,
 				halfY2, imp1.getWidth(), imp1.getHeight());
 		Line linea6 = new Line(cross6[0], cross6[1], cross6[2], cross6[3]);
@@ -1633,7 +1791,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 	public static ImagePlus[] strategiaGENERALE(ImagePlus imp1) {
 
-		// Questa potrebbe essere la strategia generale. Nel proimo passaggio
+		// Questa potrebbe essere la strategia generale. Nel primo passaggio
 		// viene effettuato il threshold automatico con RATS. Otterrò il cerchio
 		// esterno, le RODS esterne ed il quadrato interno.
 

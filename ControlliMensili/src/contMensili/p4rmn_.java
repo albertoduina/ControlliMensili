@@ -274,6 +274,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 				MyLog.waitHere("Immagine non trovata " + path1);
 				return null;
 			}
+			
 			double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
 					ReadDicom.readDicomParameter(imp1,
 							MyConst.DICOM_PIXEL_SPACING), 1));

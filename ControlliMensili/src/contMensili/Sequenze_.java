@@ -79,54 +79,38 @@ public class Sequenze_ implements PlugIn {
 	public boolean debugTables = false;
 
 	public void run(String arg) {
-
+	
 		UtilAyv.setMyPrecision();
-		// new ReadVersion().readDateInfoInManifest("contMensili");
-
-		// inizializziamo l'eventuale logger file MyFileLog.txt
-		// ricordimaci che vengono loggati tutti i messaggi
-		// File fl = new File("MyFileLog.txt");
-		// fl.delete();
-
-		// MyFileLogger.logger.severe("Sequenze"+ MyFileLogger.here("aaaa"));
-		// MyFileLogger.logger.warning("Sequenze"+ MyFileLogger.here("aaaa"));
-
-		// estraggo i prototipi di codiciNew e LIMITI. I file estratti sono
-		// quelli che verranno usati dal programma. Così diventa facile fare
-		// modifiche senza doversi occupare del file jar. ATTENZIONE PERO': il
-		// sistema di sviluppo pialla inesorabilmente la cartella quindi IO ME
-		// MEDESIMO non devo fidarmi assolutamente a fare modifiche al file
-		// estratto, perchè le perderei inevitabilmente alla prima compilazione
-
+		
 		//
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
 		// modo il messaggio viene emesso, altrimenti si ha una eccezione
 		//
-
+	
 		try {
 			Class.forName("utils.IW2AYV");
 		} catch (ClassNotFoundException e) {
 			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
 			return;
 		}
-
-		MyFileLogger.logger.info("-----INIZIO Sequenze----");
-		TextWindow tw = new TextWindow("Sequenze", "-----INIZIO Sequenze----", 300,400);
+	
+		MyFileLogger.logger.info("<-- INIZIO Sequenze -->");
+		TextWindow tw = new TextWindow("Sequenze", "<-- INIZIO Sequenze -->", 300,200);
 		Frame lw = WindowManager.getFrame("Sequenze");
 		if (lw == null)
 			return;
 		lw.setLocation(10, 10);
-
-
+	
+	
 		// new InputOutput().findCSV(MyConst.CODE_FILE);
 		// new InputOutput().findCSV(MyConst.LIMITS_FILE);
 		// new InputOutput().findCSV(MyConst.EXPAND_FILE);
-
+	
 		// IJ.log(ReadVersion.readVersionInfoInManifest("utils"));
 		// IJ.log(ReadVersion.readVersionInfoInManifest("pippo"));
 		// IJ.log(ReadVersion.readVersionInfoInManifest("contMensili"));
 		// MyLog.waitHere();
-
+	
 		// if (this.getClass().getResource("/iw2ayv*.jar") == null) {
 		// IJ.error("ATTENZIONE, manca il file iw2ayv.jar");
 		// return;
@@ -139,27 +123,27 @@ public class Sequenze_ implements PlugIn {
 				MyConst.DEFAULT_PATH);
 		MyFileLogger.logger.info("Sequenze_>>> startingDir letta= "
 				+ startingDir);
-
+	
 		UtilAyv.logResizer();
-
+	
 		boolean startingDirExist = new File(startingDir).exists();
-
+	
 		// IJ.log("il sistema dice che siamo in:"
 		// + System.getProperty("user.home"));
 		//
 		// IJ.log("il file trovami si trova in:"
 		// + new InputOutput().findResource("Sequenze_.class"));
-
+	
 		// String[][] tableCode = TableCode.loadTable(MyConst.CODE_FILE);
-
+	
 		String[][] tableCode = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 		if (debugTables) {
 			MyLog.logMatrix(tableCode, "tableCode");
 			MyLog.waitHere("salvare il log come tableCodeLoaded");
 		}
-
+	
 		String[][] tableExpand = TableExpand.loadTable(MyConst.EXPAND_FILE);
-
+	
 		// new AboutBox().about("Scansione automatica cartelle",
 		// this.getClass());
 		new AboutBox().about("Scansione automatica cartelle",
@@ -181,19 +165,19 @@ public class Sequenze_ implements PlugIn {
 		boolean p10p11p12 = gd.getNextBoolean();
 		boolean fast = gd.getNextBoolean();
 		boolean superficiali = gd.getNextBoolean();
-
+	
 		if (fast) {
 			Prefs.set("prefer.fast", "true");
 		} else {
 			Prefs.set("prefer.fast", "false");
 		}
-
+	
 		if (self1) {
 			if (!new InputOutput().checkJar(MyConst.TEST_FILE)) {
 				UtilAyv.noTest2();
 				return;
 			}
-
+	
 			IJ.runPlugIn("contMensili.p20rmn_", "-1");
 			IJ.runPlugIn("contMensili.p3rmn_", "-1");
 			IJ.runPlugIn("contMensili.p4rmn_", "-1");
@@ -210,28 +194,28 @@ public class Sequenze_ implements PlugIn {
 					"CONTINUA");
 			return;
 		} else if (nuovo1 || !startingDirExist) {
-
+	
 			DirectoryChooser od1 = new DirectoryChooser(
 					"SELEZIONARE MA NON APRIRE LA CARTELLA IMMAGINI");
 			od1.setDefaultDirectory(startingDir);
 			startingDir = od1.getDirectory();
-
+	
 			if (startingDir == null)
 				return;
 			Prefs.set("prefer.string1", startingDir);
 			// MyFileLogger.logger.info("Sequenze_>>> startingDir salvata= "
 			// + startingDir);
-
+	
 			String aux1 = Prefs
 					.get(MyConst.PREFERENCES_1, MyConst.DEFAULT_PATH);
 			// MyFileLogger.logger.info("Sequenze_>>> startingDir riletta= "
 			// + aux1);
-
+	
 		}
-
+	
 		boolean fileExist = new File(startingDir + MyConst.SEQUENZE_FILE)
 				.exists();
-
+	
 		if ((nuovo1) && (fileExist)) {
 			new ButtonMessages();
 			int userSelection1 = ButtonMessages
@@ -251,11 +235,11 @@ public class Sequenze_ implements PlugIn {
 				break;
 			}
 		}
-
+	
 		if (!fileExist) {
 			nuovo1 = true;
 		}
-
+	
 		if (nuovo1) {
 			//
 			// se è stato selezionato un nuovo set di misure cancello sia il
@@ -273,7 +257,7 @@ public class Sequenze_ implements PlugIn {
 			// MyLog.here();
 			// IJ.log("startingDir=" + startingDir);
 			MyLog.initLog(startingDir + "MyLog.txt");
-
+	
 			List<File> result = getFileListing(new File(startingDir));
 			if (result == null) {
 				MyLog.here("getFileListing.result==null");
@@ -285,32 +269,32 @@ public class Sequenze_ implements PlugIn {
 			}
 			// MyLog.logVectorVertical(list, "list");
 			// MyLog.waitHere();
-
+	
 			// //
 			// //
-
+	
 			String[][] tableSequenceLoaded = generateSequenceTable(list,
 					tableCode, tableExpand);
 			if (debugTables) {
 				MyLog.logMatrix(tableSequenceLoaded, "tableSequenceLoaded");
 				MyLog.waitHere("salvare il log come TableSequenceLoaded");
 			}
-
+	
 			// cancello gli eventuali messaggi di ImageJ dal log
 			// if (WindowManager.getFrame("Log") != null) {
 			// IJ.selectWindow("Log");
 			// IJ.run("Close");
 			// }
-
+	
 			if (tableSequenceLoaded == null) {
 				MyLog.here("non sono state trovate immagini da analizzare");
 				return;
 			}
-
+	
 			// =============================================================
 			// VECCHIA CAZZATA FUNZIONANTE
 			// =============================================================
-
+	
 			//
 			// Effettuo il sort della table, secondo il tempo di acquisizione
 			//
@@ -320,11 +304,11 @@ public class Sequenze_ implements PlugIn {
 			// MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
 			// MyLog.waitHere("salvare il log come TableSequenceSorted");
 			// }
-
+	
 			// =============================================================
 			// NUOVA CAZZATA INEDITA
 			// =============================================================
-
+	
 			String[][] tableSequenceSorted1 = TableSorter.minsort(
 					tableSequenceLoaded, TableSequence.POSIZ);
 			if (debugTables) {
@@ -332,7 +316,7 @@ public class Sequenze_ implements PlugIn {
 				MyLog.logMatrix(tableSequenceSorted1, "tableSequenceSorted1");
 				MyLog.waitHere("salvare il log come TableSequenceSorted1");
 			}
-
+	
 			String[][] tableSequenceSorted = TableSorter.minsort(
 					tableSequenceSorted1, TableSequence.TIME);
 			if (debugTables) {
@@ -340,7 +324,7 @@ public class Sequenze_ implements PlugIn {
 				MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
 				MyLog.waitHere("salvare il log come TableSequenceSorted");
 			}
-
+	
 			String[][] tableSequenceReordered = reorderSequenceTable(
 					tableSequenceSorted, tableCode);
 			if (debugTables) {
@@ -349,14 +333,14 @@ public class Sequenze_ implements PlugIn {
 						"tableSequenceReordered");
 				MyLog.waitHere("salvare il log come TableSequenceReordered");
 			}
-
+	
 			String[][] listProblems = verifySequenceTable(
 					tableSequenceReordered, tableCode);
 			if (debugTables) {
 				MyLog.logMatrix(listProblems, "listProblems");
 				MyLog.waitHere("salvare il log come ListProblems");
 			}
-
+	
 			String[] myCode = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_",
 					"YL2S_", "YR2F_", "YR2S_" };
 			// int[] myNum = { 4 };
@@ -364,15 +348,15 @@ public class Sequenze_ implements PlugIn {
 			// "LN",
 			// "LT" };
 			// String[] myPosiz = { "-45", "0", "45" };
-
+	
 			String[][] tableSequenceReordered2 = TableSorter
 					.tableModifierSmart(tableSequenceReordered, myCode);
-
+	
 			boolean test = false;
 			// NOTA BENE: lasciare test a false, altrimenti non vengono più
 			// stampati gli errori e si hanno problemi in elaborazione!!!
 			logVerifySequenceTable(listProblems, test);
-
+	
 			boolean success = new TableSequence().writeTable(startingDir
 					+ MyConst.SEQUENZE_FILE, tableSequenceReordered2);
 			if (!success)
@@ -380,7 +364,7 @@ public class Sequenze_ implements PlugIn {
 		}
 		// MyLog.here();
 		// IJ.log("startingDir=" + startingDir);
-
+	
 		String[][] tableSequenceReloaded = new TableSequence()
 				.loadTable(startingDir + MyConst.SEQUENZE_FILE);
 		// MyLog.waitHere();

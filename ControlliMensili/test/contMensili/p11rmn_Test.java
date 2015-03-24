@@ -136,6 +136,7 @@ public class p11rmn_Test {
 		boolean fast = true;
 		boolean silent = false;
 		String path1 = "./Test2/S12S_01testP11";
+//		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, true);
 		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, true);
 		double[] out = p11rmn_.positionSearch(imp1, autoCalled, verticalDir,
 				profond, "STRINGA", step, verbose, test, fast, silent);

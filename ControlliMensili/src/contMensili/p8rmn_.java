@@ -249,7 +249,6 @@ public class p8rmn_ implements PlugIn, Measurements {
 							"Cliccare nell'ordine sui 4 angoli del quadrato, poi premere FINE POSIZIONAMENTO",
 							"FINE POSIZIONAMENTO");
 			if (howmanyPoints(poli1) == MyConst.P8_NUM_POINTS4) {
-				IJ.log("009");
 				double[] vetResults = mainCalculation(poli1, dimPixel);
 
 				// Salvataggio dei risultati nella ResultsTable

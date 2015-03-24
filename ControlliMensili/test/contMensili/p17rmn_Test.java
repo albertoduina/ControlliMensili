@@ -155,6 +155,28 @@ public class p17rmn_Test {
 	}
 
 	
+	@Test
+	public final void testLocalizzaCuboCentrale() {
+
+		// String path1 = ".\\Test2\\HWSA2";
+		// String path1 =
+		// "C:\\Dati\\_____P17\\DESENZANO\\NUOVA\\17_DESENZANO_NUOVA_HWSA3";
+
+		String path1 = "C:\\Dati\\_____P17\\AERA\\11_AERA_HWSA_";
+		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, false);
+
+		ImageProcessor ip1 = imp1.getProcessor();
+		ip1.rotate(+5);
+		UtilAyv.showImageMaximized(imp1);
+
+
+		ImagePlus imp2 = p17rmn_.localizzaCuboCentrale(imp1);
+
+		MyLog.waitHere();
+
+	}
+
+	
 	
 	
 	
