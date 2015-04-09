@@ -178,7 +178,6 @@ public class Sequenze_ implements PlugIn {
 				return;
 			}
 	
-			IJ.runPlugIn("contMensili.p20rmn_", "-1");
 			IJ.runPlugIn("contMensili.p3rmn_", "-1");
 			IJ.runPlugIn("contMensili.p4rmn_", "-1");
 			IJ.runPlugIn("contMensili.p5rmn_", "-1");
@@ -188,7 +187,13 @@ public class Sequenze_ implements PlugIn {
 			IJ.runPlugIn("contMensili.p10rmn_", "-1");
 			IJ.runPlugIn("contMensili.p11rmn_", "-1");
 			IJ.runPlugIn("contMensili.p12rmn_", "-1");
-			// IJ.runPlugIn("contMensili.p9rmn_", "-1");
+			IJ.runPlugIn("contMensili.p20rmn_", "-1");
+			
+			
+			//		IJ.runPlugIn("contMensili.p9rmn_", "-1");
+			//		IJ.runPlugIn("contMensili.p2rmn_", "-1");		
+
+
 			ButtonMessages.ModelessMsg(
 					"Sequenze: fine selfTest, vedere Log per risultati",
 					"CONTINUA");

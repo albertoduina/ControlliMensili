@@ -667,29 +667,29 @@ PL4S_;SpinEcho PERIF ARRAY PL4;4;4;0;xxx;x;x;p12rmn_
 //;;;;;;;;
 //;;;;;;;;
 // T2 AND T1;;;;;;;;
-T2MA_;T2 multi SpinEcho Body;20;20;0;xxx;x;x;p20rmn_
-T2MB_;T2 multi SpinEcho Body;32;32;0;xxx;x;x;p20rmn_
+T2MA_;T2 multi SpinEcho Body;20;20;0;xxx;x;x;p2rmn_
+T2MB_;T2 multi SpinEcho Body;32;32;0;xxx;x;x;p2rmn_
 T2M1_;T2 multi SpinEcho Body;1;0;0;xxx;x;x;p9rmn_
 T2M2_;T2 multi SpinEcho Body;1;0;0;xxx;x;x;p9rmn_
 T2M3_;T2 multi SpinEcho Body;1;0;0;xxx;x;x;p9rmn_
-B2K0_;T1 ir 2000 Body;18;1;0;xxx;x;x;p20rmn_
-B1K8_;T1 ir 1800 Body;18;1;0;xxx;x;x;p20rmn_
-B1K6_;T1 ir 1600 Body;18;1;0;xxx;x;x;p20rmn_
-B1K4_;T1 ir 1400 Body;18;1;0;xxx;x;x;p20rmn_
-B1K2_;T1 ir 1200 Body;18;1;0;xxx;x;x;p20rmn_
-B1K0_;T1 ir 1000 Body;18;1;0;xxx;x;x;p20rmn_
-B090_;T1 ir 900 Body;18;1;0;xxx;x;x;p20rmn_
-B080_;T1 ir 800 Body;18;1;0;xxx;x;x;p20rmn_
-B070_;T1 ir 700 Body;18;1;0;xxx;x;x;p20rmn_
-B060_;T1 ir 600 Body;18;1;0;xxx;x;x;p20rmn_
-B050_;T1 ir 500 Body;18;1;0;xxx;x;x;p20rmn_
-B040_;T1 ir 400 Body;18;1;0;xxx;x;x;p20rmn_
-B030_;T1 ir 300 Body;18;1;0;xxx;x;x;p20rmn_
-B020_;T1 ir 200 Body;18;1;0;xxx;x;x;p20rmn_
-B010_;T1 ir 100 Body;18;1;0;xxx;x;x;p20rmn_
-B008_;T1 ir 80 Body;18;1;0;xxx;x;x;p20rmn_
-B005_;T1 ir 50 Body;18;1;0;xxx;x;x;p20rmn_
-B003_;T1 ir 30 Body;18;1;0;xxx;x;x;p20rmn_
+B2K0_;T1 ir 2000 Body;18;1;0;xxx;x;x;p2rmn_
+B1K8_;T1 ir 1800 Body;18;1;0;xxx;x;x;p2rmn_
+B1K6_;T1 ir 1600 Body;18;1;0;xxx;x;x;p2rmn_
+B1K4_;T1 ir 1400 Body;18;1;0;xxx;x;x;p2rmn_
+B1K2_;T1 ir 1200 Body;18;1;0;xxx;x;x;p2rmn_
+B1K0_;T1 ir 1000 Body;18;1;0;xxx;x;x;p2rmn_
+B090_;T1 ir 900 Body;18;1;0;xxx;x;x;p2rmn_
+B080_;T1 ir 800 Body;18;1;0;xxx;x;x;p2rmn_
+B070_;T1 ir 700 Body;18;1;0;xxx;x;x;p2rmn_
+B060_;T1 ir 600 Body;18;1;0;xxx;x;x;p2rmn_
+B050_;T1 ir 500 Body;18;1;0;xxx;x;x;p2rmn_
+B040_;T1 ir 400 Body;18;1;0;xxx;x;x;p2rmn_
+B030_;T1 ir 300 Body;18;1;0;xxx;x;x;p2rmn_
+B020_;T1 ir 200 Body;18;1;0;xxx;x;x;p2rmn_
+B010_;T1 ir 100 Body;18;1;0;xxx;x;x;p2rmn_
+B008_;T1 ir 80 Body;18;1;0;xxx;x;x;p2rmn_
+B005_;T1 ir 50 Body;18;1;0;xxx;x;x;p2rmn_
+B003_;T1 ir 30 Body;18;1;0;xxx;x;x;p2rmn_
 C080_;T1 ir 800 Body;1;0;0;xxx;x;x;p9rmn_
 //;;;;;;;;
 // BREAST AERA 18 NORMALE;;;;;;;;
