@@ -158,7 +158,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 					return 0;
 				boolean verticalProfile = true;
 				boolean autoCalled = false;
-				boolean verbose = false;
+				boolean verbose = true;
 				boolean test = false;
 				int sqX = 0;
 				int sqY = 0;

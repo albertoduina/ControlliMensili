@@ -146,7 +146,9 @@ public class p8rmn_ implements PlugIn, Measurements {
 				if (path1 == null)
 					return 5;
 				mainDgp(path1, riga1, autoCalled, step, test);
-				retry = false;
+				UtilAyv.afterWork();
+
+				retry = true;
 			}
 		} while (retry);
 		new AboutBox().close();
@@ -217,13 +219,16 @@ public class p8rmn_ implements PlugIn, Measurements {
 		// String[][] tabCodici = new InputOutput().readFile1(MyConst.CODE_FILE,
 		// MyConst.P8_TOKENS4);
 
-		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
-
-		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
-				+ MyConst.SEQUENZE_FILE);
-
-		String[][] info1 = ReportStandardInfo.getStandardInfo(iw2ayvTable,
-				riga1, tabCodici, VERSION, autoCalled);
+//		if (autoCalled) {
+//			String[][] tabCodici = TableCode
+//					.loadMultipleTable(MyConst.CODE_GROUP);
+//
+//			String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
+//					+ MyConst.SEQUENZE_FILE);
+//
+//			MyLog.waitHere();
+//
+//		}
 		//
 		// Qui si torna se la misura è da rifare
 		//
@@ -261,7 +266,19 @@ public class p8rmn_ implements PlugIn, Measurements {
 				double dgp5 = vetResults[10];
 				double dgp6 = vetResults[11];
 
-				rt = ReportStandardInfo.putStandardInfoRT(info1);
+				
+//				String[][] info1 = ReportStandardInfo.getStandardInfo(iw2ayvTable,
+//						riga1, tabCodici, VERSION, autoCalled);
+				
+				String[][] tabCodici = TableCode
+						.loadMultipleTable(MyConst.CODE_GROUP);
+
+				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
+						imp1, tabCodici, VERSION, autoCalled);
+				rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+
+
+//				rt = ReportStandardInfo.putStandardInfoRT(info1);
 				int col = 2;
 				String t1 = "TESTO";
 				String s2 = "VALORE";

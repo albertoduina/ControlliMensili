@@ -178,7 +178,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	public boolean debug1 = false;
 
-	public boolean DEBUG2 = true; // true attiva il debug
+	public boolean DEBUG2 = false; // true attiva il debug
 
 	private boolean selftest = false; // non è bello, lo uso per colpa del
 
@@ -242,33 +242,34 @@ public class p2rmn_ implements PlugIn, Measurements {
 		String defaultVetYUpperLeftCornerRoiGels = null;
 		AboutBox ab = new AboutBox();
 		if (manualCalled) {
-			retry = false;
-			do {
-				userSelection1 = UtilAyv.userSelectionManual(VERSION, TYPE);
-				switch (userSelection1) {
-				case ABORT:
-					ab.close();
-					retry = false;
-					return;
-				case 2:
-					ab.about("Controllo T1 e  T2", MyVersion.CURRENT_VERSION);
-					// ab.about("Controllo T1 e  T2", this.getClass());
-					retry = true;
-					break;
-				case 3:
-					selftest = true;
-					retry = false;
-					break;
-				case 4:
-					bstep = true;
-					retry = false;
-					break;
-				case 5:
-					retry = false;
-					break;
-				}
-			} while (retry);
-			ab.close();
+				retry = true;
+				do {
+					userSelection1 = UtilAyv.userSelectionManual(VERSION, TYPE);
+					switch (userSelection1) {
+					case ABORT:
+						ab.close();
+						retry = false;
+						return;
+					case 2:
+						ab.about("Controllo T1 e  T2",
+								MyVersion.CURRENT_VERSION);
+						// ab.about("Controllo T1 e  T2", this.getClass());
+						retry = true;
+						break;
+					case 3:
+						selftest = true;
+						retry = false;
+						break;
+					case 4:
+						bstep = true;
+						retry = false;
+						break;
+					case 5:
+						retry = false;
+						break;
+					}
+				} while (retry);
+				ab.close();
 
 			if (selftest) {
 				if (!io.checkJar(TEST_FILE)) {
@@ -571,10 +572,10 @@ public class p2rmn_ implements PlugIn, Measurements {
 			filtroFondo = mediaFondo * kMediaFiltroFondo + dsFondo
 					* kDevStFiltroFondo;
 
-			MyLog.waitHere("xRoiFondo = " + xRoiFondo + " yRoiFondo= "
-					+ yRoiFondo + " diam= " + DIAM_ROI_FONDO + "mediaFondo= "
-					+ mediaFondo + " dsFondo= " + dsFondo + " filtroFondo= "
-					+ filtroFondo);
+			// MyLog.waitHere("xRoiFondo = " + xRoiFondo + " yRoiFondo= "
+			// + yRoiFondo + " diam= " + DIAM_ROI_FONDO + "mediaFondo= "
+			// + mediaFondo + " dsFondo= " + dsFondo + " filtroFondo= "
+			// + filtroFondo);
 
 			bMap = new int[width * height];
 			int offset;
@@ -640,9 +641,9 @@ public class p2rmn_ implements PlugIn, Measurements {
 				rt.addValue(7, roi_diam);
 			}
 			rt.show("Results");
-			MyLog.waitHere();
-
-			MyLog.waitHere("85, 29, 20, 20");
+			// MyLog.waitHere();
+			//
+			// MyLog.waitHere("85, 29, 20, 20");
 
 			if (autoCalled) {
 				userSelection3 = ButtonMessages.ModelessMsg(
@@ -702,8 +703,9 @@ public class p2rmn_ implements PlugIn, Measurements {
 		UtilAyv.resetMeasure(misure1);
 
 		InputOutput.deleteDir(new File(TEST_DIRECTORY));
-		if (autoCalled)
-			UtilAyv.cleanUp();
+		// if (autoCalled)
+		UtilAyv.afterWork();
+		// UtilAyv.cleanUp();
 	} // close run
 
 	/**
@@ -957,8 +959,8 @@ public class p2rmn_ implements PlugIn, Measurements {
 				simplexregressor = new SimplexBasedRegressor();
 			} else {
 				tr_vals = getTRVals(stack4, DICOM_ECHO_TIME);
-				MyLog.logVector(tr_vals, "tr_vals");
-				MyLog.waitHere();
+				// MyLog.logVector(tr_vals, "tr_vals");
+				// MyLog.waitHere();
 				sn_vals = new double[reps];
 				IJ.showStatus("Calculating T2 map");
 				t1_map = new double[1][slices][width2][height2];

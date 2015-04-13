@@ -155,13 +155,14 @@ public class p6rmn_ implements PlugIn, Measurements {
 				if (path == null)
 					return 5;
 				boolean autoCalled = false;
-				boolean verbose = false;
+				boolean verbose = true;
 				boolean test = false;
 				ImagePlus imp0 = UtilAyv.openImageNoDisplay(path[0], true);
 				double[] oldPosition = readReferences(imp0);
 				new p6rmn_().wrapThickness(path, "0", oldPosition, autoCalled,
 						step, verbose, test);
-				retry = false;
+				UtilAyv.afterWork();
+				retry = true;
 			}
 		} while (retry);
 		new AboutBox().close();

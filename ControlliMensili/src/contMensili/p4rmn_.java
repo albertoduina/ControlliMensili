@@ -164,7 +164,18 @@ public class p4rmn_ implements PlugIn, Measurements {
 			case 4:
 				// step = true;
 			case 5:
-				retry = false;
+				boolean verbose = true;
+				boolean test = false;
+				boolean autoCalled = true;
+				boolean step=true;
+				String path1 = UtilAyv
+						.imageSelection("SELEZIONARE IMMAGINE...");
+				if (path1 == null)
+					return 0;
+
+				prepMTF(path1, "", autoCalled, step, verbose, test);
+				retry = true;
+				UtilAyv.afterWork();
 				break;
 			}
 		} while (retry);
