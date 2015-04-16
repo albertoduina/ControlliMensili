@@ -18,7 +18,7 @@ public class p20rmn_Test {
 
 	@Before
 	public void setUp() throws Exception {
-		new ImageJ(ImageJ.NORMAL);
+		// new ImageJ(ImageJ.NORMAL);
 	}
 
 	@After
@@ -57,7 +57,7 @@ public class p20rmn_Test {
 		ImagePlus imp1 = p20rmn_.imaPreparation(vetPath, typeT2);
 		UtilAyv.showImageMaximized(imp1);
 		Roi[] pippo = p20rmn_.manualRoiPreparation(imp1);
-		MyLog.waitHere();
+//		MyLog.waitHere();
 	}
 
 	@Test
@@ -71,7 +71,7 @@ public class p20rmn_Test {
 		Roi[] pippo = p20rmn_.automaticRoiPreparation(imp1,
 				MyConst.P20_X_ROI_TESTGE, MyConst.P20_Y_ROI_TESTGE,
 				MyConst.P20_DIAM_ROI);
-		MyLog.waitHere();
+//		MyLog.waitHere();
 	}
 
 	@Test
@@ -110,71 +110,71 @@ public class p20rmn_Test {
 		assertTrue(result);
 	}
 
-//	@Test
-//	public final void testAutomaticRoiPreparationTest3() {
-//
-//		String path1 = ".\\Test2\\HWSA_testP7";
-//		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, false);
-//		boolean demo = false;
-//		int diam = 10;
-//		int timeout = 2000;
-//		Roi[] pippo = p20rmn_.automaticRoiPreparation3(imp1, diam, timeout,
-//				demo);
-//
-////		for (int i1 = 0; i1 < pippo.length; i1++) {
-////			IJ.log("" + pippo[i1].toString());
-////		}
-////
-////		MyLog.waitHere();
-//
-//		String[] expected = { "Roi[Oval, x=251, y=81, width=10, height=10]",
-//				"Roi[Oval, x=247, y=100, width=10, height=10]",
-//				"Roi[Oval, x=378, y=133, width=10, height=10]",
-//				"Roi[Oval, x=118, y=134, width=10, height=10]",
-//				"Roi[Oval, x=121, y=151, width=10, height=10]",
-//				"Roi[Oval, x=375, y=152, width=10, height=10]",
-//				"Roi[Oval, x=249, y=171, width=10, height=10]",
-//				"Roi[Oval, x=247, y=191, width=10, height=10]",
-//				"Roi[Oval, x=183, y=197, width=10, height=10]",
-//				"Roi[Oval, x=312, y=198, width=10, height=10]",
-//				"Roi[Oval, x=183, y=217, width=10, height=10]",
-//				"Roi[Oval, x=313, y=217, width=10, height=10]",
-//				"Roi[Oval, x=85, y=262, width=10, height=10]",
-//				"Roi[Oval, x=165, y=262, width=10, height=10]",
-//				"Roi[Oval, x=329, y=262, width=10, height=10]",
-//				"Roi[Oval, x=411, y=262, width=10, height=10]",
-//				"Roi[Oval, x=83, y=281, width=10, height=10]",
-//				"Roi[Oval, x=165, y=281, width=10, height=10]",
-//				"Roi[Oval, x=330, y=281, width=10, height=10]",
-//				"Roi[Oval, x=411, y=281, width=10, height=10]",
-//				"Roi[Oval, x=310, y=326, width=10, height=10]",
-//				"Roi[Oval, x=181, y=327, width=10, height=10]",
-//				"Roi[Oval, x=183, y=346, width=10, height=10]",
-//				"Roi[Oval, x=312, y=346, width=10, height=10]",
-//				"Roi[Oval, x=247, y=353, width=10, height=10]",
-//				"Roi[Oval, x=246, y=372, width=10, height=10]",
-//				"Roi[Oval, x=119, y=391, width=10, height=10]",
-//				"Roi[Oval, x=375, y=392, width=10, height=10]",
-//				"Roi[Oval, x=375, y=409, width=10, height=10]",
-//				"Roi[Oval, x=119, y=410, width=10, height=10]",
-//				"Roi[Oval, x=246, y=443, width=10, height=10]",
-//				"Roi[Oval, x=247, y=462, width=10, height=10]",
-//				"Roi[Oval, x=251, y=242, width=10, height=10]",
-//				"Roi[Oval, x=218, y=273, width=10, height=10]",
-//				"Roi[Oval, x=283, y=276, width=10, height=10]",
-//				"Roi[Oval, x=249, y=307, width=10, height=10]" };
-//
-//		boolean result = true;
-//		boolean ok = false;
-//		for (int i1 = 0; i1 < pippo.length; i1++) {
-//			String seconda = pippo[i1].toString();
-//			String prima = expected[i1];
-//			ok = prima.equals(seconda);
-//			if (!ok)
-//				result = false;
-//		}
-//		assertTrue(result);
-//	}
+	// @Test
+	// public final void testAutomaticRoiPreparationTest3() {
+	//
+	// String path1 = ".\\Test2\\HWSA_testP7";
+	// ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, false);
+	// boolean demo = false;
+	// int diam = 10;
+	// int timeout = 2000;
+	// Roi[] pippo = p20rmn_.automaticRoiPreparation3(imp1, diam, timeout,
+	// demo);
+	//
+	// // for (int i1 = 0; i1 < pippo.length; i1++) {
+	// // IJ.log("" + pippo[i1].toString());
+	// // }
+	// //
+	// // MyLog.waitHere();
+	//
+	// String[] expected = { "Roi[Oval, x=251, y=81, width=10, height=10]",
+	// "Roi[Oval, x=247, y=100, width=10, height=10]",
+	// "Roi[Oval, x=378, y=133, width=10, height=10]",
+	// "Roi[Oval, x=118, y=134, width=10, height=10]",
+	// "Roi[Oval, x=121, y=151, width=10, height=10]",
+	// "Roi[Oval, x=375, y=152, width=10, height=10]",
+	// "Roi[Oval, x=249, y=171, width=10, height=10]",
+	// "Roi[Oval, x=247, y=191, width=10, height=10]",
+	// "Roi[Oval, x=183, y=197, width=10, height=10]",
+	// "Roi[Oval, x=312, y=198, width=10, height=10]",
+	// "Roi[Oval, x=183, y=217, width=10, height=10]",
+	// "Roi[Oval, x=313, y=217, width=10, height=10]",
+	// "Roi[Oval, x=85, y=262, width=10, height=10]",
+	// "Roi[Oval, x=165, y=262, width=10, height=10]",
+	// "Roi[Oval, x=329, y=262, width=10, height=10]",
+	// "Roi[Oval, x=411, y=262, width=10, height=10]",
+	// "Roi[Oval, x=83, y=281, width=10, height=10]",
+	// "Roi[Oval, x=165, y=281, width=10, height=10]",
+	// "Roi[Oval, x=330, y=281, width=10, height=10]",
+	// "Roi[Oval, x=411, y=281, width=10, height=10]",
+	// "Roi[Oval, x=310, y=326, width=10, height=10]",
+	// "Roi[Oval, x=181, y=327, width=10, height=10]",
+	// "Roi[Oval, x=183, y=346, width=10, height=10]",
+	// "Roi[Oval, x=312, y=346, width=10, height=10]",
+	// "Roi[Oval, x=247, y=353, width=10, height=10]",
+	// "Roi[Oval, x=246, y=372, width=10, height=10]",
+	// "Roi[Oval, x=119, y=391, width=10, height=10]",
+	// "Roi[Oval, x=375, y=392, width=10, height=10]",
+	// "Roi[Oval, x=375, y=409, width=10, height=10]",
+	// "Roi[Oval, x=119, y=410, width=10, height=10]",
+	// "Roi[Oval, x=246, y=443, width=10, height=10]",
+	// "Roi[Oval, x=247, y=462, width=10, height=10]",
+	// "Roi[Oval, x=251, y=242, width=10, height=10]",
+	// "Roi[Oval, x=218, y=273, width=10, height=10]",
+	// "Roi[Oval, x=283, y=276, width=10, height=10]",
+	// "Roi[Oval, x=249, y=307, width=10, height=10]" };
+	//
+	// boolean result = true;
+	// boolean ok = false;
+	// for (int i1 = 0; i1 < pippo.length; i1++) {
+	// String seconda = pippo[i1].toString();
+	// String prima = expected[i1];
+	// ok = prima.equals(seconda);
+	// if (!ok)
+	// result = false;
+	// }
+	// assertTrue(result);
+	// }
 
 	@Test
 	public final void testMapPreparationTest() {
@@ -187,7 +187,7 @@ public class p20rmn_Test {
 				MyConst.P20_X_ROI_TESTGE, MyConst.P20_Y_ROI_TESTGE,
 				MyConst.P20_DIAM_ROI);
 		int[] bMap = p20rmn_.mapPreparation(imp1, vetRoi);
-		MyLog.waitHere();
+		// MyLog.waitHere();
 	}
 
 	@Test
@@ -203,7 +203,7 @@ public class p20rmn_Test {
 				MyConst.P20_DIAM_ROI);
 		// int[] bMap = p20rmn_.mapPreparation(imp1, vetRoi);
 		double filter = p20rmn_.filterPreparation(imp1, vetRoi, bstep);
-		MyLog.waitHere("filter  aaaaa  = " + filter);
+		// MyLog.waitHere("filter  aaaaa  = " + filter);
 	}
 
 	@Test

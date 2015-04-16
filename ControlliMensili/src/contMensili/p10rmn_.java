@@ -898,8 +898,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 				MyLog.waitHere(listaMessaggi(28), debug);
 			
 			// =================================================================
-			String slicePosition = ReadDicom.readDicomParameter(imp1,
-					MyConst.DICOM_SLICE_LOCATION);
+			double slicePosition = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1,
+					MyConst.DICOM_SLICE_LOCATION));
 			
 			
 
@@ -1082,7 +1082,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, profond, "",
 				autoCalled, step, verbose, test, fast, silent);
+		
+		
+		rt1.show("Results");
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		// MyLog.logVector(vetResults, "vetResults");
+		// MyLog.waitHere();
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 				MyConst.P10_vetName);
 		return ok;
@@ -1107,6 +1112,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// double fwhm = 11.43429317989865;
 		double fwhm = 24.309816136913373;
 		double bkg = 12.4375;
+		double pos = 0.0;
 		double num1 = 2818.0;
 		double num2 = 1526.0;
 		double num3 = 7834.0;
@@ -1120,7 +1126,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double num11 = 341.0;
 		double num12 = 33816.0;
 
-		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, bkg,
+		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, bkg, pos,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
 				num11, num12 };
 		return vetReference;
@@ -1140,6 +1146,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double backNoise = 10.00347735683198;
 		double snRatio = 35.48765967441802;
 		double fwhm = 23.977086148658152;
+		double pos = 0.0;
 		double num1 = 2763.0;
 		double num2 = 1532.0;
 		double num3 = 7785.0;
@@ -1153,7 +1160,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double num11 = 354.0;
 		double num12 = 33816.0;
 
-		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm,
+		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, pos,
 				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
 				num11, num12 };
 		return vetReference;

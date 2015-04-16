@@ -3,6 +3,7 @@ package contMensili;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import ij.IJ;
+import ij.ImageJ;
 import ij.WindowManager;
 import ij.gui.WaitForUserDialog;
 import ij.measure.ResultsTable;
@@ -20,6 +21,7 @@ public class p4rmn_Test {
 
 	@Before
 	public void setUp() throws Exception {
+		new ImageJ(ImageJ.NORMAL);
 	}
 
 	@After

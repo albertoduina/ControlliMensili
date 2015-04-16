@@ -24,3 +24,195 @@ INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argome
 INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
 24-lug-2013 11.34.40 contMensili.Sequenze_ callPluginsFromSequenceTable
 INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 11.55.22 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 11.55.22 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 11.55.23 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 11.55.23 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 11.55.24 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 11.55.24 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5
+16-apr-2015 11.56.17 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 11.56.17 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 11.56.18 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 11.56.18 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 11.56.19 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 11.56.19 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5
+16-apr-2015 12.04.02 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 12.04.02 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 12.04.04 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 12.04.04 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 12.04.04 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 12.04.04 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5
+16-apr-2015 12.05.07 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 12.05.07 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 12.05.08 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 12.05.08 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 12.05.08 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 12.05.08 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5
+16-apr-2015 12.05.43 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 12.05.43 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 12.05.43 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 12.05.43 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 12.05.44 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 12.05.44 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5
+16-apr-2015 12.06.26 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 12.06.26 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 12.06.26 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 12.06.26 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 12.06.26 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 12.06.26 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5
+16-apr-2015 12.07.29 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 12.07.29 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 12.07.29 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 12.07.29 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 12.07.29 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 12.07.29 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5
+16-apr-2015 12.09.08 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 12.09.08 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 12.09.08 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 12.09.08 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 12.09.08 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 12.09.08 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5
+16-apr-2015 13.20.00 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 13.20.00 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 13.20.00 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 13.20.00 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 13.20.00 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 13.20.00 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5
+16-apr-2015 13.20.16 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 13.20.16 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 13.20.16 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 13.20.16 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 13.20.16 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 13.20.16 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5
+16-apr-2015 13.21.06 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 13.21.06 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 13.21.06 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 13.21.06 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 13.21.06 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 13.21.06 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5
+16-apr-2015 13.21.55 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 13.21.55 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 13.21.55 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 13.21.55 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 13.21.55 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 13.21.55 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5
+16-apr-2015 13.25.05 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 13.25.05 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 13.25.05 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 13.25.05 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 13.25.05 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 13.25.05 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5
+16-apr-2015 13.38.41 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 13.38.41 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 13.38.41 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 13.38.41 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 13.38.41 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 13.38.41 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5
+16-apr-2015 14.22.36 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 14.22.36 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 14.22.36 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 14.22.36 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 14.22.36 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 14.22.36 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5
+16-apr-2015 14.23.09 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 0 / 6 BUSA_ C:BC >>>
+16-apr-2015 14.23.10 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #0#1
+16-apr-2015 14.23.10 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 2 / 6 BUSS_ C:BC >>>
+16-apr-2015 14.23.10 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #2#3
+16-apr-2015 14.23.10 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: <<< RIGA 4 / 6 BUSC_ C:BC >>>
+16-apr-2015 14.23.10 contMensili.Sequenze_ callPluginsFromSequenceTable
+INFO: Sequenze.callPluginFromSequenceTable >>> plugin= contMensili.p3rmn_ argomento= #4#5

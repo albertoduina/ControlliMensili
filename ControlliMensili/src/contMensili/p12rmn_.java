@@ -816,8 +816,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			double ghostPerc4 = ghostPercCalculation(mediaGhost4, mediaBkg,
 					mean1);
 			
-			String slicePosition = ReadDicom.readDicomParameter(imp1,
-					MyConst.DICOM_SLICE_LOCATION);
+			double slicePosition = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1,
+					MyConst.DICOM_SLICE_LOCATION));
 			
 
 
@@ -1119,13 +1119,14 @@ public class p12rmn_ implements PlugIn, Measurements {
 		double g8 = 0.21542195064805592;
 		double uiPerc = 91.53798641136504;
 		double bkg = 10.80379746835443;
+		double pos = 0.0;
 		double c4 = 0.0;
 		double c3 = 0.0;
 		double c2 = 22558.0;
 		double c1 = 379.0;
 		double c0 = 42599.0;
 		double[] vetReference = { mean, noise, snRatio, g5, g6, g7, g8, uiPerc,
-				bkg, c4, c3, c2, c1, c0 };
+				bkg, pos, c4, c3, c2, c1, c0 };
 		return vetReference;
 	}
 

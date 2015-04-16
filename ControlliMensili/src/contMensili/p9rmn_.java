@@ -443,9 +443,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 			// defaultVetGy);
 
 			String saveVetXUpperLeftCornerRoiGels = Prefs.get(
-					"prefer.p20rmnGx", defaultVetGx);
+					"prefer.p2rmnGx", defaultVetGx);
 			String saveVetYUpperLeftCornerRoiGels = Prefs.get(
-					"prefer.p20rmnGy", defaultVetGy);
+					"prefer.p2rmnGy", defaultVetGy);
 
 			if (selftest) {
 				saveVetXUpperLeftCornerRoiGels = defaultVetGx;

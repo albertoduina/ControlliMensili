@@ -420,7 +420,8 @@ public class Sequenze_ implements PlugIn {
 	 *            contenuto di codici.txt
 	 * @param tableExpand4
 	 *            contenuto di expand.txt
-	 * @return restituisce una TableSequence
+	 * @return restituisce una TableSequence le cui colonne contengono:
+	 * vetConta, vetPath, vetCodice, vetCoil, vetImaDaPassare, vetimaGruppo, 
 	 */
 
 	public String[][] generateSequenceTable(String[] pathList,
@@ -845,7 +846,11 @@ public class Sequenze_ implements PlugIn {
 		int count = 0;
 		List<String> vetPlugin = new ArrayList<String>();
 		List<String> vetArgomento = new ArrayList<String>();
+//		IJ.log("lunghezza= "+tableSequenze5.length);
+//		MyLog.logMatrix(tableSequenze5, "tableSequenze5");
+//		MyLog.logMatrix(tableCode5, "tableCode5");
 		while (j1 < tableSequenze5.length) {
+//			IJ.log("j1= "+j1);
 			if (TableSequence.getDone(tableSequenze5, j1).equals("0")) {
 				String plugin = pluginToBeCalledWithCoil(j1, tableSequenze5,
 						tableCode5);
@@ -888,13 +893,12 @@ public class Sequenze_ implements PlugIn {
 					j1++;
 				} else {
 					// qui è dove vengono passate al plugin le righe delle
-					// immagini da analizzare. Il problema è effettuare la
-					// modifica se devo passare linee che non riesco a sortare a
-					// dovere, quindi non saranno adiacenti.
+					// immagini da analizzare. 
 					new TableSequence();
 					int numImaDaPassare = Integer.parseInt(TableSequence
 							.getImaPass(tableSequenze5, j1));
 
+//					MyLog.waitHere();
 					String theCode = TableSequence.getCode(tableSequenze5, j1);
 					String theCoil = TableSequence.getCoil(tableSequenze5, j1);
 
@@ -1107,10 +1111,15 @@ public class Sequenze_ implements PlugIn {
 						+ TableSequence.getRow(tableSequenze5, lineNumber + 0);
 				argomento = argomento + "#"
 						+ TableSequence.getRow(tableSequenze5, lineNumber + 1);
+				MyLog.waitHere("prima");
+				int num1 = lineNumber + 0
+						+ numImaGruppo;
+				MyLog.waitHere("num1= "+num1+ " lineNumber= "+lineNumber+" numImaGruppo= "+numImaGruppo);
 				argomento = argomento
 						+ "#"
 						+ TableSequence.getRow(tableSequenze5, lineNumber + 0
 								+ numImaGruppo);
+				MyLog.waitHere("dopo");
 				argomento = argomento
 						+ "#"
 						+ TableSequence.getRow(tableSequenze5, lineNumber + 1
@@ -1571,108 +1580,108 @@ public class Sequenze_ implements PlugIn {
 	 * @param tableIn
 	 * @return
 	 */
-	public String[][] bubbleSortSequenceTable(String[][] tableIn) {
-
-		if (tableIn == null) {
-			IJ.log("bubbleSortTable.tableIn == null");
-			return null;
-		}
-		long[] bubblesort = new long[tableIn.length];
-		String[][] tableOut = new TableUtils().duplicateTable(tableIn);
-		for (int i1 = 0; i1 < tableOut.length; i1++) {
-			String acqTime = TableSequence.getAcqTime(tableOut, i1);
-			if (acqTime == null)
-				acqTime = "9999999999999999";
-			bubblesort[i1] = Long.parseLong(acqTime);
-		}
-		String[] tempRiga = new String[tableOut[0].length];
-		boolean sorted = false;
-		while (!sorted) {
-			sorted = true;
-			for (int i1 = 0; i1 < (bubblesort.length - 1); i1++) {
-				if (bubblesort[i1] > bubblesort[i1 + 1]) {
-					long temp = bubblesort[i1];
-					// N.B. i2 in questo caso partirà da 1, poichè la colonna 0
-					// che contiene il numero della riga NON deve venire sortata
-					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-						tempRiga[i2] = tableOut[i1][i2];
-					bubblesort[i1] = bubblesort[i1 + 1];
-					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-						tableOut[i1][i2] = tableOut[i1 + 1][i2];
-					bubblesort[i1 + 1] = temp;
-					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-						tableOut[i1 + 1][i2] = tempRiga[i2];
-					sorted = false;
-				}
-			}
-		}
-		return tableOut;
-	}
-
-	/**
-	 * Effettua il bubble sort della tabella delle sequenze, utilizza
-	 * l'algoritmo bubblesort
-	 * 
-	 * @param tableIn
-	 * @return
-	 */
-	public String[][] bubbleSortSequenceTable2(String[][] tableIn) {
-
-		if (tableIn == null) {
-			IJ.log("bubbleSortTable.tableIn == null");
-			return null;
-		}
-		long[] bubblesort1 = new long[tableIn.length];
-		int[] bubblesort2 = new int[tableIn.length];
-		String[][] tableOut = new TableUtils().duplicateTable(tableIn);
-		for (int i1 = 0; i1 < tableOut.length; i1++) {
-			String acqTime = TableSequence.getAcqTime(tableOut, i1);
-			if (acqTime == null)
-				acqTime = "9999999999999999";
-			bubblesort1[i1] = Long.parseLong(acqTime);
-		}
-		for (int i1 = 0; i1 < tableOut.length; i1++) {
-			String numIma = TableSequence.getNumIma(tableOut, i1);
-			bubblesort2[i1] = ReadDicom.readInt(numIma);
-		}
-
-		String[] tempRiga = new String[tableOut[0].length];
-		boolean sorted = false;
-		while (!sorted) {
-			sorted = true;
-			for (int i1 = 0; i1 < (bubblesort1.length - 1); i1++) {
-				if (bubblesort1[i1] > bubblesort1[i1 + 1]) {
-					long temp = bubblesort1[i1];
-					// N.B. i2 in questo caso partirà da 1, poichè la colonna 0
-					// che contiene il numero della riga NON deve venire sortata
-					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-						tempRiga[i2] = tableOut[i1][i2];
-					bubblesort1[i1] = bubblesort1[i1 + 1];
-					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-						tableOut[i1][i2] = tableOut[i1 + 1][i2];
-					bubblesort1[i1 + 1] = temp;
-					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-						tableOut[i1 + 1][i2] = tempRiga[i2];
-					sorted = false;
-				} else if ((bubblesort1[i1] == bubblesort1[i1 + 1])
-						&& (bubblesort2[i1] > bubblesort2[i1 + 1])) {
-					int temp2 = bubblesort2[i1];
-					// N.B. i2 in questo caso partirà da 1, poichè la colonna 0
-					// che contiene il numero della riga NON deve venire sortata
-					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-						tempRiga[i2] = tableOut[i1][i2];
-					bubblesort2[i1] = bubblesort2[i1 + 1];
-					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-						tableOut[i1][i2] = tableOut[i1 + 1][i2];
-					bubblesort2[i1 + 1] = temp2;
-					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-						tableOut[i1 + 1][i2] = tempRiga[i2];
-					sorted = false;
-				}
-			}
-		}
-		return tableOut;
-	}
+//	public String[][] bubbleSortSequenceTable(String[][] tableIn) {
+//
+//		if (tableIn == null) {
+//			IJ.log("bubbleSortTable.tableIn == null");
+//			return null;
+//		}
+//		long[] bubblesort = new long[tableIn.length];
+//		String[][] tableOut = new TableUtils().duplicateTable(tableIn);
+//		for (int i1 = 0; i1 < tableOut.length; i1++) {
+//			String acqTime = TableSequence.getAcqTime(tableOut, i1);
+//			if (acqTime == null)
+//				acqTime = "9999999999999999";
+//			bubblesort[i1] = Long.parseLong(acqTime);
+//		}
+//		String[] tempRiga = new String[tableOut[0].length];
+//		boolean sorted = false;
+//		while (!sorted) {
+//			sorted = true;
+//			for (int i1 = 0; i1 < (bubblesort.length - 1); i1++) {
+//				if (bubblesort[i1] > bubblesort[i1 + 1]) {
+//					long temp = bubblesort[i1];
+//					// N.B. i2 in questo caso partirà da 1, poichè la colonna 0
+//					// che contiene il numero della riga NON deve venire sortata
+//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
+//						tempRiga[i2] = tableOut[i1][i2];
+//					bubblesort[i1] = bubblesort[i1 + 1];
+//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
+//						tableOut[i1][i2] = tableOut[i1 + 1][i2];
+//					bubblesort[i1 + 1] = temp;
+//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
+//						tableOut[i1 + 1][i2] = tempRiga[i2];
+//					sorted = false;
+//				}
+//			}
+//		}
+//		return tableOut;
+//	}
+//
+//	/**
+//	 * Effettua il bubble sort della tabella delle sequenze, utilizza
+//	 * l'algoritmo bubblesort
+//	 * 
+//	 * @param tableIn
+//	 * @return
+//	 */
+//	public String[][] bubbleSortSequenceTable2(String[][] tableIn) {
+//
+//		if (tableIn == null) {
+//			IJ.log("bubbleSortTable.tableIn == null");
+//			return null;
+//		}
+//		long[] bubblesort1 = new long[tableIn.length];
+//		int[] bubblesort2 = new int[tableIn.length];
+//		String[][] tableOut = new TableUtils().duplicateTable(tableIn);
+//		for (int i1 = 0; i1 < tableOut.length; i1++) {
+//			String acqTime = TableSequence.getAcqTime(tableOut, i1);
+//			if (acqTime == null)
+//				acqTime = "9999999999999999";
+//			bubblesort1[i1] = Long.parseLong(acqTime);
+//		}
+//		for (int i1 = 0; i1 < tableOut.length; i1++) {
+//			String numIma = TableSequence.getNumIma(tableOut, i1);
+//			bubblesort2[i1] = ReadDicom.readInt(numIma);
+//		}
+//
+//		String[] tempRiga = new String[tableOut[0].length];
+//		boolean sorted = false;
+//		while (!sorted) {
+//			sorted = true;
+//			for (int i1 = 0; i1 < (bubblesort1.length - 1); i1++) {
+//				if (bubblesort1[i1] > bubblesort1[i1 + 1]) {
+//					long temp = bubblesort1[i1];
+//					// N.B. i2 in questo caso partirà da 1, poichè la colonna 0
+//					// che contiene il numero della riga NON deve venire sortata
+//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
+//						tempRiga[i2] = tableOut[i1][i2];
+//					bubblesort1[i1] = bubblesort1[i1 + 1];
+//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
+//						tableOut[i1][i2] = tableOut[i1 + 1][i2];
+//					bubblesort1[i1 + 1] = temp;
+//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
+//						tableOut[i1 + 1][i2] = tempRiga[i2];
+//					sorted = false;
+//				} else if ((bubblesort1[i1] == bubblesort1[i1 + 1])
+//						&& (bubblesort2[i1] > bubblesort2[i1 + 1])) {
+//					int temp2 = bubblesort2[i1];
+//					// N.B. i2 in questo caso partirà da 1, poichè la colonna 0
+//					// che contiene il numero della riga NON deve venire sortata
+//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
+//						tempRiga[i2] = tableOut[i1][i2];
+//					bubblesort2[i1] = bubblesort2[i1 + 1];
+//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
+//						tableOut[i1][i2] = tableOut[i1 + 1][i2];
+//					bubblesort2[i1 + 1] = temp2;
+//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
+//						tableOut[i1 + 1][i2] = tempRiga[i2];
+//					sorted = false;
+//				}
+//			}
+//		}
+//		return tableOut;
+//	}
 
 	public boolean checkSequenceTable(String source) {
 		URL url1 = this.getClass().getResource("/" + source);

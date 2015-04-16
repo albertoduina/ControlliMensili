@@ -707,7 +707,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 
 		Roi[] vetRoi = new Roi[MyConst.P20_N_GELS + 1];
 
-		String saveVetXUpperLeftCornerRoiGels = Prefs.get("prefer.p20rmnGx",
+		String saveVetXUpperLeftCornerRoiGels = Prefs.get("prefer.p2rmnGx",
 				MyConst.P20_DEFAULT);
 
 		String saveVetYUpperLeftCornerRoiGels = Prefs.get("prefer.p2rmnGy",
@@ -789,8 +789,8 @@ public class p20rmn_ implements PlugIn, Measurements {
 		saveVetYUpperLeftCornerRoiGels = UtilAyv.putPos2(
 				vetYUpperLeftCornerRoiGels, Rows);
 
-		Prefs.set("prefer.p20rmnGx", saveVetXUpperLeftCornerRoiGels);
-		Prefs.set("prefer.p20rmnGy", saveVetYUpperLeftCornerRoiGels);
+		Prefs.set("prefer.p2rmnGx", saveVetXUpperLeftCornerRoiGels);
+		Prefs.set("prefer.p2rmnGy", saveVetYUpperLeftCornerRoiGels);
 
 		return vetRoi;
 	}
@@ -1017,38 +1017,38 @@ public class p20rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 
-	ResultsTable mainEchoCalculation(ImagePlus imp1, String autoArgs,
-			boolean typeT2, boolean autoCalled, boolean step, boolean verbose,
-			boolean test) {
+//	ResultsTable mainEchoCalculation(ImagePlus imp1, String autoArgs,
+//			boolean typeT2, boolean autoCalled, boolean step, boolean verbose,
+//			boolean test) {
 
-		ResultsTable rt = null;
-		boolean accetta = false;
+//		ResultsTable rt = null;
+//		boolean accetta = false;
 
-		int userSelection1 = 0;
-		int userSelection2 = 0;
-		int userSelection3 = 0;
-
-		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
-		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
-
-		int[] vetXUpperLeftCornerRoiGels = new int[MyConst.P20_N_GELS];
-		int[] vetYUpperLeftCornerRoiGels = new int[MyConst.P20_N_GELS];
-
-		String defaultVetXUpperLeftCornerRoiGels = MyConst.P20_X_ROI_TESTSIEMENS;
-		String defaultVetYUpperLeftCornerRoiGels = MyConst.P20_Y_ROI_TESTSIEMENS;
-
-		double dimPixel = 0;
-		double filtroFondo = 0;
-
-		double kMediaFiltroFondo = 3.0;
-		double kDevStFiltroFondo = 3.0;
-
-		InputOutput io = new InputOutput();
-
-		boolean retry = false;
-		AboutBox ab = new AboutBox();
-
-		int misure1 = UtilAyv.setMeasure(MEAN + STD_DEV);
+//		int userSelection1 = 0;
+//		int userSelection2 = 0;
+//		int userSelection3 = 0;
+//
+//		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
+//		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
+//
+//		int[] vetXUpperLeftCornerRoiGels = new int[MyConst.P20_N_GELS];
+//		int[] vetYUpperLeftCornerRoiGels = new int[MyConst.P20_N_GELS];
+//
+//		String defaultVetXUpperLeftCornerRoiGels = MyConst.P20_X_ROI_TESTSIEMENS;
+//		String defaultVetYUpperLeftCornerRoiGels = MyConst.P20_Y_ROI_TESTSIEMENS;
+//
+//		double dimPixel = 0;
+//		double filtroFondo = 0;
+//
+//		double kMediaFiltroFondo = 3.0;
+//		double kDevStFiltroFondo = 3.0;
+//
+//		InputOutput io = new InputOutput();
+//
+//		boolean retry = false;
+//		AboutBox ab = new AboutBox();
+//
+//		int misure1 = UtilAyv.setMeasure(MEAN + STD_DEV);
 
 		// String[][] info1 = ReportStandardInfo.getStandardInfo(strRiga3,
 		// vetPath[0], tabl, VERSION, autoCalled);
@@ -1219,9 +1219,9 @@ public class p20rmn_ implements PlugIn, Measurements {
 		 * InputOutput.deleteDir(new File(TEST_DIRECTORY)); if (autoCalled)
 		 * UtilAyv.cleanUp(); return rt;
 		 */
-		return null;
-	}
-
+//		return null;
+//	}
+//
 	/**
 	 * Saves this ResultsTable as a tab or comma delimited text file. The table
 	 * is saved as a CSV (comma-separated values) file if 'path' ends with

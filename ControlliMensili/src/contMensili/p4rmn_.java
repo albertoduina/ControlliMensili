@@ -6,6 +6,7 @@ import ij.Prefs;
 import ij.gui.ImageWindow;
 import ij.gui.Line;
 import ij.gui.OvalRoi;
+import ij.gui.Overlay;
 import ij.gui.Roi;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
@@ -167,7 +168,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 				boolean verbose = true;
 				boolean test = false;
 				boolean autoCalled = true;
-				boolean step=true;
+				boolean step = true;
 				String path1 = UtilAyv
 						.imageSelection("SELEZIONARE IMMAGINE...");
 				if (path1 == null)
@@ -279,13 +280,17 @@ public class p4rmn_ implements PlugIn, Measurements {
 		do {
 			ImagePlus imp1 = null;
 
-			imp1 = UtilAyv.openImageMaximized(path1);
+			if (verbose)
+				imp1 = UtilAyv.openImageMaximized(path1);
+			else
+				imp1 = UtilAyv.openImageNoDisplay(path1, verbose);
+
 			// l'immagine deve esere visualizzata perchè uso RoiManager
 			if (imp1 == null) {
 				MyLog.waitHere("Immagine non trovata " + path1);
 				return null;
 			}
-			
+
 			double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
 					ReadDicom.readDicomParameter(imp1,
 							MyConst.DICOM_PIXEL_SPACING), 1));
@@ -445,32 +450,46 @@ public class p4rmn_ implements PlugIn, Measurements {
 			// provo a vedere se sono in grado di sostituirmi alla macro del ROI
 			// MANAGER
 
-			RoiManager rm1 = new RoiManager();
+			// Overlay over1 = new Overlay();
+			// imp1.setOverlay(over1);
+
+			RoiManager rm1 = RoiManager.getInstance();
+			if (rm1 == null)
+				rm1 = new RoiManager();
 			imp1.setRoi(new OvalRoi(xRoi2mm, yRoi2mm, dRoi2mm, dRoi2mm));
-			Roi r1 = imp1.getRoi();
-			rm1.addRoi(r1);
+			rm1.addRoi(imp1.getRoi());
+			// over1.addElement(imp1.getRoi());
 			imp1.setRoi(new OvalRoi(xRoi1_5mm, yRoi1_5mm, dRoi1_5mm, dRoi1_5mm));
 			rm1.addRoi(imp1.getRoi());
+			// over1.addElement(imp1.getRoi());
 			imp1.setRoi(new OvalRoi(xRoi1mm, yRoi1mm, dRoi1mm, dRoi1mm));
 			rm1.addRoi(imp1.getRoi());
+			// over1.addElement(imp1.getRoi());
 			imp1.setRoi(new OvalRoi(xRoi_5mm, yRoi_5mm, dRoi_5mm, dRoi_5mm));
-			rm1.addRoi(imp1.getRoi());
+			rm1.add(imp1, imp1.getRoi(), 4);
+			// over1.addElement(imp1.getRoi());
 			imp1.setRoi(new OvalRoi(xRoi_3mm, yRoi_3mm, dRoi_3mm, dRoi_3mm));
 			rm1.addRoi(imp1.getRoi());
+			// over1.addElement(imp1.getRoi());
 			imp1.setRoi(new OvalRoi(xRoi_acqua, yRoi_acqua, dRoi_acqua,
 					dRoi_acqua));
 			rm1.addRoi(imp1.getRoi());
+			// over1.addElement(imp1.getRoi());
 			imp1.setRoi(new OvalRoi(xRoi_plexi, yRoi_plexi, dRoi_plexi,
 					dRoi_plexi));
 			rm1.addRoi(imp1.getRoi());
 
-			// if (verbose) {
-			rm1.runCommand("Combine");
+			// over1.addElement(imp1.getRoi());
+
+			if (verbose)
+				rm1.runCommand(imp1, "Combine");
 
 			if (verbose)
 				msgRefinePositioning();
 
-			rm1.runCommand("Measure");
+			rm1.runCommand(imp1, "Measure");
+
+			ResultsTable rt1 = ResultsTable.getResultsTable();
 
 			rm1.runCommand("Delete");
 
@@ -486,7 +505,6 @@ public class p4rmn_ implements PlugIn, Measurements {
 			//
 			// Display dei risultati
 			//
-			ResultsTable rt1 = Analyzer.getResultsTable();
 			rm1.close();
 
 			if (rt1 == null) {
@@ -494,10 +512,10 @@ public class p4rmn_ implements PlugIn, Measurements {
 				return null;
 			}
 
+
 			int nDati = rt1.getCounter();
 			int[][] tabValori = new int[nDati][2];
 			for (int i2 = 0; i2 < nDati; i2++) {
-
 				tabValori[i2][0] = (int) rt1.getValue("Mean", i2);
 				tabValori[i2][1] = (int) rt1.getValue("StdDev", i2);
 			}
@@ -520,7 +538,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 			// junit test of SelfTestSilent
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-					imp2, tabCodici, VERSION , autoCalled);
+					imp2, tabCodici, VERSION, autoCalled);
 
 			// put values in ResultsTable
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
@@ -531,14 +549,11 @@ public class p4rmn_ implements PlugIn, Measurements {
 			String s4 = "roi_y";
 			String s5 = "roi_b";
 			String s6 = "roi_h";
-			
-			
-			
-			
-//			rt.setHeading(++col, "roi_x");
-//			rt.setHeading(++col, "roi_y");
-//			rt.setHeading(++col, "roi_b");
-//			rt.setHeading(++col, "roi_h");
+
+			// rt.setHeading(++col, "roi_x");
+			// rt.setHeading(++col, "roi_y");
+			// rt.setHeading(++col, "roi_b");
+			// rt.setHeading(++col, "roi_h");
 			rt.addLabel(t1, "segm_riferim");
 			rt.addValue(s2, 0);
 			rt.addValue(s3, xStartRefline);

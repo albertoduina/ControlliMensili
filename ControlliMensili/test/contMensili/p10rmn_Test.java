@@ -42,11 +42,15 @@ public class p10rmn_Test {
 	public final void testDecoderLimiti() {
 
 		boolean absolute = false;
+
+		// ATTENZIONE, legge il file limiti.csv dal file jar. quindi prima di
+		// testare modufiche bisogna compilare almeno una volta
 		String[][] limiti = new InputOutput().readFile6LIKE("LIMITI.csv",
 				absolute);
-		String[] result = p10rmn_.decoderLimiti(limiti, "P10MAX");
-		String[] expected = { "P10MAX", "2000", "1000", "800", "512", "1000",
-				"1000", "1000", "1000", "1000", "1000", "1000" };
+		String[] result = p10rmn_.decoderLimiti(limiti, "DUMMY");
+		String[] expected = { "DUMMY", "101", "202", "303", "404", "505",
+				"606", "707", "808", "909", "1010", "1111" };
+
 		assertTrue(UtilAyv.compareVectors(expected, result, ""));
 	}
 
@@ -164,8 +168,8 @@ public class p10rmn_Test {
 		double by = 78.0;
 		// double prof = 20.0;
 		double out = p10rmn_.angoloRad(ax, ay, bx, by);
-		IJ.log("angoloRad= " + out + " angoloDeg= "
-				+ IJ.d2s(Math.toDegrees(out)));
+//		IJ.log("angoloRad= " + out + " angoloDeg= "
+//				+ IJ.d2s(Math.toDegrees(out)));
 		assertTrue(out == 0.6121524969450833);
 
 	}
@@ -223,7 +227,7 @@ public class p10rmn_Test {
 		int pixx = p10rmn_.countPixOverLimit(imp1, xPos, yPos, sqNEA,
 				checkPixels, test, over1);
 
-		IJ.wait(100);
+//		IJ.wait(100);
 		assertEquals(pixx, 169);
 	}
 

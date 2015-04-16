@@ -278,20 +278,23 @@ public class p6rmn_Test {
 		double[] profiE1 = new p6rmn_().createErf(profiB1, invert);
 		Plot p1 = MyPlot.basePlot(profiE1, "title", Color.red);
 		p1.show();
-		MyLog.waitHere();
+		// MyLog.waitHere();
 		double[] expectedOutput = InputOutput
-				.readDoubleArrayFromFile("./data/vet11.txt");
+				.readDoubleArrayFromFile("./data/vet21_p6.txt");
+		// MyLog.logVector(profiE1, "profiE1");
+		// MyLog.logVector(expectedOutput, "expectedOutput");
+		// MyLog.waitHere();
+
 		assertTrue(UtilAyv.compareVectors(expectedOutput, profiE1, 1e-8, ""));
 	}
 
-	
 	@Test
 	public final void testCreateErfReversed() {
 
 		double[] profiA1 = InputOutput
 				.readDoubleArrayFromFile("./data/vet10.txt");
-		double[] profiB1= UtilAyv.reverseVector(profiA1);
-		
+		double[] profiB1 = UtilAyv.reverseVector(profiA1);
+
 		Plot p2 = MyPlot.basePlot(profiB1, "title", Color.red);
 		p2.show();
 
@@ -300,11 +303,18 @@ public class p6rmn_Test {
 		double[] profiE1 = new p6rmn_().createErf(profiB1, invert);
 		Plot p1 = MyPlot.basePlot(profiE1, "title", Color.red);
 		p1.show();
-		MyLog.waitHere();
+
 		double[] expectedOutput = InputOutput
-				.readDoubleArrayFromFile("./data/vet11.txt");
+				.readDoubleArrayFromFile("./data/vet22_p6.txt");
+
+		// MyLog.logVector(expectedOutput, "expectedOutput");
+		// MyLog.waitHere();
+		// MyLog.logVector(profiE1, "profiE1");
+		// MyLog.waitHere();
+
 		assertTrue(UtilAyv.compareVectors(expectedOutput, profiE1, 1e-8, ""));
 	}
+
 	@Test
 	public final void testAnalPlot1() {
 		// test con input numerico, non dipendente da ImageJ
