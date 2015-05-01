@@ -1905,8 +1905,10 @@ public class p20rmn_ implements PlugIn, Measurements {
 	}
 
 	public static boolean msgT1T2() {
+		int preset=2;
+		int timeout=100;
 		int userSelection1 = ButtonMessages.ModelessMsg("Tipo elaborazione",
-				"immagini T2", "immagini T1");
+				"immagini T2", "immagini T1", preset, timeout);
 
 		if (userSelection1 == 2)
 			return true;

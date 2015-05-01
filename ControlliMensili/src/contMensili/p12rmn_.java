@@ -815,11 +815,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 					mean1);
 			double ghostPerc4 = ghostPercCalculation(mediaGhost4, mediaBkg,
 					mean1);
-			
-			double slicePosition = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1,
-					MyConst.DICOM_SLICE_LOCATION));
-			
 
+			double slicePosition = ReadDicom.readDouble(ReadDicom
+					.readDicomParameter(imp1, MyConst.DICOM_SLICE_LOCATION));
 
 			if (demo) {
 				ImageUtils.imageToFront(imp1);
@@ -861,36 +859,38 @@ public class p12rmn_ implements PlugIn, Measurements {
 			// in modo da evitare possibili sorprese
 			// ================================================================
 
-			if (UtilAyv.checkLimits2(mean1, minMean1, maxMean1, "mean1"))
-				abort = true;
-			if (UtilAyv.checkLimits2(noiseImaDiff, minNoiseImaDiff,
-					maxNoiseImaDiff, "noiseImaDiff"))
-				abort = true;
-			if (UtilAyv
-					.checkLimits2(snRatio, minSnRatio, maxSnRatio, "snRatio"))
-				abort = true;
-			if (UtilAyv.checkLimits2(ghostPerc1, minGhostPerc, maxGhostPerc,
-					"ghostPerc1"))
-				abort = true;
-			if (UtilAyv.checkLimits2(ghostPerc2, minGhostPerc, maxGhostPerc,
-					"ghostPerc2"))
-				abort = true;
-			if (UtilAyv.checkLimits2(ghostPerc3, minGhostPerc, maxGhostPerc,
-					"ghostPerc3"))
-				abort = true;
-			if (UtilAyv.checkLimits2(ghostPerc4, minGhostPerc, maxGhostPerc,
-					"ghostPerc4"))
-				abort = true;
-			if (UtilAyv
-					.checkLimits2(uiPerc1, minUiPerc, maxUiPerc, "maxUiPerc"))
-				abort = true;
-			if (abort) {
-				int resp = ButtonMessages
-						.ModelessMsg(
-								"Accettare il valore fuori range oppure rifare l'elaborazione in manuale",
-								"ACCETTA", "MANUALE");
-				if (resp == 1)
-					return null;
+			if (!test) {
+				if (UtilAyv.checkLimits2(mean1, minMean1, maxMean1, "mean1"))
+					abort = true;
+				if (UtilAyv.checkLimits2(noiseImaDiff, minNoiseImaDiff,
+						maxNoiseImaDiff, "noiseImaDiff"))
+					abort = true;
+				if (UtilAyv.checkLimits2(snRatio, minSnRatio, maxSnRatio,
+						"snRatio"))
+					abort = true;
+				if (UtilAyv.checkLimits2(ghostPerc1, minGhostPerc,
+						maxGhostPerc, "ghostPerc1"))
+					abort = true;
+				if (UtilAyv.checkLimits2(ghostPerc2, minGhostPerc,
+						maxGhostPerc, "ghostPerc2"))
+					abort = true;
+				if (UtilAyv.checkLimits2(ghostPerc3, minGhostPerc,
+						maxGhostPerc, "ghostPerc3"))
+					abort = true;
+				if (UtilAyv.checkLimits2(ghostPerc4, minGhostPerc,
+						maxGhostPerc, "ghostPerc4"))
+					abort = true;
+				if (UtilAyv.checkLimits2(uiPerc1, minUiPerc, maxUiPerc,
+						"maxUiPerc"))
+					abort = true;
+				if (abort) {
+					int resp = ButtonMessages
+							.ModelessMsg(
+									"Accettare il valore fuori range oppure rifare l'elaborazione in manuale",
+									"ACCETTA", "MANUALE");
+					if (resp == 1)
+						return null;
+				}
 			}
 
 			IJ.wait(MyConst.TEMPO_VISUALIZZ);
@@ -975,11 +975,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 			rt.addValue(s4, statBkg.roiY);
 			rt.addValue(s5, statBkg.roiWidth);
 			rt.addValue(s6, statBkg.roiHeight);
-			
+
 			rt.incrementCounter();
 			rt.addLabel(t1, "Pos");
 			rt.addValue(s2, slicePosition);
-
 
 			String[] levelString = { "+20%", "+10%", "-10%", "-20%", "-30%",
 					"-40%", "-50%", "-60%", "-70%", "-80%", "-90%", "fondo" };

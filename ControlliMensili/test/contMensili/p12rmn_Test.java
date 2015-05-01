@@ -147,19 +147,22 @@ public class p12rmn_Test {
 		boolean fast = false;
 		double maxFitError = 5;
 		double maxBubbleGapLimit = 2;
-		int timeout = 2000;
+		int timeout = 100;
 
 		double out2[] = p12rmn_.positionSearch11(imp11, maxFitError,
 				maxBubbleGapLimit, "", autoCalled, step, demo, test, fast,
 				timeout);
 
 		// MyLog.logVector(out2, "out2");
-		// MyLog.waitHere();
 
 		// 127.0, 116.0, 174.0, 127.0, 116.0, 155.0
 		// 126.0, 115.0, 173.0, 126.0, 115.0, 154.0
-		double[] expected = { 127.0, 116.0, 174.0, 127.0, 116.0, 155.0 };
+
+		// 141.0, 130.0, 203.0, 141.0, 130.0, 181.0,
+		double[] expected = { 141.0, 130.0, 203.0, 141.0, 130.0, 181.0 };
 		// MyLog.logVector(expected, "expected");
+		// MyLog.waitHere();
+
 		boolean ok = UtilAyv.compareVectors(out2, expected, 0.001, "");
 		assertTrue(ok);
 
@@ -211,7 +214,7 @@ public class p12rmn_Test {
 		boolean test = false;
 		boolean fast = true;
 		double maxFitError = 10;
-		int timeout = 2000;
+		int timeout = 100;
 
 		double maxBubbleGapLimit = 2;
 		String info1 = "";

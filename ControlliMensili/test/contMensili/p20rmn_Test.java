@@ -37,7 +37,11 @@ public class p20rmn_Test {
 	@Test
 	public final void testMsgT1T2Test() {
 		boolean T2 = p20rmn_.msgT1T2();
-		MyLog.waitHere("T2= " + T2);
+		boolean debug=true;
+		int timeout=100;
+		
+		MyLog.waitHere("T2= ", debug, timeout);
+
 
 	}
 
