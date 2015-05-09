@@ -122,7 +122,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		if (IJ.versionLessThan("1.43k"))
 			return;
 
-		MyFileLogger.logger.info("p11rmn_rmn_>>> fileDir = " + fileDir);
+		// MyFileLogger.logger.info("p11rmn_rmn_>>> fileDir = " + fileDir);
 
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
@@ -1755,7 +1755,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			// MyLog.waitHere(info10
 			// + "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI", debug);
 
-		//	MyLog.waitHere(info10 + "\n \n" + listaMessaggi(0), debug);
+			// MyLog.waitHere(info10 + "\n \n" + listaMessaggi(0), debug);
 
 			manualRequired = false;
 		}

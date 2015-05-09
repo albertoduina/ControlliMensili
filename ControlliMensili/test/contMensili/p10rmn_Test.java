@@ -91,7 +91,7 @@ public class p10rmn_Test {
 		boolean test = false;
 		double profond = 30;
 		boolean fast = true;
-		boolean silent = false;
+		boolean silent = true;
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
 				"info10", autoCalled, step, verbose, test, fast, silent);
 
@@ -133,18 +133,26 @@ public class p10rmn_Test {
 
 		String path1 = "./Test2/C001_testP10";
 
+//		String path1 = "./Test2/FAULT_P10";
+
 		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
 
 		boolean autoCalled = false;
-		boolean step = false;
+		boolean step = true;
 		boolean verbose = true;
 		boolean test = false;
-		boolean fast = true;
+		boolean fast = false;
 		double profond = 30;
 		double out2[] = p10rmn_.positionSearch(imp11, profond, "", autoCalled,
 				step, verbose, test, fast);
 		double[] expected = { 158.5, 105.5, 119.0, 134.0, 196.0, 78.0,
-				36.40877456777236, 199.87360843031885, 75.18283023249538, 201.0 };
+				36.40877456777236, 199.87360843031885, 75.18283023249538, 200.0 };
+		
+//		MyLog.logVector(out2, "out2");
+//		MyLog.logVector(expected, "expected");
+//		MyLog.waitHere();
+		
+		
 		assertTrue(UtilAyv.compareVectors(expected, out2, 1e-12, ""));
 	}
 
@@ -168,8 +176,8 @@ public class p10rmn_Test {
 		double by = 78.0;
 		// double prof = 20.0;
 		double out = p10rmn_.angoloRad(ax, ay, bx, by);
-//		IJ.log("angoloRad= " + out + " angoloDeg= "
-//				+ IJ.d2s(Math.toDegrees(out)));
+		// IJ.log("angoloRad= " + out + " angoloDeg= "
+		// + IJ.d2s(Math.toDegrees(out)));
 		assertTrue(out == 0.6121524969450833);
 
 	}
@@ -227,7 +235,7 @@ public class p10rmn_Test {
 		int pixx = p10rmn_.countPixOverLimit(imp1, xPos, yPos, sqNEA,
 				checkPixels, test, over1);
 
-//		IJ.wait(100);
+		// IJ.wait(100);
 		assertEquals(pixx, 169);
 	}
 

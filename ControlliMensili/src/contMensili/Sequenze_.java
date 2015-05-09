@@ -94,7 +94,7 @@ public class Sequenze_ implements PlugIn {
 			return;
 		}
 	
-		MyFileLogger.logger.info("<-- INIZIO Sequenze -->");
+//		MyFileLogger.logger.info("<-- INIZIO Sequenze -->");
 		TextWindow tw = new TextWindow("Sequenze", "<-- INIZIO Sequenze -->", 300,200);
 		Frame lw = WindowManager.getFrame("Sequenze");
 		if (lw == null)
@@ -121,8 +121,8 @@ public class Sequenze_ implements PlugIn {
 		// }
 		String startingDir = Prefs.get(MyConst.PREFERENCES_1,
 				MyConst.DEFAULT_PATH);
-		MyFileLogger.logger.info("Sequenze_>>> startingDir letta= "
-				+ startingDir);
+//		MyFileLogger.logger.info("Sequenze_>>> startingDir letta= "
+//				+ startingDir);
 	
 		UtilAyv.logResizer();
 	
@@ -906,9 +906,9 @@ public class Sequenze_ implements PlugIn {
 					// .getImaGroup(tableSequenze5, j1));
 					int numImaGruppo = 0;
 
-					MyFileLogger.logger.info("<<< RIGA " + j1 + " / "
-							+ tableSequenze5.length + " " + theCode + " "
-							+ theCoil + " >>>");
+//					MyFileLogger.logger.info("<<< RIGA " + j1 + " / "
+//							+ tableSequenze5.length + " " + theCode + " "
+//							+ theCoil + " >>>");
 					tw.append("<<< RIGA " + j1 + " / "
 							+ tableSequenze5.length + " " + theCode + " "
 							+ theCoil + " >>>");
@@ -919,22 +919,22 @@ public class Sequenze_ implements PlugIn {
 						j1++;
 					} else {
 						if (numImaGruppo == 0) {
-							MyFileLogger.logger
-									.info("Sequenze.callPluginFromSequenceTable >>> plugin= "
-											+ plugin
-											+ " argomento= "
-											+ argomento);
+//							MyFileLogger.logger
+//									.info("Sequenze.callPluginFromSequenceTable >>> plugin= "
+//											+ plugin
+//											+ " argomento= "
+//											+ argomento);
 
 							pluginRunner(plugin, argomento, test);
 							vetPlugin.add(plugin);
 							vetArgomento.add(argomento);
 							j1 = j1 + numImaDaPassare;
 						} else {
-							MyFileLogger.logger
-									.info("Sequenze.callPluginFromSequenceTable >>> plugin= "
-											+ plugin
-											+ " argomento= "
-											+ argomento);
+//							MyFileLogger.logger
+//									.info("Sequenze.callPluginFromSequenceTable >>> plugin= "
+//											+ plugin
+//											+ " argomento= "
+//											+ argomento);
 
 							pluginRunner(plugin, argomento, test);
 							vetPlugin.add(plugin);
