@@ -144,9 +144,11 @@ public class p10rmn_Test {
 		boolean fast = false;
 		double profond = 30;
 		double out2[] = p10rmn_.positionSearch(imp11, profond, "", autoCalled,
-				step, verbose, test, fast);
-		double[] expected = { 158.5, 105.5, 119.0, 134.0, 196.0, 78.0,
-				36.40877456777236, 199.87360843031885, 75.18283023249538, 200.0 };
+				step, verbose, test, fast,0);
+		
+		
+		
+		double[] expected = { 157.5,  104.5,  118.0,  133.0,  196.0,  78.0,  35.60453398043311,  199.7258133880469,  75.37282389304386,  200.0,  };
 		
 //		MyLog.logVector(out2, "out2");
 //		MyLog.logVector(expected, "expected");
