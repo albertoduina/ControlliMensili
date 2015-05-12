@@ -216,7 +216,7 @@ A12S_;SpinEcho BODY ARRAY B2;4;4;0;BO2;hdx;30;p11rmn_
 A12F_;Flash BODY ARRAY B2;4;4;0;BO2;hdx;30;p11rmn_
 B12S_;SpinEcho BODY ARRAY B1;4;4;0;BO1;hdx;30;p11rmn_
 B12F_;Flash BODY ARRAY B1;4;4;0;BO1;hdx;30;p11rmn_
-B12S_;SpinEcho BODY ARRAY B2;4;4;0;BO2;hdx;30;p11rmn_ 
+B12S_;SpinEcho BODY ARRAY B2;4;4;0;BO2;hdx;30;p11rmn_
 B12F_;Flash BODY ARRAY B2;4;4;0;BO2;hdx;30;p11rmn_
 //;;;;;;;;
 // BODY ARRAY AERA SAVE UNCOMBINED;;;;;;;;

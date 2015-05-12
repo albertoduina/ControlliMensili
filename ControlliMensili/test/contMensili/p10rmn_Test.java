@@ -93,11 +93,13 @@ public class p10rmn_Test {
 		boolean fast = true;
 		boolean silent = true;
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"info10", autoCalled, step, verbose, test, fast, silent);
+				"info10", autoCalled, step, verbose, test, fast, silent, 100);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-		double[] vetReference = p10rmn_.referenceSiemens();
-		assertTrue(UtilAyv.compareVectors(vetResults, vetReference, 1e-12, ""));
+		double[] vetExpected = p10rmn_.referenceSiemens();
+
+
+		assertTrue(UtilAyv.compareVectors(vetResults, vetExpected, 1e-12, ""));
 	}
 
 	@Test
@@ -118,9 +120,10 @@ public class p10rmn_Test {
 		double profond = 30;
 		boolean fast = true;
 		boolean silent = false;
+		int timeout=100;
 
 		p10rmn_.mainUnifor(path1, path2, autoArgs, profond, "info10",
-				autoCalled, step, verbose, test, fast, silent);
+				autoCalled, step, verbose, test, fast, silent, 100);
 		// in questo caso l'unica cosa che viene testata è l'intervento manuale.
 		// Poichè il posizionamento dipende dall'occhio dell'operatore
 		// non posso fare una verifica dei risultati ottenuti.
@@ -133,9 +136,10 @@ public class p10rmn_Test {
 
 		String path1 = "./Test2/C001_testP10";
 
-//		String path1 = "./Test2/FAULT_P10";
+		// String path1 = "./Test2/FAULT_P10";
 
-		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+		// ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+		ImagePlus imp11 = UtilAyv.openImageMaximized(path1);
 
 		boolean autoCalled = false;
 		boolean step = true;
@@ -144,17 +148,15 @@ public class p10rmn_Test {
 		boolean fast = false;
 		double profond = 30;
 		double out2[] = p10rmn_.positionSearch(imp11, profond, "", autoCalled,
-				step, verbose, test, fast,0);
-		
-		
-		
-		double[] expected = { 157.5,  104.5,  118.0,  133.0,  196.0,  78.0,  35.60453398043311,  199.7258133880469,  75.37282389304386,  200.0,  };
-		
-//		MyLog.logVector(out2, "out2");
-//		MyLog.logVector(expected, "expected");
-//		MyLog.waitHere();
-		
-		
+				step, verbose, test, fast, 100);
+
+		double[] expected = { 157.5, 104.5, 118.0, 133.0, 196.0, 78.0,
+				35.60453398043311, 199.7258133880469, 75.37282389304386, 200.0, };
+
+		// MyLog.logVector(out2, "out2");
+		// MyLog.logVector(expected, "expected");
+		// MyLog.waitHere();
+
 		assertTrue(UtilAyv.compareVectors(expected, out2, 1e-12, ""));
 	}
 

@@ -221,7 +221,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				double profond = 30;
 				boolean silent = false;
 				mainUnifor(path1, path2, "0", profond, "", autoCalled, step,
-						verbose, test, fast, silent);
+						verbose, test, fast, silent,0);
 
 				UtilAyv.afterWork();
 				retry = true;
@@ -310,7 +310,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// + TableSequence.getLength(iw2ayvTable));
 
 			ResultsTable rt = mainUnifor(path1, path2, autoArgs, profond,
-					info10, autoCalled, step, verbose, test, fast, silent);
+					info10, autoCalled, step, verbose, test, fast, silent,0);
 			if (rt == null)
 				MyLog.waitHere("ResultsTable == null");
 
@@ -352,7 +352,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 					ResultsTable rt = mainUnifor(path1, path2, autoArgs,
 							profond, info10, autoCalled, step, verbose, test,
-							fast, silent);
+							fast, silent,0);
 
 					UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 
@@ -393,7 +393,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	public static ResultsTable mainUnifor(String path1, String path2,
 			String autoArgs, double profond, String info10, boolean autoCalled,
 			boolean step, boolean verbose, boolean test, boolean fast,
-			boolean silent) {
+			boolean silent, int timeout) {
 
 		boolean accetta = false;
 		boolean abort = false;
@@ -696,6 +696,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			ImageStatistics statImaDiff = impDiff.getStatistics();
 			if (impDiff.isVisible())
 				ImageUtils.imageToFront(impDiff);
+			MyLog.waitHere("impDiff to front");
 
 			if (step)
 				MyLog.waitHere(listaMessaggi(33), debug);
@@ -732,6 +733,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 					* prelimImageNoiseEstimate_7x7;
 			int area11x11 = MyConst.P10_NEA_11X11_PIXEL
 					* MyConst.P10_NEA_11X11_PIXEL;
+			
+			
+			area11x11= 2000;
 			int enlarge = 0;
 			int pixx = 0;
 
@@ -747,15 +751,15 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp1.updateAndDraw();
 
 				// imp1.getWindow().toFront();
-				if (step)
-					MyLog.waitHere(listaMessaggi(25));
+//				if (step)
+//					MyLog.waitHere(listaMessaggi(25));
 
 				if (pixx < area11x11) {
 					sqNEA = sqNEA + 2; // accrescimento area
 					enlarge = enlarge + 1;
 				}
-				if (step)
-					MyLog.waitHere(listaMessaggi(35) + sqNEA, debug);
+//				if (step)
+//					MyLog.waitHere(listaMessaggi(35) + sqNEA, debug);
 
 				// verifico che quando cresce il lato del quadrato non si
 				// esca
@@ -839,8 +843,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			//
 			// calcolo posizione fwhm a metà della MROI
 			//
-
-			ImageUtils.imageToFront(iw1);
+			
+			ImageUtils.imageToFront(iw1.getImagePlus());
 
 			//
 			// ----------------------------------------------------------
@@ -1085,7 +1089,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean silent = true;
 
 		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, profond, "",
-				autoCalled, step, verbose, test, fast, silent);
+				autoCalled, step, verbose, test, fast, silent,0);
 
 		rt1.show("Results");
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
@@ -1103,30 +1107,31 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 */
 	public static double[] referenceSiemens() {
 
-		// 0.0, 354.16326530612247, 10.224592241325686, 34.638375491852656,
-		// 24.309816136913373, 12.4375, 2818.0, 1526.0, 7834.0, 2607.0, 2568.0,
-		// 2672.0, 2969.0, 3388.0, 3229.0, 1768.0, 341.0, 33816.0,
+
+		// 0.0, 355.6938775510204, 10.063527551353923, 35.3448505741077,
+		// 24.264691013919478, 12.4375, 0.0, 2763.0, 1478.0, 7761.0, 2712.0,
+		// ,
 
 		double simul = 0.0;
-		double signal = 354.16326530612247;
+		double signal = 355.6938775510204;
 		// double backNoise = 12.225;
-		double backNoise = 10.224592241325686;
-		double snRatio = 34.638375491852656;
+		double backNoise = 10.063527551353923;
+		double snRatio = 35.3448505741077;
 		// double fwhm = 11.43429317989865;
-		double fwhm = 24.309816136913373;
+		double fwhm = 24.264691013919478;
 		double bkg = 12.4375;
 		double pos = 0.0;
-		double num1 = 2818.0;
-		double num2 = 1526.0;
-		double num3 = 7834.0;
-		double num4 = 2607.0;
-		double num5 = 2568.0;
-		double num6 = 2672.0;
-		double num7 = 2969.0;
-		double num8 = 3388.0;
-		double num9 = 3229.0;
-		double num10 = 1768.0;
-		double num11 = 341.0;
+		double num1 = 2763.0;
+		double num2 = 1478.0;
+		double num3 = 7761.0;
+		double num4 = 2712.0;
+		double num5 = 2574.0;
+		double num6 = 2652.0;
+		double num7 = 3054.0;
+		double num8 = 3284.0;
+		double num9 = 3333.0;
+		double num10 = 1755.0;
+		double num11 = 354.0;
 		double num12 = 33816.0;
 
 		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, bkg,
@@ -1571,14 +1576,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			String title, boolean showProfiles, boolean vertical, int timeout) {
 
 		// MyLog.waitHere("showProfiles= " + showProfiles);
-		double[][] profi3 = MyLine.decomposer(imp1);
 
-		// for (int i1 = 0; i1 < profi3[0].length; i1++) {
-		// IJ.log("" + profi3[0][i1] + ";" + profi3[1][i1] + ";"
-		// + profi3[2][i1]);
-		// }
-		//
-		// MyLog.waitHere();
+		double[][] profi3 = MyLine.decomposer(imp1);
 
 		double[] vetz = new double[profi3[0].length];
 		for (int i1 = 0; i1 < profi3[0].length; i1++) {
@@ -1622,17 +1621,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 			zPoints[i1] = peaks1[2][i1];
 		}
 
-		// MyLog.logVector(xPoints, "xPoints");
-		// MyLog.logVector(yPoints, "yPoints");
-		// MyLog.logVector(zPoints, "zPoints");
-		// IJ.log("limit= "+limit);
-		// MyLog.waitHere();
-
 		if (showProfiles) {
 			Plot plot2 = MyPlot.basePlot2(profi3, title, Color.GREEN, vertical);
 			plot2.draw();
 			plot2.setColor(Color.red);
-			plot2.addPoints(xPoints, zPoints, PlotWindow.CIRCLE);
+			if (vertical)
+				plot2.addPoints(yPoints, zPoints, PlotWindow.CIRCLE);
+			else
+				plot2.addPoints(xPoints, zPoints, PlotWindow.CIRCLE);
 			plot2.show();
 
 			Frame lw = WindowManager.getFrame(title);
@@ -1641,7 +1637,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			MyLog.waitHere(listaMessaggi(5), debug, timeout);
 
-			// new WaitForUserDialog("002 premere  OK").show();
 		}
 
 		if (WindowManager.getFrame(title) != null) {
@@ -1753,7 +1748,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 								MyConst.DICOM_PIXEL_SPACING), 1));
 
 		ImageWindow iw11 = null;
-		if (demo)
+		if (demo || step)
 			iw11 = imp11.getWindow();
 
 		int width = imp11.getWidth();
@@ -1854,7 +1849,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		int[] xPoints3 = null;
 		int[] yPoints3 = null;
-
+		boolean vertical = false;
 		for (int i1 = 0; i1 < 8; i1++) {
 
 			xcoord[0] = vetx0[i1];
@@ -1866,9 +1861,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp12.updateAndDraw();
 				over12.addElement(imp12.getRoi());
 			}
-			boolean vertical = false;
+
 			if (i1 == 1)
 				vertical = true;
+			else
+				vertical = false;
 			myPeaks = profileAnalyzer(imp12, dimPixel, vetTitle[i1],
 					showProfiles, vertical, timeout);
 
@@ -1894,29 +1891,34 @@ public class p10rmn_ implements PlugIn, Measurements {
 			}
 
 			if (myPeaks != null || step) {
-				MyLog.logMatrix(myPeaks, "myPeaks");
-				
-				ImageUtils.plotPoints(imp12, over12, myPeaks, vertical);
-				imp12.updateAndDraw();
-				if (test)
-					MyLog.waitHere("BISETTRICE " + vetTitle[i1]);
 
+				ImageUtils.plotPoints(imp12, over12, myPeaks);
+				imp12.updateAndDraw();
+				if (test && step)
+					MyLog.waitHere("BISETTRICE " + vetTitle[i1]);
 			}
 
-			// ora devo compattare i vettori myXpoints e myYpoints
-			xPoints3 = new int[count];
-			yPoints3 = new int[count];
+			// ora devo compattare i vettori myXpoints e myYpoints, ovviamente a
+			// patto che count >=0;
 
-			for (int i3 = 0; i3 < count; i3++) {
-				xPoints3[i3] = myXpoints[i3];
-				yPoints3[i3] = myYpoints[i3];
+			if (count >= 0) {
+				xPoints3 = new int[count];
+				yPoints3 = new int[count];
+
+				for (int i3 = 0; i3 < count; i3++) {
+					xPoints3[i3] = myXpoints[i3];
+					yPoints3[i3] = myYpoints[i3];
+				}
+			} else {
+				xPoints3 = null;
+				yPoints3 = null;
 			}
 		}
 
 		// --------------------------------------------
-		if (demo) {
-			MyLog.waitHere(listaMessaggi(12), debug, timeout);
-		}
+		// if (demo) {
+		// MyLog.waitHere(listaMessaggi(12), debug, timeout);
+		// }
 		// --------------------------------------------
 
 		over12.clear();
@@ -1928,7 +1930,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		if (xPoints3.length < 3 || test) {
 			UtilAyv.showImageMaximized(imp11);
-			MyLog.waitHere(listaMessaggi(19), debug);
+			
+			
+//			MyLog.waitHere(listaMessaggi(19), debug);
 			manual = true;
 		}
 
@@ -2025,24 +2029,31 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		} else {
 			// NON SI SONO DETERMINATI 3 PUNTI DEL CERCHIO, SELEZIONE MANUALE
-			// MyLog.waitHere("MANUAL");
+			Rectangle boundRec1 = null;
+			Rectangle boundRec2 = null;
 
 			if (!test)
 				fast = false;
-			UtilAyv.showImageMaximized(imp12);
-			UtilAyv.showImageMaximized(imp11);
-			ImageUtils.imageToFront(iw11);
+		
+			if (! imp11.isVisible())
+				UtilAyv.showImageMaximized(imp11);
+//			UtilAyv.showImageMaximized(imp11);
+//			ImageUtils.imageToFront(iw11);
 			imp11.setRoi(new OvalRoi((width / 2) - 100, (height / 2) - 100,
 					200, 200));
-			Rectangle boundRec1 = null;
-			Rectangle boundRec2 = null;
+			imp11.updateAndDraw();
 			boundRec1 = imp11.getProcessor().getRoi();
-			if (!test)
-				MyLog.waitHere(listaMessaggi(19), debug);
-			// OBBLIGO A CAMBIARE QUALCOSA PER PREVENIRE L'OK "DA SUMMIA"
+			
+			
+			MyLog.waitHere(listaMessaggi(19), debug);
+
+			// OBBLIGO A CAMBIARE QUALCOSA PER PREVENIRE L'OK "SCIMMIA"
+			if (timeout>0) imp11.setRoi(new OvalRoi((width / 2) - 101, (height / 2) - 100,
+					200, 200));
+
 			boundRec2 = imp11.getProcessor().getRoi();
 
-			while (boundRec1.equals(boundRec2) && (!test)) {
+			while (boundRec1.equals(boundRec2)) {
 				MyLog.waitHere(listaMessaggi(40), debug);
 				boundRec2 = imp11.getProcessor().getRoi();
 			}
@@ -2056,16 +2067,18 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// ==========================================================================
 		// ==========================================================================
 		// porto in primo piano l'immagine originale
-		ImageUtils.imageToFront(iw11);
+		ImageUtils.imageToFront(iw11.getImagePlus());
 		// ==========================================================================
 		// ==========================================================================
 		imp11.setOverlay(over12);
+
 		Rectangle boundRec = null;
 		if (manual)
 			boundRec = imp11.getProcessor().getRoi();
 		else
 			boundRec = imp12.getProcessor().getRoi();
 
+		imp12.close();
 		// x1 ed y1 sono le due coordinate del centro
 
 		xCenterCircle = boundRec.x + boundRec.width / 2;
@@ -2086,7 +2099,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double[] out10 = MyFilter.maxPosition11x11(imp11);
 		xMaxima = out10[0];
 		yMaxima = out10[1];
-		over12.clear();
+
+		// over12.clear();
 
 		if (verbose) {
 			MyCircleDetector.drawCenter(imp11, over12, (int) xMaxima,
@@ -2188,7 +2202,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		if (!fast && !test || fast && manual) {
 
-			ImageUtils.imageToFront(iw11);
+			ImageUtils.imageToFront(iw11.getImagePlus());
 
 			// UtilAyv.showImageMaximized(imp11);
 			imp11.setOverlay(over12);
