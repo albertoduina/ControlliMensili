@@ -101,7 +101,7 @@ public class Sequenze_ implements PlugIn {
 			return;
 		lw.setLocation(10, 10);
 	
-	
+		/// ABBANDONATO EXCEL WRITER
 		// new InputOutput().findCSV(MyConst.CODE_FILE);
 		// new InputOutput().findCSV(MyConst.LIMITS_FILE);
 		// new InputOutput().findCSV(MyConst.EXPAND_FILE);
@@ -119,6 +119,9 @@ public class Sequenze_ implements PlugIn {
 		// IJ.error("ATTENZIONE, manca il file Excel_Writer.jar");
 		// return;
 		// }
+		
+		
+		
 		String startingDir = Prefs.get(MyConst.PREFERENCES_1,
 				MyConst.DEFAULT_PATH);
 //		MyFileLogger.logger.info("Sequenze_>>> startingDir letta= "
@@ -924,6 +927,9 @@ public class Sequenze_ implements PlugIn {
 //											+ plugin
 //											+ " argomento= "
 //											+ argomento);
+							
+							
+// TODO MA CHE VUOL DIRE, SONO ESATTAMENTE DUE CASI UGUALI UGUALI							
 
 							pluginRunner(plugin, argomento, test);
 							vetPlugin.add(plugin);

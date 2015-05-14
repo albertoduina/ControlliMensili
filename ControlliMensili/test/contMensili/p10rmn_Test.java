@@ -98,6 +98,9 @@ public class p10rmn_Test {
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		double[] vetExpected = p10rmn_.referenceSiemens();
 
+		// MyLog.logVector(vetResults, "vetResults");
+		// MyLog.logVector(vetExpected, "vetExpected");
+		// MyLog.waitHere();
 
 		assertTrue(UtilAyv.compareVectors(vetResults, vetExpected, 1e-12, ""));
 	}
@@ -120,7 +123,7 @@ public class p10rmn_Test {
 		double profond = 30;
 		boolean fast = true;
 		boolean silent = false;
-		int timeout=100;
+		int timeout = 100;
 
 		p10rmn_.mainUnifor(path1, path2, autoArgs, profond, "info10",
 				autoCalled, step, verbose, test, fast, silent, 100);

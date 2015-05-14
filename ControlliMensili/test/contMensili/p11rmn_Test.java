@@ -43,8 +43,9 @@ public class p11rmn_Test {
 		double profond = 30.0;
 		boolean fast = true;
 		boolean silent = false;
+		int timeout=100;
 		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, verticalDir,
-				profond, "", autoCalled, step, verbose, test, fast, silent);
+				profond, "", autoCalled, step, verbose, test, fast, silent, timeout);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		// MyLog.waitHere();
 		// MyLog.logVector(vetResults, "vetResults");
@@ -77,32 +78,6 @@ public class p11rmn_Test {
 	}
 
 	@Test
-	public final void testVerifyBackgroundSquareRoiPixels() {
-
-		ImagePlus imp1 = UtilAyv.openImageMaximized(".\\Test2\\S1SA_01testP11");
-		int xRoi = 20;
-		int yRoi = 20;
-		int diamRoi = 20;
-		boolean test = false;
-		boolean demo = true;
-		int incr = 0;
-		int px = 0;
-		int py = 0;
-		int height = imp1.getHeight();
-		int diamGhost = 20;
-		boolean ok = false;
-		do {
-			incr++;
-			px = xRoi + diamGhost;
-			py = yRoi + diamGhost + incr;
-			imp1.setRoi(px, py, diamGhost, diamGhost);
-			ok = p11rmn_.verifyBackgroundSquareRoiPixels(imp1, px, py, diamRoi,
-					test, demo);
-		} while (ok && (py < (height - diamRoi)));
-		assertFalse(ok);
-	}
-
-	@Test
 	public final void testOverlayGrid() {
 
 		ImagePlus imp1 = UtilAyv.openImageMaximized(".\\Test2\\S1SA_01testP11");
@@ -112,15 +87,15 @@ public class p11rmn_Test {
 
 	}
 
-	@Test
-	public final void testMaxPeakSearch() {
-
-		String path = InputOutput.findResource("002.txt");
-		double[] profile1 = InputOutput.readDoubleArrayFromFile(path);
-		double[] out = p11rmn_.maxPeakSearch(profile1);
-		double[] expected = { 96.0, 531.1009869960047 };
-		assertTrue(UtilAyv.compareVectors(expected, out, 1e-12, ""));
-	}
+//	@Test
+//	public final void testMaxPeakSearch() {
+//
+//		String path = InputOutput.findResource("002.txt");
+//		double[] profile1 = InputOutput.readDoubleArrayFromFile(path);
+//		double[] out = p11rmn_.maxPeakSearch(profile1);
+//		double[] expected = { 96.0, 531.1009869960047 };
+//		assertTrue(UtilAyv.compareVectors(expected, out, 1e-12, ""));
+//	}
 
 	@Test
 	public final void testPositionSearch() {
@@ -130,16 +105,17 @@ public class p11rmn_Test {
 		boolean autoCalled = false;
 		int verticalDir = 3;
 		double profond = 30.0;
-		boolean step = false;
-		boolean verbose = false;
-		boolean test = false;
-		boolean fast = true;
+		boolean step = true;
+		boolean verbose = true;
+		boolean test = true;
+		boolean fast = false;
 		boolean silent = false;
+		int timeout=0;
 		String path1 = "./Test2/S12S_01testP11";
 //		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, true);
 		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, true);
 		double[] out = p11rmn_.positionSearch(imp1, autoCalled, verticalDir,
-				profond, "STRINGA", step, verbose, test, fast, silent);
+				profond, "TestPositionSearch", step, verbose, test, fast, silent, timeout);
 		double[] expected = { 164.0, 172.0, 164.05714285714285, 0.0,
 				164.05714285714285, 256.0, 186.0, 169.0 };
 		assertTrue(UtilAyv.compareVectors(expected, out, 1e-12, ""));

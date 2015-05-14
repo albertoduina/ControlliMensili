@@ -34,6 +34,7 @@ import utils.InputOutput;
 import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyFilter;
+import utils.MyFwhm;
 import utils.MyLog;
 import utils.MyMsg;
 import utils.MyPlot;
@@ -136,6 +137,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	public int manualMenu(int preset, String testDirectory) {
 		boolean retry = false;
 		boolean step = false;
+		int timeout = 0;
 		do {
 			int userSelection1 = UtilAyv.userSelectionManual(VERSION, TYPE);
 			switch (userSelection1) {
@@ -181,7 +183,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				boolean fast = false;
 				boolean silent = false;
 				ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond,
-						"", autoCalled, step, verbose, test, fast, silent);
+						"", autoCalled, step, verbose, test, fast, silent, 0);
 				if (rt1 == null)
 					return 0;
 
@@ -274,7 +276,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					+ TableSequence.getLength(iw2ayvTable);
 
 			ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond,
-					info11, autoCalled, step, verbose, test, fast, silent);
+					info11, autoCalled, step, verbose, test, fast, silent, 0);
 			if (rt1 == null)
 				return 0;
 
@@ -315,7 +317,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					boolean silent = false;
 					ResultsTable rt1 = mainUnifor(path1, path2, direzione,
 							profond, "", autoCalled, step, verbose, test, fast,
-							false);
+							false, 0);
 					if (rt1 == null)
 						return 0;
 
@@ -335,7 +337,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	public static ResultsTable mainUnifor(String path1, String path2,
 			int direzione, double profond, String info10, boolean autoCalled,
 			boolean step, boolean verbose, boolean test, boolean fast,
-			boolean silent) {
+			boolean silent, int timeout) {
 		boolean accetta = false;
 		boolean manualRequired2 = false;
 		ResultsTable rt = null;
@@ -356,7 +358,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 			fast2 = fast && !manualRequired2;
 
 			double out2[] = positionSearch(imp11, autoCalled, direzione,
-					profond, info10, step, verbose, test, fast2, silent);
+					profond, info10, step, verbose, test, fast2, silent,
+					timeout);
 
 			if (out2 == null) {
 				manualRequired2 = true;
@@ -544,12 +547,14 @@ public class p11rmn_ implements PlugIn, Measurements {
 				//
 				ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
 				// ImagePlus imaDiff = UtilAyv.diffIma(imp1, imp2);
-				if (!silent)
-					imaDiff.show();
+				if (!silent) {
+					UtilAyv.showImageMaximized(imaDiff);
+					ImageUtils.imageToFront(imaDiff);
+				}
 
 				if (verbose && !fast) {
 					UtilAyv.showImageMaximized(imaDiff);
-					// imp1.getWindow().toFront();
+					ImageUtils.imageToFront(imaDiff);
 				}
 
 				imaDiff.resetDisplayRange();
@@ -584,7 +589,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				//
 
 				if (imp1.isVisible())
-					imp1.getWindow().toFront();
+					ImageUtils.imageToFront(imp1);
 				if (imaDiff.isVisible())
 					imaDiff.hide();
 
@@ -673,7 +678,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				imp1.updateAndDraw();
 
 				if (imp1.isVisible())
-					imp1.getWindow().toFront();
+					ImageUtils.imageToFront(imp1);
 				//
 				// calcolo SD su imaDiff quando i corrispondenti pixel
 				// di imp1 passano il test
@@ -726,7 +731,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				// calcolo posizione fwhm a metà della MROI
 				//
 				if (imp1.isVisible())
-					imp1.getWindow().toFront();
+					ImageUtils.imageToFront(imp1);
 				int xStartProfile = 0;
 				int yStartProfile = 0;
 				int xEndProfile = 0;
@@ -987,7 +992,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		boolean fast = true;
 		boolean silent = false;
 		ResultsTable rt1 = mainUnifor(path1, path2, verticalDir, profond, "",
-				autoCalled, step, verbose, test, fast, silent);
+				autoCalled, step, verbose, test, fast, silent, 0);
 		if (rt1 == null) {
 			MyLog.waitHere("rt1==null");
 			return false;
@@ -1021,7 +1026,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		int verticalDir = 3;
 		double profond = 30.0;
 		ResultsTable rt1 = mainUnifor(path1, path2, verticalDir, profond, "",
-				autoCalled, step, verbose, test, fast, silent);
+				autoCalled, step, verbose, test, fast, silent, 0);
 		if (rt1 == null)
 			return false;
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
@@ -1220,11 +1225,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		int vetHalfPoint[];
 		double[] outFwhm;
-		vetHalfPoint = halfPointSearch(profi1);
-		outFwhm = calcFwhm(vetHalfPoint, profi1, dimPixel);
+		vetHalfPoint = MyFwhm.halfPointSearch(profi1);
+		outFwhm = MyFwhm
+				.calcFwhm(vetHalfPoint, profi1, dimPixel, "FWHM", false);
 		if (step)
 
-			createPlot(profi1, true, true); // plot della fwhm
+			createPlotP11(profi1, true, true); // plot della fwhm
 		if (step)
 			ButtonMessages.ModelessMsg("Continuare?   <51>", "CONTINUA");
 		return (outFwhm);
@@ -1241,43 +1247,43 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * @return out[0]=FWHM, out[1]=peak position
 	 */
 
-	private static double[] calcFwhm(int[] vetUpDwPoints, double profile[],
-			double dimPixel) {
-
-		// MyLog.logVector(vetUpDwPoints, "vetUpDwPoints");
-
-		double peak = 0;
-		double[] a = Tools.getMinMax(profile);
-		double min = a[0];
-		double max = a[1];
-		// interpolazione lineare sinistra
-		double px0 = vetUpDwPoints[0];
-		double px1 = vetUpDwPoints[1];
-		double px2;
-		double py0 = profile[vetUpDwPoints[0]];
-		double py1 = profile[vetUpDwPoints[1]];
-		double py2 = (max - min) / 2.0 + min;
-		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
-		double sx = px2;
-
-		// interpolazione lineare destra
-		px0 = vetUpDwPoints[2];
-		px1 = vetUpDwPoints[3];
-		py0 = profile[vetUpDwPoints[2]];
-		py1 = profile[vetUpDwPoints[3]];
-		py2 = (max - min) / 2.0 + min;
-		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
-		double dx = px2;
-
-		double fwhm = (dx - sx) * dimPixel; // in mm
-		for (int i1 = 0; i1 < profile.length; i1++) {
-			if (profile[i1] == min)
-				peak = i1;
-		}
-
-		double[] out = { fwhm, peak };
-		return (out);
-	} // calcFwhm
+	// private static double[] calcFwhm(int[] vetUpDwPoints, double profile[],
+	// double dimPixel) {
+	//
+	// // MyLog.logVector(vetUpDwPoints, "vetUpDwPoints");
+	//
+	// double peak = 0;
+	// double[] a = Tools.getMinMax(profile);
+	// double min = a[0];
+	// double max = a[1];
+	// // interpolazione lineare sinistra
+	// double px0 = vetUpDwPoints[0];
+	// double px1 = vetUpDwPoints[1];
+	// double px2;
+	// double py0 = profile[vetUpDwPoints[0]];
+	// double py1 = profile[vetUpDwPoints[1]];
+	// double py2 = (max - min) / 2.0 + min;
+	// px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+	// double sx = px2;
+	//
+	// // interpolazione lineare destra
+	// px0 = vetUpDwPoints[2];
+	// px1 = vetUpDwPoints[3];
+	// py0 = profile[vetUpDwPoints[2]];
+	// py1 = profile[vetUpDwPoints[3]];
+	// py2 = (max - min) / 2.0 + min;
+	// px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+	// double dx = px2;
+	//
+	// double fwhm = (dx - sx) * dimPixel; // in mm
+	// for (int i1 = 0; i1 < profile.length; i1++) {
+	// if (profile[i1] == min)
+	// peak = i1;
+	// }
+	//
+	// double[] out = { fwhm, peak };
+	// return (out);
+	// } // calcFwhm
 
 	/**
 	 * Mostra a video un profilo con linea a metà picco
@@ -1288,10 +1294,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 *            Flag slab che qui mettiamo sempre true
 	 */
 
-	private static void createPlot(double profile1[], boolean bslab,
+	private static void createPlotP11(double profile1[], boolean bslab,
 			boolean bLabelSx) {
 
-		int[] vetUpDwPoints = halfPointSearch(profile1);
+		int[] vetUpDwPoints = MyFwhm.halfPointSearch(profile1);
 		double[] a = Tools.getMinMax(profile1);
 		double min = a[0];
 		double max = a[1];
@@ -1380,87 +1386,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		plot.draw();
 	} // createPlot2
-
-	/**
-	 * ricerca dei punti a metà altezza
-	 * 
-	 * @param profile1
-	 *            Vettore con il profilo da analizzare
-	 * @return isd[0] punto sotto half a sx, isd[1] punto sopra half a sx,
-	 * @return isd[2] punto sotto half a dx, isd[3] punto sopra half a dx
-	 */
-	private static int[] halfPointSearch(double profile1[]) {
-		/*
-		 * ATTENZIONE. il nostro profilo standard è il seguente:
-		 * 
-		 * ........... .......... max . . upSx * * upDx
-		 * -------------.--------------.------------ half downSx * * downDx . .
-		 * ......... min
-		 */
-
-		int upSx = 0;
-		int downSx = 0;
-		int upDx = 0;
-		int downDx = 0;
-		double max = 0;
-		int i1;
-
-		int[] vetHalfPoint = new int[4];
-		vetHalfPoint[0] = 0;
-		vetHalfPoint[1] = 0;
-		vetHalfPoint[2] = 0;
-		vetHalfPoint[3] = 0;
-		int len1 = profile1.length;
-
-		// String str = "";
-		// for (int i2 = 0; i2 < len1; i2++)
-		// str = str + profile1[i2] + " ";
-		// IJ.log("pixels profile1=" + str);
-
-		double[] a = Tools.getMinMax(profile1);
-		double min = a[0];
-
-		max = a[1];
-
-		// calcolo metà altezza
-		double half = (max - min) / 2 + min;
-		// parto da sx e percorro il profilo in cerca del primo valore che
-		// supera half
-		for (i1 = 0; i1 < len1; i1++) {
-			if (profile1[i1] > half) {
-				downSx = i1;
-				break;
-			}
-		}
-		// torno indietro e cerco il primo valore sotto half
-		for (i1 = downSx; i1 > 0; i1--) {
-			if (profile1[i1] < half) {
-				upSx = i1;
-				break;
-			}
-		}
-		// parto da dx e percorro il profilo in cerca del primo valore che
-		// supera half
-		for (i1 = len1 - 1; i1 > 0; i1--) {
-			if (profile1[i1] > half) {
-				downDx = i1;
-				break;
-			}
-		}
-		// torno indietro e cerco il primo valore sotto half
-		for (i1 = downDx; i1 < len1; i1++) {
-			if (profile1[i1] < half) {
-				upDx = i1;
-				break;
-			}
-		}
-
-		vetHalfPoint[0] = downSx;
-		vetHalfPoint[1] = upSx;
-		vetHalfPoint[2] = downDx;
-		vetHalfPoint[3] = upDx;
-		return vetHalfPoint;
-	} // halfPointSerach
 
 	public static void overlayGrid(ImagePlus imp1, int gridNumber,
 			boolean verbose) {
@@ -1561,7 +1486,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 */
 	public static double[] positionSearch(ImagePlus imp11, boolean autoCalled,
 			int direzioneTabella, double profond, String info10, boolean step,
-			boolean verbose, boolean test, boolean fast, boolean silent) {
+			boolean verbose, boolean test, boolean fast, boolean silent,
+			int timeout) {
 		//
 		// ================================================================================
 		// Inizio calcoli geometrici
@@ -1579,7 +1505,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		int width = imp11.getWidth();
 		int height = imp11.getHeight();
 
-		overlayGrid(imp11, MyConst.P11_GRID_NUMBER, verbose);
 		imp11.updateAndDraw();
 
 		if (verbose)
@@ -1620,7 +1545,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		imp11.updateAndDraw();
 		if (step)
 			MyLog.waitHere("Maximum value= " + out1[2] + " find at x= "
-					+ xMaximum + " y= " + yMaximum);
+					+ xMaximum + " y= " + yMaximum, debug, timeout);
 		// }
 
 		// IJ.log("width= " + width + " height= " + height);
@@ -1698,13 +1623,14 @@ public class p11rmn_ implements PlugIn, Measurements {
 			over1.setStrokeColor(color1);
 			imp11.updateAndDraw();
 			if (step)
-				MyLog.waitHere("selezione automatica direzione = " + strDirez);
+				MyLog.waitHere("selezione automatica direzione = " + strDirez,
+						debug, timeout);
 
 			double[] profi1 = ((Line) imp11.getRoi()).getPixels();
 			profi1[0] = 0;
 			profi1[profi1.length - 1] = 0;
 
-			int[] vetHalfPoint = halfPointSearch(profi1);
+			int[] vetHalfPoint = MyFwhm.halfPointSearch(profi1);
 
 			double[] xPoints = new double[vetHalfPoint.length];
 			double[] yPoints = new double[vetHalfPoint.length];
@@ -1713,20 +1639,23 @@ public class p11rmn_ implements PlugIn, Measurements {
 				yPoints[i1] = profi1[vetHalfPoint[i1]];
 			}
 
-			double[] fwhm = calcFwhm(vetHalfPoint, profi1, dimPixel);
+			double[] fwhm = MyFwhm.calcFwhm(vetHalfPoint, profi1, dimPixel, "",
+					false);
 			double centro = vetHalfPoint[0] + (fwhm[0] / 2) / dimPixel;
 
 			double xCenter[] = { centro };
 			double yCenter[] = { profi1[(int) centro] };
 
 			if (step) {
-				Plot plot1 = MyPlot.basePlot(profi1, "PROFILO", Color.blue);
+				Plot plot1 = MyPlot.basePlot(profi1,
+						"PROFILO SEGNALE LUNGO LINEA VERDE", Color.blue);
 				plot1.draw();
 				plot1.setColor(Color.red);
 				plot1.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
 				plot1.draw();
 				plot1.addPoints(xCenter, yCenter, PlotWindow.BOX);
 				plot1.show();
+				MyLog.waitHere(listaMessaggi(2), debug, timeout);
 			}
 
 			if (direzione < 3) {
@@ -1749,13 +1678,22 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 
-		if (!fast || manualRequired) {
+		if (manualRequired) {
+
+			
+			overlayGrid(imp11, MyConst.P11_GRID_NUMBER, true);
+
+			if (!imp11.isVisible())
+				UtilAyv.showImageMaximized(imp11);
+			imp11.updateAndDraw();
+			ImageUtils.imageToFront(imp11);
+
 			// MyLog.waitMessage(info10
 			// + "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI");
 			// MyLog.waitHere(info10
 			// + "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI", debug);
 
-			// MyLog.waitHere(info10 + "\n \n" + listaMessaggi(0), debug);
+			MyLog.waitHere(info10 + "\n \n" + listaMessaggi(0), debug, timeout);
 
 			manualRequired = false;
 		}
@@ -1935,383 +1873,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		return 0;
 	}
 
-	/***
-	 * Riceve una ImagePlus con impostata una Line, restituisce le coordinate
-	 * dei 2 picchi
-	 * 
-	 * @param imp1
-	 * @param dimPixel
-	 * @return coordinate picchi
-	 */
-	public static double[][] profileAnalyzer(ImagePlus imp1, double dimPixel,
-			String title, boolean showProfiles) {
-		Roi roi11 = imp1.getRoi();
-		double[] profi1 = ((Line) roi11).getPixels();
-
-		double[] profi2y = smooth3(profi1, 1);
-
-		double[] profi2x = new double[profi2y.length];
-		double xval = 0.;
-		for (int i1 = 0; i1 < profi2y.length; i1++) {
-			profi2x[i1] = xval;
-			xval += dimPixel;
-		}
-
-		double[][] profi3 = new double[profi2y.length][2];
-		for (int i1 = 0; i1 < profi2y.length; i1++) {
-			profi3[i1][0] = profi2x[i1];
-			profi3[i1][1] = profi2y[i1];
-		}
-		ArrayList<ArrayList<Double>> matOut = ImageUtils.peakDet(profi3, 100.);
-		double[][] peaks1 = new InputOutput()
-				.fromArrayListToDoubleTable(matOut);
-
-		double[] xPoints = new double[peaks1[0].length];
-		double[] yPoints = new double[peaks1[0].length];
-		for (int i1 = 0; i1 < peaks1[2].length; i1++) {
-			xPoints[i1] = peaks1[0][i1];
-			yPoints[i1] = peaks1[1][i1];
-
-		}
-
-		if (showProfiles) {
-			Plot plot2 = MyPlot.basePlot(profi2x, profi2y, title, color2);
-			plot2.draw();
-			plot2.setColor(color1);
-			plot2.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
-			plot2.show();
-			new WaitForUserDialog("002 premere  OK").show();
-		}
-
-		return peaks1;
-	}
-
-	/***
-	 * Effettua lo smooth su 3 pixels di un profilo
-	 * 
-	 * @param profile1
-	 *            profilo
-	 * @param loops
-	 *            numerompassaggi
-	 * @return profilo smoothato
-	 */
-	public static double[] smooth3(double[] profile1, int loops) {
-
-		int len1 = profile1.length;
-		double[] profile2 = new double[len1];
-		for (int j1 = 1; j1 < len1 - 1; j1++) {
-			profile2[j1] = profile1[j1];
-		}
-
-		for (int i1 = 0; i1 < loops; i1++) {
-			for (int j1 = 1; j1 < len1 - 1; j1++)
-				profile2[j1] = (profile2[j1 - 1] + profile2[j1] + profile2[j1 + 1]) / 3;
-		}
-		return profile2;
-
-	}
-
-	public static double[] maxPeakSearch(double[] profile) {
-
-		double[] a = Tools.getMinMax(profile);
-		double max = a[1];
-
-		// cerco il picco a partire da 0
-		int max00 = -999;
-		int max11 = -999;
-
-		for (int i1 = 0; i1 < profile.length; i1++) {
-			if (profile[i1] == max) {
-				max00 = i1;
-			}
-		}
-
-		for (int i1 = profile.length - 1; i1 >= 0; i1--) {
-			if (profile[i1] == max) {
-				max11 = i1;
-			}
-		}
-		if (max00 != max11)
-			return null;
-		double[] out = new double[2];
-		out[0] = (double) max00;
-		out[1] = max;
-		return out;
-	}
-
-	public static double angoloRad(double ax, double ay, double bx, double by) {
-		//
-		// cambio di segno il sin per tenere conto del fatto che lìorigine delle
-		// coordinate è in alto a sinistra, anzichè in basso
-		//
-		double dx = ax - bx;
-		double dy = by - ay;
-		double alf1 = Math.atan2(dy, dx);
-		return alf1;
-
-	}
-
-	public static double[] interpola2(ImagePlus imp1, double xStart,
-			double yStart, double xEnd, double yEnd, double xMaxima,
-			double yMaxima, double prof, double dimPixel, boolean verticalDir) {
-		//
-		// con ax, ay indico le coordinate del punto sul cerchio con bx, by
-		// indico le coordinate del centro
-		//
-		// IJ.log("-------- interpola --------");
-		double tolerance1 = 1e-6;
-
-		if (verticalDir && (Math.abs(xStart - xEnd) > tolerance1)) {
-			MyLog.waitHere("Il profilo non è verticale? verticalDir = "
-					+ verticalDir + " xStart= " + xStart + " xEnd= " + xEnd);
-		} else if ((Math.abs(yStart - yEnd) > tolerance1)) {
-			MyLog.waitHere("Il profilo non è orizzontale? verticalDir = "
-					+ verticalDir + " yStart= " + yStart + " yEnd= " + yEnd);
-		}
-
-		imp1.setRoi(new Line(xStart, yStart, xEnd, yEnd));
-
-		double[] profi1 = ((Line) imp1.getRoi()).getPixels();
-
-		double[] a = Tools.getMinMax(profi1);
-		double min = a[0];
-		double max = a[1];
-
-		int[] vetHalfPoint = halfPointSearch(profi1);
-
-		// interpolazione lineare sinistra
-		double px0 = vetHalfPoint[0];
-		double px1 = vetHalfPoint[1];
-		double py0 = profi1[vetHalfPoint[0]];
-		double py1 = profi1[vetHalfPoint[1]];
-
-		double py2 = (max - min) / 2.0 + min;
-		double px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
-
-		double sx = px2;
-
-		// interpolazione lineare destra
-		double px10 = vetHalfPoint[2];
-		double px11 = vetHalfPoint[3];
-		double py10 = profi1[vetHalfPoint[2]];
-		double py11 = profi1[vetHalfPoint[3]];
-		double py12 = (max - min) / 2.0 + min;
-		double px12 = px10 + (px11 - px10) / (py11 - py10) * (py12 - py10);
-
-		double dx = px12;
-
-		// a questo punto il maxima deve quasi coincidere con uno dei due punti,
-		// la direzione sarà dal punto vicino al maxima verso l'altro punto
-		// halfHeight e oltre
-
-		double tolerance2 = 4.0;
-
-		if (Math.abs(dx - sx) < tolerance2 * 4) {
-			MyLog.waitHere("profondità utile troppo bassa!");
-			return null;
-		}
-		double start = Double.NaN;
-		double point = Double.NaN;
-		double end = Double.NaN;
-
-		// double xMaximaPix = xMaxima * dimPixel;
-		// MyLog.waitHere("xMaximaPix= " + xMaximaPix + " xMaxima= " + xMaxima
-		// + " dx= " + dx + " sx= " + sx);
-
-		if (Math.abs(dx - xMaxima) <= tolerance2) {
-			start = dx;
-			point = sx;
-		} else if (Math.abs(sx - xMaxima) <= tolerance2) {
-			start = sx;
-			point = dx;
-		} else {
-			MyLog.waitHere("PROBLEMUN 001");
-			return null;
-		}
-
-		if (start < point) {
-			end = start + prof;
-		} else {
-			end = start - prof;
-		}
-
-		if (end < 0 || end > profi1.length) {
-			MyLog.waitHere("PROBLEMUN 002");
-			return null;
-		}
-
-		// per adesso ho sempre lavorato sul profilo della linea, ora devo
-		// riportarmi alle coordinate, a seconda se il mio profilo era verticale
-		// oppure orizzontale
-
-		double cx = Double.NaN;
-		double cy = Double.NaN;
-
-		if (verticalDir) {
-			cx = xStart;
-			cy = end;
-		} else {
-			cx = end;
-			cy = yStart;
-		}
-
-		double xPoints1[] = new double[10];
-		double yPoints1[] = new double[10];
-		xPoints1[0] = px0;
-		xPoints1[1] = px1;
-		xPoints1[2] = px10;
-		xPoints1[3] = px11;
-
-		yPoints1[0] = profi1[(int) px0];
-		yPoints1[1] = profi1[(int) px1];
-		yPoints1[2] = profi1[(int) px10];
-		yPoints1[3] = profi1[(int) px11];
-
-		// MyLog.logVector(xPoints1, "xPoints1");
-		// MyLog.logVector(yPoints1, "yPoints1");
-
-		double xPoints2[] = new double[10];
-		double yPoints2[] = new double[10];
-		xPoints2[0] = sx;
-		xPoints2[1] = dx;
-		xPoints2[2] = xMaxima;
-		xPoints2[3] = cx;
-
-		yPoints2[0] = profi1[(int) sx];
-		yPoints2[1] = profi1[(int) dx];
-		yPoints2[2] = profi1[(int) xMaxima];
-		yPoints2[3] = profi1[(int) cx];
-
-		// MyLog.logVector(xPoints2, "xPoints2");
-		// MyLog.logVector(yPoints2, "yPoints2");
-
-		// Plot plot2 = MyPlot.basePlot(profi1, "P R O F I L O", color2);
-		// plot2.draw();
-		// plot2.setColor(color1);
-		// plot2.addPoints(xPoints1, yPoints1, PlotWindow.CIRCLE);
-		// plot2.setColor(Color.blue);
-		// plot2.addPoints(xPoints2, yPoints2, PlotWindow.CIRCLE);
-		// plot2.drawLine(0, max / 2, profi1.length, max / 2);
-		// plot2.show();
-
-		// IJ.log("proiezioneX= " + prof * (Math.cos(ang1)));
-		// IJ.log("proiezioneY= " + prof * (Math.sin(ang1)));
-
-		// IJ.log("cx= " + IJ.d2s(cx) + " cy= " + IJ.d2s(cy));
-		double[] out = new double[2];
-		out[0] = cx;
-		out[1] = cy;
-		// IJ.log("-----------------------------");
-		return out;
-	}
-
-	/**
-	 * Per p3rmn le due immagini devono essere identiche, a parte che vengono
-	 * prese una di seguito all'altra. Testiamo seriesDescription e coil
-	 * 
-	 * @param imp1
-	 * @param imp2
-	 * @return
-	 */
-	public static boolean checkImages(ImagePlus imp1, ImagePlus imp2) {
-		boolean ok1 = false;
-		boolean ok2 = false;
-
-		String seriesDescription1 = ReadDicom.readDicomParameter(imp1,
-				MyConst.DICOM_SERIES_DESCRIPTION);
-		String seriesDescription2 = ReadDicom.readDicomParameter(imp2,
-				MyConst.DICOM_SERIES_DESCRIPTION);
-		if (seriesDescription1.equals(seriesDescription2))
-			ok1 = true;
-		String coil1 = ReadDicom.getAllCoils(imp1);
-		String coil2 = ReadDicom.getAllCoils(imp2);
-		if (coil1.equals(coil2))
-			ok2 = true;
-		return ok1 && ok2;
-	}
-
-	/**
-	 * Verifica che nella roi (beh, all'incirca) non sia presente un gruppo di
-	 * 3x3 pixels. Utilizzata per verificare che nella posizione in cui si
-	 * misura il segnale di fondo, non esistano spazi senza segnale (vedi
-	 * immagini di Esine)
-	 * 
-	 * @param imp1
-	 * @param xRoi
-	 * @param yRoi
-	 * @param diamRoi
-	 * @return
-	 */
-	public static boolean verifyBackgroundSquareRoiPixels(ImagePlus imp1,
-			int xRoi, int yRoi, int diamRoi, boolean test, boolean demo) {
-
-		int xRoi0 = xRoi - diamRoi / 2;
-		int yRoi0 = yRoi - diamRoi / 2;
-		int diamRoi0 = diamRoi;
-		// effettua un adjust per esaltare il segnale di fondo
-		Overlay over2 = new Overlay();
-
-		if (demo) {
-			over2.setStrokeColor(Color.red);
-			imp1.setOverlay(over2);
-		}
-
-		imp1.setRoi(xRoi0, yRoi0, diamRoi0, diamRoi0);
-		imp1.getRoi().setStrokeColor(Color.red);
-
-		if (demo) {
-			over2.addElement(imp1.getRoi());
-			// IJ.setMinAndMax(imp1, 10, 30);
-			UtilAyv.showImageMaximized2(imp1);
-		}
-		ImageProcessor ip1 = imp1.getProcessor();
-
-		// prevengo problemi con le immagini calibrate
-		short[] pixels = UtilAyv.truePixels(imp1);
-
-		Rectangle roi2 = ip1.getRoi();
-		int x1 = roi2.x;
-		int y1 = roi2.y;
-		int width = roi2.width;
-		int height = roi2.height;
-		int offset = 0;
-		int[] vet = new int[9];
-		// float[][] result = new float[width][height];
-		ip1.setRoi(imp1.getRoi());
-		int width1 = imp1.getWidth();
-		int sum = 0;
-
-		for (int i1 = 0; i1 < width; i1++) {
-			for (int i2 = 0; i2 < height; i2++) {
-				sum = 0;
-				offset = (y1 + i2) * width1 + (x1 + i1);
-				// se questo pixel fa parte della roi, allora analizzo
-				// l'intorno di 3x3 pixel
-				vet[0] = offset - width1 - 1;
-				vet[1] = offset - width1;
-				vet[2] = offset - width1 + 1;
-				vet[3] = offset - 1;
-				vet[4] = offset;
-				vet[5] = offset + 1;
-				vet[6] = offset + width - 1;
-				vet[7] = offset + width;
-				vet[8] = offset + width + 1;
-				for (int i4 = 0; i4 < 9; i4++) {
-					if (vet[i4] <= pixels.length) {
-						sum = sum + pixels[vet[i4]];
-						if (demo) {
-							imp1.setRoi(x1 + i1, y1 + i2, 1, 1);
-							over2.addElement(imp1.getRoi());
-						}
-					}
-				}
-				if (sum == 0)
-					return true;
-			}
-		}
-		return false;
-	}
-
 	/**
 	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo è
 	 * facilitata la eventuale modifica / traduzione dei messaggi.
@@ -2324,7 +1885,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		// ---------+-----------------------------------------------------------+
 		lista[0] = "Verifica E/O modifica manuale posizione ROI";
 		lista[1] = "Verificare immagine, accrescimento MROI in corso";
-		lista[2] = "messaggio 2";
+		lista[2] = "Analizzando il segnale lungo la linea verde si calcola la FWHM \ne ne si determina il centro. Qui verrà posizionata la MROI";
 
 		// ---------+-----------------------------------------------------------+
 		String out = lista[select];
