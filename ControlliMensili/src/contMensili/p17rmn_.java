@@ -1262,8 +1262,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// MyLog.waitHere("esterno rimosso");
 
 		HarrisCornerDetector.Parameters params = new HarrisCornerDetector.Parameters();
-		params.alpha = 0.2001;
-		params.threshold = 25000;
+		params.alpha = 0.18;
+		params.threshold = 5000000;
 		params.doCleanUp = true;
 		// int nmax = 0;
 		HarrisCornerDetector hcd = new HarrisCornerDetector(ip11, params);

@@ -65,7 +65,7 @@ import utils.UtilAyv;
 
 /**
  * Analizza in maniera automatica o semi-automatica UNIFORMITA', SNR, FWHM per
- * le bobine superficiali
+ * le bobine superficiali "piatte"
  * 
  * 
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
@@ -367,8 +367,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 				manualRequired2 = false;
 				ImagePlus imp1 = null;
 				ImagePlus imp2 = null;
-				Overlay over2 = new Overlay();
-				Overlay over3 = new Overlay();
 
 				if (verbose && !silent) {
 					imp1 = UtilAyv.openImageMaximized(path1);
@@ -377,6 +375,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 					imp1 = UtilAyv.openImageNoDisplay(path1, true);
 					imp2 = UtilAyv.openImageNoDisplay(path2, true);
 				}
+
+				Overlay over2 = new Overlay();
+				imp1.setOverlay(over2);
+
+				Overlay over3 = new Overlay();
+
 				int width = imp1.getWidth();
 				int height = imp1.getHeight();
 
@@ -398,21 +402,18 @@ public class p11rmn_ implements PlugIn, Measurements {
 				if (verbose && !silent) {
 
 					// =================================================
+
 					imp1.setRoi(new OvalRoi(xMaximum - 4, yMaximum - 4, 8, 8));
-					over2.addElement(imp1.getRoi());
-					imp1.setOverlay(over2);
-					over2.setStrokeColor(color2);
+					ImageUtils.addOverlayRoi(imp1, Color.green, 0);
 					imp1.killRoi();
 					imp1.setRoi(new Line(xStartRefLine, yStartRefLine,
 							xEndRefLine, yEndRefLine));
-					over2.addElement(imp1.getRoi());
-					over2.setStrokeColor(color2);
+					ImageUtils.addOverlayRoi(imp1, Color.green, 0);
 					imp1.killRoi();
-					imp1.setRoi(xCenterRoi - 10, yCenterRoi - 10, 20, 20);
-					over2.addElement(imp1.getRoi());
-					imp1.killRoi();
-
-					imp1.updateAndDraw();
+					// imp1.setRoi(xCenterRoi - 10, yCenterRoi - 10, 20, 20);
+					// ImageUtils.addOverlayRoi(imp1, Color.green, 0);
+					// imp1.killRoi();
+					// imp1.updateAndDraw();
 					if (step)
 						MyLog.waitHere();
 
@@ -425,14 +426,17 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
 						sqNEA, sqNEA);
-				over2.addElement(imp1.getRoi());
-				over2.setStrokeColor(color2);
-				imp1.killRoi();
 
-				if (!silent)
-					imp1.updateAndDraw();
-				if (step)
-					MyLog.waitHere();
+				imp1.getRoi().setName("NEA");
+				ImageUtils.addOverlayRoi(imp1, Color.blue, 1.01);
+				imp1.killRoi();
+				imp1.updateAndDraw();
+				// MyLog.waitHere();
+
+				// if (!silent)
+				// if (step)
+				// MyLog.waitHere();
+				// imp1.killRoi();
 
 				double xStartRefLine2 = 0;
 				double yStartRefLine2 = 0;
@@ -455,8 +459,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 				imp1.setRoi(new Line(xStartRefLine2, yStartRefLine2,
 						xEndRefLine2, yEndRefLine2));
 
-				over2.addElement(imp1.getRoi());
-				over2.setStrokeColor(color2);
+				ImageUtils.addOverlayRoi(imp1, Color.green, 0);
+				imp1.killRoi();
 				if (!silent)
 					imp1.updateAndDraw();
 				if (step)
@@ -470,13 +474,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7,
 						sq7);
-				if (!silent)
-					imp1.updateAndDraw();
 
-				over2.addElement(imp1.getRoi());
-				over2.setStrokeColor(color2);
-				if (!silent)
-					imp1.updateAndDraw();
+				// if (!silent) {
+				ImageUtils.addOverlayRoi(imp1, Color.red, 1.01);
+				imp1.getRoi().setName("MROI");
+				imp1.killRoi();
+
+				imp1.updateAndDraw();
+				// }
+
+				// MyLog.waitHere();
 				if (step)
 					MyLog.waitHere();
 
@@ -526,9 +533,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				// =============PROVVISORIO=====================================
 
 				if (verbose) {
-					imp1.getRoi().setStrokeColor(Color.yellow);
-					imp1.getRoi().setStrokeWidth(1.1);
-					over2.addElement(imp1.getRoi());
+					ImageUtils.addOverlayRoi(imp1, Color.yellow, 1);
 				}
 
 				// over2.addElement(imp1.getRoi());
@@ -563,8 +568,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				imaDiff.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7,
 						sq7);
-				over3.addElement(imaDiff.getRoi());
-				over3.setStrokeColor(color2);
+				ImageUtils.addOverlayRoi(imaDiff, Color.green, 1);
+
 				imaDiff.updateAndDraw();
 
 				ImageStatistics statImaDiff = imaDiff.getStatistics();
@@ -598,10 +603,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 				if (!silent)
 					imp1.updateAndDraw();
 
-				imp1.setOverlay(over2);
+				// MyLog.waitHere();
 
-				over2.addElement(imp1.getRoi());
-				over2.setStrokeColor(color2);
+				imp1.setOverlay(over2);
+				ImageUtils.addOverlayRoi(imp1, Color.green, 1.1);
 				if (!silent)
 					imp1.updateAndDraw();
 
@@ -625,10 +630,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 					imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
 							sqNEA, sqNEA);
-					if (!silent)
+					if (!silent) {
 						imp1.updateAndDraw();
-					over2.addElement(imp1.getRoi());
-					over2.setStrokeColor(color2);
+						imp1.getRoi().setStrokeColor(Color.green);
+						imp1.getRoi().setStrokeWidth(1.1);
+						over2.addElement(imp1.getRoi());
+					}
 
 					// imp1.getWindow().toFront();
 					if (step)
@@ -666,8 +673,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 						msgSqr2OK(pixx);
 					}
 
-					// MyLog.waitHere();
-					IJ.wait(300);
+					// IJ.wait(300);
 					IJ.wait(300);
 					loop++;
 
@@ -675,7 +681,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
 						sqNEA, sqNEA);
+
+				imp1.getRoi().setStrokeWidth(1.1);
+
 				imp1.updateAndDraw();
+				// MyLog.waitHere();
 
 				if (imp1.isVisible())
 					ImageUtils.imageToFront(imp1);
@@ -1495,6 +1505,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		//
 
 		int direzione = 0;
+		int who1 = 0;
 		boolean manualRequired = false;
 
 		double dimPixel = ReadDicom
@@ -1526,12 +1537,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 			MyLog.waitHere("rilevata differenza tra directionFinder e direzioneTabella direzione= "
 					+ direzione + " direzioneTabella= " + direzioneTabella);
 			manualRequired = true;
+			who1 = 1;
 			direzione = direzioneTabella;
 
 		}
 
 		if (direzione == 0) {
-			manualRequired = true;
+			// manualRequired = true;
+			// who1= 2;
+			// se non riesco a decidere, lascio fare alla tabella che è (forse)
+			// più saggia di me
 			direzione = direzioneTabella;
 			// manualRequired = true;
 			// MyLog.waitHere("per direzione=0 adotto direzioneTabella= "
@@ -1568,7 +1583,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 			endX = width;
 			startY = out1[1] - profond / dimPixel;
 			if (startY < 0) {
+				MyLog.waitHere("imposto manualRequired");
 				manualRequired = true;
+				who1 = 3;
 				startY = startY + height;
 			}
 			endY = startY;
@@ -1579,7 +1596,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 			endX = width;
 			startY = out1[1] + profond / dimPixel;
 			if (startY > height) {
+				MyLog.waitHere("imposto manualRequired");
 				manualRequired = true;
+				who1 = 4;
 				startY = startY - height;
 			}
 			endY = startY;
@@ -1588,7 +1607,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 			strDirez = " orizzontale a sinistra";
 			startX = out1[0] - profond / dimPixel;
 			if (startX < 0) {
+				MyLog.waitHere("imposto manualRequired");
 				manualRequired = true;
+				who1 = 5;
 				startX = startX + width;
 			}
 
@@ -1600,7 +1621,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 			strDirez = " orizzontale a destra";
 			startX = out1[0] + profond / dimPixel;
 			if (startX > width) {
+				MyLog.waitHere("imposto manualRequired");
 				manualRequired = true;
+				who1 = 6;
 				startX = startX - width;
 			}
 			endX = startX;
@@ -1680,7 +1703,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		if (manualRequired) {
 
-			
 			overlayGrid(imp11, MyConst.P11_GRID_NUMBER, true);
 
 			if (!imp11.isVisible())
@@ -1693,9 +1715,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 			// MyLog.waitHere(info10
 			// + "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI", debug);
 
-			MyLog.waitHere(info10 + "\n \n" + listaMessaggi(0), debug, timeout);
+			MyLog.waitHere(info10 + "\n richiesta al punto " + who1 + "\n "
+					+ listaMessaggi(0), debug, timeout);
 
 			manualRequired = false;
+			who1 = 0;
+
 		}
 
 		Rectangle boundRec3 = imp11.getProcessor().getRoi();
@@ -1845,7 +1870,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		// regola: dobbiamo avere un max di solo 2 NaN o, meglio, anche se
 		// abbiamo un solo NaN chiediamo la conferma manuale
 		if (!(meanx[2] > 4 * meanx[1])) {
-			MyLog.logVector(meanx, "meanx");
+			// MyLog.logVector(meanx, "meanx");
 			// MyLog.waitHere("direzione 0 per scarsa differenza");
 			return 0;
 		}
