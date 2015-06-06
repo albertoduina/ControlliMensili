@@ -361,6 +361,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 					profond, info10, step, verbose, test, fast2, silent,
 					timeout);
 
+			imp11.close();
+			
 			if (out2 == null) {
 				manualRequired2 = true;
 			} else {
@@ -414,8 +416,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					// ImageUtils.addOverlayRoi(imp1, Color.green, 0);
 					// imp1.killRoi();
 					// imp1.updateAndDraw();
-					if (step)
-						MyLog.waitHere();
+	//				if (step)
 
 					// =================================================
 				}

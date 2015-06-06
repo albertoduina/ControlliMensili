@@ -606,9 +606,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 			ImageStatistics statBkg = imp1.getStatistics();
 
 			if (verbose) {
-				imp1.getRoi().setStrokeColor(Color.yellow);
-				imp1.getRoi().setStrokeWidth(1.1);
-				over2.addElement(imp1.getRoi());
+				ImageUtils.addOverlayRoi(imp1, Color.yellow, 1.1);
+
+				// imp1.getRoi().setStrokeColor(Color.yellow);
+				// imp1.getRoi().setStrokeWidth(1.1);
+				// over2.addElement(imp1.getRoi());
 			}
 
 			if (step)
@@ -693,7 +695,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			int area11x11 = MyConst.P10_NEA_11X11_PIXEL
 					* MyConst.P10_NEA_11X11_PIXEL;
 
-			area11x11 = 2000;
+			// area11x11 = 2000;
 			int enlarge = 0;
 			int pixx = 0;
 
@@ -1564,7 +1566,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (lw != null)
 				lw.setLocation(10, 10);
 
-			MyLog.waitHere(listaMessaggi(5), debug, timeout);
+			// MyLog.waitHere(listaMessaggi(5), debug, timeout);
 
 		}
 
@@ -1653,7 +1655,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean debug = true;
 		boolean manual = false;
 		boolean demo = !fast;
-		demo = true;
 		boolean showProfiles = demo;
 
 		double ax = 0;
@@ -1811,8 +1812,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			String direction2 = "1\0\0\01\0";
 
 			if (myPeaks != null) {
-				MyLog.logMatrix(myPeaks, "myPeaks");
-				MyLog.waitHere("profileAnalyzer ritorna questi punti");
+				// MyLog.logMatrix(myPeaks, "myPeaks");
+				// MyLog.waitHere("profileAnalyzer ritorna questi punti");
 
 				// della bisettice orizzontale prendo solo il picco di dx
 				// della bisettice verticale prendo solo il picco in basso
@@ -1838,71 +1839,76 @@ public class p10rmn_ implements PlugIn, Measurements {
 				// mat/2 e come punto a sinistra quello con coordinata x < mat/2
 
 				for (int i2 = 0; i2 < myPeaks[0].length; i2++) {
-					
+
 					if ((direction1.compareTo("0\\1\\0\\0\\0\\-1") == 0)
 							&& (i1 == 0)) {
 						if (((int) (myPeaks[0][i2]) < width / 2)) {
 							valido = false;
-							MyLog.waitHere("linea orizzontale eliminato punto sx");
+							// MyLog.waitHere("linea orizzontale eliminato punto sx");
 						} else
-							MyLog.waitHere("linea orizzontale mantenuto punto dx");
+							;
+						// MyLog.waitHere("linea orizzontale mantenuto punto dx");
 					}
-				
-					
-					
-					
+
 					if ((direction1.compareTo("1\\0\\0\\1\\0") == 0)
 							&& (i1 == 1)) {
 						if (((int) (myPeaks[1][i2]) < height / 2)) {
 							valido = false;
-							MyLog.waitHere("linea verticale eliminato punto sup");
+							// MyLog.waitHere("linea verticale eliminato punto sup");
 						} else
-							MyLog.waitHere("linea orizzontale mantenuto punto inf");
+							;
+						// MyLog.waitHere("linea orizzontale mantenuto punto inf");
 					}
 
-	
 					if (valido) {
 						count++;
 						myXpoints[count] = (int) (myPeaks[0][i2]);
 						myYpoints[count] = (int) (myPeaks[1][i2]);
+						ImageUtils.plotPoints(imp12, over12,
+								(int) (myPeaks[0][i2]), (int) (myPeaks[1][i2]));
+						imp12.updateAndDraw();
+						ImageUtils.imageToFront(imp12);
+						// MyLog.waitHere("VERIFICA PLOTTAGGIO NUOVO PUNTO");
 					}
 					//
 				}
 			}
 
-			MyLog.waitHere("count vale " + count);
+			// MyLog.waitHere("count vale " + count);
 
-
-			// ora devo compattare i vettori myXpoints e myYpoints, ovviamente a
+			// devo compattare i vettori myXpoints e myYpoints, ovviamente a
 			// patto che count >=0;
-
-			if (count >= 0) {
-				xPoints3 = new int[count];
-				yPoints3 = new int[count];
-
-				for (int i3 = 0; i3 < count; i3++) {
-					xPoints3[i3] = myXpoints[i3];
-					yPoints3[i3] = myYpoints[i3];
-				}
-			} else {
-				xPoints3 = null;
-				yPoints3 = null;
-			}
-			
-			if (myPeaks != null || step) {
-
-				ImageUtils.plotPoints(imp12, over12,  xPoints3, yPoints3);
-				imp12.updateAndDraw();
-				ImageUtils.imageToFront(imp12);
-				MyLog.waitHere("VERIFICA PLOTTAGGIO NUOVO PUNTO");
-				if (test && step)
-					MyLog.waitHere("BISETTRICE " + vetTitle[i1]);
-			}
-		
-			
-			
-			
 		}
+
+		if (count >= 0) {
+			count++;
+			xPoints3 = new int[count];
+			yPoints3 = new int[count];
+
+			for (int i3 = 0; i3 < count; i3++) {
+				xPoints3[i3] = myXpoints[i3];
+				yPoints3[i3] = myYpoints[i3];
+			}
+		} else {
+			xPoints3 = null;
+			yPoints3 = null;
+		}
+
+		// MyLog.logVector(myXpoints, "myXpoints");
+		// MyLog.logVector(xPoints3, "xPoints3");
+		// MyLog.logVector(myYpoints, "myYpoints");
+		// MyLog.logVector(yPoints3, "yPoints3");
+		// MyLog.waitHere("count= " + count);
+
+		// if (myPeaks != null || step) {
+		//
+		// ImageUtils.plotPoints(imp12, over12, xPoints3, yPoints3);
+		// imp12.updateAndDraw();
+		// ImageUtils.imageToFront(imp12);
+		// MyLog.waitHere("VERIFICA PLOTTAGGIO NUOVO PUNTO");
+		// if (test && step)
+		// MyLog.waitHere("BISETTRICE " + vetTitle[i1]);
+		// }
 
 		// --------------------------------------------
 		// if (demo) {
