@@ -35,6 +35,7 @@ import utils.MyCircleDetector;
 import utils.MyConst;
 import utils.MyFilter;
 import utils.MyFwhm;
+import utils.MyInput;
 import utils.MyLine;
 import utils.MyLog;
 import utils.MyMsg;
@@ -90,6 +91,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	private static String simulataName = "";
 
 	private static final boolean debug = true;
+
+	private static int timeout = 0;
 
 	public void run(String args) {
 
@@ -187,6 +190,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 				retry = true;
 				break;
 			case 3:
+				timeout = MyInput.myIntegerInput(
+						"Ritardo avanzamento (0 = infinito)", "      [msec]",
+						1000, 0);
+
 				selfTestMenu();
 				retry = true;
 
@@ -580,7 +587,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			double xBkg = imp1.getWidth() - MyConst.P10_X_ROI_BACKGROUND;
 			double yBkg = MyConst.P10_Y_ROI_BACKGROUND;
-			boolean irraggiungibile = verbose;
+			boolean irraggiungibile = false;
 			int diamBkg = MyConst.P10_DIAM_ROI_BACKGROUND;
 			int guard = 10;
 			boolean circle = true;
@@ -1016,18 +1023,21 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean step = false;
 		boolean test = false;
 		double profond = 30;
-		boolean fast = true;
+		boolean fast = false;
 		boolean silent = true;
 
 		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, profond, "",
-				autoCalled, step, verbose, test, fast, silent, 0);
+				autoCalled, step, verbose, test, fast, silent, timeout);
 
-		rt1.show("Results");
+		// rt1.show("Results");
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		// MyLog.logVector(vetResults, "vetResults");
 		// MyLog.waitHere();
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 				MyConst.P10_vetName);
+		if (verbose)
+			UtilAyv.afterWork();
+
 		return ok;
 	}
 
@@ -1043,25 +1053,25 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// ,
 
 		double simul = 0.0;
-		double signal = 355.6938775510204;
+		double signal = 354.16326530612247;
 		// double backNoise = 12.225;
-		double backNoise = 11.731812354423619;
-		double snRatio = 30.318749295108;
+		double backNoise = 10.224592241325686;
+		double snRatio = 34.638375491852656;
 		// double fwhm = 11.43429317989865;
-		double fwhm = 24.264691013919478;
+		double fwhm = 24.329842905555697;
 		double bkg = 12.4375;
 		double pos = 0.0;
-		double num1 = 2763.0;
-		double num2 = 1478.0;
-		double num3 = 7761.0;
-		double num4 = 2712.0;
-		double num5 = 2574.0;
-		double num6 = 2652.0;
-		double num7 = 3054.0;
-		double num8 = 3284.0;
-		double num9 = 3333.0;
-		double num10 = 1755.0;
-		double num11 = 354.0;
+		double num1 = 2818.0;
+		double num2 = 1526.0;
+		double num3 = 7834.0;
+		double num4 = 2607.0;
+		double num5 = 2568.0;
+		double num6 = 2672.0;
+		double num7 = 2969.0;
+		double num8 = 3388.0;
+		double num9 = 3229.0;
+		double num10 = 1768.0;
+		double num11 = 341.0;
 		double num12 = 33816.0;
 
 		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, bkg,
@@ -1070,6 +1080,24 @@ public class p10rmn_ implements PlugIn, Measurements {
 		return vetReference;
 
 	}
+
+	// selfTestSilent.p10rmn_
+	// SIGNAL ERRATO 354.16326530612247 anzichè 355.6938775510204
+	// BACKNOISE ERRATO 10.224592241325686 anzichè 11.731812354423619
+	// SNRATIO ERRATO 34.638375491852656 anzichè 30.318749295108
+	// FWHM ERRATO 24.329842905555697 anzichè 24.264691013919478
+	// NUM_CLASS1 ERRATO 2818.0 anzichè 2763.0
+	// NUM_CLASS2 ERRATO 1526.0 anzichè 1478.0
+	// NUM_CLASS3 ERRATO 7834.0 anzichè 7761.0
+	// NUM_CLASS4 ERRATO 2607.0 anzichè 2712.0
+	// NUM_CLASS5 ERRATO 2568.0 anzichè 2574.0
+	// NUM_CLASS6 ERRATO 2672.0 anzichè 2652.0
+	// NUM_CLASS7 ERRATO 2969.0 anzichè 3054.0
+	// NUM_CLASS8 ERRATO 3388.0 anzichè 3284.0
+	// NUM_CLASS9 ERRATO 3229.0 anzichè 3333.0
+	// NUM_CLASS10 ERRATO 1768.0 anzichè 1755.0
+	// NUM_CLASS11 ERRATO 341.0 anzichè 354.0
+	// Il test di p10rmn_ UNIFORMITA' SUPERFICIALE evidenzia degli ERRORI
 
 	/**
 	 * Ge (Siemens) test image expected results maintained fou uniformity with
@@ -1084,6 +1112,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double backNoise = 10.00347735683198;
 		double snRatio = 35.48765967441802;
 		double fwhm = 23.977086148658152;
+		double bkg = 12.4375;
 		double pos = 0.0;
 		double num1 = 2763.0;
 		double num2 = 1532.0;
@@ -1098,9 +1127,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double num11 = 354.0;
 		double num12 = 33816.0;
 
-		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, pos,
-				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
-				num11, num12 };
+		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, bkg,
+				pos, num1, num2, num3, num4, num5, num6, num7, num8, num9,
+				num10, num11, num12 };
 		return vetReference;
 	}
 
@@ -1111,7 +1140,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean verbose = false;
 		boolean ok = selfTestSiemens(verbose);
 		if (ok) {
-			IJ.log("Il test di p10rmn_ UNIFORMITA' SUPERFICIALE � stato SUPERATO");
+			IJ.log("Il test di p10rmn_ UNIFORMITA' SUPERFICIALE è stato SUPERATO");
 		} else {
 			IJ.log("Il test di p10rmn_ UNIFORMITA' SUPERFICIALE evidenzia degli ERRORI");
 		}
@@ -1566,7 +1595,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (lw != null)
 				lw.setLocation(10, 10);
 
-			// MyLog.waitHere(listaMessaggi(5), debug, timeout);
+			MyLog.waitHere(listaMessaggi(5), debug, timeout);
 
 		}
 
@@ -1655,7 +1684,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean debug = true;
 		boolean manual = false;
 		boolean demo = !fast;
-		boolean showProfiles = demo;
+		// boolean showProfiles = demo;
 
 		double ax = 0;
 		double ay = 0;
@@ -1703,6 +1732,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 		if (demo) {
 			UtilAyv.showImageMaximized(imp12);
 			ImageUtils.imageToFront(imp12);
+			MyLog.waitHere(
+					"l'immagine viene processata con il filtro variance, per estrarre il bordo",
+					debug, timeout);
 		}
 
 		// ip12.findEdges();
@@ -1710,12 +1742,22 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double radius = 0.1;
 		int filterType = RankFilters.VARIANCE;
 		rk1.rank(ip12, radius, filterType);
+		imp12.updateAndDraw();
+		if (demo)
+			MyLog.waitHere(
+					"L'immagine risultante ha il bordo con il segnale evidenziato",
+					debug, timeout);
+
 		// =============== modifica 290515 ===========
 		double max1 = imp12.getStatistics().max;
 		ip12.subtract(max1 / 30);
 		// ===========================================
 
 		imp12.updateAndDraw();
+		if (demo)
+			MyLog.waitHere(
+					"all'intera immagine viene sottratto 1/30 del segnale massimo,\n questo per eliminare il noise residuo al centro del fantoccio",
+					debug, timeout);
 
 		if (step)
 			MyLog.waitHere(listaMessaggi(3), debug, timeout);
@@ -1803,6 +1845,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 				vertical = true;
 			else
 				vertical = false;
+
+			boolean showProfiles = false;
+
+			if (demo && i1 == 0)
+				showProfiles = true;
+
 			myPeaks = profileAnalyzer(imp12, dimPixel, vetTitle[i1],
 					showProfiles, vertical, timeout);
 
@@ -1819,7 +1867,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				// della bisettice verticale prendo solo il picco in basso
 				// in questi due casi, se esiste, prendo solo il secondo picco
 				// (a patto di aver tracciato correttamente la bisettrice)
-				// if (i1 < 2) {
+				// if (i1 < 2) {e alla bolla d'aria
 				// if (myPeaks[0].length == 2) {
 				// count++;
 				// myXpoints[count] = (int) (myPeaks[0][1]);
@@ -1868,17 +1916,15 @@ public class p10rmn_ implements PlugIn, Measurements {
 								(int) (myPeaks[0][i2]), (int) (myPeaks[1][i2]));
 						imp12.updateAndDraw();
 						ImageUtils.imageToFront(imp12);
-						// MyLog.waitHere("VERIFICA PLOTTAGGIO NUOVO PUNTO");
 					}
-					//
 				}
 			}
-
-			// MyLog.waitHere("count vale " + count);
 
 			// devo compattare i vettori myXpoints e myYpoints, ovviamente a
 			// patto che count >=0;
 		}
+
+		MyLog.waitHere("Si tracciano ulteriori linee ", debug, timeout);
 
 		if (count >= 0) {
 			count++;

@@ -32,6 +32,7 @@ import ij.util.Tools;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -1074,7 +1075,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				step, verbose, test, fast, silent, timeout);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-				MyConst.P3_vetName);
+				MyConst.P12_vetName);
 		if (verbose)
 			UtilAyv.afterWork();
 
@@ -1303,19 +1304,23 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 */
 	public static double[][] cannyProfileAnalyzer(ImagePlus imp1,
 			double dimPixel, String title, boolean showProfiles, boolean demo,
-			boolean debug, int timeout) {
+			boolean debug, boolean vertical, int timeout) {
 
-		double[][] line1 = MyLine.decomposer(imp1);
+		double[][] profi3 = MyLine.decomposer(imp1);
+		if (profi3 == null) {
+			MyLog.waitHere("profi3 == null");
+			return null;
+		}
 		int count1 = 0;
 		boolean ready1 = false;
 		double max1 = 0;
-		for (int i1 = 0; i1 < line1[0].length; i1++) {
+		for (int i1 = 0; i1 < profi3[0].length; i1++) {
 
-			if (line1[2][i1] > max1) {
-				max1 = line1[2][i1];
+			if (profi3[2][i1] > max1) {
+				max1 = profi3[2][i1];
 				ready1 = true;
 			}
-			if ((line1[2][i1] == 0) && ready1) {
+			if ((profi3[2][i1] == 0) && ready1) {
 				max1 = 0;
 				count1++;
 				ready1 = false;
@@ -1339,17 +1344,17 @@ public class p12rmn_ implements PlugIn, Measurements {
 		boolean ready2 = false;
 		double max2 = 0;
 
-		for (int i1 = 0; i1 < line1[0].length; i1++) {
+		for (int i1 = 0; i1 < profi3[0].length; i1++) {
 
-			if (line1[2][i1] > max2) {
-				peaks1[3][count2] = line1[0][i1];
-				peaks1[4][count2] = line1[1][i1];
-				max2 = line1[2][i1];
+			if (profi3[2][i1] > max2) {
+				peaks1[3][count2] = profi3[0][i1];
+				peaks1[4][count2] = profi3[1][i1];
+				max2 = profi3[2][i1];
 				peaks1[5][count2] = max2;
 
 				ready2 = true;
 			}
-			if ((line1[2][i1] == 0) && ready2) {
+			if ((profi3[2][i1] == 0) && ready2) {
 				max2 = 0;
 				count2++;
 				ready2 = false;
@@ -1367,37 +1372,173 @@ public class p12rmn_ implements PlugIn, Measurements {
 		}
 
 		if (showProfiles) {
-			double[] bx = new double[line1[2].length];
-			for (int i1 = 0; i1 < line1[2].length; i1++) {
+			double[] bx = new double[profi3[2].length];
+			for (int i1 = 0; i1 < profi3[2].length; i1++) {
 				bx[i1] = (double) i1;
 			}
 
-			Plot plot4 = new Plot("Profile", "X Axis", "Y Axis", bx, line1[2]);
-			plot4.setLimits(0, bx.length + 10, 0, 300);
-			plot4.setSize(400, 200);
-			plot4.setColor(Color.red);
-			plot4.setLineWidth(2);
-			plot4.show();
-			if (demo)
-				MyLog.waitHere(listaMessaggi(3), debug, timeout);
-
-			if (WindowManager.getFrame("Profile") != null) {
-				IJ.selectWindow("Profile");
-				IJ.run("Close");
+			double[] xPoints = new double[peaks1[0].length];
+			double[] yPoints = new double[peaks1[0].length];
+			double[] zPoints = new double[peaks1[0].length];
+			for (int i1 = 0; i1 < peaks1[0].length; i1++) {
+				xPoints[i1] = peaks1[3][i1];
+				yPoints[i1] = peaks1[4][i1];
+				zPoints[i1] = peaks1[5][i1];
 			}
 
-			// verifico di avere trovato un max di 2 picchi
-			if (peaks1[2].length > 2)
-				MyLog.waitHere("Attenzione trovate troppe intersezioni col cerchio, cioè "
-						+ peaks1[2].length + "  VERIFICARE");
-			if (peaks1[2].length < 2)
-				MyLog.waitHere("Attenzione trovata una sola intersezione col cerchio, cioè "
-						+ peaks1[2].length + "  VERIFICARE");
+			Plot plot2 = MyPlot.basePlot2(profi3, title, Color.GREEN, vertical);
+			plot2.draw();
+			plot2.setColor(Color.red);
+			if (vertical)
+				plot2.addPoints(yPoints, zPoints, PlotWindow.CIRCLE);
+			else
+				plot2.addPoints(xPoints, zPoints, PlotWindow.CIRCLE);
+			plot2.show();
 
-			// MyLog.logMatrix(peaks1, "peaks1 " + title);
+			Frame lw = WindowManager.getFrame(title);
+			if (lw != null)
+				lw.setLocation(10, 10);
+
+			MyLog.waitHere(listaMessaggi(3), debug, timeout);
+
 		}
+
+		//
+		// Plot plot4 = new Plot("Profile", "X Axis", "Y Axis", bx, profi3[2]);
+		// plot4.setLimits(0, bx.length + 10, 0, 300);
+		// plot4.setSize(400, 200);
+		// plot4.setColor(Color.red);
+		// plot4.setLineWidth(2);
+		// plot4.show();
+
+		if (WindowManager.getFrame("Profile") != null) {
+			IJ.selectWindow("Profile");
+			IJ.run("Close");
+		}
+
+		// verifico di avere trovato un max di 2 picchi
+		if (peaks1[2].length > 2)
+			MyLog.waitHere("Attenzione trovate troppe intersezioni col cerchio, cioè "
+					+ peaks1[2].length + "  VERIFICARE");
+		if (peaks1[2].length < 2)
+			MyLog.waitHere("Attenzione trovata una sola intersezione col cerchio, cioè "
+					+ peaks1[2].length + "  VERIFICARE");
+
+		// MyLog.logMatrix(peaks1, "peaks1 " + title);
+
 		return peaks1;
 	}
+
+	/**
+	 * Riceve una ImagePlus derivante da un CannyEdgeDetector con impostata una
+	 * Line, restituisce le coordinate dei 2 picchi, se non sono esattamente 2
+	 * restituisce null.
+	 * 
+	 * @param imp1
+	 * @param dimPixel
+	 * @param title
+	 * @param showProfiles
+	 * @param demo
+	 * @param debug
+	 * @return
+	 */
+	// public static double[][] cannyProfileAnalyzer2(ImagePlus imp1,
+	// double dimPixel, String title, boolean showProfiles, boolean demo,
+	// boolean debug, int timeout) {
+	//
+	// double[][] line1 = MyLine.decomposer(imp1);
+	// int count1 = 0;
+	// boolean ready1 = false;
+	// double max1 = 0;
+	// for (int i1 = 0; i1 < line1[0].length; i1++) {
+	//
+	// if (line1[2][i1] > max1) {
+	// max1 = line1[2][i1];
+	// ready1 = true;
+	// }
+	// if ((line1[2][i1] == 0) && ready1) {
+	// max1 = 0;
+	// count1++;
+	// ready1 = false;
+	// }
+	// }
+	// // devo ora contare i pixel a 255 che ho trovato, ne accetterò solo 2,
+	// if (count1 != 2) {
+	// if (demo)
+	// MyLog.waitHere("" + title
+	// + " trovati un numero di punti diverso da 2, count= "
+	// + count1 + " scartiamo questi risultati");
+	// return null;
+	// }
+	//
+	// // peaks1 viene utilizzato in un altra routine, per cui gli elementi 0,
+	// // 1 e
+	// // ed 2 sono utilizzati per altro, li lascio a 0
+	// double[][] peaks1 = new double[6][count1];
+	//
+	// int count2 = 0;
+	// boolean ready2 = false;
+	// double max2 = 0;
+	//
+	// for (int i1 = 0; i1 < line1[0].length; i1++) {
+	//
+	// if (line1[2][i1] > max2) {
+	// peaks1[3][count2] = line1[0][i1];
+	// peaks1[4][count2] = line1[1][i1];
+	// max2 = line1[2][i1];
+	// peaks1[5][count2] = max2;
+	//
+	// ready2 = true;
+	// }
+	// if ((line1[2][i1] == 0) && ready2) {
+	// max2 = 0;
+	// count2++;
+	// ready2 = false;
+	// }
+	// }
+	//
+	// // ----------------------------------------
+	// // AGGIUNGO 1 AI PUNTI TROVATI
+	// // ---------------------------------------
+	//
+	// for (int i1 = 0; i1 < peaks1.length; i1++) {
+	// for (int i2 = 0; i2 < peaks1[0].length; i2++)
+	// if (peaks1[i1][i2] > 0)
+	// peaks1[i1][i2] = peaks1[i1][i2] + 1;
+	// }
+	//
+	// if (showProfiles) {
+	// double[] bx = new double[line1[2].length];
+	// for (int i1 = 0; i1 < line1[2].length; i1++) {
+	// bx[i1] = (double) i1;
+	// }
+	//
+	// Plot plot4 = new Plot("Profile", "X Axis", "Y Axis", bx, line1[2]);
+	// plot4.setLimits(0, bx.length + 10, 0, 300);
+	// plot4.setSize(400, 200);
+	// plot4.setColor(Color.red);
+	// plot4.setLineWidth(2);
+	// plot4.show();
+	// if (demo)
+	// MyLog.waitHere(listaMessaggi(3), debug, timeout);
+	//
+	// if (WindowManager.getFrame("Profile") != null) {
+	// IJ.selectWindow("Profile");
+	// IJ.run("Close");
+	// }
+	//
+	// // verifico di avere trovato un max di 2 picchi
+	// if (peaks1[2].length > 2)
+	// MyLog.waitHere("Attenzione trovate troppe intersezioni col cerchio, cioè "
+	// + peaks1[2].length + "  VERIFICARE");
+	// if (peaks1[2].length < 2)
+	// MyLog.waitHere("Attenzione trovata una sola intersezione col cerchio, cioè "
+	// + peaks1[2].length + "  VERIFICARE");
+	//
+	// // MyLog.logMatrix(peaks1, "peaks1 " + title);
+	// }
+	// return peaks1;
+	// }
 
 	/***
 	 * Riceve una ImagePlus con impostata una Line, restituisce le coordinate
@@ -1407,52 +1548,52 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 * @param dimPixel
 	 * @return
 	 */
-	public static double[][] profileAnalyzer(ImagePlus imp1, double dimPixel,
-			String title, boolean showProfiles) {
-		Roi roi11 = imp1.getRoi();
-		double[] profi1 = ((Line) roi11).getPixels();
-
-		double[] profi2y = smooth3(profi1, 1);
-
-		double[] profi2x = new double[profi2y.length];
-		double xval = 0.;
-		for (int i1 = 0; i1 < profi2y.length; i1++) {
-			profi2x[i1] = xval;
-			xval += dimPixel;
-		}
-
-		double[][] profi3 = new double[profi2y.length][2];
-		for (int i1 = 0; i1 < profi2y.length; i1++) {
-			profi3[i1][0] = profi2x[i1];
-			profi3[i1][1] = profi2y[i1];
-		}
-		ArrayList<ArrayList<Double>> matOut = ImageUtils.peakDet2(profi3, 100.);
-		double[][] peaks1 = new InputOutput()
-				.fromArrayListToDoubleTable(matOut);
-
-		double[] xPoints = new double[peaks1[0].length];
-		double[] yPoints = new double[peaks1[0].length];
-		for (int i1 = 0; i1 < peaks1[0].length; i1++) {
-			xPoints[i1] = peaks1[0][i1];
-			yPoints[i1] = peaks1[1][i1];
-
-		}
-
-		if (showProfiles) {
-			Plot plot2 = MyPlot.basePlot(profi2x, profi2y, title, Color.GREEN);
-			plot2.draw();
-			plot2.setColor(Color.red);
-			plot2.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
-			plot2.show();
-			new WaitForUserDialog("002 premere  OK").show();
-		}
-
-		// verifico di avere trovato un max di 2 picchi
-		if (peaks1[2].length > 2)
-			MyLog.waitHere("Attenzione trovati troppe intersezioni col cerchio, VERIFICARE");
-
-		return peaks1;
-	}
+	// public static double[][] profileAnalyzer(ImagePlus imp1, double dimPixel,
+	// String title, boolean showProfiles) {
+	// Roi roi11 = imp1.getRoi();
+	// double[] profi1 = ((Line) roi11).getPixels();
+	//
+	// double[] profi2y = smooth3(profi1, 1);
+	//
+	// double[] profi2x = new double[profi2y.length];
+	// double xval = 0.;
+	// for (int i1 = 0; i1 < profi2y.length; i1++) {
+	// profi2x[i1] = xval;
+	// xval += dimPixel;
+	// }
+	//
+	// double[][] profi3 = new double[profi2y.length][2];
+	// for (int i1 = 0; i1 < profi2y.length; i1++) {
+	// profi3[i1][0] = profi2x[i1];
+	// profi3[i1][1] = profi2y[i1];
+	// }
+	// ArrayList<ArrayList<Double>> matOut = ImageUtils.peakDet2(profi3, 100.);
+	// double[][] peaks1 = new InputOutput()
+	// .fromArrayListToDoubleTable(matOut);
+	//
+	// double[] xPoints = new double[peaks1[0].length];
+	// double[] yPoints = new double[peaks1[0].length];
+	// for (int i1 = 0; i1 < peaks1[0].length; i1++) {
+	// xPoints[i1] = peaks1[0][i1];
+	// yPoints[i1] = peaks1[1][i1];
+	//
+	// }
+	//
+	// if (showProfiles) {
+	// Plot plot2 = MyPlot.basePlot(profi2x, profi2y, title, Color.GREEN);
+	// plot2.draw();
+	// plot2.setColor(Color.red);
+	// plot2.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
+	// plot2.show();
+	// new WaitForUserDialog("002 premere  OK").show();
+	// }
+	//
+	// // verifico di avere trovato un max di 2 picchi
+	// if (peaks1[2].length > 2)
+	// MyLog.waitHere("Attenzione trovati troppe intersezioni col cerchio, VERIFICARE");
+	//
+	// return peaks1;
+	// }
 
 	/**
 	 * Ricerca posizione ROI per calcolo uniformità. Versione con Canny Edge
@@ -1501,6 +1642,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int diamMROI = 0;
 		int xcorr = 0;
 		int ycorr = 0;
+		boolean showProfiles = false;
 
 		int height = imp11.getHeight();
 		int width = imp11.getWidth();
@@ -1553,255 +1695,188 @@ public class p12rmn_ implements PlugIn, Measurements {
 		double[][] peaks11 = new double[4][1];
 		double[][] peaks12 = new double[4][1];
 
-		boolean showProfiles = false;
-		int[] xcoord = new int[2];
-		int[] ycoord = new int[2];
 		boolean strokewidth = true;
 		double strWidth = 1.5;
+
+		// ------ riadattamento da p10
+
+		double[][] myPeaks = new double[4][1];
+		int[] myXpoints = new int[16];
+		int[] myYpoints = new int[16];
+
+		int[] xcoord = new int[2];
+		int[] ycoord = new int[2];
 		boolean manualOverride = false;
 
-		// --------DIAGONALE SINISTRA---------------------
-		xcoord[0] = 0;
-		ycoord[0] = 0;
-		xcoord[1] = width;
-		ycoord[1] = height;
-		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
-		if (demo) {
-			// imp12.updateAndDraw();
-			over12.addElement(imp12.getRoi());
-		}
-		if (strokewidth)
-			imp12.getRoi().setStrokeWidth(strWidth);
-		peaks5 = cannyProfileAnalyzer(imp12, dimPixel,
-				"BISETTRICE DIAGONALE SINISTRA", demo, demo, debug, timeout);
-		if (peaks5 != null)
-			ImageUtils.plotPoints(imp12, over12, peaks5);
+		int[] vetx0 = new int[8];
+		int[] vetx1 = new int[8];
+		int[] vety0 = new int[8];
+		int[] vety1 = new int[8];
 
-		// --------DIAGONALE DESTRA---------------------
-		xcoord[0] = width;
-		ycoord[0] = 0;
-		xcoord[1] = 0;
-		ycoord[1] = height;
-		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
-		if (demo) {
-			imp12.updateAndDraw();
-			over12.addElement(imp12.getRoi());
-		}
-		if (strokewidth)
-			imp12.getRoi().setStrokeWidth(strWidth);
-		peaks6 = cannyProfileAnalyzer(imp12, dimPixel,
-				"BISETTRICE DIAGONALE DESTRA", false, false, false, 1);
-		if (peaks6 != null)
-			ImageUtils.plotPoints(imp12, over12, peaks6);
+		vetx0[0] = 0;
+		vety0[0] = height / 2;
+		vetx1[0] = width;
+		vety1[0] = height / 2;
+		// ----
+		vetx0[1] = width / 2;
+		vety0[1] = 0;
+		vetx1[1] = width / 2;
+		vety1[1] = height;
+		// ----
+		vetx0[2] = 0;
+		vety0[2] = 0;
+		vetx1[2] = width;
+		vety1[2] = height;
+		// -----
+		vetx0[3] = width;
+		vety0[3] = 0;
+		vetx1[3] = 0;
+		vety1[3] = height;
+		// -----
+		vetx0[4] = width / 4;
+		vety0[4] = 0;
+		vetx1[4] = width * 3 / 4;
+		vety1[4] = height;
+		// ----
+		vetx0[5] = width * 3 / 4;
+		vety0[5] = 0;
+		vetx1[5] = width / 4;
+		vety1[5] = height;
+		// ----
+		vetx0[6] = width;
+		vety0[6] = height * 1 / 4;
+		vetx1[6] = 0;
+		vety1[6] = height * 3 / 4;
+		// ----
+		vetx0[7] = 0;
+		vety0[7] = height * 1 / 4;
+		vetx1[7] = width;
+		vety1[7] = height * 3 / 4;
 
-		// -------- ORIZZONTALE ---------------------
-		xcoord[0] = 0;
-		ycoord[0] = height / 2;
-		xcoord[1] = width;
-		ycoord[1] = height / 2;
+		String[] vetTitle = { "orizzontale", "verticale", "diagonale sinistra",
+				"diagonale destra", "inclinata 1", "inclinata 2",
+				"inclinata 3", "inclinata 4" };
 
-		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
-		if (demo) {
-			imp12.updateAndDraw();
-			over12.addElement(imp12.getRoi());
-		}
-		if (strokewidth)
-			imp12.getRoi().setStrokeWidth(strWidth);
+		// multipurpose line analyzer
 
-		peaks1 = cannyProfileAnalyzer(imp12, dimPixel,
-				"BISETTRICE ORIZZONTALE", showProfiles, false, false, 1);
-		// PLOTTAGGIO PUNTI
-		if (peaks1 != null)
-			ImageUtils.plotPoints(imp12, over12, peaks1);
+		int count = -1;
 
-		// NOTA BENE: sulla bisettrice (e ricordiamoci, è la bisettrice
-		// dell'immagine) potrebbe esserci la bolla d'aria a sinistra, quindi
-		// non dovrei utilizzare questo punto per la determinazione automatica
-		// del centro, poichè può introdurre un leggero shift del centro
+		// int[] xPoints3 = null;
+		// int[] yPoints3 = null;
+		boolean vertical = false;
+		boolean valido = true;
+		for (int i1 = 0; i1 < 8; i1++) {
 
-		// -------- VERTICALE ---------------------
-		xcoord[0] = width / 2;
-		ycoord[0] = 0;
-		xcoord[1] = width / 2;
-		ycoord[1] = height;
-		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
-		if (demo) {
-			imp12.updateAndDraw();
-			over12.addElement(imp12.getRoi());
-		}
+			IJ.log("------------> i1= " + i1);
 
-		if (strokewidth)
-			imp12.getRoi().setStrokeWidth(strWidth);
-		peaks2 = cannyProfileAnalyzer(imp12, dimPixel, "BISETTRICE VERTICALE",
-				showProfiles, false, false, 1);
-		// PLOTTAGGIO PUNTI
-		if (peaks2 != null)
-			ImageUtils.plotPoints(imp12, over12, peaks2);
+			xcoord[0] = vetx0[i1];
+			ycoord[0] = vety0[i1];
+			xcoord[1] = vetx1[i1];
+			ycoord[1] = vety1[i1];
+			imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
+			if (demo) {
+				imp12.updateAndDraw();
+				over12.addElement(imp12.getRoi());
+			}
 
-		// -------- INCERTA SX---------------------
-		xcoord[0] = width / 4;
-		ycoord[0] = 0;
-		xcoord[1] = width * 3 / 4;
-		ycoord[1] = height;
-		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
-		if (demo) {
-			imp12.updateAndDraw();
-			over12.addElement(imp12.getRoi());
-		}
-		if (strokewidth)
-			imp12.getRoi().setStrokeWidth(strWidth);
-		peaks3 = cannyProfileAnalyzer(imp12, dimPixel, "BISETTRICE INCERTA SX",
-				showProfiles, false, false, 1);
-		// PLOTTAGGIO PUNTI
-		if (peaks3 != null)
-			ImageUtils.plotPoints(imp12, over12, peaks3);
+			if (i1 == 1)
+				vertical = true;
+			else
+				vertical = false;
 
-		// -------- INCERTA DX---------------------
-		xcoord[0] = width * 3 / 4;
-		ycoord[0] = 0;
-		xcoord[1] = width / 4;
-		ycoord[1] = height;
-		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
-		if (demo) {
-			imp12.updateAndDraw();
-			over12.addElement(imp12.getRoi());
-		}
-		if (strokewidth)
-			imp12.getRoi().setStrokeWidth(strWidth);
-		peaks4 = cannyProfileAnalyzer(imp12, dimPixel, "BISETTRICE INCERTA SX",
-				showProfiles, false, false, 1);
-		// PLOTTAGGIO PUNTI
-		if (peaks4 != null)
-			ImageUtils.plotPoints(imp12, over12, peaks4);
-		// --------DIAGONALE DESTRA extra---------------------
-		xcoord[0] = width;
-		ycoord[0] = height * 1 / 4;
-		xcoord[1] = 0;
-		ycoord[1] = height * 3 / 4;
-		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
-		if (demo) {
-			imp12.updateAndDraw();
-			over12.addElement(imp12.getRoi());
-		}
-		if (strokewidth)
-			imp12.getRoi().setStrokeWidth(strWidth);
-		peaks7 = cannyProfileAnalyzer(imp12, dimPixel,
-				"BISETTRICE DIAGONALE DESTRA EXTRA", showProfiles, false,
-				false, 1);
-		// PLOTTAGGIO PUNTI
-		if (peaks7 != null)
-			ImageUtils.plotPoints(imp12, over12, peaks7);
-		// --------DIAGONALE DESTRA extra---------------------
-		xcoord[0] = 0;
-		ycoord[0] = height * 1 / 4;
-		xcoord[1] = width;
-		ycoord[1] = height * 3 / 4;
-		imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
-		if (demo) {
-			imp12.updateAndDraw();
-			over12.addElement(imp12.getRoi());
-		}
-		if (strokewidth)
-			imp12.getRoi().setStrokeWidth(strWidth);
-		peaks8 = cannyProfileAnalyzer(imp12, dimPixel,
-				"BISETTRICE DIAGONALE DESTRA EXTRA", showProfiles, false,
-				false, 1);
-		// PLOTTAGGIO PUNTI
-		if (peaks8 != null)
-			ImageUtils.plotPoints(imp12, over12, peaks8);
-		// --------------------------------------------
-		if (demo) {
-			MyLog.waitHere(listaMessaggi(2), debug, timeout);
-		}
-		// --------------------------------------------
-		int npeaks1 = 0;
-		if (peaks1 != null) {
-			npeaks1 = peaks1[2].length;
-			if (npeaks1 > 1)
-				npeaks1 = 1;
+			if (demo && i1 == 0)
+				showProfiles = true;
+			else
+				showProfiles = false;
+
+			myPeaks = cannyProfileAnalyzer(imp12, dimPixel, vetTitle[i1],
+					showProfiles, demo, debug, vertical, timeout);
+
+			// myPeaks = profileAnalyzer(imp12, dimPixel, vetTitle[i1],
+			// showProfiles, vertical, timeout);
+
+			String direction1 = ReadDicom.readDicomParameter(imp11,
+					MyConst.DICOM_IMAGE_ORIENTATION);
+			String direction2 = "1\0\0\01\0";
+
+			if (myPeaks != null) {
+
+				// per evitare le bolle d'aria escluderò il punto in alto per
+				// l'immagine assiale ed il punto a sinistra dell'immagine
+				// sagittale. Considero punto in alto quello con coordinata y <
+				// mat/2 e come punto a sinistra quello con coordinata x < mat/2
+				for (int i2 = 0; i2 < myPeaks[0].length; i2++) {
+					valido = true;
+					// MyLog.waitHere("direction1= " + direction1 + " i1= " +
+					// i1);
+
+					if ((direction1.compareTo("0\\1\\0\\0\\0\\-1") == 0)
+							&& (i1 == 0)) {
+						// MyLog.waitHere("interdizione 0");
+
+						if (((int) (myPeaks[0][i2]) < width / 2)) {
+							valido = false;
+							// MyLog.waitHere("linea orizzontale eliminato punto sx");
+						} else
+							;
+						// MyLog.waitHere("linea orizzontale mantenuto punto dx");
+					}
+
+					if ((direction1.compareTo("1\\0\\0\\0\\1\\0") == 0)
+							&& (i1 == 1)) {
+						// MyLog.waitHere("interdizione 1");
+						if (((int) (myPeaks[1][i2]) < height / 2)) {
+							valido = false;
+							// MyLog.waitHere("linea verticale eliminato punto sup");
+						} else
+							;
+						// MyLog.waitHere("linea verticale mantenuto punto inf");
+					}
+
+					if (valido) {
+
+						count++;
+						myXpoints[count] = (int) (myPeaks[3][i2]);
+						myYpoints[count] = (int) (myPeaks[4][i2]);
+						ImageUtils.plotPoints(imp12, over12,
+								(int) (myPeaks[3][i2]), (int) (myPeaks[4][i2]),
+								Color.red, 8.1);
+						imp12.updateAndDraw();
+						ImageUtils.imageToFront(imp12);
+					}
+					// MyLog.logVector(myXpoints, "myXpoints");
+					// MyLog.logVector(myYpoints, "myYpoints");
+				}
+				// MyLog.waitHere("count= " + count);
+			}
+
 		}
 
-		int npeaks2 = 0;
-		if (peaks2 != null) {
-			npeaks2 = peaks2[2].length;
-			if (npeaks2 > 1)
-				npeaks2 = 1;
-		}
-		int npeaks3 = 0;
-		if (peaks3 != null)
-			npeaks3 = peaks3[2].length;
-		int npeaks4 = 0;
-		if (peaks4 != null)
-			npeaks4 = peaks4[2].length;
-		int npeaks5 = 0;
-		if (peaks5 != null)
-			npeaks5 = peaks5[2].length;
-		int npeaks6 = 0;
-		if (peaks6 != null)
-			npeaks6 = peaks6[2].length;
-		int npeaks7 = 0;
-		if (peaks7 != null)
-			npeaks7 = peaks7[2].length;
-		int npeaks8 = 0;
-		if (peaks8 != null)
-			npeaks8 = peaks8[2].length;
-		int len3 = npeaks1 + npeaks2 + npeaks3 + npeaks4 + npeaks5 + npeaks6
-				+ npeaks7 + npeaks8;
-		int[] xPoints3 = new int[len3];
-		int[] yPoints3 = new int[len3];
-		int j1 = -1;
+		int[] xPoints3 = new int[count];
+		int[] yPoints3 = new int[count];
 
-		if (demo)
-			MyLog.waitHere(listaMessaggi(14), debug, timeout);
-		// della bisettice orizzontale prendo solo il picco di dx
-		if (npeaks1 == 1) {
-			j1++;
-			xPoints3[j1] = (int) (peaks1[3][1]);
-			yPoints3[j1] = (int) (peaks1[4][1]);
+		if (count >= 0) {
+			count++;
+			xPoints3 = new int[count];
+			yPoints3 = new int[count];
+
+			for (int i3 = 0; i3 < count; i3++) {
+				xPoints3[i3] = myXpoints[i3];
+				yPoints3[i3] = myYpoints[i3];
+			}
+		} else {
+			xPoints3 = null;
+			yPoints3 = null;
 		}
 
-		// della bisettice verticale prendo solo il picco in basso
-		if (npeaks2 == 1) {
-			j1++;
-			xPoints3[j1] = (int) (peaks2[3][1]);
-			yPoints3[j1] = (int) (peaks2[4][1]);
-		}
-		for (int i1 = 0; i1 < npeaks3; i1++) {
-			j1++;
-			xPoints3[j1] = (int) (peaks3[3][i1]);
-			yPoints3[j1] = (int) (peaks3[4][i1]);
-		}
-		for (int i1 = 0; i1 < npeaks4; i1++) {
-			j1++;
-			xPoints3[j1] = (int) (peaks4[3][i1]);
-			yPoints3[j1] = (int) (peaks4[4][i1]);
-		}
-		for (int i1 = 0; i1 < npeaks5; i1++) {
-			j1++;
-			xPoints3[j1] = (int) (peaks5[3][i1]);
-			yPoints3[j1] = (int) (peaks5[4][i1]);
-		}
-		for (int i1 = 0; i1 < npeaks6; i1++) {
-			j1++;
-			xPoints3[j1] = (int) (peaks6[3][i1]);
-			yPoints3[j1] = (int) (peaks6[4][i1]);
-		}
-		for (int i1 = 0; i1 < npeaks7; i1++) {
-			j1++;
-			xPoints3[j1] = (int) (peaks7[3][i1]);
-			yPoints3[j1] = (int) (peaks7[4][i1]);
-		}
-		for (int i1 = 0; i1 < npeaks8; i1++) {
-			j1++;
-			xPoints3[j1] = (int) (peaks8[3][i1]);
-			yPoints3[j1] = (int) (peaks8[4][i1]);
-		}
+		MyLog.waitHere();
 		over12.clear();
 
 		// ----------------------------------------------------------------------
 		// Verifica di avere trovato almeno 3 punti, altrimenti chiede la
 		// selezione manuale del cerchio
 		// -------------------------------------------------------------------
+		// MyLog.waitHere("uno");
 
 		if (xPoints3.length < 3 || test) {
 			UtilAyv.showImageMaximized(imp11);
@@ -1812,11 +1887,13 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (!manual) {
 			imp12.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
 			if (demo) {
+				MyLog.waitHere("uno");
+				ImageUtils.addOverlayRoi(imp12, Color.green, 8.1);
+				// over12.addElement(imp12.getRoi());
+				// over12.setStrokeColor(Color.green);
+				// imp12.setOverlay(over12);
 				imp12.updateAndDraw();
-				over12.addElement(imp12.getRoi());
-				over12.setStrokeColor(Color.green);
-				imp12.setOverlay(over12);
-				imp12.updateAndDraw();
+				MyLog.waitHere("due");
 				MyLog.waitHere(listaMessaggi(5), debug, timeout);
 			}
 			// ---------------------------------------------------
@@ -1895,18 +1972,18 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			// BISETTRICE VERTICALE FANTOCCIO
 
-			imp12.setRoi(new Line(xCenterCircle, 0, xCenterCircle, height));
-			if (demo) {
-				imp12.updateAndDraw();
-				over12.addElement(imp12.getRoi());
-			}
-			peaks9 = cannyProfileAnalyzer(imp12, dimPixel,
-					"BISETTRICE VERTICALE FANTOCCIO", showProfiles, false,
-					false, 1);
-
-			// MyLog.logMatrix(peaks9, "peaks9");
-			// MyLog.waitHere();
-
+			 imp12.setRoi(new Line(xCenterCircle, 0, xCenterCircle, height));
+			 if (demo) {
+			 imp12.updateAndDraw();
+			 over12.addElement(imp12.getRoi());
+			 }
+			 peaks9 = cannyProfileAnalyzer(imp12, dimPixel,
+			 "BISETTRICE VERTICALE FANTOCCIO", showProfiles, false,
+			 false, false, 1);
+			
+			 // MyLog.logMatrix(peaks9, "peaks9");
+			 // MyLog.waitHere();
+			
 			// PLOTTAGGIO PUNTI
 
 			double gapVert = 0;
@@ -1924,7 +2001,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			}
 			peaks10 = cannyProfileAnalyzer(imp12, dimPixel,
 					"BISETTRICE ORIZZONTALE FANTOCCIO", showProfiles, false,
-					false, 1);
+					false, false, 1);
 
 			double gapOrizz = 0;
 			if (peaks10 != null) {
@@ -1965,7 +2042,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 				over12.addElement(imp12.getRoi());
 			}
 			peaks11 = cannyProfileAnalyzer(imp12, dimPixel,
-					"BISETTRICE VERTICALE MROI", showProfiles, false, false, 1);
+					"BISETTRICE VERTICALE MROI", showProfiles, false, false,
+					false, 1);
 			if (peaks11 != null) {
 				// PLOTTAGGIO PUNTI
 				ImageUtils.plotPoints(imp12, over12, peaks11);
@@ -1978,7 +2056,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			}
 			peaks12 = cannyProfileAnalyzer(imp12, dimPixel,
 					"BISETTRICE ORIZZONTALE MROI", showProfiles, false, false,
-					1);
+					false, 1);
 			if (peaks12 != null) {
 				// PLOTTAGGIO PUNTI
 				ImageUtils.plotPoints(imp12, over12, peaks12);
