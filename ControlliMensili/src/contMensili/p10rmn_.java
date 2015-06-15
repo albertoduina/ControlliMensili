@@ -125,7 +125,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 	/***
 	 * MODI DI FUNZIONAMENTO:
 	 * 
-	 * FAST: NESSUNA IMMAGINE A DISPLAY, NESSUNA INTERAZIONE CON L'UTENTE
+	 * FAST: IMMAGINE A DISPLAY, MOSTRATA SOLO POSIZIONE ROI IN OVERLAY, NESSUNA
+	 * INTERAZIONE CON L'UTENTE
+	 * 
 	 * 
 	 * FAST NON A BUON FINE: VIENE MOSTRATA L'IMMAGINE, SI CHIEDE IL
 	 * POSIZIONAMENTO DEL CERCHIO CHE IDENTIFICA LA POSIZIONE DEL FANTOCCIO,
@@ -363,6 +365,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 	/**
 	 * Main per il calcolo dell'uniformitï¿½ per bobine di superficie
 	 * 
+	 * NOTA 14 GIUGNO 2015 vedo che per 5 modi diversi di fiunzionamento: FAST
+	 * MANUALE STEP SILENT abbiamo 5 o 6 flag booleani, che però non vengono
+	 * interpretati in modo uniforme e soprattutto non tutti vengono passati
+	 * alle subroutines, generando notevole confusione, quando si desidera
+	 * uniformare il modo di funzionamentro dei vari programmi. LA DOMANDA E':
+	 * CHE FARE ??????, quasi quasi potrei adottare un integer che però
+	 * rappresenterà i diversi modi di funzionamento 0,1,2,3 ecc oppure potrebbe
+	 * nuovamente mimare i binari 0 1 2 4 8 16 32 ecc???
+	 * Da una prima occhiata mi sembrerebbe il caso di mantenere autocalled (viene passato a molte subroutines)
+	 * 
 	 * @param path1
 	 *            path prima immagine
 	 * @param path2
@@ -392,7 +404,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		boolean accetta = false;
 		boolean abort = false;
-		boolean demo = !fast;
+		boolean demo = !fast && !silent;
 		boolean broken = false;
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
@@ -404,7 +416,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// LA ROI, anche in FAST.
 		//
 
-		verbose = true;
+		// MyLog.waitHere("fast= " + fast + " silent=" + silent + " verbose= "
+		// + verbose);
+
 		// String[][] limiti = new InputOutput().readFile6("LIMITI.csv");
 
 		String[][] limiti = TableLimiti.loadTable(MyConst.LIMITS_FILE);
@@ -448,10 +462,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		do {
 			ImagePlus imp11 = null;
-			if (fast || silent)
-				imp11 = UtilAyv.openImageNoDisplay(path1, true);
-			else
+			if (verbose)
 				imp11 = UtilAyv.openImageMaximized(path1);
+			else
+				imp11 = UtilAyv.openImageNoDisplay(path1, true);
 
 			if (imp11 == null)
 				MyLog.waitHere("Non trovato il file " + path1);
@@ -472,14 +486,17 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// se non ho trovato la posizione mi ritrovo qui senza out2[]
 			// valido
 			//
-			// se anche uno solo dei check limits ï¿½ fallito si deve tornare qui
+			// se anche uno solo dei check limits ï¿½ fallito si deve tornare
+			// qui
 			// ed eseguire il controllo, come minimo senza fast attivo ed in
 			// modalitï¿½ verbose
 			// ========================================================================
 			ImagePlus imp1 = null;
 			ImagePlus imp2 = null;
 			ImageWindow iw1 = null;
-			if (verbose && !silent) {
+			// MyLog.waitHere();
+			// if (verbose && !silent) {
+			if (!silent) {
 				imp1 = UtilAyv.openImageMaximized(path1);
 				iw1 = WindowManager.getCurrentWindow();
 				imp2 = UtilAyv.openImageNoDisplay(path2, true);
@@ -529,8 +546,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 			double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
 					ReadDicom.readDicomParameter(imp1,
 							MyConst.DICOM_PIXEL_SPACING), 1));
+			// MyLog.waitHere();
 
 			if (verbose) {
+				// MyLog.waitHere();
 				// =================================================
 				// Centro cerchio
 				MyCircleDetector.drawCenter(imp1, over2, xCenterCircle,
@@ -582,6 +601,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				MyLog.waitHere(listaMessaggi(31), debug);
 
 			ImageStatistics stat7x7 = imp1.getStatistics();
+			// MyLog.waitHere();
 
 			// =============================================================
 
@@ -620,8 +640,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 				// over2.addElement(imp1.getRoi());
 			}
 
-			if (step)
-				MyLog.waitHere(listaMessaggi(26) + statBkg.mean, debug);
+			if (verbose)
+				MyLog.waitHere(listaMessaggi(26) + statBkg.mean, debug, timeout);
 
 			//
 			// =================================================
@@ -636,9 +656,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// disegno MROI su imaDiff
 			//
 			ImagePlus impDiff = UtilAyv.genImaDifference(imp1, imp2);
+			// if (verbose && !fast && demo) {
 			if (verbose && !fast) {
 				UtilAyv.showImageMaximized(impDiff);
-				MyLog.waitHere(listaMessaggi(27));
+				MyLog.waitHere(listaMessaggi(27), debug, timeout);
 
 			}
 			impDiff.setOverlay(over3);
@@ -669,8 +690,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (impDiff.isVisible())
 				ImageUtils.imageToFront(impDiff);
 
-			if (step)
-				MyLog.waitHere(listaMessaggi(33), debug);
+			if (verbose)
+				MyLog.waitHere(listaMessaggi(33), debug, timeout);
 
 			//
 			// calcolo P su imaDiff
@@ -759,7 +780,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 					yCenterRoi, sqNEA, checkPixelsLimit);
 			if (step)
 				MyLog.waitHere(listaMessaggi(23) + out11[0] + "stdDev4= "
-						+ out11[1], debug);
+						+ out11[1], debug, timeout);
 			//
 			// calcolo SNR finale
 			//
@@ -804,8 +825,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (out3 == null)
 				MyLog.waitHere("out3==null");
 
-			// ora perï¿½ devo riordinare i valori restituiti da crossing, in modo
-			// che il punto di start del profilo sia quello piï¿½ vicino al centro
+			// ora perï¿½ devo riordinare i valori restituiti da crossing, in
+			// modo
+			// che il punto di start del profilo sia quello piï¿½ vicino al
+			// centro
 			// ROI.
 
 			double dist1 = MyFwhm.lengthCalculation(out3[0], out3[1],
@@ -843,7 +866,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 					codice, false, step);
 
 			if (step)
-				MyLog.waitHere(listaMessaggi(28), debug);
+				MyLog.waitHere(listaMessaggi(28), debug, timeout);
 
 			// =================================================================
 			double slicePosition = ReadDicom.readDouble(ReadDicom
@@ -947,7 +970,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				rt.show("Results");
 			}
 
-			if (fast) {
+			if (fast || autoCalled || silent) {
 				accetta = true;
 			} else if (autoCalled && !test) {
 				accetta = MyMsg.accettaMenu();
@@ -1681,11 +1704,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// ================================================================================
 		//
 
+		// MyLog.waitHere("autoCalled= " + autoCalled + "\nstep= " + step
+		// + "\nverbose= " + verbose + "\ntest= " + test + "\nfast= "
+		// + fast);
+
 		boolean debug = true;
 		boolean manual = false;
-		boolean demo = !fast;
+		boolean demo = verbose;
 		// boolean showProfiles = demo;
-
 		double ax = 0;
 		double ay = 0;
 		int xCenterCircle = 0;
@@ -1924,7 +1950,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// patto che count >=0;
 		}
 
-		MyLog.waitHere("Si tracciano ulteriori linee ", debug, timeout);
+		if (demo)
+			MyLog.waitHere("Si tracciano ulteriori linee ", debug, timeout);
 
 		if (count >= 0) {
 			count++;
@@ -2165,7 +2192,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 				yCenterCircle, xMaxima, yMaxima, xCenterCircle, yCenterCircle,
 				diamCircle / 2);
 
-		// il punto che ci interesasa sarï¿½ quello con minor distanza dal maxima
+		// il punto che ci interesasa sarï¿½ quello con minor distanza dal
+		// maxima
 		double dx1 = xMaxima - out11[0];
 		double dx2 = xMaxima - out11[2];
 		double dy1 = yMaxima - out11[1];
@@ -2245,7 +2273,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// + xCenterRoi + " yCenterRoi= " + yCenterRoi);
 		// }
 
-		if (!fast && !test || fast && manual) {
+		if (!fast && !test && manual || fast && manual) {
 
 			ImageUtils.imageToFront(iw11);
 
@@ -2262,7 +2290,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// cerchio,
 			// del punto di maxima e dell'angolo resteranno quelle determinate
 			// in
-			// precedenza (anche perchï¿½ non vengono comunque piï¿½ utilizzate per
+			// precedenza (anche perchï¿½ non vengono comunque piï¿½ utilizzate
+			// per
 			// i
 			// calcoli)
 			//

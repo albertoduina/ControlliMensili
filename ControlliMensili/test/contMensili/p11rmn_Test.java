@@ -147,6 +147,7 @@ public class p11rmn_Test {
 	@Test
 	public final void testSelfTestSilent() {
 		new p11rmn_().selfTestSilent();
+		
 	}
 
 }

@@ -853,16 +853,18 @@ public class p11rmn_ implements PlugIn, Measurements {
 							+ levelString[i1]);
 					rt.addValue(s2, classiSimulata[i1][1]);
 				}
+				
+				
 				if (verbose && !test && !fast) {
 					rt.show("Results");
 				}
 
-				if (fast) {
+				if (fast || autoCalled || silent) {
 					accetta = true;
 				} else if (autoCalled && !test) {
 					accetta = MyMsg.accettaMenu();
 				} else {
-					if (!test) {
+						if (!test) {
 						accetta = MyMsg.msgStandalone();
 					} else {
 						accetta = test;
