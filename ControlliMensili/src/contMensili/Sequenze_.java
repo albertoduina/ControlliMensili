@@ -79,38 +79,39 @@ public class Sequenze_ implements PlugIn {
 	public boolean debugTables = false;
 
 	public void run(String arg) {
-	
+
 		UtilAyv.setMyPrecision();
-		
+
 		//
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
 		// modo il messaggio viene emesso, altrimenti si ha una eccezione
 		//
-	
+
 		try {
 			Class.forName("utils.IW2AYV");
 		} catch (ClassNotFoundException e) {
 			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
 			return;
 		}
-	
-//		MyFileLogger.logger.info("<-- INIZIO Sequenze -->");
-		TextWindow tw = new TextWindow("Sequenze", "<-- INIZIO Sequenze -->", 300,200);
+
+		// MyFileLogger.logger.info("<-- INIZIO Sequenze -->");
+		TextWindow tw = new TextWindow("Sequenze", "<-- INIZIO Sequenze -->",
+				300, 200);
 		Frame lw = WindowManager.getFrame("Sequenze");
 		if (lw == null)
 			return;
 		lw.setLocation(10, 10);
-	
-		/// ABBANDONATO EXCEL WRITER
+
+		// / ABBANDONATO EXCEL WRITER
 		// new InputOutput().findCSV(MyConst.CODE_FILE);
 		// new InputOutput().findCSV(MyConst.LIMITS_FILE);
 		// new InputOutput().findCSV(MyConst.EXPAND_FILE);
-	
+
 		// IJ.log(ReadVersion.readVersionInfoInManifest("utils"));
 		// IJ.log(ReadVersion.readVersionInfoInManifest("pippo"));
 		// IJ.log(ReadVersion.readVersionInfoInManifest("contMensili"));
 		// MyLog.waitHere();
-	
+
 		// if (this.getClass().getResource("/iw2ayv*.jar") == null) {
 		// IJ.error("ATTENZIONE, manca il file iw2ayv.jar");
 		// return;
@@ -119,34 +120,31 @@ public class Sequenze_ implements PlugIn {
 		// IJ.error("ATTENZIONE, manca il file Excel_Writer.jar");
 		// return;
 		// }
-		
-		
-		
+
 		String startingDir = Prefs.get(MyConst.PREFERENCES_1,
 				MyConst.DEFAULT_PATH);
-//		MyFileLogger.logger.info("Sequenze_>>> startingDir letta= "
-//				+ startingDir);
-	
+		// IJ.log("Sequenze_>>> startingDir letta= " + startingDir);
+
 		UtilAyv.logResizer();
-	
+
 		boolean startingDirExist = new File(startingDir).exists();
-	
+
 		// IJ.log("il sistema dice che siamo in:"
 		// + System.getProperty("user.home"));
 		//
 		// IJ.log("il file trovami si trova in:"
 		// + new InputOutput().findResource("Sequenze_.class"));
-	
+
 		// String[][] tableCode = TableCode.loadTable(MyConst.CODE_FILE);
-	
+
 		String[][] tableCode = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 		if (debugTables) {
 			MyLog.logMatrix(tableCode, "tableCode");
 			MyLog.waitHere("salvare il log come tableCodeLoaded");
 		}
-	
+
 		String[][] tableExpand = TableExpand.loadTable(MyConst.EXPAND_FILE);
-	
+
 		// new AboutBox().about("Scansione automatica cartelle",
 		// this.getClass());
 		new AboutBox().about("Scansione automatica cartelle",
@@ -168,19 +166,19 @@ public class Sequenze_ implements PlugIn {
 		boolean p10p11p12 = gd.getNextBoolean();
 		boolean fast = gd.getNextBoolean();
 		boolean superficiali = gd.getNextBoolean();
-	
+
 		if (fast) {
 			Prefs.set("prefer.fast", "true");
 		} else {
 			Prefs.set("prefer.fast", "false");
 		}
-	
+
 		if (self1) {
 			if (!new InputOutput().checkJar(MyConst.TEST_FILE)) {
 				UtilAyv.noTest2();
 				return;
 			}
-	
+
 			IJ.runPlugIn("contMensili.p3rmn_", "-1");
 			IJ.runPlugIn("contMensili.p4rmn_", "-1");
 			IJ.runPlugIn("contMensili.p5rmn_", "-1");
@@ -191,39 +189,37 @@ public class Sequenze_ implements PlugIn {
 			IJ.runPlugIn("contMensili.p11rmn_", "-1");
 			IJ.runPlugIn("contMensili.p12rmn_", "-1");
 			IJ.runPlugIn("contMensili.p20rmn_", "-1");
-			
-			
-			//		IJ.runPlugIn("contMensili.p9rmn_", "-1");
-			//		IJ.runPlugIn("contMensili.p2rmn_", "-1");		
 
+			// IJ.runPlugIn("contMensili.p9rmn_", "-1");
+			// IJ.runPlugIn("contMensili.p2rmn_", "-1");
 
 			ButtonMessages.ModelessMsg(
 					"Sequenze: fine selfTest, vedere Log per risultati",
 					"CONTINUA");
 			return;
 		} else if (nuovo1 || !startingDirExist) {
-	
+
+			DirectoryChooser.setDefaultDirectory(startingDir);
 			DirectoryChooser od1 = new DirectoryChooser(
-					"SELEZIONARE MA NON APRIRE LA CARTELLA IMMAGINI");
-			od1.setDefaultDirectory(startingDir);
+					"Selezionare la cartella: ");
 			startingDir = od1.getDirectory();
-	
+
 			if (startingDir == null)
 				return;
 			Prefs.set("prefer.string1", startingDir);
 			// MyFileLogger.logger.info("Sequenze_>>> startingDir salvata= "
 			// + startingDir);
-	
+
 			String aux1 = Prefs
 					.get(MyConst.PREFERENCES_1, MyConst.DEFAULT_PATH);
 			// MyFileLogger.logger.info("Sequenze_>>> startingDir riletta= "
 			// + aux1);
-	
+
 		}
-	
+
 		boolean fileExist = new File(startingDir + MyConst.SEQUENZE_FILE)
 				.exists();
-	
+
 		if ((nuovo1) && (fileExist)) {
 			new ButtonMessages();
 			int userSelection1 = ButtonMessages
@@ -243,11 +239,11 @@ public class Sequenze_ implements PlugIn {
 				break;
 			}
 		}
-	
+
 		if (!fileExist) {
 			nuovo1 = true;
 		}
-	
+
 		if (nuovo1) {
 			//
 			// se è stato selezionato un nuovo set di misure cancello sia il
@@ -265,7 +261,7 @@ public class Sequenze_ implements PlugIn {
 			// MyLog.here();
 			// IJ.log("startingDir=" + startingDir);
 			MyLog.initLog(startingDir + "MyLog.txt");
-	
+
 			List<File> result = getFileListing(new File(startingDir));
 			if (result == null) {
 				MyLog.here("getFileListing.result==null");
@@ -277,32 +273,32 @@ public class Sequenze_ implements PlugIn {
 			}
 			// MyLog.logVectorVertical(list, "list");
 			// MyLog.waitHere();
-	
+
 			// //
 			// //
-	
+
 			String[][] tableSequenceLoaded = generateSequenceTable(list,
 					tableCode, tableExpand);
 			if (debugTables) {
 				MyLog.logMatrix(tableSequenceLoaded, "tableSequenceLoaded");
 				MyLog.waitHere("salvare il log come TableSequenceLoaded");
 			}
-	
+
 			// cancello gli eventuali messaggi di ImageJ dal log
 			// if (WindowManager.getFrame("Log") != null) {
 			// IJ.selectWindow("Log");
 			// IJ.run("Close");
 			// }
-	
+
 			if (tableSequenceLoaded == null) {
 				MyLog.here("non sono state trovate immagini da analizzare");
 				return;
 			}
-	
+
 			// =============================================================
 			// VECCHIA CAZZATA FUNZIONANTE
 			// =============================================================
-	
+
 			//
 			// Effettuo il sort della table, secondo il tempo di acquisizione
 			//
@@ -312,11 +308,11 @@ public class Sequenze_ implements PlugIn {
 			// MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
 			// MyLog.waitHere("salvare il log come TableSequenceSorted");
 			// }
-	
+
 			// =============================================================
 			// NUOVA CAZZATA INEDITA
 			// =============================================================
-	
+
 			String[][] tableSequenceSorted1 = TableSorter.minsort(
 					tableSequenceLoaded, TableSequence.POSIZ);
 			if (debugTables) {
@@ -324,7 +320,7 @@ public class Sequenze_ implements PlugIn {
 				MyLog.logMatrix(tableSequenceSorted1, "tableSequenceSorted1");
 				MyLog.waitHere("salvare il log come TableSequenceSorted1");
 			}
-	
+
 			String[][] tableSequenceSorted = TableSorter.minsort(
 					tableSequenceSorted1, TableSequence.TIME);
 			if (debugTables) {
@@ -332,7 +328,7 @@ public class Sequenze_ implements PlugIn {
 				MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
 				MyLog.waitHere("salvare il log come TableSequenceSorted");
 			}
-	
+
 			String[][] tableSequenceReordered = reorderSequenceTable(
 					tableSequenceSorted, tableCode);
 			if (debugTables) {
@@ -341,14 +337,14 @@ public class Sequenze_ implements PlugIn {
 						"tableSequenceReordered");
 				MyLog.waitHere("salvare il log come TableSequenceReordered");
 			}
-	
+
 			String[][] listProblems = verifySequenceTable(
 					tableSequenceReordered, tableCode);
 			if (debugTables) {
 				MyLog.logMatrix(listProblems, "listProblems");
 				MyLog.waitHere("salvare il log come ListProblems");
 			}
-	
+
 			String[] myCode = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_",
 					"YL2S_", "YR2F_", "YR2S_" };
 			// int[] myNum = { 4 };
@@ -356,15 +352,15 @@ public class Sequenze_ implements PlugIn {
 			// "LN",
 			// "LT" };
 			// String[] myPosiz = { "-45", "0", "45" };
-	
+
 			String[][] tableSequenceReordered2 = TableSorter
 					.tableModifierSmart(tableSequenceReordered, myCode);
-	
+
 			boolean test = false;
 			// NOTA BENE: lasciare test a false, altrimenti non vengono più
 			// stampati gli errori e si hanno problemi in elaborazione!!!
 			logVerifySequenceTable(listProblems, test);
-	
+
 			boolean success = new TableSequence().writeTable(startingDir
 					+ MyConst.SEQUENZE_FILE, tableSequenceReordered2);
 			if (!success)
@@ -372,14 +368,13 @@ public class Sequenze_ implements PlugIn {
 		}
 		// MyLog.here();
 		// IJ.log("startingDir=" + startingDir);
-	
+
 		String[][] tableSequenceReloaded = new TableSequence()
 				.loadTable(startingDir + MyConst.SEQUENZE_FILE);
 		// MyLog.waitHere();
-		
-	
+
 		callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false,
-				superficiali, p10p11p12,tw);
+				superficiali, p10p11p12, tw);
 		MyLog.waitHere("FINE LAVORO");
 	}
 
@@ -424,7 +419,8 @@ public class Sequenze_ implements PlugIn {
 	 * @param tableExpand4
 	 *            contenuto di expand.txt
 	 * @return restituisce una TableSequence le cui colonne contengono:
-	 * vetConta, vetPath, vetCodice, vetCoil, vetImaDaPassare, vetimaGruppo, 
+	 *         vetConta, vetPath, vetCodice, vetCoil, vetImaDaPassare,
+	 *         vetimaGruppo,
 	 */
 
 	public String[][] generateSequenceTable(String[] pathList,
@@ -849,11 +845,11 @@ public class Sequenze_ implements PlugIn {
 		int count = 0;
 		List<String> vetPlugin = new ArrayList<String>();
 		List<String> vetArgomento = new ArrayList<String>();
-//		IJ.log("lunghezza= "+tableSequenze5.length);
-//		MyLog.logMatrix(tableSequenze5, "tableSequenze5");
-//		MyLog.logMatrix(tableCode5, "tableCode5");
+		// IJ.log("lunghezza= "+tableSequenze5.length);
+		// MyLog.logMatrix(tableSequenze5, "tableSequenze5");
+		// MyLog.logMatrix(tableCode5, "tableCode5");
 		while (j1 < tableSequenze5.length) {
-//			IJ.log("j1= "+j1);
+			// IJ.log("j1= "+j1);
 			if (TableSequence.getDone(tableSequenze5, j1).equals("0")) {
 				String plugin = pluginToBeCalledWithCoil(j1, tableSequenze5,
 						tableCode5);
@@ -896,12 +892,12 @@ public class Sequenze_ implements PlugIn {
 					j1++;
 				} else {
 					// qui è dove vengono passate al plugin le righe delle
-					// immagini da analizzare. 
+					// immagini da analizzare.
 					new TableSequence();
 					int numImaDaPassare = Integer.parseInt(TableSequence
 							.getImaPass(tableSequenze5, j1));
 
-//					MyLog.waitHere();
+					// MyLog.waitHere();
 					String theCode = TableSequence.getCode(tableSequenze5, j1);
 					String theCoil = TableSequence.getCoil(tableSequenze5, j1);
 
@@ -909,38 +905,36 @@ public class Sequenze_ implements PlugIn {
 					// .getImaGroup(tableSequenze5, j1));
 					int numImaGruppo = 0;
 
-//					MyFileLogger.logger.info("<<< RIGA " + j1 + " / "
-//							+ tableSequenze5.length + " " + theCode + " "
-//							+ theCoil + " >>>");
-					tw.append("<<< RIGA " + j1 + " / "
-							+ tableSequenze5.length + " " + theCode + " "
-							+ theCoil + " >>>");
+					// MyFileLogger.logger.info("<<< RIGA " + j1 + " / "
+					// + tableSequenze5.length + " " + theCode + " "
+					// + theCoil + " >>>");
+					tw.append("<<< RIGA " + j1 + " / " + tableSequenze5.length
+							+ " " + theCode + " >><< " + theCoil + " " + plugin
+							+ " >>>");
 
-				
-					
 					if (numImaDaPassare == 0) {
 						j1++;
 					} else {
 						if (numImaGruppo == 0) {
-//							MyFileLogger.logger
-//									.info("Sequenze.callPluginFromSequenceTable >>> plugin= "
-//											+ plugin
-//											+ " argomento= "
-//											+ argomento);
-							
-							
-// TODO MA CHE VUOL DIRE, SONO ESATTAMENTE DUE CASI UGUALI UGUALI							
+							// MyFileLogger.logger
+							// .info("Sequenze.callPluginFromSequenceTable >>> plugin= "
+							// + plugin
+							// + " argomento= "
+							// + argomento);
+
+							// TODO MA CHE VUOL DIRE, SONO ESATTAMENTE DUE CASI
+							// UGUALI UGUALI
 
 							pluginRunner(plugin, argomento, test);
 							vetPlugin.add(plugin);
 							vetArgomento.add(argomento);
 							j1 = j1 + numImaDaPassare;
 						} else {
-//							MyFileLogger.logger
-//									.info("Sequenze.callPluginFromSequenceTable >>> plugin= "
-//											+ plugin
-//											+ " argomento= "
-//											+ argomento);
+							// MyFileLogger.logger
+							// .info("Sequenze.callPluginFromSequenceTable >>> plugin= "
+							// + plugin
+							// + " argomento= "
+							// + argomento);
 
 							pluginRunner(plugin, argomento, test);
 							vetPlugin.add(plugin);
@@ -1118,9 +1112,9 @@ public class Sequenze_ implements PlugIn {
 				argomento = argomento + "#"
 						+ TableSequence.getRow(tableSequenze5, lineNumber + 1);
 				MyLog.waitHere("prima");
-				int num1 = lineNumber + 0
-						+ numImaGruppo;
-				MyLog.waitHere("num1= "+num1+ " lineNumber= "+lineNumber+" numImaGruppo= "+numImaGruppo);
+				int num1 = lineNumber + 0 + numImaGruppo;
+				MyLog.waitHere("num1= " + num1 + " lineNumber= " + lineNumber
+						+ " numImaGruppo= " + numImaGruppo);
 				argomento = argomento
 						+ "#"
 						+ TableSequence.getRow(tableSequenze5, lineNumber + 0
@@ -1586,108 +1580,108 @@ public class Sequenze_ implements PlugIn {
 	 * @param tableIn
 	 * @return
 	 */
-//	public String[][] bubbleSortSequenceTable(String[][] tableIn) {
-//
-//		if (tableIn == null) {
-//			IJ.log("bubbleSortTable.tableIn == null");
-//			return null;
-//		}
-//		long[] bubblesort = new long[tableIn.length];
-//		String[][] tableOut = new TableUtils().duplicateTable(tableIn);
-//		for (int i1 = 0; i1 < tableOut.length; i1++) {
-//			String acqTime = TableSequence.getAcqTime(tableOut, i1);
-//			if (acqTime == null)
-//				acqTime = "9999999999999999";
-//			bubblesort[i1] = Long.parseLong(acqTime);
-//		}
-//		String[] tempRiga = new String[tableOut[0].length];
-//		boolean sorted = false;
-//		while (!sorted) {
-//			sorted = true;
-//			for (int i1 = 0; i1 < (bubblesort.length - 1); i1++) {
-//				if (bubblesort[i1] > bubblesort[i1 + 1]) {
-//					long temp = bubblesort[i1];
-//					// N.B. i2 in questo caso partirà da 1, poichè la colonna 0
-//					// che contiene il numero della riga NON deve venire sortata
-//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-//						tempRiga[i2] = tableOut[i1][i2];
-//					bubblesort[i1] = bubblesort[i1 + 1];
-//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-//						tableOut[i1][i2] = tableOut[i1 + 1][i2];
-//					bubblesort[i1 + 1] = temp;
-//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-//						tableOut[i1 + 1][i2] = tempRiga[i2];
-//					sorted = false;
-//				}
-//			}
-//		}
-//		return tableOut;
-//	}
-//
-//	/**
-//	 * Effettua il bubble sort della tabella delle sequenze, utilizza
-//	 * l'algoritmo bubblesort
-//	 * 
-//	 * @param tableIn
-//	 * @return
-//	 */
-//	public String[][] bubbleSortSequenceTable2(String[][] tableIn) {
-//
-//		if (tableIn == null) {
-//			IJ.log("bubbleSortTable.tableIn == null");
-//			return null;
-//		}
-//		long[] bubblesort1 = new long[tableIn.length];
-//		int[] bubblesort2 = new int[tableIn.length];
-//		String[][] tableOut = new TableUtils().duplicateTable(tableIn);
-//		for (int i1 = 0; i1 < tableOut.length; i1++) {
-//			String acqTime = TableSequence.getAcqTime(tableOut, i1);
-//			if (acqTime == null)
-//				acqTime = "9999999999999999";
-//			bubblesort1[i1] = Long.parseLong(acqTime);
-//		}
-//		for (int i1 = 0; i1 < tableOut.length; i1++) {
-//			String numIma = TableSequence.getNumIma(tableOut, i1);
-//			bubblesort2[i1] = ReadDicom.readInt(numIma);
-//		}
-//
-//		String[] tempRiga = new String[tableOut[0].length];
-//		boolean sorted = false;
-//		while (!sorted) {
-//			sorted = true;
-//			for (int i1 = 0; i1 < (bubblesort1.length - 1); i1++) {
-//				if (bubblesort1[i1] > bubblesort1[i1 + 1]) {
-//					long temp = bubblesort1[i1];
-//					// N.B. i2 in questo caso partirà da 1, poichè la colonna 0
-//					// che contiene il numero della riga NON deve venire sortata
-//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-//						tempRiga[i2] = tableOut[i1][i2];
-//					bubblesort1[i1] = bubblesort1[i1 + 1];
-//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-//						tableOut[i1][i2] = tableOut[i1 + 1][i2];
-//					bubblesort1[i1 + 1] = temp;
-//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-//						tableOut[i1 + 1][i2] = tempRiga[i2];
-//					sorted = false;
-//				} else if ((bubblesort1[i1] == bubblesort1[i1 + 1])
-//						&& (bubblesort2[i1] > bubblesort2[i1 + 1])) {
-//					int temp2 = bubblesort2[i1];
-//					// N.B. i2 in questo caso partirà da 1, poichè la colonna 0
-//					// che contiene il numero della riga NON deve venire sortata
-//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-//						tempRiga[i2] = tableOut[i1][i2];
-//					bubblesort2[i1] = bubblesort2[i1 + 1];
-//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-//						tableOut[i1][i2] = tableOut[i1 + 1][i2];
-//					bubblesort2[i1 + 1] = temp2;
-//					for (int i2 = 1; i2 < tableOut[0].length; i2++)
-//						tableOut[i1 + 1][i2] = tempRiga[i2];
-//					sorted = false;
-//				}
-//			}
-//		}
-//		return tableOut;
-//	}
+	// public String[][] bubbleSortSequenceTable(String[][] tableIn) {
+	//
+	// if (tableIn == null) {
+	// IJ.log("bubbleSortTable.tableIn == null");
+	// return null;
+	// }
+	// long[] bubblesort = new long[tableIn.length];
+	// String[][] tableOut = new TableUtils().duplicateTable(tableIn);
+	// for (int i1 = 0; i1 < tableOut.length; i1++) {
+	// String acqTime = TableSequence.getAcqTime(tableOut, i1);
+	// if (acqTime == null)
+	// acqTime = "9999999999999999";
+	// bubblesort[i1] = Long.parseLong(acqTime);
+	// }
+	// String[] tempRiga = new String[tableOut[0].length];
+	// boolean sorted = false;
+	// while (!sorted) {
+	// sorted = true;
+	// for (int i1 = 0; i1 < (bubblesort.length - 1); i1++) {
+	// if (bubblesort[i1] > bubblesort[i1 + 1]) {
+	// long temp = bubblesort[i1];
+	// // N.B. i2 in questo caso partirà da 1, poichè la colonna 0
+	// // che contiene il numero della riga NON deve venire sortata
+	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
+	// tempRiga[i2] = tableOut[i1][i2];
+	// bubblesort[i1] = bubblesort[i1 + 1];
+	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
+	// tableOut[i1][i2] = tableOut[i1 + 1][i2];
+	// bubblesort[i1 + 1] = temp;
+	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
+	// tableOut[i1 + 1][i2] = tempRiga[i2];
+	// sorted = false;
+	// }
+	// }
+	// }
+	// return tableOut;
+	// }
+	//
+	// /**
+	// * Effettua il bubble sort della tabella delle sequenze, utilizza
+	// * l'algoritmo bubblesort
+	// *
+	// * @param tableIn
+	// * @return
+	// */
+	// public String[][] bubbleSortSequenceTable2(String[][] tableIn) {
+	//
+	// if (tableIn == null) {
+	// IJ.log("bubbleSortTable.tableIn == null");
+	// return null;
+	// }
+	// long[] bubblesort1 = new long[tableIn.length];
+	// int[] bubblesort2 = new int[tableIn.length];
+	// String[][] tableOut = new TableUtils().duplicateTable(tableIn);
+	// for (int i1 = 0; i1 < tableOut.length; i1++) {
+	// String acqTime = TableSequence.getAcqTime(tableOut, i1);
+	// if (acqTime == null)
+	// acqTime = "9999999999999999";
+	// bubblesort1[i1] = Long.parseLong(acqTime);
+	// }
+	// for (int i1 = 0; i1 < tableOut.length; i1++) {
+	// String numIma = TableSequence.getNumIma(tableOut, i1);
+	// bubblesort2[i1] = ReadDicom.readInt(numIma);
+	// }
+	//
+	// String[] tempRiga = new String[tableOut[0].length];
+	// boolean sorted = false;
+	// while (!sorted) {
+	// sorted = true;
+	// for (int i1 = 0; i1 < (bubblesort1.length - 1); i1++) {
+	// if (bubblesort1[i1] > bubblesort1[i1 + 1]) {
+	// long temp = bubblesort1[i1];
+	// // N.B. i2 in questo caso partirà da 1, poichè la colonna 0
+	// // che contiene il numero della riga NON deve venire sortata
+	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
+	// tempRiga[i2] = tableOut[i1][i2];
+	// bubblesort1[i1] = bubblesort1[i1 + 1];
+	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
+	// tableOut[i1][i2] = tableOut[i1 + 1][i2];
+	// bubblesort1[i1 + 1] = temp;
+	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
+	// tableOut[i1 + 1][i2] = tempRiga[i2];
+	// sorted = false;
+	// } else if ((bubblesort1[i1] == bubblesort1[i1 + 1])
+	// && (bubblesort2[i1] > bubblesort2[i1 + 1])) {
+	// int temp2 = bubblesort2[i1];
+	// // N.B. i2 in questo caso partirà da 1, poichè la colonna 0
+	// // che contiene il numero della riga NON deve venire sortata
+	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
+	// tempRiga[i2] = tableOut[i1][i2];
+	// bubblesort2[i1] = bubblesort2[i1 + 1];
+	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
+	// tableOut[i1][i2] = tableOut[i1 + 1][i2];
+	// bubblesort2[i1 + 1] = temp2;
+	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
+	// tableOut[i1 + 1][i2] = tempRiga[i2];
+	// sorted = false;
+	// }
+	// }
+	// }
+	// return tableOut;
+	// }
 
 	public boolean checkSequenceTable(String source) {
 		URL url1 = this.getClass().getResource("/" + source);

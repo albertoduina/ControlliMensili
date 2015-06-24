@@ -85,15 +85,18 @@ public class p10rmn_Test {
 		String path1 = "./Test2/C001_testP10";
 		String path2 = "./Test2/C002_testP10";
 		String autoArgs = "0";
-		boolean autoCalled = false;
-		boolean step = false;
-		boolean verbose = false;
-		boolean test = false;
+		// Valori assegnati a mode
+		// mode = 1 (ex fast) modo automatico completo
+
+		int mode = 1;
 		double profond = 30;
-		boolean fast = true;
-		boolean silent = true;
+
 		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"info10", autoCalled, step, verbose, test, fast, silent, 100);
+				"info10", mode, 100);
+
+		// ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs,
+		// profond,
+		// "info10", autoCalled, step, verbose, test, fast, silent, 100);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		double[] vetExpected = p10rmn_.referenceSiemens();
@@ -116,6 +119,7 @@ public class p10rmn_Test {
 		String path1 = "./data/F001_testP10";
 		String path2 = "./data/F002_testP10";
 
+		int mode = 0;
 		boolean autoCalled = false;
 		boolean step = false;
 		boolean verbose = false;
@@ -125,10 +129,11 @@ public class p10rmn_Test {
 		boolean silent = false;
 		int timeout = 100;
 
-		p10rmn_.mainUnifor(path1, path2, autoArgs, profond, "info10",
-				autoCalled, step, verbose, test, fast, silent, 100);
-		// in questo caso l'unica cosa che viene testata è l'intervento manuale.
-		// Poichè il posizionamento dipende dall'occhio dell'operatore
+		// p10rmn_.mainUnifor(path1, path2, autoArgs, profond, "info10",
+		// autoCalled, step, verbose, test, fast, silent, 100);
+		p10rmn_.mainUnifor(path1, path2, autoArgs, profond, "info10", mode, 100);
+		// in questo caso l'unica cosa che viene testata ï¿½ l'intervento manuale.
+		// Poichï¿½ il posizionamento dipende dall'occhio dell'operatore
 		// non posso fare una verifica dei risultati ottenuti.
 	}
 
@@ -139,22 +144,16 @@ public class p10rmn_Test {
 
 		String path1 = "./Test2/C001_testP10";
 
-		// String path1 = "./Test2/FAULT_P10";
-
-		// ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
 		ImagePlus imp11 = UtilAyv.openImageMaximized(path1);
 
-		boolean autoCalled = false;
-		boolean step = true;
-		boolean verbose = true;
-		boolean test = false;
-		boolean fast = false;
-		double profond = 30;
-		double out2[] = p10rmn_.positionSearch(imp11, profond, "", autoCalled,
-				step, verbose, test, fast, 100);
+		int mode = 10;
 
-		double[] expected = { 157.5, 104.5, 118.0, 133.0, 196.0, 78.0,
-				35.60453398043311, 199.7258133880469, 75.37282389304386, 200.0, };
+		double profond = 30;
+		double out2[] = p10rmn_.positionSearch(imp11, profond, "", mode, 1000);
+
+		double[] expected = { 158.5, 105.5, 118.0, 135.0, 196.0, 78.0,
+				36.52885536698517, 199.54650334804768, 75.40832447642669,
+				202.0, };
 
 		// MyLog.logVector(out2, "out2");
 		// MyLog.logVector(expected, "expected");
@@ -235,8 +234,8 @@ public class p10rmn_Test {
 		// double checkPixels = 58.064;
 		double checkPixels = 300;
 		boolean test = true;
-		// rispetto a questo test ricordarsi che la roi assegnata è
-		// assolutamente arbitraria, si deve solo vedere un quadrato chiaro, più
+		// rispetto a questo test ricordarsi che la roi assegnata ï¿½
+		// assolutamente arbitraria, si deve solo vedere un quadrato chiaro, piï¿½
 		// o meno al centro dell'immagine
 
 		int pixx = p10rmn_.countPixOverLimit(imp1, xPos, yPos, sqNEA,

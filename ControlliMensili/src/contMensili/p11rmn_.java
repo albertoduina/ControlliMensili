@@ -362,7 +362,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					timeout);
 
 			imp11.close();
-			
+
 			if (out2 == null) {
 				manualRequired2 = true;
 			} else {
@@ -416,7 +416,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					// ImageUtils.addOverlayRoi(imp1, Color.green, 0);
 					// imp1.killRoi();
 					// imp1.updateAndDraw();
-	//				if (step)
+					// if (step)
 
 					// =================================================
 				}
@@ -477,12 +477,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 						sq7);
 
 				// if (!silent) {
-				//------------------------
+				// ------------------------
 				ImageUtils.addOverlayRoi(imp1, Color.red, 1.01);
 				imp1.getRoi().setName("MROI");
 				imp1.killRoi();
 				imp1.updateAndDraw();
-				//------------------------
+				// ------------------------
 				imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7,
 						sq7);
 
@@ -503,11 +503,19 @@ public class p11rmn_ implements PlugIn, Measurements {
 				boolean demo = false;
 				boolean circle = false;
 				double[] circleData = null;
+				int select = 1;
 				int mode = 1;
 
+				// public static double[] positionSearch15(ImagePlus imp1,
+				// double[] circleData, double xBkg, double yBkg, double
+				// diamBkg,
+				// int guard, int select, String info1, boolean circle, int
+				// mode,
+				// boolean irraggiungibile) {
+
 				double[] backPos = UtilAyv.positionSearch15(imp1, circleData,
-						xFondo, yFondo, diamBkg, guard, mode, info10, circle,
-						autoCalled, step, demo, test, fast, irraggiungibile);
+						xFondo, yFondo, diamBkg, guard, select, info10, circle,
+						mode, irraggiungibile);
 
 				// public static double[] positionSearch15(ImagePlus imp1,
 				// double[] circleData,
@@ -853,8 +861,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 							+ levelString[i1]);
 					rt.addValue(s2, classiSimulata[i1][1]);
 				}
-				
-				
+
 				if (verbose && !test && !fast) {
 					rt.show("Results");
 				}
@@ -864,7 +871,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				} else if (autoCalled && !test) {
 					accetta = MyMsg.accettaMenu();
 				} else {
-						if (!test) {
+					if (!test) {
 						accetta = MyMsg.msgStandalone();
 					} else {
 						accetta = test;
@@ -927,10 +934,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 		// 0.0, 953.6122448979592, 3.271011755762441, 291.53433741655306,
 		// 51.16454748650474, 3.46, 573.0, 419.0, 1085.0, 689.0, 820.0, 1082.0,
 		// 1386.0, 1890.0, 2681.0, 3981.0, 5089.0, 45841.0,
-		
-//		SIGNAL ERRATO 131.1526336669922 anzichè 953.6122448979592
-//		SNRATIO ERRATO 40.09543329703558 anzichè 291.53433741655306
 
+		// SIGNAL ERRATO 131.1526336669922 anzichè 953.6122448979592
+		// SNRATIO ERRATO 40.09543329703558 anzichè 291.53433741655306
 
 		double simul = 0.0;
 		double signal = 953.6122448979592;
@@ -1050,9 +1056,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 		if (rt1 == null)
 			return false;
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-//		 MyLog.logVector(vetResults, "vetResults");
-//		 MyLog.logVector(vetReference, "vetReference");
-//		 MyLog.waitHere();
+		// MyLog.logVector(vetResults, "vetResults");
+		// MyLog.logVector(vetReference, "vetReference");
+		// MyLog.waitHere();
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
 				MyConst.P11_vetName);
 		return ok;
