@@ -30,22 +30,24 @@ public class p11rmn_Test {
 	}
 
 	@Test
-	public final void testMainUnifor() {
+	public final void testMainUniforFast() {
 
 		String path1 = "./Test2/S12S_01testP11";
 		String path2 = "./Test2/S12S_02testP11";
-		boolean autoCalled = false;
-		boolean step = false;
-		boolean verbose = false;
-		boolean test = false;
+		
+		// boolean autoCalled = false;
+		// boolean step = false;
+		// boolean verbose = false;
+		// boolean test = false;
 		int verticalDir = 3;
 		double[] vetReference = p11rmn_.referenceSiemens();
 		double profond = 30.0;
-		boolean fast = true;
-		boolean silent = false;
-		int timeout=100;
+		// boolean fast = true;
+		// boolean silent = false;
+		int timeout = 0;
+		int mode = 1;
 		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, verticalDir,
-				profond, "", autoCalled, step, verbose, test, fast, silent, timeout);
+				profond, "", mode, timeout);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		// MyLog.waitHere();
 		// MyLog.logVector(vetResults, "vetResults");
@@ -59,7 +61,8 @@ public class p11rmn_Test {
 
 		// 16 dec 2011 sistemato, ora funziona in automatico
 		boolean verbose = true;
-		boolean ok = p11rmn_.selfTestSiemens(verbose);
+		int timeout = 0;
+		boolean ok = p11rmn_.selfTestSiemens(verbose, timeout);
 		assertTrue(ok);
 	}
 
@@ -68,7 +71,8 @@ public class p11rmn_Test {
 
 		// 16 dec 2011 sistemato, ora funziona in automatico
 		boolean verbose = true;
-		boolean ok = p11rmn_.selfTestGe(verbose);
+		int timeout = 0;
+		boolean ok = p11rmn_.selfTestGe(verbose, timeout);
 		assertTrue(ok);
 	}
 
@@ -87,15 +91,15 @@ public class p11rmn_Test {
 
 	}
 
-//	@Test
-//	public final void testMaxPeakSearch() {
-//
-//		String path = InputOutput.findResource("002.txt");
-//		double[] profile1 = InputOutput.readDoubleArrayFromFile(path);
-//		double[] out = p11rmn_.maxPeakSearch(profile1);
-//		double[] expected = { 96.0, 531.1009869960047 };
-//		assertTrue(UtilAyv.compareVectors(expected, out, 1e-12, ""));
-//	}
+	// @Test
+	// public final void testMaxPeakSearch() {
+	//
+	// String path = InputOutput.findResource("002.txt");
+	// double[] profile1 = InputOutput.readDoubleArrayFromFile(path);
+	// double[] out = p11rmn_.maxPeakSearch(profile1);
+	// double[] expected = { 96.0, 531.1009869960047 };
+	// assertTrue(UtilAyv.compareVectors(expected, out, 1e-12, ""));
+	// }
 
 	@Test
 	public final void testPositionSearch() {
@@ -105,17 +109,13 @@ public class p11rmn_Test {
 		boolean autoCalled = false;
 		int verticalDir = 3;
 		double profond = 30.0;
-		boolean step = true;
-		boolean verbose = true;
-		boolean test = true;
-		boolean fast = false;
-		boolean silent = false;
-		int timeout=0;
+		int mode = 2;
+		int timeout = 0;
 		String path1 = "./Test2/S12S_01testP11";
-//		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, true);
+		// ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, true);
 		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, true);
 		double[] out = p11rmn_.positionSearch(imp1, autoCalled, verticalDir,
-				profond, "TestPositionSearch", step, verbose, test, fast, silent, timeout);
+				profond, "TestPositionSearch", mode, timeout);
 		double[] expected = { 164.0, 172.0, 164.05714285714285, 0.0,
 				164.05714285714285, 256.0, 186.0, 169.0 };
 		assertTrue(UtilAyv.compareVectors(expected, out, 1e-12, ""));
@@ -147,7 +147,7 @@ public class p11rmn_Test {
 	@Test
 	public final void testSelfTestSilent() {
 		new p11rmn_().selfTestSilent();
-		
+
 	}
 
 }

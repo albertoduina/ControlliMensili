@@ -379,8 +379,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * 
 	 * 
 	 * introdotto il parametro integer mode, per riunire i flag booleani: step,
-	 * verbose, test, fast mode = 0 silent mode = 1 auto fast mode = 2 manuale
-	 * mode = 3 mode = 4 mode = 10
+	 * verbose, test, fast-----------------------------------------------------
+	 * mode = 0 silent ------------------------------------- ------------------
+	 * mode = 1 auto fast ----------------------------------------------------
+	 * mode = 2 manuale-------------------------------------------------------
+	 * mode = 3 manuale passo per passo (step)--------------------------------
+	 * mode = 4 --------------------------------------------------------------
+	 * mode = 10 test automatico con immagini Siemens o Ge--------------------
 	 * 
 	 * 
 	 * 
@@ -434,17 +439,23 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		switch (mode) {
 		case 0:
+			// questo è il caso del funzionamento silent: nienete a display
 			silent = true;
 			break;
 		case 1:
+			// questo è il caso del funzionamento fast: tutto va via liscio,
+			// solo il minimo sindacale a display
 			autoCalled = true;
 			fast = true;
 			break;
 		case 2:
+			// questo è il modo di funzionamento manuale
 			verbose = true;
 			step = true;
 			break;
 		case 3:
+			// questo è il modo di funzionamento manuale passo per passo conil
+			// valore di tutte le operazioni intermedie
 			verbose = true;
 			step = true;
 			break;

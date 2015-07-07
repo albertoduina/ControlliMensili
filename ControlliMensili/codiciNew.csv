@@ -194,10 +194,10 @@ S6FA_;Flash SPINE S6;4;4;0;xxx;vup;30;p11rmn_
 S6SA_;SpinEcho SPINE S6;4;4;0;xxx;vup;30;p11rmn_
 //               ;;;;;;;;
 // BODY ARRAY SIMPHONY;;;;;;;;
-B1FS_;Flash BODY ARRAY B1;4;4;0;xxx;hdx;x;p5rmn_
-B1SS_;SpinEcho BODY ARRAY B1;4;4;0;xxx;hdx;x;p5rmn_
-B2FS_;Flash BODY ARRAY B2;4;4;0;xxx;hdx;x;p5rmn_
-B2SS_;SpinEcho BODY ARRAY B2;4;4;0;xxx;hdx;x;p5rmn_
+B1FS_;Flash BODY ARRAY B1;4;4;0;xxx;hdx;30;p11rmn_
+B1SS_;SpinEcho BODY ARRAY B1;4;4;0;xxx;hdx;30;p11rmn_
+B2FS_;Flash BODY ARRAY B2;4;4;0;xxx;hdx;30;p11rmn_
+B2SS_;SpinEcho BODY ARRAY B2;4;4;0;xxx;hdx;30;p11rmn_
 //           ;;;;;;;;
 // BODY ARRAY AVANTO;;;;;;;;
 B1FA_;Flash BODY ARRAY B1;4;4;0;xxx;hdx;30;p11rmn_

@@ -713,7 +713,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			ImageStatistics statGh1 = imp1.getStatistics();
 			double mediaGhost1 = statGh1.mean;
 			Rectangle boundRec1 = null;
-			double limitBkg = mediaBkg * 3 + 6 * devStBkg;
+			double limitBkg = mediaBkg * 4 + 10 * devStBkg;
 			if (mediaGhost1 > limitBkg) {
 				MyLog.waitHere(listaMessaggi(24) + " mediaGhost= "
 						+ mediaGhost1 + " limitBkg= " + limitBkg, debug);

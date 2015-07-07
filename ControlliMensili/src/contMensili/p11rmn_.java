@@ -35,6 +35,7 @@ import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyFilter;
 import utils.MyFwhm;
+import utils.MyInput;
 import utils.MyLog;
 import utils.MyMsg;
 import utils.MyPlot;
@@ -137,7 +138,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 	public int manualMenu(int preset, String testDirectory) {
 		boolean retry = false;
 		boolean step = false;
-		int timeout = 0;
+		int timeout = 333;
+		int mode = 0;
 		do {
 			int userSelection1 = UtilAyv.userSelectionManual(VERSION, TYPE);
 			switch (userSelection1) {
@@ -153,13 +155,21 @@ public class p11rmn_ implements PlugIn, Measurements {
 				retry = true;
 				break;
 			case 3:
-				selfTestMenu();
+				boolean verbose = true;
+				timeout = MyInput.myIntegerInput(
+						"Ritardo avanzamento (0 = infinito)", "      [msec]",
+						1000, 0);
+
+				selfTestMenu(verbose, timeout);
+
 				retry = true;
 				break;
 			case 4:
-				step = true;
+				mode = 3;
+				// step = true;
 			case 5:
-
+				if (mode == 0)
+					mode = 2;
 				String path1 = UtilAyv
 						.imageSelection("SELEZIONARE PRIMA ACQUISIZIONE PRIMO ECO...");
 				if (path1 == null)
@@ -176,14 +186,17 @@ public class p11rmn_ implements PlugIn, Measurements {
 					return 0;
 
 				int direzione = 1;
-				boolean autoCalled = false;
-				boolean verbose = false;
-				boolean test = false;
+				// boolean autoCalled = false;
+				// boolean verbose = false;
+				// boolean test = false;
 				double profond = 30.0;
-				boolean fast = false;
-				boolean silent = false;
+				mode = 5;
+
+				// boolean fast = false;
+				// boolean silent = false;
 				ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond,
-						"", autoCalled, step, verbose, test, fast, silent, 0);
+						"", mode, timeout);
+
 				if (rt1 == null)
 					return 0;
 
@@ -200,6 +213,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 	}
 
 	public int autoMenu(String autoArgs) {
+
+		int timeout = 0;
 
 		MyLog.appendLog(fileDir + "MyLog.txt", "p11 riceve " + autoArgs);
 		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
@@ -256,17 +271,18 @@ public class p11rmn_ implements PlugIn, Measurements {
 			MyLog.waitHere();
 		}
 
-		boolean step = false;
+		// boolean step = false;
 		boolean retry = false;
-
+		int mode = 0;
 		if (fast) {
 			retry = false;
-			boolean autoCalled = true;
+			mode = 1;
+			// boolean autoCalled = true;
 			// TODO ripristinare verbose=false
 			// boolean verbose = false;
-			boolean verbose = true;
-			boolean test = false;
-			boolean silent = false;
+			// boolean verbose = true;
+			// boolean test = false;
+			// boolean silent = false;
 
 			String info11 = "code= "
 					+ TableSequence.getCode(iw2ayvTable, vetRiga[0])
@@ -276,7 +292,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 					+ TableSequence.getLength(iw2ayvTable);
 
 			ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond,
-					info11, autoCalled, step, verbose, test, fast, silent, 0);
+					info11, mode, timeout);
+
 			if (rt1 == null)
 				return 0;
 
@@ -305,19 +322,19 @@ public class p11rmn_ implements PlugIn, Measurements {
 					retry = true;
 					break;
 				case 3:
-					step = true;
+					// step = true;
 					// retry = false;
 					// break;
 				case 4:
 					// step = false;
 					retry = false;
-					boolean autoCalled = true;
-					boolean verbose = true;
-					boolean test = false;
-					boolean silent = false;
+					// boolean autoCalled = true;
+					// boolean verbose = true;
+					// boolean test = false;
+					// boolean silent = false;
+
 					ResultsTable rt1 = mainUnifor(path1, path2, direzione,
-							profond, "", autoCalled, step, verbose, test, fast,
-							false, 0);
+							profond, "", mode, timeout);
 					if (rt1 == null)
 						return 0;
 
@@ -333,15 +350,65 @@ public class p11rmn_ implements PlugIn, Measurements {
 		return 0;
 	}
 
+	/***
+	 * introdotto il parametro integer mode, per riunire i flag booleani: step,
+	 * verbose, test, fast-----------------------------------------------------
+	 * mode = 0 silent ------------------------------------- ------------------
+	 * mode = 1 auto fast ----------------------------------------------------
+	 * mode = 2 manuale-------------------------------------------------------
+	 * mode = 3 manuale passo per passo (step)--------------------------------
+	 * mode = 4 --------------------------------------------------------------
+	 * mode = 10 test automatico con immagini Siemens o Ge--------------------
+	 * 
+	 * @param path1
+	 * @param path2
+	 * @param direzione
+	 * @param profond
+	 * @param info10
+	 * @param mode
+	 * @param timeout
+	 * @return
+	 */
 	@SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String path1, String path2,
-			int direzione, double profond, String info10, boolean autoCalled,
-			boolean step, boolean verbose, boolean test, boolean fast,
-			boolean silent, int timeout) {
+			int direzione, double profond, String info10, int mode, int timeout) {
 		boolean accetta = false;
 		boolean manualRequired2 = false;
 		ResultsTable rt = null;
 		boolean fast2 = false;
+
+		boolean autoCalled = false;
+		boolean step = false;
+		boolean verbose = false;
+		boolean test = false;
+		boolean fast = false;
+		boolean silent = false;
+
+		switch (mode) {
+		case 0:
+			silent = true;
+			break;
+		case 1:
+			autoCalled = true;
+			verbose = true;
+			fast = true;
+			break;
+		case 2:
+			verbose = true;
+			step = true;
+			break;
+		case 3:
+			verbose = true;
+			step = true;
+			break;
+		case 4:
+			verbose = true;
+			break;
+		case 10:
+			verbose = true;
+			test = true;
+			break;
+		}
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		do {
@@ -358,8 +425,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			fast2 = fast && !manualRequired2;
 
 			double out2[] = positionSearch(imp11, autoCalled, direzione,
-					profond, info10, step, verbose, test, fast2, silent,
-					timeout);
+					profond, info10, mode, timeout);
 
 			imp11.close();
 
@@ -401,10 +467,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 				int xCenterRoi = (int) out2[0];
 				int yCenterRoi = (int) out2[1];
 
+				// =================================================
+
 				if (verbose && !silent) {
-
-					// =================================================
-
 					imp1.setRoi(new OvalRoi(xMaximum - 4, yMaximum - 4, 8, 8));
 					ImageUtils.addOverlayRoi(imp1, Color.green, 0);
 					imp1.killRoi();
@@ -416,9 +481,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 					// ImageUtils.addOverlayRoi(imp1, Color.green, 0);
 					// imp1.killRoi();
 					// imp1.updateAndDraw();
-					// if (step)
-
-					// =================================================
 				}
 
 				//
@@ -432,12 +494,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 				ImageUtils.addOverlayRoi(imp1, Color.blue, 1.01);
 				imp1.killRoi();
 				imp1.updateAndDraw();
-				// MyLog.waitHere();
 
-				// if (!silent)
-				// if (step)
-				// MyLog.waitHere();
-				// imp1.killRoi();
+				// =================================================
 
 				double xStartRefLine2 = 0;
 				double yStartRefLine2 = 0;
@@ -476,17 +534,19 @@ public class p11rmn_ implements PlugIn, Measurements {
 				imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7,
 						sq7);
 
-				// if (!silent) {
-				// ------------------------
-				ImageUtils.addOverlayRoi(imp1, Color.red, 1.01);
-				imp1.getRoi().setName("MROI");
-				imp1.killRoi();
-				imp1.updateAndDraw();
-				// ------------------------
-				imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7,
-						sq7);
+				if (!silent && !fast) {
+					// ------------------------
+					ImageUtils.addOverlayRoi(imp1, Color.red, 1.01);
+					imp1.getRoi().setName("MROI");
+					imp1.killRoi();
+					imp1.updateAndDraw();
+						MyLog.waitHere("Manuale", debug, timeout);
 
-				// }
+					// ------------------------
+					imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2,
+							sq7, sq7);
+
+				}
 
 				// MyLog.waitHere();
 				if (step)
@@ -500,30 +560,14 @@ public class p11rmn_ implements PlugIn, Measurements {
 				boolean irraggiungibile = false;
 				int diamBkg = MyConst.P11_DIAM_ROI_BACKGROUND;
 				int guard = 10;
-				boolean demo = false;
 				boolean circle = false;
 				double[] circleData = null;
 				int select = 1;
-				int mode = 1;
-
-				// public static double[] positionSearch15(ImagePlus imp1,
-				// double[] circleData, double xBkg, double yBkg, double
-				// diamBkg,
-				// int guard, int select, String info1, boolean circle, int
-				// mode,
-				// boolean irraggiungibile) {
+				mode = 1;
 
 				double[] backPos = UtilAyv.positionSearch15(imp1, circleData,
 						xFondo, yFondo, diamBkg, guard, select, info10, circle,
 						mode, irraggiungibile);
-
-				// public static double[] positionSearch15(ImagePlus imp1,
-				// double[] circleData,
-				// double xBkg, double yBkg, double diamBkg, int guard, int
-				// mode, String info1,
-				// boolean circle, boolean autoCalled, boolean step, boolean
-				// demo,
-				// boolean test, boolean fast, boolean irraggiungibile) {
 
 				xFondo = backPos[0] - diamBkg / 2;
 				yFondo = backPos[1] - diamBkg / 2;
@@ -565,12 +609,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				//
 				ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
 				// ImagePlus imaDiff = UtilAyv.diffIma(imp1, imp2);
-				if (!silent) {
-					UtilAyv.showImageMaximized(imaDiff);
-					ImageUtils.imageToFront(imaDiff);
-				}
-
-				if (verbose && !fast) {
+				if (!silent || (verbose && !fast)) {
 					UtilAyv.showImageMaximized(imaDiff);
 					ImageUtils.imageToFront(imaDiff);
 				}
@@ -590,6 +629,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				if (imaDiff.isVisible())
 					imaDiff.getWindow().toFront();
+
+				if (test)
+					MyLog.waitHere("disegnata Mroi su immagine differenza",
+							debug, timeout);
 
 				if (step)
 					msgMroi();
@@ -643,11 +686,13 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 					imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
 							sqNEA, sqNEA);
-					if (!silent) {
+					if (!silent && !fast) {
 						imp1.updateAndDraw();
 						imp1.getRoi().setStrokeColor(Color.green);
 						imp1.getRoi().setStrokeWidth(1.1);
 						over2.addElement(imp1.getRoi());
+						MyLog.waitHere("pixels utilizzabili= " + pixx, debug,
+								timeout);
 					}
 
 					// imp1.getWindow().toFront();
@@ -746,15 +791,22 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				simulataName = fileDir + patName + codice + "sim.zip";
 
+				boolean visualizza = ((verbose || test) && !fast);
+
 				int[][] classiSimulata = ImageUtils.generaSimulata12classi(
 						xCenterRoi, yCenterRoi, sq7, imp1, simulataName, step,
-						verbose, test);
+						visualizza, test);
+
+				if (!silent && !fast)
+					MyLog.waitHere("Generazione simulata 12 classi", debug,
+							timeout);
 
 				//
 				// calcolo posizione fwhm a metà della MROI
 				//
 				if (imp1.isVisible())
 					ImageUtils.imageToFront(imp1);
+
 				int xStartProfile = 0;
 				int yStartProfile = 0;
 				int xEndProfile = 0;
@@ -788,6 +840,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 								+ MyVersionUtils.CURRENT_VERSION, autoCalled);
 
 				//
+
 				rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 				int col = 2;
 				String t1 = "TESTO";
@@ -879,6 +932,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				}
 			}
+
 		} while (!accetta || manualRequired2);
 		return rt;
 
@@ -887,16 +941,14 @@ public class p11rmn_ implements PlugIn, Measurements {
 	/**
 	 * Self test execution menu
 	 */
-	public void selfTestMenu() {
+	public void selfTestMenu(boolean verbose, int timeout) {
 		if (new InputOutput().checkJar(MyConst.TEST_FILE)) {
 			int userSelection2 = UtilAyv.siemensGe();
-			boolean verbose = false;
 			boolean ok = false;
 			switch (userSelection2) {
 			case 1:
 				// GE
-				verbose = true;
-				ok = selfTestGe(verbose);
+				ok = selfTestGe(verbose, timeout);
 				if (ok)
 					MyMsg.msgTestPassed();
 				else
@@ -905,8 +957,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				break;
 
 			case 2:
-				verbose = true;
-				ok = selfTestSiemens(verbose);
+				ok = selfTestSiemens(verbose, timeout);
 				if (ok)
 					MyMsg.msgTestPassed();
 				else
@@ -1001,7 +1052,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		return vetReference;
 	}
 
-	public static boolean selfTestGe(boolean verbose) {
+	public static boolean selfTestGe(boolean verbose, int timeout) {
 		String[] list = { "CTSA2_01testP11", "CTSA2_03testP11",
 				"CTSA2_02testP11" };
 		String[] path = new InputOutput().findListTestImages2(
@@ -1009,17 +1060,24 @@ public class p11rmn_ implements PlugIn, Measurements {
 		String path1 = path[0];
 		String path2 = path[2];
 		// String path3 = path[1];
-		boolean autoCalled = false;
-		boolean step = false;
+		// boolean autoCalled = false;
+		// boolean step = false;
 		// boolean verbose = true;
-		boolean test = true;
+		// boolean test = true;
 		double[] vetReference = referenceGe();
 		int verticalDir = 3;
 		double profond = 30.0;
-		boolean fast = true;
-		boolean silent = false;
+		// boolean fast = true;
+		// boolean silent = false;
+
+		int mode;
+		if (verbose)
+			mode = 10; // modalità demo
+		else
+			mode = 0; // modalità silent
+
 		ResultsTable rt1 = mainUnifor(path1, path2, verticalDir, profond, "",
-				autoCalled, step, verbose, test, fast, silent, 0);
+				mode, timeout);
 		if (rt1 == null) {
 			MyLog.waitHere("rt1==null");
 			return false;
@@ -1031,7 +1089,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		return ok;
 	}
 
-	public static boolean selfTestSiemens(boolean verbose) {
+	public static boolean selfTestSiemens(boolean verbose, int timeout) {
 		// String path1 = "./Test2/S12S_01testP11";
 		// String path2 = "./Test2/S12S_02testP11";
 
@@ -1043,16 +1101,23 @@ public class p11rmn_ implements PlugIn, Measurements {
 		String path1 = path[0];
 		// String path3 = path[2];
 		String path2 = path[1];
-		boolean autoCalled = false;
-		boolean step = false;
-		boolean test = true;
-		boolean fast = true;
-		boolean silent = !verbose;
+		// boolean autoCalled = false;
+		// boolean step = false;
+		// boolean test = true;
+		// boolean fast = true;
+		// boolean silent = !verbose;
+
+		int mode;
+		if (verbose)
+			mode = 10; // modalità demo
+		else
+			mode = 0; // modalità silent
+
 		double[] vetReference = referenceSiemens();
 		int verticalDir = 3;
 		double profond = 30.0;
 		ResultsTable rt1 = mainUnifor(path1, path2, verticalDir, profond, "",
-				autoCalled, step, verbose, test, fast, silent, 0);
+				mode, timeout);
 		if (rt1 == null)
 			return false;
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
@@ -1069,12 +1134,15 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 */
 	public void selfTestSilent() {
 		boolean verbose = false;
-		boolean ok = selfTestSiemens(verbose);
+		int timeout = 0;
+		boolean ok = selfTestSiemens(verbose, timeout);
+
 		if (ok) {
 			IJ.log("Il test di p11rmn_ UNIFORMITA' SUPERFICIALE è stato SUPERATO");
 		} else {
 			IJ.log("Il test di p11rmn_ UNIFORMITA' SUPERFICIALE evidenzia degli ERRORI");
 		}
+
 		return;
 
 	}
@@ -1489,7 +1557,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		else if (in1.compareToIgnoreCase("hdx") == 0)
 			out = 4;
 		else {
-			MyLog.waitHere("errore nella direzione in " + MyConst.CODE_FILE
+			MyLog.waitHere("Errore nella direzione in " + MyConst.CODE_FILE
 					+ " valore " + in1 + " non previsto");
 			out = -1;
 		}
@@ -1511,14 +1579,43 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 	public static double[] positionSearch(ImagePlus imp11, boolean autoCalled,
-			int direzioneTabella, double profond, String info10, boolean step,
-			boolean verbose, boolean test, boolean fast, boolean silent,
+			int direzioneTabella, double profond, String info10, int mode,
 			int timeout) {
 		//
 		// ================================================================================
 		// Inizio calcoli geometrici
 		// ================================================================================
 		//
+		boolean verbose = false;
+		boolean silent = false;
+		boolean step = false;
+		boolean test = false;
+		boolean fast = false;
+
+		switch (mode) {
+		case 0:
+			silent = true;
+			break;
+		case 1:
+			autoCalled = true;
+			fast = true;
+			break;
+		case 2:
+			verbose = true;
+			step = true;
+			break;
+		case 3:
+			verbose = true;
+			step = true;
+			break;
+		case 4:
+			verbose = true;
+			break;
+		case 10:
+			verbose = true;
+			test = true;
+			break;
+		}
 
 		int direzione = 0;
 		int who1 = 0;
@@ -1547,10 +1644,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double xMaximum = out1[0];
 		double yMaximum = out1[1];
 
-		direzione = directionFinder(imp11, xMaximum, yMaximum, silent);
+		direzione = directionFinder(imp11, xMaximum, yMaximum, silent, timeout);
 
 		if (direzione != 0 && direzione != direzioneTabella) {
-			MyLog.waitHere("rilevata differenza tra directionFinder e direzioneTabella direzione= "
+			MyLog.waitHere("Rilevata differenza tra directionFinder e direzioneTabella direzione= "
 					+ direzione + " direzioneTabella= " + direzioneTabella);
 			manualRequired = true;
 			who1 = 1;
@@ -1578,6 +1675,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 			MyLog.waitHere("Maximum value= " + out1[2] + " find at x= "
 					+ xMaximum + " y= " + yMaximum, debug, timeout);
 		// }
+		if (test)
+			MyLog.waitHere("Maximum position", debug, timeout);
 
 		// IJ.log("width= " + width + " height= " + height);
 
@@ -1599,7 +1698,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			endX = width;
 			startY = out1[1] - profond / dimPixel;
 			if (startY < 0) {
-				MyLog.waitHere("imposto manualRequired");
+				MyLog.waitHere("Imposto manualRequired");
 				manualRequired = true;
 				who1 = 3;
 				startY = startY + height;
@@ -1612,7 +1711,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			endX = width;
 			startY = out1[1] + profond / dimPixel;
 			if (startY > height) {
-				MyLog.waitHere("imposto manualRequired");
+				MyLog.waitHere("Imposto manualRequired");
 				manualRequired = true;
 				who1 = 4;
 				startY = startY - height;
@@ -1623,7 +1722,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			strDirez = " orizzontale a sinistra";
 			startX = out1[0] - profond / dimPixel;
 			if (startX < 0) {
-				MyLog.waitHere("imposto manualRequired");
+				MyLog.waitHere("Imposto manualRequired");
 				manualRequired = true;
 				who1 = 5;
 				startX = startX + width;
@@ -1637,7 +1736,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			strDirez = " orizzontale a destra";
 			startX = out1[0] + profond / dimPixel;
 			if (startX > width) {
-				MyLog.waitHere("imposto manualRequired");
+				MyLog.waitHere("Imposto manualRequired");
 				manualRequired = true;
 				who1 = 6;
 				startX = startX - width;
@@ -1647,7 +1746,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			endY = height;
 			break;
 		case 0:
-			MyLog.waitHere("caso impossibile, la direzione 0 è gestita in precedenza");
+			MyLog.waitHere("Caso impossibile, la direzione 0 è gestita in precedenza");
 		}
 
 		// MyLog.waitHere("startX= " + startX + " startY= " + startY + " endX= "
@@ -1661,8 +1760,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 			over1.addElement(imp11.getRoi());
 			over1.setStrokeColor(color1);
 			imp11.updateAndDraw();
-			if (step)
-				MyLog.waitHere("selezione automatica direzione = " + strDirez,
+			if (step || test)
+				MyLog.waitHere("Selezione automatica direzione = " + strDirez,
 						debug, timeout);
 
 			double[] profi1 = ((Line) imp11.getRoi()).getPixels();
@@ -1685,7 +1784,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			double xCenter[] = { centro };
 			double yCenter[] = { profi1[(int) centro] };
 
-			if (step) {
+			if (step || test) {
 				Plot plot1 = MyPlot.basePlot(profi1,
 						"PROFILO SEGNALE LUNGO LINEA VERDE", Color.blue);
 				plot1.draw();
@@ -1731,7 +1830,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			// MyLog.waitHere(info10
 			// + "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI", debug);
 
-			MyLog.waitHere(info10 + "\n richiesta al punto " + who1 + "\n "
+			MyLog.waitHere(info10 + "\n Richiesta al punto " + who1 + "\n "
 					+ listaMessaggi(0), debug, timeout);
 
 			manualRequired = false;
@@ -1775,7 +1874,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 	public static int directionFinder(ImagePlus imp1, double xMaximum,
-			double yMaximum, boolean silent) {
+			double yMaximum, boolean silent, int timeout) {
 		int width = imp1.getWidth();
 		int height = imp1.getHeight();
 		if (!silent)
@@ -1878,6 +1977,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		meanx[3] = mean4;
 		// MyLog.logVector(meanx, "meanx prima di sort");
+
 		Arrays.sort(meanx);
 
 		// regola: mean[2] deve essere almeno > 4*mean[1], questo evita i casi
@@ -1910,7 +2010,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			return 4;
 		}
 		MyLog.logVector(meanx, "meanx");
-		MyLog.waitHere("direzione 0 perchè non entrato nelle altre");
+		MyLog.waitHere("Direzione 0 perchè non entrato nelle altre");
 		return 0;
 	}
 

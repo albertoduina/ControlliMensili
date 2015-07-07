@@ -102,7 +102,7 @@ public class Sequenze_ implements PlugIn {
 			return;
 		lw.setLocation(10, 10);
 
-		// / ABBANDONATO EXCEL WRITER
+		// ABBANDONATO EXCEL WRITER
 		// new InputOutput().findCSV(MyConst.CODE_FILE);
 		// new InputOutput().findCSV(MyConst.LIMITS_FILE);
 		// new InputOutput().findCSV(MyConst.EXPAND_FILE);
