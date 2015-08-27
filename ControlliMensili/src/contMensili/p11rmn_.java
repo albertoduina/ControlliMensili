@@ -1698,8 +1698,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 			endX = width;
 			startY = out1[1] - profond / dimPixel;
 			if (startY < 0) {
-				MyLog.waitHere("Imposto manualRequired");
-				manualRequired = true;
+	//			MyLog.waitHere("Imposto manualRequired");   // commentato per bottiglia verticale
+	//			manualRequired = true;
 				who1 = 3;
 				startY = startY + height;
 			}

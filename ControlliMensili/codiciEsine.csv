@@ -33,8 +33,8 @@ NVSH2;NeurovascularArray Sag.Head;2;2;0;xxx;x;x;p12rmn_
 NVCH2;NeurovascularArray Cor.Head;2;2;0;xxx;x;x;p12rmn_
 NVAH2;NeurovascularArray Ass.Head;2;2;0;xxx;x;x;p12rmn_
 9GSA2;9 inch General Purpose;2;2;0;xxx;x;x;p12rmn_
-LKSA2;Large Knee;2;2;0;xxx;x;x;p12rmn_
-LKFA2;Large Knee;2;2;0;xxx;x;x;p12rmn_
+LKSA2;Knee/FOOT;2;2;0;xxx;x;x;p12rmn_
+LKFA2;Knee/FOOT;2;2;0;xxx;x;x;p12rmn_
 SKSA2;Small Knee;2;2;0;xxx;x;x;p12rmn_
 FOSA2;Foot;4;4;0;xxx;hdx;x;p5rmn_
 WRSA2;Wrist;4;4;0;xxx;hdx;x;p5rmn_
@@ -54,4 +54,5 @@ S3AS2;CTL top;2;2;0;xxx;hdx;x;p5rmn_
 S3AF2;CTL top;2;2;0;xxx;hdx;x;p5rmn_
 SASH2;Shoulder;2;2;0;xxx;x;x;p12rmn_
 SAFH2;Shoulder;2;2;0;xxx;x;x;p12rmn_
-//;;;;;;;;
+KKSA2;Large Knee;2;2;0;xxx;x;x;p12rmn_
+KKFA2;Large Knee;2;2;0;xxx;x;x;p12rmn_

@@ -4,10 +4,10 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="data"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Programmi/Java/jdk1.6.0_10/lib/tools.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="build"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/imagej"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Iw2ayv"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_60/lib/tools.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
