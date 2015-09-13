@@ -226,7 +226,7 @@ public class Sequenze_ implements PlugIn {
 					.ModelessMsg(
 							"Attenzione, nella cartella selezionata i files iw2ayv.txt e Results1.xls"
 									+ "\n"
-									+ "esistono già  premere SOVRASCRIVI per cancellarli, CONTINUA per utilizzarli, altrimenti CHIUDI",
+									+ "esistono giï¿½  premere SOVRASCRIVI per cancellarli, CONTINUA per utilizzarli, altrimenti CHIUDI",
 							"SOVRASCRIVI", "CONTINUA", "CHIUDI");
 			switch (userSelection1) {
 			case ABORT:
@@ -246,7 +246,7 @@ public class Sequenze_ implements PlugIn {
 
 		if (nuovo1) {
 			//
-			// se è stato selezionato un nuovo set di misure cancello sia il
+			// se ï¿½ stato selezionato un nuovo set di misure cancello sia il
 			// file directory che il file excel dei risultati
 			//
 			File fx = new File(startingDir + MyConst.SEQUENZE_FILE);
@@ -357,7 +357,7 @@ public class Sequenze_ implements PlugIn {
 					.tableModifierSmart(tableSequenceReordered, myCode);
 
 			boolean test = false;
-			// NOTA BENE: lasciare test a false, altrimenti non vengono più
+			// NOTA BENE: lasciare test a false, altrimenti non vengono piï¿½
 			// stampati gli errori e si hanno problemi in elaborazione!!!
 			logVerifySequenceTable(listProblems, test);
 
@@ -573,7 +573,7 @@ public class Sequenze_ implements PlugIn {
 					// IJ.log(tableCode2[tableRow][0] + "  " + coil + "  "
 					// + tableCode2[tableRow][4]);
 					// count3++;
-					// se il codice è conosciuto aggiunge i dati
+					// se il codice ï¿½ conosciuto aggiunge i dati
 					vetConta.add("" + (count3));
 					count3++;
 					vetPath.add(path1);
@@ -787,26 +787,26 @@ public class Sequenze_ implements PlugIn {
 	/**
 	 * E' il motore che si preoccupa di chiamare i vari plugin, passando sulla
 	 * linea di comando il numero della linea di iw2ayv.txt da analizzare. Tiene
-	 * conto dei controlli già effettuati, per cui si può spegnere il PC e
+	 * conto dei controlli giï¿½ effettuati, per cui si puï¿½ spegnere il PC e
 	 * ripartire ad analizzare dal file successivo all'ultimo analizzato con
 	 * successo.
 	 * 
 	 * @param tableSequenze5
-	 *            è il file iw2ayv.txt ricaricato da disco
+	 *            ï¿½ il file iw2ayv.txt ricaricato da disco
 	 * @param tableCode5
-	 *            è il file codiciXXXX.txt caricato da disco
+	 *            ï¿½ il file codiciXXXX.txt caricato da disco
 	 */
 	public String[][] callPluginsFromSequenceTable(String[][] tableSequenze5,
 			String[][] tableCode5, boolean test, boolean superficiali,
 			boolean p10p11p12, TextWindow tw) {
 
-		// Attenzione: contrariamente a quanto scritto più sotto, per
-		// la struttura della tableSequenze è stata creata la classe
+		// Attenzione: contrariamente a quanto scritto piï¿½ sotto, per
+		// la struttura della tableSequenze ï¿½ stata creata la classe
 		// TableSequence che si occupa di tutto e in cui vengono definiti:
 		// ROW = 0, PATH = 1, CODE = 2, COIL = 3, IMA_PASS = 4, SERIE = 5,
 		// ACQ = 6, IMA = 7, TIME = 8, ECHO = 9, DONE = 10, COLUMNS = 11
 		// facendo riferimento a questi valori si ha il vantaggio che sono
-		// definiti in un unico punto. Per la struttura della TableCode è stata
+		// definiti in un unico punto. Per la struttura della TableCode ï¿½ stata
 		// creata la classe TableCode che si occupa di tutto e in cui vengono
 		// definiti:
 		// CODE = 0, IMA_PASS = 1, IMA_TOTAL = 2, COIL = 3, PLUGIN = 4.
@@ -815,7 +815,7 @@ public class Sequenze_ implements PlugIn {
 		//
 
 		// ##########--OBSOLETO-OBSOLETO--OBSOLETO--################
-		// OBSOLETO La struttura della tabella tableSequenze è la seguente:
+		// OBSOLETO La struttura della tabella tableSequenze ï¿½ la seguente:
 		// OBSOLETO tableSequenze[n][0] = n, contatore progressivo
 		// OBSOLETO tableSequenze[n][1] = path file
 		// OBSOLETO tableSequenze[n][2] = codice
@@ -827,7 +827,7 @@ public class Sequenze_ implements PlugIn {
 		// OBSOLETO tableSequenze[n][8] = acqTime
 		// OBSOLETO tableSequenze[n][9] = echoTime
 		// OBSOLETO tableSequenze[n][10] = fatto, default 0
-		// OBSOLETO La struttura di TableCode è invece quella del file
+		// OBSOLETO La struttura di TableCode ï¿½ invece quella del file
 		// OBSOLETO codici.txt:
 		// OBSOLETO tableCode [n][0] = codice
 		// OBSOLETO tableCode [n][1] = numero immagini da passare al plugin
@@ -891,7 +891,7 @@ public class Sequenze_ implements PlugIn {
 				if ((plugin == null) || (argomento == null) || jump) {
 					j1++;
 				} else {
-					// qui è dove vengono passate al plugin le righe delle
+					// qui ï¿½ dove vengono passate al plugin le righe delle
 					// immagini da analizzare.
 					new TableSequence();
 					int numImaDaPassare = Integer.parseInt(TableSequence
@@ -962,7 +962,7 @@ public class Sequenze_ implements PlugIn {
 	}
 
 	/***
-	 * Effettua il run di un plugin (abbiamo così il plugin sequenze che è in
+	 * Effettua il run di un plugin (abbiamo cosï¿½ il plugin sequenze che ï¿½ in
 	 * grado di chiamare i plugins per le eleborazioni delle varie immagini.
 	 * 
 	 * @param plugin
@@ -1075,7 +1075,7 @@ public class Sequenze_ implements PlugIn {
 	/**
 	 * Cerca in tabella il numero delle linee in cui sono elencate le immagini
 	 * da elaborare da parte del plugin e le mette in una stringa da passare
-	 * come argomento al plugin. Potremo avere ad esempio 12#13#14#15 , se è
+	 * come argomento al plugin. Potremo avere ad esempio 12#13#14#15 , se ï¿½
 	 * previsto che quel determinato plugin processi 4 immagini
 	 * 
 	 * @param lineNumber
@@ -1102,7 +1102,7 @@ public class Sequenze_ implements PlugIn {
 			return null;
 		} else {
 			if (numImaGruppo > 0 && numImaDaPassare == 4) {
-				// se numImaGruppo >0 è il caso della bobina breast, in questo
+				// se numImaGruppo >0 ï¿½ il caso della bobina breast, in questo
 				// caso abbiamo 2 immagini successive (i 2 echi), separate da
 				// numImaGruppo dalle restanti
 
@@ -1143,8 +1143,8 @@ public class Sequenze_ implements PlugIn {
 	/**
 	 * Verifica che il numero di immagini rilevate da scanlist per un certo tipo
 	 * di codice immagine corrisponda al numero previsto in codiciNew.csv. Se
-	 * ciò non accade viene passata una tabella di warnings a
-	 * logVerifySequenceTable. Si può comunque continuare a lavorare
+	 * ciï¿½ non accade viene passata una tabella di warnings a
+	 * logVerifySequenceTable. Si puï¿½ comunque continuare a lavorare
 	 * 
 	 * @param tableSequenze6
 	 * @param tableCode6
@@ -1153,6 +1153,15 @@ public class Sequenze_ implements PlugIn {
 	public String[][] verifySequenceTable(String[][] tableSequenze6,
 			String[][] tableCode6) {
 
+		
+		//TODO: incompatibilitÃ  HUSA_ vs HUSAA
+		//TODO: incompatibilitÃ  HUSC_ vs HUSCA
+		//TODO: incompatibilitÃ  HUSS_ vs HUSSA
+		
+		
+		
+		
+		
 		// IJ.log("\\Clear");
 		// IJ.log("------- TableSequenze6 ------------");
 		// TableUtils.dumpTable(tableSequenze6);
@@ -1194,7 +1203,7 @@ public class Sequenze_ implements PlugIn {
 				continue;
 			String codiceBobinaRichiesto = TableCode.getCoil(tableCode6, j1);
 			// IJ.log("codiceBobinaRichiesto= "+codiceBobinaRichiesto);
-			// codiceBobinaRichiesto = codiceBobinaRichiesto.replaceAll("§",
+			// codiceBobinaRichiesto = codiceBobinaRichiesto.replaceAll("ï¿½",
 			// ";");
 			// IJ.log("codiceBobinaRichiesto= "+codiceBobinaRichiesto);
 			for (int j2 = 0; j2 < tableSequenze6.length; j2++) {
@@ -1283,9 +1292,9 @@ public class Sequenze_ implements PlugIn {
 
 	/**
 	 * Verifica che il numero di immagini rilevate da scanlist per un certo tipo
-	 * di codice immagine corrisponda al numero previsto in iw2ayv.txt. Se ciò
+	 * di codice immagine corrisponda al numero previsto in iw2ayv.txt. Se ciï¿½
 	 * non accade viene passata una tabella di warnings a
-	 * logVerifySequenceTable. Si può comunque continuare a lavorare
+	 * logVerifySequenceTable. Si puï¿½ comunque continuare a lavorare
 	 * 
 	 * @param tableSequenze6
 	 * @param tableCode6
@@ -1601,7 +1610,7 @@ public class Sequenze_ implements PlugIn {
 	// for (int i1 = 0; i1 < (bubblesort.length - 1); i1++) {
 	// if (bubblesort[i1] > bubblesort[i1 + 1]) {
 	// long temp = bubblesort[i1];
-	// // N.B. i2 in questo caso partirà da 1, poichè la colonna 0
+	// // N.B. i2 in questo caso partirï¿½ da 1, poichï¿½ la colonna 0
 	// // che contiene il numero della riga NON deve venire sortata
 	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
 	// tempRiga[i2] = tableOut[i1][i2];
@@ -1652,7 +1661,7 @@ public class Sequenze_ implements PlugIn {
 	// for (int i1 = 0; i1 < (bubblesort1.length - 1); i1++) {
 	// if (bubblesort1[i1] > bubblesort1[i1 + 1]) {
 	// long temp = bubblesort1[i1];
-	// // N.B. i2 in questo caso partirà da 1, poichè la colonna 0
+	// // N.B. i2 in questo caso partirï¿½ da 1, poichï¿½ la colonna 0
 	// // che contiene il numero della riga NON deve venire sortata
 	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
 	// tempRiga[i2] = tableOut[i1][i2];
@@ -1666,7 +1675,7 @@ public class Sequenze_ implements PlugIn {
 	// } else if ((bubblesort1[i1] == bubblesort1[i1 + 1])
 	// && (bubblesort2[i1] > bubblesort2[i1 + 1])) {
 	// int temp2 = bubblesort2[i1];
-	// // N.B. i2 in questo caso partirà da 1, poichè la colonna 0
+	// // N.B. i2 in questo caso partirï¿½ da 1, poichï¿½ la colonna 0
 	// // che contiene il numero della riga NON deve venire sortata
 	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
 	// tempRiga[i2] = tableOut[i1][i2];
@@ -1706,7 +1715,7 @@ public class Sequenze_ implements PlugIn {
 	}
 
 	/***
-	 * Questo è un test per vedere se posso avere duefile di identico nome, uno
+	 * Questo ï¿½ un test per vedere se posso avere duefile di identico nome, uno
 	 * esterno ed uno interno al file jar (in modo da tenere l'interno come
 	 * default ed eventualmente l'esterno come risorsa modificabile dall'utente)
 	 * 
