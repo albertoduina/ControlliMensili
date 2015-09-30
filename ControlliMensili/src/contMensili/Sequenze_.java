@@ -345,7 +345,7 @@ public class Sequenze_ implements PlugIn {
 				MyLog.waitHere("salvare il log come ListProblems");
 			}
 
-			String[] myCode = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_",
+			String[] myCode1 = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_",
 					"YL2S_", "YR2F_", "YR2S_" };
 			// int[] myNum = { 4 };
 			// String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li",
@@ -354,7 +354,23 @@ public class Sequenze_ implements PlugIn {
 			// String[] myPosiz = { "-45", "0", "45" };
 
 			String[][] tableSequenceReordered2 = TableSorter
-					.tableModifierSmart(tableSequenceReordered, myCode);
+					.tableModifierSmart(tableSequenceReordered, myCode1);
+			
+			
+			String[] myCode2 = { "JUS1A", "KUS1A", "JUSAA", "KUSAA"};
+			// int[] myNum = { 4 };
+			// String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li",
+			// "LN",
+			// "LT" };
+			// String[] myPosiz = { "-45", "0", "45" };
+
+			String[][] tableSequenceReordered3 = TableSorter
+					.tableModifierSmart(tableSequenceReordered2, myCode2);
+
+			
+			
+			
+			
 
 			boolean test = false;
 			// NOTA BENE: lasciare test a false, altrimenti non vengono pi�
@@ -362,7 +378,7 @@ public class Sequenze_ implements PlugIn {
 			logVerifySequenceTable(listProblems, test);
 
 			boolean success = new TableSequence().writeTable(startingDir
-					+ MyConst.SEQUENZE_FILE, tableSequenceReordered2);
+					+ MyConst.SEQUENZE_FILE, tableSequenceReordered3);
 			if (!success)
 				IJ.log("Problemi creazione file iw2ayv.txt");
 		}
@@ -903,7 +919,7 @@ public class Sequenze_ implements PlugIn {
 
 					// int numImaGruppo = Integer.parseInt(TableSequence
 					// .getImaGroup(tableSequenze5, j1));
-					int numImaGruppo = 0;
+//					int numImaGruppo = 0;
 
 					// MyFileLogger.logger.info("<<< RIGA " + j1 + " / "
 					// + tableSequenze5.length + " " + theCode + " "
@@ -915,7 +931,7 @@ public class Sequenze_ implements PlugIn {
 					if (numImaDaPassare == 0) {
 						j1++;
 					} else {
-						if (numImaGruppo == 0) {
+	//					if (numImaGruppo == 0) {
 							// MyFileLogger.logger
 							// .info("Sequenze.callPluginFromSequenceTable >>> plugin= "
 							// + plugin
@@ -929,18 +945,18 @@ public class Sequenze_ implements PlugIn {
 							vetPlugin.add(plugin);
 							vetArgomento.add(argomento);
 							j1 = j1 + numImaDaPassare;
-						} else {
+		//				} else {
 							// MyFileLogger.logger
 							// .info("Sequenze.callPluginFromSequenceTable >>> plugin= "
 							// + plugin
 							// + " argomento= "
 							// + argomento);
 
-							pluginRunner(plugin, argomento, test);
-							vetPlugin.add(plugin);
-							vetArgomento.add(argomento);
-							j1 = j1 + numImaDaPassare;
-						}
+		//					pluginRunner(plugin, argomento, test);
+		//					vetPlugin.add(plugin);
+		//					vetArgomento.add(argomento);
+		//					j1 = j1 + numImaDaPassare;
+		//				}
 					}
 				}
 			} else {
@@ -1095,37 +1111,39 @@ public class Sequenze_ implements PlugIn {
 		int numImaDaPassare = Integer.parseInt(TableSequence.getImaPass(
 				tableSequenze5, lineNumber));
 
-		int numImaGruppo = Integer.parseInt(TableSequence.getImaGroup(
+		int numImaTab = Integer.parseInt(TableSequence.getImaGroup(
 				tableSequenze5, lineNumber));
+		// numImaTab (numero immagine in tabelle) va confrontato col numero immagine, letto dai dati dicom
+		
 
 		if (numImaDaPassare == 0) {
 			return null;
 		} else {
-			if (numImaGruppo > 0 && numImaDaPassare == 4) {
-				// se numImaGruppo >0 � il caso della bobina breast, in questo
-				// caso abbiamo 2 immagini successive (i 2 echi), separate da
-				// numImaGruppo dalle restanti
-
-				new TableSequence();
-				argomento = argomento + "#"
-						+ TableSequence.getRow(tableSequenze5, lineNumber + 0);
-				argomento = argomento + "#"
-						+ TableSequence.getRow(tableSequenze5, lineNumber + 1);
-				MyLog.waitHere("prima");
-				int num1 = lineNumber + 0 + numImaGruppo;
-				MyLog.waitHere("num1= " + num1 + " lineNumber= " + lineNumber
-						+ " numImaGruppo= " + numImaGruppo);
-				argomento = argomento
-						+ "#"
-						+ TableSequence.getRow(tableSequenze5, lineNumber + 0
-								+ numImaGruppo);
-				MyLog.waitHere("dopo");
-				argomento = argomento
-						+ "#"
-						+ TableSequence.getRow(tableSequenze5, lineNumber + 1
-								+ numImaGruppo);
-
-			} else {
+//			if (numImaGruppo > 0 && numImaDaPassare == 4) {
+//				// se numImaGruppo >0 � il caso della bobina breast, in questo
+//				// caso abbiamo 2 immagini successive (i 2 echi), separate da
+//				// numImaGruppo dalle restanti
+//
+//				new TableSequence();
+//				argomento = argomento + "#"
+//						+ TableSequence.getRow(tableSequenze5, lineNumber + 0);
+//				argomento = argomento + "#"
+//						+ TableSequence.getRow(tableSequenze5, lineNumber + 1);
+//				MyLog.waitHere("prima");
+//				int num1 = lineNumber + 0 + numImaGruppo;
+//				MyLog.waitHere("num1= " + num1 + " lineNumber= " + lineNumber
+//						+ " numImaGruppo= " + numImaGruppo);
+//				argomento = argomento
+//						+ "#"
+//						+ TableSequence.getRow(tableSequenze5, lineNumber + 0
+//								+ numImaGruppo);
+//				MyLog.waitHere("dopo");
+//				argomento = argomento
+//						+ "#"
+//						+ TableSequence.getRow(tableSequenze5, lineNumber + 1
+//								+ numImaGruppo);
+//
+//			} else {
 				for (int j2 = 0; j2 < numImaDaPassare; j2++) {
 					if ((lineNumber + j2) >= tableSequenze5.length)
 						return null;
@@ -1135,7 +1153,7 @@ public class Sequenze_ implements PlugIn {
 							+ TableSequence.getRow(tableSequenze5, lineNumber
 									+ j2);
 				}
-			}
+	//		}
 		}
 		return argomento;
 	}
