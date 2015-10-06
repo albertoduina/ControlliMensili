@@ -76,7 +76,7 @@ public class Sequenze_ implements PlugIn {
 	// // ABILITA E DISABILITA LE STAMPE DI DEBUG
 	// // METTERE debugTables A FALSE PER NON AVERE LE STAMPE
 	// //
-	public boolean debugTables = true;
+	public boolean debugTables = false;
 
 	public void run(String arg) {
 
@@ -350,15 +350,14 @@ public class Sequenze_ implements PlugIn {
 				MyLog.waitHere("salvare il log come ListProblems");
 			}
 
-			String[] myCode1 = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_", "YL2S_", "YR2F_", "YR2S_" };
+			String[] myCode1 = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_", "YL2S_", "YR2F_", "YR2S_","JUS1A", "JUSAA",  "KUS1A", "KUSAA"  };
 			// int[] myNum = { 4 };
 			// String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li",
 			// "LN",
 			// "LT" };
 			// String[] myPosiz = { "-45", "0", "45" };
 
-			boolean debug1=true;
-			String[][] tableSequenceModified1 = TableSorter.tableModifierSmart(tableSequenceReordered, myCode1, debug1);
+			String[][] tableSequenceModified1 = TableSorter.tableModifierSmart(tableSequenceReordered, myCode1);
 			
 			if (debugTables) {
 				IJ.log("\\Clear");
@@ -367,28 +366,29 @@ public class Sequenze_ implements PlugIn {
 			}
 
 
-			String[] myCode2 = { "JUS1A", "JUSAA" };
-			String[][] tableSequenceModified2 = TableSorter.tableModifierSmart(tableSequenceModified1, myCode2, debug1);
-			if (debugTables) {
-				IJ.log("\\Clear");
-				MyLog.logMatrix(tableSequenceModified2, "tableSequenceModified2");
-				MyLog.waitHere("salvare il log come tableSequenceModified2");
-			}
-			
-
-			// int[] myNum = { 4 };
-			// String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li",
-			// "LN",
-			// "LT" };
-			// String[] myPosiz = { "-45", "0", "45" };
-			String[] myCode3 = { "KUS1A", "KUSAA" };
-
-			String[][] tableSequenceModified3 = TableSorter.tableModifierSmart(tableSequenceModified2, myCode3, debug1);
-			if (debugTables) {
-				IJ.log("\\Clear");
-				MyLog.logMatrix(tableSequenceModified3, "tableSequenceModified3");
-				MyLog.waitHere("salvare il log come tableSequenceModified3");
-			}
+//			String[] myCode2 = { "JUS1A", "JUSAA" };
+//			String[][] tableSequenceModified2 = TableSorter.tableModifierSmart(tableSequenceModified1, myCode2);
+//			if (debugTables) {
+//				IJ.log("\\Clear");
+//				MyLog.logMatrix(tableSequenceModified2, "tableSequenceModified2");
+//				MyLog.waitHere("salvare il log come tableSequenceModified2");
+//			}
+//			
+//
+//			// int[] myNum = { 4 };
+//			// String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li",
+//			// "LN",
+//			// "LT" };
+//			// String[] myPosiz = { "-45", "0", "45" };
+//			String[] myCode3 = { "KUS1A", "KUSAA" };
+//
+//			String[][] tableSequenceModified3 = TableSorter.tableModifierSmart(tableSequenceModified2, myCode3);
+//			
+//			if (true) {
+//				IJ.log("\\Clear");
+//				MyLog.logMatrix(tableSequenceModified3, "tableSequenceModified3");
+//				MyLog.waitHere("salvare il log come tableSequenceModified3");
+//			}
 
 			boolean test = false;
 			// NOTA BENE: lasciare test a false, altrimenti non vengono pi�
@@ -396,7 +396,7 @@ public class Sequenze_ implements PlugIn {
 			logVerifySequenceTable(listProblems, test);
 
 			boolean success = new TableSequence().writeTable(startingDir + MyConst.SEQUENZE_FILE,
-					tableSequenceModified3);
+					tableSequenceModified1);
 			if (!success)
 				IJ.log("Problemi creazione file iw2ayv.txt");
 		}

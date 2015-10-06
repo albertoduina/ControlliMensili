@@ -90,7 +90,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	private static String simulataName = "";
 
-	private static final boolean debug = true;
+	private static final boolean debug = false;
 
 	private static int timeout = 0;
 
@@ -267,7 +267,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// TableUtils.dumpTableRow(iw2ayvTable, vetRiga[0]);
 
 		if (nTokens == MyConst.TOKENS2) {
-			MyLog.waitHere("autoargs=" +autoArgs);
 			UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
 
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
@@ -365,7 +364,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * Main per il calcolo dell'uniformit� per bobine di superficie
+	 * Main per il calcolo dell'uniformita' per bobine di superficie
 	 * 
 	 * 
 	 * introdotto il parametro integer mode, per riunire i flag booleani: step,
