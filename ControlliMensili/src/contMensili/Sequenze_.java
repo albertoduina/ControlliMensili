@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import utils.AboutBox;
 import utils.ArrayUtils;
@@ -317,7 +318,6 @@ public class Sequenze_ implements PlugIn {
 				MyLog.logMatrix(tableSequenceSorted2, "tableSequenceSorted2");
 				MyLog.waitHere("salvare il log come TableSequenceSorted2");
 			}
-			
 
 			String[][] tableSequenceReordered = reorderSequenceTable(tableSequenceSorted2, tableCode);
 			if (debugTables) {
@@ -325,23 +325,16 @@ public class Sequenze_ implements PlugIn {
 				MyLog.logMatrix(tableSequenceReordered, "tableSequenceReordered");
 				MyLog.waitHere("salvare il log come TableSequenceReordered");
 			}
-			
-			
-//			String[][] tableSequenceReordered = TableSorter.minsort(tableSequenceReorderedXX, TableSequence.POSIZ);
-//			if (debugTables) {
-//				IJ.log("\\Clear");
-//				MyLog.logMatrix(tableSequenceReordered, "tableSequenceReordered");
-//				MyLog.waitHere("salvare il log come tableSequenceReordered");
-//			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
+
+			// String[][] tableSequenceReordered =
+			// TableSorter.minsort(tableSequenceReorderedXX,
+			// TableSequence.POSIZ);
+			// if (debugTables) {
+			// IJ.log("\\Clear");
+			// MyLog.logMatrix(tableSequenceReordered,
+			// "tableSequenceReordered");
+			// MyLog.waitHere("salvare il log come tableSequenceReordered");
+			// }
 
 			String[][] listProblems = verifySequenceTable(tableSequenceReordered, tableCode);
 			if (debugTables) {
@@ -350,7 +343,8 @@ public class Sequenze_ implements PlugIn {
 				MyLog.waitHere("salvare il log come ListProblems");
 			}
 
-			String[] myCode1 = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_", "YL2S_", "YR2F_", "YR2S_","JUS1A", "JUSAA",  "KUS1A", "KUSAA"  };
+			String[] myCode1 = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_", "YL2S_", "YR2F_", "YR2S_", "JUS1A",
+					"JUSAA", "KUS1A", "KUSAA" };
 			// int[] myNum = { 4 };
 			// String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li",
 			// "LN",
@@ -358,40 +352,43 @@ public class Sequenze_ implements PlugIn {
 			// String[] myPosiz = { "-45", "0", "45" };
 
 			String[][] tableSequenceModified1 = TableSorter.tableModifierSmart(tableSequenceReordered, myCode1);
-			
+
 			if (debugTables) {
 				IJ.log("\\Clear");
 				MyLog.logMatrix(tableSequenceModified1, "tableSequenceModified1");
 				MyLog.waitHere("salvare il log come tableSequenceModified1");
 			}
 
-
-//			String[] myCode2 = { "JUS1A", "JUSAA" };
-//			String[][] tableSequenceModified2 = TableSorter.tableModifierSmart(tableSequenceModified1, myCode2);
-//			if (debugTables) {
-//				IJ.log("\\Clear");
-//				MyLog.logMatrix(tableSequenceModified2, "tableSequenceModified2");
-//				MyLog.waitHere("salvare il log come tableSequenceModified2");
-//			}
-//			
-//
-//			// int[] myNum = { 4 };
-//			// String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li",
-//			// "LN",
-//			// "LT" };
-//			// String[] myPosiz = { "-45", "0", "45" };
-//			String[] myCode3 = { "KUS1A", "KUSAA" };
-//
-//			String[][] tableSequenceModified3 = TableSorter.tableModifierSmart(tableSequenceModified2, myCode3);
-//			
-//			if (true) {
-//				IJ.log("\\Clear");
-//				MyLog.logMatrix(tableSequenceModified3, "tableSequenceModified3");
-//				MyLog.waitHere("salvare il log come tableSequenceModified3");
-//			}
+			// String[] myCode2 = { "JUS1A", "JUSAA" };
+			// String[][] tableSequenceModified2 =
+			// TableSorter.tableModifierSmart(tableSequenceModified1, myCode2);
+			// if (debugTables) {
+			// IJ.log("\\Clear");
+			// MyLog.logMatrix(tableSequenceModified2,
+			// "tableSequenceModified2");
+			// MyLog.waitHere("salvare il log come tableSequenceModified2");
+			// }
+			//
+			//
+			// // int[] myNum = { 4 };
+			// // String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li",
+			// // "LN",
+			// // "LT" };
+			// // String[] myPosiz = { "-45", "0", "45" };
+			// String[] myCode3 = { "KUS1A", "KUSAA" };
+			//
+			// String[][] tableSequenceModified3 =
+			// TableSorter.tableModifierSmart(tableSequenceModified2, myCode3);
+			//
+			// if (true) {
+			// IJ.log("\\Clear");
+			// MyLog.logMatrix(tableSequenceModified3,
+			// "tableSequenceModified3");
+			// MyLog.waitHere("salvare il log come tableSequenceModified3");
+			// }
 
 			boolean test = false;
-			// NOTA BENE: lasciare test a false, altrimenti non vengono pi�
+			// NOTA BENE: lasciare test a false, altrimenti non vengono piu'
 			// stampati gli errori e si hanno problemi in elaborazione!!!
 			logVerifySequenceTable(listProblems, test);
 
@@ -404,7 +401,11 @@ public class Sequenze_ implements PlugIn {
 		// IJ.log("startingDir=" + startingDir);
 
 		String[][] tableSequenceReloaded = new TableSequence().loadTable(startingDir + MyConst.SEQUENZE_FILE);
-		// MyLog.waitHere();
+		if (debugTables) {
+			IJ.log("\\Clear");
+			MyLog.logMatrix(tableSequenceReloaded, "tableSequenceReloaded");
+			MyLog.waitHere("salvare il log come tableSequenceReloaded");
+		}
 
 		callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false, superficiali, p10p11p12, tw);
 		MyLog.waitHere("FINE LAVORO");
@@ -463,6 +464,10 @@ public class Sequenze_ implements PlugIn {
 		List<String> vetCoil = new ArrayList<String>();
 		List<String> vetImaDaPassare = new ArrayList<String>();
 		List<String> vetImaOrder = new ArrayList<String>();
+		List<String> vetImaIncrement = new ArrayList<String>();
+		List<String> vetSpare_1 = new ArrayList<String>();
+		List<String> vetSpare_2 = new ArrayList<String>();
+		List<String> vetSpare_3 = new ArrayList<String>();
 		List<String> vetSerie = new ArrayList<String>();
 		List<String> vetAcq = new ArrayList<String>();
 		List<String> vetIma = new ArrayList<String>();
@@ -548,8 +553,6 @@ public class Sequenze_ implements PlugIn {
 				String numAcq = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_ACQUISITION_NUMBER);
 				String numIma = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_IMAGE_NUMBER);
 
-				// TODO modifica acqtime
-
 				// String acqTime = deleteDot(ReadDicom.readDicomParameter(imp1,
 				// MyConst.DICOM_ACQUISITION_TIME));
 
@@ -563,43 +566,36 @@ public class Sequenze_ implements PlugIn {
 				String done = "0";
 				boolean trovato = false;
 				int tableRow = 0;
+
 				for (int j1 = 0; j1 < tableCode2.length; j1++) {
 
 					if (codice.equals(tableCode2[j1][TableCode.CODE])) {
+						// MyLog.logMatrix(tableCode2, "tableCode2");
+						// MyLog.waitHere();
 
 						if ((tableCode2[j1][TableCode.COIL].equals("x"))
 								|| (tableCode2[j1][TableCode.COIL].equals("xxx"))
 								|| coilPresent(allCoils, tableCode2[j1][TableCode.COIL])) {
-							// if
-							// (ReadDicom.readInt(tableCode2[j1][TableCode.IMA_ORDER])
-							// > 0) {
-							// // 01/10/2015 introdotto imaOrder per
-							// // elaborazione immagini con 3 fette
-							// if
-							// (ReadDicom.readInt(tableCode2[j1][TableCode.IMA_ORDER])
-							// == ReadDicom.readInt(numIma))
-							// tableRow = j1;
-							// trovato = true;
+
 							//
-							// } else {
-							tableRow = j1;
-							trovato = true;
+							// E' QUI'LA FESTA ? cerrtoo
+							//
+							String myString = tableCode2[j1][TableCode.IMA_ORDER];
+							String[] myNums = myString.split("x");
 
-							// }
+							boolean trovato1 = false;
+							for (int i2 = 0; i2 < myNums.length; i2++) {
+								if (myNums[i2].equals(numIma))
+									trovato1 = true;
+							}
 
-							// if ((tableCode2[j1][TableCode.COIL].equals("x"))
-							// || (tableCode2[j1][TableCode.COIL]
-							// .equals("xxx"))
-							// || coilPresent(allCoils,
-							// tableCode2[j1][TableCode.COIL])
-							// || coilPresent2(coil,
-							// tableCode2[j1][TableCode.COIL])) {
-							// modifica del 090913 test se la stringa CONTIENE
-							// il nome della bobina
-							// || (coil.equals(tableCode2[j1][3]))) {
-							// IJ.log(codice + "find "+tableCode2[j1][3]);
+							if (myNums[0].equals("0") || trovato1) {
 
-							break;
+								tableRow = j1;
+								trovato = true;
+
+								break;
+							}
 						}
 					}
 				}
@@ -618,6 +614,10 @@ public class Sequenze_ implements PlugIn {
 					vetCoil.add(coil);
 					vetImaDaPassare.add(tableCode2[tableRow][TableCode.IMA_PASS]);
 					vetImaOrder.add(tableCode2[tableRow][TableCode.IMA_ORDER]);
+					vetImaIncrement.add(tableCode2[tableRow][TableCode.IMA_INCREMENT]);
+					vetSpare_1.add(tableCode2[tableRow][TableCode.SPARE_1]);
+					vetSpare_2.add(tableCode2[tableRow][TableCode.SPARE_2]);
+					vetSpare_3.add(tableCode2[tableRow][TableCode.SPARE_3]);
 					vetSerie.add(numSerie);
 					vetAcq.add(numAcq);
 					vetIma.add(numIma);
@@ -641,6 +641,10 @@ public class Sequenze_ implements PlugIn {
 						vetCoil.add(coil);
 						vetImaDaPassare.add(espansione[3]);
 						vetImaOrder.add(tableCode2[tableRow][TableCode.IMA_ORDER]);
+						vetImaIncrement.add(tableCode2[tableRow][TableCode.IMA_INCREMENT]);
+						vetSpare_1.add(tableCode2[tableRow][TableCode.SPARE_1]);
+						vetSpare_2.add(tableCode2[tableRow][TableCode.SPARE_2]);
+						vetSpare_3.add(tableCode2[tableRow][TableCode.SPARE_3]);
 						vetSerie.add(numSerie);
 						vetAcq.add(numAcq);
 						vetIma.add(numIma);
@@ -674,8 +678,16 @@ public class Sequenze_ implements PlugIn {
 		String[][] tablePass5 = TableSequence.writeColumn(tablePass4,
 				ArrayUtils.arrayListToArrayString(vetImaDaPassare), TableSequence.IMA_PASS);
 		String[][] tablePass6 = TableSequence.writeColumn(tablePass5, ArrayUtils.arrayListToArrayString(vetImaOrder),
-				TableSequence.IMA_GROUP);
-		String[][] tablePass16 = TableSequence.writeColumn(tablePass6, ArrayUtils.arrayListToArrayString(vetSerie),
+				TableSequence.IMA_ORDER);
+		String[][] tablePass17 = TableSequence.writeColumn(tablePass6,
+				ArrayUtils.arrayListToArrayString(vetImaIncrement), TableSequence.IMA_INCREMENT);
+		String[][] tablePass18 = TableSequence.writeColumn(tablePass17, ArrayUtils.arrayListToArrayString(vetSpare_1),
+				TableSequence.SPARE_1);
+		String[][] tablePass19 = TableSequence.writeColumn(tablePass18, ArrayUtils.arrayListToArrayString(vetSpare_2),
+				TableSequence.SPARE_2);
+		String[][] tablePass20 = TableSequence.writeColumn(tablePass19, ArrayUtils.arrayListToArrayString(vetSpare_3),
+				TableSequence.SPARE_3);
+		String[][] tablePass16 = TableSequence.writeColumn(tablePass20, ArrayUtils.arrayListToArrayString(vetSerie),
 				TableSequence.SERIE);
 		String[][] tablePass7 = TableSequence.writeColumn(tablePass16, ArrayUtils.arrayListToArrayString(vetAcq),
 				TableSequence.ACQ);
@@ -860,6 +872,8 @@ public class Sequenze_ implements PlugIn {
 			IJ.log("callPluginsFromSequenceTable riceve NULL : Nessuna immagine da analizzare");
 			return null;
 		}
+		// MyLog.logMatrix(tableSequenze5, "tableSequenze5");
+		// MyLog.waitHere();
 
 		int j1 = 0;
 		int count = 0;
@@ -1100,7 +1114,9 @@ public class Sequenze_ implements PlugIn {
 		new TableSequence();
 		int numImaDaPassare = Integer.parseInt(TableSequence.getImaPass(tableSequenze5, lineNumber));
 
-		int numImaTab = Integer.parseInt(TableSequence.getImaGroup(tableSequenze5, lineNumber));
+		// int numImaTab =
+		// Integer.parseInt(TableSequence.getImaGroup(tableSequenze5,
+		// lineNumber));
 		// numImaTab (numero immagine in tabelle) va confrontato col numero
 		// immagine, letto dai dati dicom
 
@@ -1524,10 +1540,7 @@ public class Sequenze_ implements PlugIn {
 		String[][] tableSequenzeReordered = new InputOutput().fromArrayListToStringTable(matrixTableReordered);
 		return (tableSequenzeReordered);
 	}
-	
-	
-	
-	
+
 	/**
 	 * Effettua il riordino della tabella dati estraendo il risultato in base
 	 * all'ordine di codici.txt
@@ -1576,7 +1589,6 @@ public class Sequenze_ implements PlugIn {
 		String[][] tableSequenzeReordered = new InputOutput().fromArrayListToStringTable(matrixTableReordered);
 		return (tableSequenzeReordered);
 	}
-
 
 	/**
 	 * Effettua il bubble sort della tabella delle sequenze, utilizza
