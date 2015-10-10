@@ -344,7 +344,7 @@ public class Sequenze_ implements PlugIn {
 			}
 
 			String[] myCode1 = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_", "YL2S_", "YR2F_", "YR2S_", "JUS1A",
-					"JUSAA", "KUS1A", "KUSAA" };
+					"JUSAA", "KUS1A", "KUSAA", "PUSAA", "PUS1A" };
 			// int[] myNum = { 4 };
 			// String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li",
 			// "LN",
