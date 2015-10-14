@@ -566,15 +566,19 @@ public class Sequenze_ implements PlugIn {
 				String done = "0";
 				boolean trovato = false;
 				int tableRow = 0;
+				// MyLog.logMatrix(tableCode2, "tableCode2");
+				// MyLog.waitHere();
 
 				for (int j1 = 0; j1 < tableCode2.length; j1++) {
 
 					if (codice.equals(tableCode2[j1][TableCode.CODE])) {
-						// MyLog.logMatrix(tableCode2, "tableCode2");
-						// MyLog.waitHere();
+						// IJ.log("tableCode2[j1][TableCode.COIL]= " +
+						// tableCode2[j1][TableCode.COIL] + "___coil= "
+						// + coil);
 
 						if ((tableCode2[j1][TableCode.COIL].equals("x"))
 								|| (tableCode2[j1][TableCode.COIL].equals("xxx"))
+								|| (tableCode2[j1][TableCode.COIL].equals(coil))
 								|| coilPresent(allCoils, tableCode2[j1][TableCode.COIL])) {
 
 							//
@@ -832,6 +836,7 @@ public class Sequenze_ implements PlugIn {
 	public String[][] callPluginsFromSequenceTable(String[][] tableSequenze5, String[][] tableCode5, boolean test,
 			boolean superficiali, boolean p10p11p12, TextWindow tw) {
 
+
 		// Attenzione: contrariamente a quanto scritto pi� sotto, per
 		// la struttura della tableSequenze � stata creata la classe
 		// TableSequence che si occupa di tutto e in cui vengono definiti:
@@ -1070,13 +1075,9 @@ public class Sequenze_ implements PlugIn {
 					// in questo modo siamo in grado di confrontare anche bobine
 					// multiple accese per errore
 					String[] allCoils = ReadDicom.parseString(TableSequence.getCoil(tableSequenze, lineNumber));
-					okCoil = coilPresent(allCoils, TableCode.getCoil(tableCode, j2));
-					// TableCode.getCoil(tableCode, j2))
-					// || coilPresent2(TableSequence.getCoil(
-					// tableSequenze, lineNumber),
-					// TableCode.getCoil(tableCode, j2));
-					// okCoil = TableSequence.getCoil(tableSequenze, lineNumber)
-					// .equals(TableCode.getCoil(tableCode, j2));
+
+					okCoil = coilPresent(allCoils, TableCode.getCoil(tableCode, j2)) || TableSequence
+							.getCoil(tableSequenze, lineNumber).equals(TableCode.getCoil(tableCode, j2));
 				}
 				if (okCode && okCoil) {
 					nome = "contMensili." + TableCode.getPluginName(tableCode, j2);
