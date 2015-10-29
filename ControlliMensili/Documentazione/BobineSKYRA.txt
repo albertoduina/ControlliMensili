@@ -1,0 +1,16 @@
+BRESCIA 09 OTTOBRE 2015
+
+BOBINE SKYRA
+
+Investigando sulle immagini di test ho stabilito in quali posizioni sono state acquisite.
+Per la head 16 le posizioni sono H55, F10, F100.
+Confrontando tra loro le tre immagini di ogni bobina si evidenzia chiaramente (regolare la finestra!!)
+quale sia la posizione da analizzare (la posizione in cui si ha il segnale piu'esteso.
+
+BOBINA HEAD 16 PEDIATRICA
+H55 immagine bobine 1,2,3,4,5,12,13,14
+F10 immagine bobine 6,7,8,15,16
+F100 immagine bobine 9,10,11
+
+
+
