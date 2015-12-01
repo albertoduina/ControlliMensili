@@ -45,11 +45,9 @@ public class p10rmn_Test {
 
 		// ATTENZIONE, legge il file limiti.csv dal file jar. quindi prima di
 		// testare modufiche bisogna compilare almeno una volta
-		String[][] limiti = new InputOutput().readFile6LIKE("LIMITI.csv",
-				absolute);
+		String[][] limiti = new InputOutput().readFile6LIKE("LIMITI.csv", absolute);
 		String[] result = p10rmn_.decoderLimiti(limiti, "DUMMY");
-		String[] expected = { "DUMMY", "101", "202", "303", "404", "505",
-				"606", "707", "808", "909", "1010", "1111" };
+		String[] expected = { "DUMMY", "101", "202", "303", "404", "505", "606", "707", "808", "909", "1010", "1111" };
 
 		assertTrue(UtilAyv.compareVectors(expected, result, ""));
 	}
@@ -90,9 +88,8 @@ public class p10rmn_Test {
 
 		int mode = 1;
 		double profond = 30;
-
-		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
-				"info10", mode, 100);
+		String reqCoil = "";
+		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond, reqCoil, "info10", mode, 100);
 
 		// ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs,
 		// profond,
@@ -128,10 +125,11 @@ public class p10rmn_Test {
 		boolean fast = true;
 		boolean silent = false;
 		int timeout = 100;
+		String reqCoil = "";
 
 		// p10rmn_.mainUnifor(path1, path2, autoArgs, profond, "info10",
 		// autoCalled, step, verbose, test, fast, silent, 100);
-		p10rmn_.mainUnifor(path1, path2, autoArgs, profond, "info10", mode, 100);
+		p10rmn_.mainUnifor(path1, path2, autoArgs, profond, reqCoil, "info10", mode, 100);
 		// in questo caso l'unica cosa che viene testata � l'intervento manuale.
 		// Poich� il posizionamento dipende dall'occhio dell'operatore
 		// non posso fare una verifica dei risultati ottenuti.
@@ -151,9 +149,8 @@ public class p10rmn_Test {
 		double profond = 30;
 		double out2[] = p10rmn_.positionSearch(imp11, profond, "", mode, 1000);
 
-		double[] expected = { 158.5, 105.5, 118.0, 135.0, 196.0, 78.0,
-				36.52885536698517, 199.54650334804768, 75.40832447642669,
-				202.0, };
+		double[] expected = { 158.5, 105.5, 118.0, 135.0, 196.0, 78.0, 36.52885536698517, 199.54650334804768,
+				75.40832447642669, 202.0, };
 
 		// MyLog.logVector(out2, "out2");
 		// MyLog.logVector(expected, "expected");
@@ -238,8 +235,7 @@ public class p10rmn_Test {
 		// assolutamente arbitraria, si deve solo vedere un quadrato chiaro, pi�
 		// o meno al centro dell'immagine
 
-		int pixx = p10rmn_.countPixOverLimit(imp1, xPos, yPos, sqNEA,
-				checkPixels, test, over1);
+		int pixx = p10rmn_.countPixOverLimit(imp1, xPos, yPos, sqNEA, checkPixels, test, over1);
 
 		// IJ.wait(100);
 		assertEquals(pixx, 169);
