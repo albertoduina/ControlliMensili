@@ -170,6 +170,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 */
 
 	public int manualMenu(int preset, String testDirectory) {
+		
 		boolean retry = false;
 		boolean step = false;
 		boolean fast = false;
@@ -215,9 +216,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				// boolean test = false;
 				double profond = 30;
 				// boolean silent = false;
-				String dummyReqCoil = "";
-				String dummyInfo10 = "";
-				mainUnifor(path1, path2, "0", profond, dummyReqCoil, dummyInfo10, mode, 0);
+				mainUnifor(path1, path2, "0", profond, "", mode, 0);
 
 				UtilAyv.afterWork();
 				retry = true;
@@ -263,8 +262,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		String info10 = (vetRiga[0] + 1) + " / " + TableSequence.getLength(iw2ayvTable) + "   code= "
 				+ TableSequence.getCode(iw2ayvTable, vetRiga[0]) + "   coil= "
 				+ TableSequence.getCoil(iw2ayvTable, vetRiga[0]);
-		String reqCoil = TableSequence.getCoil(iw2ayvTable, vetRiga[0]);
-		// MyLog.waitHere("info10= "+info10+ " reqCoil= "+reqCoil);
 
 		String path1 = "";
 		String path2 = "";
@@ -307,7 +304,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// + " " + (vetRiga[0] + 1) + " / "
 			// + TableSequence.getLength(iw2ayvTable));
 
-			ResultsTable rt = mainUnifor(path1, path2, autoArgs, profond, reqCoil, info10, mode, 0);
+			ResultsTable rt = mainUnifor(path1, path2, autoArgs, profond, info10, mode, 0);
 			if (rt == null)
 				MyLog.waitHere("ResultsTable == null");
 
@@ -349,7 +346,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 					// double profond = Double.parseDouble(TableSequence
 					// .getProfond(iw2ayvTable, vetRiga[0]));
 
-					ResultsTable rt = mainUnifor(path1, path2, autoArgs, profond, reqCoil, info10, mode, 0);
+					ResultsTable rt = mainUnifor(path1, path2, autoArgs, profond, info10, mode, 0);
 
 					// public static ResultsTable mainUnifor(String path1,
 					// String path2,
@@ -416,8 +413,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 	@SuppressWarnings("deprecation")
-	public static ResultsTable mainUnifor(String path1, String path2, String autoArgs, double profond, String reqCoil,
-			String info10, int mode, int timeout) {
+	public static ResultsTable mainUnifor(String path1, String path2, String autoArgs, double profond, String info10,
+			int mode, int timeout) {
 
 		boolean accetta = false;
 		// boolean abort = false;
@@ -566,7 +563,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
-			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, reqCoil, VERSION
+			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION
 					+ "_P10__ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_" + MyVersionUtils.CURRENT_VERSION,
 					autoCalled);
 
@@ -1079,10 +1076,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			mode = 10; // modalit� demo
 		else
 			mode = 0; // modalit� silent
-		String dummyInfo10 = "";
-		String dummyReqCoil = "";
 
-		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, profond, dummyReqCoil, dummyInfo10, mode, timeout);
+		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, profond, "", mode, timeout);
 
 		// rt1.show("Results");
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
