@@ -170,7 +170,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 */
 
 	public int manualMenu(int preset, String testDirectory) {
-		
+
 		boolean retry = false;
 		boolean step = false;
 		boolean fast = false;
@@ -243,7 +243,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		int mode = 0;
 		// IJ.log("p10rmn_.autoMenu fast= " + fast);
-		// IJ.log("p10rmn_.autoMenu autoargs= " + autoArgs);
+		IJ.log("p10rmn_.autoMenu autoargs= " + autoArgs);
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
 		if (vetRiga[0] == -1) {
@@ -781,8 +781,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			do {
 
 				boolean paintPixels = !fast;
+//				boolean paintPixels = true;
 
-				pixx = countPixOverLimit(imp1, xCenterRoi, yCenterRoi, sqNEA, checkPixelsLimit, paintPixels, over2);
+				pixx = countPixOverLimitCentered(imp1, xCenterRoi, yCenterRoi, sqNEA, checkPixelsLimit, paintPixels, over2);
 
 				imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA, sqNEA);
 				imp1.updateAndDraw();
@@ -822,7 +823,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// calcolo SD su imaDiff quando i corrispondenti pixel
 			// di imp1 passano il test
 			//
-			double[] out11 = devStandardNema(imp1, impDiff, xCenterRoi, yCenterRoi, sqNEA, checkPixelsLimit);
+			
+			
+				
+			// qui era il problema devStandardNema non era centered e quindi faceva il quadrato spostato
+			
+	
+			boolean paintPixels=true;
+			double[] out11 = devStandardNemaCentered(imp1, impDiff, xCenterRoi , yCenterRoi , sqNEA, checkPixelsLimit, paintPixels, over2);
 			if (step)
 				MyLog.waitHere(listaMessaggi(23) + out11[0] + "stdDev4= " + out11[1], debug, timeout);
 			//
@@ -1240,7 +1248,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 *            le varie ROI siano posizionate correttamente
 	 * @return pixel che superano la soglia
 	 */
-	public static int countPixOverLimit(ImagePlus imp1, int sqX, int sqY, int sqR, double limit, boolean paintPixels,
+	public static int countPixOverLimitCentered(ImagePlus imp1, int sqX, int sqY, int sqR, double limit, boolean paintPixels,
 			Overlay over1) {
 		int offset = 0;
 		int w = 0;
@@ -1293,11 +1301,18 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * @return [0] sum / pixelcount [1] devStan
 	 */
 
-	private static double[] devStandardNema(ImagePlus imp1, ImagePlus imp3, int sqX, int sqY, int sqR, double limit) {
+	private static double[] devStandardNemaCentered(ImagePlus imp1, ImagePlus imp3, int sqX1, int sqY1, int sqR, double limit,boolean paintPixels, Overlay over1 ) {
 		double[] results = new double[2];
 		double value4 = 0.0;
 		double sumValues = 0.0;
 		double sumSquare = 0.0;
+		boolean ok;
+		
+		// modifica del 260216
+		
+		int sqX = sqX1+sqR/2;
+		int sqY = sqY1+sqR/2;
+		
 
 		if ((imp1 == null) || (imp3 == null)) {
 			IJ.error("devStandardNema ricevuto null");
@@ -1311,6 +1326,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		float[] pixels4 = (float[]) ip3.getPixels();
 		for (int y1 = sqY; y1 < (sqY + sqR); y1++) {
 			for (int x1 = sqX; x1 < (sqX + sqR); x1++) {
+				ok=false;
 				offset = y1 * width + x1;
 				// IJ.log("offset= " + offset + " y1= " + y1 + " width= " +
 				// width
@@ -1320,7 +1336,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 					value4 = pixels4[offset];
 					sumValues += value4;
 					sumSquare += value4 * value4;
+					ok=true;
 				}
+				if (paintPixels) setOverlayPixel(over1, imp1, x1, y1, Color.yellow, Color.green, ok);
+
 			}
 		}
 		results[0] = sumValues / pixelCount;
@@ -2065,7 +2084,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				sumError += Math.abs(vetDist[i1]);
 			}
 			if (sumError > maxFitError) {
-				MyLog.waitHere("maxFitError");
+				// MyLog.waitHere("maxFitError");
 				// -------------------------------------------------------------
 				// disegno il cerchio ed i punti, in modo da date un feedback
 				// grafico al messaggio di eccessivo errore nel fit

@@ -238,7 +238,7 @@ public class p10rmn_Test {
 		// assolutamente arbitraria, si deve solo vedere un quadrato chiaro, pi�
 		// o meno al centro dell'immagine
 
-		int pixx = p10rmn_.countPixOverLimit(imp1, xPos, yPos, sqNEA,
+		int pixx = p10rmn_.countPixOverLimitCentered(imp1, xPos, yPos, sqNEA,
 				checkPixels, test, over1);
 
 		// IJ.wait(100);

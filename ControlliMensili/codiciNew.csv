@@ -7,9 +7,9 @@
 // CODICE;COMMENTO;DA PASSARE;TOTALI;IMAORDER;IMA_INCR;SPARE_1;SPARE_2;SPARE_3;COIL;DIRECTION;DEPTH;PLUGIN
 //SIEMENS SIMPHONY +  AVANTO;;;;;;;;;;;;
 // BODY;;;;;;;;;;;;
-BUSA_;Uniformità Assiale Body;2;2;0;0;777;888;999;BC;x;x;p12rmn_
-BUSS_;Uniformità Sagittale Body;2;2;0;0;777;888;999;BC;x;x;p12rmn_
-BUSC_;Uniformità Coronale Body;2;2;0;0;777;888;999;BC;x;x;p12rmn_
+BUSA_;Uniformità Assiale Body;2;2;0;0;777;888;999;xxx;x;x;p12rmn_
+BUSS_;Uniformità Sagittale Body;2;2;0;0;777;888;999;xxx;x;x;p12rmn_
+BUSC_;Uniformità Coronale Body;2;2;0;0;777;888;999;xxx;x;x;p12rmn_
 BDSA_;DGP Single Body;1;1;0;0;777;888;999;xxx;x;x;p8rmn_
 BDMA_;DGP Multi Body;1;3;0;0;777;888;999;xxx;x;x;p8rmn_
 BTLX_;Localizer Thickness Body;0;0;0;0;777;888;999;xxx;x;x;none_
