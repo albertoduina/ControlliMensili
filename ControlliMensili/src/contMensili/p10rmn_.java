@@ -243,7 +243,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		int mode = 0;
 		// IJ.log("p10rmn_.autoMenu fast= " + fast);
-		IJ.log("p10rmn_.autoMenu autoargs= " + autoArgs);
+		// IJ.log("p10rmn_.autoMenu autoargs= " + autoArgs);
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
 		if (vetRiga[0] == -1) {
@@ -265,21 +265,29 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		String path1 = "";
 		String path2 = "";
+		String path3 = "";
+		String path4 = "";
 		// TableUtils.dumpTableRow(iw2ayvTable, vetRiga[0]);
 
 		if (nTokens == MyConst.TOKENS2) {
-			UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
+			// UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
 
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
+			UtilAyv.checkImages2(path1, path2, debug);
+
 			MyLog.logDebug(vetRiga[0], "P10", fileDir);
 			MyLog.logDebug(vetRiga[1], "P10", fileDir);
 		} else {
 
-			UtilAyv.checkImages(vetRiga, iw2ayvTable, 3, debug);
+			// UtilAyv.checkImages(vetRiga, iw2ayvTable, 3, debug);
 
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
+			path3 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
+			path4 = TableSequence.getPath(iw2ayvTable, vetRiga[3]);
+			UtilAyv.checkImages4(path1, path2, path3, path4, debug);
+
 			MyLog.logDebug(vetRiga[0], "P10", fileDir);
 			MyLog.logDebug(vetRiga[2], "P10", fileDir);
 		}
@@ -781,9 +789,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 			do {
 
 				boolean paintPixels = !fast;
-//				boolean paintPixels = true;
+				// boolean paintPixels = true;
 
-				pixx = countPixOverLimitCentered(imp1, xCenterRoi, yCenterRoi, sqNEA, checkPixelsLimit, paintPixels, over2);
+				pixx = countPixOverLimitCentered(imp1, xCenterRoi, yCenterRoi, sqNEA, checkPixelsLimit, paintPixels,
+						over2);
 
 				imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA, sqNEA);
 				imp1.updateAndDraw();
@@ -823,14 +832,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// calcolo SD su imaDiff quando i corrispondenti pixel
 			// di imp1 passano il test
 			//
-			
-			
-				
-			// qui era il problema devStandardNema non era centered e quindi faceva il quadrato spostato
-			
-	
-			boolean paintPixels=true;
-			double[] out11 = devStandardNemaCentered(imp1, impDiff, xCenterRoi , yCenterRoi , sqNEA, checkPixelsLimit, paintPixels, over2);
+
+			// qui era il problema devStandardNema non era centered e quindi
+			// faceva il quadrato spostato
+
+			boolean paintPixels = true;
+			double[] out11 = devStandardNemaCentered(imp1, impDiff, xCenterRoi, yCenterRoi, sqNEA, checkPixelsLimit,
+					paintPixels, over2);
 			if (step)
 				MyLog.waitHere(listaMessaggi(23) + out11[0] + "stdDev4= " + out11[1], debug, timeout);
 			//
@@ -1248,8 +1256,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 *            le varie ROI siano posizionate correttamente
 	 * @return pixel che superano la soglia
 	 */
-	public static int countPixOverLimitCentered(ImagePlus imp1, int sqX, int sqY, int sqR, double limit, boolean paintPixels,
-			Overlay over1) {
+	public static int countPixOverLimitCentered(ImagePlus imp1, int sqX, int sqY, int sqR, double limit,
+			boolean paintPixels, Overlay over1) {
 		int offset = 0;
 		int w = 0;
 		int count1 = 0;
@@ -1290,29 +1298,33 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 *            immagine in input
 	 * @param imp3
 	 *            immagine differenza
-	 * @param sqX
-	 *            coordinata della Roi
-	 * @param sqY
-	 *            coordinata della Roi
+	 * @param sqX1
+	 *            coordinata del centro Roi
+	 * @param sqY1
+	 *            coordinata del centro Roi
 	 * @param sqR
 	 *            lato della Roi
 	 * @param limit
 	 *            soglia di conteggio
+	 * @param paintPixels
+	 *            marcatura Roi su overlay grafico
+	 * @param over1
+	 *            overlay grafico
 	 * @return [0] sum / pixelcount [1] devStan
 	 */
 
-	private static double[] devStandardNemaCentered(ImagePlus imp1, ImagePlus imp3, int sqX1, int sqY1, int sqR, double limit,boolean paintPixels, Overlay over1 ) {
+	private static double[] devStandardNemaCentered(ImagePlus imp1, ImagePlus imp3, int sqX1, int sqY1, int sqR,
+			double limit, boolean paintPixels, Overlay over1) {
 		double[] results = new double[2];
 		double value4 = 0.0;
 		double sumValues = 0.0;
 		double sumSquare = 0.0;
 		boolean ok;
-		
+
 		// modifica del 260216
-		
-		int sqX = sqX1+sqR/2;
-		int sqY = sqY1+sqR/2;
-		
+		int sqX = sqX1 - sqR / 2;
+		int sqY = sqY1 - sqR / 2;
+		// --------
 
 		if ((imp1 == null) || (imp3 == null)) {
 			IJ.error("devStandardNema ricevuto null");
@@ -1326,7 +1338,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		float[] pixels4 = (float[]) ip3.getPixels();
 		for (int y1 = sqY; y1 < (sqY + sqR); y1++) {
 			for (int x1 = sqX; x1 < (sqX + sqR); x1++) {
-				ok=false;
+				ok = false;
 				offset = y1 * width + x1;
 				// IJ.log("offset= " + offset + " y1= " + y1 + " width= " +
 				// width
@@ -1336,9 +1348,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 					value4 = pixels4[offset];
 					sumValues += value4;
 					sumSquare += value4 * value4;
-					ok=true;
+					ok = true;
 				}
-				if (paintPixels) setOverlayPixel(over1, imp1, x1, y1, Color.yellow, Color.green, ok);
+				// modifica del 260216
+				if (paintPixels)
+					setOverlayPixel(over1, imp1, x1, y1, Color.yellow, Color.green, ok);
+				// --------
 
 			}
 		}
@@ -2100,8 +2115,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp12.getRoi().setStrokeColor(Color.green);
 				over12.addElement(imp12.getRoi());
 				imp12.deleteRoi();
-				MyLog.logVector(xPoints3, "xPoints3");
-				MyLog.logVector(yPoints3, "yPoints3");
+				// MyLog.logVector(xPoints3, "xPoints3");
+				// MyLog.logVector(yPoints3, "yPoints3");
 				MyLog.waitHere(listaMessaggi(18) + " erano " + xPoints3.length + " punti", debug);
 				manual = true;
 			}

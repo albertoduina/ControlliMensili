@@ -92,8 +92,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 		String className = this.getClass().getName();
 
-		VERSION = className + "_build_" + MyVersion.getVersion()
-				+ "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 
 		fileDir = Prefs.get("prefer.string1", "none");
 		if (mylogger)
@@ -125,10 +124,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 				retry = false;
 				return 0;
 			case 2:
-				// new AboutBox().about("Controllo Uniformità",
+				// new AboutBox().about("Controllo Uniformitï¿½",
 				// this.getClass());
-				new AboutBox().about("Controllo Uniformità",
-						MyVersion.CURRENT_VERSION);
+				new AboutBox().about("Controllo Uniformitï¿½", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -138,12 +136,10 @@ public class p3rmn_ implements PlugIn, Measurements {
 			case 4:
 				step = true;
 			case 5:
-				String path1 = UtilAyv
-						.imageSelection("SELEZIONARE PRIMA IMMAGINE...");
+				String path1 = UtilAyv.imageSelection("SELEZIONARE PRIMA IMMAGINE...");
 				if (path1 == null)
 					return 0;
-				String path2 = UtilAyv
-						.imageSelection("SELEZIONARE SECONDA IMMAGINE...");
+				String path2 = UtilAyv.imageSelection("SELEZIONARE SECONDA IMMAGINE...");
 				if (path2 == null)
 					return 0;
 				boolean autoCalled = false;
@@ -190,22 +186,25 @@ public class p3rmn_ implements PlugIn, Measurements {
 			return 0;
 		}
 
-		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
-				+ MyConst.SEQUENZE_FILE);
+		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir + MyConst.SEQUENZE_FILE);
 
 		String path1 = "";
 		String path2 = "";
 		if (nTokens == MyConst.TOKENS2) {
-			UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
+			// UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
+			UtilAyv.checkImages2(path1, path2, debug);
+
 			MyLog.logDebug(vetRiga[0], "P3", fileDir);
 			MyLog.logDebug(vetRiga[1], "P3", fileDir);
 
 		} else {
-			UtilAyv.checkImages(vetRiga, iw2ayvTable, 3, debug);
+			// UtilAyv.checkImages(vetRiga, iw2ayvTable, 3, debug);
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
+			UtilAyv.checkImages2(path1, path2, debug);
+
 			MyLog.logDebug(vetRiga[0], "P3", fileDir);
 			MyLog.logDebug(vetRiga[2], "P3", fileDir);
 		}
@@ -215,8 +214,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 		do {
 			// int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE);
 			int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
-					TableSequence.getCode(iw2ayvTable, vetRiga[0]),
-					TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
+					TableSequence.getCode(iw2ayvTable, vetRiga[0]), TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
 					vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
 
 			switch (userSelection1) {
@@ -224,10 +222,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 				new AboutBox().close();
 				return 0;
 			case 2:
-				// new AboutBox().about("Controllo Uniformità",
+				// new AboutBox().about("Controllo Uniformitï¿½",
 				// this.getClass());
-				new AboutBox().about("Controllo Uniformità",
-						MyVersion.CURRENT_VERSION);
+				new AboutBox().about("Controllo Uniformitï¿½", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -236,8 +233,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 				boolean verbose = true;
 				boolean test = false;
 				boolean autoCalled = true;
-				ResultsTable rt = prepUnifor(path1, path2, autoArgs,
-						autoCalled, step, verbose, test);
+				ResultsTable rt = prepUnifor(path1, path2, autoArgs, autoCalled, step, verbose, test);
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 				retry = false;
 				break;
@@ -267,17 +263,15 @@ public class p3rmn_ implements PlugIn, Measurements {
 	 * @param test
 	 *            test mode
 	 */
-	public static ResultsTable prepUnifor(String path1, String path2,
-			String autoArgs, boolean autoCalled, boolean step, boolean verbose,
-			boolean test) {
+	public static ResultsTable prepUnifor(String path1, String path2, String autoArgs, boolean autoCalled, boolean step,
+			boolean verbose, boolean test) {
 
 		ImagePlus imp0 = UtilAyv.openImageNoDisplay(path1, verbose);
 		int height = imp0.getHeight();
 		int width = imp0.getWidth();
 		int[] roiData = readPreferences(width, height, MyConst.P3_ROI_LIMIT);
 
-		ResultsTable rt = mainUnifor(path1, path2, roiData, autoArgs,
-				autoCalled, step, verbose, test);
+		ResultsTable rt = mainUnifor(path1, path2, roiData, autoArgs, autoCalled, step, verbose, test);
 
 		return rt;
 	}
@@ -304,9 +298,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 	 * @return
 	 */
 	@SuppressWarnings("deprecation")
-	public static ResultsTable mainUnifor(String path1, String path2,
-			int[] roiData, String autoArgs, boolean autoCalled, boolean step,
-			boolean verbose, boolean test) {
+	public static ResultsTable mainUnifor(String path1, String path2, int[] roiData, String autoArgs,
+			boolean autoCalled, boolean step, boolean verbose, boolean test) {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
@@ -340,26 +333,24 @@ public class p3rmn_ implements PlugIn, Measurements {
 			Rectangle boundingRectangle = imp1.getProcessor().getRoi();
 			writeStoredRoiData(boundingRectangle);
 			int diamRoi2 = (int) (boundingRectangle.width * MyConst.P3_AREA_PERC_80_DIAM);
-			int xRoi2 = boundingRectangle.x
-					+ ((boundingRectangle.width - diamRoi2) / 2);
-			int yRoi2 = boundingRectangle.y
-					+ ((boundingRectangle.height - diamRoi2) / 2);
+			int xRoi2 = boundingRectangle.x + ((boundingRectangle.width - diamRoi2) / 2);
+			int yRoi2 = boundingRectangle.y + ((boundingRectangle.height - diamRoi2) / 2);
 
 			imp1.setRoi(new OvalRoi(xRoi2, yRoi2, diamRoi2, diamRoi2));
 
-			// IJ.log("roi 80% prima del riposizionamento: xRoi2= "+xRoi2+" yRoi2= "+yRoi2+" diamRoi2= "+diamRoi2);
+			// IJ.log("roi 80% prima del riposizionamento: xRoi2= "+xRoi2+"
+			// yRoi2= "+yRoi2+" diamRoi2= "+diamRoi2);
 
 			if (!test)
 				msgRoi85percPositioning();
 
 			Rectangle boundingRectangle2 = imp1.getProcessor().getRoi();
 			diamRoi2 = (int) boundingRectangle2.width;
-			xRoi2 = boundingRectangle2.x
-					+ ((boundingRectangle2.width - diamRoi2) / 2);
-			yRoi2 = boundingRectangle2.y
-					+ ((boundingRectangle2.height - diamRoi2) / 2);
+			xRoi2 = boundingRectangle2.x + ((boundingRectangle2.width - diamRoi2) / 2);
+			yRoi2 = boundingRectangle2.y + ((boundingRectangle2.height - diamRoi2) / 2);
 
-			// IJ.log("roi 80% dopo il riposizionamento: xRoi2= "+xRoi2+" yRoi2= "+yRoi2+" diamRoi2= "+diamRoi2);
+			// IJ.log("roi 80% dopo il riposizionamento: xRoi2= "+xRoi2+" yRoi2=
+			// "+yRoi2+" diamRoi2= "+diamRoi2);
 
 			ImageStatistics stat1 = imp1.getStatistics();
 			double mean1 = stat1.mean;
@@ -396,26 +387,22 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 			// if (verbose)
 			// UtilAyv.autoAdjust(imp1, imp1.getProcessor());
-			ImageStatistics statGh1 = ghostRoi(xRoi5, yRoi5, imp1, 1, step,
-					test);
+			ImageStatistics statGh1 = ghostRoi(xRoi5, yRoi5, imp1, 1, step, test);
 			double mediaGhost1 = statGh1.mean;
 
 			int xRoi6 = height / 2 - MyConst.P3_DIAM_ROI_GHOSTS / 2;
 			int yRoi6 = 1;
-			ImageStatistics statGh2 = ghostRoi(xRoi6, yRoi6, imp1, 2, step,
-					test);
+			ImageStatistics statGh2 = ghostRoi(xRoi6, yRoi6, imp1, 2, step, test);
 			double mediaGhost2 = statGh2.mean;
 
 			int xRoi7 = height - MyConst.P3_DIAM_ROI_GHOSTS - 1;
 			int yRoi7 = height / 2 - MyConst.P3_DIAM_ROI_GHOSTS / 2;
-			ImageStatistics statGh3 = ghostRoi(xRoi7, yRoi7, imp1, 3, step,
-					test);
+			ImageStatistics statGh3 = ghostRoi(xRoi7, yRoi7, imp1, 3, step, test);
 			double mediaGhost3 = statGh3.mean;
 
 			int xRoi8 = height / 2 - MyConst.P3_DIAM_ROI_GHOSTS / 2;
 			int yRoi8 = height - MyConst.P3_DIAM_ROI_GHOSTS - 1;
-			ImageStatistics statGh4 = ghostRoi(xRoi8, yRoi8, imp1, 4, step,
-					test);
+			ImageStatistics statGh4 = ghostRoi(xRoi8, yRoi8, imp1, 4, step, test);
 			double mediaGhost4 = statGh4.mean;
 
 			int xRoi9 = height - MyConst.P3_DIAM_ROI_BACKGROUND - 1;
@@ -423,31 +410,24 @@ public class p3rmn_ implements PlugIn, Measurements {
 			if (test)
 				xRoi9 = xRoi9 - 40;
 
-			ImageStatistics statBkg = ImageUtils.backCalc(xRoi9, yRoi9,
-					MyConst.P3_DIAM_ROI_BACKGROUND, imp1, step, true, test);
+			ImageStatistics statBkg = ImageUtils.backCalc(xRoi9, yRoi9, MyConst.P3_DIAM_ROI_BACKGROUND, imp1, step,
+					true, test);
 			double meanBkg = statBkg.mean;
 
-			double ghostPerc1 = ghostPercCalculation(mediaGhost1, meanBkg,
-					mean1);
+			double ghostPerc1 = ghostPercCalculation(mediaGhost1, meanBkg, mean1);
 
-			double ghostPerc2 = ghostPercCalculation(mediaGhost2, meanBkg,
-					mean1);
-			double ghostPerc3 = ghostPercCalculation(mediaGhost3, meanBkg,
-					mean1);
-			double ghostPerc4 = ghostPercCalculation(mediaGhost4, meanBkg,
-					mean1);
+			double ghostPerc2 = ghostPercCalculation(mediaGhost2, meanBkg, mean1);
+			double ghostPerc3 = ghostPercCalculation(mediaGhost3, meanBkg, mean1);
+			double ghostPerc4 = ghostPercCalculation(mediaGhost4, meanBkg, mean1);
 
-			int[][] classiSimulata = generaSimulata(xRoi2, yRoi2, diamRoi2,
-					imp1, fileDir, step, verbose, test);
+			int[][] classiSimulata = generaSimulata(xRoi2, yRoi2, diamRoi2, imp1, fileDir, step, verbose, test);
 
-			String[][] tabCodici = TableCode
-					.loadMultipleTable(MyConst.CODE_GROUP);
+			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
 			// String[][] tabCodici = new InputOutput().readFile1(
 			// MyConst.CODE_FILE, MyConst.TOKENS4);
 
-			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-					imp1, tabCodici, VERSION, autoCalled);
+			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
 
 			// put values in ResultsTable
 
@@ -537,8 +517,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 			for (int i1 = 0; i1 < classiSimulata.length; i1++) {
 				rt.incrementCounter();
-				rt.addLabel(t1, ("Classe" + classiSimulata[i1][0]) + "_"
-						+ levelString[i1]);
+				rt.addLabel(t1, ("Classe" + classiSimulata[i1][0]) + "_" + levelString[i1]);
 				rt.addValue(s2, classiSimulata[i1][1]);
 			}
 
@@ -571,12 +550,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 	 */
 	public static int[] readPreferences(int width, int height, int limit) {
 
-		int diam = ReadDicom.readInt(Prefs.get("prefer.p3rmnDiamFantoc",
-				Integer.toString(width * 2 / 3)));
-		int xRoi1 = ReadDicom.readInt(Prefs.get("prefer.p3rmnXRoi1",
-				Integer.toString(height / 2 - diam / 2)));
-		int yRoi1 = ReadDicom.readInt(Prefs.get("prefer.p3rmnYRoi1",
-				Integer.toString(width / 2 - diam / 2)));
+		int diam = ReadDicom.readInt(Prefs.get("prefer.p3rmnDiamFantoc", Integer.toString(width * 2 / 3)));
+		int xRoi1 = ReadDicom.readInt(Prefs.get("prefer.p3rmnXRoi1", Integer.toString(height / 2 - diam / 2)));
+		int yRoi1 = ReadDicom.readInt(Prefs.get("prefer.p3rmnYRoi1", Integer.toString(width / 2 - diam / 2)));
 		if (diam < limit)
 			diam = height * 2 / 3;
 		if (xRoi1 < limit)
@@ -594,8 +570,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 	 */
 	public static void writeStoredRoiData(Rectangle boundingRectangle) {
 
-		Prefs.set("prefer.p3rmnDiamFantoc",
-				Integer.toString(boundingRectangle.width));
+		Prefs.set("prefer.p3rmnDiamFantoc", Integer.toString(boundingRectangle.width));
 		Prefs.set("prefer.p3rmnXRoi1", Integer.toString(boundingRectangle.x));
 		Prefs.set("prefer.p3rmnYRoi1", Integer.toString(boundingRectangle.y));
 	}
@@ -627,8 +602,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 	 *            mean signal on image roi
 	 * @return
 	 */
-	public static double ghostPercCalculation(double mediaGhost1,
-			double meanBkg, double meanImage) {
+	public static double ghostPercCalculation(double mediaGhost1, double meanBkg, double meanImage) {
 		double ghostPerc = ((mediaGhost1 - meanBkg) / meanImage) * 100.0;
 		return ghostPerc;
 	}
@@ -644,8 +618,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 		io.extractFromJAR(MyConst.TEST_FILE, "HUSA_002testP3", "./Test2/");
 		io.extractFromJAR(MyConst.TEST_FILE, "HUSA2_01testP3", "./Test2/");
 		io.extractFromJAR(MyConst.TEST_FILE, "HUSA2_02testP3", "./Test2/");
-		String home1 = this.getClass().getResource(MyConst.TEST_DIRECTORY)
-				.getPath();
+		String home1 = this.getClass().getResource(MyConst.TEST_DIRECTORY).getPath();
 		return (home1);
 	}
 
@@ -666,16 +639,12 @@ public class p3rmn_ implements PlugIn, Measurements {
 	 *            autotest mode
 	 * @return pixel counts of classes of the simulated image
 	 */
-	private static int[][] generaSimulata(int xRoi, int yRoi, int diamRoi,
-			ImagePlus imp, String filename, boolean step, boolean verbose,
-			boolean test) {
+	private static int[][] generaSimulata(int xRoi, int yRoi, int diamRoi, ImagePlus imp, String filename, boolean step,
+			boolean verbose, boolean test) {
 
-		int xRoiSimulata = xRoi + (diamRoi - MyConst.P3_DIAM_FOR_450_PIXELS)
-				/ 2;
-		int yRoiSimulata = yRoi + (diamRoi - MyConst.P3_DIAM_FOR_450_PIXELS)
-				/ 2;
-		ImagePlus impSimulata = simulata5Classi(xRoiSimulata, yRoiSimulata,
-				MyConst.P3_DIAM_FOR_450_PIXELS, imp);
+		int xRoiSimulata = xRoi + (diamRoi - MyConst.P3_DIAM_FOR_450_PIXELS) / 2;
+		int yRoiSimulata = yRoi + (diamRoi - MyConst.P3_DIAM_FOR_450_PIXELS) / 2;
+		ImagePlus impSimulata = simulata5Classi(xRoiSimulata, yRoiSimulata, MyConst.P3_DIAM_FOR_450_PIXELS, imp);
 		if (verbose) {
 			UtilAyv.showImageMaximized(impSimulata);
 			ImageUtils.backgroundEnhancement(0, 0, 10, impSimulata);
@@ -684,11 +653,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 		impSimulata.updateAndDraw();
 		msgImaSimulata(step);
 		int[][] classiSimulata = numeroPixelsClassi(impSimulata);
-		String patName = ReadDicom.readDicomParameter(imp,
-				MyConst.DICOM_PATIENT_NAME);
+		String patName = ReadDicom.readDicomParameter(imp, MyConst.DICOM_PATIENT_NAME);
 
-		String codice1 = ReadDicom.readDicomParameter(imp,
-				MyConst.DICOM_SERIES_DESCRIPTION);
+		String codice1 = ReadDicom.readDicomParameter(imp, MyConst.DICOM_SERIES_DESCRIPTION);
 
 		String codice = UtilAyv.getFiveLetters(codice1);
 
@@ -723,9 +690,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 		ImageProcessor ip1 = imp1.getProcessor();
 		short[] pixels1 = (short[]) ip1.getPixels();
 
-		int[][] vetClassi = { { MyConst.LEVEL_5, 0 }, { MyConst.LEVEL_4, 0 },
-				{ MyConst.LEVEL_3, 0 }, { MyConst.LEVEL_2, 0 },
-				{ MyConst.LEVEL_1, 0 } };
+		int[][] vetClassi = { { MyConst.LEVEL_5, 0 }, { MyConst.LEVEL_4, 0 }, { MyConst.LEVEL_3, 0 },
+				{ MyConst.LEVEL_2, 0 }, { MyConst.LEVEL_1, 0 } };
 		int offset = 0;
 		int pix1 = 0;
 		for (int y1 = 0; y1 < width; y1++) {
@@ -752,8 +718,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 	 * @param imp1
 	 * @return
 	 */
-	public static ImagePlus simulata5Classi(int sqX, int sqY, int sqR,
-			ImagePlus imp1) {
+	public static ImagePlus simulata5Classi(int sqX, int sqY, int sqR, ImagePlus imp1) {
 
 		if (imp1 == null) {
 			IJ.error("Simula5Classi ricevuto null");
@@ -771,10 +736,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 		double plus10 = mean * MyConst.PLUS_10_PERC;
 		double plus20 = mean * MyConst.PLUS_20_PERC;
 		// genero una immagine nera
-		ImagePlus impSimulata = NewImage.createShortImage("Simulata", width,
-				width, 1, NewImage.FILL_BLACK);
-		ShortProcessor processorSimulata = (ShortProcessor) impSimulata
-				.getProcessor();
+		ImagePlus impSimulata = NewImage.createShortImage("Simulata", width, width, 1, NewImage.FILL_BLACK);
+		ShortProcessor processorSimulata = (ShortProcessor) impSimulata.getProcessor();
 		short[] pixelsSimulata = (short[]) processorSimulata.getPixels();
 
 		short pixSorgente = 0;
@@ -817,14 +780,12 @@ public class p3rmn_ implements PlugIn, Measurements {
 	 *            step mode
 	 * @return statistics
 	 */
-	private static ImageStatistics ghostRoi(int xRoi, int yRoi, ImagePlus imp,
-			int count, boolean step, boolean test) {
+	private static ImageStatistics ghostRoi(int xRoi, int yRoi, ImagePlus imp, int count, boolean step, boolean test) {
 
 		ImageStatistics stat = null;
 		boolean redo = true;
 		do {
-			imp.setRoi(new OvalRoi(xRoi, yRoi, MyConst.P3_DIAM_ROI_GHOSTS,
-					MyConst.P3_DIAM_ROI_GHOSTS));
+			imp.setRoi(new OvalRoi(xRoi, yRoi, MyConst.P3_DIAM_ROI_GHOSTS, MyConst.P3_DIAM_ROI_GHOSTS));
 			if (imp.isVisible())
 				imp.getWindow().toFront();
 			if (!test)
@@ -861,8 +822,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 		double c2 = 22579;
 		double c1 = 358;
 		double c0 = 42599;
-		double[] vetReference = { mean, noise, snRatio, g5, g6, g7, g8, uiPerc,
-				bkg, c4, c3, c2, c1, c0 };
+		double[] vetReference = { mean, noise, snRatio, g5, g6, g7, g8, uiPerc, bkg, c4, c3, c2, c1, c0 };
 		return vetReference;
 	}
 
@@ -886,8 +846,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 		double c2 = 22000;
 		double c1 = 99;
 		double c0 = 42279;
-		double[] vetReference = { mean, noise, snRatio, g5, g6, g7, g8, uiPerc,
-				bkg, c4, c3, c2, c1, c0 };
+		double[] vetReference = { mean, noise, snRatio, g5, g6, g7, g8, uiPerc, bkg, c4, c3, c2, c1, c0 };
 		return vetReference;
 	}
 
@@ -909,14 +868,11 @@ public class p3rmn_ implements PlugIn, Measurements {
 				boolean verbose = true;
 				boolean test = true;
 				double[] vetReference = referenceGe();
-				int[] roiData = { MyConst.P3_X_ROI_TESTGE,
-						MyConst.P3_Y_ROI_TESTGE, MyConst.P3_DIAM_PHANTOM };
-				ResultsTable rt1 = mainUnifor(path1, path2, roiData, autoArgs,
-						autoCalled, step, verbose, test);
+				int[] roiData = { MyConst.P3_X_ROI_TESTGE, MyConst.P3_Y_ROI_TESTGE, MyConst.P3_DIAM_PHANTOM };
+				ResultsTable rt1 = mainUnifor(path1, path2, roiData, autoArgs, autoCalled, step, verbose, test);
 				double[] vetResults = UtilAyv.vectorizeResults(rt1);
 
-				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-						MyConst.P3_vetName);
+				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P3_vetName);
 				if (ok)
 					MyMsg.msgTestPassed();
 				else
@@ -935,13 +891,10 @@ public class p3rmn_ implements PlugIn, Measurements {
 				boolean step = false;
 				boolean verbose = true;
 				boolean test = true;
-				int[] roiData = { MyConst.P3_X_ROI_TESTSIEMENS,
-						MyConst.P3_Y_ROI_TESTSIEMENS, MyConst.P3_DIAM_PHANTOM };
-				ResultsTable rt1 = mainUnifor(path1, path2, roiData, autoArgs,
-						autoCalled, step, verbose, test);
+				int[] roiData = { MyConst.P3_X_ROI_TESTSIEMENS, MyConst.P3_Y_ROI_TESTSIEMENS, MyConst.P3_DIAM_PHANTOM };
+				ResultsTable rt1 = mainUnifor(path1, path2, roiData, autoArgs, autoCalled, step, verbose, test);
 				double[] vetResults = UtilAyv.vectorizeResults(rt1);
-				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-						MyConst.P3_vetName);
+				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P3_vetName);
 				if (ok)
 					MyMsg.msgTestPassed();
 				else
@@ -970,15 +923,12 @@ public class p3rmn_ implements PlugIn, Measurements {
 		boolean step = false;
 		boolean verbose = false;
 		boolean test = true;
-		int[] roiData = { MyConst.P3_X_ROI_TESTSIEMENS,
-				MyConst.P3_Y_ROI_TESTSIEMENS, MyConst.P3_DIAM_PHANTOM };
-		ResultsTable rt1 = mainUnifor(path1, path2, roiData, autoArgs,
-				autoCalled, step, verbose, test);
+		int[] roiData = { MyConst.P3_X_ROI_TESTSIEMENS, MyConst.P3_Y_ROI_TESTSIEMENS, MyConst.P3_DIAM_PHANTOM };
+		ResultsTable rt1 = mainUnifor(path1, path2, roiData, autoArgs, autoCalled, step, verbose, test);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-				MyConst.P3_vetName);
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P3_vetName);
 		if (ok) {
-			IJ.log("Il test di p3rmn_ UNIFORMITA' CIRCOLARE è stato SUPERATO");
+			IJ.log("Il test di p3rmn_ UNIFORMITA' CIRCOLARE ï¿½ stato SUPERATO");
 		} else {
 			IJ.log("Il test di p3rmn_ UNIFORMITA' CIRCOLARE evidenzia degli ERRORI");
 		}
@@ -989,13 +939,11 @@ public class p3rmn_ implements PlugIn, Measurements {
 	}
 
 	private static void msgMainRoiPositioning() {
-		ButtonMessages.ModelessMsg(
-				"Posizionare ROI diamFantoccio e premere CONTINUA", "CONTINUA");
+		ButtonMessages.ModelessMsg("Posizionare ROI diamFantoccio e premere CONTINUA", "CONTINUA");
 	}
 
 	private static void msgRoi85percPositioning() {
-		ButtonMessages.ModelessMsg(
-				"Puoi modificare la posizione ROI con area 80%", "CONTINUA");
+		ButtonMessages.ModelessMsg("Puoi modificare la posizione ROI con area 80%", "CONTINUA");
 	}
 
 	private static void msg85percData(boolean step, double mean1) {
@@ -1005,16 +953,14 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	private static void msgElabImaDiff(boolean step) {
 		if (step)
-			ButtonMessages
-					.ModelessMsg(
-							"Elaborata immagine differenza                                                                                        <11>",
-							"CONTINUA");
+			ButtonMessages.ModelessMsg(
+					"Elaborata immagine differenza                                                                                        <11>",
+					"CONTINUA");
 	}
 
 	private static void msgImaDiffData(boolean step, double meanImaDiff) {
 		if (step)
-			ButtonMessages.ModelessMsg(" mediaImaDiff=" + meanImaDiff + "  ",
-					"CONTINUA", "CHIUDI");
+			ButtonMessages.ModelessMsg(" mediaImaDiff=" + meanImaDiff + "  ", "CONTINUA", "CHIUDI");
 	}
 
 	private static void msgImaSimulata(boolean step) {
@@ -1024,13 +970,12 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	private static void msgSnRatio(boolean step, double uiPerc1, double snRatio) {
 		if (step)
-			ButtonMessages.ModelessMsg("Uniformità integrale=" + uiPerc1
-					+ "  Rapporto segnale/rumore sn2=" + snRatio, "CONTINUA");
+			ButtonMessages.ModelessMsg("Uniformitï¿½ integrale=" + uiPerc1 + "  Rapporto segnale/rumore sn2=" + snRatio,
+					"CONTINUA");
 	}
 
 	private static void msgGhostRoi(int count) {
-		ButtonMessages.ModelessMsg("Posiziona  la ROI ghost" + count
-				+ " (ctrl+shift+E=ridisegna)", "CONTINUA");
+		ButtonMessages.ModelessMsg("Posiziona  la ROI ghost" + count + " (ctrl+shift+E=ridisegna)", "CONTINUA");
 	}
 
 	public static void msgSignalGhostRoi(boolean step, double mean) {
@@ -1039,10 +984,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 	}
 
 	private static void msgMoveGhostRoi() {
-		ButtonMessages
-				.ModalMsg(
-						"ATTENZIONE la posizione scelta per il ghost dà segnale medio =0 SPOSTARLO",
-						"CONTINUA");
+		ButtonMessages.ModalMsg("ATTENZIONE la posizione scelta per il ghost dï¿½ segnale medio =0 SPOSTARLO",
+				"CONTINUA");
 	}
 
 }
