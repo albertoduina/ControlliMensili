@@ -268,13 +268,17 @@ public class p10rmn_ implements PlugIn, Measurements {
 		String path3 = "";
 		String path4 = "";
 		// TableUtils.dumpTableRow(iw2ayvTable, vetRiga[0]);
+		boolean ok = false;
 
 		if (nTokens == MyConst.TOKENS2) {
 			// UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
 
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
-			UtilAyv.checkImages2(path1, path2, debug);
+			ok = UtilAyv.checkImages2(path1, path2, debug);
+			if (ok) {
+				MyLog.appendLog(fileDir + "MyLog.txt", "fallito checkImages2");
+			}
 
 			MyLog.logDebug(vetRiga[0], "P10", fileDir);
 			MyLog.logDebug(vetRiga[1], "P10", fileDir);
@@ -286,7 +290,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
 			path3 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
 			path4 = TableSequence.getPath(iw2ayvTable, vetRiga[3]);
-			UtilAyv.checkImages4(path1, path2, path3, path4, debug);
+			ok = UtilAyv.checkImages4(path1, path2, path3, path4, debug);
+			if (ok) {
+				MyLog.appendLog(fileDir + "MyLog.txt", "fallito checkImages4");
+			}
 
 			MyLog.logDebug(vetRiga[0], "P10", fileDir);
 			MyLog.logDebug(vetRiga[2], "P10", fileDir);

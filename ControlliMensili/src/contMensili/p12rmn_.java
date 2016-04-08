@@ -242,21 +242,40 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		String path1 = "";
 		String path2 = "";
+		String path3 = "";
+		String path4 = "";
+
+		boolean ok;
 
 		if (nTokens == MyConst.TOKENS2) {
 			// UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
-			UtilAyv.checkImages2(path1, path2, debug);
+			ok = UtilAyv.checkImages2(path1, path2, debug);
+			if (!ok) {
+				MyLog.appendLog(fileDir + "MyLog.txt", "fallito checkImages2");
+				return 2;
+			}
 
 			MyLog.logDebug(vetRiga[0], "P12", fileDir);
 			MyLog.logDebug(vetRiga[1], "P12", fileDir);
 
 		} else {
 			// UtilAyv.checkImages(vetRiga, iw2ayvTable, 3, debug);
+			// path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
+			// path2 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
+
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
-			UtilAyv.checkImages2(path1, path2, debug);
+			path3 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
+			path4 = TableSequence.getPath(iw2ayvTable, vetRiga[3]);
+			ok = UtilAyv.checkImages4(path1, path2, path3, path4, debug);
+			if (!ok) {
+				MyLog.appendLog(fileDir + "MyLog.txt", "fallito checkImages4");
+				return 4;
+			}
+
+			// UtilAyv.checkImages2(path1, path2, debug);
 
 			MyLog.logDebug(vetRiga[0], "P12", fileDir);
 			MyLog.logDebug(vetRiga[1], "P12", fileDir);
