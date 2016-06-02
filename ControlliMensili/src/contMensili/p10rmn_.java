@@ -90,7 +90,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	private static String simulataName = "";
 
-	private static final boolean debug = false;
+	private static final boolean debug = true;
 
 	private static int timeout = 0;
 
@@ -443,22 +443,22 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		switch (mode) {
 		case 0:
-			// questo � il caso del funzionamento silent: nienete a display
+			// questo e' il caso del funzionamento silent: niente a display
 			silent = true;
 			break;
 		case 1:
-			// questo � il caso del funzionamento fast: tutto va via liscio,
+			// questo e' il caso del funzionamento fast: tutto va via liscio,
 			// solo il minimo sindacale a display
 			autoCalled = true;
 			fast = true;
 			break;
 		case 2:
-			// questo � il modo di funzionamento manuale
+			// questo e' il modo di funzionamento manuale
 			verbose = true;
 			step = true;
 			break;
 		case 3:
-			// questo � il modo di funzionamento manuale passo per passo conil
+			// questo e' il modo di funzionamento manuale passo per passo conil
 			// valore di tutte le operazioni intermedie
 			verbose = true;
 			step = true;
@@ -1751,8 +1751,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 	public static double[] positionSearch(ImagePlus imp11, double profond, String info1, int mode, int timeout) {
 
 		// boolean autoCalled=false;
+		
 		boolean demo = false;
-		if (mode == 10)
+		Color colore1 = Color.red;
+		Color colore2 = Color.green;
+		Color colore3 = Color.red;
+		
+		if (mode == 10 || mode==3)
 			demo = true;
 		// boolean step = false;
 		// boolean verbose = false;
@@ -1816,7 +1821,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		if (demo) {
 			UtilAyv.showImageMaximized(imp12);
 			ImageUtils.imageToFront(imp12);
-			MyLog.waitHere("l'immagine viene processata con il filtro variance, per estrarre il bordo", debug, timeout);
+			MyLog.waitHere("L'immagine verra' processata con il filtro variance, per estrarre il bordo", debug, timeout);
 		}
 
 		// ip12.findEdges();
@@ -1826,7 +1831,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		rk1.rank(ip12, radius, filterType);
 		imp12.updateAndDraw();
 		if (demo)
-			MyLog.waitHere("L'immagine risultante ha il bordo con il segnale evidenziato", debug, timeout);
+			MyLog.waitHere("L'immagine risultante ha il bordo con il segnale fortemente evidenziato", debug, timeout);
 
 		// =============== modifica 290515 ===========
 		double max1 = imp12.getStatistics().max;
@@ -1836,11 +1841,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 		imp12.updateAndDraw();
 		if (demo)
 			MyLog.waitHere(
-					"all'intera immagine viene sottratto 1/30 del segnale massimo,\n questo per eliminare il noise residuo al centro del fantoccio",
+					"All'intera immagine viene sottratto 1/30 del segnale massimo,\n questo per eliminare eventuale noise residuo",
 					debug, timeout);
 
-		if (demo)
-			MyLog.waitHere(listaMessaggi(3), debug, timeout);
+//		if (demo)
+//			MyLog.waitHere(listaMessaggi(3), debug, timeout);
 
 		imp12.setOverlay(over12);
 
@@ -1916,8 +1921,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			ycoord[1] = vety1[i1];
 			imp12.setRoi(new Line(xcoord[0], ycoord[0], xcoord[1], ycoord[1]));
 			if (demo) {
-				imp12.updateAndDraw();
+				imp12.getRoi().setStrokeColor(colore2);
 				over12.addElement(imp12.getRoi());
+				imp12.updateAndDraw();
 			}
 
 			if (i1 == 1)
@@ -1991,7 +1997,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 						count++;
 						myXpoints[count] = (int) (myPeaks[0][i2]);
 						myYpoints[count] = (int) (myPeaks[1][i2]);
-						ImageUtils.plotPoints(imp12, over12, (int) (myPeaks[0][i2]), (int) (myPeaks[1][i2]));
+						ImageUtils.plotPoints(imp12, over12, (int) (myPeaks[0][i2]), (int) (myPeaks[1][i2]), colore1);
 						imp12.updateAndDraw();
 						ImageUtils.imageToFront(imp12);
 					}
@@ -2005,6 +2011,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 		if (demo)
 			MyLog.waitHere("Si tracciano ulteriori linee ", debug, timeout);
 
+		
+		
+		
 		if (count >= 0) {
 			count++;
 			xPoints3 = new int[count];
@@ -2018,6 +2027,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			xPoints3 = null;
 			yPoints3 = null;
 		}
+
 
 		// MyLog.logVector(myXpoints, "myXpoints");
 		// MyLog.logVector(xPoints3, "xPoints3");
@@ -2041,7 +2051,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// }
 		// --------------------------------------------
 
+		
+		// qui di seguito pulisco l'overlay, dovrò preoccuparmi di ridisegnare i punti
+		imp12.deleteRoi();
 		over12.clear();
+		imp12.updateAndDraw();
 
 		// ----------------------------------------------------------------------
 		// Verifica di avere trovato almeno 3 punti, altrimenti chiede la
@@ -2056,28 +2070,30 @@ public class p10rmn_ implements PlugIn, Measurements {
 		}
 
 		if (!manual) {
-
+			// reimposto i punti trovati
 			PointRoi pr12 = new PointRoi(xPoints3, yPoints3, xPoints3.length);
-			pr12.setPointType(2);
-			pr12.setSize(4);
-
+			pr12.setPointType(2);	
+			pr12.setSize(4);		
 			imp12.setRoi(pr12);
+			
 			if (demo) {
-				imp12.updateAndDraw();
-				over12.addElement(imp12.getRoi());
-
-				over12.setStrokeColor(Color.green);
-				imp12.setOverlay(over12);
+				
+	//			imp12.updateAndDraw();
+			
+	// ridisegno i punti sull'overlay
+				imp12.getRoi().setStrokeColor(colore1);			
+				over12.addElement(imp12.getRoi());			
+				imp12.setOverlay(over12);				
 				imp12.updateAndDraw();
 				MyLog.waitHere(listaMessaggi(15), debug, timeout);
-			}
+		}
 			// ---------------------------------------------------
 			// eseguo ora fitCircle per trovare centro e dimensione del
 			// fantoccio
 			// ---------------------------------------------------
 			ImageUtils.fitCircle(imp12);
 			if (demo) {
-				imp12.getRoi().setStrokeColor(Color.red);
+				imp12.getRoi().setStrokeColor(colore3);
 				over12.addElement(imp12.getRoi());
 			}
 
@@ -2090,7 +2106,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (!manualOverride)
 				writeStoredRoiData(boundRec);
 
-			MyCircleDetector.drawCenter(imp12, over12, xCenterCircle, yCenterCircle, Color.red);
+			MyCircleDetector.drawCenter(imp12, over12, xCenterCircle, yCenterCircle, colore3);
 
 			if (demo)
 				MyLog.waitHere(listaMessaggi(17), debug, timeout);
@@ -2116,10 +2132,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp12.setOverlay(over12);
 				imp12.setRoi(new OvalRoi(xCenterCircle - diamCircle / 2, yCenterCircle - diamCircle / 2, diamCircle,
 						diamCircle));
-				imp12.getRoi().setStrokeColor(Color.red);
+				imp12.getRoi().setStrokeColor(colore2);
 				over12.addElement(imp12.getRoi());
 				imp12.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
-				imp12.getRoi().setStrokeColor(Color.green);
+				imp12.getRoi().setStrokeColor(colore2);
 				over12.addElement(imp12.getRoi());
 				imp12.deleteRoi();
 				// MyLog.logVector(xPoints3, "xPoints3");
@@ -2418,80 +2434,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		return ok1 && ok2;
 	}
 
-	/**
-	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo �
-	 * facilitata la eventuale modifica / traduzione dei messaggi.
-	 * 
-	 * @param select
-	 * @return
-	 */
-	public static String listaMessaggi(int select) {
-		String[] lista = new String[100];
-		// ---------+-----------------------------------------------------------+
-		lista[0] = "messaggio 0";
-		lista[1] = "messaggio 1";
-		lista[2] = "Eseguito SMOOTH";
-		lista[3] = "Eseguito EDGE DETECTOR";
-		lista[4] = "Eseguito SUBTRACT";
-		lista[5] = "Analizzando il profilo del segnale lungo la linea si ricavano \n"
-				+ "le coordinate delle due intersezioni con la circonferenza.";
-		// ---------+-----------------------------------------------------------+
-
-		lista[12] = "Si tracciano ulteriori linee, passanti per il centro dell'immagine, \n"
-				+ "su queste linee si cercano le intersezioni con il cerchio";
-		lista[13] = "Analizzando il profilo del segnale lungo la linea si ricavano \n"
-				+ "le coordinate delle due intersezioni con la circonferenza.";
-		lista[14] = "Per tenere conto delle possibili bolle d'aria del fantoccio, si \n"
-				+ "escludono dalla bisettice orizzontale il picco di sinistra e dalla \n"
-				+ "bisettrice verticale il picco superiore ";
-		lista[15] = "Sono mostrati in verde i punti utilizzati per il fit della circonferenza";
-		lista[16] = "La circonferenza risultante dal fit � mostrata in rosso";
-		lista[17] = "Il centro del fantoccio � contrassegnato dal pallino rosso";
-		lista[18] = "<< SELEZIONE MANUALE >>\n " + "Troppa distanza tra i punti forniti ed il fit del cerchio";
-		lista[19] = "<< SELEZIONE MANUALE >>\n"
-				+ "Non si riescono a determinare le coordinate di almeno 3 punti del cerchio \n"
-				+ "posizionare manualmente una ROI circolare di diametro uguale al fantoccio e\n" + "premere  OK";
-
-		lista[20] = "Analizzando l'intera immagine con una ROI 11x11, viene determinata la \n"
-				+ "posizione con la massima media nell'immagine, la posizione � contrassegnata \n"
-				+ "dal pallino verde";
-		// ---------+-----------------------------------------------------------+
-		lista[21] = "Lungo il segmento che unisce il pallino rosso del centro con il pallino verde \n"
-				+ "del maximo ed il pallino rosa sulla circonferenza, viene calcolata la posizione \n"
-				+ "del centro MROI, contrassegnato dal pallino giallo,  posto alla profondit� \n"
-				+ "impostata nel file codiciNew.csv per il codice di questo controllo";
-		lista[22] = "Accrescimento NEA riuscito, pixels validi= ";
-		lista[23] = "mean4= ";
-		lista[24] = "SNR finale= ";
-		lista[25] = "displayNEA";
-		lista[26] = "Viene definita una bkgROI sul fondo, evidenziata in giallo. \n" + "Segnale medio fondo= ";
-		lista[27] = "Viene calcolata l'immagine differenza";
-		lista[28] = "Profilo";
-		lista[29] = "messaggio 29";
-		// ---------+-----------------------------------------------------------+
-		lista[30] = "Viene definita una Noise Estimate Area NEA 11x11 evidenziata in verde";
-		lista[31] = "Viene definita una MROI 7x7 evidenziata in rosso";
-		lista[32] = "ATTENZIONE la NEA esce dall'immagine senza riuscire a \n"
-				+ "trovare 121 pixel che superino il  test il programma \n" + "TERMINA PREMATURAMENTE";
-		lista[33] = "Disegnata Mroi su imaDiff";
-		lista[34] = "Sulla MROI della ImaDiff otteniamo la stdDev = ";
-		lista[35] = "Accrescimento MROI lato= ";
-		lista[36] = "messaggio 36";
-		lista[37] = "messaggio 37";
-		lista[38] = "messaggio 38";
-		lista[39] = "messaggio 39";
-		lista[40] = "ATTENZIONE, l'intervento manuale OBBLIGATORIO deve cambiare qualcosa, anche minima, \n"
-				+ "rispetto alla ROI proposta!!!";
-		;
-
-		// ---------+-----------------------------------------------------------+
-		lista[65] = "vetMinimi==null, verificare esistenza della riga P10MIN nel file limiti.csv";
-		lista[66] = "vetMaximi==null, verificare esistenza della riga P10MAX nel file limiti.csv";
-		// ---------+-----------------------------------------------------------+
-
-		String out = lista[select];
-		return out;
-	}
 
 	public static void tidalWave(ImagePlus imp1, int level) {
 		// ImagePlus imp2 = imp1.duplicate();
@@ -2632,5 +2574,82 @@ public class p10rmn_ implements PlugIn, Measurements {
 		over1.addElement(imp1.getRoi());
 		imp1.deleteRoi();
 	}
+	
+	
+	/**
+	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo e'
+	 * facilitata la eventuale modifica / traduzione (quando mai?) dei messaggi.
+	 * 
+	 * @param select
+	 * @return
+	 */
+	public static String listaMessaggi(int select) {
+		String[] lista = new String[100];
+		// ---------+-----------------------------------------------------------+
+		lista[0] = "messaggio 0";
+		lista[1] = "messaggio 1";
+		lista[2] = "Eseguito SMOOTH";
+		lista[3] = "Eseguito VARIANCE";
+		lista[4] = "Eseguito SUBTRACT";
+		lista[5] = "Analizzando il profilo del segnale lungo la linea si ricavano \n"
+				+ "le coordinate delle due intersezioni con la circonferenza.";
+		// ---------+-----------------------------------------------------------+
+
+		lista[12] = "Si tracciano ulteriori linee, passanti per il centro dell'immagine, \n"
+				+ "su queste linee si cercano le intersezioni con il cerchio";
+		lista[13] = "Analizzando il profilo del segnale lungo la linea si ricavano \n"
+				+ "le coordinate delle due intersezioni con la circonferenza.";
+		lista[14] = "Per tenere conto delle possibili bolle d'aria del fantoccio, si \n"
+				+ "escludono dalla bisettice orizzontale il picco di sinistra e dalla \n"
+				+ "bisettrice verticale il picco superiore ";
+		lista[15] = "Sono mostrati in ROSSO i punti utilizzati per il fit della circonferenza";
+		lista[16] = "La circonferenza risultante dal fit e' mostrata in rosso";
+		lista[17] = "Il centro del fantoccio e' contrassegnato dal pallino rosso";
+		lista[18] = "<< SELEZIONE MANUALE >>\n " + "Troppa distanza tra i punti forniti ed il fit del cerchio";
+		lista[19] = "<< SELEZIONE MANUALE >>\n"
+				+ "Non si riescono a determinare le coordinate di almeno 3 punti del cerchio \n"
+				+ "posizionare manualmente una ROI circolare di diametro uguale al fantoccio e\n" + "premere  OK";
+
+		lista[20] = "Analizzando l'intera immagine con una ROI 11x11, viene determinata la \n"
+				+ "posizione con la massima media nell'immagine, la posizione e' contrassegnata \n"
+				+ "dal pallino verde";
+		// ---------+-----------------------------------------------------------+
+		lista[21] = "Lungo il segmento che unisce il pallino rosso del centro con il pallino verde \n"
+				+ "del maximo ed il pallino rosa sulla circonferenza, viene calcolata la posizione \n"
+				+ "del centro MROI, contrassegnato dal pallino giallo,  posto alla profondita' \n"
+				+ "impostata nel file codiciNew.csv per il codice di questo controllo";
+		lista[22] = "Accrescimento NEA riuscito, pixels validi= ";
+		lista[23] = "mean4= ";
+		lista[24] = "SNR finale= ";
+		lista[25] = "displayNEA";
+		lista[26] = "Viene definita una bkgROI sul fondo, evidenziata in giallo. \n" + "Segnale medio fondo= ";
+		lista[27] = "Viene calcolata l'immagine differenza";
+		lista[28] = "Profilo";
+		lista[29] = "messaggio 29";
+		// ---------+-----------------------------------------------------------+
+		lista[30] = "Viene definita una Noise Estimate Area NEA 11x11 evidenziata in verde";
+		lista[31] = "Viene definita una MROI 7x7 evidenziata in rosso";
+		lista[32] = "ATTENZIONE la NEA esce dall'immagine senza riuscire a \n"
+				+ "trovare 121 pixel che superino il  test il programma \n" + "TERMINA PREMATURAMENTE";
+		lista[33] = "Disegnata Mroi su imaDiff";
+		lista[34] = "Sulla MROI della ImaDiff otteniamo la stdDev = ";
+		lista[35] = "Accrescimento MROI lato= ";
+		lista[36] = "messaggio 36";
+		lista[37] = "messaggio 37";
+		lista[38] = "messaggio 38";
+		lista[39] = "messaggio 39";
+		lista[40] = "ATTENZIONE, l'intervento manuale OBBLIGATORIO deve cambiare qualcosa, anche minima, \n"
+				+ "rispetto alla ROI proposta!!!";
+		;
+
+		// ---------+-----------------------------------------------------------+
+		lista[65] = "vetMinimi==null, verificare esistenza della riga P10MIN nel file limiti.csv";
+		lista[66] = "vetMaximi==null, verificare esistenza della riga P10MAX nel file limiti.csv";
+		// ---------+-----------------------------------------------------------+
+
+		String out = lista[select];
+		return out;
+	}
+
 
 }
