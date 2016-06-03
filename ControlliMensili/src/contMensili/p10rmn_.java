@@ -2084,8 +2084,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp12.getRoi().setStrokeColor(colore1);			
 				over12.addElement(imp12.getRoi());			
 				imp12.setOverlay(over12);				
-				imp12.updateAndDraw();
-				MyLog.waitHere(listaMessaggi(15), debug, timeout);
+//				imp12.updateAndDraw();
+//				MyLog.waitHere(listaMessaggi(15), debug, timeout);
 		}
 			// ---------------------------------------------------
 			// eseguo ora fitCircle per trovare centro e dimensione del
