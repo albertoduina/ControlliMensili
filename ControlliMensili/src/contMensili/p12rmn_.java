@@ -2220,6 +2220,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 		return out1;
 	}
 
+	
+	/***
+	 * Ricerca automatica della posizione in cui calcolare il fondo
+	 * 
+	 */
+
 	public static int[] positionSearch14(ImagePlus imp1, double[] circleData, int diamGhost, int guard, String info1,
 			boolean autoCalled, boolean step, boolean demo, boolean test, boolean fast, boolean irraggiungibile,
 			int timeout) {
