@@ -167,6 +167,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		boolean demo = false;
 		do {
 			int userSelection1 = UtilAyv.userSelectionManual(VERSION, TYPE);
+			MyLog.waitHere("MANUAL userSelection1="+userSelection1);
 			switch (userSelection1) {
 			case ABORT:
 				new AboutBox().close();
@@ -284,7 +285,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		boolean step = true;
 		boolean retry = false;
-
+		
+	
 		if (fast) {
 			retry = false;
 			boolean autoCalled = true;
@@ -304,6 +306,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
 						TableSequence.getCode(iw2ayvTable, vetRiga[0]), TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
 						vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
+				MyLog.waitHere("AUTO userSelection1="+userSelection1);
 
 				switch (userSelection1) {
 				case ABORT:
@@ -503,7 +506,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 				over11.addElement(imp11.getRoi());
 			}
 			imp11.updateAndDraw();
-			MyLog.waitHere();
 			
 			imp11.setRoi(new OvalRoi(xGhMaxSx - diamGhost / 2, yGhMaxSx - diamGhost / 2, diamGhost, diamGhost));
 			if (verbose) {
@@ -870,9 +872,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 			String s6 = "roi_h";
 
 			// put values in ResultsTable
-			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 
-			rt.addLabel(t1, "Segnale");
+			rt.addValue(t1, "Segnale");
 			rt.addValue(s2, mean1);
 			rt.addValue(s3, stat1.roiX);
 			rt.addValue(s4, stat1.roiY);
@@ -880,7 +882,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, stat1.roiHeight);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "Rumore");
+			rt.addValue(t1, "Rumore");
 			rt.addValue(s2, noiseImaDiff);
 			rt.addValue(s3, stat1.roiX);
 			rt.addValue(s4, stat1.roiY);
@@ -888,7 +890,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, stat1.roiHeight);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "SNR");
+			rt.addValue(t1, "SNR");
 			rt.addValue(s2, snRatio);
 			rt.addValue(s3, stat1.roiX);
 			rt.addValue(s4, stat1.roiY);
@@ -896,7 +898,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, stat1.roiHeight);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "Ghost_1");
+			rt.addValue(t1, "Ghost_1");
 			rt.addValue(s2, ghostPerc1);
 			rt.addValue(s3, statGh1.roiX);
 			rt.addValue(s4, statGh1.roiY);
@@ -904,7 +906,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, statGh1.roiHeight);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "Ghost_2");
+			rt.addValue(t1, "Ghost_2");
 			rt.addValue(s2, ghostPerc2);
 			rt.addValue(s3, statGh2.roiX);
 			rt.addValue(s4, statGh2.roiY);
@@ -912,7 +914,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, statGh2.roiHeight);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "Ghost_3");
+			rt.addValue(t1, "Ghost_3");
 			rt.addValue(s2, ghostPerc3);
 			rt.addValue(s3, statGh3.roiX);
 			rt.addValue(s4, statGh3.roiY);
@@ -920,7 +922,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, statGh3.roiHeight);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "Ghost_4");
+			rt.addValue(t1, "Ghost_4");
 			rt.addValue(s2, ghostPerc4);
 			rt.addValue(s3, statGh4.roiX);
 			rt.addValue(s4, statGh4.roiY);
@@ -928,7 +930,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, statGh4.roiHeight);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "Unif.Integr.%");
+			rt.addValue(t1, "Unif.Integr.%");
 			rt.addValue(s2, uiPerc1);
 			rt.addValue(s3, stat1.roiX);
 			rt.addValue(s4, stat1.roiY);
@@ -936,7 +938,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, stat1.roiHeight);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "Bkg");
+			rt.addValue(t1, "Bkg");
 			rt.addValue(s2, statBkg.mean);
 			rt.addValue(s3, statBkg.roiX);
 			rt.addValue(s4, statBkg.roiY);
@@ -944,7 +946,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, statBkg.roiHeight);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "Pos");
+			rt.addValue(t1, "Pos");
 			rt.addValue(s2, slicePosition);
 
 			String[] levelString = { "+20%", "+10%", "-10%", "-20%", "-30%", "-40%", "-50%", "-60%", "-70%", "-80%",
@@ -952,10 +954,15 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			for (int i1 = 0; i1 < classiSimulata.length; i1++) {
 				rt.incrementCounter();
-				rt.addLabel(t1, ("Classe" + classiSimulata[i1][0]) + "_" + levelString[i1]);
+				rt.addValue(t1, ("Classe" + classiSimulata[i1][0]) + "_" + levelString[i1]);
 				rt.addValue(s2, classiSimulata[i1][1]);
 			}
 
+			// vado a forzare in riga1 i nomi dei file immagini utilizzate
+			rt.setValue(1, 0, imp1.getShortTitle());
+			rt.setValue(2, 0, imp2.getShortTitle());
+
+			
 			if (verbose && !test && !fast) {
 				rt.show("Results");
 			}
@@ -1038,7 +1045,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		ResultsTable rt1 = mainUnifor(path1, path2, autoArgs, "", autoCalled, step, verbose, test, fast, silent,
 				timeout);
-		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		double[] vetResults = UtilAyv.vectorizeResultsNew(rt1);
+		
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P12_vetName);
 		if (verbose)
 			UtilAyv.afterWork();
@@ -1647,7 +1655,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				}
 			}
 		}
-		MyLog.waitHere("Si tracciano ulteriori linee", debug, timeout);
+		if (demo) MyLog.waitHere("Si tracciano ulteriori linee", debug, timeout);
 
 		int[] xPoints3 = new int[1];
 		int[] yPoints3 = new int[1];
@@ -2216,7 +2224,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		out1[0][3] = xGhMaxUp;
 		out1[1][3] = yGhMaxUp;
 
-		MyLog.waitHere("dovrei vedere le posizioni dei ghosts");
+		if (demo) MyLog.waitHere("dovrei vedere le posizioni dei ghosts", debug, timeout);
 		return out1;
 	}
 
@@ -2313,7 +2321,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		out1[0] = xcentGhost;
 		out1[1] = ycentGhost;
 		out1[2] = diamGhost;
-		MyLog.waitHere("dovrei vedere le posizioni del fondo");
+		if (demo) MyLog.waitHere("dovrei vedere le posizioni del fondo", debug, timeout);
 
 		return out1;
 	}
@@ -2467,24 +2475,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		return dist;
 	}
 
-	// /**
-	// * Lettura di un valore double da una stringa
-	// *
-	// * @param s1
-	// * stringa di input
-	// * @return double di output
-	// */
-	// public static double readDouble(String s1) {
-	// double x = 0;
-	// try {
-	// x = (new Double(s1)).doubleValue();
-	// } catch (Exception e) {
-	// // MyLog.waitHere("input non numerico= " + s1);
-	// // MyLog.caller("chiamante=");
-	// x = Double.NaN;
-	// }
-	// return x;
-	// }
 
 	/**
 	 * Calculation of Integral Uniformity Percentual

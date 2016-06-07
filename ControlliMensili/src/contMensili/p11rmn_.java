@@ -141,6 +141,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 		int mode = 0;
 		do {
 			int userSelection1 = UtilAyv.userSelectionManual(VERSION, TYPE);
+			MyLog.waitHere("MANUAL userSelection1="+userSelection1);
+
 			switch (userSelection1) {
 			case ABORT:
 				new AboutBox().close();
@@ -264,8 +266,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 			MyLog.waitHere();
 		}
 
-		// boolean step = false;
+		
 		boolean retry = false;
+		
 		int mode = 0;
 		if (fast) {
 			retry = false;
@@ -297,6 +300,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 				int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
 						TableSequence.getCode(iw2ayvTable, vetRiga[0]), TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
 						vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
+				MyLog.waitHere("AUTO userSelection1="+userSelection1);
+
 
 				switch (userSelection1) {
 				case ABORT:
@@ -309,7 +314,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					retry = true;
 					break;
 				case 3:
-					// step = true;
+					 mode = 3;
 					// retry = false;
 					// break;
 				case 4:
@@ -395,6 +400,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 			test = true;
 			break;
 		}
+
+		MyLog.waitHere("mode=" + mode);
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		do {
@@ -640,7 +647,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					imp1.updateAndDraw();
 
 				//
-				// qui, se il numero dei pixel < 121 dovr� incrementare sqR2 e
+				// qui, se il numero dei pixel < 121 dovra' incrementare sqR2 e
 				// ripetere il loop
 				//
 				double checkPixels = MyConst.P11_CHECK_PIXEL_MULTIPLICATOR * prelimImageNoiseEstimate_MROI;
@@ -763,7 +770,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					MyLog.waitHere("Generazione simulata 12 classi", debug, timeout);
 
 				//
-				// calcolo posizione fwhm a met� della MROI
+				// calcolo posizione fwhm a meta' della MROI
 				//
 				if (imp1.isVisible())
 					ImageUtils.imageToFront(imp1);
@@ -801,7 +808,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				//
 
-				rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+				rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 				int col = 2;
 				String t1 = "TESTO";
 				String s2 = "VALORE";
@@ -810,10 +817,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 				String s5 = "roi_b";
 				String s6 = "roi_h";
 
-				rt.addLabel(t1, simulataName);
+				rt.addValue(t1, simulataName);
 				rt.incrementCounter();
 
-				rt.addLabel(t1, "Segnale");
+				rt.addValue(t1, "Segnale");
 				rt.addValue(s2, signal1);
 				rt.addValue(s3, xCenterRoi);
 				rt.addValue(s4, yCenterRoi);
@@ -821,7 +828,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				rt.addValue(s6, sqNEA);
 
 				rt.incrementCounter();
-				rt.addLabel(t1, "Rumore_Fondo");
+				rt.addValue(t1, "Rumore_Fondo");
 
 				// =================================================
 				// ERRATO, QUI BISOGNA STAMPARE OUT1[1] ANZICHE'
@@ -841,7 +848,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				rt.addValue(s6, heightRoi);
 
 				rt.incrementCounter();
-				rt.addLabel(t1, "SnR");
+				rt.addValue(t1, "SnR");
 				rt.addValue(s2, snr);
 				rt.addValue(s3, xCenterRoi);
 				rt.addValue(s4, yCenterRoi);
@@ -849,7 +856,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				rt.addValue(s6, sqNEA);
 
 				rt.incrementCounter();
-				rt.addLabel(t1, "FWHM");
+				rt.addValue(t1, "FWHM");
 				rt.addValue(s2, outFwhm2[0]);
 				rt.addValue(s3, xStartProfile);
 				rt.addValue(s4, yStartProfile);
@@ -857,7 +864,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				rt.addValue(s6, yEndProfile);
 
 				rt.incrementCounter();
-				rt.addLabel(t1, "Bkg");
+				rt.addValue(t1, "Bkg");
 				rt.addValue(s2, statBkg.mean);
 				rt.addValue(s3, statBkg.roiX);
 				rt.addValue(s4, statBkg.roiY);
@@ -869,9 +876,13 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				for (int i1 = 0; i1 < classiSimulata.length; i1++) {
 					rt.incrementCounter();
-					rt.addLabel(t1, ("Classe" + classiSimulata[i1][0]) + "_" + levelString[i1]);
+					rt.addValue(t1, ("Classe" + classiSimulata[i1][0]) + "_" + levelString[i1]);
 					rt.addValue(s2, classiSimulata[i1][1]);
 				}
+
+				// vado a forzare in riga1 i nomi dei file immagini utilizzate
+				rt.setValue(1, 0, imp1.getShortTitle());
+				rt.setValue(2, 0, imp2.getShortTitle());
 
 				if (verbose && !test && !fast) {
 					rt.show("Results");
@@ -944,8 +955,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 		// 51.16454748650474, 3.46, 573.0, 419.0, 1085.0, 689.0, 820.0, 1082.0,
 		// 1386.0, 1890.0, 2681.0, 3981.0, 5089.0, 45841.0,
 
-		// SIGNAL ERRATO 131.1526336669922 anzich� 953.6122448979592
-		// SNRATIO ERRATO 40.09543329703558 anzich� 291.53433741655306
+		// SIGNAL ERRATO 131.1526336669922 anziche' 953.6122448979592
+		// SNRATIO ERRATO 40.09543329703558 anziche' 291.53433741655306
 
 		double simul = 0.0;
 		double signal = 953.6122448979592;
@@ -1026,16 +1037,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		int mode;
 		if (verbose)
-			mode = 10; // modalit� demo
+			mode = 10; // modalita' demo
 		else
-			mode = 0; // modalit� silent
+			mode = 0; // modalita' silent
 
 		ResultsTable rt1 = mainUnifor(path1, path2, verticalDir, profond, "", mode, timeout);
 		if (rt1 == null) {
 			MyLog.waitHere("rt1==null");
 			return false;
 		}
-		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		double[] vetResults = UtilAyv.vectorizeResultsNew(rt1);
 
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P11_vetName);
 		return ok;
@@ -1060,9 +1071,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		int mode;
 		if (verbose)
-			mode = 10; // modalit� demo
+			mode = 10; // modalita' demo
 		else
-			mode = 0; // modalit� silent
+			mode = 0; // modalita' silent
 
 		double[] vetReference = referenceSiemens();
 		int verticalDir = 3;
@@ -1070,7 +1081,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		ResultsTable rt1 = mainUnifor(path1, path2, verticalDir, profond, "", mode, timeout);
 		if (rt1 == null)
 			return false;
-		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		double[] vetResults = UtilAyv.vectorizeResultsNew(rt1);
 		// MyLog.logVector(vetResults, "vetResults");
 		// MyLog.logVector(vetReference, "vetReference");
 		// MyLog.waitHere();
@@ -1087,7 +1098,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		boolean ok = selfTestSiemens(verbose, timeout);
 
 		if (ok) {
-			IJ.log("Il test di p11rmn_ UNIFORMITA' SUPERFICIALE � stato SUPERATO");
+			IJ.log("Il test di p11rmn_ UNIFORMITA' SUPERFICIALE e' stato SUPERATO");
 		} else {
 			IJ.log("Il test di p11rmn_ UNIFORMITA' SUPERFICIALE evidenzia degli ERRORI");
 		}
@@ -1153,7 +1164,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		short[] pixels1 = UtilAyv.truePixels(imp1);
 		ImageProcessor ip1 = imp1.getProcessor();
 		if (paintPixels) {
-			// N.B. la roi qui sotto � volutamente centrata senza togliere
+			// N.B. la roi qui sotto e' volutamente centrata senza togliere
 			// lato/2
 			imp1.setRoi(sqX, sqY, sqR, sqR);
 			imp1.updateAndDraw();
@@ -1281,7 +1292,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * 
 	 * @param vetUpDwPoints
 	 *            Vettore restituito da AnalPlot2 con le posizioni dei punti
-	 *            sopra e sotto la met� altezza
+	 *            sopra e sotto la meta' altezza
 	 * @param profile
 	 *            Profilo da analizzare
 	 * @return out[0]=FWHM, out[1]=peak position
@@ -1326,7 +1337,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	// } // calcFwhm
 
 	/**
-	 * Mostra a video un profilo con linea a met� picco
+	 * Mostra a video un profilo con linea a meta' picco
 	 * 
 	 * @param profile1
 	 *            Vettore con il profilo da analizzare
@@ -1450,7 +1461,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	}
 
 	private static void msgSqr2OK(int pixx) {
-		ButtonMessages.ModelessMsg("sqR2 OK  poich� pixx=" + pixx, "CONTINUA");
+		ButtonMessages.ModelessMsg("sqR2 OK  poiche' pixx=" + pixx, "CONTINUA");
 	}
 
 	private static void msgSnr(double snr) {
@@ -1588,8 +1599,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 		if (direzione == 0) {
 			// manualRequired = true;
 			// who1= 2;
-			// se non riesco a decidere, lascio fare alla tabella che � (forse)
-			// pi� saggia di me
+			// se non riesco a decidere, lascio fare alla tabella che e' (forse)
+			// piu' saggia di me
 			direzione = direzioneTabella;
 			// manualRequired = true;
 			// MyLog.waitHere("per direzione=0 adotto direzioneTabella= "
@@ -1676,7 +1687,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			endY = height;
 			break;
 		case 0:
-			MyLog.waitHere("Caso impossibile, la direzione 0 � gestita in precedenza");
+			MyLog.waitHere("Caso impossibile, la direzione 0 e' gestita in precedenza");
 		}
 
 		// MyLog.waitHere("startX= " + startX + " startY= " + startY + " endX= "
@@ -1788,7 +1799,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * Cerca la direzione in cui si trova il fantoccio La routine imposta
 	 * quattro ROI attorno al punto di massima. Le medie vengono messe in un
 	 * array ed ordinate. Le medie superiori od uguali all'elemento 2 sono le
-	 * due maggiori. Ci� determina la direzione in cui troviamo il massimo
+	 * due maggiori. Cio' determina la direzione in cui troviamo il massimo
 	 * segnale e, presumibilmente il fantoccio.
 	 * 
 	 * 1 -
@@ -1811,8 +1822,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 		imp1.setRoi(new OvalRoi((int) xMaximum - 2, (int) yMaximum - 2, 4, 4));
 		imp1.getRoi().setStrokeColor(Color.red);
 		over1.addElement(imp1.getRoi());
-		// imposto ora quattro Roi quadrate, sceglier� le due con la media pi�
-		// alta, ed in base a questo decider� la direzione in cui muovere la
+		// imposto ora quattro Roi quadrate, scegliero' le due con la media piu'
+		// alta, ed in base a questo decidero' la direzione in cui muovere la
 		// MROI
 		double[] meanx = new double[4];
 
@@ -1935,12 +1946,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 			return 4;
 		}
 		MyLog.logVector(meanx, "meanx");
-		MyLog.waitHere("Direzione 0 perch� non entrato nelle altre");
+		MyLog.waitHere("Direzione 0 perche' non entrato nelle altre");
 		return 0;
 	}
 
 	/**
-	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo �
+	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo e'
 	 * facilitata la eventuale modifica / traduzione dei messaggi.
 	 * 
 	 * @param select
@@ -1951,7 +1962,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		// ---------+-----------------------------------------------------------+
 		lista[0] = "Verifica E/O modifica manuale posizione ROI";
 		lista[1] = "Verificare immagine, accrescimento MROI in corso";
-		lista[2] = "Analizzando il segnale lungo la linea verde si calcola la FWHM \ne ne si determina il centro. Qui verr� posizionata la MROI";
+		lista[2] = "Analizzando il segnale lungo la linea verde si calcola la FWHM \ne ne si determina il centro. Qui verra' posizionata la MROI";
 
 		// ---------+-----------------------------------------------------------+
 		String out = lista[select];

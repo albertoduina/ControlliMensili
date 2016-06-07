@@ -124,9 +124,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 				retry = false;
 				return 0;
 			case 2:
-				// new AboutBox().about("Controllo Uniformit�",
+				// new AboutBox().about("Controllo Uniformita'",
 				// this.getClass());
-				new AboutBox().about("Controllo Uniformit�", MyVersion.CURRENT_VERSION);
+				new AboutBox().about("Controllo Uniformita'", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -222,9 +222,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 				new AboutBox().close();
 				return 0;
 			case 2:
-				// new AboutBox().about("Controllo Uniformit�",
+				// new AboutBox().about("Controllo Uniformita'",
 				// this.getClass());
-				new AboutBox().about("Controllo Uniformit�", MyVersion.CURRENT_VERSION);
+				new AboutBox().about("Controllo Uniformita'", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -928,7 +928,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P3_vetName);
 		if (ok) {
-			IJ.log("Il test di p3rmn_ UNIFORMITA' CIRCOLARE � stato SUPERATO");
+			IJ.log("Il test di p3rmn_ UNIFORMITA' CIRCOLARE e' stato SUPERATO");
 		} else {
 			IJ.log("Il test di p3rmn_ UNIFORMITA' CIRCOLARE evidenzia degli ERRORI");
 		}
@@ -970,7 +970,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	private static void msgSnRatio(boolean step, double uiPerc1, double snRatio) {
 		if (step)
-			ButtonMessages.ModelessMsg("Uniformit� integrale=" + uiPerc1 + "  Rapporto segnale/rumore sn2=" + snRatio,
+			ButtonMessages.ModelessMsg("Uniformita' integrale=" + uiPerc1 + "  Rapporto segnale/rumore sn2=" + snRatio,
 					"CONTINUA");
 	}
 
@@ -984,7 +984,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 	}
 
 	private static void msgMoveGhostRoi() {
-		ButtonMessages.ModalMsg("ATTENZIONE la posizione scelta per il ghost d� segnale medio =0 SPOSTARLO",
+		ButtonMessages.ModalMsg("ATTENZIONE la posizione scelta per il ghost da' segnale medio =0 SPOSTARLO",
 				"CONTINUA");
 	}
 
