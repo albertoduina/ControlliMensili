@@ -78,6 +78,7 @@ public class Sequenze_ implements PlugIn {
 	// // METTERE debugTables A FALSE PER NON AVERE LE STAMPE
 	// //
 	public boolean debugTables = false;
+	public boolean legacy = false;
 
 	public void run(String arg) {
 
@@ -155,6 +156,7 @@ public class Sequenze_ implements PlugIn {
 		gd.addCheckbox("SelfTest", false);
 		gd.addCheckbox("p10_ p11_ p12_ p17_", true);
 		gd.addCheckbox("Fast", true);
+		gd.addCheckbox("Legacy", false);
 		gd.addCheckbox("Superficiali", false);
 		gd.showDialog();
 		if (gd.wasCanceled()) {
@@ -164,6 +166,7 @@ public class Sequenze_ implements PlugIn {
 		boolean self1 = gd.getNextBoolean();
 		boolean p10p11p12 = gd.getNextBoolean();
 		boolean fast = gd.getNextBoolean();
+		legacy = gd.getNextBoolean();
 		boolean superficiali = gd.getNextBoolean();
 
 		if (fast) {
@@ -188,6 +191,9 @@ public class Sequenze_ implements PlugIn {
 			IJ.runPlugIn("contMensili.p11rmn_", "-1");
 			IJ.runPlugIn("contMensili.p12rmn_", "-1");
 			IJ.runPlugIn("contMensili.p20rmn_", "-1");
+			IJ.runPlugIn("contMensili.p10rmn_OLD1", "-1");
+			IJ.runPlugIn("contMensili.p11rmn_OLD1", "-1");
+			IJ.runPlugIn("contMensili.p12rmn_OLD1", "-1");
 
 			// IJ.runPlugIn("contMensili.p9rmn_", "-1");
 			// IJ.runPlugIn("contMensili.p2rmn_", "-1");
@@ -269,6 +275,7 @@ public class Sequenze_ implements PlugIn {
 			// //
 			// //
 
+			
 			String[][] tableSequenceLoaded = generateSequenceTable(list, tableCode, tableExpand);
 			if (debugTables) {
 				IJ.log("\\Clear");
@@ -836,7 +843,6 @@ public class Sequenze_ implements PlugIn {
 	public String[][] callPluginsFromSequenceTable(String[][] tableSequenze5, String[][] tableCode5, boolean test,
 			boolean superficiali, boolean p10p11p12, TextWindow tw) {
 
-
 		// Attenzione: contrariamente a quanto scritto pi� sotto, per
 		// la struttura della tableSequenze � stata creata la classe
 		// TableSequence che si occupa di tutto e in cui vengono definiti:
@@ -908,6 +914,14 @@ public class Sequenze_ implements PlugIn {
 						plugin = "contMensili.p2rmn_";
 					if (plugin.equals("contMensili.p17rmn_"))
 						plugin = "contMensili.p7rmn_";
+				}
+				if (legacy) {
+					if (plugin.equals("contMensili.p10rmn_"))
+						plugin = "contMensili.p10rmn_OLD1";
+					if (plugin.equals("contMensili.p11rmn_"))
+						plugin = "contMensili.p11rmn_OLD1";
+					if (plugin.equals("contMensili.p12rmn_"))
+						plugin = "contMensili.p12rmn_OLD1";
 				}
 
 				String argomento = argumentForPluginToBeCalled(j1, tableSequenze5);
