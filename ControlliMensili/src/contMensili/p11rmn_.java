@@ -98,6 +98,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 	private static Color color1 = Color.green;
 	private static Color color2 = Color.green;
 	private static final boolean debug = true;
+	public static boolean forcesilent = false;
+
 
 	// private boolean profiVert = false;
 
@@ -273,6 +275,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		if (fast) {
 			retry = false;
 			mode = 1;
+			if (forcesilent) mode = 0;
 			// boolean autoCalled = true;
 			// TODO ripristinare verbose=false
 			// boolean verbose = false;

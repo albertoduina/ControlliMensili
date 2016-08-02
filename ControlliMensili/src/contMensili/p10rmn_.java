@@ -24,6 +24,7 @@ import ij.util.Tools;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Rectangle;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -93,6 +94,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 	private static final boolean debug = true;
 
 	private static int timeout = 0;
+	public static final boolean forcesilent = false;
+
+	public static final boolean blackbox = false;
+	public static String blackpath = "";
+	public static String blackname = "";
+	public static String blacklog = "";
 
 	public void run(String args) {
 
@@ -299,6 +306,29 @@ public class p10rmn_ implements PlugIn, Measurements {
 			MyLog.logDebug(vetRiga[2], "P10", fileDir);
 		}
 
+		// ========================= 12/06/16 ==================================
+		// IJ.log("path1= " + path1);
+		blackpath = path1.substring(0, path1.lastIndexOf(File.separator));
+		File f1 = new File(path1);
+		blackname = f1.getName();
+		blackpath = blackpath + "\\" + blackname + "_BLACK";
+		File newdir = new File(blackpath);
+		// IJ.log("blackpath= " + blackpath);
+		// MyLog.appendLog2(blacklog, blackpath);
+
+		boolean ok1 = false;
+		if (newdir.exists()) {
+			ok1 = InputOutput.deleteDir(newdir);
+			if (!ok1)
+				MyLog.waitHere("errore cancellazione directory " + newdir);
+		}
+		boolean ok2 = InputOutput.createDir(newdir);
+		if (!ok2)
+			MyLog.waitHere("errore creazione directory " + newdir);
+
+		blacklog = blackpath + "/blacklog.txt";
+		// =====================================================================
+
 		// boolean step = false;
 		boolean retry = false;
 		double profond = readDouble(TableSequence.getProfond(iw2ayvTable, vetRiga[0]));
@@ -401,10 +431,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * alle subroutines, generando notevole confusione, quando si desidera
 	 * uniformare il modo di funzionamentro dei vari programmi. LA DOMANDA E':
 	 * CHE FARE ??????, quasi quasi potrei adottare un integer che pero'
-	 * rappresentera' i diversi modi di funzionamento 0,1,2,3 ecc oppure potrebbe
-	 * nuovamente mimare i binari 0 1 2 4 8 16 32 ecc??? Da una prima occhiata
-	 * mi sembrerebbe il caso di mantenere autocalled (viene passato a molte
-	 * subroutines)
+	 * rappresentera' i diversi modi di funzionamento 0,1,2,3 ecc oppure
+	 * potrebbe nuovamente mimare i binari 0 1 2 4 8 16 32 ecc??? Da una prima
+	 * occhiata mi sembrerebbe il caso di mantenere autocalled (viene passato a
+	 * molte subroutines)
 	 * 
 	 * @param path1
 	 *            path prima immagine
@@ -441,6 +471,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 		boolean fast = false;
 		boolean silent = false;
 
+		if (forcesilent)
+			mode = 0;
+
 		switch (mode) {
 		case 0:
 			// questo e' il caso del funzionamento silent: niente a display
@@ -476,17 +509,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		double angle = Double.NaN;
-
-		//
-		// IL VERBOSE FORZATO A TRUE, QUI DI SEGUITO, SERVE
-		// A MOSTRARE, PER UN ISTANTE, DOVE VIENE POSIZIONATA AUTOMATICAMENTE
-		// LA ROI, anche in FAST.
-		//
-
-		// MyLog.waitHere("fast= " + fast + " silent=" + silent + " verbose= "
-		// + verbose);
-
-		// String[][] limiti = new InputOutput().readFile6("LIMITI.csv");
 
 		String[][] limiti = TableLimiti.loadTable(MyConst.LIMITS_FILE);
 
@@ -585,6 +607,46 @@ public class p10rmn_ implements PlugIn, Measurements {
 			//
 			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 
+			if (blackbox) {
+				// ===================================================================================
+				String numSerie1 = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SERIES_NUMBER);
+				String numAcq1 = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_ACQUISITION_NUMBER);
+				String numIma1 = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_IMAGE_NUMBER);
+				String acqTime1 = readTime(imp1);
+				String numSerie2 = ReadDicom.readDicomParameter(imp2, MyConst.DICOM_SERIES_NUMBER);
+				String numAcq2 = ReadDicom.readDicomParameter(imp2, MyConst.DICOM_ACQUISITION_NUMBER);
+				String numIma2 = ReadDicom.readDicomParameter(imp2, MyConst.DICOM_IMAGE_NUMBER);
+				String acqTime2 = readTime(imp2);
+				MyLog.appendLog2(blacklog, "===========< DATI IMMAGINI INPUT >==============");
+				MyLog.appendLog2(blacklog, "mainUnifor imp1> fileName1= 				" + imp1.getShortTitle());
+				MyLog.appendLog2(blacklog, "mainUnifor imp1> numSerie1= 				" + numSerie1);
+				MyLog.appendLog2(blacklog, "mainUnifor imp1> numAcq1= 				" + numAcq1);
+				MyLog.appendLog2(blacklog, "mainUnifor imp1> numima1= 				" + numIma1);
+				MyLog.appendLog2(blacklog, "mainUnifor imp1> acqTime1= 				" + acqTime1);
+				MyLog.appendLog2(blacklog, "mainUnifor imp1> fileName2= 				" + imp2.getShortTitle());
+				MyLog.appendLog2(blacklog, "mainUnifor imp1> numSerie2= 				" + numSerie2);
+				MyLog.appendLog2(blacklog, "mainUnifor imp1> numAcq2= 				" + numAcq2);
+				MyLog.appendLog2(blacklog, "mainUnifor imp1> numima2= 				" + numIma2);
+				MyLog.appendLog2(blacklog, "mainUnifor imp1> acqTime2= 				" + acqTime2);
+				// ===================================================================================
+				MyLog.appendLog2(blacklog, "===========< DATI TROVATI DA positionSearch >==============");
+				MyLog.appendLog2(blacklog, "positionSearch imp11> fileName= 			" + imp11.getShortTitle());
+				MyLog.appendLog2(blacklog, "----------- ROI circolare esterno fantoccio ---------");
+				MyLog.appendLog2(blacklog, "positionSearch imp11> xCenterPhantomCircle= 		" + out2[2]);
+				MyLog.appendLog2(blacklog, "positionSearch imp11> xCenterPhantomCircle= 		" + out2[3]);
+				MyLog.appendLog2(blacklog, "positionSearch imp11> diamPhantomCircle= 		" + out2[9]);
+				MyLog.appendLog2(blacklog, "-------- determinazione centro della MROI ---------");
+				MyLog.appendLog2(blacklog, "positionSearch imp11> xCenterRoi_MROI_&_NEA= 	" + out2[0]);
+				MyLog.appendLog2(blacklog, "positionSearch imp11> yCenterRoi_MROI_&_NEA= 	" + out2[1]);
+				MyLog.appendLog2(blacklog, "------ punti massimo e circonferenza non importanti-------");
+				MyLog.appendLog2(blacklog, "positionSearch imp11> xMaxima_11x11= 		" + out2[4]);
+				MyLog.appendLog2(blacklog, "positionSearch imp11> yMaxima_11x11= 		" + out2[5]);
+				MyLog.appendLog2(blacklog, "positionSearch imp11> angle11= 			" + out2[6]);
+				MyLog.appendLog2(blacklog, "positionSearch imp11> xCircleCrossing= 		" + out2[7]);
+				MyLog.appendLog2(blacklog, "positionSearch imp11> yCircleCrossing= 		" + out2[8]);
+				MyLog.appendLog2(blacklog, "============================================================");
+			}
+
 			// ============================================================================
 			// Fine calcoli geometrici
 			// Inizio calcoli Uniformita'
@@ -611,7 +673,15 @@ public class p10rmn_ implements PlugIn, Measurements {
 			int height = imp1.getHeight();
 			double dimPixel = ReadDicom.readDouble(
 					ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
-					// MyLog.waitHere();
+			// MyLog.waitHere();
+
+			if (blackbox) {
+				MyLog.appendLog2(blacklog, "------------------< DATI immagine input >-------------------");
+				MyLog.appendLog2(blacklog, "mainUnifor > imp1> fileName= 			" + imp1.getShortTitle());
+				MyLog.appendLog2(blacklog, "mainUnifor > dimPixel imp1= 				" + dimPixel);
+				MyLog.appendLog2(blacklog, "-------------------------------------------------------------");
+				// MyLog.waitHere();
+			}
 
 			// =================================================
 			// Questo e' l'overlay che si vede in fast
@@ -666,7 +736,30 @@ public class p10rmn_ implements PlugIn, Measurements {
 			if (step)
 				MyLog.waitHere(listaMessaggi(31), debug);
 
-			ImageStatistics stat7x7 = imp1.getStatistics();
+			ImageStatistics statMROI_7x7 = imp1.getStatistics();
+			Rectangle boundRecMROI_7x7 = imp1.getProcessor().getRoi();
+			double xCenterMROI_7x7 = boundRecMROI_7x7.getCenterX();
+			double yCenterMROI_7x7 = boundRecMROI_7x7.getCenterY();
+
+			if (blackbox) {
+				String savename1 = blackpath + "/_001_imp1";
+				blackimageSave(imp1, savename1 + "AAAA");
+				MyLog.appendLog2(blacklog, "----< CALCOLI SU MROI quadrata 7x7 immagine input >----------");
+				MyLog.appendLog2(blacklog, "mainUnifor > imp1> fileName= 			" + imp1.getShortTitle());
+				MyLog.appendLog2(blacklog, "mainUnifor > statMROI_7x7.roiX imp1= 		" + statMROI_7x7.roiX);
+				MyLog.appendLog2(blacklog, "mainUnifor > statMROI_7x7.roiY imp1= 		" + statMROI_7x7.roiY);
+				MyLog.appendLog2(blacklog, "----- verifica centro ------");
+				MyLog.appendLog2(blacklog, "mainUnifor > xCenterMROI imp1= 			" + xCenterMROI_7x7);
+				MyLog.appendLog2(blacklog, "mainUnifor > yCenterMROI imp1= 			" + yCenterMROI_7x7);
+				MyLog.appendLog2(blacklog, "----------------------------");
+				MyLog.appendLog2(blacklog, "mainUnifor > statMROI_7x7.roiWidth imp1=		" + statMROI_7x7.roiWidth);
+				MyLog.appendLog2(blacklog, "mainUnifor > statMROI_7x7.roiHeight imp1=		" + statMROI_7x7.roiHeight);
+				MyLog.appendLog2(blacklog, "mainUnifor > statMROI_7x7.stdDev imp1= 		" + statMROI_7x7.stdDev);
+				MyLog.appendLog2(blacklog,
+						"mainUnifor > statMROI_7x7.mean imp1= 		" + statMROI_7x7.mean + "[imageSignal NEMA]");
+				MyLog.appendLog2(blacklog, "-------------------------------------------------------------");
+			}
+
 			// MyLog.waitHere();
 
 			// =============================================================
@@ -699,6 +792,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 			xBkg = backPos[0] - diamBkg / 2;
 			yBkg = backPos[1] - diamBkg / 2;
 
+			if (blackbox) {
+				MyLog.appendLog2(blacklog,
+						"--------------------< misura sul fondo ROI circolare >--------------------");
+				MyLog.appendLog2(blacklog, "positionSearch15 > imp1> fileName= 			" + imp1.getShortTitle());
+				MyLog.appendLog2(blacklog, "positionSearch15 > xcentBkg imp1= 			" + backPos[0]);
+				MyLog.appendLog2(blacklog, "positionSearch15 > ycentBkg imp1= 			" + backPos[1]);
+				MyLog.appendLog2(blacklog, "positionSearch15 > diamBkg imp1= 			" + backPos[2]);
+				MyLog.appendLog2(blacklog, "-------------------------------------------------------------------------");
+			}
+
 			//
 			// disegno RoiFondo su imp1
 			//
@@ -722,7 +825,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			over2.addElement(imp1.getRoi());
 			imp1.updateAndDraw();
 			ImagePlus imp8 = imp1.flatten();
-			String newName = path1 + "_flat_p10.jpg";
+			String newName = blackpath + "\\_flat_p10.jpg";
 			new FileSaver(imp8).saveAsJpeg(newName);
 			// =============================================================
 
@@ -751,13 +854,19 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 				// =================================================
 			}
+			ImageUtils.roiCenter(imp1);
 
 			impDiff.resetDisplayRange();
 			impDiff.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7, sq7);
 			impDiff.getRoi().setStrokeColor(Color.red);
 			impDiff.getRoi().setStrokeWidth(1.1);
 			over3.addElement(impDiff.getRoi());
-			ImageStatistics statImaDiff = impDiff.getStatistics();
+
+			Rectangle boundRecImaDiff_MROI_7x7 = impDiff.getProcessor().getRoi();
+			double xCenterImaDiff_MROI_7x7 = boundRecImaDiff_MROI_7x7.getCenterX();
+			double yCenterImaDiff_MROI_7x7 = boundRecImaDiff_MROI_7x7.getCenterY();
+
+			ImageStatistics statImaDiff_MROI_7x7 = impDiff.getStatistics();
 			if (impDiff.isVisible())
 				ImageUtils.imageToFront(impDiff);
 
@@ -767,11 +876,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 			//
 			// calcolo P su imaDiff
 			//
-			double prelimImageNoiseEstimate_7x7 = statImaDiff.stdDev / Math.sqrt(2);
+			double prelimImageNoiseEstimate_7x7 = statImaDiff_MROI_7x7.stdDev / Math.sqrt(2);
 
 			if (step)
-				MyLog.waitHere(listaMessaggi(34) + statImaDiff.stdDev
-						+ "\npreliminaryNoiseEstimate= stdDev / sqrt(2) = " + +prelimImageNoiseEstimate_7x7, debug);
+				MyLog.waitHere(
+						listaMessaggi(34) + statImaDiff_MROI_7x7.stdDev
+								+ "\npreliminaryNoiseEstimate= stdDev / sqrt(2) = " + +prelimImageNoiseEstimate_7x7,
+						debug);
 
 			if (imp1.isVisible())
 				ImageUtils.imageToFront(imp1);
@@ -788,12 +899,48 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			double checkPixelsLimit = MyConst.P10_CHECK_PIXEL_MULTIPLICATOR * prelimImageNoiseEstimate_7x7;
 			int area11x11 = MyConst.P10_NEA_11X11_PIXEL * MyConst.P10_NEA_11X11_PIXEL;
+			if (blackbox) {
+				String savename2 = blackpath + "/_001_impDiff";
+				blackimageSave(impDiff, savename2);
+				MyLog.appendLog2(blacklog, "----< MISURA NOISE con MROI quadrata 7x7 su immagine differenza >-------");
+				MyLog.appendLog2(blacklog, "mainUnifor > impDiff> fileName= 			" + impDiff.getShortTitle());
+				MyLog.appendLog2(blacklog,
+						"mainUnifor > statImaDiff_MROI_7x7.roiX impDiff=	" + statImaDiff_MROI_7x7.roiX);
+				MyLog.appendLog2(blacklog,
+						"mainUnifor > statImaDiff_MROI_7x7.roiY impDiff=	" + statImaDiff_MROI_7x7.roiY);
+				MyLog.appendLog2(blacklog, "----- verifica centro ------");
+				MyLog.appendLog2(blacklog,
+						"mainUnifor > xCenterImaDiff_MROI impDiff= 		" + xCenterImaDiff_MROI_7x7);
+				MyLog.appendLog2(blacklog,
+						"mainUnifor > yCenterImaDiff_MROI impDiff= 		" + yCenterImaDiff_MROI_7x7);
+				MyLog.appendLog2(blacklog, "----------------------------");
+
+				MyLog.appendLog2(blacklog,
+						"mainUnifor > statImaDiff_MROI_7x7.roiWidth impDiff=	" + statImaDiff_MROI_7x7.roiWidth);
+				MyLog.appendLog2(blacklog,
+						"mainUnifor > statImaDiff_MROI_7x7.roiHeight impDiff=	" + statImaDiff_MROI_7x7.roiHeight);
+				MyLog.appendLog2(blacklog,
+						"mainUnifor > statImaDiff_MROI_7x7.mean impDiff=	" + statImaDiff_MROI_7x7.mean);
+				MyLog.appendLog2(blacklog,
+						"mainUnifor > statImaDiff_MROI_7x7.stdDev impDiff=	" + statImaDiff_MROI_7x7.stdDev);
+				MyLog.appendLog2(blacklog,
+						"mainUnifor > preliminaryNoiseEstimate_7x7 impDiff=	" + prelimImageNoiseEstimate_7x7);
+				MyLog.appendLog2(blacklog, "mainUnifor > checkPixelsLimit= 			" + checkPixelsLimit);
+				MyLog.appendLog2(blacklog, "mainUnifor > area11x11 iniziale=			" + area11x11);
+				MyLog.appendLog2(blacklog,
+						"--------------------------------------------------------------------------------");
+				// MyLog.waitHere();
+			}
 
 			// area11x11 = 2000;
 			int enlarge = 0;
 			int pixx = 0;
 
 			do {
+
+				if (blackbox)
+					MyLog.appendLog2(blacklog,
+							"<<<<<<<<<<<<<<< INIZIO EVENTUALE LOOP INGRANDIMENTO NEA >>>>>>>>>>>>>>>>>>>>");
 
 				boolean paintPixels = !fast;
 				// boolean paintPixels = true;
@@ -832,13 +979,25 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			} while (pixx < area11x11);
 
+			if (blackbox)
+				MyLog.appendLog2(blacklog,
+						"<<<<<<<<<<<<<<< FINE EVENTUALE LOOP INGRANDIMENTO NEA >>>>>>>>>>>>>>>>>>>>");
+
 			imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA, sqNEA);
 			imp1.updateAndDraw();
 
+			ImageUtils.roiCenter(imp1);
 			//
 			// calcolo SD su imaDiff quando i corrispondenti pixel
 			// di imp1 passano il test
 			//
+
+			if (blackbox) {
+				MyLog.appendLog2(blacklog,
+						"--------------------------------------------------------------------------------");
+				MyLog.appendLog2(blacklog,
+						"<<<<<<<<<<<<<< CALCOLO DEVIAZIONE STANDARD NEMA SUI PIXEL NEA 11x11 >>>>>>>>>>>>>>>>>>");
+			}
 
 			// qui era il problema devStandardNema non era centered e quindi
 			// faceva il quadrato spostato
@@ -846,19 +1005,35 @@ public class p10rmn_ implements PlugIn, Measurements {
 			boolean paintPixels = true;
 			double[] out11 = devStandardNemaCentered(imp1, impDiff, xCenterRoi, yCenterRoi, sqNEA, checkPixelsLimit,
 					paintPixels, over2);
+
+			if (blackbox) {
+				MyLog.appendLog2(blacklog,
+						"<<<<<<<<<<<<<<<<<< FINE CALCOLO DEVIAZIONE STANDARD NEMA >>>>>>>>>>>>>>>>>>>>>>");
+				MyLog.appendLog2(blacklog,
+						"--------------------------------------------------------------------------------");
+			}
+
 			if (step)
 				MyLog.waitHere(listaMessaggi(23) + out11[0] + "stdDev4= " + out11[1], debug, timeout);
 			//
 			// calcolo SNR finale
 			//
-			double finalSnr = stat7x7.mean / (out11[1] / Math.sqrt(2));
+			double finalSnrNEMA = statMROI_7x7.mean / (out11[1] / Math.sqrt(2));
+
+			if (blackbox) {
+				MyLog.appendLog2(blacklog,
+						"--------------------------------------------------------------------------------");
+				MyLog.appendLog2(blacklog, "mainUnifor > finalSnrNEMA= 				" + finalSnrNEMA);
+				MyLog.appendLog2(blacklog,
+						"--------------------------------------------------------------------------------");
+			}
 
 			if (out11[1] == 0) {
 				MyLog.waitHere("out11 = 0");
-				finalSnr = 100;
+				finalSnrNEMA = 100;
 			}
 			if (step)
-				MyLog.waitHere(listaMessaggi(24) + finalSnr, debug);
+				MyLog.waitHere(listaMessaggi(24) + finalSnrNEMA, debug);
 
 			String patName = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PATIENT_NAME);
 
@@ -866,7 +1041,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			String codice = UtilAyv.getFiveLetters(codice1);
 
-			simulataName = fileDir + patName + codice + "sim.zip";
+			simulataName = blackpath + "\\" + patName + codice + "sim.zip";
 
 			// passo due volte step (al posto di verbose) per non vedere la
 			// simulata in fast
@@ -876,8 +1051,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			//
 			// calcolo posizione fwhm a meta' della MROI
 			//
-
-			
 
 			ImageUtils.imageToFront(iw1);
 
@@ -944,9 +1117,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// in modo da evitare possibili sorprese
 			// ================================================================
 
-			UtilAyv.checkLimits2(stat7x7.mean, minMean7x7, maxMean7x7, "SEGNALE ROI 7X7");
+			UtilAyv.checkLimits2(statMROI_7x7.mean, minMean7x7, maxMean7x7, "SEGNALE ROI 7X7");
 			UtilAyv.checkLimits2(statBkg.mean, minMeanBkg, maxMeanBkg, "RUMORE FONDO");
-			UtilAyv.checkLimits2(finalSnr, minSnRatio, maxSnRatio, "FINAL SNR RATIO");
+			UtilAyv.checkLimits2(finalSnrNEMA, minSnRatio, maxSnRatio, "FINAL SNR RATIO");
 			UtilAyv.checkLimits2(outFwhm2[0], minFWHM, maxFWHM, "FWHM");
 
 			//
@@ -961,22 +1134,32 @@ public class p10rmn_ implements PlugIn, Measurements {
 			String s4 = "roi_y";
 			String s5 = "roi_b";
 			String s6 = "roi_h";
+			double background = out11[1] / Math.sqrt(2);
+
+			if (blackbox)
+				MyLog.appendLog2(blacklog, "=============================================================");
 
 			rt.addValue(t1, simulataName);
 			rt.incrementCounter();
 
 			rt.addValue(t1, "Segnale");
-			rt.addValue(s2, stat7x7.mean);
+			rt.addValue(s2, statMROI_7x7.mean);
+			if (blackbox)
+				MyLog.appendLog2(blacklog, "Report Segnale stat7x7.mean= 			" + statMROI_7x7.mean);
+
 			// rt.addValue(3, xCenterRoi);
 			// rt.addValue(4, yCenterRoi);
-			rt.addValue(s3, stat7x7.roiX);
-			rt.addValue(s4, stat7x7.roiY);
-			rt.addValue(s5, stat7x7.roiWidth);
+			rt.addValue(s3, statMROI_7x7.roiX);
+			rt.addValue(s4, statMROI_7x7.roiY);
+			rt.addValue(s5, statMROI_7x7.roiWidth);
 			rt.addValue(s6, angle);
 
 			rt.incrementCounter();
 			rt.addValue(t1, "Rumore_Fondo");
-			rt.addValue(s2, (out11[1] / Math.sqrt(2)));
+			rt.addValue(s2, background);
+			if (blackbox)
+				MyLog.appendLog2(blacklog, "Report Rumore_Fondo background= 			" + background);
+
 			rt.addValue(s3, statBkg.roiX);
 			rt.addValue(s4, statBkg.roiY);
 			rt.addValue(s5, statBkg.roiWidth);
@@ -984,11 +1167,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			rt.incrementCounter();
 			rt.addValue(t1, "SnR");
-			rt.addValue(s2, finalSnr);
-			rt.addValue(s3, stat7x7.roiX);
-			rt.addValue(s4, stat7x7.roiY);
-			rt.addValue(s5, stat7x7.roiWidth);
-			rt.addValue(s6, stat7x7.roiHeight);
+			rt.addValue(s2, finalSnrNEMA);
+			if (blackbox)
+				MyLog.appendLog2(blacklog, "Report SnR finalSnr= 				" + finalSnrNEMA);
+
+			rt.addValue(s3, statMROI_7x7.roiX);
+			rt.addValue(s4, statMROI_7x7.roiY);
+			rt.addValue(s5, statMROI_7x7.roiWidth);
+			rt.addValue(s6, statMROI_7x7.roiHeight);
 
 			rt.incrementCounter();
 			rt.addValue(t1, "FWHM");
@@ -1001,6 +1187,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			rt.incrementCounter();
 			rt.addValue(t1, "Bkg");
 			rt.addValue(s2, statBkg.mean);
+			if (blackbox)
+				MyLog.appendLog2(blacklog, "Report BkG statBkg.mean= 				" + statBkg.mean);
+
 			rt.addValue(s3, statBkg.roiX);
 			rt.addValue(s4, statBkg.roiY);
 			rt.addValue(s5, statBkg.roiWidth);
@@ -1009,6 +1198,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			rt.incrementCounter();
 			rt.addValue(t1, "Pos");
 			rt.addValue(s2, slicePosition);
+			if (blackbox)
+				MyLog.appendLog2(blacklog, "=============================================================");
 
 			String[] levelString = { "+20%", "+10%", "-10%", "-10%", "-30%", "-40%", "-50%", "-60%", "-70%", "-80%",
 					"-90%", "fondo" };
@@ -1018,7 +1209,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				rt.addValue(t1, ("Classe" + classiSimulata[i1][0]) + "_" + levelString[i1]);
 				rt.addValue(s2, classiSimulata[i1][1]);
 			}
-			
+
 			// vado a forzare in riga1 i nomi dei file immagini utilizzate
 			rt.setValue(1, 0, imp1.getShortTitle());
 			rt.setValue(2, 0, imp2.getShortTitle());
@@ -1089,6 +1280,15 @@ public class p10rmn_ implements PlugIn, Measurements {
 		return ok;
 	}
 
+	/***
+	 * Esegue il controllo su di un set standard di immagini, i risultati sono
+	 * confrontati con quelli ottenuti inizialmente. Questo confronto permette
+	 * di rilevare effetti indesiderati di qualche modifica al plugin e/o
+	 * modifiche di imageJ
+	 * 
+	 * @param verbose
+	 * @return
+	 */
 	public static boolean selfTestSiemens(boolean verbose) {
 		double[] vetReference = referenceSiemens();
 		String[] list = { "C001_testP10", "C002_testP10" };
@@ -1135,8 +1335,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 		double signal = 354.16326530612247;
 		// double backNoise = 12.225;
 
-		double backNoise = 8.791701101860935;  // 10.224592241325686;
-		double snRatio = 40.28381552133943;  // 34.638375491852656;
+		double backNoise = 8.791701101860935; // 10.224592241325686;
+		double snRatio = 40.28381552133943; // 34.638375491852656;
 		// double fwhm = 11.43429317989865;
 		double fwhm = 24.329842905555697;
 		double bkg = 12.4375;
@@ -1280,6 +1480,20 @@ public class p10rmn_ implements PlugIn, Measurements {
 			IJ.error("CountPixTest ricevuto null");
 			return (0);
 		}
+		if (blackbox) {
+			MyLog.appendLog2(blacklog,
+					"------------ UTILIZZO DEI SINGOLI PIXEL NELL' AREA NEA ------------------------");
+			MyLog.appendLog2(blacklog, "countPixOverLimit > imp1> fileName= 			" + imp1.getShortTitle());
+			MyLog.appendLog2(blacklog, "countPixOverLimit > lato= 				" + sqR);
+			MyLog.appendLog2(blacklog, "countPixOverLimit > limit= 				" + limit);
+			MyLog.appendLog2(blacklog, "countPixOverLimit > XSTART = sqX-sqR/2 		" + (sqX - sqR / 2));
+			MyLog.appendLog2(blacklog, "countPixOverLimit > YSTART = sqY-sqR/2 		" + (sqY - sqR / 2));
+			MyLog.appendLog2(blacklog, "countPixOverLimit > XEND = sqX+sqR/2 		" + (sqX + sqR / 2));
+			MyLog.appendLog2(blacklog, "countPixOverLimit > YEND = sqY+sqR/2 		" + (sqY + sqR / 2));
+
+			MyLog.appendLog2(blacklog, "-------");
+			MyLog.appendLog2(blacklog, "$>	y1	x1	value");
+		}
 
 		// MyLog.waitHere("sqX= "+sqX+" sqY= "+sqY+" sqR= "+sqR);
 		int width = imp1.getWidth();
@@ -1291,6 +1505,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			for (int x1 = sqX - sqR / 2; x1 <= (sqX + sqR / 2); x1++) {
 				w = offset + x1;
 				ok = false;
+				if (blackbox)
+					MyLog.appendLog2(blacklog, "$>	" + y1 + "	" + x1 + "	" + pixels1[w]);
+
 				if (w >= 0 && w < pixels1.length && pixels1[w] > limit) {
 					ok = true;
 					count1++;
@@ -1300,6 +1517,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 					setOverlayPixel(over1, imp1, x1, y1, Color.green, Color.red, ok);
 			}
 		}
+		if (blackbox) {
+			String savename2 = blackpath + "/_001_countPixOverLimit_PaintedPixels";
+			blackimageSave(imp1, savename2);
+			MyLog.appendLog2(blacklog, "-------");
+			MyLog.appendLog2(blacklog, "countPixOverLimit > count1= 				" + count1);
+			MyLog.appendLog2(blacklog, "-------------------------------------------------------------");
+		}
+
 		return count1;
 	}
 
@@ -1344,6 +1569,22 @@ public class p10rmn_ implements PlugIn, Measurements {
 			IJ.error("devStandardNema ricevuto null");
 			return (null);
 		}
+
+		if (blackbox) {
+			MyLog.appendLog2(blacklog, "-------------------------------------------------------------");
+			MyLog.appendLog2(blacklog, "devStandardNema > imp1> Immagine= 			" + imp1.getShortTitle());
+			MyLog.appendLog2(blacklog, "devStandardNema > imp3> imaDifferenza= 			" + imp3.getShortTitle());
+			MyLog.appendLog2(blacklog, "devStandardNema > limit= 				" + limit);
+			MyLog.appendLog2(blacklog, "devStandardNema > lato= 				" + sqR);
+			MyLog.appendLog2(blacklog, "$> <<-o-o-o-o QUI C'E'IL PROBLEMA DI POSIZIONAMENTO ROI -o-o-o-o->>");
+			MyLog.appendLog2(blacklog, "devStandardNema > XSTART = sqX			" + (sqX));
+			MyLog.appendLog2(blacklog, "devStandardNema > YSTART = sqY 			" + (sqY));
+			MyLog.appendLog2(blacklog, "devStandardNema > XEND = sqX+sqR 			" + (sqX + sqR));
+			MyLog.appendLog2(blacklog, "devStandardNema > YEND = sqY+sqR 			" + (sqY + sqR));
+
+			MyLog.appendLog2(blacklog, "-------");
+			MyLog.appendLog2(blacklog, "$>	y1	x1	pImaVal		pDiffVal	pixelCount	sumValues	sumSquare");
+		}
 		int width = imp1.getWidth();
 		short[] pixels1 = UtilAyv.truePixels(imp1);
 		int pixelCount = 0;
@@ -1362,18 +1603,37 @@ public class p10rmn_ implements PlugIn, Measurements {
 					value4 = pixels4[offset];
 					sumValues += value4;
 					sumSquare += value4 * value4;
+					if (blackbox)
+						MyLog.appendLog2(blacklog,
+								"$>	" + y1 + "	" + x1 + "	" + pixels1[offset] + "		" + pixels4[offset] + "		"
+										+ pixelCount + "		" + sumValues + "		" + sumSquare);
+
 					ok = true;
 				}
 				// modifica del 260216
 				if (paintPixels)
-					setOverlayPixel(over1, imp1, x1, y1, Color.yellow, Color.green, ok);
+					setOverlayPixel(over1, imp1, x1, y1, Color.yellow, Color.red, ok);
 				// --------
 
 			}
 		}
+
 		results[0] = sumValues / pixelCount;
 		double sd1 = calculateStdDev4(pixelCount, sumValues, sumSquare);
 		results[1] = sd1;
+		if (blackbox) {
+			String savename2 = blackpath + "/_001_devStandardNema_PaintedPixels";
+			blackimageSave(imp1, savename2);
+
+			MyLog.appendLog2(blacklog, "-------");
+			MyLog.appendLog2(blacklog, "devStandardNema > sumValues finale= 			" + sumValues);
+			MyLog.appendLog2(blacklog, "devStandardNema > sumSquare finale= 			" + sumSquare);
+			MyLog.appendLog2(blacklog, "devStandardNema > pixelCount finale= 		" + pixelCount);
+
+			MyLog.appendLog2(blacklog, "devStandardNema > calculateStDev4= 			" + sd1);
+			MyLog.appendLog2(blacklog, "-------------------------------------------------------------");
+		}
+
 		return (results);
 	}
 
@@ -1758,13 +2018,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 	public static double[] positionSearch(ImagePlus imp11, double profond, String info1, int mode, int timeout) {
 
 		// boolean autoCalled=false;
-		
+
 		boolean demo = false;
 		Color colore1 = Color.red;
 		Color colore2 = Color.green;
 		Color colore3 = Color.red;
-		
-		if (mode == 10 || mode==3)
+
+		if (mode == 10 || mode == 3)
 			demo = true;
 		// boolean step = false;
 		// boolean verbose = false;
@@ -1828,7 +2088,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 		if (demo) {
 			UtilAyv.showImageMaximized(imp12);
 			ImageUtils.imageToFront(imp12);
-			MyLog.waitHere("L'immagine verra' processata con il filtro variance, per estrarre il bordo", debug, timeout);
+			MyLog.waitHere("L'immagine verra' processata con il filtro variance, per estrarre il bordo", debug,
+					timeout);
 		}
 
 		// ip12.findEdges();
@@ -1851,8 +2112,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 					"All'intera immagine viene sottratto 1/30 del segnale massimo,\n questo per eliminare eventuale noise residuo",
 					debug, timeout);
 
-//		if (demo)
-//			MyLog.waitHere(listaMessaggi(3), debug, timeout);
+		// if (demo)
+		// MyLog.waitHere(listaMessaggi(3), debug, timeout);
 
 		imp12.setOverlay(over12);
 
@@ -2018,9 +2279,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		if (demo)
 			MyLog.waitHere("Si tracciano ulteriori linee ", debug, timeout);
 
-		
-		
-		
 		if (count >= 0) {
 			count++;
 			xPoints3 = new int[count];
@@ -2034,7 +2292,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			xPoints3 = null;
 			yPoints3 = null;
 		}
-
 
 		// MyLog.logVector(myXpoints, "myXpoints");
 		// MyLog.logVector(xPoints3, "xPoints3");
@@ -2058,8 +2315,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// }
 		// --------------------------------------------
 
-		
-		// qui di seguito pulisco l'overlay, dovrò preoccuparmi di ridisegnare i punti
+		// qui di seguito pulisco l'overlay, dovrò preoccuparmi di ridisegnare i
+		// punti
 		imp12.deleteRoi();
 		over12.clear();
 		imp12.updateAndDraw();
@@ -2079,21 +2336,21 @@ public class p10rmn_ implements PlugIn, Measurements {
 		if (!manual) {
 			// reimposto i punti trovati
 			PointRoi pr12 = new PointRoi(xPoints3, yPoints3, xPoints3.length);
-			pr12.setPointType(2);	
-			pr12.setSize(4);		
+			pr12.setPointType(2);
+			pr12.setSize(4);
 			imp12.setRoi(pr12);
-			
+
 			if (demo) {
-				
-	//			imp12.updateAndDraw();
-			
-	// ridisegno i punti sull'overlay
-				imp12.getRoi().setStrokeColor(colore1);			
-				over12.addElement(imp12.getRoi());			
-				imp12.setOverlay(over12);				
-//				imp12.updateAndDraw();
-//				MyLog.waitHere(listaMessaggi(15), debug, timeout);
-		}
+
+				// imp12.updateAndDraw();
+
+				// ridisegno i punti sull'overlay
+				imp12.getRoi().setStrokeColor(colore1);
+				over12.addElement(imp12.getRoi());
+				imp12.setOverlay(over12);
+				// imp12.updateAndDraw();
+				// MyLog.waitHere(listaMessaggi(15), debug, timeout);
+			}
 			// ---------------------------------------------------
 			// eseguo ora fitCircle per trovare centro e dimensione del
 			// fantoccio
@@ -2441,7 +2698,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		return ok1 && ok2;
 	}
 
-
 	public static void tidalWave(ImagePlus imp1, int level) {
 		// ImagePlus imp2 = imp1.duplicate();
 		ImageProcessor ip1 = imp1.getProcessor();
@@ -2581,8 +2837,22 @@ public class p10rmn_ implements PlugIn, Measurements {
 		over1.addElement(imp1.getRoi());
 		imp1.deleteRoi();
 	}
-	
-	
+
+	public static void blackimageSave(ImagePlus imp1, String savename) {
+		new FileSaver(imp1).saveAsTiff(savename + ".tif");
+		ImagePlus imp1flat = imp1.flatten();
+		new FileSaver(imp1flat).saveAsJpeg(savename + ".jpg");
+		MyLog.appendLog2(blacklog, "salvata " + imp1.getShortTitle());
+	}
+
+	public static String readTime(ImagePlus imp1) {
+		String acqTime = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_ACQUISITION_TIME);
+		if (acqTime.equals("MISSING")) {
+			acqTime = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_IMATIME);
+		}
+		return acqTime;
+	}
+
 	/**
 	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo e'
 	 * facilitata la eventuale modifica / traduzione (quando mai?) dei messaggi.
@@ -2657,6 +2927,5 @@ public class p10rmn_ implements PlugIn, Measurements {
 		String out = lista[select];
 		return out;
 	}
-
 
 }

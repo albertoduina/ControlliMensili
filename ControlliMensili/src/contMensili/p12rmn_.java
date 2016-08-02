@@ -39,6 +39,7 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -119,6 +120,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 	
 	// private static boolean junitTest = false;
 	private static int timeout = 0;
+	public static boolean forcesilent = false;
+	public static final boolean blackbox = false;
+	public static String blackpath = "";
+	public static String blackname = "";
+	public static String blacklog = "";
+
 
 	public void run(String args) {
 
@@ -283,6 +290,30 @@ public class p12rmn_ implements PlugIn, Measurements {
 			MyLog.logDebug(vetRiga[1], "P12", fileDir);
 		}
 
+		// ========================= 12/06/16 ==================================
+		// IJ.log("path1= " + path1);
+		blackpath = path1.substring(0, path1.lastIndexOf(File.separator));
+		File f1 = new File(path1);
+		blackname = f1.getName();
+		blackpath = blackpath + "\\" + blackname + "_BLACK";
+		File newdir = new File(blackpath);
+		// IJ.log("blackpath= " + blackpath);
+		// MyLog.appendLog2(blacklog, blackpath);
+
+		boolean ok1 = false;
+		if (newdir.exists()) {
+			ok1 = InputOutput.deleteDir(newdir);
+			if (!ok1)
+				MyLog.waitHere("errore cancellazione directory " + newdir);
+		}
+		boolean ok2 = InputOutput.createDir(newdir);
+		if (!ok2)
+			MyLog.waitHere("errore creazione directory " + newdir);
+
+		blacklog = blackpath + "/blacklog.txt";
+		// =====================================================================
+
+		
 		boolean step = true;
 		boolean retry = false;
 		
@@ -380,6 +411,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 			int timeout) {
 
 		boolean accetta = false;
+		if (forcesilent) {
+			verbose = false;
+			silent = true;
+		}
+
 
 		ResultsTable rt = null;
 		Toolkit tk = Toolkit.getDefaultToolkit();
@@ -816,9 +852,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			if (verbose)
 				MyLog.waitHere(listaMessaggi(44), debug, timeout);
+			
+			String name1 = blackpath +"\\";
 
 			int[][] classiSimulata = generaSimulata(xCenter80 - diam80 / 2, yCenter80 - diam80 / 2, diam80, imp1,
-					fileDir, step, verbose, test);
+					name1, step, verbose, test);
 			imp1.deleteRoi();
 
 			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
@@ -2568,6 +2606,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		String codice = UtilAyv.getFiveLetters(codice1);
 
+		
 		String simName = filename + patName + codice + "sim.zip";
 
 		if (!test)

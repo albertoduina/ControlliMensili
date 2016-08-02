@@ -78,7 +78,12 @@ public class Sequenze_ implements PlugIn {
 	// // METTERE debugTables A FALSE PER NON AVERE LE STAMPE
 	// //
 	public boolean debugTables = false;
-	public boolean legacy = false;
+	public static boolean forcesilent = false;
+
+	public static boolean blackbox = false;
+	public static String blackpath = "";
+	public static String blackname = "";
+	public static String blacklog = "";
 
 	public void run(String arg) {
 
@@ -151,271 +156,328 @@ public class Sequenze_ implements PlugIn {
 		new AboutBox().about("Scansione automatica cartelle", MyVersion.CURRENT_VERSION);
 		IJ.wait(2000);
 		new AboutBox().close();
-		GenericDialog gd = new GenericDialog("", IJ.getInstance());
-		gd.addCheckbox("Nuovo controllo", false);
-		gd.addCheckbox("SelfTest", false);
-		gd.addCheckbox("p10_ p11_ p12_ p17_", true);
-		gd.addCheckbox("Fast", true);
-		gd.addCheckbox("Legacy", false);
-		gd.addCheckbox("Superficiali", false);
-		gd.showDialog();
-		if (gd.wasCanceled()) {
-			return;
-		}
-		boolean nuovo1 = gd.getNextBoolean();
-		boolean self1 = gd.getNextBoolean();
-		boolean p10p11p12 = gd.getNextBoolean();
-		boolean fast = gd.getNextBoolean();
-		legacy = gd.getNextBoolean();
-		boolean superficiali = gd.getNextBoolean();
 
-		if (fast) {
-			Prefs.set("prefer.fast", "true");
-		} else {
-			Prefs.set("prefer.fast", "false");
-		}
+		boolean nuovo1 = false;
+		boolean nuovo2 = false;
+		boolean self1 = false;
+		boolean p10p11p12 = false;
+		boolean fast = false;
+		boolean batch = false;
+		boolean superficiali = false;
+		boolean aux2 = false;
+		boolean aux3 = false;
 
-		if (self1) {
-			if (!new InputOutput().checkJar(MyConst.TEST_FILE)) {
-				UtilAyv.noTest2();
+		List<String> arrayStartingDir = new ArrayList<String>();
+
+		do {
+			GenericDialog gd = new GenericDialog("", IJ.getInstance());
+			gd.addCheckbox("Nuovo controllo", aux2);
+			gd.addCheckbox("SelfTest", false);
+			gd.addCheckbox("p10_ p11_ p12_ p17_", true);
+			gd.addCheckbox("Fast", true);
+			if (blackbox)
+				gd.addCheckbox("Batch", true);
+			gd.addCheckbox("Superficiali", false);
+			gd.showDialog();
+			if (gd.wasCanceled()) {
 				return;
 			}
 
-			IJ.runPlugIn("contMensili.p3rmn_", "-1");
-			IJ.runPlugIn("contMensili.p4rmn_", "-1");
-			IJ.runPlugIn("contMensili.p5rmn_", "-1");
-			IJ.runPlugIn("contMensili.p6rmn_", "-1");
-			IJ.runPlugIn("contMensili.p7rmn_", "-1");
-			IJ.runPlugIn("contMensili.p8rmn_", "-1");
-			IJ.runPlugIn("contMensili.p10rmn_", "-1");
-			IJ.runPlugIn("contMensili.p11rmn_", "-1");
-			IJ.runPlugIn("contMensili.p12rmn_", "-1");
-			IJ.runPlugIn("contMensili.p20rmn_", "-1");
-			IJ.runPlugIn("contMensili.p10rmn_OLD1", "-1");
-			IJ.runPlugIn("contMensili.p11rmn_OLD1", "-1");
-			IJ.runPlugIn("contMensili.p12rmn_OLD1", "-1");
+			nuovo2 = gd.getNextBoolean();
+			self1 = gd.getNextBoolean();
+			p10p11p12 = gd.getNextBoolean();
+			fast = gd.getNextBoolean();
+			if (blackbox)
+				batch = gd.getNextBoolean();
 
-			// IJ.runPlugIn("contMensili.p9rmn_", "-1");
-			// IJ.runPlugIn("contMensili.p2rmn_", "-1");
+			if (fast) {
+				Prefs.set("prefer.fast", "true");
+			} else {
+				Prefs.set("prefer.fast", "false");
+			}
 
-			ButtonMessages.ModelessMsg("Sequenze: fine selfTest, vedere Log per risultati", "CONTINUA");
-			return;
-		} else if (nuovo1 || !startingDirExist) {
+			if (self1) {
+				if (!new InputOutput().checkJar(MyConst.TEST_FILE)) {
+					UtilAyv.noTest2();
+					return;
+				}
 
-			DirectoryChooser.setDefaultDirectory(startingDir);
-			DirectoryChooser od1 = new DirectoryChooser("Selezionare la cartella: ");
-			startingDir = od1.getDirectory();
+				IJ.runPlugIn("contMensili.p3rmn_", "-1");
+				IJ.runPlugIn("contMensili.p4rmn_", "-1");
+				IJ.runPlugIn("contMensili.p5rmn_", "-1");
+				IJ.runPlugIn("contMensili.p6rmn_", "-1");
+				IJ.runPlugIn("contMensili.p7rmn_", "-1");
+				IJ.runPlugIn("contMensili.p8rmn_", "-1");
+				IJ.runPlugIn("contMensili.p10rmn_", "-1");
+				IJ.runPlugIn("contMensili.p11rmn_", "-1");
+				IJ.runPlugIn("contMensili.p12rmn_", "-1");
+				IJ.runPlugIn("contMensili.p20rmn_", "-1");
+				IJ.runPlugIn("contMensili.p10rmn_OLD1", "-1");
+				IJ.runPlugIn("contMensili.p11rmn_OLD1", "-1");
+				IJ.runPlugIn("contMensili.p12rmn_OLD1", "-1");
 
-			if (startingDir == null)
+				// IJ.runPlugIn("contMensili.p9rmn_", "-1");
+				// IJ.runPlugIn("contMensili.p2rmn_", "-1");
+
+				ButtonMessages.ModelessMsg("Sequenze: fine selfTest, vedere Log per risultati", "CONTINUA");
 				return;
-			Prefs.set("prefer.string1", startingDir);
-			// MyFileLogger.logger.info("Sequenze_>>> startingDir salvata= "
-			// + startingDir);
-
-			String aux1 = Prefs.get(MyConst.PREFERENCES_1, MyConst.DEFAULT_PATH);
-			// MyFileLogger.logger.info("Sequenze_>>> startingDir riletta= "
-			// + aux1);
-
-		}
-
-		boolean fileExist = new File(startingDir + MyConst.SEQUENZE_FILE).exists();
-
-		if ((nuovo1) && (fileExist)) {
-			new ButtonMessages();
-			int userSelection1 = ButtonMessages.ModelessMsg(
-					"Attenzione, nella cartella selezionata i files iw2ayv.txt e Results1.xls" + "\n"
-							+ "esistono gi�  premere SOVRASCRIVI per cancellarli, CONTINUA per utilizzarli, altrimenti CHIUDI",
-					"SOVRASCRIVI", "CONTINUA", "CHIUDI");
-			switch (userSelection1) {
-			case ABORT:
-				return;
-			case 2:
-				nuovo1 = false;
-				break;
-			case 3:
+				// } else if (nuovo1 || !startingDirExist) {
+				// } else if ((nuovo2 || !startingDirExist) && (!batch)) {
+			} else if (nuovo2 || !startingDirExist) {
 				nuovo1 = true;
-				break;
+				aux2 = true;
+				aux3 = true;
+
+				DirectoryChooser.setDefaultDirectory(startingDir);
+				DirectoryChooser od1 = new DirectoryChooser("Selezionare la cartella: ");
+				startingDir = od1.getDirectory();
+
+				if (startingDir == null)
+					return;
+				Prefs.set("prefer.string1", startingDir);
+				// MyFileLogger.logger.info("Sequenze_>>> startingDir salvata= "
+				// + startingDir);
+
+				String aux1 = Prefs.get(MyConst.PREFERENCES_1, MyConst.DEFAULT_PATH);
+				arrayStartingDir.add(startingDir);
+				// MyFileLogger.logger.info("Sequenze_>>> startingDir riletta= "
+				// + aux1);
+				// } else if (nuovo2 && batch) {
+				// nuovo1 = true;
+				// aux2 = true;
+				// aux3 = true;
+				// DirectoryChooser.setDefaultDirectory(startingDir);
+				// DirectoryChooser od1 = new DirectoryChooser("Selezionare la
+				// cartella: ");
+				// startingDir = od1.getDirectory();
+				//
+				// if (startingDir == null)
+				// return;
+				// arrayStartingDir.add(startingDir);
 			}
-		}
+		} while (batch);
 
-		if (!fileExist) {
-			nuovo1 = true;
-		}
+		long startTime = System.currentTimeMillis();
+		for (int b1 = 0; b1 < arrayStartingDir.size(); b1++) {
+			startingDir = arrayStartingDir.get(b1);
 
-		if (nuovo1) {
-			//
-			// se � stato selezionato un nuovo set di misure cancello sia il
-			// file directory che il file excel dei risultati
-			//
-			File fx = new File(startingDir + MyConst.SEQUENZE_FILE);
-			if (fx.exists())
-				fx.delete();
-			File fy = new File(startingDir + MyConst.XLS_FILE);
-			if (fy.exists())
-				fy.delete();
-			File fz = new File(startingDir + MyConst.TXT_FILE);
-			if (fz.exists())
-				fz.delete();
+			boolean fileExist = new File(startingDir + MyConst.SEQUENZE_FILE).exists();
+
+			if ((nuovo1) && (fileExist)) {
+				new ButtonMessages();
+				int userSelection1 = ButtonMessages.ModelessMsg(
+						"Attenzione, nella cartella selezionata i files iw2ayv.txt e Results1.xls" + "\n"
+								+ "esistono gia'  premere SOVRASCRIVI per cancellarli, CONTINUA per utilizzarli, altrimenti CHIUDI",
+						"SOVRASCRIVI", "CONTINUA", "CHIUDI");
+				switch (userSelection1) {
+				case ABORT:
+					return;
+				case 2:
+					nuovo1 = false;
+					break;
+				case 3:
+					nuovo1 = true;
+					break;
+				}
+			}
+
+			if (!fileExist) {
+				nuovo1 = true;
+			}
+
+			if (nuovo1) {
+				//
+				// se e' stato selezionato un nuovo set di misure cancello sia
+				// il
+				// file directory che il file excel dei risultati
+				//
+				File fx = new File(startingDir + MyConst.SEQUENZE_FILE);
+				if (fx.exists())
+					fx.delete();
+				File fy = new File(startingDir + MyConst.XLS_FILE);
+				if (fy.exists())
+					fy.delete();
+				File fz = new File(startingDir + MyConst.TXT_FILE);
+				if (fz.exists())
+					fz.delete();
+				// MyLog.here();
+				// IJ.log("startingDir=" + startingDir);
+				MyLog.initLog(startingDir + "MyLog.txt");
+
+				List<File> result = getFileListing(new File(startingDir));
+				if (result == null) {
+					MyLog.here("getFileListing.result==null");
+				}
+				String[] list = new String[result.size()];
+				int j1 = 0;
+				for (File file : result) {
+					list[j1++] = file.getPath();
+				}
+				// MyLog.logVectorVertical(list, "list");
+				// MyLog.waitHere();
+
+				// //
+				// //
+
+				String[][] tableSequenceLoaded = generateSequenceTable(list, tableCode, tableExpand);
+				if (debugTables) {
+					IJ.log("\\Clear");
+					MyLog.logMatrix(tableSequenceLoaded, "tableSequenceLoaded");
+					MyLog.waitHere("salvare il log come TableSequenceLoaded");
+				}
+
+				// cancello gli eventuali messaggi di ImageJ dal log
+				// if (WindowManager.getFrame("Log") != null) {
+				// IJ.selectWindow("Log");
+				// IJ.run("Close");
+				// }
+
+				if (tableSequenceLoaded == null) {
+					MyLog.here("non sono state trovate immagini da analizzare");
+					return;
+				}
+
+				// =============================================================
+				// VECCHIA CAZZATA FUNZIONANTE
+				// =============================================================
+
+				//
+				// Effettuo il sort della table, secondo il tempo di
+				// acquisizione
+				//
+				// String[][] tableSequenceSorted =
+				// bubbleSortSequenceTable2(tableSequenceLoaded);
+				// if (debugTables) {
+				// MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
+				// MyLog.waitHere("salvare il log come TableSequenceSorted");
+				// }
+
+				// =============================================================
+				// NUOVA CAZZATA INEDITA
+				// =============================================================
+
+				String[][] tableSequenceSorted1 = TableSorter.minsort(tableSequenceLoaded, TableSequence.POSIZ);
+				if (debugTables) {
+					IJ.log("\\Clear");
+					MyLog.logMatrix(tableSequenceSorted1, "tableSequenceSorted1");
+					MyLog.waitHere("salvare il log come TableSequenceSorted1");
+				}
+
+				String[][] tableSequenceSorted2 = TableSorter.minsort(tableSequenceSorted1, TableSequence.TIME);
+				if (debugTables) {
+					IJ.log("\\Clear");
+					MyLog.logMatrix(tableSequenceSorted2, "tableSequenceSorted2");
+					MyLog.waitHere("salvare il log come TableSequenceSorted2");
+				}
+
+				String[][] tableSequenceReordered = reorderSequenceTable(tableSequenceSorted2, tableCode);
+				if (debugTables) {
+					IJ.log("\\Clear");
+					MyLog.logMatrix(tableSequenceReordered, "tableSequenceReordered");
+					MyLog.waitHere("salvare il log come TableSequenceReordered");
+				}
+
+				// String[][] tableSequenceReordered =
+				// TableSorter.minsort(tableSequenceReorderedXX,
+				// TableSequence.POSIZ);
+				// if (debugTables) {
+				// IJ.log("\\Clear");
+				// MyLog.logMatrix(tableSequenceReordered,
+				// "tableSequenceReordered");
+				// MyLog.waitHere("salvare il log come tableSequenceReordered");
+				// }
+
+				String[][] listProblems = verifySequenceTable(tableSequenceReordered, tableCode);
+				if (debugTables) {
+					IJ.log("\\Clear");
+					MyLog.logMatrix(listProblems, "listProblems");
+					MyLog.waitHere("salvare il log come ListProblems");
+				}
+
+				String[] myCode1 = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_", "YL2S_", "YR2F_", "YR2S_", "JUS1A",
+						"JUSAA", "KUS1A", "KUSAA", "PUSAA", "PUS1A" };
+				// int[] myNum = { 4 };
+				// String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li",
+				// "LN",
+				// "LT" };
+				// String[] myPosiz = { "-45", "0", "45" };
+
+				String[][] tableSequenceModified1 = TableSorter.tableModifierSmart(tableSequenceReordered, myCode1);
+
+				if (debugTables) {
+					IJ.log("\\Clear");
+					MyLog.logMatrix(tableSequenceModified1, "tableSequenceModified1");
+					MyLog.waitHere("salvare il log come tableSequenceModified1");
+				}
+
+				// String[] myCode2 = { "JUS1A", "JUSAA" };
+				// String[][] tableSequenceModified2 =
+				// TableSorter.tableModifierSmart(tableSequenceModified1,
+				// myCode2);
+				// if (debugTables) {
+				// IJ.log("\\Clear");
+				// MyLog.logMatrix(tableSequenceModified2,
+				// "tableSequenceModified2");
+				// MyLog.waitHere("salvare il log come tableSequenceModified2");
+				// }
+				//
+				//
+				// // int[] myNum = { 4 };
+				// // String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF",
+				// "Li",
+				// // "LN",
+				// // "LT" };
+				// // String[] myPosiz = { "-45", "0", "45" };
+				// String[] myCode3 = { "KUS1A", "KUSAA" };
+				//
+				// String[][] tableSequenceModified3 =
+				// TableSorter.tableModifierSmart(tableSequenceModified2,
+				// myCode3);
+				//
+				// if (true) {
+				// IJ.log("\\Clear");
+				// MyLog.logMatrix(tableSequenceModified3,
+				// "tableSequenceModified3");
+				// MyLog.waitHere("salvare il log come tableSequenceModified3");
+				// }
+
+				boolean test = false;
+				// NOTA BENE: lasciare test a false, altrimenti non vengono piu'
+				// stampati gli errori e si hanno problemi in elaborazione!!!
+				logVerifySequenceTable(listProblems, test);
+
+				boolean success = new TableSequence().writeTable(startingDir + MyConst.SEQUENZE_FILE,
+						tableSequenceModified1);
+				if (!success)
+					IJ.log("Problemi creazione file iw2ayv.txt");
+			}
 			// MyLog.here();
 			// IJ.log("startingDir=" + startingDir);
-			MyLog.initLog(startingDir + "MyLog.txt");
 
-			List<File> result = getFileListing(new File(startingDir));
-			if (result == null) {
-				MyLog.here("getFileListing.result==null");
-			}
-			String[] list = new String[result.size()];
-			int j1 = 0;
-			for (File file : result) {
-				list[j1++] = file.getPath();
-			}
-			// MyLog.logVectorVertical(list, "list");
-			// MyLog.waitHere();
-
-			// //
-			// //
-
-			
-			String[][] tableSequenceLoaded = generateSequenceTable(list, tableCode, tableExpand);
+			String[][] tableSequenceReloaded = new TableSequence().loadTable(startingDir + MyConst.SEQUENZE_FILE);
 			if (debugTables) {
 				IJ.log("\\Clear");
-				MyLog.logMatrix(tableSequenceLoaded, "tableSequenceLoaded");
-				MyLog.waitHere("salvare il log come TableSequenceLoaded");
+				MyLog.logMatrix(tableSequenceReloaded, "tableSequenceReloaded");
+				MyLog.waitHere("salvare il log come tableSequenceReloaded");
 			}
 
-			// cancello gli eventuali messaggi di ImageJ dal log
-			// if (WindowManager.getFrame("Log") != null) {
-			// IJ.selectWindow("Log");
-			// IJ.run("Close");
-			// }
+			callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false, superficiali, p10p11p12, tw);
 
-			if (tableSequenceLoaded == null) {
-				MyLog.here("non sono state trovate immagini da analizzare");
-				return;
-			}
-
-			// =============================================================
-			// VECCHIA CAZZATA FUNZIONANTE
-			// =============================================================
-
-			//
-			// Effettuo il sort della table, secondo il tempo di acquisizione
-			//
-			// String[][] tableSequenceSorted =
-			// bubbleSortSequenceTable2(tableSequenceLoaded);
-			// if (debugTables) {
-			// MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
-			// MyLog.waitHere("salvare il log come TableSequenceSorted");
-			// }
-
-			// =============================================================
-			// NUOVA CAZZATA INEDITA
-			// =============================================================
-
-			String[][] tableSequenceSorted1 = TableSorter.minsort(tableSequenceLoaded, TableSequence.POSIZ);
-			if (debugTables) {
-				IJ.log("\\Clear");
-				MyLog.logMatrix(tableSequenceSorted1, "tableSequenceSorted1");
-				MyLog.waitHere("salvare il log come TableSequenceSorted1");
-			}
-
-			String[][] tableSequenceSorted2 = TableSorter.minsort(tableSequenceSorted1, TableSequence.TIME);
-			if (debugTables) {
-				IJ.log("\\Clear");
-				MyLog.logMatrix(tableSequenceSorted2, "tableSequenceSorted2");
-				MyLog.waitHere("salvare il log come TableSequenceSorted2");
-			}
-
-			String[][] tableSequenceReordered = reorderSequenceTable(tableSequenceSorted2, tableCode);
-			if (debugTables) {
-				IJ.log("\\Clear");
-				MyLog.logMatrix(tableSequenceReordered, "tableSequenceReordered");
-				MyLog.waitHere("salvare il log come TableSequenceReordered");
-			}
-
-			// String[][] tableSequenceReordered =
-			// TableSorter.minsort(tableSequenceReorderedXX,
-			// TableSequence.POSIZ);
-			// if (debugTables) {
-			// IJ.log("\\Clear");
-			// MyLog.logMatrix(tableSequenceReordered,
-			// "tableSequenceReordered");
-			// MyLog.waitHere("salvare il log come tableSequenceReordered");
-			// }
-
-			String[][] listProblems = verifySequenceTable(tableSequenceReordered, tableCode);
-			if (debugTables) {
-				IJ.log("\\Clear");
-				MyLog.logMatrix(listProblems, "listProblems");
-				MyLog.waitHere("salvare il log come ListProblems");
-			}
-
-			String[] myCode1 = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_", "YL2S_", "YR2F_", "YR2S_", "JUS1A",
-					"JUSAA", "KUS1A", "KUSAA", "PUSAA", "PUS1A" };
-			// int[] myNum = { 4 };
-			// String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li",
-			// "LN",
-			// "LT" };
-			// String[] myPosiz = { "-45", "0", "45" };
-
-			String[][] tableSequenceModified1 = TableSorter.tableModifierSmart(tableSequenceReordered, myCode1);
-
-			if (debugTables) {
-				IJ.log("\\Clear");
-				MyLog.logMatrix(tableSequenceModified1, "tableSequenceModified1");
-				MyLog.waitHere("salvare il log come tableSequenceModified1");
-			}
-
-			// String[] myCode2 = { "JUS1A", "JUSAA" };
-			// String[][] tableSequenceModified2 =
-			// TableSorter.tableModifierSmart(tableSequenceModified1, myCode2);
-			// if (debugTables) {
-			// IJ.log("\\Clear");
-			// MyLog.logMatrix(tableSequenceModified2,
-			// "tableSequenceModified2");
-			// MyLog.waitHere("salvare il log come tableSequenceModified2");
-			// }
-			//
-			//
-			// // int[] myNum = { 4 };
-			// // String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li",
-			// // "LN",
-			// // "LT" };
-			// // String[] myPosiz = { "-45", "0", "45" };
-			// String[] myCode3 = { "KUS1A", "KUSAA" };
-			//
-			// String[][] tableSequenceModified3 =
-			// TableSorter.tableModifierSmart(tableSequenceModified2, myCode3);
-			//
-			// if (true) {
-			// IJ.log("\\Clear");
-			// MyLog.logMatrix(tableSequenceModified3,
-			// "tableSequenceModified3");
-			// MyLog.waitHere("salvare il log come tableSequenceModified3");
-			// }
-
-			boolean test = false;
-			// NOTA BENE: lasciare test a false, altrimenti non vengono piu'
-			// stampati gli errori e si hanno problemi in elaborazione!!!
-			logVerifySequenceTable(listProblems, test);
-
-			boolean success = new TableSequence().writeTable(startingDir + MyConst.SEQUENZE_FILE,
-					tableSequenceModified1);
-			if (!success)
-				IJ.log("Problemi creazione file iw2ayv.txt");
 		}
-		// MyLog.here();
-		// IJ.log("startingDir=" + startingDir);
+		long endTime = System.currentTimeMillis();
+		long total = (endTime - startTime) / 1000;
+		long minuti = total / 60;
+		long secondi = total - minuti * 60;
 
-		String[][] tableSequenceReloaded = new TableSequence().loadTable(startingDir + MyConst.SEQUENZE_FILE);
-		if (debugTables) {
-			IJ.log("\\Clear");
-			MyLog.logMatrix(tableSequenceReloaded, "tableSequenceReloaded");
-			MyLog.waitHere("salvare il log come tableSequenceReloaded");
-		}
+		IJ.beep();
+		IJ.wait(100);
+		IJ.beep();
+		IJ.wait(100);
+		IJ.beep();
+		IJ.wait(100);
+		IJ.beep();
 
-		callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false, superficiali, p10p11p12, tw);
-		MyLog.waitHere("FINE LAVORO");
+		MyLog.waitHere("FINE LAVORO " + minuti + " minuti " + secondi + " secondi");
 	}
 
 	/**
@@ -894,7 +956,7 @@ public class Sequenze_ implements PlugIn {
 		// MyLog.logMatrix(tableSequenze5, "tableSequenze5");
 		// MyLog.logMatrix(tableCode5, "tableCode5");
 		while (j1 < tableSequenze5.length) {
-			// IJ.log("j1= "+j1);
+			// MyLog.waitHere("j1= "+j1);
 			if (TableSequence.getDone(tableSequenze5, j1).equals("0")) {
 				String plugin = pluginToBeCalledWithCoil(j1, tableSequenze5, tableCode5);
 				// qui altero il plugin per poter chiamare, durante i tests le
@@ -914,14 +976,6 @@ public class Sequenze_ implements PlugIn {
 						plugin = "contMensili.p2rmn_";
 					if (plugin.equals("contMensili.p17rmn_"))
 						plugin = "contMensili.p7rmn_";
-				}
-				if (legacy) {
-					if (plugin.equals("contMensili.p10rmn_"))
-						plugin = "contMensili.p10rmn_OLD1";
-					if (plugin.equals("contMensili.p11rmn_"))
-						plugin = "contMensili.p11rmn_OLD1";
-					if (plugin.equals("contMensili.p12rmn_"))
-						plugin = "contMensili.p12rmn_OLD1";
 				}
 
 				String argomento = argumentForPluginToBeCalled(j1, tableSequenze5);
