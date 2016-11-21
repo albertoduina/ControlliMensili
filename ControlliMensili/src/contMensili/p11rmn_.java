@@ -404,7 +404,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			break;
 		}
 
-		MyLog.waitHere("mode=" + mode);
+//		MyLog.waitHere("mode=" + mode);
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		do {
