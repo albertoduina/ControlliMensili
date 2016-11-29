@@ -983,7 +983,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 		double[] xprofile3 = ArrayUtils.arrayListToArrayDouble(arrprofile3.get(0));
 		double[] yprofile3 = ArrayUtils.arrayListToArrayDouble(arrprofile3.get(1));
 
-		double[] derivata2_M8 = derivata(derivataM7);
+		// double[] derivata2_M8 = derivata(derivataM7);
 
 		double[] vet2X = new double[profiM1.length];
 		for (int i1 = 0; i1 < profiM1.length; i1++) {
@@ -995,7 +995,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 		double[] param1 = cf1.getParams();
 		double[] vetfit = fitResult3(vet2X, param1);
 		double[] correctedM4 = new double[vet2X.length];
-		double minC4 = ArrayUtils.vetMin(correctedM4);
+		// double minC4 = ArrayUtils.vetMin(correctedM4);
 		for (int i1 = 0; i1 < vet2X.length; i1++) {
 			correctedM4[i1] = (smoothM4[i1] - vetfit[i1]);
 		}
@@ -1015,15 +1015,17 @@ public class p16rmn_ implements PlugIn, Measurements {
 		xpoints2[0] = due;
 		ypoints2[0] = orangeslope[due];
 
-		Plot plot2 = new Plot("PRIMO SMOOTH", "pixel", "valore");
+		Plot plot2 = new Plot("SEGNALE ORIGINALE (1 SMOOTH)", "pixel", "valore");
+		plot2.setColor(Color.red);
+		plot2.addPoints(vet2X, profiM1, Plot.LINE);
 		plot2.setColor(Color.blue);
 		plot2.addPoints(vet2X, smoothM4, Plot.LINE);
+		plot2.addLegend("originale\n1 smooth");
 		boolean updateImg = true;
 		plot2.setLimitsToFit(updateImg);
 		plot2.show();
-		MyLog.waitHere("PRIMO SMOOTH");
 
-		Plot plot5 = new Plot("DERIVATA", "pixel", "valore");
+		Plot plot5 = new Plot("ELABORAZIONI DERIVATA + ANGOLO ", "pixel", "valore");
 		plot5.setColor(Color.red);
 		plot5.addPoints(vet2X, derivataM7, Plot.LINE);
 		plot5.setColor(Color.green);
@@ -1032,31 +1034,32 @@ public class p16rmn_ implements PlugIn, Measurements {
 		plot5.addPoints(vet2X, orangeslope, Plot.LINE);
 		plot5.setColor(Color.black);
 		plot5.addPoints(xpoints1, ypoints1, Plot.CIRCLE);
-		plot5.setColor(Color.black);
+		plot5.setColor(Color.blue);
 		plot5.addPoints(xpoints2, ypoints2, Plot.CIRCLE);
+		plot5.addLegend("derivata\nangolo\nangolo(rev)\nstartpoint\nendpoint");
 		plot5.setLimitsToFit(updateImg);
 		plot5.show();
-		MyLog.waitHere("DERIVATA");
 
-		Plot plot6 = new Plot("GULP", "pixel", "valore");
-		// plot6.setColor(Color.orange);
-		// plot6.addPoints(vet2X, smoothM4, Plot.LINE);
+		Plot plot6 = new Plot("FIT fondo", "pixel", "valore");
+		plot6.setColor(Color.orange);
+		plot6.addPoints(vet2X, smoothM4, Plot.LINE);
 		plot6.setColor(Color.blue);
 		plot6.addPoints(xprofile3, yprofile3, Plot.CIRCLE);
 		plot6.setColor(Color.green);
 		plot6.addPoints(vet2X, vetfit, Plot.LINE);
+		plot6.addLegend("segnale\nfondo\nPOLY2suFondo");
+		
 		plot6.setLimitsToFit(updateImg);
 		plot6.show();
-		MyLog.waitHere("GULP");
 
-		Plot plot7 = new Plot("POTA_CHE_FIGATA", "pixel", "valore");
-		plot7.setColor(Color.blue);
+		Plot plot7 = new Plot("Fondo corretto POTA CHE FIGATA", "pixel", "valore");
+		plot7.setColor(Color.orange);
 		plot7.addPoints(vet2X, smoothM4, Plot.LINE);
 		plot7.setColor(Color.blue);
 		plot7.addPoints(vet2X, correctedM4, Plot.LINE);
+		plot7.addLegend("originale\ncorretto");
 		plot7.setLimitsToFit(updateImg);
 		plot7.show();
-		MyLog.waitHere("POTA_CHE_FIGATA");
 
 		if (slab) {
 			int[] isd1 = analPlot1(smoothM4, slab);
@@ -1069,7 +1072,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 			msgFwhm();
 		}
 
-		MyLog.waitHere("CASSSO!");
+		MyLog.waitHere();
 
 		if (step) {
 			imp1.updateAndDraw();
@@ -1254,57 +1257,6 @@ public class p16rmn_ implements PlugIn, Measurements {
 	// double[] profiM1 = ((Line) roi1).getPixels();
 	// return profiM1;
 	// }
-
-	/**
-	 * Effettua un fit POLY2 (2nd Degree Polynomial), utilizzando il fit di
-	 * ImageJ ed avendo come input il vettore tempi ed il vettore dei pixel
-	 * 
-	 * @param vetX
-	 *            vettore dei tempi
-	 * @param vetPixels
-	 *            vettore dei pixels
-	 * @return vettore detrend
-	 */
-	public static double[] vetDetrend(double[] vetX, double[] vetPixels) {
-		if (vetX == null) {
-			MyLog.waitHere("vetX==null");
-			MyLog.waitThere("chiamante= ");
-			return null;
-		}
-		if (vetPixels == null) {
-			MyLog.waitHere("vetPixels==null");
-			MyLog.waitThere("chiamante= ");
-			return null;
-		}
-		double[] vetOut = new double[vetX.length];
-		// viene effettuato il fit POLYY2
-		CurveFitter cf1 = fitCurve(vetX, vetPixels);
-		// i parametri finali del fit vanno in param1
-		double[] param1 = cf1.getParams();
-		// in vetTrend viene ricostruita la curva data dai parametri del fit
-		double[] vetTrend = fitResult3(vetX, param1);
-		// viene effettuato il DETREND e messo in vetOut
-		for (int i1 = 0; i1 < vetX.length; i1++) {
-			vetOut[i1] = vetPixels[i1] - vetTrend[i1];
-		}
-		return vetOut;
-	}
-
-	/**
-	 * Fit di una curva poly2 utilizzando CurveFitter di ImageJ
-	 * 
-	 * @param vetX
-	 *            vettore ascisse
-	 * @param vetY
-	 *            vettore ordinate
-	 * @return parametri curve fitter dopo il fit
-	 */
-	public static CurveFitter fitCurve(double[] vetX, double[] vetY) {
-		CurveFitter cf = new CurveFitter(vetX, vetY);
-		// cf.doFit(CurveFitter.POLY2);
-		cf.doFit(CurveFitter.POLY2);
-		return cf;
-	}
 
 	/**
 	 * Log dei risulytati del fit polinomiale
@@ -1692,7 +1644,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 			plot.addLabel(labPos, 0.65, "up      dx " + isd2[3] + "  =   " + IJ.d2s(profile1[isd2[3]], 2));
 			plot.addLabel(labPos, 0.70, "sx interp       =  " + IJ.d2s(sx, 2));
 			plot.addLabel(labPos, 0.75, "dx interp       =  " + IJ.d2s(dx, 2));
-			plot.addLabel(labPos, 0.80, "fwhm            =  " + IJ.d2s(fwhm, 2));
+			plot.addLabel(labPos, 0.80, "fwhm            =  " + IJ.d2s(fwhm, 2) + " mm");
 			plot.setColor(Color.green);
 		}
 		fff[0] = 0;
