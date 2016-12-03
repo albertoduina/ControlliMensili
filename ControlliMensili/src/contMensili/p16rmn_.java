@@ -4,6 +4,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Prefs;
+import ij.WindowManager;
 import ij.gui.Line;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
@@ -21,6 +22,7 @@ import ij.util.Tools;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -517,13 +519,15 @@ public class p16rmn_ implements PlugIn, Measurements {
 			// refPosition [startX = 13, startY=65, endX = 147, endY=65,
 			// radius=10]
 
-			if (step)
-				msgProfile();
+			// if (step)
+			// msgProfile();
+
+			// ====== PRIMA SLAB ========
+			MyLog.waitHere("PRIMA SLAB");
 
 			double kappa = 156 / lato;
-			// MyLog.waitHere("lato= " + lato + " kappa= " + kappa);
 			int ra1 = (int) (13 / kappa);
-			vetProfile[0] = 10.0 / kappa;
+			vetProfile[0] = 10 / kappa;
 			vetProfile[1] = 26 / kappa;
 			vetProfile[2] = 141 / kappa;
 			vetProfile[3] = 26 / kappa;
@@ -543,19 +547,18 @@ public class p16rmn_ implements PlugIn, Measurements {
 
 			if (imp3.isVisible())
 				imp3.getWindow().toFront();
-			//
-			// Second slab analysis
-			//
-			if (step)
-				msgProfile();
-			// refPosition [startX = 13, startY=65, endX = 147, endY=65,
-			// radius=10]
 
-			ra1 = (int) (lato / 12.0);
-			vetProfile[0] = lato / 13.0;
-			vetProfile[1] = lato * 2.0 / 5.0;
-			vetProfile[2] = lato - lato / 13.0;
-			vetProfile[3] = lato * 2.0 / 5.0;
+			closePlots();
+			MyLog.waitHere();
+
+			// ====== SECONDA SLAB ========
+			MyLog.waitHere("SECONDA SLAB");
+
+			ra1 = (int) (13 / kappa);
+			vetProfile[0] = 10 / kappa;
+			vetProfile[1] = 61 / kappa;
+			vetProfile[2] = 141 / kappa;
+			vetProfile[3] = 61 / kappa;
 
 			isSlab = true;
 			invertErf = false;
@@ -576,19 +579,25 @@ public class p16rmn_ implements PlugIn, Measurements {
 			vetS2CorSlab[w1] = spessCor1[1];
 			vetErrSpessSlab[w1] = spessCor1[2];
 			vetAccurSpessSlab[w1] = spessCor1[3];
-			//
-			// First wedge analysis
-			//
-			if (step)
-				msgProfile();
-			// refPosition [startX = 13, startY=98, endX = 147, endY=98,
-			// radius=10]
+			// //
+			// // First wedge analysis
+			// //
+			// if (step)
+			// msgProfile();
+			// // refPosition [startX = 13, startY=98, endX = 147, endY=98,
+			// // radius=10]
 
-			ra1 = (int) (lato / 12.0);
-			vetProfile[0] = lato / 13.0;
-			vetProfile[1] = lato * 3.0 / 5.0;
-			vetProfile[2] = lato - lato / 13.0;
-			vetProfile[3] = lato * 3.0 / 5.0;
+			closePlots();
+			MyLog.waitHere();
+
+			// ====== PRIMO CUNEO ========
+			MyLog.waitHere("PRIMO CUNEO");
+
+			ra1 = (int) (13 / kappa);
+			vetProfile[0] = 10 / kappa;
+			vetProfile[1] = 96 / kappa;
+			vetProfile[2] = 141 / kappa;
+			vetProfile[3] = 96 / kappa;
 
 			isSlab = false;
 			invertErf = true;
@@ -603,24 +612,36 @@ public class p16rmn_ implements PlugIn, Measurements {
 			fwhmCuneo3[w1] = dsd3[0];
 			peakPositionCuneo3[w1] = dsd3[1];
 
+			// chiudo i plot precedenti
+			// Frame[] nonimage = WindowManager.getNonImageWindows();
+			// for (int i1 = 0; i1 < nonimage.length; i1++) {
+			// nonimage[i1].dispose();
+			// }
+
+			// MyLog.waitHere("PROSEGUIAMO");
+
 			if (imp3.isVisible())
 				imp3.getWindow().toFront();
 			//
 			// Second wedge analysis
 			//
-			if (step)
-				msgProfile();
+
+			// ====== SECONDO CUNEO ========
+			MyLog.waitHere("SECONDO CUNEO");
+
+			// if (step)
+			// msgProfile();
 			// refPosition [startX = 13, startY=133, endX = 147, endY=133,
 			// radius=10]
 
-			ra1 = (int) (lato / 12.0);
-			vetProfile[0] = lato / 13.0;
-			vetProfile[1] = lato * 4.0 / 5.0;
-			vetProfile[2] = lato - lato / 13.0;
-			vetProfile[3] = lato * 4.0 / 5.0;
+			ra1 = (int) (13 / kappa);
+			vetProfile[0] = 10 / kappa;
+			vetProfile[1] = 130 / kappa;
+			vetProfile[2] = 141 / kappa;
+			vetProfile[3] = 130 / kappa;
 
 			isSlab = false;
-			invertErf = false;
+			invertErf = true;
 			putLabelSx = true;
 			if (step) {
 				imp3.getWindow().toFront();
@@ -939,6 +960,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 
 		if (imp1 == null)
 			return null;
+		double[] outFwhm = null;
 
 		double[] msd1; // vettore output rototrasl coordinate
 		double c2x;
@@ -960,23 +982,90 @@ public class p16rmn_ implements PlugIn, Measurements {
 		imp1.setRoi(new Line(c2x, c2y, d2x, d2y));
 		Line lin2 = (Line) imp1.getRoi();
 		double[] profiM1 = lin2.getPixels();
+		double[] vet2X = new double[profiM1.length];
+		for (int i1 = 0; i1 < profiM1.length; i1++) {
+			vet2X[i1] = i1;
+		}
 		double[] smoothM4 = smooth(profiM1);
+
+		Plot plot2 = new Plot("SEGNALE ORIGINALE (1 SMOOTH)", "pixel", "valore");
+		plot2.setColor(Color.red);
+		plot2.addPoints(vet2X, profiM1, Plot.LINE);
+		plot2.setColor(Color.blue);
+		plot2.addPoints(vet2X, smoothM4, Plot.LINE);
+		plot2.addLegend("originale\n1 smooth");
+		boolean updateImg = true;
+		plot2.setLimitsToFit(updateImg);
+		plot2.show();
+		MyLog.waitHere("segnale");
+
+		if (!slab) {
+			double[] profiE1 = createErf(profiM1, invert); // profilo con ERF
+			smoothM4 = profiE1;
+		}
+
 		double minM4 = ArrayUtils.vetMin(smoothM4);
 
 		double[] derivataM7 = derivata(smoothM4);
 
-		int ordine = 6;
+		Plot plot3 = new Plot("DERIVATA", "pixel", "valore");
+		// plot3.setColor(Color.orange);
+		// plot3.addPoints(vet2X, smoothM4, Plot.LINE);
+		plot3.setColor(Color.blue);
+		plot3.addPoints(vet2X, derivataM7, Plot.LINE);
+		plot3.addLegend("derivata");
+		plot3.setLimitsToFit(updateImg);
+		plot3.show();
+		MyLog.waitHere("derivata");
+
+		// int ordine = 6;
+		int ordine = 8;
 		double[] blueslope = angolo(derivataM7, ordine);
 		double[] orangeslope = reverse(angolo(reverse(derivataM7), ordine));
-		MyLog.waitHere();
 
 		int posmax = ArrayUtils.posMax(derivataM7);
 		int posmin = ArrayUtils.posMin(derivataM7);
-		boolean reverse = false;
+		boolean reverse = invert;
 		double soglia1 = 0.5;
 		int uno = soglia(blueslope, soglia1, posmin, reverse);
 		reverse = true;
 		int due = soglia(orangeslope, soglia1, posmax, reverse);
+
+		double[] xpoints1 = new double[1];
+		double[] ypoints1 = new double[1];
+		xpoints1[0] = uno;
+		ypoints1[0] = blueslope[uno];
+
+		double[] xpoints2 = new double[1];
+		double[] ypoints2 = new double[1];
+		xpoints2[0] = due;
+		ypoints2[0] = orangeslope[due];
+
+		Plot plot5 = new Plot("ELABORAZIONI DERIVATA + ANGOLO ", "pixel", "valore");
+		plot5.setColor(Color.orange);
+		plot5.addPoints(vet2X, derivataM7, Plot.LINE);
+		plot5.setColor(Color.green);
+		plot5.addPoints(vet2X, blueslope, Plot.LINE);
+		plot5.setColor(Color.black);
+		plot5.addPoints(xpoints1, ypoints1, Plot.CIRCLE);
+		plot5.addLegend("derivata\nangolo\nendpoint");
+		// plot5.setLimitsToFit(updateImg);
+		plot5.show();
+
+		MyLog.waitHere("angolo lato DX");
+
+		Plot plot5a = new Plot("ELABORAZIONI DERIVATA + ANGOLO ", "pixel", "valore");
+		plot5a.setColor(Color.orange);
+		plot5a.addPoints(vet2X, derivataM7, Plot.LINE);
+		plot5a.setColor(Color.red);
+		plot5a.addPoints(vet2X, orangeslope, Plot.LINE);
+		plot5a.setColor(Color.black);
+		plot5a.addPoints(xpoints2, ypoints2, Plot.CIRCLE);
+		plot5a.addLegend("derivata\nangolo(rev)\nstartpoint");
+		// plot5.setLimitsToFit(updateImg);
+		plot5a.show();
+		MyLog.waitHere("angolo lato SX");
+
 		// ottenuti i punti uno e due effettuo la potatura dei dati ivi compresi
 
 		ArrayList<ArrayList<Double>> arrprofile3 = potatura(smoothM4, uno, due);
@@ -984,11 +1073,6 @@ public class p16rmn_ implements PlugIn, Measurements {
 		double[] yprofile3 = ArrayUtils.arrayListToArrayDouble(arrprofile3.get(1));
 
 		// double[] derivata2_M8 = derivata(derivataM7);
-
-		double[] vet2X = new double[profiM1.length];
-		for (int i1 = 0; i1 < profiM1.length; i1++) {
-			vet2X[i1] = i1;
-		}
 
 		CurveFitter cf1 = new CurveFitter(xprofile3, yprofile3);
 		cf1.doFit(CurveFitter.POLY2);
@@ -1005,54 +1089,19 @@ public class p16rmn_ implements PlugIn, Measurements {
 			correctedM4[i1] = correctedM4[i1] + kappa;
 		}
 
-		double[] xpoints1 = new double[1];
-		double[] ypoints1 = new double[1];
-		xpoints1[0] = uno;
-		ypoints1[0] = blueslope[uno];
-
-		double[] xpoints2 = new double[1];
-		double[] ypoints2 = new double[1];
-		xpoints2[0] = due;
-		ypoints2[0] = orangeslope[due];
-
-		Plot plot2 = new Plot("SEGNALE ORIGINALE (1 SMOOTH)", "pixel", "valore");
-		plot2.setColor(Color.red);
-		plot2.addPoints(vet2X, profiM1, Plot.LINE);
-		plot2.setColor(Color.blue);
-		plot2.addPoints(vet2X, smoothM4, Plot.LINE);
-		plot2.addLegend("originale\n1 smooth");
-		boolean updateImg = true;
-		plot2.setLimitsToFit(updateImg);
-		plot2.show();
-
-		Plot plot5 = new Plot("ELABORAZIONI DERIVATA + ANGOLO ", "pixel", "valore");
-		plot5.setColor(Color.red);
-		plot5.addPoints(vet2X, derivataM7, Plot.LINE);
-		plot5.setColor(Color.green);
-		plot5.addPoints(vet2X, blueslope, Plot.LINE);
-		plot5.setColor(Color.orange);
-		plot5.addPoints(vet2X, orangeslope, Plot.LINE);
-		plot5.setColor(Color.black);
-		plot5.addPoints(xpoints1, ypoints1, Plot.CIRCLE);
-		plot5.setColor(Color.blue);
-		plot5.addPoints(xpoints2, ypoints2, Plot.CIRCLE);
-		plot5.addLegend("derivata\nangolo\nangolo(rev)\nstartpoint\nendpoint");
-		plot5.setLimitsToFit(updateImg);
-		plot5.show();
-
-		Plot plot6 = new Plot("FIT fondo", "pixel", "valore");
+		Plot plot6 = new Plot("FIT POLY2 FONDO", "pixel", "valore");
 		plot6.setColor(Color.orange);
 		plot6.addPoints(vet2X, smoothM4, Plot.LINE);
 		plot6.setColor(Color.blue);
-		plot6.addPoints(xprofile3, yprofile3, Plot.CIRCLE);
+		plot6.addPoints(xprofile3, yprofile3, Plot.CROSS);
 		plot6.setColor(Color.green);
 		plot6.addPoints(vet2X, vetfit, Plot.LINE);
 		plot6.addLegend("segnale\nfondo\nPOLY2suFondo");
-		
 		plot6.setLimitsToFit(updateImg);
 		plot6.show();
+		MyLog.waitHere("FONDO RILEVATO");
 
-		Plot plot7 = new Plot("Fondo corretto POTA CHE FIGATA", "pixel", "valore");
+		Plot plot7 = new Plot("FONDO CORRETTO", "pixel", "valore");
 		plot7.setColor(Color.orange);
 		plot7.addPoints(vet2X, smoothM4, Plot.LINE);
 		plot7.setColor(Color.blue);
@@ -1060,121 +1109,31 @@ public class p16rmn_ implements PlugIn, Measurements {
 		plot7.addLegend("originale\ncorretto");
 		plot7.setLimitsToFit(updateImg);
 		plot7.show();
+		MyLog.waitHere("FONDO CORRETTO");
 
-		if (slab) {
-			int[] isd1 = analPlot1(smoothM4, slab);
-			double[] outFwhm = calcFwhm(isd1, smoothM4, slab, dimPixel);
-			createPlot2(smoothM4, slab, dimPixel, bLabelSx, "plot segnale + FWHM", true);
+		int[] isd1 = analPlot1(smoothM4, slab);
+		outFwhm = calcFwhm(isd1, smoothM4, slab, dimPixel);
+		createPlot2(smoothM4, slab, dimPixel, bLabelSx, "plot segnale + FWHM", true);
+		MyLog.waitHere("FWHM SENZA CORREZIONE");
 
-			int[] isd2 = analPlot1(correctedM4, slab);
-			outFwhm = calcFwhm(isd2, correctedM4, slab, dimPixel);
-			createPlot2(correctedM4, slab, dimPixel, bLabelSx, "plot corretto + FWHM", true);
-			msgFwhm();
-		}
+		int[] isd2 = analPlot1(correctedM4, slab);
+		outFwhm = calcFwhm(isd2, correctedM4, slab, dimPixel);
+		createPlot2(correctedM4, slab, dimPixel, bLabelSx, "plot corretto + FWHM", true);
+		MyLog.waitHere("FWHM CON CORREZIONE");
+		Line.setWidth(1);
+		MyLog.waitHere("FINE ANALPROF");
 
-		MyLog.waitHere();
-
-		if (step) {
-			imp1.updateAndDraw();
-			msgWideline();
-			createPlot2(profiM1, true, dimPixel, bLabelSx, "Profilo mediato", false);
-			msgSlab();
-		}
-
-		// double meansig = ArrayUtils.vetMean(profiM1);
-		// double[] pixcorr1 = new double[profiM1.length];
-		// for (int i1 = 0; i1 < pixfondo.length; i1++) {
-		// pixcorr1[i1] = (profiM1[i1] - vetrend1[i1]) + meansig * 1.15;
-		// }
-		// CurveFitter cf2 = fitCurve(vet2X, profiM1);
-		// double[] param2 = cf2.getParams();
-		// double[] vetrend2 = fitResult(vet2X, param2);
-		// double[] pixcorr2 = new double[profiM1.length];
-		// for (int i1 = 0; i1 < pixfondo.length; i1++) {
-		// pixcorr2[i1] = (profiM1[i1] - vetrend2[i1]) + meansig;
-		// }
-		// Plot plot22 = new Plot("CORRETTO FERNET", "pixel", "valore");
-		// plot22.setColor(Color.black);
-		// plot22.addPoints(vet2X, profiM1, plot.LINE);
-		// plot22.setColor(Color.green);
-		// plot22.addPoints(vet2X, vetrend, plot.LINE);
-		// plot22.setColor(Color.green);
-		// plot22.addPoints(vet2X, pixcorr1, plot.LINE);
-		// plot22.setColor(Color.orange);
-		// plot22.addPoints(vet2X, vetrend2, plot.LINE);
-		// plot22.setColor(Color.orange);
-		// plot22.addPoints(vet2X, pixcorr2, plot.LINE);
-		// // plot22.setColor(Color.orange);
-		// boolean updateImg = true;
-		// plot22.setLimitsToFit(updateImg);
-		// plot22.show();
-		// MyLog.waitHere("nero= originale, verde=detrend su fondo, arancio 0
-		// detrend su segnale");
-
-		// Plot plot3 = new Plot("CORRETTO LISSIO", "pixel", "valore");
-		//
-		// plot3.setColor(Color.black);
-		// plot3.addPoints(vet2X, profiM1, plot1.LINE);
-		//
-		// plot3.setColor(Color.green);
-		// plot3.addPoints(vet2X, vetrend1, plot1.LINE);
-		//
-		// plot3.setColor(Color.red);
-		// plot3.addPoints(vet2X, pixcorr1, plot1.LINE);
-		//
-		// // plot22.setColor(Color.orange);
-		// boolean updateImg3 = true;
-		// plot3.setLimitsToFit(updateImg3);
-		//
-		// plot3.show();
-		// MyLog.waitHere("nero= originale, verde=trend, rosso=originale
-		// corretto");
-
-		// double[] profiB1 = vetDetrend(vet2X, profiM1); //
-		// baselineCorrection2(profiM1,
-		// pixFondo);
-		// double[] profiB1 = pixcorr1; // baselineCorrection2(profiM1,
-		// pixFondo);
-
-		// if (step) {
-		// createPlot2(profiB1, true, bLabelSx, "Profilo mediato + DETREND",
-		// true);
-		// msgBaseline();
-		// }
-		int isd3[];
-		double[] outFwhm;
-		// if (slab) {
-		// isd3 = analPlot1(profiB1, slab);
-		// outFwhm = calcFwhm(isd3, profiB1, slab, dimPixel);
-		// if (step) {
-		// createPlot2(profiB1, slab, bLabelSx, "plot correzione POLY2 + FWHM",
-		// true);
-		// msgFwhm();
-		// }
-		// Line.setWidth(1);
-		// return (outFwhm);
-		// } else {
-		// double[] profiE1 = createErf(profiB1, invert); // profilo con ERF
-		//
-		// isd3 = analPlot1(profiE1, slab);
-		//
-		// outFwhm = calcFwhm(isd3, profiE1, slab, dimPixel);
-		//
-		// if (step) {
-		// createPlot2(profiE1, slab, bLabelSx, "plot ERF con smooth 3x3 e
-		// FWHM", true);
-		// msgErf();
-		// }
-		// Line.setWidth(1);
-		return null;
-
+		return (outFwhm);
 	}
 
-	double vetsearch(double[] vet1, double vet2[]) {
-		double max = ArrayUtils.vetMax(vet2);
-		double min = ArrayUtils.vetMin(vet2);
-
-		return 0;
+	public void closePlots() {
+		// chiudo i plot esistenti plot=immagine senza info
+		String[] vetNames = WindowManager.getImageTitles();
+		for (int i1 = 0; i1 < vetNames.length; i1++) {
+			ImagePlus impx = WindowManager.getImage(vetNames[i1]);
+			if (impx.getInfoProperty() == null)
+				impx.close();
+		}
 	}
 
 	/**
@@ -1506,40 +1465,121 @@ public class p16rmn_ implements PlugIn, Measurements {
 
 		double[] erf = new double[len1];
 		// if (invert) {
-		for (int j = 0; j < profile1.length - 1; j++)
-			erf[j] = (profile1[j] - profile1[j + 1]) * (-1);
-		// } else {
-		// for (int j = profile1.length - 1; j >= 0; j--)
-		// erf[j] = (profile1[j] - profile1[j - 1]) * (-1);
-		// }
+		for (int j = 0; j < profile1.length - 1; j++) {
+			erf[j] = (profile1[j] - profile1[j + 1]);
+			// erf[j] = (profile1[j] - profile1[j + 1]) * (-1);
+		}
+
+		// elimino alcuni errori a inizio e fine profilo (non li voglio a zero)
 		erf[len1 - 1] = erf[len1 - 2];
+		erf[0] = erf[3];
+		erf[1] = erf[3];
+		erf[2] = erf[3];
 
 		// Anziche' utilizzare algoritmi di ricerca dei picchi, cerco il minimo
 		// ed il massimo. Il valore assoluto piu' grande corrispondera'
-		// all'angolo
-		// a 90° che non ci interessa. A questo punto posso portare a zero tutti
-		// i valori del medesimo segno. Restera' cosi' solo il
-		// picco meno alto, corrispondente all'erf della rampa del cuneo.
+		// all'angolo a 90° che non ci interessa. A questo punto posso portare a
+		// zero tutti i valori del medesimo segno. Restera' cosi' solo il picco
+		// meno alto, corrispondente all'erf della rampa del cuneo. (boh, a
+		// distanza di anni non ci capisco una fava di quanto avevo scritto)
+		
 
-		double[] minMax = Tools.getMinMax(erf);
-		double min = minMax[0];
-		double max = minMax[1];
+		
 
+		double[] vet2X = new double[profile1.length];
+		for (int i1 = 0; i1 < profile1.length; i1++) {
+			vet2X[i1] = i1;
+		}
+		Plot plot1 = new Plot("COMPLETE ERF", "pixel", "valore");
+		plot1.setColor(Color.red);
+		// plot1.addPoints(vet2X, profile1, Plot.LINE);
+		// plot1.setColor(Color.blue);
+		plot1.addPoints(vet2X, erf, Plot.LINE);
+		boolean updateImg = true;
+		plot1.setLimitsToFit(updateImg);
+		plot1.show();
+		MyLog.waitHere("ERF TOTALE");
+
+
+		double max = ArrayUtils.vetMax(erf);
+		double min = ArrayUtils.vetMin(erf);
+		int posmax = ArrayUtils.posMax(erf);
+		int posmin = ArrayUtils.posMin(erf);
+		int posx = 0;
+		if (Math.abs(min) > Math.abs(max)) {
+			posx= posmin;
+		} else {
+			posx=posmax;
+		}
+
+		int ordine = 1;
+		double[] blueslope = angolo(erf, ordine);
+		double[] orangeslope = reverse(angolo(reverse(erf), ordine));
+		double soglia1 = 0.5;
+		boolean reverse=true;
+		int uno = soglia(blueslope, soglia1, posx, reverse);
+		reverse = false;
+		int due = soglia(orangeslope, soglia1, posx, reverse);
+		MyLog.waitHere("uno= "+uno+" due= "+due);
+		
+		double[] xpoints1 = new double[1];
+		double[] ypoints1 = new double[1];
+		xpoints1[0] = uno;
+		ypoints1[0] = blueslope[uno];
+
+		double[] xpoints2 = new double[1];
+		double[] ypoints2 = new double[1];
+		xpoints2[0] = due;
+		ypoints2[0] = orangeslope[due];
+
+
+		Plot plot3 = new Plot("slopes", "pixel", "valore");
+		plot3.setColor(Color.blue);
+		plot3.addPoints(vet2X, blueslope, Plot.LINE);
+		plot3.addPoints(xpoints1, ypoints1, Plot.CIRCLE);
+		plot3.setColor(Color.orange);
+		plot3.addPoints(vet2X, orangeslope, Plot.LINE);
+		plot3.addPoints(xpoints2, ypoints2, Plot.CIRCLE);
+		plot3.setLimitsToFit(updateImg);
+		plot3.show();
+		MyLog.waitHere("CALCOLI");
+		
+		
+		// ottenuti i punti uno e due effettuo la potatura dei dati ivi compresi
+
+		ArrayList<ArrayList<Double>> arrprofile3 = potatura(erf, uno, due);
+		double[] xprofile3 = ArrayUtils.arrayListToArrayDouble(arrprofile3.get(0));
+		double[] yprofile3 = ArrayUtils.arrayListToArrayDouble(arrprofile3.get(1));
+		
+		Plot plot4 = new Plot("erf restante", "pixel", "valore");
+		plot4.setColor(Color.orange);
+		plot4.addPoints(vet2X, erf, Plot.LINE);
+		plot4.setColor(Color.green);
+		plot4.addPoints(xprofile3, yprofile3, Plot.X);
+		plot4.setLimitsToFit(updateImg);
+		plot4.show();
+		MyLog.waitHere("ERF RESTANTE");
+	
+		
+		
+
+		
+		
 		if (Math.abs(min) > Math.abs(max) && min < 0) {
-			// se il minimo � di valore assoluto pi� grande, allora porto a 0
+			// se il minimo e' di valore assoluto piu' grande, allora porto a 0
 			// tutti i valori minori di 0
 			for (int i1 = 0; i1 < erf.length; i1++) {
 				if (erf[i1] < 0)
 					erf[i1] = 0;
 			}
-			// e poi cambio il tutto di segno, poich� voglio il picco verso il
+			// e poi cambio il tutto di segno, poiche' voglio il picco verso il
 			// basso
 			for (int i1 = 0; i1 < erf.length; i1++) {
 				erf[i1] *= -1;
 			}
 
 		} else if (Math.abs(min) < Math.abs(max) && max > 0) {
-			// se il massimo � di valore assoluto pi� grande, allora porto a 0
+			// se il massimo e' di valore assoluto piu' grande, allora porto a 0
 			// tutti i valori maggiori di 0
 			for (int i1 = 0; i1 < erf.length; i1++) {
 				if (erf[i1] > 0)
@@ -1548,6 +1588,17 @@ public class p16rmn_ implements PlugIn, Measurements {
 
 		} else
 			MyLog.waitHere("QUESTA E'UNA STRANA ERF");
+
+		Plot plot2 = new Plot("RAMP ERF", "pixel", "valore");
+		plot2.setColor(Color.red);
+		// plot1.addPoints(vet2X, profile1, Plot.LINE);
+		// plot1.setColor(Color.blue);
+		plot2.addPoints(vet2X, erf, Plot.LINE);
+		plot2.addLegend("RAMP ERF");
+		updateImg = true;
+		plot2.setLimitsToFit(updateImg);
+		plot2.show();
+		MyLog.waitHere("ERF RAMPA");
 
 		return (erf);
 	} // createErf

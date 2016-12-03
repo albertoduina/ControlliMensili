@@ -79,10 +79,10 @@ public class p6rmn_Test {
 	public final void testGetLinePixelsHorizontal() {
 		/*
 		 * I risultati ricavati da p6rmn_ sono cambiati con l'uscita della
-		 * release 1.42p di ImageJ. Tale cambiamento è dovuto alle modifiche
+		 * release 1.42p di ImageJ. Tale cambiamento ï¿½ dovuto alle modifiche
 		 * apportate a ij\plugin\Straightener.java, in pratica le variabili che
 		 * definivano le coordinate di inizio e fine della linea sono passate da
-		 * float a double. Ciò ha provocato una variazione sui valori dei pixel
+		 * float a double. Ciï¿½ ha provocato una variazione sui valori dei pixel
 		 * delle linee inclinate con spessore > 1. Con questo test vengono
 		 * verificati i valori forniti da IJ dalla versione 1.42p e successive
 		 */
@@ -174,6 +174,7 @@ public class p6rmn_Test {
 		String[] path2 = new InputOutput().findListTestImages2(
 				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 		String path1 = path2[0];
+		MyLog.waitHere("path1= "+path1);
 		ImagePlus imp3 = UtilAyv.openImageMaximized(path1);
 		double dimPixel = 0.78125;
 		int ra1 = 13;
@@ -189,7 +190,7 @@ public class p6rmn_Test {
 		assertEquals(156.00320509528, lato, 1e-25);
 		boolean slab = true;
 		boolean invert = false;
-		// N.B: mettendo verbose a true si può vedere la grafica funzionare
+		// N.B: mettendo verbose a true si puï¿½ vedere la grafica funzionare
 		boolean verbose = false;
 		boolean bLabelSx = false;
 		double[] dsd1 = new p6rmn_().analProf(imp3, vetTestPositions,
@@ -225,7 +226,7 @@ public class p6rmn_Test {
 		assertEquals(156.00320509528, lato, 1e-25);
 		boolean slab = false;
 		boolean invert = true;
-		// N.B: mettendo verbose a true si può vedere la grafica funzionare
+		// N.B: mettendo verbose a true si puï¿½ vedere la grafica funzionare
 		boolean verbose = false;
 		boolean bLabelSx = false;
 		double[] dsd1 = new p6rmn_().analProf(imp3, vetTestPositions,
