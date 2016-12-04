@@ -12,6 +12,7 @@ import ij.ImageJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.Line;
+import ij.gui.Overlay;
 import ij.gui.Plot;
 import ij.gui.Roi;
 import ij.measure.ResultsTable;
@@ -46,71 +47,168 @@ public class p16rmn_Test {
 
 	@Test
 	public final void testAnalProfFirstSlab() {
-		double vetProfile[] = { 12.00024654579077, 31.200641019056,
-				144.00295854948925, 31.200641019056 }; // [xStart,yStart,xEnd,yEnd]
+		double vetProfile[] = new double[4];
 		double lato = 0;
-		double[] vetTestPositions = { 51.0, 36.0, 52.0, 192.0, }; // [xStart,yStart,xEnd,yEnd]
-		String[] list = { "066" };
-		String[] path2 = new InputOutput().findListTestImages2(
-				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
-		String path1 = path2[0];
-		MyLog.waitHere("path1= "+path1);
+		double[] vetRefPosition = { 54.0, 53.0, 56.0, 208.0, }; // [xStart,yStart,xEnd,yEnd]
+		
+		
+		String path1 = "./Test2/066";
 		ImagePlus imp3 = UtilAyv.openImageMaximized(path1);
+		Overlay over3 = new Overlay();
+		imp3.setOverlay(over3);
+
 		double dimPixel = 0.78125;
 		int ra1 = 13;
-		imp3.setRoi(new Line((int) vetTestPositions[0],
-				(int) vetTestPositions[1], (int) vetTestPositions[2],
-				(int) vetTestPositions[3], imp3));
+		
+		
+		Line lin1 = new Line((int) vetRefPosition[0], (int) vetRefPosition[1], (int) vetRefPosition[2],
+				(int) vetRefPosition[3]);
+		
+		imp3.setRoi(lin1);
 		imp3.updateAndRepaintWindow();
-		Roi r1 = imp3.getRoi();
-		assert (r1 != null);
+
 		Roi roi = imp3.getRoi();
 		Line line2 = (Line) roi;
 		lato = line2.getRawLength();
-		assertEquals(156.00320509528, lato, 1e-25);
+		double kappa = 156 / lato;
+		ra1 = (int) (13 / kappa);
+		vetProfile[0] = 5 / kappa;
+		vetProfile[1] = 26 / kappa;
+		vetProfile[2] = 150 / kappa;
+		vetProfile[3] = 26 / kappa;
+
+		
 		boolean slab = true;
 		boolean invert = false;
-		// N.B: mettendo verbose a true si pu� vedere la grafica funzionare
+		// N.B: mettendo verbose a true si puo' vedere la grafica funzionare
 		boolean verbose = false;
 		boolean bLabelSx = false;
-		double[] dsd1 = new p6rmn_().analProf(imp3, vetTestPositions,
-				vetProfile, ra1, slab, invert, verbose, bLabelSx, dimPixel);
+		double[] dsd1 = new p16rmn_().analProf(imp3, vetRefPosition,
+				vetProfile, ra1, slab, invert, verbose, bLabelSx, dimPixel, over3);
+		
 		double fwhm = dsd1[0];
 		double peak = dsd1[1];
-		assertEquals(10.090520971808136, fwhm, 1e-25);
-		assertEquals(42.96875, peak, 1e-25);
+		assertEquals(8.090445406547264, fwhm, 1e-25);
+		assertEquals(44.53125, peak, 1e-25);
 	}
 
+	
 	@Test
-	public final void testAnalProfFirstWedge() {
-		double vetProfile[] = { 12.00024654579077, 93.60192305716801,
-				144.00295854948925, 93.60192305716801 }; // [xStart,yStart,xEnd,yEnd]
+	public final void testAnalSecondSlab() {
+		double vetProfile[] = new double[4];
 		double lato = 0;
-		double[] vetTestPositions = { 51.0, 36.0, 52.0, 192.0 }; // [xStart,yStart,xEnd,yEnd]
-		String[] list = { "066.ima" };
-		String[] path2 = new InputOutput().findListTestImages2(
-				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
-		String path1 = path2[0];
+		double[] vetRefPosition = { 54.0, 53.0, 56.0, 208.0, }; // [xStart,yStart,xEnd,yEnd]
+		
+		
+		String path1 = "./Test2/066";
 		ImagePlus imp3 = UtilAyv.openImageMaximized(path1);
+		Overlay over3 = new Overlay();
+		imp3.setOverlay(over3);
+
 		double dimPixel = 0.78125;
 		int ra1 = 13;
-		imp3.setRoi(new Line((int) vetTestPositions[0],
-				(int) vetTestPositions[1], (int) vetTestPositions[2],
-				(int) vetTestPositions[3], imp3));
+		
+		
+		Line lin1 = new Line((int) vetRefPosition[0], (int) vetRefPosition[1], (int) vetRefPosition[2],
+				(int) vetRefPosition[3]);
+		
+		imp3.setRoi(lin1);
 		imp3.updateAndRepaintWindow();
-		Roi r1 = imp3.getRoi();
-		assert (r1 != null);
+
 		Roi roi = imp3.getRoi();
 		Line line2 = (Line) roi;
 		lato = line2.getRawLength();
-		assertEquals(156.00320509528, lato, 1e-25);
-		boolean slab = false;
-		boolean invert = true;
-		// N.B: mettendo verbose a true si pu� vedere la grafica funzionare
+		double kappa = 156 / lato;
+		ra1 = (int) (13 / kappa);
+		vetProfile[0] = 5 / kappa;
+		vetProfile[1] = 60 / kappa;
+		vetProfile[2] = 150 / kappa;
+		vetProfile[3] = 60 / kappa;
+
+		
+		boolean slab = true;
+		boolean invert = false;
+		// N.B: mettendo verbose a true si puo' vedere la grafica funzionare
 		boolean verbose = false;
 		boolean bLabelSx = false;
-		double[] dsd1 = new p6rmn_().analProf(imp3, vetTestPositions,
-				vetProfile, ra1, slab, invert, verbose, bLabelSx, dimPixel);
+		double[] dsd1 = new p16rmn_().analProf(imp3, vetRefPosition,
+				vetProfile, ra1, slab, invert, verbose, bLabelSx, dimPixel, over3);
+		
+		double fwhm = dsd1[0];
+		double peak = dsd1[1];
+		assertEquals(8.090445406547264, fwhm, 1e-25);
+		assertEquals(44.53125, peak, 1e-25);
+	}
+
+	
+	
+	
+	@Test
+	public final void testAnalProfFirstWedge() {
+		double vetProfile[] = new double[4];
+		double lato = 0;
+		double[] vetRefPosition = { 54.0, 53.0, 56.0, 208.0, }; // [xStart,yStart,xEnd,yEnd]
+		String path1 = "./Test2/066";
+		ImagePlus imp3 = UtilAyv.openImageMaximized(path1);
+		Overlay over3 = new Overlay();
+		imp3.setOverlay(over3);
+		double dimPixel = 0.78125;
+		int ra1 = 13;	
+		Line lin1 = new Line((int) vetRefPosition[0], (int) vetRefPosition[1], (int) vetRefPosition[2],
+				(int) vetRefPosition[3]);
+		imp3.setRoi(lin1);
+		imp3.updateAndRepaintWindow();
+		Roi roi = imp3.getRoi();
+		Line line2 = (Line) roi;
+		lato = line2.getRawLength();
+		double kappa = 156 / lato;
+		ra1 = (int) (13 / kappa);
+		vetProfile[0] = 5 / kappa;
+		vetProfile[1] = 96 / kappa;
+		vetProfile[2] = 150 / kappa;
+		vetProfile[3] = 96 / kappa;
+		boolean slab = false;
+		boolean invert = true;
+		boolean verbose = false;
+		boolean bLabelSx = false;
+		double[] dsd1 = new p16rmn_().analProf(imp3, vetRefPosition,
+				vetProfile, ra1, slab, invert, verbose, bLabelSx, dimPixel, over3);	
+		double fwhm = dsd1[0];
+		double peak = dsd1[1];
+		assertEquals(8.090445406547264, fwhm, 1e-25);
+		assertEquals(44.53125, peak, 1e-25);
+	}
+	
+	@Test
+	public final void testAnalProfSecondWedge() {
+		double vetProfile[] = new double[4];
+		double lato = 0;
+		double[] vetRefPosition = { 54.0, 53.0, 56.0, 208.0, }; // [xStart,yStart,xEnd,yEnd]
+		String path1 = "./Test2/066";
+		ImagePlus imp3 = UtilAyv.openImageMaximized(path1);
+		Overlay over3 = new Overlay();
+		imp3.setOverlay(over3);
+		double dimPixel = 0.78125;
+		int ra1 = 13;	
+		Line lin1 = new Line((int) vetRefPosition[0], (int) vetRefPosition[1], (int) vetRefPosition[2],
+				(int) vetRefPosition[3]);
+		imp3.setRoi(lin1);
+		imp3.updateAndRepaintWindow();
+		Roi roi = imp3.getRoi();
+		Line line2 = (Line) roi;
+		lato = line2.getRawLength();
+		double kappa = 156 / lato;
+		ra1 = (int) (13 / kappa);
+		vetProfile[0] = 5 / kappa;
+		vetProfile[1] = 130 / kappa;
+		vetProfile[2] = 150 / kappa;
+		vetProfile[3] = 130 / kappa;
+		boolean slab = false;
+		boolean invert = false;
+		boolean verbose = true;
+		boolean bLabelSx = false;
+		double[] dsd1 = new p16rmn_().analProf(imp3, vetRefPosition,
+				vetProfile, ra1, slab, invert, verbose, bLabelSx, dimPixel, over3);	
 		double fwhm = dsd1[0];
 		double peak = dsd1[1];
 		assertEquals(8.090445406547264, fwhm, 1e-25);

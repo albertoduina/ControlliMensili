@@ -639,9 +639,9 @@ public class p16rmn_ implements PlugIn, Measurements {
 			vetProfile[1] = 130 / kappa;
 			vetProfile[2] = 141 / kappa;
 			vetProfile[3] = 130 / kappa;
-
+			
 			isSlab = false;
-			invertErf = true;
+			invertErf = false;
 			putLabelSx = true;
 			if (step) {
 				imp3.getWindow().toFront();
@@ -987,20 +987,23 @@ public class p16rmn_ implements PlugIn, Measurements {
 			vet2X[i1] = i1;
 		}
 		double[] smoothM4 = smooth(profiM1);
+		boolean updateimg = true;
 
-		Plot plot2 = new Plot("SEGNALE ORIGINALE (1 SMOOTH)", "pixel", "valore");
-		plot2.setColor(Color.red);
-		plot2.addPoints(vet2X, profiM1, Plot.LINE);
-		plot2.setColor(Color.blue);
-		plot2.addPoints(vet2X, smoothM4, Plot.LINE);
-		plot2.addLegend("originale\n1 smooth");
-		boolean updateImg = true;
-		plot2.setLimitsToFit(updateImg);
-		plot2.show();
-		MyLog.waitHere("segnale");
+		if (step) {
+			Plot plot2 = new Plot("SEGNALE ORIGINALE (1 SMOOTH)", "pixel", "valore");
+			plot2.setColor(Color.red);
+			plot2.addPoints(vet2X, profiM1, Plot.LINE);
+			plot2.setColor(Color.blue);
+			plot2.addPoints(vet2X, smoothM4, Plot.LINE);
+			plot2.addLegend("originale\n1 smooth");
+			plot2.setLimitsToFit(updateimg);
+			plot2.show();
+			MyLog.waitHere("SEGNALE ORIGINALE");
+		}
 
 		if (!slab) {
-			double[] profiE1 = createErf(profiM1, invert); // profilo con ERF
+			double[] profiE1 = createErf(profiM1, invert, step); // profilo con
+																	// ERF
 			smoothM4 = profiE1;
 		}
 
@@ -1008,28 +1011,35 @@ public class p16rmn_ implements PlugIn, Measurements {
 
 		double[] derivataM7 = derivata(smoothM4);
 
-		Plot plot3 = new Plot("DERIVATA", "pixel", "valore");
-		// plot3.setColor(Color.orange);
-		// plot3.addPoints(vet2X, smoothM4, Plot.LINE);
-		plot3.setColor(Color.blue);
-		plot3.addPoints(vet2X, derivataM7, Plot.LINE);
-		plot3.addLegend("derivata");
-		plot3.setLimitsToFit(updateImg);
-		plot3.show();
-		MyLog.waitHere("derivata");
+		if (step) {
+			Plot plot3 = new Plot("DERIVATA COMUNE", "pixel", "valore");
+			// plot3.setColor(Color.orange);
+			// plot3.addPoints(vet2X, smoothM4, Plot.LINE);
+			plot3.setColor(Color.blue);
+			plot3.addPoints(vet2X, derivataM7, Plot.LINE);
+			plot3.addLegend("derivata comune");
+			plot3.setLimitsToFit(updateimg);
+			plot3.show();
+			MyLog.waitHere("DERIVATA COMUNE");
+		}
 
 		// int ordine = 6;
-		int ordine = 8;
+		int ordine = 6;
 		double[] blueslope = angolo(derivataM7, ordine);
 		double[] orangeslope = reverse(angolo(reverse(derivataM7), ordine));
 
 		int posmax = ArrayUtils.posMax(derivataM7);
 		int posmin = ArrayUtils.posMin(derivataM7);
-		boolean reverse = invert;
+		boolean reverse = false;
 		double soglia1 = 0.5;
 		int uno = soglia(blueslope, soglia1, posmin, reverse);
+		if (step)
+			MyLog.waitHere("blueslope posmin= " + posmin + " reverse= " + reverse);
+
 		reverse = true;
 		int due = soglia(orangeslope, soglia1, posmax, reverse);
+		if (step)
+			MyLog.waitHere("orangeslope posmax= " + posmax + " reverse= " + reverse);
 
 		double[] xpoints1 = new double[1];
 		double[] ypoints1 = new double[1];
@@ -1040,31 +1050,52 @@ public class p16rmn_ implements PlugIn, Measurements {
 		double[] ypoints2 = new double[1];
 		xpoints2[0] = due;
 		ypoints2[0] = orangeslope[due];
+		if (step) {
+			Plot plot5 = new Plot("ELABORAZIONI DERIVATA + ANGOLO ", "pixel", "valore");
+			plot5.setColor(Color.orange);
+			plot5.addPoints(vet2X, derivataM7, Plot.LINE);
+			plot5.setColor(Color.green);
+			plot5.addPoints(vet2X, blueslope, Plot.LINE);
+			plot5.setColor(Color.black);
+			plot5.addPoints(xpoints1, ypoints1, Plot.CIRCLE);
+			plot5.addLegend("derivata\nangolo\nendpoint");
+			plot5.setLimitsToFit(updateimg);
+			plot5.show();
+			MyLog.waitHere("angolo lato DX");
+		}
+		if (step) {
+			Plot plot5a = new Plot("ELABORAZIONI DERIVATA + ANGOLO ", "pixel", "valore");
+			plot5a.setColor(Color.orange);
+			plot5a.addPoints(vet2X, derivataM7, Plot.LINE);
+			plot5a.setColor(Color.red);
+			plot5a.addPoints(vet2X, orangeslope, Plot.LINE);
+			plot5a.setColor(Color.black);
+			plot5a.addPoints(xpoints2, ypoints2, Plot.CIRCLE);
+			plot5a.addLegend("derivata\nangolo(rev)\nstartpoint");
+			plot5a.setLimitsToFit(updateimg);
+			plot5a.show();
+			MyLog.waitHere("angolo lato SX");
+		}
 
-		Plot plot5 = new Plot("ELABORAZIONI DERIVATA + ANGOLO ", "pixel", "valore");
-		plot5.setColor(Color.orange);
-		plot5.addPoints(vet2X, derivataM7, Plot.LINE);
-		plot5.setColor(Color.green);
-		plot5.addPoints(vet2X, blueslope, Plot.LINE);
-		plot5.setColor(Color.black);
-		plot5.addPoints(xpoints1, ypoints1, Plot.CIRCLE);
-		plot5.addLegend("derivata\nangolo\nendpoint");
-		// plot5.setLimitsToFit(updateImg);
-		plot5.show();
+		double[] ypoints3 = new double[1];
+		ypoints3[0] = derivataM7[uno];
+		double[] ypoints4 = new double[1];
+		ypoints4[0] = derivataM7[due];
 
-		MyLog.waitHere("angolo lato DX");
-
-		Plot plot5a = new Plot("ELABORAZIONI DERIVATA + ANGOLO ", "pixel", "valore");
-		plot5a.setColor(Color.orange);
-		plot5a.addPoints(vet2X, derivataM7, Plot.LINE);
-		plot5a.setColor(Color.red);
-		plot5a.addPoints(vet2X, orangeslope, Plot.LINE);
-		plot5a.setColor(Color.black);
-		plot5a.addPoints(xpoints2, ypoints2, Plot.CIRCLE);
-		plot5a.addLegend("derivata\nangolo(rev)\nstartpoint");
-		// plot5.setLimitsToFit(updateImg);
-		plot5a.show();
-		MyLog.waitHere("angolo lato SX");
+		if (step) {
+			Plot plot5b = new Plot("DERIVATA CON PUNTI", "pixel", "valore");
+			plot5b.setColor(Color.green);
+			plot5b.addPoints(vet2X, derivataM7, Plot.LINE);
+			plot5b.setColor(Color.black);
+			plot5b.addPoints(xpoints1, ypoints3, Plot.CIRCLE);
+			plot5b.addPoints(xpoints2, ypoints4, Plot.CIRCLE);
+			plot5b.addLegend("derivata\nxpoints1\nxpoints2");
+			plot5b.setLimitsToFit(updateimg);
+			plot5b.show();
+		}
+		if (step)
+			MyLog.waitHere("DERIVATA CON PUNTI xpoints1= " + xpoints1[0] + " ypoints3= " + ypoints3[0] + " xpoints2= "
+					+ xpoints2[0] + " ypoints4= " + ypoints4[0]);
 
 		// ottenuti i punti uno e due effettuo la potatura dei dati ivi compresi
 
@@ -1097,7 +1128,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 		plot6.setColor(Color.green);
 		plot6.addPoints(vet2X, vetfit, Plot.LINE);
 		plot6.addLegend("segnale\nfondo\nPOLY2suFondo");
-		plot6.setLimitsToFit(updateImg);
+		plot6.setLimitsToFit(updateimg);
 		plot6.show();
 		MyLog.waitHere("FONDO RILEVATO");
 
@@ -1107,7 +1138,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 		plot7.setColor(Color.blue);
 		plot7.addPoints(vet2X, correctedM4, Plot.LINE);
 		plot7.addLegend("originale\ncorretto");
-		plot7.setLimitsToFit(updateImg);
+		plot7.setLimitsToFit(updateimg);
 		plot7.show();
 		MyLog.waitHere("FONDO CORRETTO");
 
@@ -1348,12 +1379,12 @@ public class p16rmn_ implements PlugIn, Measurements {
 
 		if (reverse) {
 			for (int i1 = start; i1 >= 0; i1--)
-				if (profile1[i1] > soglia1)
+				if (Math.abs(profile1[i1]) < soglia1)
 					return i1;
 		} else {
-			soglia1 = soglia1 * (-1.0);
+			// soglia1 = soglia1 * (-1.0);
 			for (int i1 = start; i1 < profile1.length; i1++)
-				if (profile1[i1] < soglia1)
+				if (Math.abs(profile1[i1]) < soglia1)
 					return i1;
 		}
 		return -1;
@@ -1364,17 +1395,58 @@ public class p16rmn_ implements PlugIn, Measurements {
 		ArrayList<ArrayList<Double>> arrprofile2 = new ArrayList<ArrayList<Double>>();
 		ArrayList<Double> arrx = new ArrayList<Double>();
 		ArrayList<Double> arry = new ArrayList<Double>();
-		for (int i1 = 0; i1 <= due; i1++) {
+		// mi cautelo contro i punti passati al rovescio
+		int lower = 0;
+		int upper = 0;
+		if (due > uno) {
+			lower = uno;
+			upper = due;
+		} else {
+			lower = due;
+			upper = uno;
+		}
+		for (int i1 = 0; i1 <= lower; i1++) {
 			arrx.add((double) i1);
 			arry.add(profile1[i1]);
 		}
-		for (int i1 = uno; i1 < profile1.length; i1++) {
+		for (int i1 = upper; i1 < profile1.length; i1++) {
 			arrx.add((double) i1);
 			arry.add(profile1[i1]);
 		}
 		arrprofile2.add(arrx);
 		arrprofile2.add(arry);
 		return arrprofile2;
+	}
+
+	public double[] interpolazione(double[] profile1, int uno, int due) {
+		// mi cautelo contro i punti passati al rovescio
+
+		double[] profile2 = new double[profile1.length];
+		for (int i1 = 0; i1 < profile1.length; i1++) {
+			profile2[i1] = profile1[i1];
+		}
+
+		int lower = 0;
+		int upper = 0;
+		if (due > uno) {
+			lower = uno;
+			upper = due;
+		} else {
+			lower = due;
+			upper = uno;
+		}
+		double x1 = lower;
+		double y1 = profile2[lower];
+		double x2 = upper;
+		double y2 = profile2[upper];
+		double m = (y2 - y1) / (x2 - x1);
+		double q = (x2 * y1 - x1 * y2) / (x2 - x1);
+
+		for (int i1 = (int) (x1 + 1); i1 < x2; i1++) {
+			profile2[i1] = m * i1 + q;
+		}
+
+		return profile2;
 	}
 
 	public double[] smooth(double[] profile1) {
@@ -1447,7 +1519,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 	 *            true se da invertire
 	 * @return profilo con ERF
 	 */
-	public double[] createErf(double[] profile1, boolean invert) {
+	public double[] createErf(double[] profile1, boolean invert, boolean step) {
 
 		int len1 = profile1.length;
 		//
@@ -1464,10 +1536,8 @@ public class p16rmn_ implements PlugIn, Measurements {
 			profile1[j] = (profile1[j - 1] + profile1[j] + profile1[j + 1]) / 3;
 
 		double[] erf = new double[len1];
-		// if (invert) {
 		for (int j = 0; j < profile1.length - 1; j++) {
 			erf[j] = (profile1[j] - profile1[j + 1]);
-			// erf[j] = (profile1[j] - profile1[j + 1]) * (-1);
 		}
 
 		// elimino alcuni errori a inizio e fine profilo (non li voglio a zero)
@@ -1475,132 +1545,114 @@ public class p16rmn_ implements PlugIn, Measurements {
 		erf[0] = erf[3];
 		erf[1] = erf[3];
 		erf[2] = erf[3];
-
-		// Anziche' utilizzare algoritmi di ricerca dei picchi, cerco il minimo
-		// ed il massimo. Il valore assoluto piu' grande corrispondera'
-		// all'angolo a 90° che non ci interessa. A questo punto posso portare a
-		// zero tutti i valori del medesimo segno. Restera' cosi' solo il picco
-		// meno alto, corrispondente all'erf della rampa del cuneo. (boh, a
-		// distanza di anni non ci capisco una fava di quanto avevo scritto)
-		
-
-		
-
 		double[] vet2X = new double[profile1.length];
 		for (int i1 = 0; i1 < profile1.length; i1++) {
 			vet2X[i1] = i1;
 		}
-		Plot plot1 = new Plot("COMPLETE ERF", "pixel", "valore");
-		plot1.setColor(Color.red);
-		// plot1.addPoints(vet2X, profile1, Plot.LINE);
-		// plot1.setColor(Color.blue);
-		plot1.addPoints(vet2X, erf, Plot.LINE);
 		boolean updateImg = true;
-		plot1.setLimitsToFit(updateImg);
-		plot1.show();
-		MyLog.waitHere("ERF TOTALE");
-
-
-		double max = ArrayUtils.vetMax(erf);
-		double min = ArrayUtils.vetMin(erf);
-		int posmax = ArrayUtils.posMax(erf);
-		int posmin = ArrayUtils.posMin(erf);
-		int posx = 0;
-		if (Math.abs(min) > Math.abs(max)) {
-			posx= posmin;
-		} else {
-			posx=posmax;
+		if (step) {
+			Plot plot1 = new Plot("COMPLETE ERF", "pixel", "valore");
+			plot1.setColor(Color.red);
+			// plot1.addPoints(vet2X, profile1, Plot.LINE);
+			// plot1.setColor(Color.blue);
+			plot1.addPoints(vet2X, erf, Plot.LINE);
+			plot1.setLimitsToFit(updateImg);
+			plot1.show();
+			MyLog.waitHere("ERF TOTALE");
 		}
 
 		int ordine = 1;
 		double[] blueslope = angolo(erf, ordine);
 		double[] orangeslope = reverse(angolo(reverse(erf), ordine));
-		double soglia1 = 0.5;
-		boolean reverse=true;
-		int uno = soglia(blueslope, soglia1, posx, reverse);
-		reverse = false;
-		int due = soglia(orangeslope, soglia1, posx, reverse);
-		MyLog.waitHere("uno= "+uno+" due= "+due);
-		
-		double[] xpoints1 = new double[1];
-		double[] ypoints1 = new double[1];
-		xpoints1[0] = uno;
-		ypoints1[0] = blueslope[uno];
-
-		double[] xpoints2 = new double[1];
-		double[] ypoints2 = new double[1];
-		xpoints2[0] = due;
-		ypoints2[0] = orangeslope[due];
-
-
+		int posmax1 = ArrayUtils.posMax(blueslope);
+		int posmin1 = ArrayUtils.posMin(blueslope);
+		int posmax2 = ArrayUtils.posMax(orangeslope);
+		int posmin2 = ArrayUtils.posMin(orangeslope);
 		Plot plot3 = new Plot("slopes", "pixel", "valore");
-		plot3.setColor(Color.blue);
-		plot3.addPoints(vet2X, blueslope, Plot.LINE);
-		plot3.addPoints(xpoints1, ypoints1, Plot.CIRCLE);
-		plot3.setColor(Color.orange);
-		plot3.addPoints(vet2X, orangeslope, Plot.LINE);
-		plot3.addPoints(xpoints2, ypoints2, Plot.CIRCLE);
-		plot3.setLimitsToFit(updateImg);
-		plot3.show();
-		MyLog.waitHere("CALCOLI");
-		
-		
-		// ottenuti i punti uno e due effettuo la potatura dei dati ivi compresi
 
-		ArrayList<ArrayList<Double>> arrprofile3 = potatura(erf, uno, due);
-		double[] xprofile3 = ArrayUtils.arrayListToArrayDouble(arrprofile3.get(0));
-		double[] yprofile3 = ArrayUtils.arrayListToArrayDouble(arrprofile3.get(1));
-		
-		Plot plot4 = new Plot("erf restante", "pixel", "valore");
-		plot4.setColor(Color.orange);
-		plot4.addPoints(vet2X, erf, Plot.LINE);
-		plot4.setColor(Color.green);
-		plot4.addPoints(xprofile3, yprofile3, Plot.X);
-		plot4.setLimitsToFit(updateImg);
-		plot4.show();
-		MyLog.waitHere("ERF RESTANTE");
-	
-		
-		
+		if (step) {
+			plot3.setColor(Color.blue);
+			plot3.addPoints(vet2X, blueslope, Plot.LINE);
+			plot3.setColor(Color.orange);
+			plot3.addPoints(vet2X, orangeslope, Plot.LINE);
+			plot3.setLimitsToFit(updateImg);
+			plot3.show();
+			MyLog.waitHere("ANGOLO");
+		}
 
-		
-		
-		if (Math.abs(min) > Math.abs(max) && min < 0) {
-			// se il minimo e' di valore assoluto piu' grande, allora porto a 0
-			// tutti i valori minori di 0
-			for (int i1 = 0; i1 < erf.length; i1++) {
-				if (erf[i1] < 0)
-					erf[i1] = 0;
+		double soglia1 = 0.5;
+		boolean reverse = true;
+		int uno = soglia(blueslope, soglia1, posmax1, reverse);
+		reverse = false;
+		int due = soglia(blueslope, soglia1, posmin1, reverse);
+
+		reverse = true;
+		int tre = soglia(orangeslope, soglia1, posmax2, reverse);
+		reverse = false;
+		int quattro = soglia(orangeslope, soglia1, posmin2, reverse);
+		if (step)
+			MyLog.waitHere("uno= " + uno + " due= " + due + " tre= " + tre + " quattro= " + quattro);
+
+		double[] xpoints1 = new double[2];
+		double[] ypoints1 = new double[2];
+		xpoints1[0] = uno;
+		xpoints1[1] = due;
+		ypoints1[0] = blueslope[uno];
+		ypoints1[1] = blueslope[due];
+
+		double[] xpoints2 = new double[2];
+		double[] ypoints2 = new double[2];
+		xpoints2[0] = tre;
+		xpoints2[1] = quattro;
+		ypoints2[0] = orangeslope[tre];
+		ypoints2[1] = orangeslope[quattro];
+
+		if (step) {
+			plot3.setColor(Color.blue);
+			plot3.addPoints(xpoints1, ypoints1, Plot.CIRCLE);
+			plot3.setColor(Color.orange);
+			plot3.addPoints(xpoints2, ypoints2, Plot.CIRCLE);
+			plot3.setLimitsToFit(updateImg);
+			plot3.updateImage();
+			MyLog.waitHere("AGGIUNTA PUNTI");
+		}
+
+		// ottenuti i punti uno e due effettuo l'interpolazione dei dati ivi
+		// compresi
+
+		double[] yprofile3 = interpolazione(erf, uno, due);
+		double[] xprofile3 = new double[yprofile3.length];
+		for (int i1 = 0; i1 < yprofile3.length; i1++) {
+			xprofile3[i1] = i1;
+		}
+
+		if (step) {
+			Plot plot4 = new Plot("erf restante", "pixel", "valore");
+			plot4.setColor(Color.orange);
+			plot4.addPoints(vet2X, erf, Plot.LINE);
+			plot4.setColor(Color.green);
+			plot4.addPoints(xprofile3, yprofile3, Plot.X);
+			plot4.setLimitsToFit(updateImg);
+			plot4.show();
+			MyLog.waitHere("ERF COMPARATE");
+		}
+
+		if (invert) {
+			for (int i1 = 0; i1 < yprofile3.length; i1++) {
+				yprofile3[i1] *= (-1);
 			}
-			// e poi cambio il tutto di segno, poiche' voglio il picco verso il
-			// basso
-			for (int i1 = 0; i1 < erf.length; i1++) {
-				erf[i1] *= -1;
-			}
+		}
 
-		} else if (Math.abs(min) < Math.abs(max) && max > 0) {
-			// se il massimo e' di valore assoluto piu' grande, allora porto a 0
-			// tutti i valori maggiori di 0
-			for (int i1 = 0; i1 < erf.length; i1++) {
-				if (erf[i1] > 0)
-					erf[i1] = 0;
-			}
+		if (step) {
+			Plot plot4a = new Plot("erf restante", "pixel", "valore");
+			plot4a.setColor(Color.green);
+			plot4a.addPoints(xprofile3, yprofile3, Plot.LINE);
+			plot4a.setLimitsToFit(updateImg);
+			plot4a.show();
+			MyLog.waitHere("ERF RESTANTE");
+		}
 
-		} else
-			MyLog.waitHere("QUESTA E'UNA STRANA ERF");
-
-		Plot plot2 = new Plot("RAMP ERF", "pixel", "valore");
-		plot2.setColor(Color.red);
-		// plot1.addPoints(vet2X, profile1, Plot.LINE);
-		// plot1.setColor(Color.blue);
-		plot2.addPoints(vet2X, erf, Plot.LINE);
-		plot2.addLegend("RAMP ERF");
-		updateImg = true;
-		plot2.setLimitsToFit(updateImg);
-		plot2.show();
-		MyLog.waitHere("ERF RAMPA");
-
-		return (erf);
+		return (yprofile3);
 	} // createErf
 
 	/**
