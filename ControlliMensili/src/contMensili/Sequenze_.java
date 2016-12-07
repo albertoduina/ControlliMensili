@@ -173,7 +173,7 @@ public class Sequenze_ implements PlugIn {
 			GenericDialog gd = new GenericDialog("", IJ.getInstance());
 			gd.addCheckbox("Nuovo controllo", aux2);
 			gd.addCheckbox("SelfTest", false);
-			gd.addCheckbox("p10_ p11_ p12_ p17_", true);
+			gd.addCheckbox("p10_ p11_ p12_ p16_ p17_", true);
 			gd.addCheckbox("Fast", true);
 			if (blackbox)
 				gd.addCheckbox("Batch", true);
@@ -211,6 +211,7 @@ public class Sequenze_ implements PlugIn {
 				IJ.runPlugIn("contMensili.p10rmn_", "-1");
 				IJ.runPlugIn("contMensili.p11rmn_", "-1");
 				IJ.runPlugIn("contMensili.p12rmn_", "-1");
+				IJ.runPlugIn("contMensili.p16rmn_", "-1");
 				IJ.runPlugIn("contMensili.p20rmn_", "-1");
 				IJ.runPlugIn("contMensili.p10rmn_OLD1", "-1");
 				IJ.runPlugIn("contMensili.p11rmn_OLD1", "-1");
@@ -976,6 +977,8 @@ public class Sequenze_ implements PlugIn {
 						plugin = "contMensili.p2rmn_";
 					if (plugin.equals("contMensili.p17rmn_"))
 						plugin = "contMensili.p7rmn_";
+					if (plugin.equals("contMensili.p16rmn_"))
+						plugin = "contMensili.p6rmn_";
 				}
 
 				String argomento = argumentForPluginToBeCalled(j1, tableSequenze5);
