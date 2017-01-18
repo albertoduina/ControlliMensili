@@ -100,7 +100,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 	private static final boolean debug = true;
 	public static boolean forcesilent = false;
 
-
 	// private boolean profiVert = false;
 
 	public void run(String args) {
@@ -143,7 +142,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		int mode = 0;
 		do {
 			int userSelection1 = UtilAyv.userSelectionManual(VERSION, TYPE);
-			MyLog.waitHere("MANUAL userSelection1="+userSelection1);
+			MyLog.waitHere("MANUAL userSelection1=" + userSelection1);
 
 			switch (userSelection1) {
 			case ABORT:
@@ -268,14 +267,14 @@ public class p11rmn_ implements PlugIn, Measurements {
 			MyLog.waitHere();
 		}
 
-		
 		boolean retry = false;
-		
+
 		int mode = 0;
 		if (fast) {
 			retry = false;
 			mode = 1;
-			if (forcesilent) mode = 0;
+			if (forcesilent)
+				mode = 0;
 			// boolean autoCalled = true;
 			// TODO ripristinare verbose=false
 			// boolean verbose = false;
@@ -303,8 +302,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
 						TableSequence.getCode(iw2ayvTable, vetRiga[0]), TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
 						vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
-				MyLog.waitHere("AUTO userSelection1="+userSelection1);
-
+				MyLog.waitHere("AUTO userSelection1=" + userSelection1);
 
 				switch (userSelection1) {
 				case ABORT:
@@ -317,7 +315,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					retry = true;
 					break;
 				case 3:
-					 mode = 3;
+					mode = 3;
 					// retry = false;
 					// break;
 				case 4:
@@ -681,7 +679,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 						sqNEA = sqNEA + 2; // accrescimento area
 						enlarge = enlarge + 1;
 
-						MyLog.waitHere(info10 + "\n \n" + listaMessaggi(1), debug);
+						MyLog.waitHere(info10 + "\nimp1= "+imp1.getTitle()+"\nimp2= "+imp2.getTitle()+ "\n" + listaMessaggi(1), debug);
 
 						// MyLog.waitHere("verificare immagine, insolito
 						// accrescimento richiesto");

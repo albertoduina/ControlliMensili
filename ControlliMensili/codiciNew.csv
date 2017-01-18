@@ -13,9 +13,9 @@ BUSC_;Uniformità Coronale Body;2;2;0;0;777;888;999;xxx;x;x;p12rmn_
 BDSA_;DGP Single Body;1;1;0;0;777;888;999;xxx;x;x;p8rmn_
 BDMA_;DGP Multi Body;1;3;0;0;777;888;999;xxx;x;x;p8rmn_
 BTLX_;Localizer Thickness Body;0;0;0;0;777;888;999;xxx;x;x;none_
-BT2A_;Thickness 2mm Sing.Body;1;1;0;0;777;888;999;xxx;x;x;p16rmn_
-BT5A_;Thickness 5mm Sing.Body;1;1;0;0;777;888;999;xxx;x;x;p16rmn_
-BTMA_;Thickness 2mm Multi Body;15;15;0;0;777;888;999;xxx;x;x;p16rmn_
+BT2A_;Thickness 2mm Sing.Body;1;1;0;0;777;888;999;xxx;x;x;p6rmn_
+BT5A_;Thickness 5mm Sing.Body;1;1;0;0;777;888;999;xxx;x;x;p6rmn_
+BTMA_;Thickness 2mm Multi Body;15;15;0;0;777;888;999;xxx;x;x;p6rmn_
 BRKA_;Risoluzione 1024 Body;1;1;0;0;777;888;999;xxx;x;x;p4rmn_
 BR5A_;Risoluzione 512 Body;1;1;0;0;777;888;999;xxx;x;x;p4rmn_
 BR2A_;Risoluzione 256 Body;1;1;0;0;777;888;999;xxx;x;x;p4rmn_
@@ -27,9 +27,9 @@ HUSC_;Uniformità Coronale Head;2;2;0;0;777;888;999;xxx;x;x;p12rmn_
 HDSA_;DGP Single Head;1;1;0;0;777;888;999;xxx;x;x;p8rmn_
 HDMA_;DGP Multi Head;1;3;0;0;777;888;999;xxx;x;x;p8rmn_
 HTLX_;Localizer Thickness Head;0;0;0;0;777;888;999;xxx;x;x;none_
-HT2A_;Thickness 2mm Sing.Head;1;1;0;0;777;888;999;xxx;x;x;p16rmn_
-HT5A_;Thickness 5mm Sing.Head;1;1;0;0;777;888;999;xxx;x;x;p16rmn_
-HTMA_;Thickness 2mm Multi Head;15;15;0;0;777;888;999;xxx;x;x;p16rmn_
+HT2A_;Thickness 2mm Sing.Head;1;1;0;0;777;888;999;xxx;x;x;p6rmn_
+HT5A_;Thickness 5mm Sing.Head;1;1;0;0;777;888;999;xxx;x;x;p6rmn_
+HTMA_;Thickness 2mm Multi Head;15;15;0;0;777;888;999;xxx;x;x;p6rmn_
 HWLX_;Localizer Warp Head;0;0;0;0;777;888;999;xxx;x;x;none_
 HWSA_;Warp Assiale Head;1;1;0;0;777;888;999;xxx;x;x;p7rmn_
 HRKA_;Risoluzione 1024 Head;1;1;0;0;777;888;999;xxx;x;x;p4rmn_

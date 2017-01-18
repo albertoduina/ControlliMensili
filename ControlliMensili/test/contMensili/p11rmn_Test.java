@@ -55,6 +55,34 @@ public class p11rmn_Test {
 		// MyLog.waitHere();
 		assertTrue(UtilAyv.compareVectors(vetResults, vetReference, 1e-12, ""));
 	}
+	
+	@Test
+	public final void testMainUniforFast170117() {
+
+		String path1 = "./Test2/87_0001_P11";
+		String path2 = "./Test2/89_0001_P11";
+		
+		// boolean autoCalled = false;
+		// boolean step = false;
+		// boolean verbose = false;
+		// boolean test = false;
+		int verticalDir = 4;
+		double[] vetReference = p11rmn_.referenceSiemens();
+		double profond = 30.0;
+		// boolean fast = true;
+		// boolean silent = false;
+		int timeout = 0;
+		int mode = 3;
+		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, verticalDir,
+				profond, "", mode, timeout);
+		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		// MyLog.waitHere();
+		// MyLog.logVector(vetResults, "vetResults");
+		// MyLog.logVector(vetReference, "vetReference");
+		// MyLog.waitHere();
+		assertTrue(UtilAyv.compareVectors(vetResults, vetReference, 1e-12, ""));
+	}
+
 
 	@Test
 	public final void testMainUniforTestSiemens() {

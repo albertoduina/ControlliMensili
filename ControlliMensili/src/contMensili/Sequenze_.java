@@ -162,101 +162,105 @@ public class Sequenze_ implements PlugIn {
 		boolean self1 = false;
 		boolean p10p11p12 = false;
 		boolean fast = false;
-		boolean batch = false;
+		// boolean batch = false;
 		boolean superficiali = false;
 		boolean aux2 = false;
 		boolean aux3 = false;
 
 		List<String> arrayStartingDir = new ArrayList<String>();
 
-		do {
-			GenericDialog gd = new GenericDialog("", IJ.getInstance());
-			gd.addCheckbox("Nuovo controllo", aux2);
-			gd.addCheckbox("SelfTest", false);
-			gd.addCheckbox("p10_ p11_ p12_ p16_ p17_", true);
-			gd.addCheckbox("Fast", true);
-			if (blackbox)
-				gd.addCheckbox("Batch", true);
-			gd.addCheckbox("Superficiali", false);
-			gd.showDialog();
-			if (gd.wasCanceled()) {
+		// do {
+		GenericDialog gd = new GenericDialog("", IJ.getInstance());
+		gd.addCheckbox("Nuovo controllo", aux2);
+		gd.addCheckbox("SelfTest", false);
+		gd.addCheckbox("p10_ p11_ p12_ p16_ p17_", true);
+		gd.addCheckbox("Fast", true);
+		// if (blackbox)
+		// gd.addCheckbox("Batch", true);
+		gd.addCheckbox("Superficiali", false);
+		gd.showDialog();
+		if (gd.wasCanceled()) {
+			return;
+		}
+
+		nuovo2 = gd.getNextBoolean();
+		self1 = gd.getNextBoolean();
+		p10p11p12 = gd.getNextBoolean();
+		fast = gd.getNextBoolean();
+		// if (blackbox)
+		// batch = gd.getNextBoolean();
+		superficiali = gd.getNextBoolean();
+
+		MyLog.waitHere("nuovoControllo= " + nuovo2 + "\nselfTest= " + self1 + "\np10_p11_p12_p16_17_= " + p10p11p12
+				+ "\nfast= " + fast + "\nsuperficiali= " + superficiali);
+
+		if (fast) {
+			Prefs.set("prefer.fast", "true");
+		} else {
+			Prefs.set("prefer.fast", "false");
+		}
+
+		if (self1) {
+			if (!new InputOutput().checkJar(MyConst.TEST_FILE)) {
+				UtilAyv.noTest2();
 				return;
 			}
 
-			nuovo2 = gd.getNextBoolean();
-			self1 = gd.getNextBoolean();
-			p10p11p12 = gd.getNextBoolean();
-			fast = gd.getNextBoolean();
-			if (blackbox)
-				batch = gd.getNextBoolean();
+			IJ.runPlugIn("contMensili.p3rmn_", "-1");
+			IJ.runPlugIn("contMensili.p4rmn_", "-1");
+			IJ.runPlugIn("contMensili.p5rmn_", "-1");
+			IJ.runPlugIn("contMensili.p6rmn_", "-1");
+			IJ.runPlugIn("contMensili.p7rmn_", "-1");
+			IJ.runPlugIn("contMensili.p8rmn_", "-1");
+			IJ.runPlugIn("contMensili.p10rmn_", "-1");
+			IJ.runPlugIn("contMensili.p11rmn_", "-1");
+			IJ.runPlugIn("contMensili.p12rmn_", "-1");
+			IJ.runPlugIn("contMensili.p16rmn_", "-1");
+			IJ.runPlugIn("contMensili.p20rmn_", "-1");
+			IJ.runPlugIn("contMensili.p10rmn_OLD1", "-1");
+			IJ.runPlugIn("contMensili.p11rmn_OLD1", "-1");
+			IJ.runPlugIn("contMensili.p12rmn_OLD1", "-1");
 
-			if (fast) {
-				Prefs.set("prefer.fast", "true");
-			} else {
-				Prefs.set("prefer.fast", "false");
-			}
+			// IJ.runPlugIn("contMensili.p9rmn_", "-1");
+			// IJ.runPlugIn("contMensili.p2rmn_", "-1");
 
-			if (self1) {
-				if (!new InputOutput().checkJar(MyConst.TEST_FILE)) {
-					UtilAyv.noTest2();
-					return;
-				}
+			ButtonMessages.ModelessMsg("Sequenze: fine selfTest, vedere Log per risultati", "CONTINUA");
+			return;
+			// } else if (nuovo1 || !startingDirExist) {
+			// } else if ((nuovo2 || !startingDirExist) && (!batch)) {
+		} else if (nuovo2 || !startingDirExist) {
+			nuovo1 = true;
+			aux2 = true;
+			aux3 = true;
 
-				IJ.runPlugIn("contMensili.p3rmn_", "-1");
-				IJ.runPlugIn("contMensili.p4rmn_", "-1");
-				IJ.runPlugIn("contMensili.p5rmn_", "-1");
-				IJ.runPlugIn("contMensili.p6rmn_", "-1");
-				IJ.runPlugIn("contMensili.p7rmn_", "-1");
-				IJ.runPlugIn("contMensili.p8rmn_", "-1");
-				IJ.runPlugIn("contMensili.p10rmn_", "-1");
-				IJ.runPlugIn("contMensili.p11rmn_", "-1");
-				IJ.runPlugIn("contMensili.p12rmn_", "-1");
-				IJ.runPlugIn("contMensili.p16rmn_", "-1");
-				IJ.runPlugIn("contMensili.p20rmn_", "-1");
-				IJ.runPlugIn("contMensili.p10rmn_OLD1", "-1");
-				IJ.runPlugIn("contMensili.p11rmn_OLD1", "-1");
-				IJ.runPlugIn("contMensili.p12rmn_OLD1", "-1");
+			DirectoryChooser.setDefaultDirectory(startingDir);
+			DirectoryChooser od1 = new DirectoryChooser("Selezionare la cartella: ");
+			startingDir = od1.getDirectory();
 
-				// IJ.runPlugIn("contMensili.p9rmn_", "-1");
-				// IJ.runPlugIn("contMensili.p2rmn_", "-1");
-
-				ButtonMessages.ModelessMsg("Sequenze: fine selfTest, vedere Log per risultati", "CONTINUA");
+			if (startingDir == null)
 				return;
-				// } else if (nuovo1 || !startingDirExist) {
-				// } else if ((nuovo2 || !startingDirExist) && (!batch)) {
-			} else if (nuovo2 || !startingDirExist) {
-				nuovo1 = true;
-				aux2 = true;
-				aux3 = true;
+			Prefs.set("prefer.string1", startingDir);
+			// MyFileLogger.logger.info("Sequenze_>>> startingDir salvata= "
+			// + startingDir);
 
-				DirectoryChooser.setDefaultDirectory(startingDir);
-				DirectoryChooser od1 = new DirectoryChooser("Selezionare la cartella: ");
-				startingDir = od1.getDirectory();
-
-				if (startingDir == null)
-					return;
-				Prefs.set("prefer.string1", startingDir);
-				// MyFileLogger.logger.info("Sequenze_>>> startingDir salvata= "
-				// + startingDir);
-
-				String aux1 = Prefs.get(MyConst.PREFERENCES_1, MyConst.DEFAULT_PATH);
-				arrayStartingDir.add(startingDir);
-				// MyFileLogger.logger.info("Sequenze_>>> startingDir riletta= "
-				// + aux1);
-				// } else if (nuovo2 && batch) {
-				// nuovo1 = true;
-				// aux2 = true;
-				// aux3 = true;
-				// DirectoryChooser.setDefaultDirectory(startingDir);
-				// DirectoryChooser od1 = new DirectoryChooser("Selezionare la
-				// cartella: ");
-				// startingDir = od1.getDirectory();
-				//
-				// if (startingDir == null)
-				// return;
-				// arrayStartingDir.add(startingDir);
-			}
-		} while (batch);
+			String aux1 = Prefs.get(MyConst.PREFERENCES_1, MyConst.DEFAULT_PATH);
+			arrayStartingDir.add(startingDir);
+			// MyFileLogger.logger.info("Sequenze_>>> startingDir riletta= "
+			// + aux1);
+			// } else if (nuovo2 && batch) {
+			// nuovo1 = true;
+			// aux2 = true;
+			// aux3 = true;
+			// DirectoryChooser.setDefaultDirectory(startingDir);
+			// DirectoryChooser od1 = new DirectoryChooser("Selezionare la
+			// cartella: ");
+			// startingDir = od1.getDirectory();
+			//
+			// if (startingDir == null)
+			// return;
+			// arrayStartingDir.add(startingDir);
+		}
+		// } while (batch);
 
 		long startTime = System.currentTimeMillis();
 		for (int b1 = 0; b1 < arrayStartingDir.size(); b1++) {

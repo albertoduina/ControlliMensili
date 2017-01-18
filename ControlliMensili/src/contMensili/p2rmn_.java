@@ -103,12 +103,12 @@ public class p2rmn_ implements PlugIn, Measurements {
 	String[][] tabl;
 
 	/**
-	 * calibrazioni spaziali e di densità dell'immagine
+	 * calibrazioni spaziali e di densitï¿½ dell'immagine
 	 */
 	Calibration cal8;
 
 	/**
-	 * true se l'immagine è una T2
+	 * true se l'immagine ï¿½ una T2
 	 */
 	boolean typeT2 = false;
 
@@ -180,7 +180,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	public boolean DEBUG2 = false; // true attiva il debug
 
-	private boolean selftest = false; // non è bello, lo uso per colpa del
+	private boolean selftest = false; // non ï¿½ bello, lo uso per colpa del
 
 	// maledetto filtro sul fondo
 
@@ -394,7 +394,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 			if (nTokens == 1) {
 				ButtonMessages
 						.ModelessMsg(
-								"Non è possibile selezionare solo una immagine    <06>",
+								"Non ï¿½ possibile selezionare solo una immagine    <06>",
 								"CHIUDI");
 				return;
 			}
@@ -410,7 +410,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 			defaultVetYUpperLeftCornerRoiGels = Y_ULC_ROI_TESTGE;
 
 			for (int i1 = 0; i1 < nTokens; i1++)
-				// vetRiga1 conterrà i codici multipli passati da sequenze
+				// vetRiga1 conterrï¿½ i codici multipli passati da sequenze
 				vetRiga1[i1] = Integer.parseInt(strTok.nextToken());
 			//
 			// Carico la tabella in memoria
@@ -439,7 +439,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 				vetRiga1[0], tabl, VERSION + "_P2_", autoCalled);
 
 		//
-		// Qui si torna se la misura è da rifare
+		// Qui si torna se la misura ï¿½ da rifare
 		//
 		do {
 			UtilAyv.closeResultsWindow();
@@ -702,7 +702,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 		UtilAyv.resetResultsTable();
 		UtilAyv.resetMeasure(misure1);
 
-		InputOutput.deleteDir(new File(TEST_DIRECTORY));
+		// InputOutput.deleteDir(new File(TEST_DIRECTORY));
 		// if (autoCalled)
 		UtilAyv.afterWork();
 		// UtilAyv.cleanUp();
@@ -811,8 +811,8 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * dispone il contenuto dei pixel nella tabella in formato double [][][][].
-	 * Nellla tabella abbiamo: tabella[rep][slice][x][y] in cui slice è sempre 0
-	 * (usato per compatibilità con le librerie che sono fatte per processare
+	 * Nellla tabella abbiamo: tabella[rep][slice][x][y] in cui slice ï¿½ sempre 0
+	 * (usato per compatibilitï¿½ con le librerie che sono fatte per processare
 	 * dei volumi.
 	 * 
 	 * @param stack1
@@ -871,7 +871,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 	 */
 	private double[] getTRVals(ImageStack stack1, String userinput) {
 		//
-		// attenzione nel caso del T1, viene chiamato TR ma in realtà è il TI
+		// attenzione nel caso del T1, viene chiamato TR ma in realtï¿½ ï¿½ il TI
 		//
 		String attribute = "???";
 		String value = "???";
@@ -1020,7 +1020,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 								double filtroFondo2 = filtroFondo;
 								// ##############################################
 								// applicazione del filtro sul fondo ai segnali
-								// in ingresso, ma solo se abbiamo più di 10
+								// in ingresso, ma solo se abbiamo piï¿½ di 10
 								// immagini
 								// #############################################
 
@@ -1251,32 +1251,32 @@ public class p2rmn_ implements PlugIn, Measurements {
 		boolean testok = true;
 		double rightValue = 58.592281981359555;
 		if (medGel1 != rightValue) {
-			IJ.log("medGel1 ERRATA " + medGel1 + " anzichè " + rightValue);
+			IJ.log("medGel1 ERRATA " + medGel1 + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 3.866370693178298;
 		if (devGel1 != rightValue) {
-			IJ.log("devGel1 ERRATA " + devGel1 + " anzichè " + rightValue);
+			IJ.log("devGel1 ERRATA " + devGel1 + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 73.95285294931146;
 		if (medGel2 != rightValue) {
-			IJ.log("medGel2 ERRATA " + medGel2 + " anzichè " + rightValue);
+			IJ.log("medGel2 ERRATA " + medGel2 + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 3.6103799208252223;
 		if (devGel2 != rightValue) {
-			IJ.log("devGel2 ERRATA " + devGel2 + " anzichè " + rightValue);
+			IJ.log("devGel2 ERRATA " + devGel2 + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 113.45177367970913;
 		if (medGel3 != rightValue) {
-			IJ.log("medGel3 ERRATA " + medGel3 + " anzichè " + rightValue);
+			IJ.log("medGel3 ERRATA " + medGel3 + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 4.585334675446435;
 		if (devGel3 != rightValue) {
-			IJ.log("devGel3 ERRATA " + devGel3 + " anzichè " + rightValue);
+			IJ.log("devGel3 ERRATA " + devGel3 + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 
@@ -1300,32 +1300,32 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 		double rightValue = 41.12338699871981;
 		if (medGel1 != rightValue) {
-			IJ.log("medGel1 ERRATA " + medGel1 + " anzichè " + rightValue);
+			IJ.log("medGel1 ERRATA " + medGel1 + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 6.807091233248218;
 		if (devGel1 != rightValue) {
-			IJ.log("devGel1 ERRATA " + devGel1 + " anzichè " + rightValue);
+			IJ.log("devGel1 ERRATA " + devGel1 + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 47.02839973304845;
 		if (medGel2 != rightValue) {
-			IJ.log("medGel2 ERRATA " + medGel2 + " anzichè " + rightValue);
+			IJ.log("medGel2 ERRATA " + medGel2 + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 6.160207177522188;
 		if (devGel2 != rightValue) {
-			IJ.log("devGel2 ERRATA " + devGel2 + " anzichè " + rightValue);
+			IJ.log("devGel2 ERRATA " + devGel2 + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 73.95455746711055;
 		if (medGel3 != rightValue) {
-			IJ.log("medGel3 ERRATA " + medGel3 + " anzichè " + rightValue);
+			IJ.log("medGel3 ERRATA " + medGel3 + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 5.076411495907888;
 		if (devGel3 != rightValue) {
-			IJ.log("devGel3 ERRATA " + devGel3 + " anzichè " + rightValue);
+			IJ.log("devGel3 ERRATA " + devGel3 + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 

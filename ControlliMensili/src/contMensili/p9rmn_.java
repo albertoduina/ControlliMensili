@@ -169,9 +169,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 		// GEL 5,4 deltaT2 50 ms alto contrasto
 		// GEL 14,1 deltaT2 106 ms altissimo contrasto
 		//
-		// il CNR per immagini pesate T1 è valutato su una IR con TR=4000 ms,
+		// il CNR per immagini pesate T1 ï¿½ valutato su una IR con TR=4000 ms,
 		// TI=800 ms
-		// il CNR per immagini pesate T2 è valutato su 3 immagini SE TR=2000 ms,
+		// il CNR per immagini pesate T2 ï¿½ valutato su 3 immagini SE TR=2000 ms,
 		// TE=45,90,180 ms
 		//
 
@@ -214,7 +214,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 		fileDir = Prefs.get("prefer.string1", "none");
 
 		//
-		// questo plugin è organizzato per ricevere solo i numeri di riga,
+		// questo plugin ï¿½ organizzato per ricevere solo i numeri di riga,
 		// che fanno riferimento alla lista immagini COMMAND_FILE generata da
 		// Sequenze, i codici della misura vengono letti dall'header
 		// dell'immagine
@@ -296,7 +296,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 			if (!selftest) {
 				//
-				// poichè si tratta dell'utilizzo manuale del programma chiedo
+				// poichï¿½ si tratta dell'utilizzo manuale del programma chiedo
 				// quale immagine analizzare, in seguito chiedo se analizziamo
 				// un T1 o un T2 (in questo modo mi svincolo dai dati
 				// dell'immagine)
@@ -395,7 +395,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 				autoCalled);
 
 		//
-		// Qui si torna se la misura è da rifare
+		// Qui si torna se la misura ï¿½ da rifare
 		//
 		do {
 			UtilAyv.closeResultsWindow();
@@ -431,7 +431,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 			Roi[] vetRoi = new Roi[N_GELS];
 			//
 			// utilizziamo le preferenze di p2rmn, questo ci permette di
-			// sfruttare il posizionamento già effettuato per p2, a patto che in
+			// sfruttare il posizionamento giï¿½ effettuato per p2, a patto che in
 			// codici.txt venga messo p9rmn dopo p2rmn (le immagini in ayv.txt
 			// sono ordinate da sequenze utilizzando codici.txt)
 			//
@@ -666,7 +666,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 		}
 		UtilAyv.resetResultsTable();
 		UtilAyv.resetMeasure(misure1);
-		InputOutput.deleteDir(new File(TEST_DIRECTORY));
+		// InputOutput.deleteDir(new File(TEST_DIRECTORY));
 		if (autoCalled)
 			UtilAyv.cleanUp();
 	} // close run
@@ -714,28 +714,28 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 		double rightValue = 1647.762658227848;
 		if (medGel_a != rightValue) {
-			IJ.log("medGel2 ERRATA " + medGel_a + " anzichè " + rightValue);
+			IJ.log("medGel2 ERRATA " + medGel_a + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 59.41805613461411;
 		if (devGel_a != rightValue) {
-			IJ.log("devGel2 ERRATA > " + devGel_a + " anzichè " + rightValue);
+			IJ.log("devGel2 ERRATA > " + devGel_a + " anzichï¿½ " + rightValue);
 			testok = false;
 
 		}
 		rightValue = 1603.3101265822784;
 		if (medGel_b != rightValue) {
-			IJ.log("medGel1 ERRATA  > " + medGel_b + " anzichè " + rightValue);
+			IJ.log("medGel1 ERRATA  > " + medGel_b + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 55.54885187603639;
 		if (devGel_b != rightValue) {
-			IJ.log("devGel1 ERRATA > " + devGel_b + " anzichè " + rightValue);
+			IJ.log("devGel1 ERRATA > " + devGel_b + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 0.5465033551900027;
 		if (cnrGel_ab != rightValue) {
-			IJ.log("cnrGel_2_1 ERRATA  > " + cnrGel_ab + " anzichè "
+			IJ.log("cnrGel_2_1 ERRATA  > " + cnrGel_ab + " anzichï¿½ "
 					+ rightValue);
 			testok = false;
 		}
@@ -769,28 +769,28 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 		double rightValue = 733.5474683544304;
 		if (medGel_a != rightValue) {
-			IJ.log("medGel2 ERRATA " + medGel_a + " anzichè " + rightValue);
+			IJ.log("medGel2 ERRATA " + medGel_a + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 24.3458081509488;
 		if (devGel_a != rightValue) {
-			IJ.log("devGel2 ERRATA > " + devGel_a + " anzichè " + rightValue);
+			IJ.log("devGel2 ERRATA > " + devGel_a + " anzichï¿½ " + rightValue);
 			testok = false;
 
 		}
 		rightValue = 590.4746835443038;
 		if (medGel_b != rightValue) {
-			IJ.log("medGel1 ERRATA  > " + medGel_b + " anzichè " + rightValue);
+			IJ.log("medGel1 ERRATA  > " + medGel_b + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 19.717432257273583;
 		if (devGel_b != rightValue) {
-			IJ.log("devGel1 ERRATA > " + devGel_b + " anzichè " + rightValue);
+			IJ.log("devGel1 ERRATA > " + devGel_b + " anzichï¿½ " + rightValue);
 			testok = false;
 		}
 		rightValue = 2.150170864842611;
 		if (cnrGel_ab != rightValue) {
-			IJ.log("cnrGel_2_1 ERRATA  > " + cnrGel_ab + " anzichè "
+			IJ.log("cnrGel_2_1 ERRATA  > " + cnrGel_ab + " anzichï¿½ "
 					+ rightValue);
 			testok = false;
 		}

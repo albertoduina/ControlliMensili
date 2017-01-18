@@ -1,12 +1,18 @@
 package contMensili;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Prefs;
 import ij.WindowManager;
 import ij.gui.Line;
-import ij.gui.OvalRoi;
 import ij.gui.Overlay;
 import ij.gui.Plot;
 import ij.gui.PlotWindow;
@@ -17,25 +23,14 @@ import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
-import ij.process.ImageStatistics;
 import ij.util.Tools;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Frame;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
-
 import utils.AboutBox;
 import utils.ArrayUtils;
 import utils.ButtonMessages;
-import utils.ImageUtils;
 import utils.InputOutput;
-import utils.MyMsg;
 import utils.MyConst;
 import utils.MyLog;
+import utils.MyMsg;
 import utils.MyStackUtils;
 import utils.MyVersionUtils;
 import utils.ReadDicom;
@@ -593,6 +588,8 @@ public class p16rmn_ implements PlugIn, Measurements {
 					dimPixel, over3);
 
 			fwhmCuneo3[w1] = dsd3[0];
+			if (UtilAyv.isNaN(dsd3[0]))
+				MyLog.waitHere("NaN");
 			peakPositionCuneo3[w1] = dsd3[1];
 
 			if (imp3.isVisible())
@@ -697,6 +694,8 @@ public class p16rmn_ implements PlugIn, Measurements {
 		rt.incrementCounter();
 		rt.addValue(t1, "fwhm_cuneo3");
 		for (int j1 = 0; j1 < nFrames; j1++) {
+			if (UtilAyv.isNaN(fwhmCuneo3[j1]))
+				MyLog.waitHere("BOH");
 			rt.addValue(s2 + j1, fwhmCuneo3[j1]);
 		}
 
@@ -960,6 +959,9 @@ public class p16rmn_ implements PlugIn, Measurements {
 		for (int i1 = 0; i1 < profiM1.length; i1++) {
 			vet2X[i1] = i1;
 		}
+
+		MyLog.logVector(profiM1, "profiM1");
+
 		double[] smoothM4 = smooth(profiM1);
 		boolean updateimg = true;
 
@@ -976,6 +978,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 		}
 
 		if (!slab) {
+
 			double[] profiE1 = createErf(profiM1, invert, step); // profilo con
 																	// ERF
 			smoothM4 = profiE1;
@@ -998,8 +1001,18 @@ public class p16rmn_ implements PlugIn, Measurements {
 		}
 
 		// int ordine = 6;
-		int ordine = 6;
+		int ordine = 8;
 		double[] blueslope = angolo(derivataM7, ordine);
+		if (step) {
+			Plot plot5b = new Plot("ANGOLO ", "pixel", "valore");
+			plot5b.setColor(Color.blue);
+			plot5b.addPoints(vet2X, blueslope, Plot.LINE);
+			plot5b.addLegend("angolo");
+			plot5b.setLimitsToFit(updateimg);
+			plot5b.show();
+			MyLog.waitHere("angolo solo");
+		}
+
 		double[] orangeslope = reverse(angolo(reverse(derivataM7), ordine));
 
 		int posmax = ArrayUtils.posMax(derivataM7);
@@ -1188,6 +1201,10 @@ public class p16rmn_ implements PlugIn, Measurements {
 		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
 		double dx = px2;
 		double fwhm = (dx - sx) * dimPixel;
+		if (fwhm == Double.NaN) {
+			MyLog.waitHere("isd[2]= " + isd[2] + " isd[3]= " + isd[3]);
+			errorlog(profile, 0, 0, bslab);
+		}
 
 		for (int i1 = 0; i1 < profile.length; i1++) {
 			if (profile[i1] == min1)
@@ -1347,10 +1364,44 @@ public class p16rmn_ implements PlugIn, Measurements {
 		double x1 = 0;
 		double y1 = 0;
 		double[] vetslope = new double[profile1.length];
+		for (int i1 = ordine; i1 < profile1.length - ordine - 1; i1++) {
+			x0 = i1;
+			y0 = profile1[i1];
+			x1 = i1 + ordine;
+			y1 = profile1[i1 + ordine];
+			vetslope[i1] = (y1 - y0) / (x1 - x0);
+		}
+		return vetslope;
+	}
+
+	public double[] angolo22222(double[] profile1, int ordine) {
+
+		double x0 = 0;
+		double y0 = 0;
+		double x1 = 0;
+		double y1 = 0;
+		double[] vetslope = new double[profile1.length];
+		for (int i1 = 1; i1 < profile1.length - 1; i1++) {
+			x0 = i1 - 1;
+			y0 = profile1[i1 - 1];
+			x1 = i1 + 1;
+			y1 = profile1[i1 + 1];
+			vetslope[i1] = (y1 - y0) / (x1 - x0);
+		}
+		return vetslope;
+	}
+
+	public double[] angolo3333(double[] profile1, int ordine) {
+
+		double x0 = 0;
+		double y0 = 0;
+		double x1 = 0;
+		double y1 = 0;
+		double[] vetslope = new double[profile1.length];
 		for (int i1 = 0; i1 < profile1.length - ordine; i1++) {
 			x0 = i1;
 			y0 = profile1[i1];
-			x1 = i1 + 1;
+			x1 = i1 + ordine;
 			y1 = profile1[i1 + ordine];
 			vetslope[i1] = (y1 - y0) / (x1 - x0);
 		}
@@ -1371,31 +1422,20 @@ public class p16rmn_ implements PlugIn, Measurements {
 		}
 		double[] vet2X = new double[profile1.length];
 		for (int i1 = 0; i1 < profile1.length; i1++) {
-			vet2X[i1]=i1;
+			vet2X[i1] = i1;
 		}
-		double[] xx= new double[1];
-		xx[0]= start;
-		double[] yy= new double[1];
-		yy[0]= profile1[start];
-		double[] sogliax= new double[2];
-		sogliax[0]= 0;
-		sogliax[0]= profile1.length-1;
-		double[] sogliay= new double[2];
-		sogliay[0]= soglia1;
-		sogliay[0]= soglia1;
-		
-		Plot plot6 = new Plot("ERRORE", "pixel", "valore");
-		plot6.setColor(Color.blue);
-		plot6.addPoints(vet2X, profile1, Plot.LINE);
-		plot6.setColor(Color.blue);
-		plot6.addPoints(xx, yy, Plot.CIRCLE);
-		plot6.setColor(Color.green);
-		plot6.addPoints(sogliax, sogliay, Plot.LINE);
-		plot6.addLegend("segnale\nstart\nsoglia1");
-		plot6.setLimitsToFit(true);
-		plot6.show();
-		MyLog.waitHere(
-				"ERRORE non trovato punto sotto soglia start= " + start + " reverse= " + reverse + "soglia1= " + soglia1);
+		double[] xx = new double[1];
+		xx[0] = start;
+		double[] yy = new double[1];
+		yy[0] = profile1[start];
+		double[] sogliax = new double[2];
+		sogliax[0] = 0;
+		sogliax[0] = profile1.length - 1;
+		double[] sogliay = new double[2];
+		sogliay[0] = soglia1;
+		sogliay[0] = soglia1;
+
+		errorlog(profile1, soglia1, start, reverse);
 		return -1;
 	}
 
@@ -1570,7 +1610,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 			MyLog.waitHere("ERF TOTALE");
 		}
 
-		int ordine = 1;
+		int ordine = 4;
 		double[] blueslope = angolo(erf, ordine);
 		double[] orangeslope = reverse(angolo(reverse(erf), ordine));
 		int posmax1 = ArrayUtils.posMax(blueslope);
@@ -1580,8 +1620,8 @@ public class p16rmn_ implements PlugIn, Measurements {
 		Plot plot3 = new Plot("slopes", "pixel", "valore");
 
 		if (step) {
-			plot3.setColor(Color.blue);
-			plot3.addPoints(vet2X, blueslope, Plot.LINE);
+			// plot3.setColor(Color.blue);
+			// plot3.addPoints(vet2X, blueslope, Plot.LINE);
 			plot3.setColor(Color.orange);
 			plot3.addPoints(vet2X, orangeslope, Plot.LINE);
 			plot3.setLimitsToFit(updateImg);
@@ -1910,6 +1950,37 @@ public class p16rmn_ implements PlugIn, Measurements {
 			return true;
 
 		return false;
+	}
+
+	void errorlog(double[] profile1, double soglia, int start, boolean reverse) {
+
+		double[] vet2X = new double[profile1.length];
+		for (int i1 = 0; i1 < profile1.length; i1++) {
+			vet2X[i1] = i1;
+		}
+		double[] xx = new double[1];
+		xx[0] = start;
+		double[] yy = new double[1];
+		yy[0] = profile1[start];
+		double[] sogliax = new double[2];
+		sogliax[0] = 0;
+		sogliax[0] = profile1.length - 1;
+		double[] sogliay = new double[2];
+		sogliay[0] = soglia;
+		sogliay[0] = soglia;
+
+		Plot plot6 = new Plot("ERRORE", "pixel", "valore");
+		plot6.setColor(Color.blue);
+		plot6.addPoints(vet2X, profile1, Plot.LINE);
+		plot6.setColor(Color.blue);
+		plot6.addPoints(xx, yy, Plot.CIRCLE);
+		plot6.setColor(Color.green);
+		plot6.addPoints(sogliax, sogliay, Plot.LINE);
+		plot6.addLegend("segnale\nstart\nsoglia1");
+		plot6.setLimitsToFit(true);
+		plot6.show();
+		MyLog.waitThere("ERRORE soglia= " + soglia + " start= " + start + " reverse= " + reverse);
+
 	}
 
 	/**
