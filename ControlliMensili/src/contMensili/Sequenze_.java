@@ -191,8 +191,9 @@ public class Sequenze_ implements PlugIn {
 		// batch = gd.getNextBoolean();
 		superficiali = gd.getNextBoolean();
 
-		MyLog.waitHere("nuovoControllo= " + nuovo2 + "\nselfTest= " + self1 + "\np10_p11_p12_p16_17_= " + p10p11p12
-				+ "\nfast= " + fast + "\nsuperficiali= " + superficiali);
+		// MyLog.waitHere("nuovoControllo= " + nuovo2 + "\nselfTest= " + self1 +
+		// "\np10_p11_p12_p16_17_= " + p10p11p12
+		// + "\nfast= " + fast + "\nsuperficiali= " + superficiali);
 
 		if (fast) {
 			Prefs.set("prefer.fast", "true");

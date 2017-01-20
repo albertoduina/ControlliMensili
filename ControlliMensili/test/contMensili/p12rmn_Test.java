@@ -292,16 +292,17 @@ public class p12rmn_Test {
 		// 16 dic 2011 sistemato, ora funziona in automatico
 
 		String path1 = "./Test2/HUSA2_01testP3";
-		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+//		ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+		ImagePlus imp11 = UtilAyv.openImageMaximized(path1);
 		imp11.deleteRoi();
 		int xRoi = 240;
 		int yRoi = 240;
 		int diamRoi = 20;
 		boolean test = true;
-		boolean demo = false;
+		boolean demo = true;
 		boolean out3 = p12rmn_.verifyCircularRoiPixels(imp11, xRoi, yRoi,
 				diamRoi, test, demo);
-		// MyLog.waitHere("out3= " + out3);
+		MyLog.waitHere("out3= " + out3);
 		assertTrue(out3);
 
 	}
@@ -404,8 +405,8 @@ public class p12rmn_Test {
 		int sqNEA = 20;
 		double checkPixels = 58.064;
 		boolean test = true;
-		// rispetto a questo test ricordarsi che la roi assegnata è
-		// assolutamente arbitraria, si deve solo vedere un quadrato chiaro, più
+		// rispetto a questo test ricordarsi che la roi assegnata ï¿½
+		// assolutamente arbitraria, si deve solo vedere un quadrato chiaro, piï¿½
 		// o meno al centro dell'immagine
 
 		int pixx = p12rmn_.countPixTest(imp1, xPos, yPos, sqNEA, checkPixels,

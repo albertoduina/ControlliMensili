@@ -358,6 +358,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * @param profond
 	 * @param info10
 	 * @param mode
+	 *            0=silent, 1=fast, 2=step, 3=step, 4=verbose, 10=step
 	 * @param timeout
 	 * @return
 	 */
@@ -402,7 +403,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			break;
 		}
 
-//		MyLog.waitHere("mode=" + mode);
+		// MyLog.waitHere("mode=" + mode);
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		do {
@@ -458,6 +459,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				double yEndRefLine = out2[5];
 				int xCenterRoi = (int) out2[0];
 				int yCenterRoi = (int) out2[1];
+				boolean confirmed = false;
 
 				// =================================================
 
@@ -664,9 +666,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 					imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA, sqNEA);
 					if (!silent && !fast) {
+
 						imp1.updateAndDraw();
+
 						imp1.getRoi().setStrokeColor(Color.green);
-						imp1.getRoi().setStrokeWidth(1.1);
+						imp1.getRoi().setStrokeWidth(1);
 						over2.addElement(imp1.getRoi());
 						MyLog.waitHere("pixels utilizzabili= " + pixx, debug, timeout);
 					}
@@ -676,10 +680,60 @@ public class p11rmn_ implements PlugIn, Measurements {
 						msgDisplayNEA();
 
 					if (pixx < area11x11) {
+
+						if (!confirmed) {
+
+							imp1.deleteRoi();
+							overlayGrid(imp1, MyConst.P11_GRID_NUMBER, true);
+							over2.clear();
+							imp1.setOverlay(over2);
+
+							xStartRefLine2 = 0;
+							yStartRefLine2 = yCenterRoi;
+							xEndRefLine2 = width;
+							yEndRefLine2 = yCenterRoi;
+
+							imp1.setRoi(new Line(xStartRefLine2, yStartRefLine2, xEndRefLine2, yEndRefLine2));
+							imp1.getRoi().setStrokeColor(Color.green);
+							imp1.getRoi().setStrokeWidth(0.5);
+							over2.add(imp1.getRoi());
+
+							xStartRefLine2 = xCenterRoi;
+							yStartRefLine2 = 0;
+							xEndRefLine2 = xCenterRoi;
+							yEndRefLine2 = height;
+
+							imp1.setRoi(new Line(xStartRefLine2, yStartRefLine2, xEndRefLine2, yEndRefLine2));
+							imp1.getRoi().setStrokeColor(Color.green);
+							imp1.getRoi().setStrokeWidth(0.5);
+							over2.add(imp1.getRoi());
+
+							// ImageUtils.addOverlayRoi(imp1, Color.green, 1);
+							// MyLog.waitHere();
+
+							imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA, sqNEA);
+							imp1.getRoi().setStrokeColor(Color.red);
+							imp1.getRoi().setStrokeWidth(1.1);
+
+							MyLog.waitHere(info10 + "\nimp1= " + imp1.getTitle() + "\nimp2= " + imp2.getTitle()
+									+ "\nConfermare correttezza posizione ROI indicata in rosso,\nORA E SOLO ORA e' possibile spostarla, oppure lasciarla dove si trova.\nPOI premere OK");
+
+							confirmed = true;
+							Rectangle boundRec4 = imp1.getProcessor().getRoi();
+							xCenterRoi = (int) boundRec4.getCenterX();
+							yCenterRoi = (int) boundRec4.getCenterY();
+							imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA, sqNEA);
+
+							imp1.getRoi().setStrokeWidth(1);
+							imp1.getRoi().setStrokeColor(Color.green);
+							imp1.updateAndDraw();
+						}
+						// over2.clear();
+						MyLog.waitHere(info10 + "\nimp1= " + imp1.getTitle() + "\nimp2= " + imp2.getTitle() + "\n"
+								+ "Accrescimento MROI in corso", debug);
+
 						sqNEA = sqNEA + 2; // accrescimento area
 						enlarge = enlarge + 1;
-
-						MyLog.waitHere(info10 + "\nimp1= "+imp1.getTitle()+"\nimp2= "+imp2.getTitle()+ "\n" + listaMessaggi(1), debug);
 
 						// MyLog.waitHere("verificare immagine, insolito
 						// accrescimento richiesto");
@@ -724,8 +778,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 				// calcolo SD su imaDiff quando i corrispondenti pixel
 				// di imp1 passano il test
 				//
-				double[] out1 = devStandardNema(imp1, imaDiff, xCenterRoi - enlarge, yCenterRoi - enlarge, sqNEA,
-						checkPixels);
+
+				double[] out1 = devStandardNema(imp1, imaDiff, xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA,
+						checkPixels, true, imp1.getOverlay());
 				if (step)
 					msgDisplayMean4(out1[0], out1[1]);
 
@@ -795,6 +850,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				double[] outFwhm2 = analyzeProfile(imp1, xStartProfile, yStartProfile, xEndProfile, yEndProfile,
 						dimPixel, step);
+
 				IJ.wait(MyConst.TEMPO_VISUALIZZ);
 
 				//
@@ -1207,11 +1263,13 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * @return [0] sum / pixelcount [1] devStan
 	 */
 
-	public static double[] devStandardNema(ImagePlus imp1, ImagePlus imp3, int sqX, int sqY, int sqR, double limit) {
+	public static double[] devStandardNema(ImagePlus imp1, ImagePlus imp3, int sqX, int sqY, int sqR, double limit,
+			boolean paintPixels, Overlay over1) {
 		double[] results = new double[2];
 		double value4 = 0.0;
 		double sumValues = 0.0;
 		double sumSquare = 0.0;
+		boolean ok;
 
 		if ((imp1 == null) || (imp3 == null)) {
 			IJ.error("devStandardNema ricevuto imp null");
@@ -1224,13 +1282,20 @@ public class p11rmn_ implements PlugIn, Measurements {
 		ImageProcessor ip3 = imp3.getProcessor();
 		float[] pixels4 = (float[]) ip3.getPixels();
 		for (int y1 = sqY; y1 < (sqY + sqR); y1++) {
+			ok = false;
 			for (int x1 = sqX; x1 < (sqX + sqR); x1++) {
 				offset = y1 * width + x1;
+				ok = true;
 				if (pixels1[offset] > limit) {
 					pixelCount++;
 					value4 = pixels4[offset];
 					sumValues += value4;
 					sumSquare += value4 * value4;
+					// modifica del 200117
+					if (paintPixels)
+						setOverlayPixel(over1, imp1, x1, y1, Color.yellow, Color.red, ok);
+					// --------
+
 				}
 			}
 		}
@@ -1238,6 +1303,20 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double sd1 = calculateStdDev4(pixelCount, sumValues, sumSquare);
 		results[1] = sd1;
 		return (results);
+	}
+
+	public static void setOverlayPixel(Overlay over1, ImagePlus imp1, int x1, int y1, Color col1, Color col2,
+			boolean ok) {
+		imp1.setRoi(x1, y1, 1, 1);
+		if (ok) {
+			imp1.getRoi().setStrokeColor(col1);
+			imp1.getRoi().setFillColor(col1);
+		} else {
+			imp1.getRoi().setStrokeColor(col1);
+			imp1.getRoi().setFillColor(col2);
+		}
+		over1.addElement(imp1.getRoi());
+		imp1.deleteRoi();
 	}
 
 	/**
@@ -1285,6 +1364,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			createPlotP11(profi1, true, true); // plot della fwhm
 		if (step)
 			ButtonMessages.ModelessMsg("Continuare?   <51>", "CONTINUA");
+		imp1.deleteRoi();
 		return (outFwhm);
 	} // analProf2
 
@@ -1511,17 +1591,17 @@ public class p11rmn_ implements PlugIn, Measurements {
 		return out;
 	}
 
-	/***
+	/**
 	 * 
 	 * @param imp11
 	 * @param autoCalled
-	 * @param direzione
+	 * @param direzioneTabella
+	 *            1=verticale a salire, 2=verticale a scendere, 3=orizzontale
+	 *            sinistra, 4=orizzontale destra
 	 * @param profond
 	 * @param info10
-	 * @param step
-	 * @param verbose
-	 * @param test
-	 * @param fast
+	 * @param mode
+	 * @param timeout
 	 * @return
 	 */
 	public static double[] positionSearch(ImagePlus imp11, boolean autoCalled, int direzioneTabella, double profond,
@@ -1578,8 +1658,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 			imp11.setTitle(
 					"DIMENSIONI RETICOLO= " + (dimPixel * (double) height / (double) MyConst.P11_GRID_NUMBER) + " mm");
 
-		Overlay over1 = new Overlay();
-		imp11.setOverlay(over1);
+		Overlay over11 = new Overlay();
+		imp11.setOverlay(over11);
 		imp11.updateAndDraw();
 
 		double[] out1 = MyFilter.maxPosition1x1(imp11);
@@ -1589,8 +1669,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 		direzione = directionFinder(imp11, xMaximum, yMaximum, silent, timeout);
 
 		if (direzione != 0 && direzione != direzioneTabella) {
-			MyLog.waitHere("Rilevata differenza tra directionFinder e direzioneTabella direzione= " + direzione
-					+ " direzioneTabella= " + direzioneTabella);
+			// MyLog.waitHere("Rilevata differenza tra directionFinder e
+			// direzioneTabella direzione= " + direzione
+			// + " direzioneTabella= " + direzioneTabella);
 			manualRequired = true;
 			who1 = 1;
 			direzione = direzioneTabella;
@@ -1610,8 +1691,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		// if (fast && (step || test)) {
 		imp11.setRoi(new OvalRoi((int) xMaximum - 4, (int) yMaximum - 4, 8, 8));
-		over1.addElement(imp11.getRoi());
-		over1.setStrokeColor(color1);
+		over11.addElement(imp11.getRoi());
+		over11.setStrokeColor(color1);
 		imp11.updateAndDraw();
 		if (step)
 			MyLog.waitHere("Maximum value= " + out1[2] + " find at x= " + xMaximum + " y= " + yMaximum, debug, timeout);
@@ -1699,8 +1780,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 			ay = height / 2;
 		} else {
 			imp11.setRoi(new Line(startX, startY, endX, endY));
-			over1.addElement(imp11.getRoi());
-			over1.setStrokeColor(color1);
+			over11.addElement(imp11.getRoi());
+			over11.setStrokeColor(color1);
 			imp11.updateAndDraw();
 			if (step || test)
 				MyLog.waitHere("Selezione automatica direzione = " + strDirez, debug, timeout);
@@ -1748,16 +1829,37 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		if (!fast && (step || test || manualRequired)) {
 			imp11.setRoi(new OvalRoi((int) ax - 4, (int) ay - 4, 8, 8));
-			over1.addElement(imp11.getRoi());
-			over1.setStrokeColor(color1);
+			over11.addElement(imp11.getRoi());
+			over11.setStrokeColor(color1);
 			imp11.updateAndDraw();
 		}
 
 		imp11.setRoi((int) ax - 10, (int) ay - 10, 20, 20);
 
 		if (manualRequired) {
+			imp11.deleteRoi();
+			over11.clear();
+			// UtilAyv.showImageMaximized(imp11);
 
 			overlayGrid(imp11, MyConst.P11_GRID_NUMBER, true);
+			imp11.setOverlay(over11);
+			imp11.setRoi(new Line(0, (int) ay, imp11.getWidth(), (int) ay));
+			imp11.getRoi().setStrokeColor(Color.green);
+			imp11.getRoi().setStrokeWidth(.5);
+			over11.addElement(imp11.getRoi());
+			imp11.setRoi(new Line((int) ax, 0, (int) ax, imp11.getHeight()));
+			imp11.getRoi().setStrokeColor(Color.green);
+			imp11.getRoi().setStrokeWidth(.5);
+			over11.addElement(imp11.getRoi());
+
+			imp11.deleteRoi();
+			imp11.updateAndDraw();
+
+			int sqNEA = MyConst.P11_NEA_11X11_PIXEL;
+			imp11.setRoi((int) ax - sqNEA / 2, (int) ay - sqNEA / 2, sqNEA, sqNEA);
+			imp11.getRoi().setStrokeColor(Color.red);
+			imp11.getRoi().setStrokeWidth(1.1);
+			MyLog.waitHere();
 
 			if (!imp11.isVisible())
 				UtilAyv.showImageMaximized(imp11);
@@ -1769,7 +1871,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 			// MyLog.waitHere(info10
 			// + "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI", debug);
 
-			MyLog.waitHere(info10 + "\n Richiesta al punto " + who1 + "\n " + listaMessaggi(0), debug, timeout);
+			// MyLog.waitHere(info10 + "\nimp11= " + imp11.getTitle() + "\n
+			// Richiesta al punto " + who1 + "\n "
+			// + listaMessaggi(0), debug, timeout);
+			//
+			MyLog.waitHere(info10 + "\nimp11= " + imp11.getTitle()
+					+ "\nConfermare correttezza posizione ROI indicata in rosso,\nORA E SOLO ORA e' possibile spostarla, oppure lasciarla dove si trova.\nPOI premere OK");
 
 			manualRequired = false;
 			who1 = 0;
@@ -1961,8 +2068,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	public static String listaMessaggi(int select) {
 		String[] lista = new String[100];
 		// ---------+-----------------------------------------------------------+
-		lista[0] = "Verifica E/O modifica manuale posizione ROI";
-		lista[1] = "Verificare immagine, accrescimento MROI in corso";
+		// lista[0] = "Verifica E/O modifica manuale posizione ROI";
 		lista[2] = "Analizzando il segnale lungo la linea verde si calcola la FWHM \ne ne si determina il centro. Qui verra' posizionata la MROI";
 
 		// ---------+-----------------------------------------------------------+

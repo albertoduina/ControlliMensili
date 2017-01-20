@@ -5,6 +5,7 @@ import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
 import ij.gui.OvalRoi;
+import ij.gui.Overlay;
 import ij.gui.WaitForUserDialog;
 import ij.measure.ResultsTable;
 
@@ -34,34 +35,7 @@ public class p11rmn_Test {
 
 		String path1 = "./Test2/S12S_01testP11";
 		String path2 = "./Test2/S12S_02testP11";
-		
-		// boolean autoCalled = false;
-		// boolean step = false;
-		// boolean verbose = false;
-		// boolean test = false;
-		int verticalDir = 3;
-		double[] vetReference = p11rmn_.referenceSiemens();
-		double profond = 30.0;
-		// boolean fast = true;
-		// boolean silent = false;
-		int timeout = 0;
-		int mode = 1;
-		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, verticalDir,
-				profond, "", mode, timeout);
-		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-		// MyLog.waitHere();
-		// MyLog.logVector(vetResults, "vetResults");
-		// MyLog.logVector(vetReference, "vetReference");
-		// MyLog.waitHere();
-		assertTrue(UtilAyv.compareVectors(vetResults, vetReference, 1e-12, ""));
-	}
-	
-	@Test
-	public final void testMainUniforFast170117() {
 
-		String path1 = "./Test2/87_0001_P11";
-		String path2 = "./Test2/89_0001_P11";
-		
 		// boolean autoCalled = false;
 		// boolean step = false;
 		// boolean verbose = false;
@@ -72,9 +46,8 @@ public class p11rmn_Test {
 		// boolean fast = true;
 		// boolean silent = false;
 		int timeout = 0;
-		int mode = 3;
-		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, verticalDir,
-				profond, "", mode, timeout);
+		int mode = 1;
+		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, verticalDir, profond, "", mode, timeout);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		// MyLog.waitHere();
 		// MyLog.logVector(vetResults, "vetResults");
@@ -83,6 +56,39 @@ public class p11rmn_Test {
 		assertTrue(UtilAyv.compareVectors(vetResults, vetReference, 1e-12, ""));
 	}
 
+	@Test
+	public final void testMainUniforFast170117() {
+
+		String path1 = "./Test2/87_0001_P11";
+		String path2 = "./Test2/89_0001_P11";
+
+		// boolean autoCalled = false;
+		// boolean step = false;
+		// boolean verbose = false;
+		// boolean test = false;
+
+		// dir=0 verticale a salire
+		// dir=1 verticale a scendere
+		// dir=3 orizzontale a sx
+		// dir=4 orizzontale a dx
+		int dir = 1;
+		double[] vetReference = p11rmn_.referenceSiemens();
+		double profond = 30.0;
+		// boolean fast = true;
+		// boolean silent = false;
+		int timeout = 0;
+		// mode=0 silent
+		// mode=1 fast
+		// mode=2 step
+		int mode = 1;
+		ResultsTable rt1 = p11rmn_.mainUnifor(path1, path2, dir, profond, "", mode, timeout);
+		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		// MyLog.waitHere();
+		// MyLog.logVector(vetResults, "vetResults");
+		// MyLog.logVector(vetReference, "vetReference");
+		MyLog.waitHere();
+		assertTrue(UtilAyv.compareVectors(vetResults, vetReference, 1e-12, ""));
+	}
 
 	@Test
 	public final void testMainUniforTestSiemens() {
@@ -142,10 +148,9 @@ public class p11rmn_Test {
 		String path1 = "./Test2/S12S_01testP11";
 		// ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, true);
 		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, true);
-		double[] out = p11rmn_.positionSearch(imp1, autoCalled, verticalDir,
-				profond, "TestPositionSearch", mode, timeout);
-		double[] expected = { 164.0, 172.0, 164.05714285714285, 0.0,
-				164.05714285714285, 256.0, 186.0, 169.0 };
+		double[] out = p11rmn_.positionSearch(imp1, autoCalled, verticalDir, profond, "TestPositionSearch", mode,
+				timeout);
+		double[] expected = { 164.0, 172.0, 164.05714285714285, 0.0, 164.05714285714285, 256.0, 186.0, 169.0 };
 		assertTrue(UtilAyv.compareVectors(expected, out, 1e-12, ""));
 	}
 
@@ -157,6 +162,8 @@ public class p11rmn_Test {
 		String path2 = "./Test2/2_SLFS";
 		ImagePlus imp2 = UtilAyv.openImageNoDisplay(path2, true);
 		ImagePlus imp3 = UtilAyv.genImaDifference(imp1, imp2);
+		Overlay over1 = new Overlay();
+		imp1.setOverlay(over1);
 
 		// UtilAyv.showImageMaximized(imp3);
 		int sqX = 124;
@@ -164,11 +171,11 @@ public class p11rmn_Test {
 		int sqR = 11;
 		double limit = 11.2;
 
-		double[] devStand = p11rmn_.devStandardNema(imp1, imp3, sqX, sqY, sqR,
-				limit);
+		double[] devStand = p11rmn_.devStandardNema(imp1, imp3, sqX, sqY, sqR, limit, true, imp1.getOverlay());
 		// IJ.log("p11rmn.devStand= " + devStand[1]);
 		double expected = 0.9569954129386802;
 		assertEquals(expected, devStand[1], 1e-12);
+		MyLog.waitHere();
 
 	}
 
@@ -176,6 +183,34 @@ public class p11rmn_Test {
 	public final void testSelfTestSilent() {
 		new p11rmn_().selfTestSilent();
 
+	}
+
+	// @Test
+	// public final void testMaxPeakSearch() {
+	//
+	// String path = InputOutput.findResource("002.txt");
+	// double[] profile1 = InputOutput.readDoubleArrayFromFile(path);
+	// double[] out = p11rmn_.maxPeakSearch(profile1);
+	// double[] expected = { 96.0, 531.1009869960047 };
+	// assertTrue(UtilAyv.compareVectors(expected, out, 1e-12, ""));
+	// }
+
+	@Test
+	public final void testPositionSearch170117() {
+
+		// 16 dec 2011 sistemato, ora funziona in automatico
+
+		boolean autoCalled = false;
+		int dir = 1;
+		double profond = 30.0;
+		int mode = 1;
+		int timeout = 0;
+		String path1 = "./Test2/86_0001_P11";
+		// ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, true);
+		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, true);
+		double[] out = p11rmn_.positionSearch(imp1, autoCalled, dir, profond, "TestPositionSearch", mode, timeout);
+		double[] expected = { 164.0, 172.0, 164.05714285714285, 0.0, 164.05714285714285, 256.0, 186.0, 169.0 };
+		assertTrue(UtilAyv.compareVectors(expected, out, 1e-12, ""));
 	}
 
 }

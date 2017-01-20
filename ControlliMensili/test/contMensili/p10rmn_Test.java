@@ -241,6 +241,7 @@ public class p10rmn_Test {
 		int pixx = p10rmn_.countPixOverLimitCentered(imp1, xPos, yPos, sqNEA,
 				checkPixels, test, over1);
 
+		MyLog.waitHere();
 		// IJ.wait(100);
 		assertEquals(pixx, 169);
 	}

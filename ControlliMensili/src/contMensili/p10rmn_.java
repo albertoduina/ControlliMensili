@@ -948,6 +948,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				pixx = countPixOverLimitCentered(imp1, xCenterRoi, yCenterRoi, sqNEA, checkPixelsLimit, paintPixels,
 						over2);
 
+				
 				imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA, sqNEA);
 				imp1.updateAndDraw();
 
@@ -976,8 +977,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 				}
 				if (step && pixx >= area11x11)
 					MyLog.waitHere(listaMessaggi(22) + pixx, debug, timeout);
+				
 
 			} while (pixx < area11x11);
+
 
 			if (blackbox)
 				MyLog.appendLog2(blacklog,
@@ -1001,7 +1004,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			// qui era il problema devStandardNema non era centered e quindi
 			// faceva il quadrato spostato
-
+	
+			
+	
 			boolean paintPixels = true;
 			double[] out11 = devStandardNemaCentered(imp1, impDiff, xCenterRoi, yCenterRoi, sqNEA, checkPixelsLimit,
 					paintPixels, over2);
