@@ -948,7 +948,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 				pixx = countPixOverLimitCentered(imp1, xCenterRoi, yCenterRoi, sqNEA, checkPixelsLimit, paintPixels,
 						over2);
 
-				
 				imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA, sqNEA);
 				imp1.updateAndDraw();
 
@@ -977,10 +976,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 				}
 				if (step && pixx >= area11x11)
 					MyLog.waitHere(listaMessaggi(22) + pixx, debug, timeout);
-				
 
 			} while (pixx < area11x11);
-
 
 			if (blackbox)
 				MyLog.appendLog2(blacklog,
@@ -1004,9 +1001,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			// qui era il problema devStandardNema non era centered e quindi
 			// faceva il quadrato spostato
-	
-			
-	
+
 			boolean paintPixels = true;
 			double[] out11 = devStandardNemaCentered(imp1, impDiff, xCenterRoi, yCenterRoi, sqNEA, checkPixelsLimit,
 					paintPixels, over2);
@@ -2403,19 +2398,22 @@ public class p10rmn_ implements PlugIn, Measurements {
 						diamCircle));
 				imp12.getRoi().setStrokeColor(colore2);
 				over12.addElement(imp12.getRoi());
-				imp12.setRoi(new PointRoi(xPoints3, yPoints3, xPoints3.length));
-				imp12.getRoi().setStrokeColor(colore2);
+				PointRoi pr1 = new PointRoi(xPoints3, yPoints3, xPoints3.length);
+				pr1.setSize(4);
+				pr1.setPointType(1);
+				imp12.setRoi(pr1);
+				imp12.getRoi().setStrokeColor(Color.red);
 				over12.addElement(imp12.getRoi());
 				imp12.deleteRoi();
 				// MyLog.logVector(xPoints3, "xPoints3");
 				// MyLog.logVector(yPoints3, "yPoints3");
-				MyLog.waitHere(listaMessaggi(18) + " erano " + xPoints3.length + " punti", debug);
+				MyLog.waitHere(listaMessaggi(18) + " rilevati " + xPoints3.length + " punti", debug);
 				manual = true;
 			}
 
 		}
 
-		// MyLog.waitHere("manual= " + manual);
+		Rectangle boundRec = null;
 		// MyLog.waitHere("xPoints3.length= " + xPoints3.length);
 
 		// ----------------------------------------------------------------------
@@ -2430,35 +2428,37 @@ public class p10rmn_ implements PlugIn, Measurements {
 				over12.addElement(imp12.getRoi());
 				over12.setStrokeColor(Color.red);
 			}
+			boundRec = imp12.getProcessor().getRoi();
 
 		} else {
+
 			// NON SI SONO DETERMINATI 3 PUNTI DEL CERCHIO, SELEZIONE MANUALE
-			Rectangle boundRec1 = null;
-			Rectangle boundRec2 = null;
 
 			if (!imp11.isVisible())
 				UtilAyv.showImageMaximized(imp11);
 			// UtilAyv.showImageMaximized(imp11);
 			// ImageUtils.imageToFront(iw11);
-			imp11.setRoi(new OvalRoi((width / 2) - 100, (height / 2) - 100, 200, 200));
+			imp11.setRoi(new OvalRoi((width / 2) - 100, (height / 2) - 100, 180, 180));
 			imp11.updateAndDraw();
-			boundRec1 = imp11.getProcessor().getRoi();
+			imp11.getRoi().setStrokeColor(Color.red);
+			imp11.getRoi().setStrokeWidth(1.1);
+			MyLog.waitHere(
+					"imp11= " + imp11.getTitle() + "\nNon si riescono a determinare le coordinate corrette del cerchio"
+							+ "\nRichiesto ridimensionamennto e riposizionamento della ROI indicata in rosso, attorno al fantoccio\n"
+							+ "POI premere  OK");
 
-			MyLog.waitHere(listaMessaggi(19), debug, timeout);
+			boundRec = imp11.getProcessor().getRoi();
+			xCenterCircle = boundRec.x + boundRec.width / 2;
+			yCenterCircle = boundRec.y + boundRec.height / 2;
+			diamCircle = boundRec.width;
 
-			// OBBLIGO A CAMBIARE QUALCOSA PER PREVENIRE L'OK "SCIMMIA"
-			if (timeout > 0) {
-				IJ.wait(100);
-				imp11.setRoi(new OvalRoi((width / 2) - 101, (height / 2) - 100, 200, 200));
-			}
-
-			boundRec2 = imp11.getProcessor().getRoi();
-
-			while (boundRec1.equals(boundRec2)) {
-				MyLog.waitHere(listaMessaggi(40), debug);
-				boundRec2 = imp11.getProcessor().getRoi();
-			}
-
+			imp11.setRoi(new OvalRoi(xCenterCircle - diamCircle / 2, yCenterCircle - diamCircle / 2, diamCircle,
+					diamCircle));
+			imp11.updateAndDraw();
+			imp11.getRoi().setStrokeColor(Color.green);
+			imp11.getRoi().setStrokeWidth(0);
+			over12.clear();
+			over12.add(imp11.getRoi());
 			//
 			// Ho cosi' risolto la mancata localizzazione automatica del
 			// fantoccio (messaggi non visualizzati in junit)
@@ -2472,13 +2472,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// ==========================================================================
 		// ==========================================================================
 		imp11.setOverlay(over12);
-
-		Rectangle boundRec = null;
-		if (manual)
-			boundRec = imp11.getProcessor().getRoi();
-		else
-			boundRec = imp12.getProcessor().getRoi();
-
 		imp12.close();
 		// x1 ed y1 sono le due coordinate del centro
 
@@ -2601,8 +2594,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			imp11.setOverlay(over12);
 			imp11.setRoi((int) ax - sqNEA / 2, (int) ay - sqNEA / 2, sqNEA, sqNEA);
 			imp11.updateAndDraw();
-			if (demo)
-				MyLog.waitHere(info1 + "\n \nMODIFICA MANUALE POSIZIONE ROI", debug, timeout);
+			// if (demo)
+			MyLog.waitHere(info1 + "\n \nMODIFICA MANUALE POSIZIONE ROI", debug, timeout);
 			//
 			// Vado a rileggere solo le coordinate della ROI, quelle del
 			// cerchio,

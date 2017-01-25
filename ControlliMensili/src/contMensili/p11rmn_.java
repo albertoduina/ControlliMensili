@@ -658,6 +658,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 				int enlarge = 0;
 				int pixx = 0;
 				int loop = 0;
+				boolean alreadyWarned = false;
+
 				do {
 
 					boolean paintPixels = false;
@@ -714,9 +716,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 							imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA, sqNEA);
 							imp1.getRoi().setStrokeColor(Color.red);
 							imp1.getRoi().setStrokeWidth(1.1);
-
 							MyLog.waitHere(info10 + "\nimp1= " + imp1.getTitle() + "\nimp2= " + imp2.getTitle()
-									+ "\nConfermare correttezza posizione ROI indicata in rosso,\nORA E SOLO ORA e' possibile spostarla, oppure lasciarla dove si trova.\nPOI premere OK");
+									+ "\n \nRichiesto riposizionamento della ROI indicata in rosso,\nORA e' possibile spostarla, oppure lasciarla dove si trova.\nPOI premere OK");
 
 							confirmed = true;
 							Rectangle boundRec4 = imp1.getProcessor().getRoi();
@@ -729,9 +730,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 							imp1.updateAndDraw();
 						}
 						// over2.clear();
-						MyLog.waitHere(info10 + "\nimp1= " + imp1.getTitle() + "\nimp2= " + imp2.getTitle() + "\n"
-								+ "Accrescimento MROI in corso", debug);
+						if (!alreadyWarned)
 
+							MyLog.waitHere(info10 + "\nimp1= " + imp1.getTitle() + "\nimp2= " + imp2.getTitle()
+									+ "\n \nAccrescimento MROI in corso", debug);
+
+						alreadyWarned = true;
 						sqNEA = sqNEA + 2; // accrescimento area
 						enlarge = enlarge + 1;
 
@@ -759,8 +763,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 						msgSqr2OK(pixx);
 					}
 
-					// IJ.wait(300);
-					IJ.wait(200);
 					loop++;
 
 				} while (pixx < area11x11);
@@ -1859,24 +1861,14 @@ public class p11rmn_ implements PlugIn, Measurements {
 			imp11.setRoi((int) ax - sqNEA / 2, (int) ay - sqNEA / 2, sqNEA, sqNEA);
 			imp11.getRoi().setStrokeColor(Color.red);
 			imp11.getRoi().setStrokeWidth(1.1);
-			MyLog.waitHere();
 
 			if (!imp11.isVisible())
 				UtilAyv.showImageMaximized(imp11);
 			imp11.updateAndDraw();
 			ImageUtils.imageToFront(imp11);
 
-			// MyLog.waitMessage(info10
-			// + "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI");
-			// MyLog.waitHere(info10
-			// + "\n \nVERIFICA E/O MODIFICA MANUALE POSIZIONE ROI", debug);
-
-			// MyLog.waitHere(info10 + "\nimp11= " + imp11.getTitle() + "\n
-			// Richiesta al punto " + who1 + "\n "
-			// + listaMessaggi(0), debug, timeout);
-			//
 			MyLog.waitHere(info10 + "\nimp11= " + imp11.getTitle()
-					+ "\nConfermare correttezza posizione ROI indicata in rosso,\nORA E SOLO ORA e' possibile spostarla, oppure lasciarla dove si trova.\nPOI premere OK");
+					+ "\n \nRichiesto riposizionamento della ROI indicata in rosso,\nORA e' possibile spostarla, oppure lasciarla dove si trova.\nPOI premere OK");
 
 			manualRequired = false;
 			who1 = 0;

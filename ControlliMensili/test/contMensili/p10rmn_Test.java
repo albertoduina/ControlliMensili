@@ -107,6 +107,36 @@ public class p10rmn_Test {
 
 		assertTrue(UtilAyv.compareVectors(vetResults, vetExpected, 1e-12, ""));
 	}
+	@Test
+	public final void testMainUniforFast250117() {
+
+		// 16 dec 2011 sistemato, ora funziona in automatico
+
+		String path1 = "./Test2/24_0084_P10";
+		String path2 = "./Test2/24_0111_P10";
+		String autoArgs = "0";
+		// Valori assegnati a mode
+		// mode = 1 (ex fast) modo automatico completo
+
+		int mode = 1;
+		double profond = 30;
+
+		ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs, profond,
+				"info10", mode, 100);
+
+		// ResultsTable rt1 = p10rmn_.mainUnifor(path1, path2, autoArgs,
+		// profond,
+		// "info10", autoCalled, step, verbose, test, fast, silent, 100);
+
+		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		double[] vetExpected = p10rmn_.referenceSiemens();
+
+		// MyLog.logVector(vetResults, "vetResults");
+		// MyLog.logVector(vetExpected, "vetExpected");
+		// MyLog.waitHere();
+
+		assertTrue(UtilAyv.compareVectors(vetResults, vetExpected, 1e-12, ""));
+	}
 
 	@Test
 	public final void testMainUniforFault() {
@@ -244,6 +274,31 @@ public class p10rmn_Test {
 		MyLog.waitHere();
 		// IJ.wait(100);
 		assertEquals(pixx, 169);
+	}
+
+	@Test
+	public final void testPositionSearch250117() {
+	
+		// 16 dic 2011 sistemato, ora funziona in automatico
+	
+		String path1 = "./Test2/24_0084_P10";
+	
+		ImagePlus imp11 = UtilAyv.openImageMaximized(path1);
+	
+		int mode = 10;
+	
+		double profond = 30;
+		double out2[] = p10rmn_.positionSearch(imp11, profond, "", mode, 1000);
+	
+		double[] expected = { 158.5, 105.5, 118.0, 135.0, 196.0, 78.0,
+				36.52885536698517, 199.54650334804768, 75.40832447642669,
+				202.0, };
+	
+		// MyLog.logVector(out2, "out2");
+		// MyLog.logVector(expected, "expected");
+		// MyLog.waitHere();
+	
+		assertTrue(UtilAyv.compareVectors(expected, out2, 1e-12, ""));
 	}
 
 }

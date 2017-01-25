@@ -1,0 +1,14 @@
+Lista problemi 180117
+
+Elaborazione RmnAeraNeuro170117
+
+RISOLTO_180117 SEQUENZE:  se spunto superficiali mi viene comunque chiesto di elaborare la DGP, MTF, THICK, WARP, T2, T1, CNR
+
+Riga 534 p11_ messaggio: Verificare immagine, accrescimento MROI in corso (684)  era meglio chiedere di riposizionere ROI
+Riga 790 p11_ messaggio; Rilevata differenza tra directionFinder e Tabella direzione 4 tabella 1
+Riga 791 p11 Richiesta al punto 1 Verifica E/O modifica manuale posizione ROI
+Riga 1032 p12_ Troppa distanza tra i punti forniti ed il fit del cerchio
+Riga 1052 p12_ Spostamento automatico eccessivo x bolla (1952) vedo il messaggio ma non la immagine
+Riga 1052 p12_ Valore insolito segnale del ghost (l'immagine è sotto, si vede solo quella con la roi del fondo) portare immagine in primo piano
+
+

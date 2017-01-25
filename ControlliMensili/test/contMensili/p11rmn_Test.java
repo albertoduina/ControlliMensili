@@ -210,7 +210,9 @@ public class p11rmn_Test {
 		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, true);
 		double[] out = p11rmn_.positionSearch(imp1, autoCalled, dir, profond, "TestPositionSearch", mode, timeout);
 		double[] expected = { 164.0, 172.0, 164.05714285714285, 0.0, 164.05714285714285, 256.0, 186.0, 169.0 };
+		MyLog.waitHere();
 		assertTrue(UtilAyv.compareVectors(expected, out, 1e-12, ""));
+
 	}
 
 }

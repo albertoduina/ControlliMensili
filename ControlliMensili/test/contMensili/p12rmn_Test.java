@@ -56,12 +56,36 @@ public class p12rmn_Test {
 	}
 
 	@Test
-	public final void testMainUniforFast() {
+	public final void testMainUniforFast210117NOFIT() {
 
 		// 04 sep 2013 funziona in automatico
 
-		String path1 = "./Test2//HUSA_001testP3";
-		String path2 = "./Test2//HUSA_002testP3";
+		String path1 = "./Test2//50_0001_P12";
+		String path2 = "./Test2//50_0002_p12";
+		String autoArgs = "0";
+		boolean autoCalled = false;
+		boolean step = false;
+		boolean demo = false;
+		boolean test = false;
+		boolean fast = true;
+		boolean silent = false;
+		int timeout = 100;
+
+		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
+				autoCalled, step, demo, test, fast, silent, timeout);
+		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		double[] vetReference = p12rmn_.referenceSiemens();
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
+				MyConst.P3_vetName);
+		assertTrue(ok);
+	}
+	@Test
+	public final void testMainUniforFast210117BUBBLE() {
+
+		// 04 sep 2013 funziona in automatico
+
+		String path1 = "./Test2//46_0001_P12";
+		String path2 = "./Test2//46_0002_p12";
 		String autoArgs = "0";
 		boolean autoCalled = false;
 		boolean step = false;
@@ -415,6 +439,56 @@ public class p12rmn_Test {
 		// IJ.log("pixx= " + pixx);
 		IJ.wait(200);
 		assertEquals(pixx, 441);
+	}
+
+	@Test
+	public final void testMainUniforFast() {
+	
+		// 04 sep 2013 funziona in automatico
+	
+		String path1 = "./Test2//HUSA_001testP3";
+		String path2 = "./Test2//HUSA_002testP3";
+		String autoArgs = "0";
+		boolean autoCalled = false;
+		boolean step = false;
+		boolean demo = false;
+		boolean test = false;
+		boolean fast = true;
+		boolean silent = false;
+		int timeout = 100;
+	
+		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
+				autoCalled, step, demo, test, fast, silent, timeout);
+		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		double[] vetReference = p12rmn_.referenceSiemens();
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
+				MyConst.P3_vetName);
+		assertTrue(ok);
+	}
+
+	@Test
+	public final void testMainUniforFast250117() {
+	
+		// 04 sep 2013 funziona in automatico
+	
+		String path1 = "./Test2//2_00003_p12";
+		String path2 = "./Test2//3_00005_P12";
+		String autoArgs = "0";
+		boolean autoCalled = false;
+		boolean step = false;
+		boolean demo = false;
+		boolean test = false;
+		boolean fast = true;
+		boolean silent = false;
+		int timeout = 100;
+	
+		ResultsTable rt1 = p12rmn_.mainUnifor(path1, path2, autoArgs, "info10",
+				autoCalled, step, demo, test, fast, silent, timeout);
+		double[] vetResults = UtilAyv.vectorizeResults(rt1);
+		double[] vetReference = p12rmn_.referenceSiemens();
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
+				MyConst.P3_vetName);
+		assertTrue(ok);
 	}
 
 	// @Test
