@@ -1598,7 +1598,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 
 	public static int msgAccept() {
 		int userSelection = ButtonMessages.ModelessMsg(
-				"Accettabilit� immagine   <08>", "ELABORA", "SALTA");
+				"Accettabilita' immagine   <08>", "ELABORA", "SALTA");
 		return userSelection;
 	}
 

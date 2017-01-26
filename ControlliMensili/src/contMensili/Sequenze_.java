@@ -564,8 +564,10 @@ public class Sequenze_ implements PlugIn {
 
 		int count3 = 0;
 		for (int i1 = 0; i1 < pathList.length; i1++) {
-			IJ.showStatus("generateSequenceTable " + i1 + " / " + pathList.length);
+
+			String aux1 = "generateSequenceTable " + i1 + " / " + pathList.length;
 			IJ.redirectErrorMessages();
+			IJ.showStatus(aux1);
 
 			// boolean questo = false;
 
