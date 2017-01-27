@@ -1441,7 +1441,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * calcolo spessore di strato effettivo, apportando le correzioni per
-	 * inclinazione e tilt (ci� che veniva effettuato dal foglio Excel)
+	 * inclinazione e tilt (cio' che veniva effettuato dal foglio Excel)
 	 * 
 	 * @param R1
 	 * @param R2
@@ -1479,8 +1479,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 	/**
 	 * impedisce che nelle preferenze di ImageJ vengano memorizzati segmenti con
 	 * valori assurdi, crea un area al di fuori della quale il valore
-	 * memorizzato � quello di default, inoltre non permette che il segmento sia
-	 * pi� corto di 10 pixel
+	 * memorizzato e' quello di default, inoltre non permette che il segmento sia
+	 * piu' corto di 10 pixel
 	 * 
 	 * @param vetLine
 	 *            coordinate linea [ xStart, yStart, xEnd, yEnd ]
