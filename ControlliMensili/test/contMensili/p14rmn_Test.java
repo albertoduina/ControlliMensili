@@ -66,4 +66,25 @@ public class p14rmn_Test {
 
 	}
 
+	@Test
+	public final void testCalculateMTF2() {
+	
+		String path1 = "./Test2/005_P14";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		int latoWidth = 130;
+		int latoHeight = 130;
+		int centerx = 586;
+		int centery = 300;
+	
+		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
+		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
+	
+		p14rmn_ p14 = new p14rmn_();
+	
+		p14.calculateMTF(imp1);
+	
+		MyLog.waitHere();
+	
+	}
+
 }

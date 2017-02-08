@@ -276,6 +276,9 @@ public class p14rmn_ implements PlugIn {
 			restart = false;
 			level = level - 1;
 			fixedOptions(level);
+			if (sSize < 32) {
+				MyLog.waitHere("non riesco a calcolare la MTF!!!");
+				cancel = true;}
 			// if (cancel == false) {
 			// options();
 			// }
@@ -293,7 +296,7 @@ public class p14rmn_ implements PlugIn {
 			if (cancel == false) {
 				LSFArrayF = alignArray(LSFArray);
 				if (restart) {
-						continue;
+					continue;
 				}
 			}
 			if (cancel == false) {
@@ -450,7 +453,11 @@ public class p14rmn_ implements PlugIn {
 		case 1:
 			sSize = 32;
 			break;
+		case 0:
+			sSize = 0;
+			break;
 		}
+
 		IJ.showMessage("size= " + sSize);
 		return;
 	}
@@ -610,10 +617,12 @@ public class p14rmn_ implements PlugIn {
 		int ini;
 		int fin;
 
-//		IJ.log("dimensioni Array sorgente= [" + Array.length + "] [" + Array[0].length + "]");
-//		IJ.log("dimensioni ArrayF allineando= [" + ArrayF.length + "] [" + ArrayF[0].length + "]");
-//		IJ.log("selecHeight= " + selecHeight);
-//		MyLog.waitHere();
+		// IJ.log("dimensioni Array sorgente= [" + Array.length + "] [" +
+		// Array[0].length + "]");
+		// IJ.log("dimensioni ArrayF allineando= [" + ArrayF.length + "] [" +
+		// ArrayF[0].length + "]");
+		// IJ.log("selecHeight= " + selecHeight);
+		// MyLog.waitHere();
 
 		// Create new array aligned
 		for (k = 0; k < selecHeight; k++) {
