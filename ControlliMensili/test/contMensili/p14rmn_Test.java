@@ -53,7 +53,7 @@ public class p14rmn_Test {
 		int latoWidth = 130;
 		int latoHeight = 150;
 		int centerx = 480;
-		int centery = 356;
+		int centery = 360;
 
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
@@ -68,23 +68,173 @@ public class p14rmn_Test {
 
 	@Test
 	public final void testCalculateMTF2() {
-	
-		String path1 = "./Test2/005_P14";
+
+		String path1 = "./Test2/MTF1024_SIEMENS_aera_neuro";
 		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		int latoWidth = 130;
-		int latoHeight = 130;
-		int centerx = 586;
+		int latoWidth = 150;
+		int latoHeight = 150;
+		int centerx = 472;
 		int centery = 300;
-	
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
-	
 		p14rmn_ p14 = new p14rmn_();
-	
 		p14.calculateMTF(imp1);
-	
 		MyLog.waitHere();
+	}
+
+	@Test
+	public final void testCalculateMTF3() {
+
+		String path1 = "./Test2/MTF1024_TOSHIBA_echelon_desenzano";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		int latoWidth = 150;
+		int latoHeight = 150;
+		int centerx = 470;
+		int centery = 314;
+		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
+		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
+		p14rmn_ p14 = new p14rmn_();
+		p14.calculateMTF(imp1);
+		MyLog.waitHere();
+	}
+
+	@Test
+	public final void testCalculateMTF4() {
+
+		String path1 = "./Test2/MTF512_GE_optima450w_esine";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		int latoWidth = 78;
+		int latoHeight = 78;
+		int centerx = 250;
+		int centery = 190;
+		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
+		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
+		p14rmn_ p14 = new p14rmn_();
+		p14.calculateMTF(imp1);
+		MyLog.waitHere();
+	}
+
+	@Test
+	public final void testCalculateMTF5() {
+
+		String path1 = "./Test2/MTF512_PHILIPS_achieva_gavardo";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		int latoWidth = 78;
+		int latoHeight = 78;
+		int centerx = 260;
+		int centery = 184;
+		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
+		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
+		p14rmn_ p14 = new p14rmn_();
+		p14.calculateMTF(imp1);
+		MyLog.waitHere();
+	}
+
 	
+	@Test
+	public final void testCalculateMTF6() {
+
+		String path1 = "./Test2/MTF256_siemens_avanto";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		int latoWidth = 38;
+		int latoHeight = 38;
+		int centerx = 123;
+		int centery = 87;
+		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
+		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
+		p14rmn_ p14 = new p14rmn_();
+		p14.calculateMTF(imp1);
+		MyLog.waitHere();
+	}
+	@Test
+	public final void testCalculateMTF7() {
+
+		String path1 = "./Test2/MTF512_siemens_avanto";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		int latoWidth = 78;
+		int latoHeight = 78;
+		int centerx = 253;
+		int centery = 174;
+		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
+		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
+		p14rmn_ p14 = new p14rmn_();
+		p14.calculateMTF(imp1);
+		MyLog.waitHere();
+	}
+	@Test
+	public final void testCalculateMTF8() {
+
+		String path1 = "./Test2/mtf1024_siemens_avanto";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		int latoWidth = 144;
+		int latoHeight = 144;
+		int centerx = 500;
+		int centery = 350;
+		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
+		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
+		p14rmn_ p14 = new p14rmn_();
+		p14.calculateMTF(imp1);
+		MyLog.waitHere();
+	}
+	@Test
+	public final void testCalculateMTF9() {
+
+		String path1 = "./Test2/MTF256_toshiba_echelon";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		int latoWidth = 38;
+		int latoHeight = 38;
+		int centerx = 119;
+		int centery = 78;
+		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
+		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
+		p14rmn_ p14 = new p14rmn_();
+		p14.calculateMTF(imp1);
+		MyLog.waitHere();
+	}
+	@Test
+	public final void testCalculateMTF10() {
+
+		String path1 = "./Test2/MTF512_toshiba_echelon";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		int latoWidth = 78;
+		int latoHeight = 78;
+		int centerx = 237;
+		int centery = 156;
+		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
+		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
+		p14rmn_ p14 = new p14rmn_();
+		p14.calculateMTF(imp1);
+		MyLog.waitHere();
+	}
+	@Test
+	public final void testCalculateMTF11() {
+
+		String path1 = "./Test2/MTF1024_toshiba_echelon";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		int latoWidth = 148;
+		int latoHeight = 148;
+		int centerx = 472;
+		int centery = 313;
+		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
+		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
+		p14rmn_ p14 = new p14rmn_();
+		p14.calculateMTF(imp1);
+		MyLog.waitHere();
+	}
+	@Test
+	public final void testCalculateMTF12() {
+
+		String path1 = "./Test2/MTF512_PHILIPS_achieva_gavardo";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		int latoWidth = 78;
+		int latoHeight = 78;
+		int centerx = 260;
+		int centery = 184;
+		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
+		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
+		p14rmn_ p14 = new p14rmn_();
+		p14.calculateMTF(imp1);
+		MyLog.waitHere();
 	}
 
 }

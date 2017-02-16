@@ -273,18 +273,24 @@ public class p14rmn_ implements PlugIn {
 			IJ.showMessageWithCancel("Warning", "All image selected");
 		}
 		do {
+			cancel = false;
 			restart = false;
 			level = level - 1;
 			fixedOptions(level);
 			if (sSize < 32) {
 				MyLog.waitHere("non riesco a calcolare la MTF!!!");
-				cancel = true;}
+				cancel = true;
+			}
 			// if (cancel == false) {
 			// options();
 			// }
 			// if (cancel == false) {
 
 			generateESFArray("ESF Plot", imp2, roi2);
+			if (restart) {
+				continue;
+			}
+
 			generateLSFArray("LSF Plot", ESFArray);
 			calculateMax();
 
@@ -578,6 +584,7 @@ public class p14rmn_ implements PlugIn {
 
 		if (sSize >= selecWidth) {
 			IJ.showMessage("Error", "sample size is bigger than selection width\nProcess canceled");
+			restart = true;
 			return;
 		}
 

@@ -28,8 +28,8 @@ EX1F_;Flash EXTREMITY COIL;4;4;0;0;0;0;0;xxx;x;x;p12rmn_
 EX1S_;SpinEcho EXTREMITY COIL;4;4;0;0;0;0;0;xxx;x;x;p12rmn_
 //;;;;;0;0;0;0;;;;
 // SHOULDER COIL;;;;;0;0;0;0;;;;
-SHLF_;Flash SHOULDER COIL;4;4;0;0;0;0;0;xxx;x;x;p3rmn_
-SHLS_;SpinEcho SHOULDER COIL;4;4;0;0;0;0;0;xxx;x;x;p3rmn_
-SHSF_;Flash SHOULDER COIL;4;4;0;0;0;0;0;xxx;x;x;p3rmn_
-SHSS_;SpinEcho SHOULDER COIL;4;4;0;0;0;0;0;xxx;x;x;p3rmn_
+SHLF_;Flash SHOULDER COIL;4;4;0;0;0;0;0;xxx;x;x;p12rmn_
+SHLS_;SpinEcho SHOULDER COIL;4;4;0;0;0;0;0;xxx;x;x;p12rmn_
+SHSF_;Flash SHOULDER COIL;4;4;0;0;0;0;0;xxx;x;x;p12rmn_
+SHSS_;SpinEcho SHOULDER COIL;4;4;0;0;0;0;0;xxx;x;x;p12rmn_
 //;;;;;;;;;;;;
