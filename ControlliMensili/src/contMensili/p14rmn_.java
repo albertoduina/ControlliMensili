@@ -928,7 +928,14 @@ public class p14rmn_ implements PlugIn {
 		for (int i1 = 0; i1 < aaa[0].length; i1++) {
 			// IJ.log("i1:" + i1 + " x:" + (int) aaa[0][i1] + " y:" + (int)
 			// aaa[1][i1] + " val:" + (int) aaa[2][i1]);
-			if ((int) aaa[2][i1] == 0 && search) {
+
+			boolean aux1 = false;
+			if (i1 < aaa[0].length - 1)
+				aux1 = (int) aaa[2][i1] == 0 && aaa[2][i1 + 1] > 0;
+			else
+				aux1 = (int) aaa[2][i1] == 0;
+
+			if (aux1 && search) {
 				search = false;
 				find1x = aaa[0][i1];
 				find1y = aaa[1][i1];
@@ -951,39 +958,65 @@ public class p14rmn_ implements PlugIn {
 		for (int i1 = 0; i1 < bbb[0].length; i1++) {
 			// IJ.log("i1:" + i1 + " x:" + (int) bbb[0][i1] + " y:" + (int)
 			// bbb[1][i1] + " val:" + (int) bbb[2][i1]);
-			if ((int) bbb[2][i1] == 0 && search) {
+			boolean aux2 = false;
+			if (i1 < bbb[0].length - 1)
+				aux2 = (int) bbb[2][i1] == 0 && bbb[2][i1 + 1] > 0;
+			else
+				aux2 = (int) bbb[2][i1] == 0;
+
+			if (aux2 && search) {
 				search = false;
 				find2x = bbb[0][i1];
 				find2y = bbb[1][i1];
 			}
 		}
-		imp2.setRoi(new OvalRoi(find2x - 8, find2y - 8, 16, 16));
-		// double
 
+		imp2.setRoi(new OvalRoi(find2x - 8, find2y - 8, 16, 16));
 		roi1 = imp2.getRoi();
 		roi1.setFillColor(Color.green);
 		roi1.setStrokeColor(Color.green);
+		over2.addElement(imp2.getRoi());
+
+		double find3x = 0;
+		double find3y = 0;
+		find3x = (find2x - find1x) / 2 + find1x;
+		find3y = (find2y - find1y) / 2 + find1y;
+
+		imp2.setRoi(new OvalRoi(find3x - 8, find3y - 8, 16, 16));
+		roi1 = imp2.getRoi();
+		roi1.setFillColor(Color.red);
+		roi1.setStrokeColor(Color.red);
 		over2.addElement(imp2.getRoi());
 
 		// MyLog.waitHere("find2x= " + find2x + " find2y= " + find2y);
 
 		int lato = (int) (Math.abs(find1y - find2y));
 
-		int xsel = (int) Math.round(find2x);
-		int ysel = (int) Math.round(find1y);
+		boolean trovato = false;
+		do {
+			int xsopra = (int) (find3x - lato / 2);
+			int ysopra = (int) (find3y - lato / 2);
+			int xsotto = (int) (find3x - lato / 2);
+			int ysotto = (int) (find3y + lato / 2);
+			double val1 = imp2.getPixel(xsopra, ysopra)[0];
+			double val2 = imp2.getPixel(xsotto, ysotto)[0];
+			if (val1 > 0 || val2 > 0)
+				lato = lato - 1;
+			else
+				trovato = true;
+		} while (!trovato);
 
+		int xsel = (int) find3x - lato / 2;
+		int ysel = (int) find3y - lato / 2;
 		imp2.setRoi(xsel, ysel, lato, lato);
+
 		roi1 = imp2.getRoi();
 		roi1.setStrokeColor(Color.green);
 		over2.addElement(imp2.getRoi());
 
-		MyLog.waitHere("FINITO DENTRO");
-
 		ImagePlus imp3 = imp2.crop();
-		UtilAyv.showImageMaximized(imp3);
-
-		return null;
-
+		imp3.show();
+		return roi1;
 	}
 
 	public static ImagePlus applyThreshold(ImagePlus imp1) {
