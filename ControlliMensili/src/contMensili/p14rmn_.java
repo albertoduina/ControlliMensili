@@ -1,6 +1,7 @@
 package contMensili;
 
 import java.awt.AWTEvent;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.Rectangle;
@@ -34,15 +35,23 @@ import ij.Prefs;
 import ij.WindowManager;
 import ij.gui.DialogListener;
 import ij.gui.GenericDialog;
+import ij.gui.Line;
+import ij.gui.NewImage;
+import ij.gui.OvalRoi;
+import ij.gui.Overlay;
 import ij.gui.Plot;
 import ij.gui.ProfilePlot;
 import ij.gui.Roi;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
+import ij.plugin.filter.ParticleAnalyzer;
+import ij.plugin.frame.RoiManager;
+import ij.process.ByteProcessor;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 import utils.AboutBox;
 import utils.MyInput;
+import utils.MyLine;
 import utils.MyLog;
 import utils.MyVersionUtils;
 import utils.UtilAyv;
@@ -358,79 +367,6 @@ public class p14rmn_ implements PlugIn {
 		} while (restart);
 		MyLog.waitHere("USCITA!!");
 	}
-
-	// cleanImage();
-
-	// public void openImage() {
-	//
-	// boolean opButton = true;
-	//
-	// imp = WindowManager.getCurrentImage();
-	//
-	// if (imp == null) {
-	// IJ.showMessage("Error", "There are no images open\nProcess canceled");
-	// cancel = true;
-	// }
-	//
-	// title = imp.getTitle();
-	//
-	// if (cancel == false) {
-	// type = imp.getType();
-	// switch (type) {
-	// case ImagePlus.GRAY8: {
-	// isStack = false;
-	// yMax = 255;
-	// }
-	// break;
-	// case ImagePlus.GRAY16: {
-	// isStack = false;
-	// yMax = 65535;
-	// }
-	// break;
-	// case ImagePlus.GRAY32: {
-	// isStack = false;
-	// yMax = 2147483647;
-	// }
-	// break;
-	// case ImagePlus.COLOR_256: {
-	// isStack = true;
-	// yMax = 255;
-	// }
-	// break;
-	// case ImagePlus.COLOR_RGB: {
-	// isStack = true;
-	// yMax = 255;
-	// }
-	// break;
-	// default:
-	// yMax = 255;
-	// }
-	//
-	// // Get the selection
-	// roi = imp.getRoi();
-	// if (roi == null) {
-	// imp.setRoi(0, 0, imp.getWidth(), imp.getHeight());
-	// roi = imp.getRoi();
-	// opButton = IJ.showMessageWithCancel("Warning", "All image selected");
-	// if (opButton == false)
-	// cancel = true;
-	// }
-	// }
-	//
-	// if (cancel == false) {
-	// // Rectangular selection
-	// roiType = roi.getType();
-	// if (!(roi.isLine() || roiType == Roi.RECTANGLE)) {
-	// IJ.showMessage("Error", "Line or rectangular selection required\nProcess
-	// canceled");
-	// cancel = true;
-	// }
-	// }
-	// }
-
-	// void cleanImage() {
-	// imp.killRoi();
-	// }
 
 	void generateStack() {
 
@@ -936,26 +872,138 @@ public class p14rmn_ implements PlugIn {
 		return y;
 	}
 
-	// public void windowOpened(WindowEvent e) {
-	// }
-	//
-	// public void windowActivated(WindowEvent e) {
-	// }
-	//
-	// public void windowDeactivated(WindowEvent e) {
-	// }
-	//
-	// public void windowIconified(WindowEvent e) {
-	// }
-	//
-	// public void windowDeiconified(WindowEvent e) {
-	// }
-	//
-	// public void windowClosing(WindowEvent e) {
-	// frame.dispose();
-	// }
-	//
-	// public void windowClosed(WindowEvent e) {
-	// }
+	public Roi positionSearch(ImagePlus imp1, double minSizeInPixel, double maxSizeInPixel, double minCirc,
+			double maxCirc) {
+
+		ImagePlus imp2 = applyThreshold(imp1);
+		UtilAyv.showImageMaximized(imp2);
+
+		Overlay over1 = new Overlay();
+		imp1.setOverlay(over1);
+		Overlay over2 = new Overlay();
+		imp2.setOverlay(over2);
+
+		int options = ParticleAnalyzer.SHOW_OUTLINES + ParticleAnalyzer.ADD_TO_MANAGER;
+		boolean excludeEdges = true;
+		if (excludeEdges)
+			options = ParticleAnalyzer.SHOW_OUTLINES + ParticleAnalyzer.ADD_TO_MANAGER
+					+ ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES;
+
+		int measurements = 0;
+
+		ResultsTable rt0 = new ResultsTable();
+		RoiManager rm0 = new RoiManager(false);
+		ParticleAnalyzer pa1 = new ParticleAnalyzer(options, measurements, rt0, minSizeInPixel, maxSizeInPixel, minCirc,
+				maxCirc);
+		ParticleAnalyzer.setRoiManager(rm0);
+		pa1.setHideOutputImage(true);
+		pa1.analyze(imp2);
+		Roi roi0 = null;
+
+		int num = rm0.getCount();
+		Roi[] vetRoi = rm0.getRoisAsArray();
+		roi0 = vetRoi[0];
+
+		// MyLog.waitHere("" + roi0.getDebugInfo());
+
+		imp2.setRoi(roi0);
+		imp2.updateAndDraw();
+
+		Rectangle rect = roi0.getBounds();
+		int rx = rect.x;
+		int ry = rect.y;
+		int w = rect.width;
+		int h = rect.height;
+		imp2.setRoi(rx, ry, w, h);
+		imp2.getRoi().setStrokeColor(Color.red);
+		over2.addElement(imp2.getRoi());
+
+		// imp2.setRoi(new Line(rx, ry, rx, ry + h));
+		imp2.setRoi(new Line(rx + w - 1, ry + h, rx + w - 1, ry));
+		double[][] aaa = MyLine.decomposer(imp2);
+		// MyLog.waitHere();
+		boolean search = true;
+		double find1x = 0;
+		double find1y = 0;
+		for (int i1 = 0; i1 < aaa[0].length; i1++) {
+			// IJ.log("i1:" + i1 + " x:" + (int) aaa[0][i1] + " y:" + (int)
+			// aaa[1][i1] + " val:" + (int) aaa[2][i1]);
+			if ((int) aaa[2][i1] == 0 && search) {
+				search = false;
+				find1x = aaa[0][i1];
+				find1y = aaa[1][i1];
+			}
+		}
+		imp2.setRoi(new OvalRoi(find1x - 8, find1y - 8, 16, 16));
+		Roi roi1 = imp2.getRoi();
+		roi1.setFillColor(Color.green);
+		roi1.setStrokeColor(Color.green);
+		over2.addElement(imp2.getRoi());
+		// MyLog.waitHere("find1x= " + find1x + " find1y= " + find1y);
+
+		search = true;
+		double find2x = 0;
+		double find2y = 0;
+		imp2.setRoi(new Line(rx + w - 1, ry + h - 1, rx, ry + h - 1));
+		double[][] bbb = MyLine.decomposer(imp2);
+		// MyLog.waitHere();
+
+		for (int i1 = 0; i1 < bbb[0].length; i1++) {
+			// IJ.log("i1:" + i1 + " x:" + (int) bbb[0][i1] + " y:" + (int)
+			// bbb[1][i1] + " val:" + (int) bbb[2][i1]);
+			if ((int) bbb[2][i1] == 0 && search) {
+				search = false;
+				find2x = bbb[0][i1];
+				find2y = bbb[1][i1];
+			}
+		}
+		imp2.setRoi(new OvalRoi(find2x - 8, find2y - 8, 16, 16));
+		// double
+
+		roi1 = imp2.getRoi();
+		roi1.setFillColor(Color.green);
+		roi1.setStrokeColor(Color.green);
+		over2.addElement(imp2.getRoi());
+
+		// MyLog.waitHere("find2x= " + find2x + " find2y= " + find2y);
+
+		int lato = (int) (Math.abs(find1y - find2y));
+
+		int xsel = (int) Math.round(find2x);
+		int ysel = (int) Math.round(find1y);
+
+		imp2.setRoi(xsel, ysel, lato, lato);
+		roi1 = imp2.getRoi();
+		roi1.setStrokeColor(Color.green);
+		over2.addElement(imp2.getRoi());
+
+		MyLog.waitHere("FINITO DENTRO");
+
+		ImagePlus imp3 = imp2.crop();
+		UtilAyv.showImageMaximized(imp3);
+
+		return null;
+
+	}
+
+	public static ImagePlus applyThreshold(ImagePlus imp1) {
+		int slices = 1;
+		ImageProcessor ip1 = imp1.getProcessor();
+		short[] pixels1 = (short[]) ip1.getPixels();
+		int threshold = ip1.getAutoThreshold();
+		ImagePlus imp2 = NewImage.createByteImage("Thresholded", imp1.getWidth(), imp1.getHeight(), slices,
+				NewImage.FILL_BLACK);
+		ByteProcessor ip2 = (ByteProcessor) imp2.getProcessor();
+		byte[] pixels2 = (byte[]) ip2.getPixels();
+		for (int i1 = 0; i1 < pixels2.length; i1++) {
+			if (pixels1[i1] >= threshold) {
+				pixels2[i1] = (byte) 255;
+			} else {
+				pixels2[i1] = (byte) 0;
+			}
+		}
+		ip2.resetMinAndMax();
+		return imp2;
+	}
 
 }

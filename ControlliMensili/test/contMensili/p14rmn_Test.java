@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 
 import ij.IJ;
 import ij.ImageJ;
@@ -130,7 +131,6 @@ public class p14rmn_Test {
 		MyLog.waitHere();
 	}
 
-	
 	@Test
 	public final void testCalculateMTF6() {
 
@@ -146,6 +146,7 @@ public class p14rmn_Test {
 		p14.calculateMTF(imp1);
 		MyLog.waitHere();
 	}
+
 	@Test
 	public final void testCalculateMTF7() {
 
@@ -161,6 +162,7 @@ public class p14rmn_Test {
 		p14.calculateMTF(imp1);
 		MyLog.waitHere();
 	}
+
 	@Test
 	public final void testCalculateMTF8() {
 
@@ -176,6 +178,7 @@ public class p14rmn_Test {
 		p14.calculateMTF(imp1);
 		MyLog.waitHere();
 	}
+
 	@Test
 	public final void testCalculateMTF9() {
 
@@ -191,6 +194,7 @@ public class p14rmn_Test {
 		p14.calculateMTF(imp1);
 		MyLog.waitHere();
 	}
+
 	@Test
 	public final void testCalculateMTF10() {
 
@@ -206,6 +210,7 @@ public class p14rmn_Test {
 		p14.calculateMTF(imp1);
 		MyLog.waitHere();
 	}
+
 	@Test
 	public final void testCalculateMTF11() {
 
@@ -221,6 +226,7 @@ public class p14rmn_Test {
 		p14.calculateMTF(imp1);
 		MyLog.waitHere();
 	}
+
 	@Test
 	public final void testCalculateMTF12() {
 
@@ -235,6 +241,38 @@ public class p14rmn_Test {
 		p14rmn_ p14 = new p14rmn_();
 		p14.calculateMTF(imp1);
 		MyLog.waitHere();
+	}
+
+	@Test
+	public final void testPositionSearch1() {
+
+		String path1 = "./Test2/gradi1";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		double minSizeInPixel = 5000;
+		double maxSizeInPixel = 100000;
+		double minCirc = .3;
+		double maxCirc = 1;
+
+		p14rmn_ p14 = new p14rmn_();
+		Roi roi14 = p14.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc);
+		MyLog.waitHere("finito");
+
+	}
+
+	@Test
+	public final void testPositionSearch2() {
+
+		String path1 = "./Test2/HRKA";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		double minSizeInPixel = 5000;
+		double maxSizeInPixel = 100000;
+		double minCirc = .1;
+		double maxCirc = 1;
+
+		p14rmn_ p14 = new p14rmn_();
+		Roi roi14 = p14.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc);
+		MyLog.waitHere("FINITO FUORI");
+
 	}
 
 }
