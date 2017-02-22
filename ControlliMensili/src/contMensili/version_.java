@@ -49,8 +49,7 @@ public class version_ implements PlugIn {
 		}
 
 		IJ.log("--------------+--------------");
-		IJ.log("Package contMensili VERSION "
-				+ new AboutBox().myImplementationVersion(this.getClass()));
+		IJ.log("Package contMensili VERSION " + new AboutBox().myImplementationVersion(this.getClass()));
 		IJ.log("--------------+--------------");
 		IJ.log("Sequenze    " + Sequenze_.VERSION);
 		IJ.log("--------------+--------------");
@@ -66,6 +65,7 @@ public class version_ implements PlugIn {
 		IJ.log("p10_rmn      " + p10rmn_.VERSION);
 		IJ.log("p11_rmn      " + p11rmn_.VERSION);
 		IJ.log("p12_rmn      " + p12rmn_.VERSION);
+		IJ.log("p14_rmn      " + p14rmn_.VERSION);
 		IJ.log("--------------+--------------");
 		findIt("utils.IW2AYV");
 
@@ -75,7 +75,7 @@ public class version_ implements PlugIn {
 
 		try {
 			String classpath = System.getProperty("java.class.path", "");
-		//	MyLog.waitHere("classpath= " + classpath);
+			// MyLog.waitHere("classpath= " + classpath);
 
 		} catch (Exception e) {
 			e.printStackTrace();

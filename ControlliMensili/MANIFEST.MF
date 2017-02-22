@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
-Ant-Version: Apache Ant 1.9.4
+Ant-Version: Apache Ant 1.9.6
 Created-By: 1.8.0_60-b27 (Oracle Corporation)
 Built-By: AlbertoDuina
-Built-Date: February 16 2017
+Built-Date: February 22 2017
 Main-Class: contMensili.Sequenze_
-Implementation-Version: b4419
+Implementation-Version: b4442
 

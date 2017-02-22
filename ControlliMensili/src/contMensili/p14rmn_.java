@@ -7,6 +7,7 @@ import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import java.util.StringTokenizer;
 
 /*************************************************************************
@@ -50,10 +51,16 @@ import ij.process.ByteProcessor;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 import utils.AboutBox;
+import utils.InputOutput;
+import utils.MyConst;
 import utils.MyInput;
 import utils.MyLine;
 import utils.MyLog;
+import utils.MyMsg;
 import utils.MyVersionUtils;
+import utils.ReportStandardInfo;
+import utils.TableCode;
+import utils.TableSequence;
 import utils.UtilAyv;
 
 public class p14rmn_ implements PlugIn {
@@ -105,6 +112,7 @@ public class p14rmn_ implements PlugIn {
 	public static String VERSION = "MTF metodo SLANTED EDGE";
 
 	private String TYPE = " >> CONTROLLO MTF SLANTED EDGE____";
+	private static String fileDir = "";
 
 	/**
 	 * directory dati, dove vengono memorizzati ayv.txt e Results1.txt
@@ -132,6 +140,7 @@ public class p14rmn_ implements PlugIn {
 		String className = this.getClass().getName();
 
 		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		fileDir = Prefs.get("prefer.string1", "none");
 
 		if (IJ.versionLessThan("1.43k"))
 			return;
@@ -207,10 +216,98 @@ public class p14rmn_ implements PlugIn {
 		return 0;
 	}
 
+	public int autoMenu(String autoArgs) {
+		MyLog.appendLog(fileDir + "MyLog.txt", "p14 riceve " + autoArgs);
+
+		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true : false;
+
+		ResultsTable result1 = null;
+		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
+		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
+
+		if (nTokens != MyConst.TOKENS1) {
+			MyMsg.msgParamError();
+			return 0;
+		}
+
+		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir + MyConst.SEQUENZE_FILE);
+
+		String info10 = (vetRiga[0] + 1) + " / " + TableSequence.getLength(iw2ayvTable) + "   code= "
+				+ TableSequence.getCode(iw2ayvTable, vetRiga[0]) + "   coil= "
+				+ TableSequence.getCoil(iw2ayvTable, vetRiga[0]);
+
+		String path1 = "";
+
+		if (nTokens == MyConst.TOKENS1) {
+			// UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
+			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
+			MyLog.logDebug(vetRiga[0], "P14", fileDir);
+
+			boolean retry = false;
+			int mode = 0;
+
+			if (fast) {
+				retry = false;
+				mode = 1;
+				result1 = mainMTF(path1, autoArgs, info10, mode, timeout);
+
+				if (!(result1 == null))
+					UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, result1);
+
+				UtilAyv.afterWork();
+
+			} else
+				do {
+					int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
+							TableSequence.getCode(iw2ayvTable, vetRiga[0]),
+							TableSequence.getCoil(iw2ayvTable, vetRiga[0]), vetRiga[0] + 1,
+							TableSequence.getLength(iw2ayvTable));
+					MyLog.waitHere("AUTO userSelection1=" + userSelection1);
+
+					switch (userSelection1) {
+					case ABORT:
+						new AboutBox().close();
+						return 0;
+					case 2:
+						new AboutBox().about("Controllo MTF con Slanted Edge", MyVersion.CURRENT_VERSION);
+						retry = true;
+						break;
+					case 3:
+						// step = true;
+						mode = 2;
+					case 4:
+						retry = false;
+						mode = 3;
+						result1 = mainMTF(path1, autoArgs, info10, mode, timeout);
+
+						if (result1 == null) {
+							break;
+						}
+
+						UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, result1);
+
+						UtilAyv.afterWork();
+						break;
+					}
+				} while (retry);
+			new AboutBox().close();
+			UtilAyv.afterWork();
+			// if (result1 == null) {
+			// int resp = MyLog.waitHere("A causa di problemi sulla immagine,
+			// \n"
+			// + "viene avviato il programma p3rmn_, che \n" + "ripete il
+			// controllo in maniera manuale", debug,
+			// "Prosegui", "Annulla");
+			// if (resp == 2)
+			// IJ.runPlugIn("contMensili.p3rmn_", autoArgs);
+			// }
+		}
+		return 0;
+	}
+
 	public ResultsTable mainMTF(String path1, String autoArgs, String info10, int mode, int timeout) {
 
-		boolean accetta = false;
-		// boolean abort = false;
+		// // boolean abort = false;
 		// boolean demo = false;
 		boolean autoCalled = false;
 		boolean step = false;
@@ -230,13 +327,14 @@ public class p14rmn_ implements PlugIn {
 		case 1:
 			// questo e' il caso del funzionamento fast: tutto va via liscio,
 			// solo il minimo sindacale a display
-			autoCalled = true;
+			// autoCalled = true;
 			fast = true;
+			verbose = false;
 			break;
 		case 2:
 			// questo e' il modo di funzionamento manuale
 			verbose = true;
-			step = true;
+			step = false;
 			break;
 		case 3:
 			// questo e' il modo di funzionamento manuale passo per passo conil
@@ -259,15 +357,35 @@ public class p14rmn_ implements PlugIn {
 		else
 			imp1 = UtilAyv.openImageNoDisplay(path1, true);
 
-		int lato = 140;
-		manualSearchPosition(imp1, lato);
-		// boolean broken = false;
-		calculateMTF(imp1);
-		ResultsTable rt = null;
+		// int lato = 140;
+		// manualSearchPosition(imp1, lato);
+
+		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION + "_P10__ContMensili_"
+				+ MyVersion.CURRENT_VERSION + "__iw2ayv_" + MyVersionUtils.CURRENT_VERSION, autoCalled);
+
+		if (info1 == null) {
+			info1 = dummyInfo();
+		}
+
+		ResultsTable rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+
+		double minSizeInPixel = 5000;
+		double maxSizeInPixel = 100000;
+		double minCirc = .1;
+		double maxCirc = 1;
+		p14rmn_ p14 = new p14rmn_();
+		Roi roi14 = p14.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc, step, fast);
+		Rectangle r1 = roi14.getBounds();
+		imp1.setRoi(r1);
+		ImagePlus imp3 = imp1.crop();
+		imp3.show();
+		calculateMTF(imp3, rt);
+		MyLog.waitHere();
 		return rt;
 	}
 
-	public void calculateMTF(ImagePlus imp2) {
+	public void calculateMTF(ImagePlus imp2, ResultsTable rt1) {
 		title = imp2.getTitle();
 		cancel = false;
 		restart = false;
@@ -279,7 +397,7 @@ public class p14rmn_ implements PlugIn {
 		if (roi2 == null) {
 			imp2.setRoi(0, 0, imp2.getWidth(), imp2.getHeight());
 			roi2 = imp2.getRoi();
-			IJ.showMessageWithCancel("Warning", "All image selected");
+			// IJ.showMessageWithCancel("Warning", "All image selected");
 		}
 		do {
 			cancel = false;
@@ -359,6 +477,21 @@ public class p14rmn_ implements PlugIn {
 				// d'intentar que no qued�ssin superposats, sin� en escala,
 				// cada un 10 m�s avall
 
+				if (rt1 == null) {
+				} else {
+					rt1.incrementCounter();
+					for (int i1 = 0; i1 < MTFVector.length; i1++) {
+						rt1.addValue("MTF", MTFVector[i1]);
+						if (i1 < LSFVector.length)
+							rt1.addValue("LSF", LSFVector[i1]);
+						if (i1 < ESFVector.length)
+							rt1.addValue("ESF", ESFVector[i1]);
+						if (i1 < SPPVector.length)
+							rt1.addValue("SPP", SPPVector[i1]);
+						rt1.incrementCounter();
+					}
+				}
+
 				generatePlot(MTFVector, "MTF");
 				generatePlot(LSFVector, "LSF");
 				generatePlot(ESFVector, "ESF");
@@ -400,7 +533,7 @@ public class p14rmn_ implements PlugIn {
 			break;
 		}
 
-		IJ.showMessage("size= " + sSize);
+		// IJ.showMessage("size= " + sSize);
 		return;
 	}
 
@@ -519,7 +652,8 @@ public class p14rmn_ implements PlugIn {
 		selecHeight = r.height;
 
 		if (sSize >= selecWidth) {
-			IJ.showMessage("Error", "sample size is bigger than selection width\nProcess canceled");
+			// IJ.showMessage("Error", "sample size is bigger than selection
+			// width\nProcess canceled");
 			restart = true;
 			return;
 		}
@@ -657,7 +791,7 @@ public class p14rmn_ implements PlugIn {
 		String ejeX = "pixel";
 		String ejeY = "";
 		String allTitle = "";
-		ImageProcessor imgProc;
+		// ImageProcessor imgProc;
 
 		// If MTF plot, calculate the scale of cycles per pixel for x-axis
 		// values
@@ -691,7 +825,7 @@ public class p14rmn_ implements PlugIn {
 			ejeY = "SPP";
 		}
 
-		allTitle = plot + "_" + title;
+		allTitle = plot + "_" + ejeY + "[" + ejeX + "]_" + title;
 		plotResult = new Plot(allTitle, ejeX, ejeY, xValues, Vector);
 
 		// plot limits
@@ -873,7 +1007,7 @@ public class p14rmn_ implements PlugIn {
 	}
 
 	public Roi positionSearch(ImagePlus imp1, double minSizeInPixel, double maxSizeInPixel, double minCirc,
-			double maxCirc) {
+			double maxCirc, boolean step, boolean fast) {
 
 		ImagePlus imp2 = applyThreshold(imp1);
 		UtilAyv.showImageMaximized(imp2);
@@ -908,6 +1042,8 @@ public class p14rmn_ implements PlugIn {
 
 		imp2.setRoi(roi0);
 		imp2.updateAndDraw();
+		if (step)
+			MyLog.waitHere("particle analyzer");
 
 		Rectangle rect = roi0.getBounds();
 		int rx = rect.x;
@@ -915,8 +1051,12 @@ public class p14rmn_ implements PlugIn {
 		int w = rect.width;
 		int h = rect.height;
 		imp2.setRoi(rx, ry, w, h);
-		imp2.getRoi().setStrokeColor(Color.red);
-		over2.addElement(imp2.getRoi());
+		if (!fast) {
+			imp2.getRoi().setStrokeColor(Color.red);
+			over2.addElement(imp2.getRoi());
+		}
+		if (step)
+			MyLog.waitHere("bounding rectangle");
 
 		// imp2.setRoi(new Line(rx, ry, rx, ry + h));
 		imp2.setRoi(new Line(rx + w - 1, ry + h, rx + w - 1, ry));
@@ -941,11 +1081,16 @@ public class p14rmn_ implements PlugIn {
 				find1y = aaa[1][i1];
 			}
 		}
-		imp2.setRoi(new OvalRoi(find1x - 8, find1y - 8, 16, 16));
-		Roi roi1 = imp2.getRoi();
-		roi1.setFillColor(Color.green);
-		roi1.setStrokeColor(Color.green);
-		over2.addElement(imp2.getRoi());
+		Roi roi1 = null;
+		if (!fast) {
+			imp2.setRoi(new OvalRoi(find1x - 8, find1y - 8, 16, 16));
+
+			roi1 = imp2.getRoi();
+			roi1.setFillColor(Color.green);
+			roi1.setStrokeColor(Color.green);
+			over2.addElement(imp2.getRoi());
+		}
+
 		// MyLog.waitHere("find1x= " + find1x + " find1y= " + find1y);
 
 		search = true;
@@ -971,22 +1116,29 @@ public class p14rmn_ implements PlugIn {
 			}
 		}
 
-		imp2.setRoi(new OvalRoi(find2x - 8, find2y - 8, 16, 16));
-		roi1 = imp2.getRoi();
-		roi1.setFillColor(Color.green);
-		roi1.setStrokeColor(Color.green);
-		over2.addElement(imp2.getRoi());
+		if (!fast) {
+			imp2.setRoi(new OvalRoi(find2x - 8, find2y - 8, 16, 16));
+			roi1 = imp2.getRoi();
+			roi1.setFillColor(Color.green);
+			roi1.setStrokeColor(Color.green);
+			over2.addElement(imp2.getRoi());
+		}
+		if (step)
+			MyLog.waitHere("vertici");
 
 		double find3x = 0;
 		double find3y = 0;
 		find3x = (find2x - find1x) / 2 + find1x;
 		find3y = (find2y - find1y) / 2 + find1y;
-
-		imp2.setRoi(new OvalRoi(find3x - 8, find3y - 8, 16, 16));
-		roi1 = imp2.getRoi();
-		roi1.setFillColor(Color.red);
-		roi1.setStrokeColor(Color.red);
-		over2.addElement(imp2.getRoi());
+		if (!fast) {
+			imp2.setRoi(new OvalRoi(find3x - 8, find3y - 8, 16, 16));
+			roi1 = imp2.getRoi();
+			roi1.setFillColor(Color.red);
+			roi1.setStrokeColor(Color.red);
+			over2.addElement(imp2.getRoi());
+		}
+		if (step)
+			MyLog.waitHere("centro roi MTF");
 
 		// MyLog.waitHere("find2x= " + find2x + " find2y= " + find2y);
 
@@ -1013,9 +1165,11 @@ public class p14rmn_ implements PlugIn {
 		roi1 = imp2.getRoi();
 		roi1.setStrokeColor(Color.green);
 		over2.addElement(imp2.getRoi());
-
-		ImagePlus imp3 = imp2.crop();
-		imp3.show();
+		if (step)
+			MyLog.waitHere("roi MTF");
+		IJ.wait(timeout);
+		// ImagePlus imp3 = imp2.crop();
+		// imp3.show();
 		return roi1;
 	}
 
@@ -1037,6 +1191,21 @@ public class p14rmn_ implements PlugIn {
 		}
 		ip2.resetMinAndMax();
 		return imp2;
+	}
+
+	public static String[] dummyInfo() {
+		String[] info = new String[8];
+
+		info[0] = "HRKA_";
+		info[1] = "dummy";
+		info[2] = "dummy";
+		info[3] = "17-gen-2017";
+		info[4] = "22-feb-2017_MTF metodo SLANTED EDGE_P10__ContMensili_null__iw2ayv_null";
+		info[5] = "dummy";
+		info[6] = "dummy";
+		info[7] = "<END>";
+
+		return info;
 	}
 
 }

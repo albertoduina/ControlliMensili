@@ -61,7 +61,7 @@ public class p14rmn_Test {
 
 		p14rmn_ p14 = new p14rmn_();
 
-		p14.calculateMTF(imp1);
+		p14.calculateMTF(imp1, null);
 
 		MyLog.waitHere();
 
@@ -79,7 +79,7 @@ public class p14rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1);
+		p14.calculateMTF(imp1, null);
 		MyLog.waitHere();
 	}
 
@@ -95,7 +95,7 @@ public class p14rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1);
+		p14.calculateMTF(imp1, null);
 		MyLog.waitHere();
 	}
 
@@ -111,7 +111,7 @@ public class p14rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1);
+		p14.calculateMTF(imp1, null);
 		MyLog.waitHere();
 	}
 
@@ -127,7 +127,7 @@ public class p14rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1);
+		p14.calculateMTF(imp1, null);
 		MyLog.waitHere();
 	}
 
@@ -143,7 +143,7 @@ public class p14rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1);
+		p14.calculateMTF(imp1, null);
 		MyLog.waitHere();
 	}
 
@@ -159,7 +159,7 @@ public class p14rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1);
+		p14.calculateMTF(imp1, null);
 		MyLog.waitHere();
 	}
 
@@ -175,7 +175,7 @@ public class p14rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1);
+		p14.calculateMTF(imp1, null);
 		MyLog.waitHere();
 	}
 
@@ -191,7 +191,7 @@ public class p14rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1);
+		p14.calculateMTF(imp1, null);
 		MyLog.waitHere();
 	}
 
@@ -207,7 +207,7 @@ public class p14rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1);
+		p14.calculateMTF(imp1, null);
 		MyLog.waitHere();
 	}
 
@@ -223,7 +223,7 @@ public class p14rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1);
+		p14.calculateMTF(imp1, null);
 		MyLog.waitHere();
 	}
 
@@ -239,7 +239,7 @@ public class p14rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1);
+		p14.calculateMTF(imp1, null);
 		MyLog.waitHere();
 	}
 
@@ -252,9 +252,10 @@ public class p14rmn_Test {
 		double maxSizeInPixel = 100000;
 		double minCirc = .3;
 		double maxCirc = 1;
+		boolean step = true;
 
 		p14rmn_ p14 = new p14rmn_();
-		Roi roi14 = p14.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc);
+		Roi roi14 = p14.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc, step, false);
 		MyLog.waitHere("finito");
 
 	}
@@ -268,10 +269,76 @@ public class p14rmn_Test {
 		double maxSizeInPixel = 100000;
 		double minCirc = .1;
 		double maxCirc = 1;
+		boolean step = true;
 
 		p14rmn_ p14 = new p14rmn_();
-		Roi roi14 = p14.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc);
+		Roi roi14 = p14.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc, step, false);
 		MyLog.waitHere("FINITO FUORI");
+
+		// ImagePlus imp3 = imp2.crop();
+		// imp3.show();
+
+	}
+
+	@Test
+	public final void testMainMTF_1() {
+
+		String path1 = "./Test2/HRKA";
+		String autoArgs = "0";
+		int mode = 2;
+		int timeout = 200;
+		p14rmn_ p14 = new p14rmn_();
+		ResultsTable rt1 = p14.mainMTF(path1, autoArgs, "info10", mode, timeout);
+		rt1.show("Results");
+		MyLog.waitHere("FINITO FUORI");
+	}
+
+	@Test
+	public final void testMainMTF_2() {
+
+		String path1 = "./Test2/gradi1";
+		String autoArgs = "0";
+		int mode = 2;
+		int timeout = 200;
+		p14rmn_ p14 = new p14rmn_();
+		ResultsTable rt1 = p14.mainMTF(path1, autoArgs, "info10", mode, timeout);
+		rt1.show("Results");
+		MyLog.waitHere("FINITO FUORI");
+	}
+
+	@Test
+	public final void testMainMTF_3() {
+
+		String path1 = "./Test2/HRKA";
+		String autoArgs = "0";
+		int mode = 1;
+		int timeout = 200;
+		p14rmn_ p14 = new p14rmn_();
+		ResultsTable rt1 = p14.mainMTF(path1, autoArgs, "info10", mode, timeout);
+		rt1.show("Results");
+		MyLog.waitHere("FINITO FUORI");
+	}
+
+	@Test
+	public final void testComplete1() {
+
+		String path1 = "./Test2/gradi1";
+		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		double minSizeInPixel = 5000;
+		double maxSizeInPixel = 100000;
+		double minCirc = .1;
+		double maxCirc = 1;
+		boolean step = false;
+
+		p14rmn_ p14 = new p14rmn_();
+		Roi roi14 = p14.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc, step, false);
+
+		Rectangle r1 = roi14.getBounds();
+		imp1.setRoi(r1);
+		ImagePlus imp3 = imp1.crop();
+		imp3.show();
+		p14 = new p14rmn_();
+		p14.calculateMTF(imp3, null);
 
 	}
 
