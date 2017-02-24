@@ -1,7 +1,8 @@
 package contMensili;
 
 /***
- * Copied from the source of SE_MTF_2xNyquist.jar (on the imagej site)
+ 
+* Copied from the source of SE_MTF_2xNyquist.jar (on the imagej site)
  * 
  * Authors: Carles Mitja (carles.mitja@citm.upc.edu), Jaume Escofet, Aura Tacho and Raquel Revuelta.
  * 
@@ -27,6 +28,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import ij.IJ;
@@ -41,6 +43,7 @@ import ij.gui.Overlay;
 import ij.gui.Plot;
 import ij.gui.ProfilePlot;
 import ij.gui.Roi;
+import ij.measure.CurveFitter;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import ij.plugin.filter.ParticleAnalyzer;
@@ -380,7 +383,10 @@ public class p14rmn_ implements PlugIn {
 		imp1.setRoi(r1);
 		ImagePlus imp3 = imp1.crop();
 		imp3.show();
+		double preciseAngle = newEdgeAngle(imp1, "VERTICAL_ANGLE");
+
 		calculateMTF(imp3, rt);
+		MyLog.waitHere();
 		return rt;
 	}
 
@@ -1144,7 +1150,7 @@ public class p14rmn_ implements PlugIn {
 		double m1 = (find2y - find1y) / (find2x - find1x);
 		angolo = Math.toDegrees(Math.atan(m1)) + 90;
 
-		MyLog.waitHere("angolo approssimato= " + (angolo));
+		// MyLog.waitHere("angolo approssimato= " + (angolo));
 
 		double find3x = 0;
 		double find3y = 0;
@@ -1226,6 +1232,72 @@ public class p14rmn_ implements PlugIn {
 		info[7] = "<END>";
 
 		return info;
+	}
+
+	public double newEdgeAngle(ImagePlus imp1, String angle) {
+		ImagePlus imp2 = applyThreshold(imp1);
+		ImageProcessor ip2 = imp2.getProcessor();
+		// Overlay over2 = new Overlay();
+		// imp2.setOverlay(over2);
+		// imp2.show();
+		// //
+		byte[] sourcePixels = (byte[]) ip2.getPixels();
+		double[] bwValues = new double[sourcePixels.length];
+		for (int i = 0; i < sourcePixels.length; i++) {
+			if (sourcePixels[i] == 0)
+				bwValues[i] = 0;
+			else
+				bwValues[i] = 255.0;
+		}
+		ArrayList<Double> xVal = new ArrayList<Double>();
+		ArrayList<Double> yVal = new ArrayList<Double>();
+		// differentiation
+		for (int i1 = 0; i1 < ip2.getHeight(); i1++) {
+			double max = 0.0;
+			double x = 0.0;
+			for (int i2 = 1; i2 < ip2.getWidth(); i2++) {
+				double diff = Math.abs(bwValues[i2 + i1 * ip2.getWidth()] - bwValues[(i2 + i1 * ip2.getWidth()) - 1]);
+				if (diff > max) {
+					max = diff;
+					x = i2;
+				}
+			}
+			if (max != 0.) {
+				xVal.add((double) x);
+				yVal.add((double) i1);
+			}
+		}
+		double[] xArr = new double[xVal.size() - 1];
+		double[] yArr = new double[yVal.size() - 1];
+		for (int i = 0; i < xVal.size() - 1; i++) {
+			xArr[i] = xVal.get(i);
+			yArr[i] = yVal.get(i);
+			// setOverlayPixel(over2, imp2, (int) xArr[i], (int) yArr[i],
+			// Color.green, Color.red, false);
+		}
+		CurveFitter lineFitter = new CurveFitter(xArr, yArr);
+		lineFitter.doFit(CurveFitter.STRAIGHT_LINE);
+		imp2.setRoi(new Line((1 - lineFitter.getParams()[0]) / lineFitter.getParams()[1], 1,
+				(ip2.getHeight() - 1 - lineFitter.getParams()[0]) / lineFitter.getParams()[1], ip2.getHeight() - 1));
+		// imp2.show();
+		double angleGrad = Math.toDegrees(Math.atan(1.0 / (lineFitter.getParams())[1]));
+		// IJ.log("preciseEdgeAngle= " + angleGrad);
+		// MyLog.waitHere("preciseEdgeAngle= " + angleGrad);
+		return angleGrad;
+	}
+
+	public static void setOverlayPixel(Overlay over1, ImagePlus imp1, int x1, int y1, Color col1, Color col2,
+			boolean ok) {
+		imp1.setRoi(x1, y1, 1, 1);
+		if (ok) {
+			imp1.getRoi().setStrokeColor(col1);
+			imp1.getRoi().setFillColor(col1);
+		} else {
+			imp1.getRoi().setStrokeColor(col1);
+			imp1.getRoi().setFillColor(col2);
+		}
+		over1.addElement(imp1.getRoi());
+		imp1.deleteRoi();
 	}
 
 }

@@ -1,5 +1,15 @@
 package contMensili;
 
+/***
+*
+* Copied from https://github.com/oskrebkova/mtf_analyzer
+* 
+* Authors: Olga Skrebkova   (not sure, lack author informations)
+* 
+* Adapted by Alberto Duina  01/02/2017
+* 
+*************************************************************************/
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -98,7 +108,7 @@ public class p15rmn_ implements PlugIn {
 	int nPhotodetectors = 0;
 	double ny = 1;
 	int level = 0;
-	public static double angolo = 0;
+	// public static double angolo = 0;
 	String auxPath1 = null;
 
 	private static final int ABORT = 1;
@@ -122,13 +132,10 @@ public class p15rmn_ implements PlugIn {
 	public void run(String args) {
 
 		UtilAyv.setMyPrecision();
-
 		Count c1 = new Count();
 		if (!c1.jarCount("iw2ayv_"))
 			return;
-
 		String className = this.getClass().getName();
-
 		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -141,7 +148,6 @@ public class p15rmn_ implements PlugIn {
 		} else {
 			// autoMenu(args);
 		}
-
 	}
 
 	/**
@@ -167,8 +173,7 @@ public class p15rmn_ implements PlugIn {
 				retry = false;
 				return 0;
 			case 2:
-				new AboutBox().credits(titolo, "CREDITS to: Carles Mitja", "carles.mitja@citm.upc.edu",
-						MyVersion.CURRENT_VERSION);
+				new AboutBox().credits(titolo, "CREDITS to: OSrebkova", "no mail known", MyVersion.CURRENT_VERSION);
 
 				retry = true;
 				break;
@@ -186,7 +191,8 @@ public class p15rmn_ implements PlugIn {
 				String path1 = UtilAyv.imageSelection("SELEZIONARE IMMAGINE...");
 				auxPath1 = path1;
 				if (path1 == null)
-					mainMTF(path1, "0", "", mode, 0);
+					return 0;
+				mainMTF(path1, "0", "", mode, 0);
 				UtilAyv.afterWork();
 				retry = true;
 				break;
@@ -272,30 +278,17 @@ public class p15rmn_ implements PlugIn {
 					}
 				} while (retry);
 			new AboutBox().close();
-			UtilAyv.afterWork();
-			// if (result1 == null) {
-			// int resp = MyLog.waitHere("A causa di problemi sulla immagine,
-			// \n"
-			// + "viene avviato il programma p3rmn_, che \n" + "ripete il
-			// controllo in maniera manuale", debug,
-			// "Prosegui", "Annulla");
-			// if (resp == 2)
-			// IJ.runPlugIn("contMensili.p3rmn_", autoArgs);
-			// }
 		}
 		return 0;
 	}
 
 	public ResultsTable mainMTF(String path1, String autoArgs, String info10, int mode, int timeout) {
 
-		// // boolean abort = false;
-		// boolean demo = false;
 		boolean autoCalled = false;
 		boolean step = false;
 		boolean verbose = false;
-		boolean test = false;
 		boolean fast = false;
-		boolean silent = false;
+		boolean silent=false;
 
 		if (forcesilent)
 			mode = 0;
@@ -328,7 +321,6 @@ public class p15rmn_ implements PlugIn {
 			break;
 		case 10:
 			verbose = true;
-			test = true;
 			break;
 		}
 
@@ -361,7 +353,8 @@ public class p15rmn_ implements PlugIn {
 		imp1.setRoi(r1);
 		ImagePlus imp3 = imp1.crop();
 		imp3.show();
-		calculate(imp3);
+		double quotient = 1.0;
+		gatherMTF(imp3, "VERTICAL_ANGLE", quotient);
 		return rt;
 	}
 
@@ -406,9 +399,6 @@ public class p15rmn_ implements PlugIn {
 
 		Roi[] vetRoi = rm0.getRoisAsArray();
 		roi0 = vetRoi[0];
-
-		// MyLog.waitHere("" + roi0.getDebugInfo());
-
 		imp2.setRoi(roi0);
 		imp2.updateAndDraw();
 		if (step)
@@ -426,18 +416,12 @@ public class p15rmn_ implements PlugIn {
 		}
 		if (step)
 			MyLog.waitHere("bounding rectangle");
-
-		// imp2.setRoi(new Line(rx, ry, rx, ry + h));
 		imp2.setRoi(new Line(rx + w - 1, ry + h, rx + w - 1, ry));
 		double[][] aaa = MyLine.decomposer(imp2);
-		// MyLog.waitHere();
 		boolean search = true;
 		double find1x = 0;
 		double find1y = 0;
 		for (int i1 = 0; i1 < aaa[0].length; i1++) {
-			// IJ.log("i1:" + i1 + " x:" + (int) aaa[0][i1] + " y:" + (int)
-			// aaa[1][i1] + " val:" + (int) aaa[2][i1]);
-
 			boolean aux1 = false;
 			if (i1 < aaa[0].length - 1)
 				aux1 = (int) aaa[2][i1] == 0 && aaa[2][i1 + 1] > 0;
@@ -460,14 +444,11 @@ public class p15rmn_ implements PlugIn {
 			over2.addElement(imp2.getRoi());
 		}
 
-		// MyLog.waitHere("find1x= " + find1x + " find1y= " + find1y);
-
 		search = true;
 		double find2x = 0;
 		double find2y = 0;
 		imp2.setRoi(new Line(rx + w - 1, ry + h - 1, rx, ry + h - 1));
 		double[][] bbb = MyLine.decomposer(imp2);
-		// MyLog.waitHere();
 
 		for (int i1 = 0; i1 < bbb[0].length; i1++) {
 			// IJ.log("i1:" + i1 + " x:" + (int) bbb[0][i1] + " y:" + (int)
@@ -507,11 +488,6 @@ public class p15rmn_ implements PlugIn {
 		}
 
 		double m1 = (find2y - find1y) / (find2x - find1x);
-		angolo = Math.toDegrees(Math.atan(m1)) + 90;
-
-		IJ.log("angolo approssimato= " + (angolo));
-		MyLog.waitHere("angolo approssimato= " + (angolo));
-
 		double find3x = 0;
 		double find3y = 0;
 		find3x = (find2x - find1x) / 2 + find1x;
@@ -525,8 +501,6 @@ public class p15rmn_ implements PlugIn {
 		}
 		if (step)
 			MyLog.waitHere("centro roi MTF");
-
-		// MyLog.waitHere("find2x= " + find2x + " find2y= " + find2y);
 
 		int lato = (int) (Math.abs(find1y - find2y));
 
@@ -554,8 +528,6 @@ public class p15rmn_ implements PlugIn {
 		if (step)
 			MyLog.waitHere("roi MTF");
 		IJ.wait(timeout);
-		// ImagePlus imp3 = imp2.crop();
-		// imp3.show();
 		return roi1;
 	}
 
@@ -630,10 +602,10 @@ public class p15rmn_ implements PlugIn {
 
 			if (topWindow != null) {
 				System.out.println("X : " + pw.getX() + " Y : " + pw.getY());
-				IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
+			//	IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
 				pw.setLocation(topWindow.getX() + 50, topWindow.getY() + 50);
 				System.out.println("X : " + pw.getX() + " Y : " + pw.getY());
-				IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
+			//	IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
 			}
 			pw.requestFocus();
 			pw.toFront();
@@ -649,9 +621,6 @@ public class p15rmn_ implements PlugIn {
 			double[] plotY = new double[keys.size()];
 			int count = 0;
 			for (Double key : keys) {
-				// System.out.println("KEY:"+key+"
-				// "+"VALUE:"+distanceValueAverageMap.get(key));
-				// if(count>200)break;
 				plotX[count] = key;
 				plotY[count] = map.get(key).get(0); // 1 - to get sum
 				count++;
@@ -666,10 +635,10 @@ public class p15rmn_ implements PlugIn {
 
 			if (topWindow != null) {
 				System.out.println("X : " + pw.getX() + " Y : " + pw.getY());
-				IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
+		//		IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
 				pw.setLocation(topWindow.getX() + 50, topWindow.getY() + 50);
 				System.out.println("X : " + pw.getX() + " Y : " + pw.getY());
-				IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
+		//		IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
 			}
 			pw.requestFocus();
 			pw.toFront();
@@ -796,14 +765,8 @@ public class p15rmn_ implements PlugIn {
 		public void checkColorMode(ImagePlus image) {
 
 			int bitDepth = image.getBitDepth();
-			// if(bitDepth == ImagePlus.COLOR_256 || bitDepth ==
-			// ImagePlus.COLOR_RGB
-			// || bitDepth == ImagePlus.GRAY32){
 			System.out.println(bitDepth);
-			IJ.log("bitDepth= " + bitDepth);
-			// System.out.println(ImagePlus.GRAY16);
 			if (bitDepth == 8 || bitDepth == 16) {
-				// currentWorkImage.setProcessor(((ImageProcessor)(img.getProcessor().clone())));
 			} else {
 				image.setProcessor(((ImageProcessor) (image.getProcessor().clone())).convertToByteProcessor());
 			}
@@ -824,23 +787,14 @@ public class p15rmn_ implements PlugIn {
 	}
 
 	/////////////////////////////////////////////////////////////////
-	public void calculate(ImagePlus imp1) {
-		double quotient = 1.0;
-		gatherMTF(imp1, "VERTICAL_ANGLE", quotient);
-	}
-
-	boolean fatto = false;
 
 	private void gatherMTF(ImagePlus imp1, String angle, double quotient) {
-
 		String postmortem = "";
 		checkColorMode(imp1);
 		postmortem = auxPath1 + "_postmortem.txt";
 		initLog(postmortem);
-		fatto = true;
 		appendLog(postmortem, "**** gatherMTF *****");
-
-		preciseEdgeAngle(imp1, "VERTICAL_ANGLE");
+		double preciseAngle = newEdgeAngle(imp1, "VERTICAL_ANGLE");
 
 		Overlay overlay = new Overlay();
 		overlay.clear();
@@ -855,7 +809,6 @@ public class p15rmn_ implements PlugIn {
 		// ==================================================================
 
 		ImageProcessor proc = currentRegion.getProcessor();
-
 		appendLog(postmortem, "currentRegion [" + currentRegion.getWidth() + "x" + currentRegion.getHeight() + "]");
 
 		double[] bwValues;
@@ -956,7 +909,7 @@ public class p15rmn_ implements PlugIn {
 			yArr[i] = yVal.get(i);
 			aux1 = "xArr[" + i + "]= " + xArr[i] + " yArr[" + i + "]= " + yArr[i];
 			appendLog(postmortem, aux1);
-			IJ.log(aux1);
+		//	IJ.log(aux1);
 		}
 		appendLog(postmortem, "------");
 
@@ -1057,11 +1010,8 @@ public class p15rmn_ implements PlugIn {
 		double avg = 0;
 		int count = 0;
 		for (Double distance : DVkeys) {
-			// IJ.log(key);
-			// do{
 			if (Math.abs(distance - k * deltaS) <= deltaS / 2) {
 				avg = avg + distanceValueMap.get(distance);
-				// IJ.log("1 if");
 				count++;
 			} else {
 				if (count > 0) {
@@ -1073,13 +1023,8 @@ public class p15rmn_ implements PlugIn {
 				} else {
 					count = 0;
 					k++;
-					// IJ.log(k);
 				}
-				// IJ.log("else");
 			}
-			// }while(avg == 0 /*&& distanceValueMap.get(distance)
-			// !=
-			// 0.*/);
 		}
 
 		appendLog(postmortem, "----- averageMap [" + averageMap.size() + "]------");
@@ -1087,8 +1032,6 @@ public class p15rmn_ implements PlugIn {
 			appendLog(postmortem, "averageMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
 		}
 		appendLog(postmortem, "-------");
-
-		IJ.log("calcAverageSpread()");
 		// calculate LSF
 		Set<Double> AMkeys = averageMap.keySet();
 		TreeMap<Double, Double> difrMap = new TreeMap<Double, Double>();
@@ -1099,17 +1042,12 @@ public class p15rmn_ implements PlugIn {
 		}
 		while (AMKeys.hasNext()) {
 			double AMkey = (double) AMKeys.next();
-			/*
-			 * if(previousVal == 0) { previousVal = averageMap.get(AMkey);
-			 * difrMap.put(AMkey, 0.0); }else{
-			 */
 			if (AMKeys.hasNext()) {
 				difrMap.put(AMkey, (averageMap.get(averageMap.higherKey(AMkey)) - previousVal) / 2);// *deltaS);
 				previousVal = averageMap.get(AMkey);
 			} else {
 				difrMap.put(AMkey, 0.0);
 			}
-			// }
 		}
 
 		appendLog(postmortem, "----- firstDerivative difrMap [" + difrMap.size() + "] ------");
@@ -1155,19 +1093,15 @@ public class p15rmn_ implements PlugIn {
 		double h = deltaS;
 		double T = n * h;
 		double DFT[] = new double[(int) n / 2];
-		// double DFT[] = new double[(int) n/2];
 		for (int j = 0; j < (int) n / 2; j++) {
-			// for (int j = 0; j < (int) n / 2; j++) {
 			Set<Double> DMkeys = difrMap2.keySet();
 			double fs = 0.0;
 			double ss = 0.0;
 			k = 0;
 			for (Double DMkey : DMkeys) {
-				// if(key >= 48. && key <= 75.){
 				fs = fs + difrMap2.get(DMkey) * Math.cos(2 * Math.PI * j * k / n);
 				ss = ss + difrMap2.get(DMkey) * Math.sin(2 * Math.PI * j * k / n);
 				k++;
-				// }
 			}
 			DFT[j] = Math.abs(Math.sqrt(Math.pow(fs, 2.0) + Math.pow(ss, 2.0)));
 		}
@@ -1186,24 +1120,21 @@ public class p15rmn_ implements PlugIn {
 		// double [] normalizedDFT = new double [DFT.length];
 		TreeMap<Double, Double> intensityMTFMap = new TreeMap<Double, Double>();
 
-		IJ.log("quotient= " + quotient);
+//		IJ.log("quotient= " + quotient);
 		for (int i = 0; i < DFT.length * quotient; i++) {
-			// double IMkey = i * height / (2 * quotient *
-			// DFT.length *
-			// pixelSize);
 			double IMkey = (double) i / (DFT.length * quotient);
 			double val = DFT[i] * normalizer;
 			intensityMTFMap.put(IMkey, val);
 		}
 
-		IJ.log("calcMTF()");
+//		IJ.log("calcMTF()");
 		appendLog(postmortem, "----- intensityMTFMap [" + intensityMTFMap.size() + "]------");
 		for (Entry<Double, Double> entry : intensityMTFMap.entrySet()) {
 			appendLog(postmortem, "intensityMTFMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
-			IJ.log("intensityMTFMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
+//			IJ.log("intensityMTFMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
 		}
 		appendLog(postmortem, "-------");
-		IJ.log("------");
+	//	IJ.log("------");
 
 		CustomUtils.drawPlot(averageMap, "Edge Spread Function", "pixels", "intensity");
 		CustomUtils.drawPlot(difrMap, "Line Spread Function", "pixels", "values");
@@ -1213,57 +1144,13 @@ public class p15rmn_ implements PlugIn {
 
 	}
 
-	// }
-
-	// private void constructResultantMTF() {
-	//
-	// /*
-	// * Test Map
-	// *
-	// * TreeMap<Double, Double> fm = new TreeMap<Double, Double>();
-	// * fm.put(0., 1.); fm.put(10., 0.96); fm.put(25., 0.85); fm.put(45.,
-	// * 0.75); fm.put(60., 0.15); fm.put(95., 0.08); fm.put(135., 0.05);
-	// * TreeMap<Double, Double> sm = new TreeMap<Double, Double>();
-	// * sm.put(0., 1.); sm.put(15., 0.95); sm.put(25., 0.75); sm.put(35.,
-	// * 0.6); sm.put(55., 0.55); sm.put(75., 0.48); sm.put(95., 0.3);
-	// * sm.put(105., 0.2); sm.put(120., 0.15); mtfList.add(fm);
-	// * mtfList.add(sm);
-	// */
-	//
-	// // for (TreeMap<Double, Double> mtfA : mtfList) {
-	//
-	// TreeMap<Double, Double> mtfA;
-	// for (Double keyA : mtfA.keySet()) {
-	// Double sumVal = mtfA.get(keyA);
-	// int count = 1;
-	// // if (!resultantMTFMap.isEmpty() && !((Map<Double, Double>)
-	// resultantMTFMap).containsKey(keyA)) {
-	// Object mtfList;
-	// for (TreeMap<Double, Double> mtfB : mtfList) {
-	// if (mtfA != mtfB) {
-	// if (mtfB.floorEntry(keyA) != null) {// resultantMTFMap.put(keyA,
-	// // mtfB.ceilingEntry(keyA).getValue());
-	// sumVal = sumVal + mtfB.floorEntry(keyA).getValue();
-	// count++;
-	// }
-	// }
-	// }
-	// }
-	// resultantMTFMap.putIfAbsent(keyA, sumVal / count);
-	// }
-	//// }
-	// CustomUtils.drawPlot(resultantMTFMap, "Modulation Transfer Function
-	// (normalized)", "frequency", "intensity");
-	// resultantMTFMap.clear();
-	// }
-
 	private void checkColorMode(ImagePlus img) {
 		// ImagePlus img = WindowManager.getImage(imageID);
 		int bitDepth = img.getBitDepth();
 		// if(bitDepth == ImagePlus.COLOR_256 || bitDepth ==
 		// ImagePlus.COLOR_RGB
 		// || bitDepth == ImagePlus.GRAY32){
-		IJ.log("bitDepth= " + bitDepth);
+//		IJ.log("bitDepth= " + bitDepth);
 		// IJ.log(ImagePlus.GRAY16);
 		if (bitDepth == 8 || bitDepth == 16) {
 			img.setProcessor(((ImageProcessor) (img.getProcessor().clone())));
@@ -1299,188 +1186,57 @@ public class p15rmn_ implements PlugIn {
 		appendLog(path, "---- INIZIO ---------");
 	}
 
-	public void preciseEdgeAngle(ImagePlus imp1, String angle) {
-
-		ImagePlus imp2 = imp1.duplicate();
+	public double newEdgeAngle(ImagePlus imp1, String angle) {
+		ImagePlus imp2 = applyThreshold(imp1);
 		ImageProcessor ip2 = imp2.getProcessor();
-		Overlay over2 = new Overlay();
-		imp2.setOverlay(over2);
-
-		double[] bwValues;
-		double[] pixelsValues;
-		// ========================================================
-		// olga: convert to Black&White
-		// ========================================================
-		if (ip2.getBitDepth() == 16) {
-			IJ.log("preciseEdgeAngle passo 001");
-			short[] sourcePixels = (short[]) ip2.getPixels();
-			pixelsValues = new double[sourcePixels.length];
-			for (int i = 0; i < sourcePixels.length; i++) {
-				pixelsValues[i] = sourcePixels[i] & 0xffff;
-			}
-			bwValues = new double[sourcePixels.length];
-			double middleVal = ip2.getAutoThreshold();
-
-			for (int i = 0; i < sourcePixels.length; i++) {
-				if (pixelsValues[i] <= middleVal) {
-					bwValues[i] = 0.0;
-					sourcePixels[i] = 0;
-				} else {
-					bwValues[i] = 65635.0;
-					sourcePixels[i] = (short) 65535;
-				}
-			}
-		} else {
-			IJ.log("preciseEdgeAngle passo 002");
-			byte[] sourcePixels = (byte[]) ip2.getPixels();
-			pixelsValues = new double[sourcePixels.length];
-			for (int i = 0; i < sourcePixels.length; i++) {
-				pixelsValues[i] = sourcePixels[i] & 0xff;
-			}
-			bwValues = new double[sourcePixels.length];
-			double middleVal = ip2.getAutoThreshold();
-			// middleVal = middleVal+middleVal*0.15;
-
-			for (int i = 0; i < sourcePixels.length; i++) {
-				if (pixelsValues[i] <= middleVal) {
-					bwValues[i] = 0.0;
-					sourcePixels[i] = 0;
-				} else {
-					bwValues[i] = 255.0;
-					sourcePixels[i] = (byte) 255;
-				}
-			}
+//		Overlay over2 = new Overlay();
+//		imp2.setOverlay(over2);
+//		imp2.show();
+//		//
+		byte[] sourcePixels = (byte[]) ip2.getPixels();
+		double[] bwValues = new double[sourcePixels.length];
+		for (int i = 0; i < sourcePixels.length; i++) {
+			if (sourcePixels[i] == 0)
+				bwValues[i] = 0;
+			else
+				bwValues[i] = 255.0;
 		}
-		imp2.updateAndRepaintWindow();
-
 		ArrayList<Double> xVal = new ArrayList<Double>();
 		ArrayList<Double> yVal = new ArrayList<Double>();
 		// differentiation
-		if (angle == "VERTICAL_ANGLE") {
-			IJ.log("preciseEdgeAngle passo 003");
-
-			for (int i1 = 0; i1 < ip2.getHeight(); i1++) {
-				double max = 0.0;
-				double x = 0.0;
-				for (int i2 = 1; i2 < ip2.getWidth(); i2++) {
-					double diff = Math
-							.abs(bwValues[i2 + i1 * ip2.getWidth()] - bwValues[(i2 + i1 * ip2.getWidth()) - 1]);
-					if (diff > max) {
-						max = diff;
-						x = i2;
-					}
-				}
-				if (max != 0.) {
-					xVal.add((double) x);
-					yVal.add((double) i1);
+		for (int i1 = 0; i1 < ip2.getHeight(); i1++) {
+			double max = 0.0;
+			double x = 0.0;
+			for (int i2 = 1; i2 < ip2.getWidth(); i2++) {
+				double diff = Math.abs(bwValues[i2 + i1 * ip2.getWidth()] - bwValues[(i2 + i1 * ip2.getWidth()) - 1]);
+				if (diff > max) {
+					max = diff;
+					x = i2;
 				}
 			}
-		} else {
-			IJ.log("preciseEdgeAngle passo 004");
-
-			for (int i1 = 0; i1 < ip2.getWidth(); i1++) {
-				double max = 0.0;
-				double y = 0.0;
-				for (int i2 = 1; i2 < ip2.getHeight(); i2++) {
-					double diff = Math
-							.abs(bwValues[i1 + i2 * ip2.getWidth()] - bwValues[(i1 + (i2 - 1) * ip2.getWidth())]);
-					if (diff > max) {
-						max = diff;
-						y = i2;
-					}
-				}
-				if (max != 0.) {
-					xVal.add((double) i1);
-					yVal.add((double) y);
-				}
+			if (max != 0.) {
+				xVal.add((double) x);
+				yVal.add((double) i1);
 			}
 		}
-
 		double[] xArr = new double[xVal.size() - 1];
 		double[] yArr = new double[yVal.size() - 1];
 		for (int i = 0; i < xVal.size() - 1; i++) {
 			xArr[i] = xVal.get(i);
 			yArr[i] = yVal.get(i);
-			setOverlayPixel(over2, imp2, (int) xArr[i], (int) yArr[i], Color.green, Color.red, false);
+//			setOverlayPixel(over2, imp2, (int) xArr[i], (int) yArr[i], Color.green, Color.red, false);
 		}
-
-		MyLog.logVector(xArr, "xArr");
-		MyLog.logVector(yArr, "yArr");
-
-		MyLog.waitHere();
-
 		CurveFitter lineFitter = new CurveFitter(xArr, yArr);
 		lineFitter.doFit(CurveFitter.STRAIGHT_LINE);
-
-		// Roi rect = new Roi(0, 0, imp2.getWidth(), imp2.getHeight());
-		// Roi line;
-		// if (angle == "VERTICAL_ANGLE")
-
 		imp2.setRoi(new Line((1 - lineFitter.getParams()[0]) / lineFitter.getParams()[1], 1,
 				(ip2.getHeight() - 1 - lineFitter.getParams()[0]) / lineFitter.getParams()[1], ip2.getHeight() - 1));
-
-		// proc.getHeight() - 1);
-		// else
-		// line = new Line(1, lineFitter.getParams()[0] +
-		// lineFitter.getParams()[1], proc.getWidth() - 1,
-		// lineFitter.getParams()[0] + lineFitter.getParams()[1] *
-		// (proc.getWidth() - 1));
-
-		imp2.show();
+//		imp2.show();
 		double angleGrad = Math.toDegrees(Math.atan(1.0 / (lineFitter.getParams())[1]));
-
-		IJ.log(lineFitter.getResultString());
-
-		IJ.log("preciseEdgeAngle= " + angleGrad);
-		MyLog.waitHere("preciseEdgeAngle= " + angleGrad + "   " + angleGrad);
-
+//		IJ.log("preciseEdgeAngle= " + angleGrad);
+//		MyLog.waitHere("preciseEdgeAngle= " + angleGrad);
+		return angleGrad;
 	}
 
-	void bwConverter(ImagePlus imp1) {
-		// ========================================================
-		// olga: convert to Black&White
-		// ========================================================
-		ImageProcessor proc = imp1.getProcessor();
-
-		double[] bwValues;
-		double[] pixelsValues;
-
-		if (proc.getBitDepth() == 16) {
-			short[] sourcePixels = (short[]) proc.getPixels();
-			pixelsValues = new double[sourcePixels.length];
-			for (int i = 0; i < sourcePixels.length; i++) {
-				pixelsValues[i] = sourcePixels[i] & 0xffff;
-			}
-			bwValues = new double[sourcePixels.length];
-			double middleVal = proc.getAutoThreshold();
-
-			for (int i = 0; i < sourcePixels.length; i++) {
-				if (pixelsValues[i] <= middleVal) {
-					bwValues[i] = 0.0;
-				} else {
-					bwValues[i] = 65635.0;
-				}
-			}
-		} else {
-			byte[] sourcePixels = (byte[]) proc.getPixels();
-			pixelsValues = new double[sourcePixels.length];
-			for (int i = 0; i < sourcePixels.length; i++) {
-				pixelsValues[i] = sourcePixels[i] & 0xff;
-			}
-			bwValues = new double[sourcePixels.length];
-			double middleVal = proc.getAutoThreshold();
-			// middleVal = middleVal+middleVal*0.15;
-
-			for (int i = 0; i < sourcePixels.length; i++) {
-				if (pixelsValues[i] <= middleVal) {
-					bwValues[i] = 0.0;
-				} else {
-					bwValues[i] = 255.0;
-				}
-			}
-		}
-		imp1.updateAndRepaintWindow();
-	}
 
 	public static void setOverlayPixel(Overlay over1, ImagePlus imp1, int x1, int y1, Color col1, Color col2,
 			boolean ok) {
