@@ -1,16 +1,13 @@
 package contMensili;
 
-import java.awt.AWTEvent;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Frame;
-import java.awt.Rectangle;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.File;
-import java.util.StringTokenizer;
-
-/*************************************************************************
+/***
+ * Copied from the source of SE_MTF_2xNyquist.jar (on the imagej site)
+ * 
+ * Authors: Carles Mitja (carles.mitja@citm.upc.edu), Jaume Escofet, Aura Tacho and Raquel Revuelta.
+ * 
+ * Adapted by Alberto Duina  01/02/2017
+ * 
+ * 
  *  Compilation:  javac SE_MTF_2xNyquist.java
  *  Execution:    java SE_MTF_2xNyquist
  *
@@ -22,19 +19,20 @@ import java.util.StringTokenizer;
  *	Por requisitos de la fft, se utiliza una muestra de hileras potencia de 2 tanto para el calculo 
  *	de la MTF como de la SPP.
  *  
- *
- *  Limitations
- *  -----------
- *   * TIFF image only
- *  
  *  
  *************************************************************************/
+
+import java.awt.AWTEvent;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Frame;
+import java.awt.Rectangle;
+import java.util.StringTokenizer;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Prefs;
-import ij.WindowManager;
-import ij.gui.DialogListener;
 import ij.gui.GenericDialog;
 import ij.gui.Line;
 import ij.gui.NewImage;
@@ -51,7 +49,6 @@ import ij.process.ByteProcessor;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 import utils.AboutBox;
-import utils.InputOutput;
 import utils.MyConst;
 import utils.MyInput;
 import utils.MyLine;
@@ -107,6 +104,8 @@ public class p14rmn_ implements PlugIn {
 	int nPhotodetectors = 0;
 	double ny = 1;
 	int level = 0;
+	public static double angolo = 0;
+
 	private static final int ABORT = 1;
 
 	public static String VERSION = "MTF metodo SLANTED EDGE";
@@ -179,7 +178,8 @@ public class p14rmn_ implements PlugIn {
 				retry = false;
 				return 0;
 			case 2:
-				new AboutBox().about(titolo, MyVersion.CURRENT_VERSION);
+				new AboutBox().credits(titolo, "CREDITS to: Carles Mitja", "carles.mitja@citm.upc.edu",
+						MyVersion.CURRENT_VERSION);
 
 				retry = true;
 				break;
@@ -381,7 +381,6 @@ public class p14rmn_ implements PlugIn {
 		ImagePlus imp3 = imp1.crop();
 		imp3.show();
 		calculateMTF(imp3, rt);
-		MyLog.waitHere();
 		return rt;
 	}
 
@@ -479,8 +478,15 @@ public class p14rmn_ implements PlugIn {
 
 				if (rt1 == null) {
 				} else {
-					rt1.incrementCounter();
+					String t1 = "TESTO";
+					String s2 = "VALORE";
+
+					rt1.addValue(t1, "APPROXIMATED_ANGLE");
+					rt1.addValue(s2, angolo);
+
 					for (int i1 = 0; i1 < MTFVector.length; i1++) {
+						rt1.incrementCounter();
+						rt1.addValue(t1, "PLOT_" + i1);
 						rt1.addValue("MTF", MTFVector[i1]);
 						if (i1 < LSFVector.length)
 							rt1.addValue("LSF", LSFVector[i1]);
@@ -488,7 +494,6 @@ public class p14rmn_ implements PlugIn {
 							rt1.addValue("ESF", ESFVector[i1]);
 						if (i1 < SPPVector.length)
 							rt1.addValue("SPP", SPPVector[i1]);
-						rt1.incrementCounter();
 					}
 				}
 
@@ -498,7 +503,6 @@ public class p14rmn_ implements PlugIn {
 				generatePlot(SPPVector, "SPP");
 			}
 		} while (restart);
-		MyLog.waitHere("USCITA!!");
 	}
 
 	void generateStack() {
@@ -1086,8 +1090,8 @@ public class p14rmn_ implements PlugIn {
 			imp2.setRoi(new OvalRoi(find1x - 8, find1y - 8, 16, 16));
 
 			roi1 = imp2.getRoi();
-			roi1.setFillColor(Color.green);
-			roi1.setStrokeColor(Color.green);
+			roi1.setFillColor(Color.yellow);
+			roi1.setStrokeColor(Color.yellow);
 			over2.addElement(imp2.getRoi());
 		}
 
@@ -1125,6 +1129,22 @@ public class p14rmn_ implements PlugIn {
 		}
 		if (step)
 			MyLog.waitHere("vertici");
+
+		double find4x = find2x;
+		double find4y = 4;
+
+		if (!fast) {
+			imp2.setRoi(new OvalRoi(find4x - 8, find4y - 8, 16, 16));
+			roi1 = imp2.getRoi();
+			roi1.setFillColor(Color.blue);
+			roi1.setStrokeColor(Color.blue);
+			over2.addElement(imp2.getRoi());
+		}
+
+		double m1 = (find2y - find1y) / (find2x - find1x);
+		angolo = Math.toDegrees(Math.atan(m1)) + 90;
+
+		MyLog.waitHere("angolo approssimato= " + (angolo));
 
 		double find3x = 0;
 		double find3y = 0;
