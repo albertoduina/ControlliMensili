@@ -323,22 +323,16 @@ public class p15rmn_Test {
 	public final void testComplete1() {
 
 		String path1 = "./Test2/gradi1";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		double minSizeInPixel = 5000;
-		double maxSizeInPixel = 100000;
-		double minCirc = .1;
-		double maxCirc = 1;
-		boolean step = false;
 
-		p14rmn_ p14 = new p14rmn_();
-		Roi roi14 = p14.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc, step, false);
+		p15rmn_ p15 = new p15rmn_();
+		String autoArgs = "6";
 
-		Rectangle r1 = roi14.getBounds();
-		imp1.setRoi(r1);
-		ImagePlus imp3 = imp1.crop();
-		imp3.show();
-		p14 = new p14rmn_();
-		p14.calculateMTF(imp3, null);
+		int mode = 3;
+		int timeout = 200;
+		String info= "INFO";
+
+		p15.mainMTF(path1, autoArgs, info, mode, timeout);
+		MyLog.waitHere();
 
 	}
 

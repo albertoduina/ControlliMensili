@@ -708,38 +708,46 @@ public class Sequenze_ implements PlugIn {
 					vetDirez.add(tableCode2[tableRow][TableCode.DIREZ]);
 					vetProfond.add(tableCode2[tableRow][TableCode.PROFOND]);
 					vetDone.add(done);
-					String[] espansione;
+					String[][] espansione;
 					// vedo se occorre espandere
 					espansione = expandCode(codice, echoTime, tableExpand4);
+
+					// List<String> vetOldCode = new ArrayList<String>();
+					// List<String> vetEcho = new ArrayList<String>();
+					// List<String> vetNewCode = new ArrayList<String>();
+					// List<String> vetImaPass = new ArrayList<String>();
+
 					if (espansione != null) {
-						// count3++;
-						vetConta.add("" + (count3));
-						count3++;
-						vetPath.add(path1);
-						// IJ.log("espando con "+espansione[2]+"
-						// "+espansione[3]);
-						vetCodice.add(espansione[2]);
-						vetCoil.add(coil);
-						vetImaDaPassare.add(espansione[3]);
-						vetImaOrder.add(tableCode2[tableRow][TableCode.IMA_ORDER]);
-						vetImaIncrement.add(tableCode2[tableRow][TableCode.IMA_INCREMENT]);
-						vetSpare_1.add(tableCode2[tableRow][TableCode.SPARE_1]);
-						vetSpare_2.add(tableCode2[tableRow][TableCode.SPARE_2]);
-						vetSpare_3.add(tableCode2[tableRow][TableCode.SPARE_3]);
-						vetSerie.add(numSerie);
-						vetAcq.add(numAcq);
-						vetIma.add(numIma);
-						vetAcqTime.add(acqTime);
-						vetEchoTime.add(echoTime);
-						vetSlicePosition.add(slicePosition);
-						vetDirez.add(tableCode2[tableRow][TableCode.DIREZ]);
-						vetProfond.add(tableCode2[tableRow][TableCode.PROFOND]);
-						vetDone.add(done);
+						for (int i2 = 0; i2 < espansione.length; i2++) {
+							// count3++;
+							vetConta.add("" + (count3));
+							count3++;
+							vetPath.add(path1);
+							// IJ.log("espando con " + espansione[2] + " " +
+							// espansione[3]);
+							vetCodice.add(espansione[i2][2]);
+							vetCoil.add(coil);
+							vetImaDaPassare.add(espansione[i2][3]);
+							vetImaOrder.add(tableCode2[tableRow][TableCode.IMA_ORDER]);
+							vetImaIncrement.add(tableCode2[tableRow][TableCode.IMA_INCREMENT]);
+							vetSpare_1.add(tableCode2[tableRow][TableCode.SPARE_1]);
+							vetSpare_2.add(tableCode2[tableRow][TableCode.SPARE_2]);
+							vetSpare_3.add(tableCode2[tableRow][TableCode.SPARE_3]);
+							vetSerie.add(numSerie);
+							vetAcq.add(numAcq);
+							vetIma.add(numIma);
+							vetAcqTime.add(acqTime);
+							vetEchoTime.add(echoTime);
+							vetSlicePosition.add(slicePosition);
+							vetDirez.add(tableCode2[tableRow][TableCode.DIREZ]);
+							vetProfond.add(tableCode2[tableRow][TableCode.PROFOND]);
+							vetDone.add(done);
+						}
+					} else {
+						// non aggiunge alcun dato
+						// if (questo)
+						// MyLog.waitHere("NON leggo questo");
 					}
-				} else {
-					// non aggiunge alcun dato
-					// if (questo)
-					// MyLog.waitHere("NON leggo questo");
 				}
 			}
 		}
@@ -825,26 +833,37 @@ public class Sequenze_ implements PlugIn {
 	 *            tabella contenente i dati di expand.txt
 	 * @return vettore contenente i dati espansi
 	 */
-	public String[] expandCode(String codice, String eco, String[][] tableExpand4) {
+	public String[][] expandCode(String codice, String eco, String[][] tableExpand4) {
 		if (codice == null)
 			return null;
 		if (eco == null)
 			return null;
 		if (tableExpand4 == null)
 			return null;
-		String[] out = new String[4];
+		List<String> vetOldCode = new ArrayList<String>();
+		List<String> vetEcho = new ArrayList<String>();
+		List<String> vetNewCode = new ArrayList<String>();
+		List<String> vetImaPass = new ArrayList<String>();
+
 		for (int i2 = 0; i2 < tableExpand4.length; i2++) {
 			String codiceExpand = TableExpand.getOldCode(tableExpand4, i2);
 			String ecoExpand = TableExpand.getEcho(tableExpand4, i2);
 			if ((codice.equals(codiceExpand)) && (eco.equals(ecoExpand))) {
-				out[0] = tableExpand4[i2][TableExpand.OLD_CODE];
-				out[1] = tableExpand4[i2][TableExpand.ECHO];
-				out[2] = tableExpand4[i2][TableExpand.NEW_CODE];
-				out[3] = tableExpand4[i2][TableExpand.IMA_PASS];
-				return out;
+				vetOldCode.add(tableExpand4[i2][TableExpand.OLD_CODE]);
+				vetEcho.add(tableExpand4[i2][TableExpand.ECHO]);
+				vetNewCode.add(tableExpand4[i2][TableExpand.NEW_CODE]);
+				vetImaPass.add(tableExpand4[i2][TableExpand.IMA_PASS]);
 			}
 		}
-		return null;
+		String[][] out1 = new String[vetOldCode.size()][4];
+
+		for (int i1 = 0; i1 < vetOldCode.size(); i1++) {
+			out1[i1][0] = vetOldCode.get(i1);
+			out1[i1][1] = vetEcho.get(i1);
+			out1[i1][2] = vetNewCode.get(i1);
+			out1[i1][3] = vetImaPass.get(i1);
+		}
+		return out1;
 	}
 
 	/**

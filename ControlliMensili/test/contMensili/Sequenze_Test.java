@@ -62,8 +62,7 @@ public class Sequenze_Test {
 		}
 		boolean success4 = InputOutput.createDir(new File(dir2Test));
 		assertTrue("fallita creazione directory " + dir2Test, success4);
-		assertTrue("verificata presenza directory",
-				InputOutput.checkDir(dir2Test));
+		assertTrue("verificata presenza directory", InputOutput.checkDir(dir2Test));
 		// -----
 
 		String dirTest = "/test3/";
@@ -76,16 +75,13 @@ public class Sequenze_Test {
 
 		boolean success2 = InputOutput.createDir(new File(dirTest));
 		assertTrue("fallita creazione directory", success2);
-		assertTrue("verificata presenza directory",
-				InputOutput.checkDir(dirTest));
+		assertTrue("verificata presenza directory", InputOutput.checkDir(dirTest));
 
 		//
-		String[] listFiles = { "BTMA_01testP6", "BTMA_02testP6",
-				"BTMA_03testP6", "BTMA_04testP6", "BTMA_05testP6",
+		String[] listFiles = { "BTMA_01testP6", "BTMA_02testP6", "BTMA_03testP6", "BTMA_04testP6", "BTMA_05testP6",
 				"BTMA_06testP6" };
 
-		String[] path1 = new InputOutput().findListTestImages2(
-				MyConst.TEST_FILE, listFiles, dirTest);
+		String[] path1 = new InputOutput().findListTestImages2(MyConst.TEST_FILE, listFiles, dirTest);
 
 		// MyLog.logVector(path1, "path1");
 
@@ -112,8 +108,7 @@ public class Sequenze_Test {
 		if (mark)
 			IJ.log(">002");
 
-		String[][] expectTable = InputOutput
-				.readStringMatrixFromFile("./data/vet18.txt");
+		String[][] expectTable = InputOutput.readStringMatrixFromFile("./data/vet18.txt");
 
 		// TableUtils.dumpTable(expectTable, "expectTable");
 
@@ -136,8 +131,7 @@ public class Sequenze_Test {
 		if (mark)
 			IJ.log(">003");
 
-		String[][] expectTable = { { "BUSS_", "2", "1", "/test3/BUSS_05testP6",
-				"29", "1", "5", "BC" } };
+		String[][] expectTable = { { "BUSS_", "2", "1", "/test3/BUSS_05testP6", "29", "1", "5", "BC" } };
 
 		new Sequenze_().logVerifySequenceTable(expectTable, true);
 
@@ -158,8 +152,7 @@ public class Sequenze_Test {
 			IJ.log(">004");
 
 		String startingDir = "C://Dati/vuota/";
-		List<File> listona = new Sequenze_().getFileListing(new File(
-				startingDir));
+		List<File> listona = new Sequenze_().getFileListing(new File(startingDir));
 		for (File file : listona) {
 			System.out.println(file);
 		}
@@ -192,10 +185,10 @@ public class Sequenze_Test {
 	// strList1[j1++] = file.getPath();
 	// }
 	//
-	// // il problema è che quando utilizzo generateSequenceTable il path
-	// // indicato per le immagini di test è assoluto. Ciò è usato solo per
-	// // questo test in junit ma cozza con la portabilità (per esempip col
-	// // calcolatore di casa), pertanto la tabella di uscita andrà trasformata
+	// // il problema ï¿½ che quando utilizzo generateSequenceTable il path
+	// // indicato per le immagini di test ï¿½ assoluto. Ciï¿½ ï¿½ usato solo per
+	// // questo test in junit ma cozza con la portabilitï¿½ (per esempip col
+	// // calcolatore di casa), pertanto la tabella di uscita andrï¿½ trasformata
 	// // con il path relativo, in modo che sia portatile
 	//
 	// String[][] res1 = new Sequenze_().generateSequenceTable(strList1,
@@ -267,8 +260,7 @@ public class Sequenze_Test {
 		if (mark)
 			IJ.log(">005");
 
-		String[][] inTable = { { "aa11", "bb11", "cc11" },
-				{ "aa22", "bb22", "cc22" } };
+		String[][] inTable = { { "aa11", "bb11", "cc11" }, { "aa22", "bb22", "cc22" } };
 		String[][] outTable = new TableUtils().duplicateTable(inTable);
 		assertTrue(TableUtils.compareTable(inTable, outTable));
 		if (mark)
@@ -304,8 +296,7 @@ public class Sequenze_Test {
 
 		// 18 dec 2011 sistemato, ora funziona in automatico
 
-		String[][] expected = { { "contMensili.p3rmn_", "#0#1" },
-				{ "contMensili.p3rmn_", "#2#3" },
+		String[][] expected = { { "contMensili.p3rmn_", "#0#1" }, { "contMensili.p3rmn_", "#2#3" },
 				{ "contMensili.p3rmn_", "#4#5" } };
 
 		// MyLog.logMatrix(codeTable, "codeTable");
@@ -325,8 +316,8 @@ public class Sequenze_Test {
 
 		TextWindow tw = new TextWindow("Sequenze", "Sequenze", 200, 200);
 
-		String[][] chiamate = new Sequenze_().callPluginsFromSequenceTable(
-				iw2ayvTable, codeTable, test, superficiali, p10p11, tw);
+		String[][] chiamate = new Sequenze_().callPluginsFromSequenceTable(iw2ayvTable, codeTable, test, superficiali,
+				p10p11, tw);
 
 		// TableUtils.dumpTable(expected, "expected");
 		// TableUtils.dumpTable(chiamate, "chiamate");
@@ -348,8 +339,7 @@ public class Sequenze_Test {
 		// MyLog.logMatrix(codeTable, "codeTable");
 		// MyLog.waitHere();
 
-		String nome = new Sequenze_().pluginToBeCalled(2, iw2ayvTable,
-				codeTable);
+		String nome = new Sequenze_().pluginToBeCalled(2, iw2ayvTable, codeTable);
 		// MyLog.waitHere("nome= "+nome);
 		// System.out.printf("\nnome= " + nome);
 		assertEquals("contMensili.p3rmn_", nome);
@@ -363,11 +353,8 @@ public class Sequenze_Test {
 		if (mark)
 			IJ.log(">008");
 
-		String[][] iw2ayvTable = new TableSequence()
-				.loadTable(new InputOutput()
-						.findResource("iw2ayv_sequenze.txt"));
-		String nome = new Sequenze_().pluginToBeCalledWithCoil(2, iw2ayvTable,
-				codeTable);
+		String[][] iw2ayvTable = new TableSequence().loadTable(new InputOutput().findResource("iw2ayv_sequenze.txt"));
+		String nome = new Sequenze_().pluginToBeCalledWithCoil(2, iw2ayvTable, codeTable);
 		assertEquals("contMensili.p3rmn_", nome);
 		if (mark)
 			IJ.log("008>");
@@ -379,8 +366,7 @@ public class Sequenze_Test {
 		if (mark)
 			IJ.log(">009");
 
-		String argomento = new Sequenze_().argumentForPluginToBeCalled(2,
-				orderedTable);
+		String argomento = new Sequenze_().argumentForPluginToBeCalled(2, orderedTable);
 		assertEquals("#2#3", argomento);
 		if (mark)
 			IJ.log("009>");
@@ -392,8 +378,7 @@ public class Sequenze_Test {
 		if (mark)
 			IJ.log(">010");
 
-		String argomento = new Sequenze_().argumentForPluginToBeCalled(4,
-				orderedTable);
+		String argomento = new Sequenze_().argumentForPluginToBeCalled(4, orderedTable);
 		assertEquals("#4#5#6#7", argomento);
 		if (mark)
 			IJ.log("010>");
@@ -405,8 +390,7 @@ public class Sequenze_Test {
 		if (mark)
 			IJ.log(">011");
 
-		String argomento = new Sequenze_().argumentForPluginToBeCalled(0,
-				orderedTable);
+		String argomento = new Sequenze_().argumentForPluginToBeCalled(0, orderedTable);
 		assertEquals("#0", argomento);
 		if (mark)
 			IJ.log("011>");
@@ -415,32 +399,32 @@ public class Sequenze_Test {
 
 	@Test
 	public final void testExpandCode() {
-		if (mark)
-			IJ.log(">012");
-
-		String codice = "T2MA_";
-		String eco = "180";
-		String[][] expandTable = {
-				{ "T2MA_", "45", "T2M1_", "1", "0", "p9rmn_" },
-				{ "T2MA_", "90", "T2M2_", "1", "0", "p9rmn_" },
-				{ "T2MA_", "180", "T2M3_", "1", "0", "p9rmn_" },
-				{ "B080_", "20", "C080_", "1", "0", "p9rmn_" },
-				{ "T2MA2", "45", "T2M12", "1", "0", "p9rmn_" },
-				{ "T2MA2", "90", "T2M22", "1", "0", "p9rmn_" },
-				{ "T2MA2", "180", "T2M32", "1", "0", "p9rmn_" },
-				{ "T2MA3", "30", "T2M13", "1", "0", "p9rmn_" },
-				{ "T2MA3", "60", "T2M23", "1", "0", "p9rmn_" },
-				{ "T2MA3", "120", "T2M33", "1", "0", "p9rmn_" } };
-
-		String[] expected = { "T2MA_", "180", "T2M3_", "1" };
-
-		String[] vetExpanded = new Sequenze_().expandCode(codice, eco,
-				expandTable);
-		new UtilAyv();
-		assertTrue(UtilAyv.compareVectors(vetExpanded, expected,
-				"errore comparazione"));
-		if (mark)
-			IJ.log("012>");
+		// if (mark)
+		// IJ.log(">012");
+		//
+		// String codice = "T2MA_";
+		// String eco = "180";
+		// String[][] expandTable = {
+		// { "T2MA_", "45", "T2M1_", "1", "0", "p9rmn_" },
+		// { "T2MA_", "90", "T2M2_", "1", "0", "p9rmn_" },
+		// { "T2MA_", "180", "T2M3_", "1", "0", "p9rmn_" },
+		// { "B080_", "20", "C080_", "1", "0", "p9rmn_" },
+		// { "T2MA2", "45", "T2M12", "1", "0", "p9rmn_" },
+		// { "T2MA2", "90", "T2M22", "1", "0", "p9rmn_" },
+		// { "T2MA2", "180", "T2M32", "1", "0", "p9rmn_" },
+		// { "T2MA3", "30", "T2M13", "1", "0", "p9rmn_" },
+		// { "T2MA3", "60", "T2M23", "1", "0", "p9rmn_" },
+		// { "T2MA3", "120", "T2M33", "1", "0", "p9rmn_" } };
+		//
+		// String[] expected = { "T2MA_", "180", "T2M3_", "1" };
+		//
+		// String[] vetExpanded = new Sequenze_().expandCode(codice, eco,
+		// expandTable);
+		// new UtilAyv();
+		// assertTrue(UtilAyv.compareVectors(vetExpanded, expected,
+		// "errore comparazione"));
+		// if (mark)
+		// IJ.log("012>");
 
 	}
 
@@ -449,23 +433,16 @@ public class Sequenze_Test {
 		if (mark)
 			IJ.log(">013");
 
-		String[][] outTable = new Sequenze_().verifySequenceTable(orderedTable,
-				codeTable);
+		String[][] outTable = new Sequenze_().verifySequenceTable(orderedTable, codeTable);
 
 		String[][] verifyTableExpected = {
 
-				{ "BTMA_", "15", "6", "./test3/BTMA_01testP6", "1", "1",
-						"102922955019", "BC" },
-				{ "BTMA_", "15", "6", "./test3/BTMA_03testP6", "1", "3",
-						"102923022490", "BC" },
-				{ "BTMA_", "15", "6", "./test3/BTMA_04testP6", "1", "4",
-						"102923555016", "BC" },
-				{ "BTMA_", "15", "6", "./test3/BTMA_04testP6", "1", "4",
-						"102923555016", "BC" },
-				{ "BTMA_", "15", "6", "./test3/BTMA_04testP6", "1", "4",
-						"102923555016", "BC" },
-				{ "BTMA_", "15", "6", "./test3/BTMA_04testP6", "1", "4",
-						"102923555016", "BC" } };
+				{ "BTMA_", "15", "6", "./test3/BTMA_01testP6", "1", "1", "102922955019", "BC" },
+				{ "BTMA_", "15", "6", "./test3/BTMA_03testP6", "1", "3", "102923022490", "BC" },
+				{ "BTMA_", "15", "6", "./test3/BTMA_04testP6", "1", "4", "102923555016", "BC" },
+				{ "BTMA_", "15", "6", "./test3/BTMA_04testP6", "1", "4", "102923555016", "BC" },
+				{ "BTMA_", "15", "6", "./test3/BTMA_04testP6", "1", "4", "102923555016", "BC" },
+				{ "BTMA_", "15", "6", "./test3/BTMA_04testP6", "1", "4", "102923555016", "BC" } };
 		// TableUtils.dumpTable(orderedTable, "orderedTable");
 		// TableUtils.dumpTable(outTable, "outTable");
 		// TableUtils.dumpTable(verifyTableExpected, "expectTable");
@@ -484,34 +461,22 @@ public class Sequenze_Test {
 			IJ.log(">014");
 
 		String[][] inTable = {
-				{ "0", "./test3/BTMA_01testP6", "BTMA_", "COIL", "15", "29",
-						"1", "1", "102922955019", "20", "1" },
-				{ "1", "./test3/BTMA_03testP6", "BTMA_", "COIL", "15", "29",
-						"1", "3", "102923022490", "20", "1" },
-				{ "2", "./test3/BUSS_05testP6", "BUSS_", "COIL", "2", "29",
-						"1", "5", "102923090001", "20", "0" },
-				{ "3", "./test3/BUSC_02testP6", "BUSC_", "COIL", "2", "29",
-						"1", "2", "102923489999", "20", "0" },
-				{ "4", "./test3/BTMA_04testP6", "BTMA_", "COIL", "15", "29",
-						"1", "4", "102923555016", "20", "0" },
-				{ "5", "./test3/BTMA_06testP6", "BTMA_", "COIL", "15", "29",
-						"1", "6", "102923622487", "20", "0" } };
+				{ "0", "./test3/BTMA_01testP6", "BTMA_", "COIL", "15", "29", "1", "1", "102922955019", "20", "1" },
+				{ "1", "./test3/BTMA_03testP6", "BTMA_", "COIL", "15", "29", "1", "3", "102923022490", "20", "1" },
+				{ "2", "./test3/BUSS_05testP6", "BUSS_", "COIL", "2", "29", "1", "5", "102923090001", "20", "0" },
+				{ "3", "./test3/BUSC_02testP6", "BUSC_", "COIL", "2", "29", "1", "2", "102923489999", "20", "0" },
+				{ "4", "./test3/BTMA_04testP6", "BTMA_", "COIL", "15", "29", "1", "4", "102923555016", "20", "0" },
+				{ "5", "./test3/BTMA_06testP6", "BTMA_", "COIL", "15", "29", "1", "6", "102923622487", "20", "0" } };
 		Sequenze_ seq = new Sequenze_();
 		String[][] outTable = seq.reorderSequenceTable(inTable, codeTable);
 
 		String[][] expectTable = {
-				{ "0", "./test3/BUSS_05testP6", "BUSS_", "COIL", "2", "29",
-						"1", "5", "102923090001", "20", "0" },
-				{ "1", "./test3/BUSC_02testP6", "BUSC_", "COIL", "2", "29",
-						"1", "2", "102923489999", "20", "0" },
-				{ "2", "./test3/BTMA_01testP6", "BTMA_", "COIL", "15", "29",
-						"1", "1", "102922955019", "20", "1" },
-				{ "3", "./test3/BTMA_03testP6", "BTMA_", "COIL", "15", "29",
-						"1", "3", "102923022490", "20", "1" },
-				{ "4", "./test3/BTMA_04testP6", "BTMA_", "COIL", "15", "29",
-						"1", "4", "102923555016", "20", "0" },
-				{ "5", "./test3/BTMA_06testP6", "BTMA_", "COIL", "15", "29",
-						"1", "6", "102923622487", "20", "0" } };
+				{ "0", "./test3/BUSS_05testP6", "BUSS_", "COIL", "2", "29", "1", "5", "102923090001", "20", "0" },
+				{ "1", "./test3/BUSC_02testP6", "BUSC_", "COIL", "2", "29", "1", "2", "102923489999", "20", "0" },
+				{ "2", "./test3/BTMA_01testP6", "BTMA_", "COIL", "15", "29", "1", "1", "102922955019", "20", "1" },
+				{ "3", "./test3/BTMA_03testP6", "BTMA_", "COIL", "15", "29", "1", "3", "102923022490", "20", "1" },
+				{ "4", "./test3/BTMA_04testP6", "BTMA_", "COIL", "15", "29", "1", "4", "102923555016", "20", "0" },
+				{ "5", "./test3/BTMA_06testP6", "BTMA_", "COIL", "15", "29", "1", "6", "102923622487", "20", "0" } };
 		// TableUtils.dumpTable(outTable, "outTable");
 
 		assertTrue(TableUtils.compareTable(expectTable, outTable));
@@ -529,8 +494,7 @@ public class Sequenze_Test {
 		String codeImaReq = "R12F_";
 		String coilImaAcq = "A3B";
 		String coilImaReq = "A3B";
-		boolean res = new Sequenze_().compareAcqReq(codeImaAcq, codeImaReq,
-				coilImaAcq, coilImaReq);
+		boolean res = new Sequenze_().compareAcqReq(codeImaAcq, codeImaReq, coilImaAcq, coilImaReq);
 		assertTrue(res);
 		if (mark)
 			IJ.log("015>");
@@ -546,8 +510,7 @@ public class Sequenze_Test {
 		String codeImaReq = "BUSA_";
 		String coilImaAcq = "C:BC";
 		String coilImaReq = "xxx";
-		boolean res = new Sequenze_().compareAcqReq(codeImaAcq, codeImaReq,
-				coilImaAcq, coilImaReq);
+		boolean res = new Sequenze_().compareAcqReq(codeImaAcq, codeImaReq, coilImaAcq, coilImaReq);
 		assertTrue(res);
 		if (mark)
 			IJ.log("016>");

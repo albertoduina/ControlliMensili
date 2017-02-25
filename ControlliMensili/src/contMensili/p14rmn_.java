@@ -107,8 +107,6 @@ public class p14rmn_ implements PlugIn {
 	int nPhotodetectors = 0;
 	double ny = 1;
 	int level = 0;
-	public static double angolo = 0;
-
 	private static final int ABORT = 1;
 
 	public static String VERSION = "MTF metodo SLANTED EDGE";
@@ -151,7 +149,7 @@ public class p14rmn_ implements PlugIn {
 		if (nTokens == 0) {
 			manualMenu(0, "");
 		} else {
-			// autoMenu(args);
+			autoMenu(args);
 		}
 
 	}
@@ -377,13 +375,15 @@ public class p14rmn_ implements PlugIn {
 		double maxSizeInPixel = 100000;
 		double minCirc = .1;
 		double maxCirc = 1;
+		MyLog.waitHere("p14");
 		p14rmn_ p14 = new p14rmn_();
-		Roi roi14 = p14.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc, step, fast);
-		Rectangle r1 = roi14.getBounds();
+		Roi roi4 = p14.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc, step, fast);
+		if (roi4 == null)
+			return null;
+		Rectangle r1 = roi4.getBounds();
 		imp1.setRoi(r1);
 		ImagePlus imp3 = imp1.crop();
 		imp3.show();
-		double preciseAngle = newEdgeAngle(imp1, "VERTICAL_ANGLE");
 
 		calculateMTF(imp3, rt);
 		MyLog.waitHere();
@@ -404,6 +404,9 @@ public class p14rmn_ implements PlugIn {
 			roi2 = imp2.getRoi();
 			// IJ.showMessageWithCancel("Warning", "All image selected");
 		}
+
+		double preciseAngle = newEdgeAngle(imp2, "VERTICAL_ANGLE");
+
 		do {
 			cancel = false;
 			restart = false;
@@ -487,8 +490,8 @@ public class p14rmn_ implements PlugIn {
 					String t1 = "TESTO";
 					String s2 = "VALORE";
 
-					rt1.addValue(t1, "APPROXIMATED_ANGLE");
-					rt1.addValue(s2, angolo);
+					rt1.addValue(t1, "EDGE_ANGLE");
+					rt1.addValue(s2, preciseAngle);
 
 					for (int i1 = 0; i1 < MTFVector.length; i1++) {
 						rt1.incrementCounter();
@@ -1045,6 +1048,10 @@ public class p14rmn_ implements PlugIn {
 		Roi roi0 = null;
 
 		int num = rm0.getCount();
+		if (num < 1) {
+			MyLog.waitHere("IMPOSSIBILE CALCOLARE LA MTF !!!!!!!");
+			return null;
+		}
 		Roi[] vetRoi = rm0.getRoisAsArray();
 		roi0 = vetRoi[0];
 
@@ -1148,7 +1155,7 @@ public class p14rmn_ implements PlugIn {
 		}
 
 		double m1 = (find2y - find1y) / (find2x - find1x);
-		angolo = Math.toDegrees(Math.atan(m1)) + 90;
+		// angolo = Math.toDegrees(Math.atan(m1)) + 90;
 
 		// MyLog.waitHere("angolo approssimato= " + (angolo));
 

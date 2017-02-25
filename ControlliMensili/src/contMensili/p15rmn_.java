@@ -146,7 +146,7 @@ public class p15rmn_ implements PlugIn {
 		if (nTokens == 0) {
 			manualMenu(0, "");
 		} else {
-			// autoMenu(args);
+			autoMenu(args);
 		}
 	}
 
@@ -288,7 +288,7 @@ public class p15rmn_ implements PlugIn {
 		boolean step = false;
 		boolean verbose = false;
 		boolean fast = false;
-		boolean silent=false;
+		boolean silent = false;
 
 		if (forcesilent)
 			mode = 0;
@@ -347,14 +347,17 @@ public class p15rmn_ implements PlugIn {
 		double maxSizeInPixel = 100000;
 		double minCirc = .1;
 		double maxCirc = 1;
-		p15rmn_ p14 = new p15rmn_();
-		Roi roi14 = p14.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc, step, fast);
-		Rectangle r1 = roi14.getBounds();
+		MyLog.waitHere("p15");
+		p15rmn_ p15 = new p15rmn_();
+		Roi roi4 = p15.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc, step, fast);
+		if (roi4 == null)
+			return null;
+		Rectangle r1 = roi4.getBounds();
 		imp1.setRoi(r1);
 		ImagePlus imp3 = imp1.crop();
 		imp3.show();
 		double quotient = 1.0;
-		gatherMTF(imp3, "VERTICAL_ANGLE", quotient);
+		gatherMTF(imp3, "VERTICAL_ANGLE", quotient, rt);
 		return rt;
 	}
 
@@ -396,7 +399,6 @@ public class p15rmn_ implements PlugIn {
 			MyLog.waitHere("IMPOSSIBILE CALCOLARE LA MTF !!!!!!!");
 			return null;
 		}
-
 		Roi[] vetRoi = rm0.getRoisAsArray();
 		roi0 = vetRoi[0];
 		imp2.setRoi(roi0);
@@ -602,10 +604,10 @@ public class p15rmn_ implements PlugIn {
 
 			if (topWindow != null) {
 				System.out.println("X : " + pw.getX() + " Y : " + pw.getY());
-			//	IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
+				// IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
 				pw.setLocation(topWindow.getX() + 50, topWindow.getY() + 50);
 				System.out.println("X : " + pw.getX() + " Y : " + pw.getY());
-			//	IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
+				// IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
 			}
 			pw.requestFocus();
 			pw.toFront();
@@ -635,10 +637,10 @@ public class p15rmn_ implements PlugIn {
 
 			if (topWindow != null) {
 				System.out.println("X : " + pw.getX() + " Y : " + pw.getY());
-		//		IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
+				// IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
 				pw.setLocation(topWindow.getX() + 50, topWindow.getY() + 50);
 				System.out.println("X : " + pw.getX() + " Y : " + pw.getY());
-		//		IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
+				// IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
 			}
 			pw.requestFocus();
 			pw.toFront();
@@ -674,6 +676,22 @@ public class p15rmn_ implements PlugIn {
 			plot.setColor(color);
 			plot.addPoints(plotX, plotY, Plot.LINE);
 
+		}
+
+		public static double[] treemapToArray(TreeMap<Double, Double> map, boolean outX) {
+			Set<Double> keys = map.keySet();
+			double[] plotX = new double[keys.size()];
+			double[] plotY = new double[keys.size()];
+			int count = 0;
+			for (Double key : keys) {
+				plotX[count] = key;
+				plotY[count] = map.get(key);
+				count++;
+			}
+			if (outX) {
+				return plotX;
+			} else
+				return plotY;
 		}
 
 		public static void resetRoiColor() {
@@ -784,17 +802,20 @@ public class p15rmn_ implements PlugIn {
 			}
 			return originalProcessor;
 		}
+
 	}
 
 	/////////////////////////////////////////////////////////////////
 
-	private void gatherMTF(ImagePlus imp1, String angle, double quotient) {
+	private void gatherMTF(ImagePlus imp1, String angle, double quotient, ResultsTable rt1) {
 		String postmortem = "";
 		checkColorMode(imp1);
 		postmortem = auxPath1 + "_postmortem.txt";
 		initLog(postmortem);
 		appendLog(postmortem, "**** gatherMTF *****");
 		double preciseAngle = newEdgeAngle(imp1, "VERTICAL_ANGLE");
+
+		MyLog.waitHere("preciseAngle= " + preciseAngle);
 
 		Overlay overlay = new Overlay();
 		overlay.clear();
@@ -854,6 +875,7 @@ public class p15rmn_ implements PlugIn {
 		}
 
 		appendLog(postmortem, "pixelsValues [" + pixelsValues.length + "]");
+		MyLog.waitHere("pixelsValues [" + pixelsValues.length + "]");
 
 		// iw2ayv POTREBBERO ESSERE LE COORDINATE IN CUI IL
 		// THRESHOLD
@@ -901,6 +923,7 @@ public class p15rmn_ implements PlugIn {
 		double[] yArr = new double[yVal.size() - 1];
 		String aux1 = "";
 		appendLog(postmortem, "----EDGE detection [" + xVal.size() + "]------");
+		MyLog.waitHere("----EDGE detection [" + xVal.size() + "]------");
 
 		///// NOTA BENE MESSO UN PIXEL IN MENO X CHE SBALLAVA FIT ANGOLI PICCOLI
 		///// (valore errato nell'ultimo pixel)
@@ -909,7 +932,7 @@ public class p15rmn_ implements PlugIn {
 			yArr[i] = yVal.get(i);
 			aux1 = "xArr[" + i + "]= " + xArr[i] + " yArr[" + i + "]= " + yArr[i];
 			appendLog(postmortem, aux1);
-		//	IJ.log(aux1);
+			// IJ.log(aux1);
 		}
 		appendLog(postmortem, "------");
 
@@ -1028,6 +1051,7 @@ public class p15rmn_ implements PlugIn {
 		}
 
 		appendLog(postmortem, "----- averageMap [" + averageMap.size() + "]------");
+		MyLog.waitHere("----- averageMap [" + averageMap.size() + "]------");
 		for (Entry<Double, Double> entry : averageMap.entrySet()) {
 			appendLog(postmortem, "averageMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
 		}
@@ -1051,6 +1075,7 @@ public class p15rmn_ implements PlugIn {
 		}
 
 		appendLog(postmortem, "----- firstDerivative difrMap [" + difrMap.size() + "] ------");
+		MyLog.waitHere("----- firstDerivative difrMap [" + difrMap.size() + "] ------");
 		for (Entry<Double, Double> entry : difrMap.entrySet()) {
 			appendLog(postmortem, "difrMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
 		}
@@ -1079,6 +1104,7 @@ public class p15rmn_ implements PlugIn {
 		}
 
 		appendLog(postmortem, "----- firstDerivative difrMap2 [" + difrMap2.size() + "] ------");
+		MyLog.waitHere("----- firstDerivative difrMap2 [" + difrMap2.size() + "] ------");
 		for (Entry<Double, Double> entry : difrMap2.entrySet()) {
 			appendLog(postmortem, "difrMap2 Key: " + entry.getKey() + "  Value: " + entry.getValue());
 		}
@@ -1107,6 +1133,7 @@ public class p15rmn_ implements PlugIn {
 		}
 
 		appendLog(postmortem, "------- DFT[" + DFT.length + "]----------");
+		MyLog.waitHere("------- DFT[" + DFT.length + "]----------");
 		for (int i1 = 0; i1 < DFT.length; i1++) {
 			appendLog(postmortem, "i1: " + i1 + " DFT: " + DFT[i1]);
 		}
@@ -1120,27 +1147,58 @@ public class p15rmn_ implements PlugIn {
 		// double [] normalizedDFT = new double [DFT.length];
 		TreeMap<Double, Double> intensityMTFMap = new TreeMap<Double, Double>();
 
-//		IJ.log("quotient= " + quotient);
+		// IJ.log("quotient= " + quotient);
 		for (int i = 0; i < DFT.length * quotient; i++) {
 			double IMkey = (double) i / (DFT.length * quotient);
 			double val = DFT[i] * normalizer;
 			intensityMTFMap.put(IMkey, val);
 		}
 
-//		IJ.log("calcMTF()");
+		// IJ.log("calcMTF()");
 		appendLog(postmortem, "----- intensityMTFMap [" + intensityMTFMap.size() + "]------");
+		MyLog.waitHere("----- intensityMTFMap [" + intensityMTFMap.size() + "]------");
 		for (Entry<Double, Double> entry : intensityMTFMap.entrySet()) {
 			appendLog(postmortem, "intensityMTFMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
-//			IJ.log("intensityMTFMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
+			// IJ.log("intensityMTFMap Key: " + entry.getKey() + " Value: " +
+			// entry.getValue());
 		}
 		appendLog(postmortem, "-------");
-	//	IJ.log("------");
+		// IJ.log("------");
 
-		CustomUtils.drawPlot(averageMap, "Edge Spread Function", "pixels", "intensity");
-		CustomUtils.drawPlot(difrMap, "Line Spread Function", "pixels", "values");
-		CustomUtils.drawPlot(intensityMTFMap, "Modulation Transfer Function (normalized)", "frequency", "intensity");
-		CustomUtils.resetRoiColor();
-		MyLog.waitHere("FINITO ??");
+		for (Entry<Double, Double> entry : intensityMTFMap.entrySet()) {
+			appendLog(postmortem, "intensityMTFMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
+
+			if (rt1 == null) {
+			} else {
+				String t1 = "TESTO";
+				String s2 = "VALORE";
+
+				rt1.addValue(t1, "EDGE_ANGLE");
+				rt1.addValue(s2, angleGrad);
+
+				if (intensityMTFMap == null) {
+					MyLog.waitHere("IMPOSSIBILE TROVARE LA MTF!!!");
+					return;
+				}
+
+				double[] MTF_X = CustomUtils.treemapToArray(intensityMTFMap, true);
+				double[] MTF_Y = CustomUtils.treemapToArray(intensityMTFMap, false);
+
+				for (int i1 = 0; i1 < MTF_X.length; i1++) {
+					rt1.incrementCounter();
+					rt1.addValue(t1, "PLOT_" + i1);
+					rt1.addValue("MTF_X", MTF_X[i1]);
+					rt1.addValue("MTF_Y", MTF_Y[i1]);
+				}
+			}
+
+			CustomUtils.drawPlot(averageMap, "Edge Spread Function", "pixels", "intensity");
+			CustomUtils.drawPlot(difrMap, "Line Spread Function", "pixels", "values");
+			CustomUtils.drawPlot(intensityMTFMap, "Modulation Transfer Function (normalized)", "frequency",
+					"intensity");
+			CustomUtils.resetRoiColor();
+			MyLog.waitHere("FINITO ??");
+		}
 
 	}
 
@@ -1150,7 +1208,7 @@ public class p15rmn_ implements PlugIn {
 		// if(bitDepth == ImagePlus.COLOR_256 || bitDepth ==
 		// ImagePlus.COLOR_RGB
 		// || bitDepth == ImagePlus.GRAY32){
-//		IJ.log("bitDepth= " + bitDepth);
+		// IJ.log("bitDepth= " + bitDepth);
 		// IJ.log(ImagePlus.GRAY16);
 		if (bitDepth == 8 || bitDepth == 16) {
 			img.setProcessor(((ImageProcessor) (img.getProcessor().clone())));
@@ -1189,10 +1247,10 @@ public class p15rmn_ implements PlugIn {
 	public double newEdgeAngle(ImagePlus imp1, String angle) {
 		ImagePlus imp2 = applyThreshold(imp1);
 		ImageProcessor ip2 = imp2.getProcessor();
-//		Overlay over2 = new Overlay();
-//		imp2.setOverlay(over2);
-//		imp2.show();
-//		//
+		// Overlay over2 = new Overlay();
+		// imp2.setOverlay(over2);
+		// imp2.show();
+		// //
 		byte[] sourcePixels = (byte[]) ip2.getPixels();
 		double[] bwValues = new double[sourcePixels.length];
 		for (int i = 0; i < sourcePixels.length; i++) {
@@ -1224,19 +1282,19 @@ public class p15rmn_ implements PlugIn {
 		for (int i = 0; i < xVal.size() - 1; i++) {
 			xArr[i] = xVal.get(i);
 			yArr[i] = yVal.get(i);
-//			setOverlayPixel(over2, imp2, (int) xArr[i], (int) yArr[i], Color.green, Color.red, false);
+			// setOverlayPixel(over2, imp2, (int) xArr[i], (int) yArr[i],
+			// Color.green, Color.red, false);
 		}
 		CurveFitter lineFitter = new CurveFitter(xArr, yArr);
 		lineFitter.doFit(CurveFitter.STRAIGHT_LINE);
 		imp2.setRoi(new Line((1 - lineFitter.getParams()[0]) / lineFitter.getParams()[1], 1,
 				(ip2.getHeight() - 1 - lineFitter.getParams()[0]) / lineFitter.getParams()[1], ip2.getHeight() - 1));
-//		imp2.show();
+		// imp2.show();
 		double angleGrad = Math.toDegrees(Math.atan(1.0 / (lineFitter.getParams())[1]));
-//		IJ.log("preciseEdgeAngle= " + angleGrad);
-//		MyLog.waitHere("preciseEdgeAngle= " + angleGrad);
+		// IJ.log("preciseEdgeAngle= " + angleGrad);
+		// MyLog.waitHere("preciseEdgeAngle= " + angleGrad);
 		return angleGrad;
 	}
-
 
 	public static void setOverlayPixel(Overlay over1, ImagePlus imp1, int x1, int y1, Color col1, Color col2,
 			boolean ok) {
