@@ -815,7 +815,6 @@ public class p15rmn_ implements PlugIn {
 		appendLog(postmortem, "**** gatherMTF *****");
 		double preciseAngle = newEdgeAngle(imp1, "VERTICAL_ANGLE");
 
-		MyLog.waitHere("preciseAngle= " + preciseAngle);
 
 		Overlay overlay = new Overlay();
 		overlay.clear();
@@ -875,7 +874,6 @@ public class p15rmn_ implements PlugIn {
 		}
 
 		appendLog(postmortem, "pixelsValues [" + pixelsValues.length + "]");
-		MyLog.waitHere("pixelsValues [" + pixelsValues.length + "]");
 
 		// iw2ayv POTREBBERO ESSERE LE COORDINATE IN CUI IL
 		// THRESHOLD
@@ -923,7 +921,6 @@ public class p15rmn_ implements PlugIn {
 		double[] yArr = new double[yVal.size() - 1];
 		String aux1 = "";
 		appendLog(postmortem, "----EDGE detection [" + xVal.size() + "]------");
-		MyLog.waitHere("----EDGE detection [" + xVal.size() + "]------");
 
 		///// NOTA BENE MESSO UN PIXEL IN MENO X CHE SBALLAVA FIT ANGOLI PICCOLI
 		///// (valore errato nell'ultimo pixel)
@@ -1051,7 +1048,6 @@ public class p15rmn_ implements PlugIn {
 		}
 
 		appendLog(postmortem, "----- averageMap [" + averageMap.size() + "]------");
-		MyLog.waitHere("----- averageMap [" + averageMap.size() + "]------");
 		for (Entry<Double, Double> entry : averageMap.entrySet()) {
 			appendLog(postmortem, "averageMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
 		}
@@ -1075,7 +1071,6 @@ public class p15rmn_ implements PlugIn {
 		}
 
 		appendLog(postmortem, "----- firstDerivative difrMap [" + difrMap.size() + "] ------");
-		MyLog.waitHere("----- firstDerivative difrMap [" + difrMap.size() + "] ------");
 		for (Entry<Double, Double> entry : difrMap.entrySet()) {
 			appendLog(postmortem, "difrMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
 		}
@@ -1104,7 +1099,6 @@ public class p15rmn_ implements PlugIn {
 		}
 
 		appendLog(postmortem, "----- firstDerivative difrMap2 [" + difrMap2.size() + "] ------");
-		MyLog.waitHere("----- firstDerivative difrMap2 [" + difrMap2.size() + "] ------");
 		for (Entry<Double, Double> entry : difrMap2.entrySet()) {
 			appendLog(postmortem, "difrMap2 Key: " + entry.getKey() + "  Value: " + entry.getValue());
 		}
@@ -1133,7 +1127,6 @@ public class p15rmn_ implements PlugIn {
 		}
 
 		appendLog(postmortem, "------- DFT[" + DFT.length + "]----------");
-		MyLog.waitHere("------- DFT[" + DFT.length + "]----------");
 		for (int i1 = 0; i1 < DFT.length; i1++) {
 			appendLog(postmortem, "i1: " + i1 + " DFT: " + DFT[i1]);
 		}
@@ -1156,7 +1149,6 @@ public class p15rmn_ implements PlugIn {
 
 		// IJ.log("calcMTF()");
 		appendLog(postmortem, "----- intensityMTFMap [" + intensityMTFMap.size() + "]------");
-		MyLog.waitHere("----- intensityMTFMap [" + intensityMTFMap.size() + "]------");
 		for (Entry<Double, Double> entry : intensityMTFMap.entrySet()) {
 			appendLog(postmortem, "intensityMTFMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
 			// IJ.log("intensityMTFMap Key: " + entry.getKey() + " Value: " +
@@ -1165,40 +1157,55 @@ public class p15rmn_ implements PlugIn {
 		appendLog(postmortem, "-------");
 		// IJ.log("------");
 
-		for (Entry<Double, Double> entry : intensityMTFMap.entrySet()) {
-			appendLog(postmortem, "intensityMTFMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
+		double[] MTF_X = null;
+		double[] MTF_Y = null;
+		double[] AVE_X = null;
+		double[] AVE_Y = null;
+		double[] DIF_X = null;
+		double[] DIF_Y = null;
+		// for (Entry<Double, Double> entry : intensityMTFMap.entrySet()) {
+		// appendLog(postmortem, "intensityMTFMap Key: " + entry.getKey() + "
+		// Value: " + entry.getValue());
 
-			if (rt1 == null) {
-			} else {
-				String t1 = "TESTO";
-				String s2 = "VALORE";
+		if (rt1 == null) {
+		} else {
 
-				rt1.addValue(t1, "EDGE_ANGLE");
-				rt1.addValue(s2, angleGrad);
+			String t1 = "TESTO";
+			String s2 = "VALORE";
 
-				if (intensityMTFMap == null) {
-					MyLog.waitHere("IMPOSSIBILE TROVARE LA MTF!!!");
-					return;
-				}
+			rt1.addValue(t1, "EDGE_ANGLE");
+			rt1.addValue(s2, angleGrad);
 
-				double[] MTF_X = CustomUtils.treemapToArray(intensityMTFMap, true);
-				double[] MTF_Y = CustomUtils.treemapToArray(intensityMTFMap, false);
+			// if (intensityMTFMap == null) {
+			// MyLog.waitHere("IMPOSSIBILE TROVARE LA MTF!!!");
+			// return;
+			// }
 
-				for (int i1 = 0; i1 < MTF_X.length; i1++) {
-					rt1.incrementCounter();
-					rt1.addValue(t1, "PLOT_" + i1);
-					rt1.addValue("MTF_X", MTF_X[i1]);
-					rt1.addValue("MTF_Y", MTF_Y[i1]);
-				}
+			MTF_X = CustomUtils.treemapToArray(intensityMTFMap, true);
+			MTF_Y = CustomUtils.treemapToArray(intensityMTFMap, false);
+			AVE_X = CustomUtils.treemapToArray(averageMap, true);
+			AVE_Y = CustomUtils.treemapToArray(averageMap, false);
+			DIF_X = CustomUtils.treemapToArray(difrMap, true);
+			DIF_Y = CustomUtils.treemapToArray(difrMap, false);
+
+			for (int i1 = 0; i1 < MTF_X.length; i1++) {
+				rt1.incrementCounter();
+				rt1.addValue(t1, "PLOT_" + i1);
+				rt1.addValue("MTF_X", MTF_X[i1]);
+				rt1.addValue("MTF_Y", MTF_Y[i1]);
+				rt1.addValue("AVE_X", AVE_X[i1]);
+				rt1.addValue("AVE_Y", AVE_Y[i1]);
+				rt1.addValue("DIF_X", DIF_X[i1]);
+				rt1.addValue("DIF_Y", DIF_Y[i1]);
 			}
-
-			CustomUtils.drawPlot(averageMap, "Edge Spread Function", "pixels", "intensity");
-			CustomUtils.drawPlot(difrMap, "Line Spread Function", "pixels", "values");
-			CustomUtils.drawPlot(intensityMTFMap, "Modulation Transfer Function (normalized)", "frequency",
-					"intensity");
-			CustomUtils.resetRoiColor();
-			MyLog.waitHere("FINITO ??");
+			// }
 		}
+
+		CustomUtils.drawPlot(averageMap, "Edge Spread Function", "pixels", "intensity");
+		CustomUtils.drawPlot(difrMap, "Line Spread Function", "pixels", "values");
+		CustomUtils.drawPlot(intensityMTFMap, "Modulation Transfer Function (normalized)", "frequency", "intensity");
+		CustomUtils.resetRoiColor();
+		MyLog.waitHere("FINITO ??");
 
 	}
 
