@@ -28,7 +28,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.Rectangle;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.StringTokenizer;
 
 import ij.IJ;
@@ -43,6 +49,7 @@ import ij.gui.Overlay;
 import ij.gui.Plot;
 import ij.gui.ProfilePlot;
 import ij.gui.Roi;
+import ij.measure.Calibration;
 import ij.measure.CurveFitter;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
@@ -107,6 +114,9 @@ public class p14rmn_ implements PlugIn {
 	int nPhotodetectors = 0;
 	double ny = 1;
 	int level = 0;
+	String postmortem = "";
+	String pathLog = "";
+
 	private static final int ABORT = 1;
 
 	public static String VERSION = "MTF metodo SLANTED EDGE";
@@ -263,7 +273,7 @@ public class p14rmn_ implements PlugIn {
 							TableSequence.getCode(iw2ayvTable, vetRiga[0]),
 							TableSequence.getCoil(iw2ayvTable, vetRiga[0]), vetRiga[0] + 1,
 							TableSequence.getLength(iw2ayvTable));
-					MyLog.waitHere("AUTO userSelection1=" + userSelection1);
+					// MyLog.waitHere("AUTO userSelection1=" + userSelection1);
 
 					switch (userSelection1) {
 					case ABORT:
@@ -307,6 +317,11 @@ public class p14rmn_ implements PlugIn {
 	}
 
 	public ResultsTable mainMTF(String path1, String autoArgs, String info10, int mode, int timeout) {
+
+		postmortem = path1 + "_postmortem.txt";
+		pathLog = path1;
+		initLog(postmortem);
+		appendLog(postmortem, "**** gatherMTF *****");
 
 		// // boolean abort = false;
 		// boolean demo = false;
@@ -352,17 +367,16 @@ public class p14rmn_ implements PlugIn {
 			break;
 		}
 
-		ImagePlus imp1 = null;
+		ImagePlus imp2 = null;
+		imp2 = UtilAyv.openImageNoDisplay(path1, true);
+		ImagePlus imp1 = removeCalibration(imp2);
 		if (verbose)
-			imp1 = UtilAyv.openImageMaximized(path1);
-		else
-			imp1 = UtilAyv.openImageNoDisplay(path1, true);
-
+			UtilAyv.showImageMaximized(imp1);
 		// int lato = 140;
 		// manualSearchPosition(imp1, lato);
 
 		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
-		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION + "_P10__ContMensili_"
+		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp2, tabCodici, VERSION + "_P10__ContMensili_"
 				+ MyVersion.CURRENT_VERSION + "__iw2ayv_" + MyVersionUtils.CURRENT_VERSION, autoCalled);
 
 		if (info1 == null) {
@@ -375,7 +389,7 @@ public class p14rmn_ implements PlugIn {
 		double maxSizeInPixel = 100000;
 		double minCirc = .1;
 		double maxCirc = 1;
-		MyLog.waitHere("p14");
+		// MyLog.waitHere("p14");
 		p14rmn_ p14 = new p14rmn_();
 		Roi roi4 = p14.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc, step, fast);
 		if (roi4 == null)
@@ -384,9 +398,9 @@ public class p14rmn_ implements PlugIn {
 		imp1.setRoi(r1);
 		ImagePlus imp3 = imp1.crop();
 		imp3.show();
+		p14rmn_.positionOptimize(imp3);
 
 		calculateMTF(imp3, rt);
-		MyLog.waitHere();
 		return rt;
 	}
 
@@ -406,6 +420,7 @@ public class p14rmn_ implements PlugIn {
 		}
 
 		double preciseAngle = newEdgeAngle(imp2, "VERTICAL_ANGLE");
+		appendLog(postmortem, "preciseAngle= " + preciseAngle);
 
 		do {
 			cancel = false;
@@ -413,14 +428,18 @@ public class p14rmn_ implements PlugIn {
 			level = level - 1;
 			fixedOptions(level);
 			if (sSize < 32) {
+				appendLog(postmortem, "uscita001 per sSize<32");
 				MyLog.waitHere("non riesco a calcolare la MTF!!!");
 				cancel = true;
+				break;
 			}
+
 			// if (cancel == false) {
 			// options();
 			// }
 			// if (cancel == false) {
 
+			// ESFArray contiene i valori di grigio
 			generateESFArray("ESF Plot", imp2, roi2);
 			if (restart) {
 				continue;
@@ -431,20 +450,29 @@ public class p14rmn_ implements PlugIn {
 
 			ESFArrayF = alignArray(ESFArray);
 			if (restart) {
+				MyLog.waitHere("005");
 				continue;
 			}
 
 			if (cancel == false) {
+				MyLog.waitHere("006");
+
 				LSFArrayF = alignArray(LSFArray);
+				MyLog.waitHere("007");
 				if (restart) {
+					MyLog.waitHere("008");
 					continue;
 				}
 			}
 			if (cancel == false) {
+				MyLog.waitHere("009");
 				ESFVector = averageVector(ESFArrayF);
+				MyLog.waitHere("010");
 			}
 			if (cancel == false) {
+				MyLog.waitHere("011");
 				LSFVector = averageVector(LSFArrayF);
+				MyLog.waitHere("012");
 
 				int aura = (LSFVector.length * 2);
 				LSFDVector = new double[aura];
@@ -496,13 +524,20 @@ public class p14rmn_ implements PlugIn {
 					for (int i1 = 0; i1 < MTFVector.length; i1++) {
 						rt1.incrementCounter();
 						rt1.addValue(t1, "PLOT_" + i1);
-						rt1.addValue("MTF", MTFVector[i1]);
-						if (i1 < LSFVector.length)
-							rt1.addValue("LSF", LSFVector[i1]);
-						if (i1 < ESFVector.length)
-							rt1.addValue("ESF", ESFVector[i1]);
-						if (i1 < SPPVector.length)
-							rt1.addValue("SPP", SPPVector[i1]);
+						rt1.addValue("MTF_X", i1 * (1.0 / MTFVector.length));
+						rt1.addValue("MTF_Y", MTFVector[i1]);
+						if (i1 < LSFVector.length) {
+							rt1.addValue("LSF_X", (double) i1);
+							rt1.addValue("LSF_Y", LSFVector[i1]);
+						}
+						if (i1 < ESFVector.length) {
+							rt1.addValue("ESF_X", (double) i1);
+							rt1.addValue("ESF_Y", ESFVector[i1]);
+						}
+						if (i1 < SPPVector.length) {
+							rt1.addValue("SPP_X", (double) i1);
+							rt1.addValue("SPP_Y", SPPVector[i1]);
+						}
 					}
 				}
 
@@ -546,7 +581,7 @@ public class p14rmn_ implements PlugIn {
 			break;
 		}
 
-		// IJ.showMessage("size= " + sSize);
+		MyLog.waitHere("size= " + sSize);
 		return;
 	}
 
@@ -657,14 +692,28 @@ public class p14rmn_ implements PlugIn {
 		return true;
 	}
 
-	// The grey values of the line selections are tipped in a Array
+	/***
+	 * Mitja: The grey values of the line selections are tipped in a Array
+	 * 
+	 * Inserisce i valori dei pixel (presi come successione di linee all'interno
+	 * della selezione) in un Array, NON effettua il sovracampionamento
+	 * 
+	 * @param title
+	 * @param imp
+	 * @param roi
+	 */
 	void generateESFArray(String title, ImagePlus imp, Roi roi) {
 
 		Rectangle r = roi.getBounds();
 		selecWidth = r.width;
 		selecHeight = r.height;
+		MyLog.initLog3(pathLog + "ESF.txt");
 
 		if (sSize >= selecWidth) {
+			// MyLog.waitHere("sSize= " + sSize + " >= selecWidth= " +
+			// selecWidth);
+			appendLog(postmortem, "uscita002 sSize= " + sSize + " >= selecWidth= " + selecWidth);
+
 			// IJ.showMessage("Error", "sample size is bigger than selection
 			// width\nProcess canceled");
 			restart = true;
@@ -677,6 +726,8 @@ public class p14rmn_ implements PlugIn {
 		int selectYFin = selectY + selecHeight;
 		ESFLinea = new double[selecWidth];
 		ESFArray = new double[selecHeight][selecWidth];
+		appendLog(postmortem, "sSize= " + sSize + " ----- ESFARRAY [" + ESFArray.length + "][" + ESFArray[0].length
+				+ "]---------------");
 		for (k = 0; k < selecHeight; k++) {
 			// select line
 			IJ.makeLine(selectX, k + selectY, selectXFin - 1, k + selectY);
@@ -687,32 +738,84 @@ public class p14rmn_ implements PlugIn {
 			for (i = 0; i < selecWidth; i++) {
 				ESFArray[k][i] = ESFLinea[i];
 			}
+
 		}
+
+		for (int i1 = 0; i1 < ESFArray.length; i1++) {
+			String aux1 = "";
+			for (int i2 = 0; i2 < ESFArray[0].length; i2++) {
+				aux1 = aux1 + " " + (int) ESFArray[i1][i2];
+			}
+			appendLog(postmortem, aux1);
+		}
+		for (int i1 = 0; i1 < ESFArray.length; i1++) {
+			String aux1 = "";
+			for (int i2 = 0; i2 < ESFArray[0].length; i2++) {
+				aux1 = aux1 + "\t" + (int) ESFArray[i1][i2];
+			}
+			MyLog.appendLog3(pathLog + "ESF.txt", aux1);
+		}
+
 	}
 
+	/***
+	 * Genera i valori della derivata prima
+	 * 
+	 * @param title
+	 * @param ESFArray
+	 */
 	void generateLSFArray(String title, double[][] ESFArray) {
 
 		LSFArray = new double[selecHeight][selecWidth];
+		MyLog.initLog3(pathLog + "LSF.txt");
+
+		appendLog(postmortem, "sSize= " + sSize + " ----- LSFARRAY [" + LSFArray.length + "][" + LSFArray[0].length
+				+ "]---------------");
 
 		for (k = 0; k < selecHeight; k++) {
 			for (i = 0; i < selecWidth - 1; i++) {
 				LSFArray[k][i] = ESFArray[k][i + 1] - ESFArray[k][i];
 			}
 		}
+
+		for (int i1 = 0; i1 < LSFArray.length; i1++) {
+			String aux1 = "";
+			for (int i2 = 0; i2 < LSFArray[0].length; i2++) {
+				aux1 = aux1 + " " + (int) LSFArray[i1][i2];
+			}
+			appendLog(postmortem, aux1);
+		}
+
+		String aux2 = "";
+		for (int i1 = 0; i1 < LSFArray.length; i1++) {
+			String aux1 = "";
+
+			for (int i2 = 0; i2 < LSFArray[0].length; i2++) {
+				aux2 = "" + (int) LSFArray[i1][i2];
+				if ((int) LSFArray[i1][i2] < 100)
+					aux2 = aux2 + " ";
+				if (i2 > 0)
+					aux1 = aux1 + "\t" + aux2;
+				else
+					aux1 = aux1 + aux2;
+			}
+			MyLog.appendLog3(pathLog + "LSF.txt", aux1);
+		}
+
 	}
 
+	/***
+	 * Allinea l'Array utilizzando la posizione del massimo in LSF, preleva
+	 * mezzo size a sinistra e mezzo a destra
+	 * 
+	 * @param Array
+	 * @return
+	 */
 	public double[][] alignArray(double[][] Array) {
 
 		ArrayF = new double[selecHeight][sSize];
 		int ini;
 		int fin;
-
-		// IJ.log("dimensioni Array sorgente= [" + Array.length + "] [" +
-		// Array[0].length + "]");
-		// IJ.log("dimensioni ArrayF allineando= [" + ArrayF.length + "] [" +
-		// ArrayF[0].length + "]");
-		// IJ.log("selecHeight= " + selecHeight);
-		// MyLog.waitHere();
 
 		// Create new array aligned
 		for (k = 0; k < selecHeight; k++) {
@@ -721,11 +824,16 @@ public class p14rmn_ implements PlugIn {
 			ini = (int) PosMax[k][2];
 			fin = (int) PosMax[k][3];
 
-			if (ini < 0 || fin > Array.length) {
-				restart = true;
-				return null;
-			}
+			// if (ini < 0 || fin > Array.length) {
+			// MyLog.waitHere(
+			// "AAAA esce in k= " + k + "ini= " + ini + " fin= " + fin + " per
+			// Array.length= " + Array.length);
+			// restart = true;
+			// return null;
+			// }
 			if (ini < 0 || fin > Array[0].length) {
+				MyLog.waitHere(
+						"BBBB esce in k= " + k + "ini= " + ini + " fin= " + fin + " per Array.length= " + Array.length);
 				restart = true;
 				return null;
 			}
@@ -738,7 +846,17 @@ public class p14rmn_ implements PlugIn {
 		return ArrayF;
 	}
 
-	// Calculate maximum value and find 32 positions to align
+	/***
+	 * 
+	 * Mitja: Calculate maximum value and find 32 positions to align
+	 * 
+	 * Calcolo della posizione del massimo in LSFArray, per ogni linea di pixels
+	 * dell'area selezionatavengono calcolati: la posizione del max (posMax)
+	 * sulla linea, il valore del massimo sulla linea, le posizioni inizio e
+	 * fine di un campione di pixel largo come il sample size (pixels) centrato
+	 * sul posMax. I risultati vengono inseriti in un array di dimensioni
+	 * [selectionHeight]x[4]
+	 */
 	void calculateMax() {
 
 		PosMax = new double[selecHeight][4];
@@ -760,7 +878,10 @@ public class p14rmn_ implements PlugIn {
 			// Starting and ending position to align maximum values
 			PosMax[k][2] = PosMax[k][0] - halfSize;
 			PosMax[k][3] = PosMax[k][0] + halfSize;
+			appendLog(postmortem, "ZZZZ PosMax k: " + (int) k + "\t[0]:" + (int) PosMax[k][0] + "\t\t[1]:"
+					+ (int) PosMax[k][1] + "\t\t[2]:" + (int) PosMax[k][2] + "\t\t[3]:" + (int) PosMax[k][3]);
 		}
+
 	}
 
 	public double[] averageVector(double[][] Array) {
@@ -1022,6 +1143,8 @@ public class p14rmn_ implements PlugIn {
 	public Roi positionSearch(ImagePlus imp1, double minSizeInPixel, double maxSizeInPixel, double minCirc,
 			double maxCirc, boolean step, boolean fast) {
 
+		ImagePlus imp3 = removeCalibration(imp1);
+		UtilAyv.showImageMaximized(imp3);
 		ImagePlus imp2 = applyThreshold(imp1);
 		UtilAyv.showImageMaximized(imp2);
 
@@ -1193,7 +1316,7 @@ public class p14rmn_ implements PlugIn {
 
 		int xsel = (int) find3x - lato / 2;
 		int ysel = (int) find3y - lato / 2;
-		imp2.setRoi(xsel, ysel, lato, lato);
+		imp2.setRoi(xsel + 1, ysel, lato, lato);
 
 		roi1 = imp2.getRoi();
 		roi1.setStrokeColor(Color.green);
@@ -1206,15 +1329,111 @@ public class p14rmn_ implements PlugIn {
 		return roi1;
 	}
 
+	public static void positionOptimize(ImagePlus imp1) {
+
+		// trasformo l'immagine in b/w
+		ImagePlus imp3 = applyThreshold2(imp1);
+		imp3.show();
+
+		ImagePlus imp2 = imp3.duplicate();
+		imp2.setTitle("EDGE");
+
+		MyLog.waitHere("inizio");
+		// derivata
+		byte def = 0;
+		byte val = 0;
+		// traccio solo l'edge
+		ByteProcessor ip2 = (ByteProcessor) imp2.getProcessor();
+		byte[] pixels2 = (byte[]) ip2.getPixels();
+		// metto la posizione dell'edge in un array
+		int count = 0;
+		int[] vetPos = new int[imp2.getHeight()];
+		for (int i1 = 0; i1 < imp2.getHeight(); i1++) {
+			count = 0;
+			def = (byte) (pixels2[i1 * imp1.getWidth()] & 0xFF);
+			for (int i2 = 0; i2 < imp2.getWidth(); i2++) {
+				val = (byte) (pixels2[i1 * imp1.getWidth() + i2] & 0xFF);
+				if (val != def) {
+					def = val;
+					vetPos[i1] = i2;
+					count++;
+				}
+			}
+			if (count < 1)
+				MyLog.waitHere("manca edge in riga " + i1);
+			if (count > 1)
+				MyLog.waitHere("doppio edge in riga " + i1);
+		}
+
+		int misure = 6;
+		int[] sopra = new int[misure];
+		int[] sotto = new int[misure];
+		int[] size1 = new int[misure];
+		int size = 0;
+
+		for (int s1 = 0; s1 < misure; s1++) {
+			switch (s1) {
+			case 0:
+				size = 512;
+				break;
+			case 1:
+				size = 256;
+				break;
+			case 3:
+				size = 128;
+				break;
+			case 4:
+				size = 64;
+				break;
+			case 5:
+				size = 32;
+				break;
+			}
+			// vedo dove l'edge è compatibile con l'ampiezza campione
+			int upper = 99999;
+			int lower = 99999;
+			int half = size / 2;
+			boolean inside = false;
+			for (int i1 = 0; i1 < imp2.getHeight(); i1++) {
+				if ((vetPos[i1] - half) >= 0 && (vetPos[i1] + half) < (imp2.getWidth()) && (!inside)) {
+					lower = i1;
+					inside = true;
+				}
+				if (((vetPos[i1] - half) < 0 || (vetPos[i1] + half) >= (imp2.getWidth())) && inside) {
+					upper = i1;
+					inside = false;
+				}
+			}
+			size1[s1] = size;
+			sopra[s1] = upper;
+			sotto[s1] = lower;
+		}
+
+		for (int i1 = 0; i1 < size1.length; i1++) {
+			IJ.log("size " + size1[i1] + " sopra " + sopra[i1] + " sotto " + sotto[i1]);
+		}
+		MyLog.waitHere();
+
+		return;
+
+	}
+
 	public static ImagePlus applyThreshold(ImagePlus imp1) {
 		int slices = 1;
 		ImageProcessor ip1 = imp1.getProcessor();
-		short[] pixels1 = (short[]) ip1.getPixels();
-		int threshold = ip1.getAutoThreshold();
+		Calibration cal1 = imp1.getCalibration();
+
+		short[] pixels1 = rawVector((short[]) ip1.getPixels(), cal1);
+
+		int threshold = (int) cal1.getCValue(ip1.getAutoThreshold());
+
 		ImagePlus imp2 = NewImage.createByteImage("Thresholded", imp1.getWidth(), imp1.getHeight(), slices,
 				NewImage.FILL_BLACK);
 		ByteProcessor ip2 = (ByteProcessor) imp2.getProcessor();
 		byte[] pixels2 = (byte[]) ip2.getPixels();
+
+		// MyLog.resultsLog(pixels1, "pixels1");
+		// MyLog.waitHere("threshold= " + threshold);
 		for (int i1 = 0; i1 < pixels2.length; i1++) {
 			if (pixels1[i1] >= threshold) {
 				pixels2[i1] = (byte) 255;
@@ -1224,6 +1443,41 @@ public class p14rmn_ implements PlugIn {
 		}
 		ip2.resetMinAndMax();
 		return imp2;
+	}
+
+	public static ImagePlus applyThreshold2(ImagePlus imp1) {
+		int slices = 1;
+		ImageProcessor ip1 = imp1.getProcessor();
+		Calibration cal1 = imp1.getCalibration();
+
+		short[] pixels1 = rawVector((short[]) ip1.getPixels(), cal1);
+
+		int threshold = (int) cal1.getCValue(ip1.getAutoThreshold());
+
+		ImagePlus imp2 = NewImage.createByteImage("Thresholded", imp1.getWidth(), imp1.getHeight(), slices,
+				NewImage.FILL_BLACK);
+		ByteProcessor ip2 = (ByteProcessor) imp2.getProcessor();
+		byte[] pixels2 = (byte[]) ip2.getPixels();
+
+		// MyLog.resultsLog(pixels1, "pixels1");
+		// MyLog.waitHere("threshold= " + threshold);
+		for (int i1 = 0; i1 < pixels2.length; i1++) {
+			if (pixels1[i1] >= threshold) {
+				pixels2[i1] = (byte) 120;
+			} else {
+				pixels2[i1] = (byte) 0;
+			}
+		}
+		ip2.resetMinAndMax();
+		return imp2;
+	}
+
+	public static short[] rawVector(short[] pixels1, Calibration cal1) {
+		short[] out2 = new short[pixels1.length];
+		for (int i1 = 0; i1 < pixels1.length; i1++) {
+			out2[i1] = (short) cal1.getRawValue(pixels1[i1]);
+		}
+		return out2;
 	}
 
 	public static String[] dummyInfo() {
@@ -1305,6 +1559,47 @@ public class p14rmn_ implements PlugIn {
 		}
 		over1.addElement(imp1.getRoi());
 		imp1.deleteRoi();
+	}
+
+	public static ImagePlus removeCalibration(ImagePlus imp1) {
+
+		ImagePlus imp2 = NewImage.createShortImage("uncalibrated", imp1.getWidth(), imp1.getHeight(), 1,
+				NewImage.FILL_BLACK);
+		ImageProcessor ip2 = imp2.getProcessor();
+		short[] pixels1 = UtilAyv.truePixels(imp1);
+		short[] pixels2 = (short[]) ip2.getPixels();
+		for (int i1 = 0; i1 < pixels1.length; i1++) {
+			pixels2[i1] = pixels1[i1];
+		}
+		ip2.resetMinAndMax();
+		imp2.updateImage();
+
+		return imp2;
+	}
+
+	public static void appendLog(String path, String linea) {
+
+		BufferedWriter out;
+		String time = new SimpleDateFormat("yyyy-MM-dd hh:mm").format(new Date());
+
+		try {
+			out = new BufferedWriter(new FileWriter(path, true));
+			out.write(time + " " + linea);
+			out.newLine();
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public static void initLog(String path) {
+		File f1 = new File(path);
+		if (f1.exists()) {
+			f1.delete();
+		}
+		appendLog(path, "---- INIZIO ---------");
 	}
 
 }

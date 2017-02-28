@@ -723,8 +723,8 @@ public class Sequenze_ implements PlugIn {
 							vetConta.add("" + (count3));
 							count3++;
 							vetPath.add(path1);
-							// IJ.log("espando con " + espansione[2] + " " +
-							// espansione[3]);
+							// IJ.log("espando con " + espansione[i2][2] + " " +
+							// espansione[i2][3]);
 							vetCodice.add(espansione[i2][2]);
 							vetCoil.add(coil);
 							vetImaDaPassare.add(espansione[i2][3]);
@@ -862,6 +862,10 @@ public class Sequenze_ implements PlugIn {
 			out1[i1][1] = vetEcho.get(i1);
 			out1[i1][2] = vetNewCode.get(i1);
 			out1[i1][3] = vetImaPass.get(i1);
+			// IJ.log("expanded " + out1[i1][0] + " " + out1[i1][1] + " " +
+			// out1[i1][2] + " " + out1[i1][3]);
+			// MyLog.waitHere();
+
 		}
 		return out1;
 	}
@@ -925,9 +929,9 @@ public class Sequenze_ implements PlugIn {
 	 * successo.
 	 * 
 	 * @param tableSequenze5
-	 *            � il file iw2ayv.txt ricaricato da disco
+	 *            e' il file iw2ayv.txt ricaricato da disco
 	 * @param tableCode5
-	 *            � il file codiciXXXX.txt caricato da disco
+	 *            e' il file codiciXXXX.txt caricato da disco
 	 */
 	public String[][] callPluginsFromSequenceTable(String[][] tableSequenze5, String[][] tableCode5, boolean test,
 			boolean superficiali, boolean p10p11p12, TextWindow tw) {

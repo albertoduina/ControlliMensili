@@ -347,7 +347,7 @@ public class p15rmn_ implements PlugIn {
 		double maxSizeInPixel = 100000;
 		double minCirc = .1;
 		double maxCirc = 1;
-		MyLog.waitHere("p15");
+		// MyLog.waitHere("p15");
 		p15rmn_ p15 = new p15rmn_();
 		Roi roi4 = p15.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc, step, fast);
 		if (roi4 == null)
@@ -522,7 +522,7 @@ public class p15rmn_ implements PlugIn {
 
 		int xsel = (int) find3x - lato / 2;
 		int ysel = (int) find3y - lato / 2;
-		imp2.setRoi(xsel, ysel, lato, lato);
+		imp2.setRoi(xsel+1, ysel, lato, lato);
 
 		roi1 = imp2.getRoi();
 		roi1.setStrokeColor(Color.green);
@@ -814,7 +814,6 @@ public class p15rmn_ implements PlugIn {
 		initLog(postmortem);
 		appendLog(postmortem, "**** gatherMTF *****");
 		double preciseAngle = newEdgeAngle(imp1, "VERTICAL_ANGLE");
-
 
 		Overlay overlay = new Overlay();
 		overlay.clear();

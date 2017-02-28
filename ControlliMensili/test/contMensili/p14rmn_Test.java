@@ -318,6 +318,19 @@ public class p14rmn_Test {
 		rt1.show("Results");
 		MyLog.waitHere("FINITO FUORI");
 	}
+	
+	@Test
+	public final void testMainMTF_4() {
+
+		String path1 = "./Test2/HRKA3_P14";
+		String autoArgs = "0";
+		int mode = 1;
+		int timeout = 200;
+		p14rmn_ p14 = new p14rmn_();
+		ResultsTable rt1 = p14.mainMTF(path1, autoArgs, "info10", mode, timeout);
+		rt1.show("Results");
+		MyLog.waitHere("FINITO FUORI");
+	}
 
 	@Test
 	public final void testComplete1() {
