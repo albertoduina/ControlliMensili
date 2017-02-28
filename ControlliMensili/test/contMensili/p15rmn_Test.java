@@ -61,7 +61,7 @@ public class p15rmn_Test {
 
 		p14rmn_ p14 = new p14rmn_();
 
-		p14.calculateMTF(imp1, null);
+		p14.calculateMTF(imp1, null, null);
 
 		MyLog.waitHere();
 
@@ -79,7 +79,7 @@ public class p15rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null);
+		p14.calculateMTF(imp1, null,null);
 		MyLog.waitHere();
 	}
 
@@ -95,7 +95,7 @@ public class p15rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null);
+		p14.calculateMTF(imp1, null, null);
 		MyLog.waitHere();
 	}
 
@@ -111,7 +111,7 @@ public class p15rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null);
+		p14.calculateMTF(imp1, null, null);
 		MyLog.waitHere();
 	}
 
@@ -127,7 +127,7 @@ public class p15rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null);
+		p14.calculateMTF(imp1, null, null);
 		MyLog.waitHere();
 	}
 
@@ -143,7 +143,7 @@ public class p15rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null);
+		p14.calculateMTF(imp1, null, null);
 		MyLog.waitHere();
 	}
 
@@ -159,7 +159,7 @@ public class p15rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null);
+		p14.calculateMTF(imp1, null, null);
 		MyLog.waitHere();
 	}
 
@@ -175,7 +175,7 @@ public class p15rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null);
+		p14.calculateMTF(imp1, null, null);
 		MyLog.waitHere();
 	}
 
@@ -191,7 +191,7 @@ public class p15rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null);
+		p14.calculateMTF(imp1, null, null);
 		MyLog.waitHere();
 	}
 
@@ -207,7 +207,7 @@ public class p15rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null);
+		p14.calculateMTF(imp1, null, null);
 		MyLog.waitHere();
 	}
 
@@ -223,7 +223,7 @@ public class p15rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null);
+		p14.calculateMTF(imp1, null, null);
 		MyLog.waitHere();
 	}
 
@@ -239,7 +239,7 @@ public class p15rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null);
+		p14.calculateMTF(imp1, null, null);
 		MyLog.waitHere();
 	}
 
