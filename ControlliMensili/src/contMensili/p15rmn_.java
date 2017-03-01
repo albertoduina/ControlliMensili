@@ -43,6 +43,7 @@ import ij.gui.Plot;
 import ij.gui.PlotWindow;
 import ij.gui.ProfilePlot;
 import ij.gui.Roi;
+import ij.measure.Calibration;
 import ij.measure.CurveFitter;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
@@ -369,8 +370,13 @@ public class p15rmn_ implements PlugIn {
 	public Roi positionSearch(ImagePlus imp1, double minSizeInPixel, double maxSizeInPixel, double minCirc,
 			double maxCirc, boolean step, boolean fast) {
 
+		ImagePlus imp3 = removeCalibration(imp1);
+		UtilAyv.showImageMaximized(imp3);
 		ImagePlus imp2 = applyThreshold(imp1);
 		UtilAyv.showImageMaximized(imp2);
+
+		// ImagePlus imp2 = applyThreshold(imp1);
+		// UtilAyv.showImageMaximized(imp2);
 
 		Overlay over1 = new Overlay();
 		imp1.setOverlay(over1);
@@ -522,7 +528,7 @@ public class p15rmn_ implements PlugIn {
 
 		int xsel = (int) find3x - lato / 2;
 		int ysel = (int) find3y - lato / 2;
-		imp2.setRoi(xsel+1, ysel, lato, lato);
+		imp2.setRoi(xsel + 1, ysel, lato, lato);
 
 		roi1 = imp2.getRoi();
 		roi1.setStrokeColor(Color.green);
@@ -536,12 +542,19 @@ public class p15rmn_ implements PlugIn {
 	public static ImagePlus applyThreshold(ImagePlus imp1) {
 		int slices = 1;
 		ImageProcessor ip1 = imp1.getProcessor();
-		short[] pixels1 = (short[]) ip1.getPixels();
-		int threshold = ip1.getAutoThreshold();
+		Calibration cal1 = imp1.getCalibration();
+
+		short[] pixels1 = rawVector((short[]) ip1.getPixels(), cal1);
+
+		int threshold = (int) cal1.getCValue(ip1.getAutoThreshold());
+
 		ImagePlus imp2 = NewImage.createByteImage("Thresholded", imp1.getWidth(), imp1.getHeight(), slices,
 				NewImage.FILL_BLACK);
 		ByteProcessor ip2 = (ByteProcessor) imp2.getProcessor();
 		byte[] pixels2 = (byte[]) ip2.getPixels();
+
+		// MyLog.resultsLog(pixels1, "pixels1");
+		// MyLog.waitHere("threshold= " + threshold);
 		for (int i1 = 0; i1 < pixels2.length; i1++) {
 			if (pixels1[i1] >= threshold) {
 				pixels2[i1] = (byte) 255;
@@ -551,6 +564,14 @@ public class p15rmn_ implements PlugIn {
 		}
 		ip2.resetMinAndMax();
 		return imp2;
+	}
+
+	public static short[] rawVector(short[] pixels1, Calibration cal1) {
+		short[] out2 = new short[pixels1.length];
+		for (int i1 = 0; i1 < pixels1.length; i1++) {
+			out2[i1] = (short) cal1.getRawValue(pixels1[i1]);
+		}
+		return out2;
 	}
 
 	public static String[] dummyInfo() {
@@ -603,10 +624,10 @@ public class p15rmn_ implements PlugIn {
 			PlotWindow pw = resultantGraph.show();
 
 			if (topWindow != null) {
-				System.out.println("X : " + pw.getX() + " Y : " + pw.getY());
+				MyLog.mark("X : " + pw.getX() + " Y : " + pw.getY());
 				// IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
 				pw.setLocation(topWindow.getX() + 50, topWindow.getY() + 50);
-				System.out.println("X : " + pw.getX() + " Y : " + pw.getY());
+				MyLog.mark("X : " + pw.getX() + " Y : " + pw.getY());
 				// IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
 			}
 			pw.requestFocus();
@@ -636,10 +657,10 @@ public class p15rmn_ implements PlugIn {
 			PlotWindow pw = resultantGraph.show();
 
 			if (topWindow != null) {
-				System.out.println("X : " + pw.getX() + " Y : " + pw.getY());
+				MyLog.mark("X : " + pw.getX() + " Y : " + pw.getY());
 				// IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
 				pw.setLocation(topWindow.getX() + 50, topWindow.getY() + 50);
-				System.out.println("X : " + pw.getX() + " Y : " + pw.getY());
+				MyLog.mark("X : " + pw.getX() + " Y : " + pw.getY());
 				// IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
 			}
 			pw.requestFocus();
@@ -783,7 +804,7 @@ public class p15rmn_ implements PlugIn {
 		public void checkColorMode(ImagePlus image) {
 
 			int bitDepth = image.getBitDepth();
-			System.out.println(bitDepth);
+			MyLog.mark("" + bitDepth);
 			if (bitDepth == 8 || bitDepth == 16) {
 			} else {
 				image.setProcessor(((ImageProcessor) (image.getProcessor().clone())).convertToByteProcessor());
@@ -813,7 +834,9 @@ public class p15rmn_ implements PlugIn {
 		postmortem = auxPath1 + "_postmortem.txt";
 		initLog(postmortem);
 		appendLog(postmortem, "**** gatherMTF *****");
+
 		double preciseAngle = newEdgeAngle(imp1, "VERTICAL_ANGLE");
+		MyLog.mark("preciseAngle= " + preciseAngle);
 
 		Overlay overlay = new Overlay();
 		overlay.clear();
@@ -1025,6 +1048,7 @@ public class p15rmn_ implements PlugIn {
 		 * AVERAGE MAP _________ ESF
 		 */
 
+
 		TreeMap<Double, Double> averageMap = new TreeMap<Double, Double>();
 		double avg = 0;
 		int count = 0;
@@ -1051,6 +1075,7 @@ public class p15rmn_ implements PlugIn {
 			appendLog(postmortem, "averageMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
 		}
 		appendLog(postmortem, "-------");
+
 		// calculate LSF
 		Set<Double> AMkeys = averageMap.keySet();
 		TreeMap<Double, Double> difrMap = new TreeMap<Double, Double>();
@@ -1314,6 +1339,22 @@ public class p15rmn_ implements PlugIn {
 		}
 		over1.addElement(imp1.getRoi());
 		imp1.deleteRoi();
+	}
+
+	public static ImagePlus removeCalibration(ImagePlus imp1) {
+
+		ImagePlus imp2 = NewImage.createShortImage("uncalibrated", imp1.getWidth(), imp1.getHeight(), 1,
+				NewImage.FILL_BLACK);
+		ImageProcessor ip2 = imp2.getProcessor();
+		short[] pixels1 = UtilAyv.truePixels(imp1);
+		short[] pixels2 = (short[]) ip2.getPixels();
+		for (int i1 = 0; i1 < pixels1.length; i1++) {
+			pixels2[i1] = pixels1[i1];
+		}
+		ip2.resetMinAndMax();
+		imp2.updateImage();
+
+		return imp2;
 	}
 
 }

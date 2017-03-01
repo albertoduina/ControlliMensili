@@ -76,8 +76,8 @@ public class p14rmn_ implements PlugIn {
 	ImagePlus imp, impOriginal;
 	ProfilePlot plotESF;
 	Plot plotResult;
-	int k;
-	int i;
+	int kkk;
+	int iii;
 	int selecWidth;
 	int selecHeight;
 	int sppLength;
@@ -114,9 +114,9 @@ public class p14rmn_ implements PlugIn {
 	int nPhotodetectors = 0;
 	double ny = 1;
 	int level = 0;
-	String postmortem = "";
+	static String postmortem = "";
 	String pathLog = "";
-
+	Color myColor = Color.black;
 	private static final int ABORT = 1;
 
 	public static String VERSION = "MTF metodo SLANTED EDGE";
@@ -397,102 +397,141 @@ public class p14rmn_ implements PlugIn {
 		Rectangle r1 = roi4.getBounds();
 		imp1.setRoi(r1);
 		ImagePlus imp3 = imp1.crop();
+		imp3.setTitle("cropped");
 		imp3.show();
-		p14rmn_.positionOptimize(imp3);
 
-		calculateMTF(imp3, rt);
+		int[][] out1 = p14rmn_.positionOptimize(imp3);
+
+		calculateMTF(imp3, rt, out1);
 		return rt;
 	}
 
-	public void calculateMTF(ImagePlus imp2, ResultsTable rt1) {
+	public void calculateMTF(ImagePlus imp2, ResultsTable rt1, int[][] out1) {
 		title = imp2.getTitle();
 		cancel = false;
 		restart = false;
+		boolean done = false;
 		level = 4;
+		MyLog.mark("sono in calculateMTF");
 		// openImage();
+		imp2.show();
+		Overlay over2 = new Overlay();
+		imp2.setOverlay(over2);
 
+		int width = imp2.getWidth();
 		// Get the selection
 		Roi roi2 = imp2.getRoi();
+		String title2 = imp2.getTitle();
+
 		if (roi2 == null) {
-			imp2.setRoi(0, 0, imp2.getWidth(), imp2.getHeight());
-			roi2 = imp2.getRoi();
 			// IJ.showMessageWithCancel("Warning", "All image selected");
 		}
-
 		double preciseAngle = newEdgeAngle(imp2, "VERTICAL_ANGLE");
-		appendLog(postmortem, "preciseAngle= " + preciseAngle);
+		appendLog(postmortem, "title= " + title2 + " preciseAngle= " + preciseAngle);
+		boolean completed = false;
 
 		do {
 			cancel = false;
 			restart = false;
+
 			level = level - 1;
 			fixedOptions(level);
-			if (sSize < 32) {
+			appendLog(postmortem, "title= " + title2 + "  calculateMTF level= " + level + " sSize= " + sSize);
+			MyLog.mark("level= " + level + " sSize= " + sSize);
+
+			if (sSize < 32 && done) {
+				completed = true;
+				restart = false;
+			}
+
+			if (sSize < 32 && !done) {
+				restart = false;
+				completed = true;
 				appendLog(postmortem, "uscita001 per sSize<32");
-				MyLog.waitHere("non riesco a calcolare la MTF!!!");
+				MyLog.mark("non riesco a calcolare la MTF!!!");
 				cancel = true;
 				break;
 			}
 
-			// if (cancel == false) {
-			// options();
-			// }
-			// if (cancel == false) {
+			int size = out1[level][0];
+			int upper = out1[level][1];
+			int lower = out1[level][2];
+			if (upper < 0 || lower < 0) {
+				appendLog(postmortem, "skippato size " + size);
+				MyLog.mark("SKIPPATO sSize= " + sSize + " upper " + upper + " lower " + lower);
+				restart = true;
+				continue;
+			}
+
+			MyLog.mark("CALCOLO sSize= " + sSize + " lower " + lower + " upper " + upper);
+			int width2 = width;
+			int height2 = Math.abs(upper - lower);
+
+			MyLog.mark("imposto la roi2 a " + 0 + " " + lower + " " + width2 + " " + height2);
+			imp2.setRoi(0, lower, width, height2);
+			roi2 = imp2.getRoi();
+			roi2.setStrokeColor(Color.red);
+			over2.add(roi2);
+
+			appendLog(postmortem, "calculateMTF calcolo per sSize= " + sSize);
 
 			// ESFArray contiene i valori di grigio
 			generateESFArray("ESF Plot", imp2, roi2);
 			if (restart) {
+				MyLog.mark("restart");
 				continue;
 			}
+			MyLog.mark("000");
 
 			generateLSFArray("LSF Plot", ESFArray);
 			calculateMax();
 
 			ESFArrayF = alignArray(ESFArray);
 			if (restart) {
-				MyLog.waitHere("005");
+				MyLog.mark("restart");
 				continue;
 			}
 
 			if (cancel == false) {
-				MyLog.waitHere("006");
-
+				MyLog.mark("001");
 				LSFArrayF = alignArray(LSFArray);
-				MyLog.waitHere("007");
 				if (restart) {
-					MyLog.waitHere("008");
+					MyLog.mark("restart");
 					continue;
 				}
-			}
+			} else
+				MyLog.mark("cancel");
+
 			if (cancel == false) {
-				MyLog.waitHere("009");
+				MyLog.mark("002");
 				ESFVector = averageVector(ESFArrayF);
-				MyLog.waitHere("010");
-			}
+			} else
+				MyLog.mark("cancel");
+
 			if (cancel == false) {
-				MyLog.waitHere("011");
+				MyLog.mark("003");
 				LSFVector = averageVector(LSFArrayF);
-				MyLog.waitHere("012");
 
 				int aura = (LSFVector.length * 2);
 				LSFDVector = new double[aura];
 				int j = 0;
 				int aura2 = (LSFVector.length);
 
-				for (i = 0; i < (LSFDVector.length - 3); i++) {
+				for (iii = 0; iii < (LSFDVector.length - 3); iii++) {
 
-					if (i % 2 == 0) {
-						LSFDVector[i] = LSFVector[j];
+					if (iii % 2 == 0) {
+						LSFDVector[iii] = LSFVector[j];
 						j = j + 1;
 					} else {
-						LSFDVector[i] = ((0.375 * LSFVector[(j - 1)]) + (0.75 * LSFVector[(j)])
+						LSFDVector[iii] = ((0.375 * LSFVector[(j - 1)]) + (0.75 * LSFVector[(j)])
 								- (0.125 * LSFVector[(j + 1)]));
 					}
 				}
+				MyLog.mark("004");
 
-				LSFDVector[i] = ((LSFVector[j - 1] + LSFVector[j]) * 0.5);
-				LSFDVector[i + 1] = LSFVector[j];
-				LSFDVector[i + 2] = LSFVector[j];
+				LSFDVector[iii] = ((LSFVector[j - 1] + LSFVector[j]) * 0.5);
+				LSFDVector[iii + 1] = LSFVector[j];
+				LSFDVector[iii + 2] = LSFVector[j];
 
 				int indexMax = 0;
 				double valorMax = LSFDVector[0];
@@ -502,8 +541,10 @@ public class p14rmn_ implements PlugIn {
 						valorMax = LSFDVector[i];
 					}
 				}
-				i = indexMax;
-				LSFDVector[i - 1] = ((LSFDVector[i - 2] + LSFDVector[i]) * 0.5);
+				MyLog.mark("005");
+
+				iii = indexMax;
+				LSFDVector[iii - 1] = ((LSFDVector[iii - 2] + LSFDVector[iii]) * 0.5);
 
 				MTFVector = fftConversion(LSFDVector, "MTF");
 				Max = obtenerMax();
@@ -515,11 +556,16 @@ public class p14rmn_ implements PlugIn {
 
 				if (rt1 == null) {
 				} else {
+					MyLog.mark("006");
+
 					String t1 = "TESTO";
 					String s2 = "VALORE";
 
 					rt1.addValue(t1, "EDGE_ANGLE");
 					rt1.addValue(s2, preciseAngle);
+					rt1.incrementCounter();
+					rt1.addValue(t1, "SAMPLE_SIZE");
+					rt1.addValue(s2, sSize);
 
 					for (int i1 = 0; i1 < MTFVector.length; i1++) {
 						rt1.incrementCounter();
@@ -545,8 +591,12 @@ public class p14rmn_ implements PlugIn {
 				generatePlot(LSFVector, "LSF");
 				generatePlot(ESFVector, "ESF");
 				generatePlot(SPPVector, "SPP");
-			}
-		} while (restart);
+				rt1.show("Result");
+				done = true;
+				MyLog.mark("done per " + sSize);
+			} else
+				MyLog.mark("cancel");
+		} while (!completed);
 	}
 
 	void generateStack() {
@@ -569,19 +619,20 @@ public class p14rmn_ implements PlugIn {
 		switch (level) {
 		case 3:
 			sSize = 128;
+			myColor = Color.red;
 			break;
 		case 2:
 			sSize = 64;
+			myColor = Color.magenta;
 			break;
 		case 1:
 			sSize = 32;
+			myColor = Color.yellow;
 			break;
 		case 0:
 			sSize = 0;
 			break;
 		}
-
-		MyLog.waitHere("size= " + sSize);
 		return;
 	}
 
@@ -699,15 +750,21 @@ public class p14rmn_ implements PlugIn {
 	 * della selezione) in un Array, NON effettua il sovracampionamento
 	 * 
 	 * @param title
-	 * @param imp
-	 * @param roi
+	 * @param imp1
+	 * @param roi1
 	 */
-	void generateESFArray(String title, ImagePlus imp, Roi roi) {
+	void generateESFArray(String title, ImagePlus imp1, Roi roi1) {
 
-		Rectangle r = roi.getBounds();
+		Overlay over1 = imp1.getOverlay();
+		if (over1 == null) {
+			over1 = new Overlay();
+			imp1.setOverlay(over1);
+		}
+		Rectangle r = roi1.getBounds();
 		selecWidth = r.width;
 		selecHeight = r.height;
 		MyLog.initLog3(pathLog + "ESF.txt");
+		MyLog.mark("selecWidth= " + selecWidth + " selecHeight= " + selecHeight);
 
 		if (sSize >= selecWidth) {
 			// MyLog.waitHere("sSize= " + sSize + " >= selecWidth= " +
@@ -716,35 +773,40 @@ public class p14rmn_ implements PlugIn {
 
 			// IJ.showMessage("Error", "sample size is bigger than selection
 			// width\nProcess canceled");
+			MyLog.mark("uscita002 sSize= " + sSize + " >= selecWidth= " + selecWidth);
 			restart = true;
 			return;
 		}
 
+		String title1 = imp1.getTitle();
+
 		int selectX = r.x;
 		int selectY = r.y;
 		int selectXFin = selectX + selecWidth;
-		int selectYFin = selectY + selecHeight;
 		ESFLinea = new double[selecWidth];
 		ESFArray = new double[selecHeight][selecWidth];
-		appendLog(postmortem, "sSize= " + sSize + " ----- ESFARRAY [" + ESFArray.length + "][" + ESFArray[0].length
-				+ "]---------------");
-		for (k = 0; k < selecHeight; k++) {
+		appendLog(postmortem, "title= " + title1 + " sSize= " + sSize + " ----- ESFARRAY [" + ESFArray.length + "]["
+				+ ESFArray[0].length + "]---------------");
+		for (int i1 = 0; i1 < selecHeight; i1++) {
 			// select line
-			IJ.makeLine(selectX, k + selectY, selectXFin - 1, k + selectY);
+			// IJ.makeLine(selectX, i1 + selectY, selectXFin - 1, i1 + selectY);
+			// IJ.makeline dava problemi se il focus di ImageJ era portato su di
+			// una altra immagine
+
+			imp1.setRoi(new Line(selectX, i1 + selectY, selectXFin - 1, i1 + selectY));
 			// save values
-			plotESF = new ProfilePlot(imp);
+			plotESF = new ProfilePlot(imp1);
 			ESFLinea = plotESF.getProfile();
 			// Load Array ESF
-			for (i = 0; i < selecWidth; i++) {
-				ESFArray[k][i] = ESFLinea[i];
+			for (int i2 = 0; i2 < selecWidth; i2++) {
+				ESFArray[i1][i2] = ESFLinea[i2];
 			}
-
 		}
 
 		for (int i1 = 0; i1 < ESFArray.length; i1++) {
 			String aux1 = "";
 			for (int i2 = 0; i2 < ESFArray[0].length; i2++) {
-				aux1 = aux1 + " " + (int) ESFArray[i1][i2];
+				aux1 = aux1 + "\t" + (int) ESFArray[i1][i2];
 			}
 			appendLog(postmortem, aux1);
 		}
@@ -772,9 +834,9 @@ public class p14rmn_ implements PlugIn {
 		appendLog(postmortem, "sSize= " + sSize + " ----- LSFARRAY [" + LSFArray.length + "][" + LSFArray[0].length
 				+ "]---------------");
 
-		for (k = 0; k < selecHeight; k++) {
-			for (i = 0; i < selecWidth - 1; i++) {
-				LSFArray[k][i] = ESFArray[k][i + 1] - ESFArray[k][i];
+		for (kkk = 0; kkk < selecHeight; kkk++) {
+			for (iii = 0; iii < selecWidth - 1; iii++) {
+				LSFArray[kkk][iii] = ESFArray[kkk][iii + 1] - ESFArray[kkk][iii];
 			}
 		}
 
@@ -818,28 +880,20 @@ public class p14rmn_ implements PlugIn {
 		int fin;
 
 		// Create new array aligned
-		for (k = 0; k < selecHeight; k++) {
+		for (kkk = 0; kkk < selecHeight; kkk++) {
 
 			// Initial and end positions of k-line
-			ini = (int) PosMax[k][2];
-			fin = (int) PosMax[k][3];
-
-			// if (ini < 0 || fin > Array.length) {
-			// MyLog.waitHere(
-			// "AAAA esce in k= " + k + "ini= " + ini + " fin= " + fin + " per
-			// Array.length= " + Array.length);
-			// restart = true;
-			// return null;
-			// }
+			ini = (int) PosMax[kkk][2];
+			fin = (int) PosMax[kkk][3];
 			if (ini < 0 || fin > Array[0].length) {
-				MyLog.waitHere(
-						"BBBB esce in k= " + k + "ini= " + ini + " fin= " + fin + " per Array.length= " + Array.length);
+				MyLog.waitHere("BBBB esce in k= " + kkk + "ini= " + ini + " fin= " + fin + " per Array.length= "
+						+ Array.length);
 				restart = true;
 				return null;
 			}
 
-			for (i = ini; i < fin; i++) {
-				ArrayF[k][i - ini] = Array[k][i];
+			for (iii = ini; iii < fin; iii++) {
+				ArrayF[kkk][iii - ini] = Array[kkk][iii];
 			}
 		}
 		// final array - from 32 to 512 positions
@@ -863,23 +917,23 @@ public class p14rmn_ implements PlugIn {
 		int posMax;
 		int halfSize;
 		halfSize = sSize / 2;
-		for (k = 0; k < selecHeight - 1; k++) {
+		for (kkk = 0; kkk < selecHeight - 1; kkk++) {
 			posMax = 0;
-			for (i = 0; i < selecWidth - 1; i++) {
-				if (LSFArray[k][posMax] < LSFArray[k][i] || LSFArray[k][posMax] == LSFArray[k][i]) {
-					posMax = i;
+			for (iii = 0; iii < selecWidth - 1; iii++) {
+				if (LSFArray[kkk][posMax] < LSFArray[kkk][iii] || LSFArray[kkk][posMax] == LSFArray[kkk][iii]) {
+					posMax = iii;
 				}
 			}
 
 			// The maximum value position on the line
-			PosMax[k][0] = posMax;
+			PosMax[kkk][0] = posMax;
 			// The maximum value on the line
-			PosMax[k][1] = LSFArray[k][posMax];
+			PosMax[kkk][1] = LSFArray[kkk][posMax];
 			// Starting and ending position to align maximum values
-			PosMax[k][2] = PosMax[k][0] - halfSize;
-			PosMax[k][3] = PosMax[k][0] + halfSize;
-			appendLog(postmortem, "ZZZZ PosMax k: " + (int) k + "\t[0]:" + (int) PosMax[k][0] + "\t\t[1]:"
-					+ (int) PosMax[k][1] + "\t\t[2]:" + (int) PosMax[k][2] + "\t\t[3]:" + (int) PosMax[k][3]);
+			PosMax[kkk][2] = PosMax[kkk][0] - halfSize;
+			PosMax[kkk][3] = PosMax[kkk][0] + halfSize;
+			appendLog(postmortem, "ZZZZ PosMax k: " + (int) kkk + "\t[0]:" + (int) PosMax[kkk][0] + "\t\t[1]:"
+					+ (int) PosMax[kkk][1] + "\t\t[2]:" + (int) PosMax[kkk][2] + "\t\t[3]:" + (int) PosMax[kkk][3]);
 		}
 
 	}
@@ -891,14 +945,14 @@ public class p14rmn_ implements PlugIn {
 		double[] Vector = new double[sSize];
 
 		// Average of all linear ESF/LSF
-		for (i = 0; i < sSize; i++) {
+		for (iii = 0; iii < sSize; iii++) {
 			result = 0;
 			// Average of all rows i-position
-			for (k = 0; k < selecHeight; k++) {
-				result = result + Array[k][i];
+			for (kkk = 0; kkk < selecHeight; kkk++) {
+				result = result + Array[kkk][iii];
 			}
 			result = result / selecHeight;
-			Vector[i] = result;
+			Vector[iii] = result;
 		}
 		return Vector;
 	}
@@ -913,8 +967,8 @@ public class p14rmn_ implements PlugIn {
 	public double[] obtenerMax() {
 		int N = longPotDos(selecHeight);
 		Max = new double[N];
-		for (k = 0; k < N; k++) {
-			Max[k] = PosMax[k][1];
+		for (kkk = 0; kkk < N; kkk++) {
+			Max[kkk] = PosMax[kkk][1];
 		}
 		return Max;
 	}
@@ -992,13 +1046,13 @@ public class p14rmn_ implements PlugIn {
 		if (plot == "MTF") {
 			xValues[0] = 0;
 			// Scale of values for x-axis
-			for (i = 1; i < N; i++) {
+			for (iii = 1; iii < N; iii++) {
 				// xValues[i]=xValues[i-1]+(0.5/(N-1));
-				xValues[i] = xValues[i - 1] + (ny / (N - 1));
+				xValues[iii] = xValues[iii - 1] + (ny / (N - 1));
 			}
 		} else {
-			for (i = 0; i < N; i++) {
-				xValues[i] = i + 1;
+			for (iii = 0; iii < N; iii++) {
+				xValues[iii] = iii + 1;
 			}
 		}
 		return xValues;
@@ -1015,24 +1069,24 @@ public class p14rmn_ implements PlugIn {
 		Complex[] VectorFFTC = new Complex[N];
 		double[] VectorFFTD = new double[M];
 
-		for (i = 0; i < N; i++) {
+		for (iii = 0; iii < N; iii++) {
 			// A double array is converted into a complex array ; imaginary
 			// part=0
-			ArrayComplex[i] = new Complex(Vector[i], 0);
+			ArrayComplex[iii] = new Complex(Vector[iii], 0);
 		}
 		// FFT operation
 		VectorFFTC = fft(ArrayComplex);
 
 		if (plot == "SPP") {
 			// Reject the first one
-			for (i = 1; i < M; i++) {
+			for (iii = 1; iii < M; iii++) {
 				// absolute value (module)
-				VectorFFTD[i - 1] = VectorFFTC[i].abs() / VectorFFTC[1].abs();
+				VectorFFTD[iii - 1] = VectorFFTC[iii].abs() / VectorFFTC[1].abs();
 			}
 		} else {
-			for (i = 0; i < M; i++) {
+			for (iii = 0; iii < M; iii++) {
 				// absolute value (module)
-				VectorFFTD[i] = VectorFFTC[i].abs() / VectorFFTC[0].abs();
+				VectorFFTD[iii] = VectorFFTC[iii].abs() / VectorFFTC[0].abs();
 			}
 		}
 
@@ -1043,8 +1097,8 @@ public class p14rmn_ implements PlugIn {
 			divisor = VectorFFTD[0];
 		}
 
-		for (i = 0; i < M; i++) {
-			VectorFFTD[i] = VectorFFTD[i] / divisor;
+		for (iii = 0; iii < M; iii++) {
+			VectorFFTD[iii] = VectorFFTD[iii] / divisor;
 		}
 		return VectorFFTD;
 	}
@@ -1329,7 +1383,7 @@ public class p14rmn_ implements PlugIn {
 		return roi1;
 	}
 
-	public static void positionOptimize(ImagePlus imp1) {
+	public static int[][] positionOptimize(ImagePlus imp1) {
 
 		// trasformo l'immagine in b/w
 		ImagePlus imp3 = applyThreshold2(imp1);
@@ -1338,7 +1392,6 @@ public class p14rmn_ implements PlugIn {
 		ImagePlus imp2 = imp3.duplicate();
 		imp2.setTitle("EDGE");
 
-		MyLog.waitHere("inizio");
 		// derivata
 		byte def = 0;
 		byte val = 0;
@@ -1366,32 +1419,31 @@ public class p14rmn_ implements PlugIn {
 		}
 
 		int misure = 6;
-		int[] sopra = new int[misure];
-		int[] sotto = new int[misure];
-		int[] size1 = new int[misure];
+		int[][] output1 = new int[misure][3];
+
 		int size = 0;
 
 		for (int s1 = 0; s1 < misure; s1++) {
 			switch (s1) {
-			case 0:
+			case 5:
 				size = 512;
 				break;
-			case 1:
+			case 4:
 				size = 256;
 				break;
 			case 3:
 				size = 128;
 				break;
-			case 4:
+			case 2:
 				size = 64;
 				break;
-			case 5:
+			case 1:
 				size = 32;
 				break;
 			}
 			// vedo dove l'edge è compatibile con l'ampiezza campione
-			int upper = 99999;
-			int lower = 99999;
+			int upper = -1;
+			int lower = -1;
 			int half = size / 2;
 			boolean inside = false;
 			for (int i1 = 0; i1 < imp2.getHeight(); i1++) {
@@ -1404,18 +1456,12 @@ public class p14rmn_ implements PlugIn {
 					inside = false;
 				}
 			}
-			size1[s1] = size;
-			sopra[s1] = upper;
-			sotto[s1] = lower;
+			output1[s1][0] = size;
+			output1[s1][1] = upper;
+			output1[s1][2] = lower;
+			appendLog(postmortem, "positionOptimize= " + "size= " + size + " upper= " + upper + " lower= " + lower);
 		}
-
-		for (int i1 = 0; i1 < size1.length; i1++) {
-			IJ.log("size " + size1[i1] + " sopra " + sopra[i1] + " sotto " + sotto[i1]);
-		}
-		MyLog.waitHere();
-
-		return;
-
+		return output1;
 	}
 
 	public static ImagePlus applyThreshold(ImagePlus imp1) {
