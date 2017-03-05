@@ -51,6 +51,7 @@ import ij.plugin.filter.ParticleAnalyzer;
 import ij.plugin.frame.RoiManager;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
 import ij.process.ShortProcessor;
 import utils.AboutBox;
 import utils.MyConst;
@@ -193,7 +194,7 @@ public class p15rmn_ implements PlugIn {
 				auxPath1 = path1;
 				if (path1 == null)
 					return 0;
-				mainMTF(path1, "0", "", mode, 0);
+				mainMTF(path1, "0", "", mode, 0, "");
 				UtilAyv.afterWork();
 				retry = true;
 				break;
@@ -225,6 +226,7 @@ public class p15rmn_ implements PlugIn {
 				+ TableSequence.getCoil(iw2ayvTable, vetRiga[0]);
 
 		String path1 = "";
+		String passo = TableSequence.getCode(iw2ayvTable, vetRiga[0]);
 
 		if (nTokens == MyConst.TOKENS1) {
 			// UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
@@ -237,7 +239,7 @@ public class p15rmn_ implements PlugIn {
 			if (fast) {
 				retry = false;
 				mode = 1;
-				result1 = mainMTF(path1, autoArgs, info10, mode, timeout);
+				result1 = mainMTF(path1, autoArgs, info10, mode, timeout, passo);
 
 				if (!(result1 == null))
 					UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, result1);
@@ -266,7 +268,7 @@ public class p15rmn_ implements PlugIn {
 					case 4:
 						retry = false;
 						mode = 3;
-						result1 = mainMTF(path1, autoArgs, info10, mode, timeout);
+						result1 = mainMTF(path1, autoArgs, info10, mode, timeout, "");
 
 						if (result1 == null) {
 							break;
@@ -283,7 +285,7 @@ public class p15rmn_ implements PlugIn {
 		return 0;
 	}
 
-	public ResultsTable mainMTF(String path1, String autoArgs, String info10, int mode, int timeout) {
+	public ResultsTable mainMTF(String path1, String autoArgs, String info10, int mode, int timeout, String passo) {
 
 		boolean autoCalled = false;
 		boolean step = false;
@@ -341,6 +343,8 @@ public class p15rmn_ implements PlugIn {
 		if (info1 == null) {
 			info1 = dummyInfo();
 		}
+
+		info1[0] = passo;
 
 		ResultsTable rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 
@@ -624,10 +628,10 @@ public class p15rmn_ implements PlugIn {
 			PlotWindow pw = resultantGraph.show();
 
 			if (topWindow != null) {
-				MyLog.mark("X : " + pw.getX() + " Y : " + pw.getY());
+				// MyLog.mark("X : " + pw.getX() + " Y : " + pw.getY());
 				// IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
 				pw.setLocation(topWindow.getX() + 50, topWindow.getY() + 50);
-				MyLog.mark("X : " + pw.getX() + " Y : " + pw.getY());
+				// MyLog.mark("X : " + pw.getX() + " Y : " + pw.getY());
 				// IJ.log("X : " + pw.getX() + " Y : " + pw.getY());
 			}
 			pw.requestFocus();
@@ -832,17 +836,17 @@ public class p15rmn_ implements PlugIn {
 		String postmortem = "";
 		checkColorMode(imp1);
 		postmortem = auxPath1 + "_postmortem.txt";
-		initLog(postmortem);
-		appendLog(postmortem, "**** gatherMTF *****");
+		MyLog.initLog(postmortem);
+		MyLog.appendLog(postmortem, "**** gatherMTF *****");
 
 		double preciseAngle = newEdgeAngle(imp1, "VERTICAL_ANGLE");
-		MyLog.mark("preciseAngle= " + preciseAngle);
 
 		Overlay overlay = new Overlay();
 		overlay.clear();
 		ImagePlus currentRegion = new ImagePlus("CurrentRegion");
 		currentRegion = (ImagePlus) (imp1.clone());
 		currentRegion.setRoi(0, 0, currentRegion.getWidth(), currentRegion.getHeight());
+		ImageStatistics stat2 = currentRegion.getStatistics();
 
 		// ==================================================================
 		// iw2ayv USA THRESHOLD PER OTTENERE UNA IMMAGINE
@@ -851,7 +855,7 @@ public class p15rmn_ implements PlugIn {
 		// ==================================================================
 
 		ImageProcessor proc = currentRegion.getProcessor();
-		appendLog(postmortem, "currentRegion [" + currentRegion.getWidth() + "x" + currentRegion.getHeight() + "]");
+		MyLog.appendLog(postmortem, "currentRegion [" + currentRegion.getWidth() + "x" + currentRegion.getHeight() + "]");
 
 		double[] bwValues;
 		double[] pixelsValues;
@@ -866,7 +870,7 @@ public class p15rmn_ implements PlugIn {
 			}
 			bwValues = new double[sourcePixels.length];
 			double middleVal = proc.getAutoThreshold();
-			appendLog(postmortem, "threshold 16 bit Middle val: " + middleVal);
+			MyLog.appendLog(postmortem, "threshold 16 bit Middle val: " + middleVal);
 
 			for (int i = 0; i < sourcePixels.length; i++) {
 				if (pixelsValues[i] <= middleVal) {
@@ -884,7 +888,7 @@ public class p15rmn_ implements PlugIn {
 			bwValues = new double[sourcePixels.length];
 			double middleVal = proc.getAutoThreshold();
 			// middleVal = middleVal+middleVal*0.15;
-			appendLog(postmortem, "threshold 8 bit Middle val: " + middleVal);
+			MyLog.appendLog(postmortem, "threshold 8 bit Middle val: " + middleVal);
 
 			for (int i = 0; i < sourcePixels.length; i++) {
 				if (pixelsValues[i] <= middleVal) {
@@ -895,7 +899,7 @@ public class p15rmn_ implements PlugIn {
 			}
 		}
 
-		appendLog(postmortem, "pixelsValues [" + pixelsValues.length + "]");
+		MyLog.appendLog(postmortem, "pixelsValues [" + pixelsValues.length + "]");
 
 		// iw2ayv POTREBBERO ESSERE LE COORDINATE IN CUI IL
 		// THRESHOLD
@@ -942,7 +946,7 @@ public class p15rmn_ implements PlugIn {
 		double[] xArr = new double[xVal.size() - 1];
 		double[] yArr = new double[yVal.size() - 1];
 		String aux1 = "";
-		appendLog(postmortem, "----EDGE detection [" + xVal.size() + "]------");
+		MyLog.appendLog(postmortem, "----EDGE detection [" + xVal.size() + "]------");
 
 		///// NOTA BENE MESSO UN PIXEL IN MENO X CHE SBALLAVA FIT ANGOLI PICCOLI
 		///// (valore errato nell'ultimo pixel)
@@ -950,10 +954,10 @@ public class p15rmn_ implements PlugIn {
 			xArr[i] = xVal.get(i);
 			yArr[i] = yVal.get(i);
 			aux1 = "xArr[" + i + "]= " + xArr[i] + " yArr[" + i + "]= " + yArr[i];
-			appendLog(postmortem, aux1);
+			MyLog.appendLog(postmortem, aux1);
 			// IJ.log(aux1);
 		}
-		appendLog(postmortem, "------");
+		MyLog.appendLog(postmortem, "------");
 
 		// iw2ayv FIT DELL 'IIMAGINE PER TROVARE IL LIMITE
 		// CHIARO/SCURO
@@ -1003,7 +1007,7 @@ public class p15rmn_ implements PlugIn {
 		// pixelSizeNormalized = pixelSize * k;
 
 		double roiAngle = angleGrad * Math.PI / 180;
-		appendLog(postmortem, "Linear fit over Edge, Angle: " + angleGrad);
+		MyLog.appendLog(postmortem, "Linear fit over Edge, Angle: " + angleGrad);
 		for (int i = 0; i < proc.getHeight(); i++) {
 			for (int j = 0; j < proc.getWidth(); j++) {
 				// distance to line for every pixel;
@@ -1017,8 +1021,7 @@ public class p15rmn_ implements PlugIn {
 
 		// ================================================================
 		// iw2ayv la DistanceValueMap contiene il valore dei pixel,
-		// con
-		// come chiave la distanza dalla linea NOTA BENE SONO
+		// con come chiave la distanza dalla linea NOTA BENE SONO
 		// BINARIZZATI: BIANCO o NERO
 		// ================================================================
 
@@ -1029,7 +1032,7 @@ public class p15rmn_ implements PlugIn {
 			// "+"VALUE:"+distanceValueBeinding.get(proection[i]));
 		}
 
-		appendLog(postmortem, "makeProjection(ImagePlus currentRegion)");
+		MyLog.appendLog(postmortem, "makeProjection(ImagePlus currentRegion)");
 
 		double deltaS = quotient * pixelSize; // ����� � ������
 												// �������
@@ -1037,17 +1040,16 @@ public class p15rmn_ implements PlugIn {
 		if (distanceValueMap.firstKey() < 0) {
 			if (distanceValueMap.firstKey() < -deltaS / 2) {
 				k = -((int) ((Math.abs(distanceValueMap.firstKey()) - deltaS / 2) / deltaS) + 1);
-				appendLog(postmortem, "distanceValueMap.firstKey() < 0: " + k);
+				MyLog.appendLog(postmortem, "distanceValueMap.firstKey() < 0: " + k);
 			}
 		}
 		Set<Double> DVkeys = distanceValueMap.keySet();
 		// IJ.log(distanceValueMap);
-		appendLog(postmortem, "----- distanceValueMap [" + distanceValueMap.size() + "]------");
+		MyLog.appendLog(postmortem, "----- distanceValueMap [" + distanceValueMap.size() + "]------");
 
 		/***
 		 * AVERAGE MAP _________ ESF
 		 */
-
 
 		TreeMap<Double, Double> averageMap = new TreeMap<Double, Double>();
 		double avg = 0;
@@ -1070,11 +1072,11 @@ public class p15rmn_ implements PlugIn {
 			}
 		}
 
-		appendLog(postmortem, "----- averageMap [" + averageMap.size() + "]------");
+		MyLog.appendLog(postmortem, "----- averageMap [" + averageMap.size() + "]------");
 		for (Entry<Double, Double> entry : averageMap.entrySet()) {
-			appendLog(postmortem, "averageMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
+			MyLog.appendLog(postmortem, "averageMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
 		}
-		appendLog(postmortem, "-------");
+		MyLog.appendLog(postmortem, "-------");
 
 		// calculate LSF
 		Set<Double> AMkeys = averageMap.keySet();
@@ -1094,11 +1096,11 @@ public class p15rmn_ implements PlugIn {
 			}
 		}
 
-		appendLog(postmortem, "----- firstDerivative difrMap [" + difrMap.size() + "] ------");
+		MyLog.appendLog(postmortem, "----- firstDerivative difrMap [" + difrMap.size() + "] ------");
 		for (Entry<Double, Double> entry : difrMap.entrySet()) {
-			appendLog(postmortem, "difrMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
+			MyLog.appendLog(postmortem, "difrMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
 		}
-		appendLog(postmortem, "-------");
+		MyLog.appendLog(postmortem, "-------");
 		int j1 = 0;
 		double[] vetDifrKey = new double[difrMap.size() * 2];
 		double[] vetDifrValue = new double[difrMap.size() * 2];
@@ -1122,12 +1124,12 @@ public class p15rmn_ implements PlugIn {
 			}
 		}
 
-		appendLog(postmortem, "----- firstDerivative difrMap2 [" + difrMap2.size() + "] ------");
+		MyLog.appendLog(postmortem, "----- firstDerivative difrMap2 [" + difrMap2.size() + "] ------");
 		for (Entry<Double, Double> entry : difrMap2.entrySet()) {
-			appendLog(postmortem, "difrMap2 Key: " + entry.getKey() + "  Value: " + entry.getValue());
+			MyLog.appendLog(postmortem, "difrMap2 Key: " + entry.getKey() + "  Value: " + entry.getValue());
 		}
-		appendLog(postmortem, "-------");
-		appendLog(postmortem, "calcLineSpread()");
+		MyLog.appendLog(postmortem, "-------");
+		MyLog.appendLog(postmortem, "calcLineSpread()");
 
 		/***
 		 * iw2ayv: DFT = Discrete Fourier Transform ????
@@ -1150,11 +1152,11 @@ public class p15rmn_ implements PlugIn {
 			DFT[j] = Math.abs(Math.sqrt(Math.pow(fs, 2.0) + Math.pow(ss, 2.0)));
 		}
 
-		appendLog(postmortem, "------- DFT[" + DFT.length + "]----------");
+		MyLog.appendLog(postmortem, "------- DFT[" + DFT.length + "]----------");
 		for (int i1 = 0; i1 < DFT.length; i1++) {
-			appendLog(postmortem, "i1: " + i1 + " DFT: " + DFT[i1]);
+			MyLog.appendLog(postmortem, "i1: " + i1 + " DFT: " + DFT[i1]);
 		}
-		appendLog(postmortem, "-------");
+		MyLog.appendLog(postmortem, "-------");
 
 		/****
 		 * iw2ayv: qui avviene la NORMALIZZAZIONE ?????
@@ -1172,13 +1174,13 @@ public class p15rmn_ implements PlugIn {
 		}
 
 		// IJ.log("calcMTF()");
-		appendLog(postmortem, "----- intensityMTFMap [" + intensityMTFMap.size() + "]------");
+		MyLog.appendLog(postmortem, "----- intensityMTFMap [" + intensityMTFMap.size() + "]------");
 		for (Entry<Double, Double> entry : intensityMTFMap.entrySet()) {
-			appendLog(postmortem, "intensityMTFMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
+			MyLog.appendLog(postmortem, "intensityMTFMap Key: " + entry.getKey() + "  Value: " + entry.getValue());
 			// IJ.log("intensityMTFMap Key: " + entry.getKey() + " Value: " +
 			// entry.getValue());
 		}
-		appendLog(postmortem, "-------");
+		MyLog.appendLog(postmortem, "-------");
 		// IJ.log("------");
 
 		double[] MTF_X = null;
@@ -1188,7 +1190,7 @@ public class p15rmn_ implements PlugIn {
 		double[] DIF_X = null;
 		double[] DIF_Y = null;
 		// for (Entry<Double, Double> entry : intensityMTFMap.entrySet()) {
-		// appendLog(postmortem, "intensityMTFMap Key: " + entry.getKey() + "
+		// MyLog.appendLog(postmortem, "intensityMTFMap Key: " + entry.getKey() + "
 		// Value: " + entry.getValue());
 
 		if (rt1 == null) {
@@ -1196,9 +1198,22 @@ public class p15rmn_ implements PlugIn {
 
 			String t1 = "TESTO";
 			String s2 = "VALORE";
+			String s3 = "MTF_X";
+			String s4 = "MTF_Y";
+			String s5 = "AVE_X";
+			String s6 = "AVE_Y";
+			String s7 = "DIF_X";
+			String s8 = "DIF_Y";
+			String s9 = "roi_x";
+			String s10 = "roi_y";
+			String s11 = "roi_b";
+			String s12 = "roi_h";
 
 			rt1.addValue(t1, "EDGE_ANGLE");
 			rt1.addValue(s2, angleGrad);
+			rt1.incrementCounter();
+			rt1.addValue(t1, "SAMPLE_SIZE");
+			rt1.addValue(s2, "-");
 
 			// if (intensityMTFMap == null) {
 			// MyLog.waitHere("IMPOSSIBILE TROVARE LA MTF!!!");
@@ -1215,12 +1230,17 @@ public class p15rmn_ implements PlugIn {
 			for (int i1 = 0; i1 < MTF_X.length; i1++) {
 				rt1.incrementCounter();
 				rt1.addValue(t1, "PLOT_" + i1);
-				rt1.addValue("MTF_X", MTF_X[i1]);
-				rt1.addValue("MTF_Y", MTF_Y[i1]);
-				rt1.addValue("AVE_X", AVE_X[i1]);
-				rt1.addValue("AVE_Y", AVE_Y[i1]);
-				rt1.addValue("DIF_X", DIF_X[i1]);
-				rt1.addValue("DIF_Y", DIF_Y[i1]);
+				rt1.addValue(s3, MTF_X[i1]);
+				rt1.addValue(s4, MTF_Y[i1]);
+				rt1.addValue(s5, AVE_X[i1]);
+				rt1.addValue(s6, AVE_Y[i1]);
+				rt1.addValue(s7, DIF_X[i1]);
+				rt1.addValue(s8, DIF_Y[i1]);
+				rt1.addValue(s9, stat2.roiX);
+				rt1.addValue(s10, stat2.roiY);
+				rt1.addValue(s11, stat2.roiWidth);
+				rt1.addValue(s12, stat2.roiHeight);
+
 			}
 			// }
 		}
@@ -1250,30 +1270,7 @@ public class p15rmn_ implements PlugIn {
 		assert bitDepth == 8 || bitDepth == 16;
 	}
 
-	public static void appendLog(String path, String linea) {
 
-		BufferedWriter out;
-		String time = new SimpleDateFormat("yyyy-MM-dd hh:mm").format(new Date());
-
-		try {
-			out = new BufferedWriter(new FileWriter(path, true));
-			out.write(time + " " + linea);
-			out.newLine();
-			out.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
-	public static void initLog(String path) {
-		File f1 = new File(path);
-		if (f1.exists()) {
-			f1.delete();
-		}
-		appendLog(path, "---- INIZIO ---------");
-	}
 
 	public double newEdgeAngle(ImagePlus imp1, String angle) {
 		ImagePlus imp2 = applyThreshold(imp1);

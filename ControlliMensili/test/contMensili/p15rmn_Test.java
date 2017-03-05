@@ -61,12 +61,11 @@ public class p15rmn_Test {
 
 		p15rmn_ p15 = new p15rmn_();
 
-	//	p15.MTF(imp1, null, null);
+		// p15.MTF(imp1, null, null);
 
 		MyLog.waitHere();
 
 	}
-
 
 	@Test
 	public final void testPositionSearch1() {
@@ -113,7 +112,7 @@ public class p15rmn_Test {
 		int mode = 2;
 		int timeout = 200;
 		p15rmn_ p15 = new p15rmn_();
-		ResultsTable rt1 = p15.mainMTF(path1, autoArgs, "info10", mode, timeout);
+		ResultsTable rt1 = p15.mainMTF(path1, autoArgs, "info10", mode, timeout, "");
 		rt1.show("Results");
 		MyLog.waitHere("FINITO FUORI");
 	}
@@ -126,7 +125,7 @@ public class p15rmn_Test {
 		int mode = 2;
 		int timeout = 200;
 		p15rmn_ p15 = new p15rmn_();
-		ResultsTable rt1 = p15.mainMTF(path1, autoArgs, "info10", mode, timeout);
+		ResultsTable rt1 = p15.mainMTF(path1, autoArgs, "info10", mode, timeout, "");
 		rt1.show("Results");
 		MyLog.waitHere("FINITO FUORI");
 	}
@@ -139,11 +138,11 @@ public class p15rmn_Test {
 		int mode = 1;
 		int timeout = 200;
 		p15rmn_ p15 = new p15rmn_();
-		ResultsTable rt1 = p15.mainMTF(path1, autoArgs, "info10", mode, timeout);
+		ResultsTable rt1 = p15.mainMTF(path1, autoArgs, "info10", mode, timeout, "");
 		rt1.show("Results");
 		MyLog.waitHere("FINITO FUORI");
 	}
-	
+
 	@Test
 	public final void testMainMTF_4() {
 
@@ -152,7 +151,7 @@ public class p15rmn_Test {
 		int mode = 1;
 		int timeout = 200;
 		p15rmn_ p15 = new p15rmn_();
-		ResultsTable rt1 = p15.mainMTF(path1, autoArgs, "info10", mode, timeout);
+		ResultsTable rt1 = p15.mainMTF(path1, autoArgs, "info10", mode, timeout, "");
 		rt1.show("Results");
 		MyLog.waitHere("FINITO FUORI");
 	}
@@ -167,9 +166,9 @@ public class p15rmn_Test {
 
 		int mode = 3;
 		int timeout = 200;
-		String info= "INFO";
+		String info = "INFO";
 
-		p15.mainMTF(path1, autoArgs, info, mode, timeout);
+		p15.mainMTF(path1, autoArgs, info, mode, timeout, "");
 		MyLog.waitHere();
 
 	}

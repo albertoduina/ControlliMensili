@@ -60,8 +60,8 @@ public class p14rmn_Test {
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 
 		p14rmn_ p14 = new p14rmn_();
-
-		p14.calculateMTF(imp1, null, null);
+		int sSize = 32;
+		p14.calculateMTF(imp1, null, sSize);
 
 		MyLog.waitHere();
 
@@ -79,169 +79,190 @@ public class p14rmn_Test {
 		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
 		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
 		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null, null);
+		int sSize = 64;
+		p14.calculateMTF(imp1, null, sSize);
 		MyLog.waitHere();
 	}
 
-	@Test
-	public final void testCalculateMTF3() {
-
-		String path1 = "./Test2/MTF1024_TOSHIBA_echelon_desenzano";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		int latoWidth = 150;
-		int latoHeight = 150;
-		int centerx = 470;
-		int centery = 314;
-		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
-		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
-		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null, null);
-		MyLog.waitHere();
-	}
-
-	@Test
-	public final void testCalculateMTF4() {
-
-		String path1 = "./Test2/MTF512_GE_optima450w_esine";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		int latoWidth = 78;
-		int latoHeight = 78;
-		int centerx = 250;
-		int centery = 190;
-		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
-		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
-		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null, null);
-		MyLog.waitHere();
-	}
-
-	@Test
-	public final void testCalculateMTF5() {
-
-		String path1 = "./Test2/MTF512_PHILIPS_achieva_gavardo";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		int latoWidth = 78;
-		int latoHeight = 78;
-		int centerx = 260;
-		int centery = 184;
-		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
-		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
-		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null, null);
-		MyLog.waitHere();
-	}
-
-	@Test
-	public final void testCalculateMTF6() {
-
-		String path1 = "./Test2/MTF256_siemens_avanto";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		int latoWidth = 38;
-		int latoHeight = 38;
-		int centerx = 123;
-		int centery = 87;
-		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
-		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
-		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null, null);
-		MyLog.waitHere();
-	}
-
-	@Test
-	public final void testCalculateMTF7() {
-
-		String path1 = "./Test2/MTF512_siemens_avanto";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		int latoWidth = 78;
-		int latoHeight = 78;
-		int centerx = 253;
-		int centery = 174;
-		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
-		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
-		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null, null);
-		MyLog.waitHere();
-	}
-
-	@Test
-	public final void testCalculateMTF8() {
-
-		String path1 = "./Test2/mtf1024_siemens_avanto";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		int latoWidth = 144;
-		int latoHeight = 144;
-		int centerx = 500;
-		int centery = 350;
-		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
-		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
-		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null, null);
-		MyLog.waitHere();
-	}
-
-	@Test
-	public final void testCalculateMTF9() {
-
-		String path1 = "./Test2/MTF256_toshiba_echelon";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		int latoWidth = 38;
-		int latoHeight = 38;
-		int centerx = 119;
-		int centery = 78;
-		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
-		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
-		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null, null);
-		MyLog.waitHere();
-	}
-
-	@Test
-	public final void testCalculateMTF10() {
-
-		String path1 = "./Test2/MTF512_toshiba_echelon";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		int latoWidth = 78;
-		int latoHeight = 78;
-		int centerx = 237;
-		int centery = 156;
-		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
-		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
-		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null, null);
-		MyLog.waitHere();
-	}
-
-	@Test
-	public final void testCalculateMTF11() {
-
-		String path1 = "./Test2/MTF1024_toshiba_echelon";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		int latoWidth = 148;
-		int latoHeight = 148;
-		int centerx = 472;
-		int centery = 313;
-		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
-		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
-		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null, null);
-		MyLog.waitHere();
-	}
-
-	@Test
-	public final void testCalculateMTF12() {
-
-		String path1 = "./Test2/MTF512_PHILIPS_achieva_gavardo";
-		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-		int latoWidth = 78;
-		int latoHeight = 78;
-		int centerx = 260;
-		int centery = 184;
-		imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth, latoHeight);
-		MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la parte nera sia A SINISTRA e premere OK");
-		p14rmn_ p14 = new p14rmn_();
-		p14.calculateMTF(imp1, null, null);
-		MyLog.waitHere();
-	}
+	// @Test
+	// public final void testCalculateMTF3() {
+	//
+	// String path1 = "./Test2/MTF1024_TOSHIBA_echelon_desenzano";
+	// ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+	// int latoWidth = 150;
+	// int latoHeight = 150;
+	// int centerx = 470;
+	// int centery = 314;
+	// imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth,
+	// latoHeight);
+	// MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la
+	// parte nera sia A SINISTRA e premere OK");
+	// p14rmn_ p14 = new p14rmn_();
+	// p14.calculateMTF(imp1, null);
+	// MyLog.waitHere();
+	// }
+	//
+	// @Test
+	// public final void testCalculateMTF4() {
+	//
+	// String path1 = "./Test2/MTF512_GE_optima450w_esine";
+	// ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+	// int latoWidth = 78;
+	// int latoHeight = 78;
+	// int centerx = 250;
+	// int centery = 190;
+	// imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth,
+	// latoHeight);
+	// MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la
+	// parte nera sia A SINISTRA e premere OK");
+	// p14rmn_ p14 = new p14rmn_();
+	// p14.calculateMTF(imp1, null);
+	// MyLog.waitHere();
+	// }
+	//
+	// @Test
+	// public final void testCalculateMTF5() {
+	//
+	// String path1 = "./Test2/MTF512_PHILIPS_achieva_gavardo";
+	// ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+	// int latoWidth = 78;
+	// int latoHeight = 78;
+	// int centerx = 260;
+	// int centery = 184;
+	// imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth,
+	// latoHeight);
+	// MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la
+	// parte nera sia A SINISTRA e premere OK");
+	// p14rmn_ p14 = new p14rmn_();
+	// p14.calculateMTF(imp1, null);
+	// MyLog.waitHere();
+	// }
+	//
+	// @Test
+	// public final void testCalculateMTF6() {
+	//
+	// String path1 = "./Test2/MTF256_siemens_avanto";
+	// ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+	// int latoWidth = 38;
+	// int latoHeight = 38;
+	// int centerx = 123;
+	// int centery = 87;
+	// imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth,
+	// latoHeight);
+	// MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la
+	// parte nera sia A SINISTRA e premere OK");
+	// p14rmn_ p14 = new p14rmn_();
+	// p14.calculateMTF(imp1, null);
+	// MyLog.waitHere();
+	// }
+	//
+	// @Test
+	// public final void testCalculateMTF7() {
+	//
+	// String path1 = "./Test2/MTF512_siemens_avanto";
+	// ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+	// int latoWidth = 78;
+	// int latoHeight = 78;
+	// int centerx = 253;
+	// int centery = 174;
+	// imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth,
+	// latoHeight);
+	// MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la
+	// parte nera sia A SINISTRA e premere OK");
+	// p14rmn_ p14 = new p14rmn_();
+	// p14.calculateMTF(imp1, null);
+	// MyLog.waitHere();
+	// }
+	//
+	// @Test
+	// public final void testCalculateMTF8() {
+	//
+	// String path1 = "./Test2/mtf1024_siemens_avanto";
+	// ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+	// int latoWidth = 144;
+	// int latoHeight = 144;
+	// int centerx = 500;
+	// int centery = 350;
+	// imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth,
+	// latoHeight);
+	// MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la
+	// parte nera sia A SINISTRA e premere OK");
+	// p14rmn_ p14 = new p14rmn_();
+	// p14.calculateMTF(imp1, null);
+	// MyLog.waitHere();
+	// }
+	//
+	// @Test
+	// public final void testCalculateMTF9() {
+	//
+	// String path1 = "./Test2/MTF256_toshiba_echelon";
+	// ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+	// int latoWidth = 38;
+	// int latoHeight = 38;
+	// int centerx = 119;
+	// int centery = 78;
+	// imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth,
+	// latoHeight);
+	// MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la
+	// parte nera sia A SINISTRA e premere OK");
+	// p14rmn_ p14 = new p14rmn_();
+	// p14.calculateMTF(imp1, null);
+	// MyLog.waitHere();
+	// }
+	//
+	// @Test
+	// public final void testCalculateMTF10() {
+	//
+	// String path1 = "./Test2/MTF512_toshiba_echelon";
+	// ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+	// int latoWidth = 78;
+	// int latoHeight = 78;
+	// int centerx = 237;
+	// int centery = 156;
+	// imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth,
+	// latoHeight);
+	// MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la
+	// parte nera sia A SINISTRA e premere OK");
+	// p14rmn_ p14 = new p14rmn_();
+	// p14.calculateMTF(imp1, null);
+	// MyLog.waitHere();
+	// }
+	//
+	// @Test
+	// public final void testCalculateMTF11() {
+	//
+	// String path1 = "./Test2/MTF1024_toshiba_echelon";
+	// ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+	// int latoWidth = 148;
+	// int latoHeight = 148;
+	// int centerx = 472;
+	// int centery = 313;
+	// imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth,
+	// latoHeight);
+	// MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la
+	// parte nera sia A SINISTRA e premere OK");
+	// p14rmn_ p14 = new p14rmn_();
+	// p14.calculateMTF(imp1, null);
+	// MyLog.waitHere();
+	// }
+	//
+	// @Test
+	// public final void testCalculateMTF12() {
+	//
+	// String path1 = "./Test2/MTF512_PHILIPS_achieva_gavardo";
+	// ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+	// int latoWidth = 78;
+	// int latoHeight = 78;
+	// int centerx = 260;
+	// int centery = 184;
+	// imp1.setRoi(centerx - latoWidth / 2, centery - latoHeight / 2, latoWidth,
+	// latoHeight);
+	// MyLog.waitHere("posizionare la ROI sullo SLANTED EDGE, in modo che la
+	// parte nera sia A SINISTRA e premere OK");
+	// p14rmn_ p14 = new p14rmn_();
+	// p14.calculateMTF(imp1, null);
+	// MyLog.waitHere();
+	// }
 
 	@Test
 	public final void testPositionSearch1() {
@@ -288,8 +309,7 @@ public class p14rmn_Test {
 		int mode = 2;
 		int timeout = 200;
 		p14rmn_ p14 = new p14rmn_();
-		ResultsTable rt1 = p14.mainMTF(path1, autoArgs, "info10", mode, timeout);
-		rt1.show("Results");
+		p14.mainMTF(path1, autoArgs, "info10", mode, timeout, "", null, null);
 		MyLog.waitHere("FINITO FUORI");
 	}
 
@@ -301,8 +321,7 @@ public class p14rmn_Test {
 		int mode = 2;
 		int timeout = 200;
 		p14rmn_ p14 = new p14rmn_();
-		ResultsTable rt1 = p14.mainMTF(path1, autoArgs, "info10", mode, timeout);
-		rt1.show("Results");
+		p14.mainMTF(path1, autoArgs, "info10", mode, timeout, "", null, null);
 		MyLog.waitHere("FINITO FUORI");
 	}
 
@@ -314,8 +333,7 @@ public class p14rmn_Test {
 		int mode = 1;
 		int timeout = 200;
 		p14rmn_ p14 = new p14rmn_();
-		ResultsTable rt1 = p14.mainMTF(path1, autoArgs, "info10", mode, timeout);
-		rt1.show("Results");
+		p14.mainMTF(path1, autoArgs, "info10", mode, timeout, "", null, null);
 		MyLog.waitHere("FINITO FUORI");
 	}
 
@@ -327,8 +345,7 @@ public class p14rmn_Test {
 		int mode = 1;
 		int timeout = 200;
 		p14rmn_ p14 = new p14rmn_();
-		ResultsTable rt1 = p14.mainMTF(path1, autoArgs, "info10", mode, timeout);
-		rt1.show("Results");
+		p14.mainMTF(path1, autoArgs, "info10", mode, timeout, "", null, null);
 		MyLog.waitHere("FINITO FUORI");
 	}
 
@@ -350,10 +367,11 @@ public class p14rmn_Test {
 		imp1.setRoi(r1);
 		ImagePlus imp3 = imp1.crop();
 		imp3.show();
-		int[][] out1 = p14rmn_.positionOptimize(imp3);
+		// int[][] out1 = p14rmn_.positionOptimize(imp3);
 
+		int sSize = 32;
 		p14 = new p14rmn_();
-		p14.calculateMTF(imp3, null, out1);
+		p14.calculateMTF(imp3, null, sSize);
 
 	}
 
