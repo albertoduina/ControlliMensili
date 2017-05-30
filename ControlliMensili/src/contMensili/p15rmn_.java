@@ -43,6 +43,7 @@ import ij.gui.Plot;
 import ij.gui.PlotWindow;
 import ij.gui.ProfilePlot;
 import ij.gui.Roi;
+import ij.io.FileSaver;
 import ij.measure.Calibration;
 import ij.measure.CurveFitter;
 import ij.measure.ResultsTable;
@@ -361,6 +362,10 @@ public class p15rmn_ implements PlugIn {
 		imp1.setRoi(r1);
 		ImagePlus imp3 = imp1.crop();
 		imp3.show();
+
+		String imp3Name = path1 + "imp3_p15.bmp";
+		new FileSaver(imp3).saveAsBmp(imp3Name);
+
 		double quotient = 1.0;
 		gatherMTF(imp3, "VERTICAL_ANGLE", quotient, rt);
 		return rt;
@@ -855,7 +860,8 @@ public class p15rmn_ implements PlugIn {
 		// ==================================================================
 
 		ImageProcessor proc = currentRegion.getProcessor();
-		MyLog.appendLog(postmortem, "currentRegion [" + currentRegion.getWidth() + "x" + currentRegion.getHeight() + "]");
+		MyLog.appendLog(postmortem,
+				"currentRegion [" + currentRegion.getWidth() + "x" + currentRegion.getHeight() + "]");
 
 		double[] bwValues;
 		double[] pixelsValues;
@@ -1006,13 +1012,17 @@ public class p15rmn_ implements PlugIn {
 
 		// pixelSizeNormalized = pixelSize * k;
 
-		double roiAngle = angleGrad * Math.PI / 180;
+		double roiAngleRadiants = angleGrad * Math.PI / 180;
 		MyLog.appendLog(postmortem, "Linear fit over Edge, Angle: " + angleGrad);
-		for (int i = 0; i < proc.getHeight(); i++) {
-			for (int j = 0; j < proc.getWidth(); j++) {
+		String aux3 = "";
+		MyLog.appendLog(postmortem, "------ Distance to line [" + distanceToLine.length + "]-----");
+		for (int i1 = 0; i1 < proc.getHeight(); i1++) {
+			for (int i2 = 0; i2 < proc.getWidth(); i2++) {
 				// distance to line for every pixel;
-				distanceToLine[j + i * proc.getWidth()] = pixelSize * 1
-						* (j * Math.cos(roiAngle) - i * Math.sin(roiAngle));
+				distanceToLine[i2 + i1 * proc.getWidth()] = pixelSize * 1
+						* (i2 * Math.cos(roiAngleRadiants) - i1 * Math.sin(roiAngleRadiants));
+				aux3 = aux3 + distanceToLine[i2 + i1 * proc.getWidth()] + " ";
+
 				// if(j+i*proc.getWidth() < 400)IJ.log("x="
 				// + j+" y="+i+" "
 				// +distanceToLine[j+i*proc.getWidth()]);
@@ -1190,7 +1200,8 @@ public class p15rmn_ implements PlugIn {
 		double[] DIF_X = null;
 		double[] DIF_Y = null;
 		// for (Entry<Double, Double> entry : intensityMTFMap.entrySet()) {
-		// MyLog.appendLog(postmortem, "intensityMTFMap Key: " + entry.getKey() + "
+		// MyLog.appendLog(postmortem, "intensityMTFMap Key: " + entry.getKey()
+		// + "
 		// Value: " + entry.getValue());
 
 		if (rt1 == null) {
@@ -1245,6 +1256,8 @@ public class p15rmn_ implements PlugIn {
 			// }
 		}
 
+		MyLog.waitHere("ESF= " + averageMap.size() + " LSF= " + difrMap.size() + " MTF= " + intensityMTFMap.size());
+
 		CustomUtils.drawPlot(averageMap, "Edge Spread Function", "pixels", "intensity");
 		CustomUtils.drawPlot(difrMap, "Line Spread Function", "pixels", "values");
 		CustomUtils.drawPlot(intensityMTFMap, "Modulation Transfer Function (normalized)", "frequency", "intensity");
@@ -1269,8 +1282,6 @@ public class p15rmn_ implements PlugIn {
 		bitDepth = img.getProcessor().getBitDepth();
 		assert bitDepth == 8 || bitDepth == 16;
 	}
-
-
 
 	public double newEdgeAngle(ImagePlus imp1, String angle) {
 		ImagePlus imp2 = applyThreshold(imp1);

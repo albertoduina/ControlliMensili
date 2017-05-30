@@ -60,3 +60,7 @@ BRRS2;BreastRight;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 BRRF2;BreastRight;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 BRLS2;BreastLeft;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 BRLF2;BreastLeft;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
+BARS2;Body Array 8 CH upper;2;2;0;0;0;0;0;xxx;hdx;x;p5rmn_
+BARF2;Body Array 8 CH upper;2;2;0;0;0;0;0;xxx;hdx;x;p5rmn_
+BALS2;Body Array 8 CH lower;2;2;0;0;0;0;0;xxx;hdx;x;p5rmn_
+BALF2;Body Array 8 CH lower;2;2;0;0;0;0;0;xxx;hdx;x;p5rmn_

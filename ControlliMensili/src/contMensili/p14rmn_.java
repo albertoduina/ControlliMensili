@@ -543,6 +543,7 @@ public class p14rmn_ implements PlugIn {
 		MyLog.appendLog(postmortem, "grafic per sSize= " + sSize);
 
 		int sFrequnits = 1;
+		MyLog.waitHere("SIZE= "+sSize+" MTF= "+MTFVector.length+ " LSF= "+LSFVector.length+" ESF= "+ESFVector.length+ " SPP= "+SPPVector.length);
 
 		generatePlot(MTFVector, "MTF", title, sFrequnits);
 		generatePlot(LSFVector, "LSF", title, sFrequnits);
@@ -562,7 +563,7 @@ public class p14rmn_ implements PlugIn {
 	 * Mitja: The grey values of the line selections are tipped in a Array
 	 * 
 	 * Inserisce i valori dei pixel (presi come successione di linee all'interno
-	 * della selezione) in un Array, NON effettua il sovracampionamento
+	 * della selezione) in un Array, NON effettua il sovracampionamento?
 	 * 
 	 * @param title
 	 * @param imp1
@@ -874,6 +875,39 @@ public class p14rmn_ implements PlugIn {
 		return Vector;
 	}
 
+	/// TITOLO: FOLLIE DI IW2AYV
+	public double[] rebellottationOfVector(double[][] Array, Roi roi1, int sSize, double angle, double pixelPitch) {
+		// Rectangle r = roi1.getBounds();
+		// int selecWidth = r.width;
+		angle = 44.0;
+		pixelPitch = 1;
+		double spacing = pixelPitch * Math.sin(angle);
+		double count = pixelPitch / spacing;
+		MyLog.waitHere("count= " + count);
+		if (Array == null) {
+			MyLog.waitHere("Array==null");
+			return null;
+		}
+		int selecHeight = Array.length;
+		// MyLog.waitHere("selecHeight =" + selecHeight);
+
+		double result;
+		// int j;
+		double[] Vector = new double[sSize];
+
+		// Average of all linear ESF/LSF
+		for (int i2 = 0; i2 < sSize; i2++) {
+			result = 0;
+			// Average of all rows i-position
+			for (int i1 = 0; i1 < selecHeight; i1++) {
+				result = result + Array[i1][i2];
+			}
+			result = result / selecHeight;
+			Vector[i2] = result;
+		}
+		return Vector;
+	}
+
 	public int longPotDos(int length) {
 		int N;
 		double log = Math.log(length) / Math.log(2);
@@ -966,8 +1000,9 @@ public class p14rmn_ implements PlugIn {
 			// Scale of values for x-axis
 			for (int i2 = 1; i2 < N; i2++) {
 				// xValues[i]=xValues[i-1]+(0.5/(N-1));
-				xValues[i2] = xValues[i2 - 1] + (1 / (N - 1));
+				xValues[i2] = xValues[i2 - 1] + (1 / ((double) N - 1));
 			}
+	//		MyLog.logVector(xValues, "xValues");
 		} else {
 			for (int i2 = 0; i2 < N; i2++) {
 				xValues[i2] = i2 + 1;

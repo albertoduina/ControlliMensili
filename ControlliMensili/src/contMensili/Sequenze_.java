@@ -1306,10 +1306,10 @@ public class Sequenze_ implements PlugIn {
 			int numeroImaAcquisite = 0;
 			int numeroImaRichieste = 0;
 			if (UtilAyv.isNumeric(TableCode.getImaTotal(tableCode6, j1))) {
-
 				numeroImaRichieste = Integer.parseInt(TableCode.getImaTotal(tableCode6, j1));
-			} else
-				MyLog.waitHere("errore formato a j1= " + j1);
+			} else {
+				// MyLog.waitHere("errore formato a j1= " + j1);
+			}
 			String codiceImaRichieste = TableCode.getCode(tableCode6, j1);
 			if (codiceImaRichieste == null)
 				break;

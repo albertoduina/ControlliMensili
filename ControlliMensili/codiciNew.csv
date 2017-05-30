@@ -35,28 +35,36 @@ HWSA_;Warp Assiale Head;1;1;0;0;777;888;999;xxx;x;x;p7rmn_
 HRKA_;Risoluzione 1024 Head;1;1;0;0;777;888;999;xxx;x;x;p4rmn_
 HR5A_;Risoluzione 512 Head;1;1;0;0;777;888;999;xxx;x;x;p4rmn_
 HR2A_;Risoluzione 256 Head;1;1;0;0;777;888;999;xxx;x;x;p4rmn_
+//;;;;;;;;;;;;
+//;;;;;;;;;;;;
 BSK7_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
 BS57_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
 BS27_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
-HSK7_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
-HSK73;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
-HS57_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
-HS27_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
-HS572;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
 BRK7_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
 BR57_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
 BR27_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
-HRK7_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
-HRK73;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
-HR57_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
-HR27_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
-HR572;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
 BRK8_;Risoluzione Oskbrekova;1;1;0;0;777;888;999;xxx;x;x;p15rmn_
 BR58_;Risoluzione Oskbrekova;1;1;0;0;777;888;999;xxx;x;x;p15rmn_
 BR28_;Risoluzione Oskbrekova;1;1;0;0;777;888;999;xxx;x;x;p15rmn_
-HRK8_;Risoluzione Oskbrekova;1;1;0;0;777;888;999;xxx;x;x;p15rmn_
-HR58_;Risoluzione Oskbrekova;1;1;0;0;777;888;999;xxx;x;x;p15rmn_
-HR28_;Risoluzione Oskbrekova;1;1;0;0;777;888;999;xxx;x;x;p15rmn_
+
+
+HSK7_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_;;
+HS57_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_;;
+HS27_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_;;
+HRK7_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_;;
+HR57_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_;;
+HR27_;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_;;
+HRK8_;Risoluzione Oskbrekova;1;1;0;0;777;888;999;xxx;x;x;p15rmn_;;
+HR58_;Risoluzione Oskbrekova;1;1;0;0;777;888;999;xxx;x;x;p15rmn_;;
+HR28_;Risoluzione Oskbrekova;1;1;0;0;777;888;999;xxx;x;x;p15rmn_;;
+
+// BR5A2;Risoluzione 512 Head;1;1;0;0;0;0;0;xxx;x;x;p4rmn_;;esine
+// HR5A2;Risoluzione 512 Head;1;1;0;0;0;0;0;xxx;x;x;p4rmn_;;esine
+// HR2A2;Risoluzione 256 Head;1;1;0;0;0;0;0;xxx;x;x;p4rmn_;;esine
+HS572;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_;;
+HSK73;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
+HRK73;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
+HR572;Risoluzione Mitja;1;1;0;0;777;888;999;xxx;x;x;p14rmn_
 HR582;Risoluzione Oskbrekova;1;1;0;0;777;888;999;xxx;x;x;p15rmn_
 HRK83;Risoluzione Oskbrekova;1;1;0;0;777;888;999;xxx;x;x;p15rmn_
 
