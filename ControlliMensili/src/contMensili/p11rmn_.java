@@ -1234,7 +1234,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			offset = y1 * width;
 			for (int x1 = sqX - sqR / 2; x1 <= (sqX + sqR / 2); x1++) {
 				w = offset + x1;
-				if (w < pixels1.length && pixels1[w] > limit) {
+				if (w > 0 && pixels1[w] > limit) {
 					if (paintPixels)
 						pixels2[w] = 4096;
 					count1++;
@@ -1243,6 +1243,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		}
 		imp1.updateAndDraw();
 		return count1;
+
 	}
 
 	/**

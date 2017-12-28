@@ -369,6 +369,7 @@ public class Sequenze_ implements PlugIn {
 					MyLog.waitHere("salvare il log come TableSequenceSorted1");
 				}
 
+
 				String[][] tableSequenceSorted2 = TableSorter.minsort(tableSequenceSorted1, TableSequence.TIME);
 				if (debugTables) {
 					IJ.log("\\Clear");

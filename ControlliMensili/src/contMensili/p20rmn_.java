@@ -111,7 +111,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 
 	public static boolean DEBUG2 = false; // true attiva il debug
 
-	private static boolean selftest = false; // non è bello, lo uso per colpa
+	private static boolean selftest = false; // non ï¿½ bello, lo uso per colpa
 												// del
 
 	// maledetto filtro sul fondo
@@ -249,7 +249,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 			}
 		} while (continua1);
 		String[] vetPath = ArrayUtils.arrayListToArrayString(arrayPath);
-		// se è stato selezionato solo un file suppongo che si vogliano
+		// se ï¿½ stato selezionato solo un file suppongo che si vogliano
 		// selezionare tutti i file della directory.
 		File dir1 = new File(directory);
 		File[] allFiles = null;
@@ -317,9 +317,9 @@ public class p20rmn_ implements PlugIn, Measurements {
 				new AboutBox().close();
 				return 0;
 			case 2:
-				// new AboutBox().about("Controllo Uniformità",
+				// new AboutBox().about("Controllo Uniformitï¿½",
 				// this.getClass());
-				new AboutBox().about("Controllo Uniformità",
+				new AboutBox().about("Controllo Uniformitï¿½",
 						MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
@@ -430,7 +430,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 		boolean ok = UtilAyv.verifyResults1(vetResults, referenceSiemens(),
 				MyConst.P20_vetName);
 		if (ok)
-			IJ.log("Il test di p20rmn_ T2calculation è stato SUPERATO");
+			IJ.log("Il test di p20rmn_ T2calculation ï¿½ stato SUPERATO");
 		else
 			IJ.log("Il test di p20rmn_ T2calculation evidenzia degli ERRORI");
 
@@ -1054,7 +1054,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 		// vetPath[0], tabl, VERSION, autoCalled);
 
 		//
-		// Qui si torna se la misura è da rifare
+		// Qui si torna se la misura ï¿½ da rifare
 		//
 
 		/*
@@ -1326,8 +1326,8 @@ public class p20rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * dispone il contenuto dei pixel nella tabella in formato double [][][][].
-	 * Nellla tabella abbiamo: tabella[rep][slice][x][y] in cui slice è sempre 0
-	 * (usato per compatibilità con le librerie che sono fatte per processare
+	 * Nellla tabella abbiamo: tabella[rep][slice][x][y] in cui slice ï¿½ sempre 0
+	 * (usato per compatibilitï¿½ con le librerie che sono fatte per processare
 	 * dei volumi.
 	 * 
 	 * @param stack1
@@ -1388,7 +1388,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 	 */
 	private static double[] getTRVals(ImageStack stack1, String userinput) {
 		//
-		// attenzione nel caso del T1, viene chiamato TR ma in realtà è il TI
+		// attenzione nel caso del T1, viene chiamato TR ma in realtï¿½ ï¿½ il TI
 		//
 		String attribute = "???";
 		String value = "???";
@@ -1533,7 +1533,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 								double filtroFondo2 = filtroFondo;
 								// ##############################################
 								// applicazione del filtro sul fondo ai segnali
-								// in ingresso, ma solo se abbiamo più di 10
+								// in ingresso, ma solo se abbiamo piï¿½ di 10
 								// immagini
 								// #############################################
 
@@ -1780,32 +1780,32 @@ public class p20rmn_ implements PlugIn, Measurements {
 	// boolean testok = true;
 	// double rightValue = 59.59740003754821; // 59.100444600551945;
 	// if (medGel1 != rightValue) {
-	// IJ.log("medGel1 ERRATA " + medGel1 + " anzichè " + rightValue);
+	// IJ.log("medGel1 ERRATA " + medGel1 + " anzichï¿½ " + rightValue);
 	// testok = false;
 	// }
 	// rightValue = 3.961381020749687; // 4.006797467473977;
 	// if (devGel1 != rightValue) {
-	// IJ.log("devGel1 ERRATA " + devGel1 + " anzichè " + rightValue);
+	// IJ.log("devGel1 ERRATA " + devGel1 + " anzichï¿½ " + rightValue);
 	// testok = false;
 	// }
 	// rightValue = 74.93121866636639; // 73.95285294931146;
 	// if (medGel2 != rightValue) {
-	// IJ.log("medGel2 ERRATA " + medGel2 + " anzichè " + rightValue);
+	// IJ.log("medGel2 ERRATA " + medGel2 + " anzichï¿½ " + rightValue);
 	// testok = false;
 	// }
 	// rightValue = 3.5595121692227956; // 3.6103799208252223;
 	// if (devGel2 != rightValue) {
-	// IJ.log("devGel2 ERRATA " + devGel2 + " anzichè " + rightValue);
+	// IJ.log("devGel2 ERRATA " + devGel2 + " anzichï¿½ " + rightValue);
 	// testok = false;
 	// }
 	// rightValue = 114.61472226396391; // 113.45177367970913;
 	// if (medGel3 != rightValue) {
-	// IJ.log("medGel3 ERRATA " + medGel3 + " anzichè " + rightValue);
+	// IJ.log("medGel3 ERRATA " + medGel3 + " anzichï¿½ " + rightValue);
 	// testok = false;
 	// }
 	// rightValue = 4.517450908271077; // 4.585334675446435;
 	// if (devGel3 != rightValue) {
-	// IJ.log("devGel3 ERRATA " + devGel3 + " anzichè " + rightValue);
+	// IJ.log("devGel3 ERRATA " + devGel3 + " anzichï¿½ " + rightValue);
 	// testok = false;
 	// }
 	//
@@ -1829,32 +1829,32 @@ public class p20rmn_ implements PlugIn, Measurements {
 	//
 	// double rightValue = 41.12338699871981;
 	// if (medGel1 != rightValue) {
-	// IJ.log("medGel1 ERRATA " + medGel1 + " anzichè " + rightValue);
+	// IJ.log("medGel1 ERRATA " + medGel1 + " anzichï¿½ " + rightValue);
 	// testok = false;
 	// }
 	// rightValue = 6.807091233248218;
 	// if (devGel1 != rightValue) {
-	// IJ.log("devGel1 ERRATA " + devGel1 + " anzichè " + rightValue);
+	// IJ.log("devGel1 ERRATA " + devGel1 + " anzichï¿½ " + rightValue);
 	// testok = false;
 	// }
 	// rightValue = 47.02839973304845;
 	// if (medGel2 != rightValue) {
-	// IJ.log("medGel2 ERRATA " + medGel2 + " anzichè " + rightValue);
+	// IJ.log("medGel2 ERRATA " + medGel2 + " anzichï¿½ " + rightValue);
 	// testok = false;
 	// }
 	// rightValue = 6.160207177522188;
 	// if (devGel2 != rightValue) {
-	// IJ.log("devGel2 ERRATA " + devGel2 + " anzichè " + rightValue);
+	// IJ.log("devGel2 ERRATA " + devGel2 + " anzichï¿½ " + rightValue);
 	// testok = false;
 	// }
 	// rightValue = 73.95455746711055;
 	// if (medGel3 != rightValue) {
-	// IJ.log("medGel3 ERRATA " + medGel3 + " anzichè " + rightValue);
+	// IJ.log("medGel3 ERRATA " + medGel3 + " anzichï¿½ " + rightValue);
 	// testok = false;
 	// }
 	// rightValue = 5.076411495907888;
 	// if (devGel3 != rightValue) {
-	// IJ.log("devGel3 ERRATA " + devGel3 + " anzichè " + rightValue);
+	// IJ.log("devGel3 ERRATA " + devGel3 + " anzichï¿½ " + rightValue);
 	// testok = false;
 	// }
 	//
@@ -1917,7 +1917,7 @@ public class p20rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo è
+	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo ï¿½
 	 * facilitata la eventuale modifica / traduzione dei messaggi.
 	 * 
 	 * @param select
