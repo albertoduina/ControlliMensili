@@ -8,6 +8,6 @@
 	<classpathentry kind="lib" path="build"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/imagej"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Iw2ayv"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_60/lib/tools.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_151/lib/tools.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
