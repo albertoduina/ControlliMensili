@@ -55,6 +55,7 @@ import utils.UtilAyv;
 
 /**
  * 
+ * 
  * Main plugin for the Quality Controls of MRI images.
  * 
  * The program, for a new search, make a recursive search in the selected
