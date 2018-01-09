@@ -1,0 +1,7 @@
+2017-03-05 10:35 file=MyLog.java  line=859 ===>  ---- INIZIO ---------
+2017-03-05 10:35 file=p14rmn_.java  line=256 ===>  **** gatherMTF *****
+2017-03-05 10:35 file=p14rmn_.java  line=353 ===>  title= HRKA3_P14  calculateMTF level= 3 sSize= 128
+2017-03-05 10:35 file=p14rmn_.java  line=384 ===>  title= DUP_cropped preciseAngle= -36.87115345662538
+2017-03-05 10:35 file=p14rmn_.java  line=400 ===>  calculateMTF calcolo per sSize= 128
+2017-03-05 10:35 file=p14rmn_.java  line=580 ===>  uscita002 sSize= 128 >= selecWidth= 117
+2017-03-05 10:35 file=p14rmn_.java  line=404 ===>  esce per sSize= 128

@@ -55,7 +55,6 @@ import utils.UtilAyv;
 
 /**
  * 
- * 
  * Main plugin for the Quality Controls of MRI images.
  * 
  * The program, for a new search, make a recursive search in the selected
@@ -78,7 +77,7 @@ public class Sequenze_ implements PlugIn {
 	// // ABILITA E DISABILITA LE STAMPE DI DEBUG
 	// // METTERE debugTables A FALSE PER NON AVERE LE STAMPE
 	// //
-	public boolean debugTables = false;
+	public boolean debugTables = true;
 	public static boolean forcesilent = false;
 
 	public static boolean blackbox = false;
@@ -521,14 +520,15 @@ public class Sequenze_ implements PlugIn {
 	 * analizzare
 	 * 
 	 * @param pathList
-	 *            lista dei file presenti nelle directory e relative sottodirectory
-	 *            selezionate.
+	 *            lista dei file presenti nelle directory e relative
+	 *            sottodirectory selezionate.
 	 * @param tableCode2
 	 *            contenuto di codici.txt
 	 * @param tableExpand4
 	 *            contenuto di expand.txt
-	 * @return restituisce una TableSequence le cui colonne contengono: vetConta,
-	 *         vetPath, vetCodice, vetCoil, vetImaDaPassare, vetimaGruppo,
+	 * @return restituisce una TableSequence le cui colonne contengono:
+	 *         vetConta, vetPath, vetCodice, vetCoil, vetImaDaPassare,
+	 *         vetimaGruppo,
 	 */
 
 	public String[][] generateSequenceTable(String[] pathList, String[][] tableCode2, String[][] tableExpand4) {
@@ -922,10 +922,11 @@ public class Sequenze_ implements PlugIn {
 	}
 
 	/**
-	 * E' il motore che si preoccupa di chiamare i vari plugin, passando sulla linea
-	 * di comando il numero della linea di iw2ayv.txt da analizzare. Tiene conto dei
-	 * controlli gi� effettuati, per cui si pu� spegnere il PC e ripartire ad
-	 * analizzare dal file successivo all'ultimo analizzato con successo.
+	 * E' il motore che si preoccupa di chiamare i vari plugin, passando sulla
+	 * linea di comando il numero della linea di iw2ayv.txt da analizzare. Tiene
+	 * conto dei controlli gi� effettuati, per cui si pu� spegnere il PC e
+	 * ripartire ad analizzare dal file successivo all'ultimo analizzato con
+	 * successo.
 	 * 
 	 * @param tableSequenze5
 	 *            e' il file iw2ayv.txt ricaricato da disco
@@ -935,8 +936,8 @@ public class Sequenze_ implements PlugIn {
 	public String[][] callPluginsFromSequenceTable(String[][] tableSequenze5, String[][] tableCode5, boolean test,
 			boolean superficiali, boolean p10p11p12, TextWindow tw) {
 
-		// Attenzione: contrariamente a quanto scritto piu' sotto, per
-		// la struttura della tableSequenze e' stata creata la classe
+		// Attenzione: contrariamente a quanto scritto pi� sotto, per
+		// la struttura della tableSequenze � stata creata la classe
 		// TableSequence che si occupa di tutto e in cui vengono definiti:
 		// ROW = 0, PATH = 1, CODE = 2, COIL = 3, IMA_PASS = 4, SERIE = 5,
 		// ACQ = 6, IMA = 7, TIME = 8, ECHO = 9, DONE = 10, COLUMNS = 11
@@ -1014,8 +1015,8 @@ public class Sequenze_ implements PlugIn {
 				boolean jump = false;
 				if (superficiali) {
 					if ((plugin.equals("contMensili.p10rmn_")) || (plugin.equals("contMensili.p11rmn_"))
-							|| (plugin.equals("contMensili.p12rmn_")) || (plugin.equals("contMensili.p13rmn_"))
-							|| (plugin.equals("contMensili.p5rmn_")) || (plugin.equals("contMensili.p5rmn_"))) {
+							|| (plugin.equals("contMensili.p12rmn_")) || (plugin.equals("contMensili.p5rmn_"))
+							|| (plugin.equals("contMensili.p5rmn_"))) {
 						jump = false;
 						count++;
 						// IJ.log("" + count + " eseguito superficiali");
@@ -1110,12 +1111,13 @@ public class Sequenze_ implements PlugIn {
 	}
 
 	/**
-	 * Cerca in tabella il nome del plugin da lanciare per il codice corrispondente
-	 * alla linea di ayv.txt elaborata al momento. Potremo avere ad esempio "p6rmn_"
+	 * Cerca in tabella il nome del plugin da lanciare per il codice
+	 * corrispondente alla linea di ayv.txt elaborata al momento. Potremo avere
+	 * ad esempio "p6rmn_"
 	 * 
 	 * @param lineNumber
-	 *            numero linea tableSequenze in elaborazione (la prima con "fatto"
-	 *            =0
+	 *            numero linea tableSequenze in elaborazione (la prima con
+	 *            "fatto" =0
 	 * @param tableSequenze
 	 *            tabella sequenze in memoria
 	 * @param tableCode
@@ -1140,13 +1142,13 @@ public class Sequenze_ implements PlugIn {
 	}
 
 	/**
-	 * Cerca in tabella il nome del plugin da lanciare per il codice corrispondente
-	 * alla linea di ayv.txt elaborata al momento. Potremo avere ad esempio
-	 * "p6rmn_". Utilizza anche la colonna "COIL"
+	 * Cerca in tabella il nome del plugin da lanciare per il codice
+	 * corrispondente alla linea di ayv.txt elaborata al momento. Potremo avere
+	 * ad esempio "p6rmn_". Utilizza anche la colonna "COIL"
 	 * 
 	 * @param lineNumber
-	 *            numero linea tableSequenze in elaborazione (la prima con "fatto"
-	 *            =0
+	 *            numero linea tableSequenze in elaborazione (la prima con
+	 *            "fatto" =0
 	 * @param tableSequenze
 	 *            tabella sequenze in memoria
 	 * @param tableCode
@@ -1194,14 +1196,14 @@ public class Sequenze_ implements PlugIn {
 	}
 
 	/**
-	 * Cerca in tabella il numero delle linee in cui sono elencate le immagini da
-	 * elaborare da parte del plugin e le mette in una stringa da passare come
-	 * argomento al plugin. Potremo avere ad esempio 12#13#14#15 , se � previsto
-	 * che quel determinato plugin processi 4 immagini
+	 * Cerca in tabella il numero delle linee in cui sono elencate le immagini
+	 * da elaborare da parte del plugin e le mette in una stringa da passare
+	 * come argomento al plugin. Potremo avere ad esempio 12#13#14#15 , se �
+	 * previsto che quel determinato plugin processi 4 immagini
 	 * 
 	 * @param lineNumber
-	 *            numero linea tableSequenze in elaborazione (la prima con "fatto"
-	 *            =0
+	 *            numero linea tableSequenze in elaborazione (la prima con
+	 *            "fatto" =0
 	 * @param tableSequenze5
 	 *            tabella sequenze in memoria
 	 * @return argomento per il plugin da chiamare
@@ -1260,10 +1262,10 @@ public class Sequenze_ implements PlugIn {
 	}
 
 	/**
-	 * Verifica che il numero di immagini rilevate da scanlist per un certo tipo di
-	 * codice immagine corrisponda al numero previsto in codiciNew.csv. Se ci� non
-	 * accade viene passata una tabella di warnings a logVerifySequenceTable. Si
-	 * pu� comunque continuare a lavorare
+	 * Verifica che il numero di immagini rilevate da scanlist per un certo tipo
+	 * di codice immagine corrisponda al numero previsto in codiciNew.csv. Se
+	 * ci� non accade viene passata una tabella di warnings a
+	 * logVerifySequenceTable. Si pu� comunque continuare a lavorare
 	 * 
 	 * @param tableSequenze6
 	 * @param tableCode6
@@ -1384,10 +1386,10 @@ public class Sequenze_ implements PlugIn {
 	}
 
 	/**
-	 * Verifica che il numero di immagini rilevate da scanlist per un certo tipo di
-	 * codice immagine corrisponda al numero previsto in iw2ayv.txt. Se ci� non
-	 * accade viene passata una tabella di warnings a logVerifySequenceTable. Si
-	 * pu� comunque continuare a lavorare
+	 * Verifica che il numero di immagini rilevate da scanlist per un certo tipo
+	 * di codice immagine corrisponda al numero previsto in iw2ayv.txt. Se ci�
+	 * non accade viene passata una tabella di warnings a
+	 * logVerifySequenceTable. Si pu� comunque continuare a lavorare
 	 * 
 	 * @param tableSequenze6
 	 * @param tableCode6
@@ -1691,8 +1693,8 @@ public class Sequenze_ implements PlugIn {
 	}
 
 	/**
-	 * Effettua il bubble sort della tabella delle sequenze, utilizza l'algoritmo
-	 * bubblesort
+	 * Effettua il bubble sort della tabella delle sequenze, utilizza
+	 * l'algoritmo bubblesort
 	 * 
 	 * @param tableIn
 	 * @return
@@ -1824,8 +1826,8 @@ public class Sequenze_ implements PlugIn {
 
 	/***
 	 * Questo � un test per vedere se posso avere duefile di identico nome, uno
-	 * esterno ed uno interno al file jar (in modo da tenere l'interno come default
-	 * ed eventualmente l'esterno come risorsa modificabile dall'utente)
+	 * esterno ed uno interno al file jar (in modo da tenere l'interno come
+	 * default ed eventualmente l'esterno come risorsa modificabile dall'utente)
 	 * 
 	 * @param source
 	 */

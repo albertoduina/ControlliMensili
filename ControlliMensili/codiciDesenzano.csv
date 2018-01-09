@@ -51,6 +51,6 @@ NVCH3;Neurovascular Coil Head;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 RWCA3;Wrist;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 RBCA3;Torso;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 CTLC3;CervicalToracicLumbar Cerv;2;2;0;0;0;0;0;xxx;vup;x;p12rmn_
-CTLT3;CervicalToracicLumbar Torac;2;2;0;0;0;0;0;xxx;vup;x;p5rmn_
-CTL13;CervicalToracicLumbar Lumb1;2;2;0;0;0;0;0;xxx;vup;x;p5rmn_
-CTL23;CervicalToracicLumbar Lumb2;2;2;0;0;0;0;0;xxx;vup;x;p5rmn_
+CTLT3;CervicalToracicLumbar Torac;2;2;0;0;0;0;0;xxx;vup;x;p13rmn_
+CTL13;CervicalToracicLumbar Lumb1;2;2;0;0;0;0;0;xxx;vup;x;p13rmn_
+CTL23;CervicalToracicLumbar Lumb2;2;2;0;0;0;0;0;xxx;vup;x;p13rmn_
