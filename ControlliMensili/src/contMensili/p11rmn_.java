@@ -344,13 +344,13 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 	/***
 	 * introdotto il parametro integer mode, per riunire i flag booleani: step,
-	 * verbose, test, fast-----------------------------------------------------
-	 * mode = 0 silent ------------------------------------- ------------------
-	 * mode = 1 auto fast ----------------------------------------------------
-	 * mode = 2 manuale-------------------------------------------------------
-	 * mode = 3 manuale passo per passo (step)--------------------------------
-	 * mode = 4 --------------------------------------------------------------
-	 * mode = 10 test automatico con immagini Siemens o Ge--------------------
+	 * verbose, test, fast----------------------------------------------------- mode
+	 * = 0 silent ------------------------------------- ------------------ mode = 1
+	 * auto fast ---------------------------------------------------- mode = 2
+	 * manuale------------------------------------------------------- mode = 3
+	 * manuale passo per passo (step)-------------------------------- mode = 4
+	 * -------------------------------------------------------------- mode = 10 test
+	 * automatico con immagini Siemens o Ge--------------------
 	 * 
 	 * @param path1
 	 * @param path2
@@ -1248,8 +1248,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Effettua il calcolo della deviazione standard per i pixel della immagine
-	 * differenza i cui corrispondenti pixel della prima immagine oltrepassano
-	 * la soglia di conteggio, secondo il protocollo NEMA
+	 * differenza i cui corrispondenti pixel della prima immagine oltrepassano la
+	 * soglia di conteggio, secondo il protocollo NEMA
 	 * 
 	 * @param imp1
 	 *            immagine in input
@@ -1375,8 +1375,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * Calcolo dell'FWHM su di un vettore profilo
 	 * 
 	 * @param vetUpDwPoints
-	 *            Vettore restituito da AnalPlot2 con le posizioni dei punti
-	 *            sopra e sotto la meta' altezza
+	 *            Vettore restituito da AnalPlot2 con le posizioni dei punti sopra e
+	 *            sotto la meta' altezza
 	 * @param profile
 	 *            Profilo da analizzare
 	 * @return out[0]=FWHM, out[1]=peak position
@@ -1868,8 +1868,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 			imp11.updateAndDraw();
 			ImageUtils.imageToFront(imp11);
 
-			MyLog.waitHere(info10 + "\nimp11= " + imp11.getTitle()
-					+ "\n \nRichiesto riposizionamento della ROI indicata in rosso,\nORA e' possibile spostarla, oppure lasciarla dove si trova.\nPOI premere OK");
+			MyLog.waitHere("<< SELEZIONE MANUALE ATTIVA >>\n \n" + info10 + "\nimp11= " + imp11.getTitle()
+					+ "\n \nRichiesto riposizionamento della ROI indicata in rosso,"
+					+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova.\nPOI premere OK");
 
 			manualRequired = false;
 			who1 = 0;
@@ -1897,11 +1898,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * Cerca la direzione in cui si trova il fantoccio La routine imposta
-	 * quattro ROI attorno al punto di massima. Le medie vengono messe in un
-	 * array ed ordinate. Le medie superiori od uguali all'elemento 2 sono le
-	 * due maggiori. Cio' determina la direzione in cui troviamo il massimo
-	 * segnale e, presumibilmente il fantoccio.
+	 * Cerca la direzione in cui si trova il fantoccio La routine imposta quattro
+	 * ROI attorno al punto di massima. Le medie vengono messe in un array ed
+	 * ordinate. Le medie superiori od uguali all'elemento 2 sono le due maggiori.
+	 * Cio' determina la direzione in cui troviamo il massimo segnale e,
+	 * presumibilmente il fantoccio.
 	 * 
 	 * 1 -
 	 * 

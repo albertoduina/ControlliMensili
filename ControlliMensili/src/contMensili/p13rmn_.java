@@ -390,7 +390,8 @@ public class p13rmn_ implements PlugIn, Measurements {
 			// MyLog.logVector(info1, "info1");
 			// MyLog.waitHere();
 
-			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+			
 			String t1 = "TESTO";
 			String s2 = "VALORE";
 			String s3 = "roi_x";

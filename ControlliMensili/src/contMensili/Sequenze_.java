@@ -87,21 +87,22 @@ public class Sequenze_ implements PlugIn {
 	public static String blacklog = "";
 
 	public void run(String arg) {
-
-		UtilAyv.setMyPrecision();
-
-		//
-		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
+		// ============================================================================================
+		// nota bene: le seguenti istruzioni devono ASSOLUTAMENTE essere all'inizio, in
+		// questo
 		// modo il messaggio viene emesso, altrimenti si ha una eccezione
 		//
-
 		try {
 			Class.forName("utils.IW2AYV");
 		} catch (ClassNotFoundException e) {
 			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
 			return;
 		}
+		if (!UtilAyv.jarCount("iw2ayv_"))
+			return;
+		// ============================================================================================
 
+		UtilAyv.setMyPrecision();
 		// MyFileLogger.logger.info("<-- INIZIO Sequenze -->");
 		TextWindow tw = new TextWindow("Sequenze", "<-- INIZIO Sequenze -->", 300, 200);
 		Frame lw = WindowManager.getFrame("Sequenze");
@@ -109,39 +110,12 @@ public class Sequenze_ implements PlugIn {
 			return;
 		lw.setLocation(10, 10);
 
-		// ABBANDONATO EXCEL WRITER
-		// new InputOutput().findCSV(MyConst.CODE_FILE);
-		// new InputOutput().findCSV(MyConst.LIMITS_FILE);
-		// new InputOutput().findCSV(MyConst.EXPAND_FILE);
-
-		// IJ.log(ReadVersion.readVersionInfoInManifest("utils"));
-		// IJ.log(ReadVersion.readVersionInfoInManifest("pippo"));
-		// IJ.log(ReadVersion.readVersionInfoInManifest("contMensili"));
-		// MyLog.waitHere();
-
-		// if (this.getClass().getResource("/iw2ayv*.jar") == null) {
-		// IJ.error("ATTENZIONE, manca il file iw2ayv.jar");
-		// return;
-		// }
-		// if (this.getClass().getResource("/Excel_Writer.jar") == null) {
-		// IJ.error("ATTENZIONE, manca il file Excel_Writer.jar");
-		// return;
-		// }
-
 		String startingDir = Prefs.get(MyConst.PREFERENCES_1, MyConst.DEFAULT_PATH);
 		// IJ.log("Sequenze_>>> startingDir letta= " + startingDir);
 
 		UtilAyv.logResizer();
 
 		boolean startingDirExist = new File(startingDir).exists();
-
-		// IJ.log("il sistema dice che siamo in:"
-		// + System.getProperty("user.home"));
-		//
-		// IJ.log("il file trovami si trova in:"
-		// + new InputOutput().findResource("Sequenze_.class"));
-
-		// String[][] tableCode = TableCode.loadTable(MyConst.CODE_FILE);
 
 		String[][] tableCode = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 		if (debugTables) {
@@ -152,8 +126,6 @@ public class Sequenze_ implements PlugIn {
 
 		String[][] tableExpand = TableExpand.loadTable(MyConst.EXPAND_FILE);
 
-		// new AboutBox().about("Scansione automatica cartelle",
-		// this.getClass());
 		new AboutBox().about("Scansione automatica cartelle", MyVersion.CURRENT_VERSION);
 		IJ.wait(2000);
 		new AboutBox().close();
@@ -170,14 +142,11 @@ public class Sequenze_ implements PlugIn {
 
 		List<String> arrayStartingDir = new ArrayList<String>();
 
-		// do {
 		GenericDialog gd = new GenericDialog("", IJ.getInstance());
 		gd.addCheckbox("Nuovo controllo", aux2);
 		gd.addCheckbox("SelfTest", false);
 		gd.addCheckbox("p10_ p11_ p12_ p16_ p17_", true);
 		gd.addCheckbox("Fast", true);
-		// if (blackbox)
-		// gd.addCheckbox("Batch", true);
 		gd.addCheckbox("Superficiali", false);
 		gd.showDialog();
 		if (gd.wasCanceled()) {
@@ -188,14 +157,7 @@ public class Sequenze_ implements PlugIn {
 		self1 = gd.getNextBoolean();
 		p10p11p12 = gd.getNextBoolean();
 		fast = gd.getNextBoolean();
-		// if (blackbox)
-		// batch = gd.getNextBoolean();
 		superficiali = gd.getNextBoolean();
-
-		// MyLog.waitHere("nuovoControllo= " + nuovo2 + "\nselfTest= " + self1 +
-		// "\np10_p11_p12_p16_17_= " + p10p11p12
-		// + "\nfast= " + fast + "\nsuperficiali= " + superficiali);
-
 		if (fast) {
 			Prefs.set("prefer.fast", "true");
 		} else {
@@ -223,18 +185,14 @@ public class Sequenze_ implements PlugIn {
 			IJ.runPlugIn("contMensili.p11rmn_OLD1", "-1");
 			IJ.runPlugIn("contMensili.p12rmn_OLD1", "-1");
 
-			// IJ.runPlugIn("contMensili.p9rmn_", "-1");
-			// IJ.runPlugIn("contMensili.p2rmn_", "-1");
-
 			ButtonMessages.ModelessMsg("Sequenze: fine selfTest, vedere Log per risultati", "CONTINUA");
 			return;
-			// } else if (nuovo1 || !startingDirExist) {
-			// } else if ((nuovo2 || !startingDirExist) && (!batch)) {
-		} else if (nuovo2 || !startingDirExist) {
+		}
+
+		if (nuovo2 || !startingDirExist) {
 			nuovo1 = true;
 			aux2 = true;
 			aux3 = true;
-
 			DirectoryChooser.setDefaultDirectory(startingDir);
 			DirectoryChooser od1 = new DirectoryChooser("Selezionare la cartella: ");
 			startingDir = od1.getDirectory();
@@ -242,27 +200,10 @@ public class Sequenze_ implements PlugIn {
 			if (startingDir == null)
 				return;
 			Prefs.set("prefer.string1", startingDir);
-			// MyFileLogger.logger.info("Sequenze_>>> startingDir salvata= "
-			// + startingDir);
-
-			String aux1 = Prefs.get(MyConst.PREFERENCES_1, MyConst.DEFAULT_PATH);
 			arrayStartingDir.add(startingDir);
-			// MyFileLogger.logger.info("Sequenze_>>> startingDir riletta= "
-			// + aux1);
-			// } else if (nuovo2 && batch) {
-			// nuovo1 = true;
-			// aux2 = true;
-			// aux3 = true;
-			// DirectoryChooser.setDefaultDirectory(startingDir);
-			// DirectoryChooser od1 = new DirectoryChooser("Selezionare la
-			// cartella: ");
-			// startingDir = od1.getDirectory();
-			//
-			// if (startingDir == null)
-			// return;
-			// arrayStartingDir.add(startingDir);
+		} else {
+			arrayStartingDir.add(startingDir);
 		}
-		// } while (batch);
 
 		long startTime = System.currentTimeMillis();
 		for (int b1 = 0; b1 < arrayStartingDir.size(); b1++) {
@@ -307,8 +248,6 @@ public class Sequenze_ implements PlugIn {
 				File fz = new File(startingDir + MyConst.TXT_FILE);
 				if (fz.exists())
 					fz.delete();
-				// MyLog.here();
-				// IJ.log("startingDir=" + startingDir);
 				MyLog.initLog(startingDir + "MyLog.txt");
 
 				List<File> result = getFileListing(new File(startingDir));
@@ -320,11 +259,6 @@ public class Sequenze_ implements PlugIn {
 				for (File file : result) {
 					list[j1++] = file.getPath();
 				}
-				// MyLog.logVectorVertical(list, "list");
-				// MyLog.waitHere();
-
-				// //
-				// //
 
 				String[][] tableSequenceLoaded = generateSequenceTable(list, tableCode, tableExpand);
 				if (debugTables) {
@@ -333,31 +267,10 @@ public class Sequenze_ implements PlugIn {
 					MyLog.waitHere("salvare il log come TableSequenceLoaded");
 				}
 
-				// cancello gli eventuali messaggi di ImageJ dal log
-				// if (WindowManager.getFrame("Log") != null) {
-				// IJ.selectWindow("Log");
-				// IJ.run("Close");
-				// }
-
 				if (tableSequenceLoaded == null) {
 					MyLog.here("non sono state trovate immagini da analizzare");
 					return;
 				}
-
-				// =============================================================
-				// VECCHIA CAZZATA FUNZIONANTE
-				// =============================================================
-
-				//
-				// Effettuo il sort della table, secondo il tempo di
-				// acquisizione
-				//
-				// String[][] tableSequenceSorted =
-				// bubbleSortSequenceTable2(tableSequenceLoaded);
-				// if (debugTables) {
-				// MyLog.logMatrix(tableSequenceSorted, "tableSequenceSorted");
-				// MyLog.waitHere("salvare il log come TableSequenceSorted");
-				// }
 
 				// =============================================================
 				// NUOVA CAZZATA INEDITA
@@ -384,16 +297,6 @@ public class Sequenze_ implements PlugIn {
 					MyLog.waitHere("salvare il log come TableSequenceReordered");
 				}
 
-				// String[][] tableSequenceReordered =
-				// TableSorter.minsort(tableSequenceReorderedXX,
-				// TableSequence.POSIZ);
-				// if (debugTables) {
-				// IJ.log("\\Clear");
-				// MyLog.logMatrix(tableSequenceReordered,
-				// "tableSequenceReordered");
-				// MyLog.waitHere("salvare il log come tableSequenceReordered");
-				// }
-
 				String[][] listProblems = verifySequenceTable(tableSequenceReordered, tableCode);
 				if (debugTables) {
 					IJ.log("\\Clear");
@@ -403,11 +306,6 @@ public class Sequenze_ implements PlugIn {
 
 				String[] myCode1 = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_", "YL2S_", "YR2F_", "YR2S_", "JUS1A",
 						"JUSAA", "KUS1A", "KUSAA", "PUSAA", "PUS1A" };
-				// int[] myNum = { 4 };
-				// String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF", "Li",
-				// "LN",
-				// "LT" };
-				// String[] myPosiz = { "-45", "0", "45" };
 
 				String[][] tableSequenceModified1 = TableSorter.tableModifierSmart(tableSequenceReordered, myCode1);
 
@@ -416,37 +314,6 @@ public class Sequenze_ implements PlugIn {
 					MyLog.logMatrix(tableSequenceModified1, "tableSequenceModified1");
 					MyLog.waitHere("salvare il log come tableSequenceModified1");
 				}
-
-				// String[] myCode2 = { "JUS1A", "JUSAA" };
-				// String[][] tableSequenceModified2 =
-				// TableSorter.tableModifierSmart(tableSequenceModified1,
-				// myCode2);
-				// if (debugTables) {
-				// IJ.log("\\Clear");
-				// MyLog.logMatrix(tableSequenceModified2,
-				// "tableSequenceModified2");
-				// MyLog.waitHere("salvare il log come tableSequenceModified2");
-				// }
-				//
-				//
-				// // int[] myNum = { 4 };
-				// // String[] myCoil = { "LH", "Lo", "LS", "LD", "L8", "LF",
-				// "Li",
-				// // "LN",
-				// // "LT" };
-				// // String[] myPosiz = { "-45", "0", "45" };
-				// String[] myCode3 = { "KUS1A", "KUSAA" };
-				//
-				// String[][] tableSequenceModified3 =
-				// TableSorter.tableModifierSmart(tableSequenceModified2,
-				// myCode3);
-				//
-				// if (true) {
-				// IJ.log("\\Clear");
-				// MyLog.logMatrix(tableSequenceModified3,
-				// "tableSequenceModified3");
-				// MyLog.waitHere("salvare il log come tableSequenceModified3");
-				// }
 
 				boolean test = false;
 				// NOTA BENE: lasciare test a false, altrimenti non vengono piu'
@@ -458,8 +325,6 @@ public class Sequenze_ implements PlugIn {
 				if (!success)
 					IJ.log("Problemi creazione file iw2ayv.txt");
 			}
-			// MyLog.here();
-			// IJ.log("startingDir=" + startingDir);
 
 			String[][] tableSequenceReloaded = new TableSequence().loadTable(startingDir + MyConst.SEQUENZE_FILE);
 			if (debugTables) {
@@ -1026,7 +891,7 @@ public class Sequenze_ implements PlugIn {
 				if ((plugin == null) || (argomento == null) || jump) {
 					j1++;
 				} else {
-					// qui � dove vengono passate al plugin le righe delle
+					// qui e' dove vengono passate al plugin le righe delle
 					// immagini da analizzare.
 					new TableSequence();
 					int numImaDaPassare = Integer.parseInt(TableSequence.getImaPass(tableSequenze5, j1));
@@ -1043,7 +908,7 @@ public class Sequenze_ implements PlugIn {
 					// + tableSequenze5.length + " " + theCode + " "
 					// + theCoil + " >>>");
 					tw.append("<<< RIGA " + j1 + " / " + tableSequenze5.length + " " + theCode + " >><< " + theCoil
-							+ " " + plugin + " >>>");
+							+ " " + plugin + " arg= " + argomento + " >>>");
 
 					if (numImaDaPassare == 0) {
 						j1++;

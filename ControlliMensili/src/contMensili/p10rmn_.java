@@ -135,11 +135,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * INTERAZIONE CON L'UTENTE
 	 * 
 	 * 
-	 * FAST NON A BUON FINE: VIENE MOSTRATA L'IMMAGINE, SI CHIEDE IL
-	 * POSIZIONAMENTO DEL CERCHIO CHE IDENTIFICA LA POSIZIONE DEL FANTOCCIO,
-	 * VIENE MOSTRATO L'OVERLAY COMPLETO DELLA ROI QUADRATA E CHIESTA CONFERMA
-	 * ALL'OPERATORE (TENERE VIA UN SET DI IMMAGINI, IN MODO DA POTER ESEGUIRE
-	 * ANCHE I TEST DI REGRESSIONE)
+	 * FAST NON A BUON FINE: VIENE MOSTRATA L'IMMAGINE, SI CHIEDE IL POSIZIONAMENTO
+	 * DEL CERCHIO CHE IDENTIFICA LA POSIZIONE DEL FANTOCCIO, VIENE MOSTRATO
+	 * L'OVERLAY COMPLETO DELLA ROI QUADRATA E CHIESTA CONFERMA ALL'OPERATORE
+	 * (TENERE VIA UN SET DI IMMAGINI, IN MODO DA POTER ESEGUIRE ANCHE I TEST DI
+	 * REGRESSIONE)
 	 * 
 	 * MODO NORMALE: VIENE MOSTRATA L'IMMAGINE CON L'OVERLAY COMPLETO DELLA ROI
 	 * QUADRATA, CHIESTA CONFERMA ALL'OPERATORE
@@ -153,16 +153,15 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * 
 	 * 
 	 * ****************** QUANTO SCRITTO DI SEGUITO NON E'VALIDO *********** A
-	 * QUESTA DESCRIZIONE VA AGGIUNTO CHE SE ANCHE UNO SOLO DEI PARAMETRI VA AL
-	 * DI FUORI DAI LIMITI DI MASSIMA:
+	 * QUESTA DESCRIZIONE VA AGGIUNTO CHE SE ANCHE UNO SOLO DEI PARAMETRI VA AL DI
+	 * FUORI DAI LIMITI DI MASSIMA:
 	 * 
-	 * VIENE PRESENTATO UN MESSAGGIO CHE INDICA CHE VALORE SUPERA I LIMITI, CI
-	 * SONO 3 POSSIBILITA' DI SCELTA: CONTINUA, VISUALIZZA, SUCCESSIVA CONTINUA
-	 * PERMETTE DI CONTINUARE, COME SE NON CI FOSSE STATO ALCUN SUPERAMENTO,
-	 * VISUALIZZA LO SI UTILIZZA SE SI E' IN MODO FAST, RIPARTE CON IL
-	 * CONTROLLO, PERO'LE IMMAGINI VENGONO VISUALIZZATE, PERMETTENDO DI
-	 * LOCALIZZARE (FORSE) IL PROBLEMA, SUCCESSIVA PASSA ALLA IMMAGINE
-	 * SUCCESSIVA, I RISULATATI NON VERRANNO SCRITTI
+	 * VIENE PRESENTATO UN MESSAGGIO CHE INDICA CHE VALORE SUPERA I LIMITI, CI SONO
+	 * 3 POSSIBILITA' DI SCELTA: CONTINUA, VISUALIZZA, SUCCESSIVA CONTINUA PERMETTE
+	 * DI CONTINUARE, COME SE NON CI FOSSE STATO ALCUN SUPERAMENTO, VISUALIZZA LO SI
+	 * UTILIZZA SE SI E' IN MODO FAST, RIPARTE CON IL CONTROLLO, PERO'LE IMMAGINI
+	 * VENGONO VISUALIZZATE, PERMETTENDO DI LOCALIZZARE (FORSE) IL PROBLEMA,
+	 * SUCCESSIVA PASSA ALLA IMMAGINE SUCCESSIVA, I RISULATATI NON VERRANNO SCRITTI
 	 * 
 	 */
 
@@ -414,27 +413,26 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * 
 	 * 
 	 * introdotto il parametro integer mode, per riunire i flag booleani: step,
-	 * verbose, test, fast-----------------------------------------------------
-	 * mode = 0 silent ------------------------------------- ------------------
-	 * mode = 1 auto fast ----------------------------------------------------
-	 * mode = 2 manuale-------------------------------------------------------
-	 * mode = 3 manuale passo per passo (step)--------------------------------
-	 * mode = 4 --------------------------------------------------------------
-	 * mode = 10 test automatico con immagini Siemens o Ge--------------------
+	 * verbose, test, fast----------------------------------------------------- mode
+	 * = 0 silent ------------------------------------- ------------------ mode = 1
+	 * auto fast ---------------------------------------------------- mode = 2
+	 * manuale------------------------------------------------------- mode = 3
+	 * manuale passo per passo (step)-------------------------------- mode = 4
+	 * -------------------------------------------------------------- mode = 10 test
+	 * automatico con immagini Siemens o Ge--------------------
 	 * 
 	 * 
 	 * 
 	 * 
 	 * NOTA 14 GIUGNO 2015 vedo che per 5 modi diversi di fiunzionamento: FAST
 	 * MANUALE STEP SILENT abbiamo 5 o 6 flag booleani, che pero' non vengono
-	 * interpretati in modo uniforme e soprattutto non tutti vengono passati
-	 * alle subroutines, generando notevole confusione, quando si desidera
-	 * uniformare il modo di funzionamentro dei vari programmi. LA DOMANDA E':
-	 * CHE FARE ??????, quasi quasi potrei adottare un integer che pero'
-	 * rappresentera' i diversi modi di funzionamento 0,1,2,3 ecc oppure
-	 * potrebbe nuovamente mimare i binari 0 1 2 4 8 16 32 ecc??? Da una prima
-	 * occhiata mi sembrerebbe il caso di mantenere autocalled (viene passato a
-	 * molte subroutines)
+	 * interpretati in modo uniforme e soprattutto non tutti vengono passati alle
+	 * subroutines, generando notevole confusione, quando si desidera uniformare il
+	 * modo di funzionamentro dei vari programmi. LA DOMANDA E': CHE FARE ??????,
+	 * quasi quasi potrei adottare un integer che pero' rappresentera' i diversi
+	 * modi di funzionamento 0,1,2,3 ecc oppure potrebbe nuovamente mimare i binari
+	 * 0 1 2 4 8 16 32 ecc??? Da una prima occhiata mi sembrerebbe il caso di
+	 * mantenere autocalled (viene passato a molte subroutines)
 	 * 
 	 * @param path1
 	 *            path prima immagine
@@ -961,15 +959,19 @@ public class p10rmn_ implements PlugIn, Measurements {
 				// verifico che quando cresce il lato del quadrato non si
 				// esca
 				// dall'immagine
+				
+				String str32 = "ATTENZIONE la NEA esce dall'immagine senza riuscire a \n"
+						+ "trovare 121 pixel che superino il  test il programma \n" + "TERMINA PREMATURAMENTE,\n \n PREMERE OK";
+
 
 				if ((xCenterRoi + sqNEA - enlarge) >= width || (xCenterRoi - enlarge) <= 0) {
-					MyLog.waitHere(listaMessaggi(32), debug, timeout);
+					MyLog.waitHere(str32, debug, timeout);
 					// return null;
 					// broken = true;
 					return rt;
 				}
 				if ((yCenterRoi + sqNEA - enlarge) >= height || (yCenterRoi - enlarge) <= 0) {
-					MyLog.waitHere(listaMessaggi(32), debug, timeout);
+					MyLog.waitHere(str32, debug, timeout);
 					// return null;
 					// broken = true;
 					return rt;
@@ -1282,9 +1284,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	/***
 	 * Esegue il controllo su di un set standard di immagini, i risultati sono
-	 * confrontati con quelli ottenuti inizialmente. Questo confronto permette
-	 * di rilevare effetti indesiderati di qualche modifica al plugin e/o
-	 * modifiche di imageJ
+	 * confrontati con quelli ottenuti inizialmente. Questo confronto permette di
+	 * rilevare effetti indesiderati di qualche modifica al plugin e/o modifiche di
+	 * imageJ
 	 * 
 	 * @param verbose
 	 * @return
@@ -1466,8 +1468,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 *            soglia di conteggio, vengono contati i pixel che la superano
 	 * @param paintPixels
 	 *            switch per test, se attivato vengono colorati i pixels di cui
-	 *            viene effettuato il conteggio. Utilizzato per verificare che
-	 *            le varie ROI siano posizionate correttamente
+	 *            viene effettuato il conteggio. Utilizzato per verificare che le
+	 *            varie ROI siano posizionate correttamente
 	 * @return pixel che superano la soglia
 	 */
 	public static int countPixOverLimitCentered(ImagePlus imp1, int sqX, int sqY, int sqR, double limit,
@@ -1530,8 +1532,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Effettua il calcolo della deviazione standard per i pixel della immagine
-	 * differenza i cui corrispondenti pixel della prima immagine oltrepassano
-	 * la soglia di conteggio, secondo il protocollo NEMA
+	 * differenza i cui corrispondenti pixel della prima immagine oltrepassano la
+	 * soglia di conteggio, secondo il protocollo NEMA
 	 * 
 	 * @param imp1
 	 *            immagine in input
@@ -1706,8 +1708,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * Dati i punti di inizio e fine di un segmento, restituisce il valore
 	 * dell'angolo theta, effettuando la conversione da coordinate rettangolari
 	 * (x,y) a coordinate polari (r, theta). NB: tiene conto che in ImageJ la
-	 * coordinata Y ha lo 0 in alto a sx, anziche' in basso a sx, come siamo
-	 * soliti a vedere il piano cartesiano
+	 * coordinata Y ha lo 0 in alto a sx, anziche' in basso a sx, come siamo soliti
+	 * a vedere il piano cartesiano
 	 * 
 	 * @param ax
 	 *            coordinata X inizio
@@ -1870,8 +1872,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * Riceve una ImagePlus con impostata una Line, restituisce le coordinate
-	 * dei 2 picchi. Se i picchi non sono 1 oppure 2, restituisce null.
+	 * Riceve una ImagePlus con impostata una Line, restituisce le coordinate dei 2
+	 * picchi. Se i picchi non sono 1 oppure 2, restituisce null.
 	 * 
 	 * @param imp1
 	 * @param dimPixel
@@ -2407,7 +2409,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp12.deleteRoi();
 				// MyLog.logVector(xPoints3, "xPoints3");
 				// MyLog.logVector(yPoints3, "yPoints3");
-				MyLog.waitHere(listaMessaggi(18) + " rilevati " + xPoints3.length + " punti", debug);
+				String msg18 = "<<PREMERE OK PER ATTIVARE LA SELEZIONE MANUALE >>\n \nimp11= " + imp11.getTitle()
+						+ "\nTroppa distanza tra i punti forniti ed il fit del cerchio\n";
+				MyLog.waitHere(msg18 + " rilevati " + xPoints3.length + " punti", debug);
 				manual = true;
 			}
 
@@ -2442,10 +2446,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 			imp11.updateAndDraw();
 			imp11.getRoi().setStrokeColor(Color.red);
 			imp11.getRoi().setStrokeWidth(1.1);
-			MyLog.waitHere(
-					"imp11= " + imp11.getTitle() + "\nNon si riescono a determinare le coordinate corrette del cerchio"
-							+ "\nRichiesto ridimensionamennto e riposizionamento della ROI indicata in rosso, attorno al fantoccio\n"
-							+ "POI premere  OK");
+			MyLog.waitHere("<<  SELEZIONE MANUALE ATTIVA >>\n \n" + "imp11= " + imp11.getTitle()
+					+ "\nNon si riescono a determinare le coordinate corrette del cerchio"
+					+ "\nRichiesto ridimensionamennto e riposizionamento della ROI indicata in rosso, attorno al fantoccio\n"
+					+ "POI premere  OK");
 
 			boundRec = imp11.getProcessor().getRoi();
 			xCenterCircle = boundRec.x + boundRec.width / 2;
@@ -2674,8 +2678,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * Per p3rmn le due immagini devono essere identiche, a parte che vengono
-	 * prese una di seguito all'altra. Testiamo seriesDescription e coil
+	 * Per p3rmn le due immagini devono essere identiche, a parte che vengono prese
+	 * una di seguito all'altra. Testiamo seriesDescription e coil
 	 * 
 	 * @param imp1
 	 * @param imp2
@@ -2904,8 +2908,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		// ---------+-----------------------------------------------------------+
 		lista[30] = "Viene definita una Noise Estimate Area NEA 11x11 evidenziata in verde";
 		lista[31] = "Viene definita una MROI 7x7 evidenziata in rosso";
-		lista[32] = "ATTENZIONE la NEA esce dall'immagine senza riuscire a \n"
-				+ "trovare 121 pixel che superino il  test il programma \n" + "TERMINA PREMATURAMENTE";
 		lista[33] = "Disegnata Mroi su imaDiff";
 		lista[34] = "Sulla MROI della ImaDiff otteniamo la stdDev = ";
 		lista[35] = "Accrescimento MROI lato= ";

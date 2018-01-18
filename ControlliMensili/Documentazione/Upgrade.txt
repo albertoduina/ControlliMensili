@@ -1,7 +1,7 @@
 Upgrade del programma
 
 
-1) spezzettati i vari programmi in pi� subroutines.
+1) spezzettati i vari programmi in piu' subroutines.
 2) introdotti i test in junit.
 
 
