@@ -111,8 +111,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 	// VET_NUMERI_GEL contiene il numero identificativo della targhetta sui
 	// GEL
 	//
-	private final int[] VET_NUMERI_GEL = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-			14 };
+	private final int[] VET_NUMERI_GEL = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14 };
 
 	// attenzione i seguenti POINTER_GELx_Tx sono dei puntatori ai dati
 	// nei vettori, NON contengono il numero del gel
@@ -223,7 +222,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 		// tabl = io.readFile1(CODE_FILE, TOKENS4);
 
-		tabl = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		// tabl = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		TableCode tc1= new TableCode();
+		String[][] tabCodici = tc1.loadMultipleTable( "codici", ".csv");
 
 		StringTokenizer strTok = new StringTokenizer(args, "#");
 		int nTokens = strTok.countTokens();
@@ -296,7 +297,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 			if (!selftest) {
 				//
-				// poich� si tratta dell'utilizzo manuale del programma chiedo
+				// poiche' si tratta dell'utilizzo manuale del programma chiedo
 				// quale immagine analizzare, in seguito chiedo se analizziamo
 				// un T1 o un T2 (in questo modo mi svincolo dai dati
 				// dell'immagine)
@@ -305,8 +306,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 				if (path1 == null)
 					return;
 
-				userSelection1 = ButtonMessages.ModalMsg(
-						"Cosa vuoi elaborare?   <03>", "T1", "T2");
+				userSelection1 = ButtonMessages.ModalMsg("Cosa vuoi elaborare?   <03>", "T1", "T2");
 				switch (userSelection1) {
 				case 1:
 					typeT2 = true;
@@ -367,8 +367,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 				ButtonMessages.ModelessMsg("Ricevuto=" + args, "CONTINUA");
 
 			if (nTokens != 1) {
-				ButtonMessages.ModelessMsg(VERSION
-						+ " >> p9rmn ERRORE PARAMETRI CHIAMATA", "CHIUDI");
+				ButtonMessages.ModelessMsg(VERSION + " >> p9rmn ERRORE PARAMETRI CHIAMATA", "CHIUDI");
 				IJ.log("p9rmn ERRORE PARAMETRI CHIAMATA =" + args);
 				return;
 			}
@@ -389,10 +388,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 		}
 		int misure1 = UtilAyv.setMeasure(MEAN + STD_DEV);
-		String[][] info1 = ReportStandardInfo.getStandardInfo(strRiga3, riga1,
-				tabl, VERSION + "_P9__ContMensili_" + MyVersion.CURRENT_VERSION
-						+ "__iw2ayv_" + MyVersionUtils.CURRENT_VERSION,
-				autoCalled);
+		
+		String[][] info1 = ReportStandardInfo.getStandardInfo(strRiga3, riga1, tabCodici, VERSION + "_P9__ContMensili_"
+				+ MyVersion.CURRENT_VERSION + "__iw2ayv_" + MyVersionUtils.CURRENT_VERSION, autoCalled);
 
 		//
 		// Qui si torna se la misura � da rifare
@@ -402,29 +400,20 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 			ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
 
-			int Rows = ReadDicom.readInt(ReadDicom.readDicomParameter(imp1,
-					DICOM_ROWS));
-			int Columns = ReadDicom.readInt(ReadDicom.readDicomParameter(imp1,
-					DICOM_COLUMNS));
+			int Rows = ReadDicom.readInt(ReadDicom.readDicomParameter(imp1, DICOM_ROWS));
+			int Columns = ReadDicom.readInt(ReadDicom.readDicomParameter(imp1, DICOM_COLUMNS));
 
-			strTR1 = ReadDicom.readDicomParameter(imp1,
-					MyConst.DICOM_REPETITION_TIME);
+			strTR1 = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_REPETITION_TIME);
 
-			strTE1 = ReadDicom
-					.readDicomParameter(imp1, MyConst.DICOM_ECHO_TIME);
-			strTI1 = ReadDicom.readDicomParameter(imp1,
-					MyConst.DICOM_INVERSION_TIME);
+			strTE1 = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_ECHO_TIME);
+			strTI1 = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_INVERSION_TIME);
 
-			MyLog.appendLog(fileDir + "MyLog.txt", "p9 TR= " + strTR1
-					+ " [mSec]");
-			MyLog.appendLog(fileDir + "MyLog.txt", "p9 TE= " + strTE1
-					+ " [mSec]");
-			MyLog.appendLog(fileDir + "MyLog.txt", "p9 TI= " + strTI1
-					+ " [mSec]");
+			MyLog.appendLog(fileDir + "MyLog.txt", "p9 TR= " + strTR1 + " [mSec]");
+			MyLog.appendLog(fileDir + "MyLog.txt", "p9 TE= " + strTE1 + " [mSec]");
+			MyLog.appendLog(fileDir + "MyLog.txt", "p9 TI= " + strTI1 + " [mSec]");
 
 			dimPixel = ReadDicom
-					.readDouble(ReadDicom.readSubstring(ReadDicom
-							.readDicomParameter(imp1, DICOM_PIXEL_SPACING), 2));
+					.readDouble(ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, DICOM_PIXEL_SPACING), 2));
 
 			int roi_diam = (int) ((double) ROI_DIAM * DIM_PIXEL_FOV_220 / dimPixel);
 
@@ -442,21 +431,17 @@ public class p9rmn_ implements PlugIn, Measurements {
 			// Prefs.get("prefer.p2rmnGy",
 			// defaultVetGy);
 
-			String saveVetXUpperLeftCornerRoiGels = Prefs.get(
-					"prefer.p2rmnGx", defaultVetGx);
-			String saveVetYUpperLeftCornerRoiGels = Prefs.get(
-					"prefer.p2rmnGy", defaultVetGy);
+			String saveVetXUpperLeftCornerRoiGels = Prefs.get("prefer.p2rmnGx", defaultVetGx);
+			String saveVetYUpperLeftCornerRoiGels = Prefs.get("prefer.p2rmnGy", defaultVetGy);
 
 			if (selftest) {
 				saveVetXUpperLeftCornerRoiGels = defaultVetGx;
 				saveVetYUpperLeftCornerRoiGels = defaultVetGy;
 			}
 
-			vetXUpperLeftCornerRoiGels = UtilAyv.getPos2(
-					saveVetXUpperLeftCornerRoiGels, Columns);
+			vetXUpperLeftCornerRoiGels = UtilAyv.getPos2(saveVetXUpperLeftCornerRoiGels, Columns);
 
-			vetYUpperLeftCornerRoiGels = UtilAyv.getPos2(
-					saveVetYUpperLeftCornerRoiGels, Rows);
+			vetYUpperLeftCornerRoiGels = UtilAyv.getPos2(saveVetYUpperLeftCornerRoiGels, Rows);
 
 			// vetXUpperLeftCornerRoiGels = UtilAyv
 			// .getPos(saveVetXUpperLeftCornerRoiGels);
@@ -466,16 +451,15 @@ public class p9rmn_ implements PlugIn, Measurements {
 			medGels = new double[vetXUpperLeftCornerRoiGels.length];
 			devGels = new double[vetXUpperLeftCornerRoiGels.length];
 			if (selftest) {
-				// userSelection1 = utils.ModelessMsg("SELFTEST    <40>",
+				// userSelection1 = utils.ModelessMsg("SELFTEST <40>",
 				// "CONTINUA");
 			}
 
 			for (int i1 = 0; i1 < vetRoi.length; i1++) {
 
 				if (selftest) {
-					imp1.setRoi(new OvalRoi(vetXUpperLeftCornerRoiGels[i1],
-							vetYUpperLeftCornerRoiGels[i1], roi_diam, roi_diam,
-							imp1));
+					imp1.setRoi(new OvalRoi(vetXUpperLeftCornerRoiGels[i1], vetYUpperLeftCornerRoiGels[i1], roi_diam,
+							roi_diam, imp1));
 
 					imp1.updateAndDraw();
 
@@ -496,15 +480,13 @@ public class p9rmn_ implements PlugIn, Measurements {
 						if (yRoi + roi_diam > Rows)
 							yRoi = Rows / 2;
 
-						imp1.setRoi(new OvalRoi(xRoi, yRoi, roi_diam, roi_diam,
-								imp1));
+						imp1.setRoi(new OvalRoi(xRoi, yRoi, roi_diam, roi_diam, imp1));
 
 						imp1.updateAndDraw();
 						if (!selftest)
 							userSelection1 = ButtonMessages.ModelessMsg(
-									"Posizionare ROI su GEL" + (i1 + 1)
-											+ "  e premere Accetta      <08>",
-									"ACCETTA", "RIDISEGNA");
+									"Posizionare ROI su GEL" + (i1 + 1) + "  e premere Accetta      <08>", "ACCETTA",
+									"RIDISEGNA");
 					} while (userSelection1 == 1);
 				}
 
@@ -519,8 +501,8 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 				medGels[i1] = stat1.mean;
 				devGels[i1] = stat1.stdDev;
-				MyLog.appendLog(fileDir + "MyLog.txt", "p9 GEL " + i1
-						+ " media= " + stat1.mean + " devstan= " + stat1.stdDev);
+				MyLog.appendLog(fileDir + "MyLog.txt",
+						"p9 GEL " + i1 + " media= " + stat1.mean + " devstan= " + stat1.stdDev);
 
 			}
 
@@ -533,10 +515,8 @@ public class p9rmn_ implements PlugIn, Measurements {
 			// + vetYUpperLeftCornerRoiGels[i1] + ";";
 			// }
 
-			saveVetXUpperLeftCornerRoiGels = UtilAyv.putPos2(
-					vetXUpperLeftCornerRoiGels, Columns);
-			saveVetYUpperLeftCornerRoiGels = UtilAyv.putPos2(
-					vetYUpperLeftCornerRoiGels, Rows);
+			saveVetXUpperLeftCornerRoiGels = UtilAyv.putPos2(vetXUpperLeftCornerRoiGels, Columns);
+			saveVetYUpperLeftCornerRoiGels = UtilAyv.putPos2(vetYUpperLeftCornerRoiGels, Rows);
 
 			Prefs.set("prefer.p2rmnGx", saveVetXUpperLeftCornerRoiGels);
 			Prefs.set("prefer.p2rmnGy", saveVetYUpperLeftCornerRoiGels);
@@ -561,8 +541,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 				// CNR= ( medGel1 - medGel2 ) / sqrt( devGel1 ^2 + devGel2 ^2 )
 				// ////////////
 				vetCNR[i1] = (medGels[pointerGel1[i1]] - medGels[pointerGel2[i1]])
-						/ (Math.sqrt(Math.pow(devGels[pointerGel1[i1]], 2)
-								+ Math.pow(devGels[pointerGel2[i1]], 2)));
+						/ (Math.sqrt(Math.pow(devGels[pointerGel1[i1]], 2) + Math.pow(devGels[pointerGel2[i1]], 2)));
 				if (!typeT2) {
 
 				}
@@ -582,24 +561,19 @@ public class p9rmn_ implements PlugIn, Measurements {
 			String s8 = "roi_r2";
 
 			String label;
-			double echo = ReadDicom.readDouble(ReadDicom.readDicomParameter(
-					imp1, DICOM_ECHO_TIME));
+			double echo = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1, DICOM_ECHO_TIME));
 			rt.addLabel(t1, "TE");
 			rt.addValue(s2, echo);
 			rt.incrementCounter();
 
-			double inversion = ReadDicom.readDouble(ReadDicom
-					.readDicomParameter(imp1, DICOM_INVERSION_TIME));
+			double inversion = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1, DICOM_INVERSION_TIME));
 			rt.addLabel(t1, "TI");
 			rt.addValue(s2, inversion);
 			if (typeT2 && (inversion > 0))
-				IJ.showMessage("la sequenza di "
-						+ path1
-						+ " dovrebbe essere una T2 ma ha un Inversion Time > 0!");
+				IJ.showMessage("la sequenza di " + path1 + " dovrebbe essere una T2 ma ha un Inversion Time > 0!");
 			for (int i1 = 0; i1 < pointerGel1.length; i1++) {
 				rt.incrementCounter();
-				label = "gels_" + VET_NUMERI_GEL[pointerGel1[i1]] + "-"
-						+ VET_NUMERI_GEL[pointerGel2[i1]];
+				label = "gels_" + VET_NUMERI_GEL[pointerGel1[i1]] + "-" + VET_NUMERI_GEL[pointerGel2[i1]];
 				rt.addLabel(t1, label);
 				rt.addValue(s2, vetCNR[i1]);
 				rt.addValue(s3, vetXUpperLeftCornerRoiGels[pointerGel1[i1]]);
@@ -613,9 +587,8 @@ public class p9rmn_ implements PlugIn, Measurements {
 			rt.show("Results");
 
 			if (autoCalled) {
-				userSelection3 = ButtonMessages.ModelessMsg(
-						"Accettare il risultato delle misure?     <11>",
-						"ACCETTA", "RIFAI");
+				userSelection3 = ButtonMessages.ModelessMsg("Accettare il risultato delle misure?     <11>", "ACCETTA",
+						"RIFAI");
 				switch (userSelection3) {
 				case 1:
 					UtilAyv.cleanUp();
@@ -629,17 +602,14 @@ public class p9rmn_ implements PlugIn, Measurements {
 			} else {
 				if (selftest) {
 					if (testSiemens)
-						testSymphony(medGels[1], devGels[1], medGels[0],
-								devGels[0], vetCNR[1]);
+						testSymphony(medGels[1], devGels[1], medGels[0], devGels[0], vetCNR[1]);
 
 					if (testGe)
-						testGe(medGels[1], devGels[1], medGels[0], devGels[0],
-								vetCNR[2]);
+						testGe(medGels[1], devGels[1], medGels[0], devGels[0], vetCNR[2]);
 				} else {
-					userSelection3 = ButtonMessages
-							.ModelessMsg(
-									"Fine programma, in modo STAND-ALONE salvare A MANO la finestra Risultati    <12>",
-									"CONTINUA");
+					userSelection3 = ButtonMessages.ModelessMsg(
+							"Fine programma, in modo STAND-ALONE salvare A MANO la finestra Risultati    <12>",
+							"CONTINUA");
 					System.gc();
 				}
 				accetta = true;
@@ -672,10 +642,10 @@ public class p9rmn_ implements PlugIn, Measurements {
 	} // close run
 
 	/**
-	 * Saves this ResultsTable as a tab or comma delimited text file. The table
-	 * is saved as a CSV (comma-separated values) file if 'path' ends with
-	 * ".csv". Displays a file save dialog if 'path' is empty or null. Does
-	 * nothing if the table is empty.
+	 * Saves this ResultsTable as a tab or comma delimited text file. The table is
+	 * saved as a CSV (comma-separated values) file if 'path' ends with ".csv".
+	 * Displays a file save dialog if 'path' is empty or null. Does nothing if the
+	 * table is empty.
 	 */
 	public static void mySaveAs(String path) throws IOException {
 
@@ -708,8 +678,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 	 * @param cnrGel_ab
 	 *            cnrGel 1-2
 	 */
-	private void testSymphony(double medGel_a, double devGel_a,
-			double medGel_b, double devGel_b, double cnrGel_ab) {
+	private void testSymphony(double medGel_a, double devGel_a, double medGel_b, double devGel_b, double cnrGel_ab) {
 		boolean testok = true;
 
 		double rightValue = 1647.762658227848;
@@ -735,16 +704,13 @@ public class p9rmn_ implements PlugIn, Measurements {
 		}
 		rightValue = 0.5465033551900027;
 		if (cnrGel_ab != rightValue) {
-			IJ.log("cnrGel_2_1 ERRATA  > " + cnrGel_ab + " anzich� "
-					+ rightValue);
+			IJ.log("cnrGel_2_1 ERRATA  > " + cnrGel_ab + " anzich� " + rightValue);
 			testok = false;
 		}
 		if (testok == true)
-			ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OK  <42>",
-					"CONTINUA");
+			ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OK  <42>", "CONTINUA");
 		else
-			ButtonMessages.ModelessMsg(
-					"Fine SelfTest CON ERRORI, vedi LOG  <43>", "CONTINUA");
+			ButtonMessages.ModelessMsg("Fine SelfTest CON ERRORI, vedi LOG  <43>", "CONTINUA");
 		UtilAyv.cleanUp();
 
 	} // testSymphony
@@ -763,8 +729,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 	 * @param cnrGel_ab
 	 *            cnrGel 1-2
 	 */
-	private void testGe(double medGel_a, double devGel_a, double medGel_b,
-			double devGel_b, double cnrGel_ab) {
+	private void testGe(double medGel_a, double devGel_a, double medGel_b, double devGel_b, double cnrGel_ab) {
 		boolean testok = true;
 
 		double rightValue = 733.5474683544304;
@@ -790,23 +755,19 @@ public class p9rmn_ implements PlugIn, Measurements {
 		}
 		rightValue = 2.150170864842611;
 		if (cnrGel_ab != rightValue) {
-			IJ.log("cnrGel_2_1 ERRATA  > " + cnrGel_ab + " anzich� "
-					+ rightValue);
+			IJ.log("cnrGel_2_1 ERRATA  > " + cnrGel_ab + " anzich� " + rightValue);
 			testok = false;
 		}
 		if (testok == true)
-			ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OK  <42>",
-					"CONTINUA");
+			ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OK  <42>", "CONTINUA");
 		else
-			ButtonMessages.ModelessMsg(
-					"Fine SelfTest CON ERRORI, vedi LOG  <43>", "CONTINUA");
+			ButtonMessages.ModelessMsg("Fine SelfTest CON ERRORI, vedi LOG  <43>", "CONTINUA");
 		UtilAyv.cleanUp();
 
 	} // testGe
 
 	/**
-	 * genera una directory temporanea e vi estrae le immagini di test da
-	 * test2.jar
+	 * genera una directory temporanea e vi estrae le immagini di test da test2.jar
 	 * 
 	 * @return home1 path della directory temporanea con le immagini di test
 	 */

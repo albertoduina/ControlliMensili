@@ -866,9 +866,15 @@ public class p12rmn_ implements PlugIn, Measurements {
 					step, verbose, test);
 			imp1.deleteRoi();
 
-			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+			// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+
+			TableCode tc1 = new TableCode();
+			String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
+
 			if (verbose)
 				MyLog.waitHere(listaMessaggi(45), debug, timeout);
+			// imp1.show();
+			// MyLog.waitHere("vedi imp1 and path1= " + path1);
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
 
 			if (iw1 != null) {
@@ -1175,8 +1181,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 *            soglia di conteggio, vengono contati i pixel che la superano
 	 * @param paintPixels
 	 *            switch per test, se attivato vengono colorati i pixels di cui
-	 *            viene effettuato il conteggio. Utilizzato per verificare che
-	 *            le varie ROI siano posizionate correttamente
+	 *            viene effettuato il conteggio. Utilizzato per verificare che le
+	 *            varie ROI siano posizionate correttamente
 	 * @return pixel che superano la soglia
 	 */
 	public static int countPixTest(ImagePlus imp1, int sqX, int sqY, int sqR, double limit, boolean paintPixels) {
@@ -2052,9 +2058,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 			imp11.setRoi(new OvalRoi(width / 2 - diamRoiMan / 2, height / 2 - diamRoiMan / 2, diamRoiMan, diamRoiMan));
 			imp11.getRoi().setStrokeColor(Color.red);
 			imp11.getRoi().setStrokeWidth(1.1);
-			MyLog.waitHere(
-					motivo + "\nRichiesto ridimensionamento e riposizionamento della ROI, indicata in rosso,attorno al fantoccio"
-							+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova.\nPOI premere OK");
+			MyLog.waitHere(motivo
+					+ "\nRichiesto ridimensionamento e riposizionamento della ROI, indicata in rosso,attorno al fantoccio"
+					+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova.\nPOI premere OK");
 			Rectangle boundRec11 = imp11.getProcessor().getRoi();
 			xCenterCircle = Math.round(boundRec11.x + boundRec11.width / 2);
 			yCenterCircle = Math.round(boundRec11.y + boundRec11.height / 2);
@@ -2504,8 +2510,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 	}
 
 	/***
-	 * Cerco se all'interno del cerchio esiste almeno un area di 3x3 pixel a
-	 * zero
+	 * Cerco se all'interno del cerchio esiste almeno un area di 3x3 pixel a zero
 	 * 
 	 * @param imp1
 	 * @param xRoi
@@ -2539,10 +2544,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * Verifica che nella roi (beh, all'incirca) non sia presente un gruppo di
-	 * 3x3 pixels. Utilizzata per verificare che nella posizione in cui si
-	 * misura il segnale di fondo, non esistano spazi senza segnale (vedi
-	 * immagini di Esine)
+	 * Verifica che nella roi (beh, all'incirca) non sia presente un gruppo di 3x3
+	 * pixels. Utilizzata per verificare che nella posizione in cui si misura il
+	 * segnale di fondo, non esistano spazi senza segnale (vedi immagini di Esine)
 	 * 
 	 * @param imp1
 	 * @param xRoi
@@ -2845,8 +2849,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Scrive una label all'interno di una textRoi, associata alla Roi gia'
-	 * impostata nell'ImagePlus che viene passata, purtroppo lascia tracci della
-	 * roi rettangolare in cui scrive
+	 * impostata nell'ImagePlus che viene passata, purtroppo lascia tracci della roi
+	 * rettangolare in cui scrive
 	 * 
 	 * @param imp1
 	 * @param text

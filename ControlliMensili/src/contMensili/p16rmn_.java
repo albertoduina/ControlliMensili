@@ -639,7 +639,9 @@ public class p16rmn_ implements PlugIn, Measurements {
 		// String[][] tabCodici = new InputOutput().readFile1(MyConst.CODE_FILE,
 		// MyConst.TOKENS4);
 
-		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		TableCode tc1 = new TableCode();
+		String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 
 		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path[0], impStack, tabCodici, VERSION, autoCalled);
 		rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
@@ -782,8 +784,8 @@ public class p16rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * Costruisce uno stack a partire dal path delle immagini e lo riordina
-	 * secondo la posizione delle fette.
+	 * Costruisce uno stack a partire dal path delle immagini e lo riordina secondo
+	 * la posizione delle fette.
 	 * 
 	 * @param path
 	 *            vettore contenente il path delle immagini
@@ -907,8 +909,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 	 *            Coordinate riferimento posizionato dall'operatore [ xStart,
 	 *            yStart, xEnd, yEnd ]
 	 * @param vetProfile
-	 *            Coordinate profilo (da rototraslare)[ xStart, yStart, xEnd,
-	 *            yEnd ]
+	 *            Coordinate profilo (da rototraslare)[ xStart, yStart, xEnd, yEnd ]
 	 * @param ra1
 	 *            Diametro della Roi per calcolo baseline correction
 	 * @param slab
@@ -1812,8 +1813,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * analisi di un profilo normale con ricerca punti sopra e sotto met�
-	 * altezza
+	 * analisi di un profilo normale con ricerca punti sopra e sotto met� altezza
 	 * 
 	 * @param profile1
 	 *            profilo da analizzare
@@ -1922,9 +1922,9 @@ public class p16rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * impedisce che nelle preferenze di ImageJ vengano memorizzati segmenti con
-	 * valori assurdi, crea un area al di fuori della quale il valore
-	 * memorizzato e' quello di default, inoltre non permette che il segmento
-	 * sia piu' corto di 10 pixel
+	 * valori assurdi, crea un area al di fuori della quale il valore memorizzato e'
+	 * quello di default, inoltre non permette che il segmento sia piu' corto di 10
+	 * pixel
 	 * 
 	 * @param vetLine
 	 *            coordinate linea [ xStart, yStart, xEnd, yEnd ]
@@ -2019,8 +2019,8 @@ public class p16rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * Restituisce i valori di riferimento per le immagini Ge (e simili), i
-	 * valori non dovrebbero mai cambiare, salvo che per modifiche a ImageJ
+	 * Restituisce i valori di riferimento per le immagini Ge (e simili), i valori
+	 * non dovrebbero mai cambiare, salvo che per modifiche a ImageJ
 	 * 
 	 * @return
 	 */

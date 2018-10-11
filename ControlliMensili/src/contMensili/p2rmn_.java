@@ -218,7 +218,9 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 		// tabl = io.readFile1(CODE_FILE, TOKENS4);
 
-		tabl = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+//		tabl = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		TableCode tc1= new TableCode();
+		String[][] tabCodici = tc1.loadMultipleTable( "codici", ".csv");
 
 		StringTokenizer strTok = new StringTokenizer(args, "#");
 		int nTokens = strTok.countTokens();
@@ -436,7 +438,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 		int misure1 = UtilAyv.setMeasure(MEAN + STD_DEV);
 		String[][] info1 = ReportStandardInfo.getStandardInfo(strRiga3,
-				vetRiga1[0], tabl, VERSION + "_P2_", autoCalled);
+				vetRiga1[0], tabCodici, VERSION + "_P2_", autoCalled);
 
 		//
 		// Qui si torna se la misura � da rifare

@@ -82,7 +82,6 @@ public class p5rmn_ implements PlugIn, Measurements {
 	public void run(String args) {
 		UtilAyv.setMyPrecision();
 
-
 		//
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
 		// modo il messaggio viene emesso, altrimenti si ha una eccezione
@@ -97,9 +96,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 		String className = this.getClass().getName();
 
-		VERSION = className + "_build_" + MyVersion.getVersion()
-				+ "_iw2ayv_build_" + MyVersionUtils.getVersion();
- 
+		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
+
 		if (IJ.versionLessThan("1.43k"))
 			return;
 
@@ -130,8 +128,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			case 2:
 				// new AboutBox().about("Controllo Bobine Superficiali",
 				// this.getClass());
-				new AboutBox().about("Controllo Bobine Superficiali",
-						MyVersion.CURRENT_VERSION);
+				new AboutBox().about("Controllo Bobine Superficiali", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -142,18 +139,15 @@ public class p5rmn_ implements PlugIn, Measurements {
 				step = true;
 			case 5:
 				String[] path = new String[3];
-				path[0] = UtilAyv
-						.imageSelection("SELEZIONARE PRIMA ACQUISIZIONE PRIMO ECO...");
+				path[0] = UtilAyv.imageSelection("SELEZIONARE PRIMA ACQUISIZIONE PRIMO ECO...");
 				if (path[0] == null)
 					return 0;
 
-				path[1] = UtilAyv
-						.imageSelection("SELEZIONARE SECONDA ACQUISIZIONE PRIMO ECO...");
+				path[1] = UtilAyv.imageSelection("SELEZIONARE SECONDA ACQUISIZIONE PRIMO ECO...");
 				if (path[1] == null)
 					return 0;
 
-				path[2] = UtilAyv
-						.imageSelection("SELEZIONARE PRIMA  ACQUISIZIONE SECONDO ECO...");
+				path[2] = UtilAyv.imageSelection("SELEZIONARE PRIMA  ACQUISIZIONE SECONDO ECO...");
 				if (path[2] == null)
 					return 0;
 				boolean verticalProfile = true;
@@ -164,8 +158,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 				int sqY = 0;
 				// ResultsTable rt1 = mainUnifor(path, sqX, sqY, "0",
 				// verticalProfile, autoCalled, step, verbose, test);
-				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile,
-						autoCalled, step, verbose, test);
+				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile, autoCalled, step, verbose, test);
 				if (rt1 == null)
 					return 0;
 
@@ -198,8 +191,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			return 0;
 		}
 
-		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
-				+ MyConst.SEQUENZE_FILE);
+		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir + MyConst.SEQUENZE_FILE);
 
 		String[] path = new String[3];
 		if (nTokens == MyConst.TOKENS2) {
@@ -217,16 +209,14 @@ public class p5rmn_ implements PlugIn, Measurements {
 			MyLog.logDebug(vetRiga[2], "P5", fileDir);
 		}
 
-		boolean direz = decodeDirez(TableSequence.getDirez(iw2ayvTable,
-				vetRiga[0]));
+		boolean direz = decodeDirez(TableSequence.getDirez(iw2ayvTable, vetRiga[0]));
 
 		boolean step = false;
 		boolean retry = false;
 		do {
 			// int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE);
 			int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
-					TableSequence.getCode(iw2ayvTable, vetRiga[0]),
-					TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
+					TableSequence.getCode(iw2ayvTable, vetRiga[0]), TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
 					vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
 
 			switch (userSelection1) {
@@ -236,8 +226,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			case 2:
 				// new AboutBox().about("Controllo Bobine Superficiali",
 				// this.getClass());
-				new AboutBox().about("Controllo Bobine Superficiali",
-						MyVersion.CURRENT_VERSION);
+				new AboutBox().about("Controllo Bobine Superficiali", MyVersion.CURRENT_VERSION);
 
 				retry = true;
 				break;
@@ -256,8 +245,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 				int sqY = 0;
 				// ResultsTable rt1 = mainUnifor(path, sqX, sqY, autoArgs,
 				// verticalProfile, autoCalled, step, verbose, test);
-				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile,
-						autoCalled, step, verbose, test);
+				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile, autoCalled, step, verbose, test);
 				if (rt1 == null)
 					return 0;
 
@@ -274,9 +262,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static ResultsTable mainUnifor(String[] path, int sqX, int sqY,
-			boolean verticalProfile, boolean autoCalled, boolean step,
-			boolean verbose, boolean test) {
+	public static ResultsTable mainUnifor(String[] path, int sqX, int sqY, boolean verticalProfile, boolean autoCalled,
+			boolean step, boolean verbose, boolean test) {
 		// public static ResultsTable mainUnifor(String[] path, int sqX, int
 		// sqY,
 		// String autoArgs, boolean verticalProfile, boolean autoCalled,
@@ -319,12 +306,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 			overlayGrid(imp1, MyConst.P5_GRID_NUMBER, verbose);
 
-			double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
-					ReadDicom.readDicomParameter(imp1,
-							MyConst.DICOM_PIXEL_SPACING), 2));
+			double dimPixel = ReadDicom.readDouble(
+					ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 2));
 			if (verbose)
-				imp1.setTitle("DIMENSIONI RETICOLO= "
-						+ (dimPixel * (double) height / (double) MyConst.P5_GRID_NUMBER)
+				imp1.setTitle("DIMENSIONI RETICOLO= " + (dimPixel * (double) height / (double) MyConst.P5_GRID_NUMBER)
 						+ " mm");
 
 			int sqNEA = MyConst.P5_NEA_11X11_PIXEL;
@@ -336,12 +321,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 			// disegno MROI su imp1
 			//
 			if (!test) {
-				int posX = ReadDicom.readInt(Prefs.get("prefer.p5rmnPosX",
-						Integer.toString(height / 2)));
+				int posX = ReadDicom.readInt(Prefs.get("prefer.p5rmnPosX", Integer.toString(height / 2)));
 				if ((posX < 10) || (posX > (height - 10)))
 					posX = height / 2;
-				int posY = ReadDicom.readInt(Prefs.get("prefer.p5rmnPosY",
-						Integer.toString(width / 2)));
+				int posY = ReadDicom.readInt(Prefs.get("prefer.p5rmnPosY", Integer.toString(width / 2)));
 				if ((posY < 10) || (posY > (width - 10)))
 					posY = width / 2;
 				// UtilAyv.autoAdjust(imp1, ip1);
@@ -375,10 +358,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 				sqX = boundingRectangle.x;
 				sqY = boundingRectangle.y;
 
-				Prefs.set("prefer.p5rmnPosX",
-						Integer.toString(boundingRectangle.x));
-				Prefs.set("prefer.p5rmnPosY",
-						Integer.toString(boundingRectangle.y));
+				Prefs.set("prefer.p5rmnPosX", Integer.toString(boundingRectangle.x));
+				Prefs.set("prefer.p5rmnPosY", Integer.toString(boundingRectangle.y));
 			} else {
 				imp1.setRoi(sqX, sqY, sqNEA, sqNEA);
 				imp1.updateAndDraw();
@@ -389,8 +370,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			// posiziono la ROI 7x7 all'interno di MROI
 			//
 			int gap = (sqNEA - MyConst.P5_MROI_7X7_PIXEL) / 2;
-			imp1.setRoi(sqX + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL,
-					MyConst.P5_MROI_7X7_PIXEL);
+			imp1.setRoi(sqX + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL, MyConst.P5_MROI_7X7_PIXEL);
 			imp1.updateAndDraw();
 			over2.addElement(imp1.getRoi());
 			over2.setStrokeColor(Color.red);
@@ -406,8 +386,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 			//
 			// disegno RoiFondo su imp1
 			//
-			ImageStatistics statBkg = ImageUtils.backCalc(xFondo, yFondo,
-					MyConst.P5_DIAM_ROI_BACKGROUND, imp1, step, false, test);
+			ImageStatistics statBkg = ImageUtils.backCalc(xFondo, yFondo, MyConst.P5_DIAM_ROI_BACKGROUND, imp1, step,
+					false, test);
 
 			//
 			// disegno MROI su imaDiff
@@ -423,8 +403,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			imaDiff.setOverlay(over3);
 			over3.setStrokeColor(Color.green);
 
-			imaDiff.setRoi(sqX + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL,
-					MyConst.P5_MROI_7X7_PIXEL);
+			imaDiff.setRoi(sqX + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL, MyConst.P5_MROI_7X7_PIXEL);
 			over3.addElement(imaDiff.getRoi());
 			over3.setStrokeColor(Color.green);
 			imaDiff.updateAndDraw();
@@ -441,8 +420,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			//
 			// calcolo P su imaDiff
 			//
-			double prelimImageNoiseEstimate_MROI = statImaDiff.stdDev
-					/ Math.sqrt(2);
+			double prelimImageNoiseEstimate_MROI = statImaDiff.stdDev / Math.sqrt(2);
 
 			if (step) {
 				msgNea(prelimImageNoiseEstimate_MROI);
@@ -462,16 +440,13 @@ public class p5rmn_ implements PlugIn, Measurements {
 			// qui, se il numero dei pixel < 121 dovrò incrementare sqR2 e
 			// ripetere il loop
 			//
-			double checkPixels = MyConst.P5_CHECK_PIXEL_MULTIPLICATOR
-					* prelimImageNoiseEstimate_MROI;
-			int area11x11 = MyConst.P5_NEA_11X11_PIXEL
-					* MyConst.P5_NEA_11X11_PIXEL;
+			double checkPixels = MyConst.P5_CHECK_PIXEL_MULTIPLICATOR * prelimImageNoiseEstimate_MROI;
+			int area11x11 = MyConst.P5_NEA_11X11_PIXEL * MyConst.P5_NEA_11X11_PIXEL;
 			int enlarge = 0;
 			int pixx = 0;
 
 			do {
-				pixx = countPix(imp1, sqX - enlarge, sqY - enlarge, sqNEA,
-						checkPixels);
+				pixx = countPix(imp1, sqX - enlarge, sqY - enlarge, sqNEA, checkPixels);
 
 				imp1.setRoi(sqX - enlarge, sqY - enlarge, sqNEA, sqNEA);
 				imp1.updateAndDraw();
@@ -519,8 +494,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 			//
 
 			boolean paintPixels = false;
-			double[] out1 = devStandardNema(imp1, imaDiff, sqX - enlarge, sqY
-					- enlarge, sqNEA, checkPixels, paintPixels);
+			double[] out1 = devStandardNema(imp1, imaDiff, sqX - enlarge, sqY - enlarge, sqNEA, checkPixels,
+					paintPixels);
 
 			if (step)
 				msgDisplayMean4(out1[0], out1[1]);
@@ -539,11 +514,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 			// + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL, imp1, step,
 			// verbose, test);
 
-			String patName = ReadDicom.readDicomParameter(imp1,
-					MyConst.DICOM_PATIENT_NAME);
+			String patName = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PATIENT_NAME);
 
-			String codice1 = ReadDicom.readDicomParameter(imp1,
-					MyConst.DICOM_SERIES_DESCRIPTION);
+			String codice1 = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION);
 
 			String codice = UtilAyv.getFiveLetters(codice1);
 
@@ -558,9 +531,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 			// + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL, imp1, step,
 			// verbose, test);
 
-			int[][] classiSimulata = ImageUtils.generaSimulata12classi(sqX
-					+ gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL, imp1,
-					simulataName, step, verbose, test);
+			int[][] classiSimulata = ImageUtils.generaSimulata12classi(sqX + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL,
+					imp1, simulataName, step, verbose, test);
 			//
 			// calcolo posizione fwhm a metà della MROI
 			//
@@ -588,8 +560,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 					yEndProfile = yStartProfile;
 				}
 			} else {
-				Line line = selectProfilePosition(sqX + gap, sqY + gap,
-						MyConst.P5_MROI_7X7_PIXEL, imp1, verticalProfile);
+				Line line = selectProfilePosition(sqX + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL, imp1,
+						verticalProfile);
 
 				xStartProfile = line.x1;
 				yStartProfile = line.y1;
@@ -598,8 +570,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 			}
 
-			double[] outFwhm2 = analyzeProfile(imp1, xStartProfile,
-					yStartProfile, xEndProfile, yEndProfile, dimPixel, step);
+			double[] outFwhm2 = analyzeProfile(imp1, xStartProfile, yStartProfile, xEndProfile, yEndProfile, dimPixel,
+					step);
 
 			//
 			// Salvataggio dei risultati nella ResultsTable
@@ -607,10 +579,11 @@ public class p5rmn_ implements PlugIn, Measurements {
 			// String[][] tabCodici = new InputOutput().readFile1(
 			// MyConst.CODE_FILE, MyConst.TOKENS4);
 
-			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+			// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+			TableCode tc1 = new TableCode();
+			String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 
-			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path[0],
-					imp1, tabCodici, VERSION , autoCalled);
+			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path[0], imp1, tabCodici, VERSION, autoCalled);
 
 			//
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
@@ -662,7 +635,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			rt.addValue(s4, yStartProfile);
 			rt.addValue(s5, xEndProfile);
 			rt.addValue(s6, yEndProfile);
-			
+
 			rt.incrementCounter();
 			rt.addLabel(t1, "Bkg");
 			rt.addValue(s2, statBkg.mean);
@@ -671,14 +644,12 @@ public class p5rmn_ implements PlugIn, Measurements {
 			rt.addValue(s5, statBkg.roiWidth);
 			rt.addValue(s6, statBkg.roiHeight);
 
-
-			String[] levelString = { "+20%", "+10%", "-10%", "-10%", "-30%",
-					"-40%", "-50%", "-60%", "-70%", "-80%", "-90%", "fondo" };
+			String[] levelString = { "+20%", "+10%", "-10%", "-10%", "-30%", "-40%", "-50%", "-60%", "-70%", "-80%",
+					"-90%", "fondo" };
 
 			for (int i1 = 0; i1 < classiSimulata.length; i1++) {
 				rt.incrementCounter();
-				rt.addLabel(t1, ("Classe" + classiSimulata[i1][0]) + "_"
-						+ levelString[i1]);
+				rt.addLabel(t1, ("Classe" + classiSimulata[i1][0]) + "_" + levelString[i1]);
 				rt.addValue(s2, classiSimulata[i1][1]);
 			}
 			if (verbose && !test)
@@ -708,10 +679,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 			switch (userSelection2) {
 			case 1: {
 				// GE
-				String[] list = { "CTSA2_01testP5", "CTSA2_02testP5",
-						"CTSA2_03testP5" };
-				String[] path = new InputOutput().findListTestImages2(
-						MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
+				String[] list = { "CTSA2_01testP5", "CTSA2_02testP5", "CTSA2_03testP5" };
+				String[] path = new InputOutput().findListTestImages2(MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 
 				int sqX = MyConst.P5_X_ROI_TESTGE;
 				int sqY = MyConst.P5_Y_ROI_TESTGE;
@@ -722,14 +691,12 @@ public class p5rmn_ implements PlugIn, Measurements {
 				boolean test = true;
 				double[] vetReference = referenceGe();
 				boolean verticalProfile = false;
-				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile,
-						autoCalled, step, verbose, test);
+				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile, autoCalled, step, verbose, test);
 				if (rt1 == null)
 					return;
 
 				double[] vetResults = UtilAyv.vectorizeResults(rt1);
-				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-						MyConst.P5_vetName);
+				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P5_vetName);
 				if (ok)
 					MyMsg.msgTestPassed();
 				else
@@ -739,10 +706,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 			}
 			case 2:
 				// Siemens
-				String[] list = { "S1SA_01testP5", "S1SA_02testP5",
-						"S1SA_03testP5" };
-				String[] path = new InputOutput().findListTestImages2(
-						MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
+				String[] list = { "S1SA_01testP5", "S1SA_02testP5", "S1SA_03testP5" };
+				String[] path = new InputOutput().findListTestImages2(MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 
 				int sqX = MyConst.P5_X_ROI_TESTSIEMENS;
 				int sqY = MyConst.P5_Y_ROI_TESTSIEMENS;
@@ -755,15 +720,13 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 				double[] vetReference = referenceSiemens();
 				boolean verticalProfile = true;
-				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile,
-						autoCalled, step, verbose, test);
+				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile, autoCalled, step, verbose, test);
 				// ResultsTable rt1 = mainUnifor(path, sqX, sqY, autoArgs,
 				// verticalProfile, autoCalled, step, verbose, test);
 				if (rt1 == null)
 					return;
 				double[] vetResults = UtilAyv.vectorizeResults(rt1);
-				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-						MyConst.P5_vetName);
+				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P5_vetName);
 				if (ok)
 					MyMsg.msgTestPassed();
 				else
@@ -803,11 +766,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 		double num10 = 2617.0;
 		double num11 = 5287.0;
 		double num12 = 47606.0;
-		
 
-		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, bkg,
-				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
-				num11, num12 };
+		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, bkg, num1, num2, num3, num4, num5, num6,
+				num7, num8, num9, num10, num11, num12 };
 		return vetReference;
 
 	}
@@ -825,7 +786,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 		double backNoise = 21.947567747419033;
 		double snRatio = 93.19892843975435;
 		double fwhm = 32.93099254935456;
-		double bkg =  84.06;
+		double bkg = 84.06;
 		double num1 = 2262.0;
 		double num2 = 521.0;
 		double num3 = 1427.0;
@@ -839,10 +800,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 		double num11 = 948.0;
 		double num12 = 45801.0;
 
-		
-		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, bkg,
-				num1, num2, num3, num4, num5, num6, num7, num8, num9, num10,
-				num11, num12 };
+		double[] vetReference = { simul, signal, backNoise, snRatio, fwhm, bkg, num1, num2, num3, num4, num5, num6,
+				num7, num8, num9, num10, num11, num12 };
 		return vetReference;
 	}
 
@@ -851,8 +810,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 */
 	public void selfTestSilent() {
 		String[] list = { "S1SA_01testP5", "S1SA_02testP5", "S1SA_03testP5" };
-		String[] path = new InputOutput().findListTestImages2(
-				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
+		String[] path = new InputOutput().findListTestImages2(MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 
 		double[] vetReference = referenceSiemens();
 
@@ -864,13 +822,11 @@ public class p5rmn_ implements PlugIn, Measurements {
 		int sqY = MyConst.P5_Y_ROI_TESTSIEMENS;
 		boolean verticalProfile = true;
 
-		ResultsTable rt1 = p5rmn_.mainUnifor(path, sqX, sqY, verticalProfile,
-				autoCalled, step, verbose, test);
+		ResultsTable rt1 = p5rmn_.mainUnifor(path, sqX, sqY, verticalProfile, autoCalled, step, verbose, test);
 		// ResultsTable rt1 = p5rmn_.mainUnifor(path, sqX, sqY, autoArgs,
 		// verticalProfile, autoCalled, step, verbose, test);
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-				MyConst.P5_vetName);
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P5_vetName);
 		if (ok) {
 			IJ.log("Il test di p5rmn_ UNIFORMITA' SUPERFICIALE è stato SUPERATO");
 		} else {
@@ -920,8 +876,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 *            soglia di conteggio
 	 * @return pixel che superano la soglia
 	 */
-	private static int countPix(ImagePlus imp1, int sqX, int sqY, int sqR,
-			double limit) {
+	private static int countPix(ImagePlus imp1, int sqX, int sqY, int sqR, double limit) {
 		int offset = 0;
 		int w = 0;
 		int count1 = 0;
@@ -947,8 +902,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Effettua il calcolo della deviazione standard per i pixel della immagine
-	 * differenza i cui corrispondenti pixel della prima immagine oltrepassano
-	 * la soglia di conteggio, secondo il protocollo NEMA
+	 * differenza i cui corrispondenti pixel della prima immagine oltrepassano la
+	 * soglia di conteggio, secondo il protocollo NEMA
 	 * 
 	 * @param imp1
 	 *            immagine in input
@@ -979,8 +934,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 * @param limit
 	 * @return
 	 */
-	public static double[] devStandardNema(ImagePlus imp1, ImagePlus imp3,
-			int sqX, int sqY, int sqR, double limit, boolean paintPixels) {
+	public static double[] devStandardNema(ImagePlus imp1, ImagePlus imp3, int sqX, int sqY, int sqR, double limit,
+			boolean paintPixels) {
 		double[] results = new double[2];
 		double value4 = 0.0;
 		double sumValues = 0.0;
@@ -1041,8 +996,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 * @return outFwhm[0]=FWHM, outFwhm[1]=peak position
 	 */
 
-	private static double[] analyzeProfile(ImagePlus imp1, int ax, int ay,
-			int bx, int by, double dimPixel, boolean step) {
+	private static double[] analyzeProfile(ImagePlus imp1, int ax, int ay, int bx, int by, double dimPixel,
+			boolean step) {
 
 		if (imp1 == null) {
 			IJ.error("analProf2 ricevuto null");
@@ -1055,10 +1010,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 		double[] profi1 = ((Line) roi1).getPixels(); // profilo non mediato
 
 		/*
-		 * le seguenti istruzioni sono state superate dalla release 1.40a di
-		 * ImageJ. Tale cambiamento è dovuto alle modifiche apportate a
-		 * ij\ImagePlus.java, in pratica se l'immagine è calibrata la
-		 * calibrazione viene automaticamente applicata anche ad ImagePlus
+		 * le seguenti istruzioni sono state superate dalla release 1.40a di ImageJ.
+		 * Tale cambiamento è dovuto alle modifiche apportate a ij\ImagePlus.java, in
+		 * pratica se l'immagine è calibrata la calibrazione viene automaticamente
+		 * applicata anche ad ImagePlus
 		 */
 
 		// Calibration cal = imp1.getCalibration();
@@ -1090,15 +1045,14 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 * Calcolo dell'FWHM su di un vettore profilo
 	 * 
 	 * @param vetUpDwPoints
-	 *            Vettore restituito da AnalPlot2 con le posizioni dei punti
-	 *            sopra e sotto la metà altezza
+	 *            Vettore restituito da AnalPlot2 con le posizioni dei punti sopra e
+	 *            sotto la metà altezza
 	 * @param profile
 	 *            Profilo da analizzare
 	 * @return out[0]=FWHM, out[1]=peak position
 	 */
 
-	private static double[] calcFwhm(int[] vetUpDwPoints, double profile[],
-			double dimPixel) {
+	private static double[] calcFwhm(int[] vetUpDwPoints, double profile[], double dimPixel) {
 
 		double peak = 0;
 		double[] a = Tools.getMinMax(profile);
@@ -1145,8 +1099,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 *            Flag slab che qui mettiamo sempre true
 	 */
 
-	private static void createPlot(double profile1[], boolean bslab,
-			boolean bLabelSx) {
+	private static void createPlot(double profile1[], boolean bslab, boolean bLabelSx) {
 
 		int[] vetUpDwPoints = halfPointSearch(profile1);
 		double[] a = Tools.getMinMax(profile1);
@@ -1169,8 +1122,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 		// PlotWindow plot = new PlotWindow("Plot profilo penetrazione",
 		// "pixel",
 		// "valore", xcoord1, profile1);
-		Plot plot = new Plot("Plot profilo penetrazione", "pixel", "valore",
-				xcoord1, profile1);
+		Plot plot = new Plot("Plot profilo penetrazione", "pixel", "valore", xcoord1, profile1);
 		if (bslab)
 			plot.setLimits(0, len1, min, max);
 		else
@@ -1215,20 +1167,17 @@ public class p5rmn_ implements PlugIn, Measurements {
 		else
 			labelPosition = 0.60;
 		plot.addLabel(labelPosition, 0.45, "peak / 2=   " + IJ.d2s(max / 2, 2));
-		plot.addLabel(labelPosition, 0.50, "down sx " + vetUpDwPoints[0]
-				+ "  =   " + IJ.d2s(profile1[vetUpDwPoints[0]], 2));
-		plot.addLabel(labelPosition, 0.55, "down dx " + vetUpDwPoints[2]
-				+ "  =   " + IJ.d2s(profile1[vetUpDwPoints[2]], 2));
-		plot.addLabel(labelPosition, 0.60, "up      sx " + vetUpDwPoints[1]
-				+ "  =   " + IJ.d2s(profile1[vetUpDwPoints[1]], 2));
-		plot.addLabel(labelPosition, 0.65, "up      dx " + vetUpDwPoints[3]
-				+ "  =   " + IJ.d2s(profile1[vetUpDwPoints[3]], 2));
-		plot.addLabel(labelPosition, 0.70,
-				"sx interp       =  " + IJ.d2s(sx, 2));
-		plot.addLabel(labelPosition, 0.75,
-				"dx interp       =  " + IJ.d2s(dx, 2));
-		plot.addLabel(labelPosition, 0.80,
-				"fwhm            =  " + IJ.d2s(fwhm, 2));
+		plot.addLabel(labelPosition, 0.50,
+				"down sx " + vetUpDwPoints[0] + "  =   " + IJ.d2s(profile1[vetUpDwPoints[0]], 2));
+		plot.addLabel(labelPosition, 0.55,
+				"down dx " + vetUpDwPoints[2] + "  =   " + IJ.d2s(profile1[vetUpDwPoints[2]], 2));
+		plot.addLabel(labelPosition, 0.60,
+				"up      sx " + vetUpDwPoints[1] + "  =   " + IJ.d2s(profile1[vetUpDwPoints[1]], 2));
+		plot.addLabel(labelPosition, 0.65,
+				"up      dx " + vetUpDwPoints[3] + "  =   " + IJ.d2s(profile1[vetUpDwPoints[3]], 2));
+		plot.addLabel(labelPosition, 0.70, "sx interp       =  " + IJ.d2s(sx, 2));
+		plot.addLabel(labelPosition, 0.75, "dx interp       =  " + IJ.d2s(dx, 2));
+		plot.addLabel(labelPosition, 0.80, "fwhm            =  " + IJ.d2s(fwhm, 2));
 		plot.setColor(Color.green);
 		xVetLineHalf[0] = 0;
 		xVetLineHalf[1] = len1;
@@ -1322,8 +1271,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 	} // halfPointSerach
 
 	/**
-	 * scelta da parte dell'utente della posizione e direzione del profilo su
-	 * cui poi verrà calcolata l'FWHM
+	 * scelta da parte dell'utente della posizione e direzione del profilo su cui
+	 * poi verrà calcolata l'FWHM
 	 * 
 	 * @param xPos
 	 *            posizione x MROI
@@ -1335,8 +1284,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 *            puntatore ImagePlus alla immagine originale
 	 * @return line parametri profilo selezionato
 	 */
-	private static Line selectProfilePosition(int xPos, int yPos, int len,
-			ImagePlus imp1, boolean profiVert) {
+	private static Line selectProfilePosition(int xPos, int yPos, int len, ImagePlus imp1, boolean profiVert) {
 
 		// partiamo da dove è stata posizionata la ROI
 
@@ -1362,15 +1310,13 @@ public class p5rmn_ implements PlugIn, Measurements {
 				xEndProfile = width;
 				yEndProfile = yPos + len / 2;
 			}
-			imp1.setRoi(new Line((int) xStartProfile, (int) yStartProfile,
-					(int) xEndProfile, (int) yEndProfile));
+			imp1.setRoi(new Line((int) xStartProfile, (int) yStartProfile, (int) xEndProfile, (int) yEndProfile));
 			imp1.updateAndDraw();
 
 			// effettuo la scelta all'interno del loop, in modo da poterla
 			// ripetere
 			int userSelection1 = ButtonMessages.ModelessMsg(
-					"Linea su cui verrà calcolata la FWHM, eventualmente"
-							+ " riposizionarla e premere CONTINUA   <24>",
+					"Linea su cui verrà calcolata la FWHM, eventualmente" + " riposizionarla e premere CONTINUA   <24>",
 					"CONTINUA", "ORIZZ", "VERT");
 
 			switch (userSelection1) {
@@ -1395,8 +1341,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 		return line;
 	}
 
-	public static void overlayGrid(ImagePlus imp1, int gridNumber,
-			boolean verbose) {
+	public static void overlayGrid(ImagePlus imp1, int gridNumber, boolean verbose) {
 
 		CustomCanvasGeneric ccg1 = new CustomCanvasGeneric(imp1);
 		ccg1.setGridElements(gridNumber);
@@ -1407,8 +1352,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	}
 
 	private static void msgNot121() {
-		IJ.showMessage("ATTENZIONE la NEA esce dall'immagine\nsenza"
-				+ " riuscire a trovare 121 pixel che superino il"
+		IJ.showMessage("ATTENZIONE la NEA esce dall'immagine\nsenza" + " riuscire a trovare 121 pixel che superino il"
 				+ " test\nil programma TERMINA PREMATURAMENTE");
 	}
 
@@ -1417,13 +1361,11 @@ public class p5rmn_ implements PlugIn, Measurements {
 	}
 
 	private static void msgNea(double noise) {
-		ButtonMessages.ModelessMsg("P=" + noise
-				+ "  (Preliminary Noise Estimate MROI ima4)", "CONTINUA");
+		ButtonMessages.ModelessMsg("P=" + noise + "  (Preliminary Noise Estimate MROI ima4)", "CONTINUA");
 	}
 
 	private static void msgEnlargeRoi(int sqNEA) {
-		ButtonMessages.ModelessMsg("Accrescimento MROI lato=" + sqNEA,
-				"CONTINUA");
+		ButtonMessages.ModelessMsg("Accrescimento MROI lato=" + sqNEA, "CONTINUA");
 	}
 
 	private static void msgSqr2OK(int pixx) {
@@ -1435,8 +1377,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	}
 
 	private static void msgDisplayMean4(double mean, double stdDev) {
-		ButtonMessages.ModelessMsg("mean4= " + mean + " standard_deviation4= "
-				+ stdDev, "CONTINUA");
+		ButtonMessages.ModelessMsg("mean4= " + mean + " standard_deviation4= " + stdDev, "CONTINUA");
 	}
 
 	private static void msgDisplayNEA() {
@@ -1449,8 +1390,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	private static int menuPositionMroi() {
 		int userSelection1 = ButtonMessages.ModelessMsg(
-				"Posizionare la MROI sull'area della bobina"
-						+ "  e premere Accetta", "ACCETTA", "RIDISEGNA");
+				"Posizionare la MROI sull'area della bobina" + "  e premere Accetta", "ACCETTA", "RIDISEGNA");
 		return userSelection1;
 	}
 

@@ -113,8 +113,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 		String className = this.getClass().getName();
 
-		VERSION = className + "_build_" + MyVersion.getVersion()
-				+ "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
@@ -126,8 +125,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * genera una directory temporanea e vi estrae le immagini di test da
-	 * test2.jar
+	 * genera una directory temporanea e vi estrae le immagini di test da test2.jar
 	 * 
 	 * @return home1 path della directory temporanea con le immagini di test
 	 */
@@ -137,8 +135,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 		io.extractFromJAR(MyConst.TEST_FILE, "HR2A_testP4", "./Test2/");
 		io.extractFromJAR(MyConst.TEST_FILE, "HR2A2_testP4", "./Test2/");
-		String home1 = this.getClass().getResource(MyConst.TEST_DIRECTORY)
-				.getPath();
+		String home1 = this.getClass().getResource(MyConst.TEST_DIRECTORY).getPath();
 		return (home1);
 	} // findTestImages
 
@@ -154,8 +151,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 				return 0;
 			case 2:
 				// new AboutBox().about("Controllo MTF", this.getClass());
-				new AboutBox()
-						.about("Controllo MTF", MyVersion.CURRENT_VERSION);
+				new AboutBox().about("Controllo MTF", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -169,8 +165,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 				boolean test = false;
 				boolean autoCalled = true;
 				boolean step = true;
-				String path1 = UtilAyv
-						.imageSelection("SELEZIONARE IMMAGINE...");
+				String path1 = UtilAyv.imageSelection("SELEZIONARE IMMAGINE...");
 				if (path1 == null)
 					return 0;
 
@@ -211,13 +206,11 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 		if (nTokens != MyConst.TOKENS1) {
 			MyMsg.msgParamError();
-			IJ.log("p4rmn ERRORE PARAMETRI CHIAMATA nTokens =" + nTokens
-					+ " invece di 1");
+			IJ.log("p4rmn ERRORE PARAMETRI CHIAMATA nTokens =" + nTokens + " invece di 1");
 			return 0;
 		}
 
-		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
-				+ MyConst.SEQUENZE_FILE);
+		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir + MyConst.SEQUENZE_FILE);
 		String path1 = "";
 
 		path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
@@ -227,8 +220,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 		do {
 			int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
-					TableSequence.getCode(iw2ayvTable, vetRiga[0]),
-					TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
+					TableSequence.getCode(iw2ayvTable, vetRiga[0]), TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
 					vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
 			switch (userSelection1) {
 			case ABORT:
@@ -236,8 +228,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 				return 0;
 			case 2:
 				// new AboutBox().about("Contollo MTF", this.getClass());
-				new AboutBox()
-						.about("Controllo MTF", MyVersion.CURRENT_VERSION);
+				new AboutBox().about("Controllo MTF", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -247,8 +238,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 				boolean test = false;
 				boolean autoCalled = true;
 				// double[] roiData = readPreferences();
-				ResultsTable rt = prepMTF(path1, autoArgs, autoCalled, step,
-						verbose, test);
+				ResultsTable rt = prepMTF(path1, autoArgs, autoCalled, step, verbose, test);
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 				retry = false;
 				break;
@@ -259,18 +249,17 @@ public class p4rmn_ implements PlugIn, Measurements {
 		return 0;
 	}
 
-	public static ResultsTable prepMTF(String path1, String autoArgs,
-			boolean autoCalled, boolean step, boolean verbose, boolean test) {
+	public static ResultsTable prepMTF(String path1, String autoArgs, boolean autoCalled, boolean step, boolean verbose,
+			boolean test) {
 
 		double[] vetPreferences = readPreferences();
-		ResultsTable rt = mainMTF(path1, vetPreferences, autoCalled, step,
-				verbose, test);
+		ResultsTable rt = mainMTF(path1, vetPreferences, autoCalled, step, verbose, test);
 		return rt;
 	}
 
 	@SuppressWarnings("deprecation")
-	public static ResultsTable mainMTF(String path1, double[] vetPreferences,
-			boolean autoCalled, boolean step, boolean verbose, boolean test) {
+	public static ResultsTable mainMTF(String path1, double[] vetPreferences, boolean autoCalled, boolean step,
+			boolean verbose, boolean test) {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
@@ -291,9 +280,8 @@ public class p4rmn_ implements PlugIn, Measurements {
 				return null;
 			}
 
-			double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
-					ReadDicom.readDicomParameter(imp1,
-							MyConst.DICOM_PIXEL_SPACING), 1));
+			double dimPixel = ReadDicom.readDouble(
+					ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
 
 			int width = imp1.getWidth();
 			int height = imp1.getHeight();
@@ -308,10 +296,9 @@ public class p4rmn_ implements PlugIn, Measurements {
 			// + ", " + xEndRefline + ", " + yEndRefline);
 
 			if (!test) {
-				if (((Math.abs(xStartRefline - xEndRefline) < 5) && (Math
-						.abs(yStartRefline - yEndRefline) < 5))
-						|| ((Math.abs(xStartRefline - xEndRefline) > width) && (Math
-								.abs(yStartRefline - yEndRefline) > height))) {
+				if (((Math.abs(xStartRefline - xEndRefline) < 5) && (Math.abs(yStartRefline - yEndRefline) < 5))
+						|| ((Math.abs(xStartRefline - xEndRefline) > width)
+								&& (Math.abs(yStartRefline - yEndRefline) > height))) {
 					IJ.log("p4rmn_ INTERVENUTO OVERRIDE");
 					xStartRefline = 20.;
 					yStartRefline = 25.;
@@ -334,8 +321,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 			yStartReflineScreen = (int) yStartRefline2;
 			xEndReflineScreen = (int) xEndRefline2;
 			yEndReflineScreen = (int) yEndRefline2;
-			imp1.setRoi(new Line(xStartReflineScreen, yStartReflineScreen,
-					xEndReflineScreen, yEndReflineScreen));
+			imp1.setRoi(new Line(xStartReflineScreen, yStartReflineScreen, xEndReflineScreen, yEndReflineScreen));
 			imp1.updateAndDraw();
 
 			if (verbose)
@@ -374,45 +360,38 @@ public class p4rmn_ implements PlugIn, Measurements {
 			// -------------- 2 mm
 			xRoi = (int) (MyConst.P4_X_ROI_POSITION[0] / dimPixel);
 			yRoi = (int) (MyConst.P4_Y_ROI_POSITION[0] / dimPixel);
-			double[] dsd1 = UtilAyv.coord2D(xStartReflineUser,
-					yStartReflineUser, xEndReflineUser, yEndReflineUser, xRoi,
-					yRoi, false);
+			double[] dsd1 = UtilAyv.coord2D(xStartReflineUser, yStartReflineUser, xEndReflineUser, yEndReflineUser,
+					xRoi, yRoi, false);
 			// -------------- 1.5 mm
 			xRoi = (int) (MyConst.P4_X_ROI_POSITION[1] / dimPixel);
 			yRoi = (int) (MyConst.P4_Y_ROI_POSITION[1] / dimPixel);
-			double[] dsd2 = UtilAyv.coord2D(xStartReflineUser,
-					yStartReflineUser, xEndReflineUser, yEndReflineUser, xRoi,
-					yRoi, false);
+			double[] dsd2 = UtilAyv.coord2D(xStartReflineUser, yStartReflineUser, xEndReflineUser, yEndReflineUser,
+					xRoi, yRoi, false);
 			// -------------- 1 mm
 			xRoi = (int) (MyConst.P4_X_ROI_POSITION[2] / dimPixel);
 			yRoi = (int) (MyConst.P4_Y_ROI_POSITION[2] / dimPixel);
-			double[] dsd3 = UtilAyv.coord2D(xStartReflineUser,
-					yStartReflineUser, xEndReflineUser, yEndReflineUser, xRoi,
-					yRoi, false);
+			double[] dsd3 = UtilAyv.coord2D(xStartReflineUser, yStartReflineUser, xEndReflineUser, yEndReflineUser,
+					xRoi, yRoi, false);
 			// -------------- 0.5 mm
 			xRoi = (int) (MyConst.P4_X_ROI_POSITION[3] / dimPixel);
 			yRoi = (int) (MyConst.P4_Y_ROI_POSITION[3] / dimPixel);
-			double[] dsd4 = UtilAyv.coord2D(xStartReflineUser,
-					yStartReflineUser, xEndReflineUser, yEndReflineUser, xRoi,
-					yRoi, false);
+			double[] dsd4 = UtilAyv.coord2D(xStartReflineUser, yStartReflineUser, xEndReflineUser, yEndReflineUser,
+					xRoi, yRoi, false);
 			// -------------- 0.3 mm
 			xRoi = (int) (MyConst.P4_X_ROI_POSITION[4] / dimPixel);
 			yRoi = (int) (MyConst.P4_Y_ROI_POSITION[4] / dimPixel);
-			double[] dsd5 = UtilAyv.coord2D(xStartReflineUser,
-					yStartReflineUser, xEndReflineUser, yEndReflineUser, xRoi,
-					yRoi, false);
+			double[] dsd5 = UtilAyv.coord2D(xStartReflineUser, yStartReflineUser, xEndReflineUser, yEndReflineUser,
+					xRoi, yRoi, false);
 			// -------------- plexiglas
 			xRoi = (int) (MyConst.P4_X_ROI_POSITION[5] / dimPixel);
 			yRoi = (int) (MyConst.P4_Y_ROI_POSITION[5] / dimPixel);
-			double[] dsd6 = UtilAyv.coord2D(xStartReflineUser,
-					yStartReflineUser, xEndReflineUser, yEndReflineUser, xRoi,
-					yRoi, false);
+			double[] dsd6 = UtilAyv.coord2D(xStartReflineUser, yStartReflineUser, xEndReflineUser, yEndReflineUser,
+					xRoi, yRoi, false);
 			// -------------- acqua
 			xRoi = (int) (MyConst.P4_X_ROI_POSITION[6] / dimPixel);
 			yRoi = (int) (MyConst.P4_Y_ROI_POSITION[6] / dimPixel);
-			double[] dsd7 = UtilAyv.coord2D(xStartReflineUser,
-					yStartReflineUser, xEndReflineUser, yEndReflineUser, xRoi,
-					yRoi, false);
+			double[] dsd7 = UtilAyv.coord2D(xStartReflineUser, yStartReflineUser, xEndReflineUser, yEndReflineUser,
+					xRoi, yRoi, false);
 
 			// -------------------------------------------------------/
 
@@ -471,12 +450,10 @@ public class p4rmn_ implements PlugIn, Measurements {
 			imp1.setRoi(new OvalRoi(xRoi_3mm, yRoi_3mm, dRoi_3mm, dRoi_3mm));
 			rm1.addRoi(imp1.getRoi());
 			// over1.addElement(imp1.getRoi());
-			imp1.setRoi(new OvalRoi(xRoi_acqua, yRoi_acqua, dRoi_acqua,
-					dRoi_acqua));
+			imp1.setRoi(new OvalRoi(xRoi_acqua, yRoi_acqua, dRoi_acqua, dRoi_acqua));
 			rm1.addRoi(imp1.getRoi());
 			// over1.addElement(imp1.getRoi());
-			imp1.setRoi(new OvalRoi(xRoi_plexi, yRoi_plexi, dRoi_plexi,
-					dRoi_plexi));
+			imp1.setRoi(new OvalRoi(xRoi_plexi, yRoi_plexi, dRoi_plexi, dRoi_plexi));
 			rm1.addRoi(imp1.getRoi());
 
 			// over1.addElement(imp1.getRoi());
@@ -512,7 +489,6 @@ public class p4rmn_ implements PlugIn, Measurements {
 				return null;
 			}
 
-
 			int nDati = rt1.getCounter();
 			int[][] tabValori = new int[nDati][2];
 			for (int i2 = 0; i2 < nDati; i2++) {
@@ -529,16 +505,17 @@ public class p4rmn_ implements PlugIn, Measurements {
 			double mod10 = vetCalc[2];
 			double mod05 = vetCalc[3];
 			double mod03 = vetCalc[4];
-			String[][] tabCodici = TableCode
-					.loadMultipleTable(MyConst.CODE_GROUP);
+			// String[][] tabCodici = TableCode
+			// .loadMultipleTable(MyConst.CODE_GROUP);
+			TableCode tc1 = new TableCode();
+			String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 
 			ImagePlus imp2 = UtilAyv.openImageNoDisplay(path1, verbose);
 
 			// must open another time the image because a strange problem in
 			// junit test of SelfTestSilent
 
-			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-					imp2, tabCodici, VERSION, autoCalled);
+			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp2, tabCodici, VERSION, autoCalled);
 
 			// put values in ResultsTable
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
@@ -629,16 +606,11 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 	public static double[] readPreferences() {
 
-		double xStartRefline = ReadDicom.readDouble(Prefs.get("prefer.p4rmnAx",
-				"" + 0.4));
-		double yStartRefline = ReadDicom.readDouble(Prefs.get("prefer.p4rmnAy",
-				"" + 0.4));
-		double xEndRefline = ReadDicom.readDouble(Prefs.get("prefer.p4rmnBx",
-				"" + 0.8));
-		double yEndRefline = ReadDicom.readDouble(Prefs.get("prefer.p4rmnBy",
-				"" + 0.8));
-		double[] defaults = { xStartRefline, yStartRefline, xEndRefline,
-				yEndRefline };
+		double xStartRefline = ReadDicom.readDouble(Prefs.get("prefer.p4rmnAx", "" + 0.4));
+		double yStartRefline = ReadDicom.readDouble(Prefs.get("prefer.p4rmnAy", "" + 0.4));
+		double xEndRefline = ReadDicom.readDouble(Prefs.get("prefer.p4rmnBx", "" + 0.8));
+		double yEndRefline = ReadDicom.readDouble(Prefs.get("prefer.p4rmnBy", "" + 0.8));
+		double[] defaults = { xStartRefline, yStartRefline, xEndRefline, yEndRefline };
 		return defaults;
 	}
 
@@ -651,34 +623,26 @@ public class p4rmn_ implements PlugIn, Measurements {
 	}
 
 	private static void msgLinePositioning() {
-		ButtonMessages
-				.ModelessMsg(
-						"Far coincidere il segmento  con il lato esterno sx delle linee 2 mm e premere CONTINUA",
-						"CONTINUA");
+		ButtonMessages.ModelessMsg(
+				"Far coincidere il segmento  con il lato esterno sx delle linee 2 mm e premere CONTINUA", "CONTINUA");
 	}
 
 	private static void msgRefinePositioning() {
 
-		ButtonMessages
-				.ModelessMsg(
-						"Posizionare con maggiore esattezza le roi e poi premere CONTINUA",
-						"CONTINUA");
+		ButtonMessages.ModelessMsg("Posizionare con maggiore esattezza le roi e poi premere CONTINUA", "CONTINUA");
 	}
 
 	private static int msgLastVisiblePositioning() {
 
-		int userSelection1 = ButtonMessages.ModelessMsg(
-				"Quale è l'ultimo gruppo visibile?", "- 5 -", "- 4 -", "- 3 -",
+		int userSelection1 = ButtonMessages.ModelessMsg("Quale è l'ultimo gruppo visibile?", "- 5 -", "- 4 -", "- 3 -",
 				"- 2 -", "- 1 -");
 		return (userSelection1);
 	}
 
 	public static void overlayNumbers(ImagePlus imp1, boolean verbose) {
 		imp1.setRoi(new OvalRoi(0, 0, 0, 0));
-		double dimPixel = ReadDicom
-				.readDouble(ReadDicom.readSubstring(ReadDicom
-						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
-						1));
+		double dimPixel = ReadDicom.readDouble(
+				ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
 
 		CustomCanvasGeneric ccg1 = new CustomCanvasGeneric(imp1);
 
@@ -746,13 +710,9 @@ public class p4rmn_ implements PlugIn, Measurements {
 				boolean verbose = true;
 				boolean test = true;
 				double[] vetReference = referenceGe();
-				double[] vetLinePositions = {
-						MyConst.P4_X_START_REFLINE_TESTGE,
-						MyConst.P4_Y_START_REFLINE_TESTGE,
-						MyConst.P4_X_END_REFLINE_TESTGE,
-						MyConst.P4_Y_END_REFLINE_TESTGE };
-				ResultsTable rt1 = mainMTF(path1, vetLinePositions, autoCalled,
-						step, verbose, test);
+				double[] vetLinePositions = { MyConst.P4_X_START_REFLINE_TESTGE, MyConst.P4_Y_START_REFLINE_TESTGE,
+						MyConst.P4_X_END_REFLINE_TESTGE, MyConst.P4_Y_END_REFLINE_TESTGE };
+				ResultsTable rt1 = mainMTF(path1, vetLinePositions, autoCalled, step, verbose, test);
 				double[] vetOutput = UtilAyv.vectorizeResults(rt1);
 
 				double[] vetResults = new double[5];
@@ -762,8 +722,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 				vetResults[3] = vetOutput[4];
 				vetResults[4] = vetOutput[5];
 
-				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-						MyConst.P4_vetName);
+				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P4_vetName);
 				if (ok)
 					MyMsg.msgTestPassed();
 				else
@@ -780,13 +739,10 @@ public class p4rmn_ implements PlugIn, Measurements {
 				boolean step = false;
 				boolean verbose = true;
 				boolean test = true;
-				double[] vetLinePositions = {
-						MyConst.P4_X_START_REFLINE_TESTSIEMENS,
-						MyConst.P4_Y_START_REFLINE_TESTSIEMENS,
-						MyConst.P4_X_END_REFLINE_TESTSIEMENS,
+				double[] vetLinePositions = { MyConst.P4_X_START_REFLINE_TESTSIEMENS,
+						MyConst.P4_Y_START_REFLINE_TESTSIEMENS, MyConst.P4_X_END_REFLINE_TESTSIEMENS,
 						MyConst.P4_Y_END_REFLINE_TESTSIEMENS };
-				ResultsTable rt1 = mainMTF(path1, vetLinePositions, autoCalled,
-						step, verbose, test);
+				ResultsTable rt1 = mainMTF(path1, vetLinePositions, autoCalled, step, verbose, test);
 				double[] vetOutput = UtilAyv.vectorizeResults(rt1);
 
 				double[] vetResults = new double[5];
@@ -796,8 +752,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 				vetResults[3] = vetOutput[4];
 				vetResults[4] = vetOutput[5];
 
-				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-						MyConst.P4_vetName);
+				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P4_vetName);
 				if (ok)
 					MyMsg.msgTestPassed();
 				else
@@ -836,11 +791,9 @@ public class p4rmn_ implements PlugIn, Measurements {
 		double xEndRefline = MyConst.P4_X_END_REFLINE_TESTSIEMENS;
 		double yEndRefline = MyConst.P4_Y_END_REFLINE_TESTSIEMENS;
 
-		double[] vetPreferences = { xStartRefline, yStartRefline, xEndRefline,
-				yEndRefline };
+		double[] vetPreferences = { xStartRefline, yStartRefline, xEndRefline, yEndRefline };
 
-		ResultsTable rt1 = mainMTF(path1, vetPreferences, autoCalled, step,
-				verbose, test);
+		ResultsTable rt1 = mainMTF(path1, vetPreferences, autoCalled, step, verbose, test);
 
 		// UtilAyv.dumpResultsTable(rt1);
 		double[] vetOutput = UtilAyv.vectorizeResults(rt1);
@@ -852,8 +805,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 		vetResults[3] = vetOutput[4];
 		vetResults[4] = vetOutput[5];
 
-		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference,
-				MyConst.P4_vetName);
+		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P4_vetName);
 
 		// UtilAyv.closeResultsWindow();
 		if (ok) {
@@ -877,25 +829,20 @@ public class p4rmn_ implements PlugIn, Measurements {
 		double siPlexi = tabValori[6][0];
 
 		double mod20 = (Math.PI * Math.sqrt(2.0) / 2.0)
-				* (Math.sqrt(Math.pow(ds20, 2)
-						- (Math.pow(dsAcqua, 2) + Math.pow(dsPlexi, 2)) / 2) / Math
-							.abs(siPlexi - siAcqua));
+				* (Math.sqrt(Math.pow(ds20, 2) - (Math.pow(dsAcqua, 2) + Math.pow(dsPlexi, 2)) / 2)
+						/ Math.abs(siPlexi - siAcqua));
 		double mod15 = (Math.PI * Math.sqrt(2.0) / 2.0)
-				* (Math.sqrt(Math.pow(ds15, 2)
-						- (Math.pow(dsAcqua, 2) + Math.pow(dsPlexi, 2)) / 2) / Math
-							.abs(siPlexi - siAcqua));
+				* (Math.sqrt(Math.pow(ds15, 2) - (Math.pow(dsAcqua, 2) + Math.pow(dsPlexi, 2)) / 2)
+						/ Math.abs(siPlexi - siAcqua));
 		double mod10 = (Math.PI * Math.sqrt(2.0) / 2.0)
-				* (Math.sqrt(Math.pow(ds10, 2)
-						- (Math.pow(dsAcqua, 2) + Math.pow(dsPlexi, 2)) / 2) / Math
-							.abs(siPlexi - siAcqua));
+				* (Math.sqrt(Math.pow(ds10, 2) - (Math.pow(dsAcqua, 2) + Math.pow(dsPlexi, 2)) / 2)
+						/ Math.abs(siPlexi - siAcqua));
 		double mod05 = (Math.PI * Math.sqrt(2.0) / 2.0)
-				* (Math.sqrt(Math.pow(ds05, 2)
-						- (Math.pow(dsAcqua, 2) + Math.pow(dsPlexi, 2)) / 2) / Math
-							.abs(siPlexi - siAcqua));
+				* (Math.sqrt(Math.pow(ds05, 2) - (Math.pow(dsAcqua, 2) + Math.pow(dsPlexi, 2)) / 2)
+						/ Math.abs(siPlexi - siAcqua));
 		double mod03 = (Math.PI * Math.sqrt(2.0) / 2.0)
-				* (Math.sqrt(Math.pow(ds03, 2)
-						- (Math.pow(dsAcqua, 2) + Math.pow(dsPlexi, 2)) / 2) / Math
-							.abs(siPlexi - siAcqua));
+				* (Math.sqrt(Math.pow(ds03, 2) - (Math.pow(dsAcqua, 2) + Math.pow(dsPlexi, 2)) / 2)
+						/ Math.abs(siPlexi - siAcqua));
 		double[] vetCalc = new double[5];
 
 		vetCalc[0] = mod20;

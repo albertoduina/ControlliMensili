@@ -95,8 +95,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 	 */
 	// String[][] iw2ayvTable;
 
-	private static Color[] c1 = { Color.red, Color.orange, Color.blue,
-			Color.green, Color.cyan, Color.yellow, Color.magenta, Color.pink };
+	private static Color[] c1 = { Color.red, Color.orange, Color.blue, Color.green, Color.cyan, Color.yellow,
+			Color.magenta, Color.pink };
 
 	/**
 	 * immagine da analizzare
@@ -122,8 +122,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		String className = this.getClass().getName();
 
-		VERSION = className + "_build_" + MyVersion.getVersion()
-				+ "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -149,8 +148,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 				return 0;
 			case 2:
 				// new AboutBox().about("Controllo Warp", this.getClass());
-				new AboutBox().about("Controllo Warp",
-						MyVersion.CURRENT_VERSION);
+				new AboutBox().about("Controllo Warp", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -160,8 +158,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 			case 4:
 				step = true;
 			case 5:
-				String path1 = UtilAyv
-						.imageSelection("SELEZIONARE IMMAGINE...");
+				String path1 = UtilAyv.imageSelection("SELEZIONARE IMMAGINE...");
 				if (path1 == null)
 					return 5;
 				boolean autoCalled = false;
@@ -170,8 +167,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 				boolean demo = true;
 				boolean silent = false;
 				int timeout = 0;
-				mainWarp(path1, autoCalled, step, silent, verbose, test, demo,
-						timeout);
+				mainWarp(path1, autoCalled, step, silent, verbose, test, demo, timeout);
 				UtilAyv.afterWork();
 				retry = false;
 				return 5;
@@ -185,12 +181,10 @@ public class p17rmn_ implements PlugIn, Measurements {
 	public int autoMenu(String autoArgs) {
 		MyLog.appendLog(fileDir + "MyLog.txt", "p17 riceve " + autoArgs);
 
-		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true
-				: false;
+		boolean fast = Prefs.get("prefer.fast", "false").equals("true") ? true : false;
 
 		ResultsTable result1 = null;
-		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
-				+ MyConst.SEQUENZE_FILE);
+		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir + MyConst.SEQUENZE_FILE);
 
 		StringTokenizer st = new StringTokenizer(autoArgs, "#");
 		int nTokens = st.countTokens();
@@ -217,8 +211,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 			String path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 
-			result1 = mainWarp(path1, autoCalled, step, silent, verbose, test,
-					demo, timeout);
+			result1 = mainWarp(path1, autoCalled, step, silent, verbose, test, demo, timeout);
 
 			if (!(result1 == null))
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, result1);
@@ -230,8 +223,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 				// int userSelection1 = UtilAyv.userSelectionAuto(VERSION,
 				// TYPE);
 				int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
-						TableSequence.getCode(iw2ayvTable, vetRiga[0]),
-						TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
+						TableSequence.getCode(iw2ayvTable, vetRiga[0]), TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
 						vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
 
 				switch (userSelection1) {
@@ -240,8 +232,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 					return 0;
 				case 2:
 					// new AboutBox().about("Controllo Warp", this.getClass());
-					new AboutBox().about("Controllo Warp",
-							MyVersion.CURRENT_VERSION);
+					new AboutBox().about("Controllo Warp", MyVersion.CURRENT_VERSION);
 					retry = true;
 					break;
 				case 3:
@@ -250,10 +241,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 					boolean verbose = true;
 					boolean test = false;
 					boolean autoCalled = true;
-					iw2ayvTable = new TableSequence().loadTable(fileDir
-							+ MyConst.SEQUENZE_FILE);
-					String path1 = TableSequence.getPath(iw2ayvTable,
-							vetRiga[0]);
+					iw2ayvTable = new TableSequence().loadTable(fileDir + MyConst.SEQUENZE_FILE);
+					String path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 					// ResultsTable rt = mainWarp(path1], autoCalled, step,
 					// verbose,
 					// test);
@@ -271,9 +260,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static ResultsTable mainWarp(String path1, boolean autoCalled,
-			boolean step, boolean silent, boolean verbose, boolean test,
-			boolean demo, int timeout) {
+	public static ResultsTable mainWarp(String path1, boolean autoCalled, boolean step, boolean silent, boolean verbose,
+			boolean test, boolean demo, int timeout) {
 		boolean accetta = false;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		ResultsTable rt = null;
@@ -287,25 +275,22 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, verbose);
 
 		int diam = 10;
-		ResultsTable rt1 = p17rmn_.automaticRoiPreparation4(imp1, diam, silent,
-				timeout, demo);
+		ResultsTable rt1 = p17rmn_.automaticRoiPreparation4(imp1, diam, silent, timeout, demo);
 		if (rt1 == null) {
 			imp1.show();
 			MyLog.waitHere("tabPunti==null");
 			return null;
 		}
-		dimPixel2 = ReadDicom
-				.readDouble(ReadDicom.readSubstring(ReadDicom
-						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
-						1));
-		String slicePos = ReadDicom.readSubstring(ReadDicom.readDicomParameter(
-				imp1, MyConst.DICOM_IMAGE_POSITION), 3);
+		dimPixel2 = ReadDicom.readDouble(
+				ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
+		String slicePos = ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_IMAGE_POSITION), 3);
 		int nPunti = rt1.getCounter();
 
-		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		TableCode tc1 = new TableCode();
+		String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 
-		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1,
-				tabCodici, VERSION, autoCalled);
+		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
 		rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 		String t1 = "TESTO";
 		String s2 = "coord_x";
@@ -359,17 +344,17 @@ public class p17rmn_ implements PlugIn, Measurements {
 	}
 
 	/***
-	 * Ricerca automatica delle posizioni rods con AutoTreshold ed
-	 * AnalyzeParticles, può utilizzare diverse strategie (valori di preset) se
-	 * la prima dovesse fallire
+	 * Ricerca automatica delle posizioni rods con AutoTreshold ed AnalyzeParticles,
+	 * può utilizzare diverse strategie (valori di preset) se la prima dovesse
+	 * fallire
 	 * 
 	 * @param imp1
 	 * @param diam2
 	 * @param timeout
 	 * @param demo
 	 */
-	public static ResultsTable automaticRoiPreparation4(ImagePlus imp1,
-			int diam2, boolean silent, int timeout, boolean demo) {
+	public static ResultsTable automaticRoiPreparation4(ImagePlus imp1, int diam2, boolean silent, int timeout,
+			boolean demo) {
 
 		ImagePlus imp4 = imp1.duplicate();
 		Overlay over1 = new Overlay();
@@ -383,10 +368,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// MyLog.waitHere(listaMessaggi(0), debug, timeout);
 		// }
 
-		double dimPixel = ReadDicom
-				.readDouble(ReadDicom.readSubstring(ReadDicom
-						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
-						1));
+		double dimPixel = ReadDicom.readDouble(
+				ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
 
 		// -------------------------------------------------------------------
 		// REMEMBER: PER USARE ANALYZE PARTICLES DOBBIAMO
@@ -548,16 +531,15 @@ public class p17rmn_ implements PlugIn, Measurements {
 	}
 
 	/***
-	 * Ricerca automatica delle posizioni gels con AutoTreshold ed
-	 * AnalyzeParticles
+	 * Ricerca automatica delle posizioni gels con AutoTreshold ed AnalyzeParticles
 	 * 
 	 * @param imp1
 	 * @param diam2
 	 * @param timeout
 	 * @param demo
 	 */
-	public static ResultsTable automaticRoiPreparation3(ImagePlus imp1,
-			int diam2, boolean silent, int timeout, boolean demo) {
+	public static ResultsTable automaticRoiPreparation3(ImagePlus imp1, int diam2, boolean silent, int timeout,
+			boolean demo) {
 
 		ImagePlus imp4 = imp1.duplicate();
 		Overlay over1 = new Overlay();
@@ -573,10 +555,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// MyLog.waitHere(listaMessaggi(0), debug, timeout);
 		// }
 
-		double dimPixel = ReadDicom
-				.readDouble(ReadDicom.readSubstring(ReadDicom
-						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
-						1));
+		double dimPixel = ReadDicom.readDouble(
+				ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
 
 		// -------------------------------------------------------------------
 		// REMEMBER: PER USARE ANALYZE PARTICLES DOBBIAMO
@@ -770,8 +750,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		Roi[] vetRoi = new Roi[vetX.length];
 		for (int i1 = 0; i1 < vetX.length; i1++) {
-			imp1.setRoi(new OvalRoi(vetx1[i1] - diam2 / 2, vety1[i1] - diam2
-					/ 2, diam2, diam2));
+			imp1.setRoi(new OvalRoi(vetx1[i1] - diam2 / 2, vety1[i1] - diam2 / 2, diam2, diam2));
 			vetRoi[i1] = imp1.getRoi();
 			imp1.getRoi().setStrokeColor(Color.green);
 			over1.addElement(imp1.getRoi());
@@ -802,10 +781,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 			imp1.getWindow().toFront();
 			IJ.setTool("multipoint");
 			MyLog.waitHere(listaMessaggi(7), debug, timeout);
-			MyLog.waitHere("Sono state trovate "
-					+ vetX.length
-					+ " RODS anzichè "
-					+ numRods1
+			MyLog.waitHere("Sono state trovate " + vetX.length + " RODS anzichè " + numRods1
 					+ "\nCliccare sulle RODS non selezionate, per annullare le RODS sbagliate,\n"
 					+ "cliccare sul puntino rosso mentre si tiene premuto ALT,\nalla fine premere OK");
 		}
@@ -960,8 +936,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean doSet = false;
 		boolean doLog = false;
 
-		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Huang", noBlack,
-				noWhite, doWhite, doSet, doLog);
+		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Huang", noBlack, noWhite, doWhite, doSet, doLog);
 		// UtilAyv.showImageMaximized(imp12);
 		// MyLog.waitHere();
 
@@ -969,8 +944,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		int minSizePixels = 10000;
 		int maxSizePixels = 300000;
 		boolean excludeEdges = false;
-		Roi roiCerchio = analisi0(imp12, minSizePixels, maxSizePixels,
-				excludeEdges);
+		Roi roiCerchio = analisi0(imp12, minSizePixels, maxSizePixels, excludeEdges);
 		if (roiCerchio == null) {
 			MyLog.waitHere("roiCerchio==null");
 			return null;
@@ -981,8 +955,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		minSizePixels = 1000;
 		maxSizePixels = 30000;
 		excludeEdges = true;
-		Roi roiQuadrato = analisi0(imp12, minSizePixels, maxSizePixels,
-				excludeEdges);
+		Roi roiQuadrato = analisi0(imp12, minSizePixels, maxSizePixels, excludeEdges);
 
 		if (roiQuadrato == null) {
 			MyLog.waitHere("roiQuadrato==null");
@@ -1018,8 +991,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 			ip1122.setThreshold(minThreshold, maxThreshold, lutUpdate);
 			ip1122.setBinaryThreshold();
 			imp112.updateAndRepaintWindow();
-			ResultsTable rt1 = analisi1(imp112, minSizePixels, maxSizePixels,
-					0, 1);
+			ResultsTable rt1 = analisi1(imp112, minSizePixels, maxSizePixels, 0, 1);
 			if (rt1 == null)
 				return null;
 			trovati = rt1.getCounter();
@@ -1055,8 +1027,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 	}
 
 	/***
-	 * La strategia 0 è dedicata al circolo esterno di rods nelle macchine
-	 * Siemens
+	 * La strategia 0 è dedicata al circolo esterno di rods nelle macchine Siemens
 	 * 
 	 * @param imp1
 	 * @return
@@ -1070,8 +1041,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean doLog = false;
 
 		// MyLog.waitHere("strategia 0");
-		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Mean", noBlack,
-				noWhite, doWhite, doSet, doLog);
+		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Mean", noBlack, noWhite, doWhite, doSet, doLog);
 		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
 		// riempirò l'esterno di nero
 		int minSizePixels = 10000;
@@ -1113,20 +1083,16 @@ public class p17rmn_ implements PlugIn, Measurements {
 		return imp112;
 	}
 
-	public static Roi analisi0(ImagePlus imp1, int minSizePixel,
-			int maxSizePixel, boolean excludeEdges) {
-		int options = ParticleAnalyzer.SHOW_OUTLINES
-				+ ParticleAnalyzer.ADD_TO_MANAGER;
+	public static Roi analisi0(ImagePlus imp1, int minSizePixel, int maxSizePixel, boolean excludeEdges) {
+		int options = ParticleAnalyzer.SHOW_OUTLINES + ParticleAnalyzer.ADD_TO_MANAGER;
 		if (excludeEdges)
-			options = ParticleAnalyzer.SHOW_OUTLINES
-					+ ParticleAnalyzer.ADD_TO_MANAGER
+			options = ParticleAnalyzer.SHOW_OUTLINES + ParticleAnalyzer.ADD_TO_MANAGER
 					+ ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES;
 
 		int measurements = 0;
 		ResultsTable rt0 = new ResultsTable();
 		RoiManager rm0 = new RoiManager(false);
-		ParticleAnalyzer pa1 = new ParticleAnalyzer(options, measurements, rt0,
-				minSizePixel, maxSizePixel);
+		ParticleAnalyzer pa1 = new ParticleAnalyzer(options, measurements, rt0, minSizePixel, maxSizePixel);
 		ParticleAnalyzer.setRoiManager(rm0);
 		pa1.setHideOutputImage(true);
 		pa1.analyze(imp1);
@@ -1139,8 +1105,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 	}
 
 	/***
-	 * La strategia 1 è dedicata al circolo interno di rods nelle macchine
-	 * Siemens
+	 * La strategia 1 è dedicata al circolo interno di rods nelle macchine Siemens
 	 * 
 	 * @param imp1
 	 * @return
@@ -1153,8 +1118,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean doWhite = true;
 		boolean doSet = false;
 		boolean doLog = false;
-		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Huang", noBlack,
-				noWhite, doWhite, doSet, doLog);
+		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Huang", noBlack, noWhite, doWhite, doSet, doLog);
 		ImageProcessor ip12 = imp12.getProcessor();
 		ip12.setColor(Color.BLACK);
 		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
@@ -1193,8 +1157,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean doSet = false;
 		boolean doLog = false;
 
-		ImagePlus imp2 = MyAutoThreshold.threshold(imp1, "Moments", noBlack,
-				noWhite, doWhite, doSet, doLog);
+		ImagePlus imp2 = MyAutoThreshold.threshold(imp1, "Moments", noBlack, noWhite, doWhite, doSet, doLog);
 		IJ.run(imp2, "Invert", "");
 
 		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
@@ -1284,8 +1247,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// mettere in corretto ordine i vertici utilizzo il getConvexHull
 		Polygon p2 = pr22.getPolygon();
 		PolygonRoi pol2 = new PolygonRoi(p2, PolygonRoi.POLYGON);
-		PolygonRoi pol3 = new PolygonRoi(pol2.getConvexHull(),
-				PolygonRoi.POLYGON);
+		PolygonRoi pol3 = new PolygonRoi(pol2.getConvexHull(), PolygonRoi.POLYGON);
 		Polygon p3 = pol3.getPolygon();
 
 		int[] vetxp = p3.xpoints;
@@ -1296,7 +1258,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 		double[] vety1 = new double[vetxp.length];
 		double[] vetx;
 		double[] vety;
-		double[] vetdist= new double[vetxp.length];;
+		double[] vetdist = new double[vetxp.length];
+		;
 		double min = 99999;
 		int minPos = 9999;
 		double aux1 = 0;
@@ -1305,7 +1268,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 			vetx1[i1] = (double) vetxp[i1];
 			vety1[i1] = (double) vetyp[i1];
 			aux1 = MyGeometry.pointsDistance(0., vety1[i1], vetx1[i1], 0.);
-			vetdist[i1]=aux1;
+			vetdist[i1] = aux1;
 			if (aux1 < min) {
 				min = aux1;
 				minPos = i1;
@@ -1315,49 +1278,47 @@ public class p17rmn_ implements PlugIn, Measurements {
 		MyLog.logVector(vetx1, "vetx1");
 		MyLog.logVector(vety1, "vety1");
 		MyLog.logVector(vetdist, "vetdist");
-		
-		IJ.log("minPos= "+minPos);
+
+		IJ.log("minPos= " + minPos);
 		MyLog.waitHere();
-		
-		
+
 		// ruoto le coordinate per portare la minPos al vertice iniziale
-		
-		if (minPos>0)
 
-		do {
-			MyLog.logVector(vetx1, "vetx1");
-			MyLog.logVector(vety1, "vety1");
-			MyLog.waitHere("prima minPos= "+minPos);
+		if (minPos > 0)
 
-			vetx = ArrayUtils.rotateArrayLeft(vetx1);
-			vety = ArrayUtils.rotateArrayLeft(vety1);
-			vetx1 = vetx;
-			vety1 = vety;
-			min = 99999;
-			minPos = 999;
-			for (int i1 = 0; i1 < vetx1.length; i1++) {
-				aux1 = vetx1[i1] + vety1[i1];
-				if (aux1 < min) {
-					min = aux1;
-					minPos = i1;
+			do {
+				MyLog.logVector(vetx1, "vetx1");
+				MyLog.logVector(vety1, "vety1");
+				MyLog.waitHere("prima minPos= " + minPos);
+
+				vetx = ArrayUtils.rotateArrayLeft(vetx1);
+				vety = ArrayUtils.rotateArrayLeft(vety1);
+				vetx1 = vetx;
+				vety1 = vety;
+				min = 99999;
+				minPos = 999;
+				for (int i1 = 0; i1 < vetx1.length; i1++) {
+					aux1 = vetx1[i1] + vety1[i1];
+					if (aux1 < min) {
+						min = aux1;
+						minPos = i1;
+					}
 				}
-			}
-			
-			IJ.log("-----------------");
-			IJ.log("rotazione vertici");
-			MyLog.logVector(vetx1, "vetx1");
-			MyLog.logVector(vety1, "vety1");
-			IJ.log("dopo minPos= "+minPos);
-			
-		} while (minPos>0);
+
+				IJ.log("-----------------");
+				IJ.log("rotazione vertici");
+				MyLog.logVector(vetx1, "vetx1");
+				MyLog.logVector(vety1, "vety1");
+				IJ.log("dopo minPos= " + minPos);
+
+			} while (minPos > 0);
 		MyLog.logVector(vetx1, "vetx1");
 		MyLog.logVector(vety1, "vety1");
-		MyLog.waitHere("finale minPos= "+minPos);
+		MyLog.waitHere("finale minPos= " + minPos);
 
 		// marco i vertici ma solo per vedere se sono in ordine
 
-		double lato = (new Line(vetxp[0], vetyp[0], vetxp[1], vetyp[1]))
-				.getLength();
+		double lato = (new Line(vetxp[0], vetyp[0], vetxp[1], vetyp[1])).getLength();
 		int dia1 = 10;
 
 		if (true) {
@@ -1368,8 +1329,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 			// NB: il red è il primo vertice
 
 			for (int i1 = 0; i1 < vetxp.length; i1++) {
-				imp11.setRoi(new OvalRoi(vetxp[i1] - dia1 / 2, vetyp[i1] - dia1
-						/ 2, dia1, dia1));
+				imp11.setRoi(new OvalRoi(vetxp[i1] - dia1 / 2, vetyp[i1] - dia1 / 2, dia1, dia1));
 				imp11.getRoi().setStrokeColor(c1[i1]);
 				over11.addElement(imp11.getRoi());
 				imp11.deleteRoi();
@@ -1383,8 +1343,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 	/***
 	 * Analizza i dati delle 32 rods forniti da automatiCRoiPreparation,
-	 * prefiggendosi di identificare le diverse coppie di rods, in modo da
-	 * poterle scrivere nelle posizioni corrette del report finale
+	 * prefiggendosi di identificare le diverse coppie di rods, in modo da poterle
+	 * scrivere nelle posizioni corrette del report finale
 	 * 
 	 * @param imp1
 	 * @param rt1
@@ -1436,13 +1396,10 @@ public class p17rmn_ implements PlugIn, Measurements {
 		return imp11;
 	}
 
-	public static Roi analizzaRisultati(ImagePlus imp1, PointRoi pr1,
-			int quadrant, ImagePlus imp2, ResultsTable rt1) {
+	public static Roi analizzaRisultati(ImagePlus imp1, PointRoi pr1, int quadrant, ImagePlus imp2, ResultsTable rt1) {
 
-		double dimPixel = ReadDicom
-				.readDouble(ReadDicom.readSubstring(ReadDicom
-						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
-						1));
+		double dimPixel = ReadDicom.readDouble(
+				ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
 
 		Overlay over2 = new Overlay();
 		imp2.setOverlay(over2);
@@ -1452,8 +1409,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// mettere in corretto ordine i vertici utilizzo il getConvexHull
 		Polygon p2 = pr1.getPolygon();
 		PolygonRoi pol2 = new PolygonRoi(p2, PolygonRoi.POLYGON);
-		PolygonRoi pol3 = new PolygonRoi(pol2.getConvexHull(),
-				PolygonRoi.POLYGON);
+		PolygonRoi pol3 = new PolygonRoi(pol2.getConvexHull(), PolygonRoi.POLYGON);
 		Polygon p3 = pol3.getPolygon();
 
 		int[] vetxp = p3.xpoints;
@@ -1470,8 +1426,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		// marco i vertici ma solo per vedere se sono in ordine
 
-		double lato = (new Line(vetxp[0], vetyp[0], vetxp[1], vetyp[1]))
-				.getLength();
+		double lato = (new Line(vetxp[0], vetyp[0], vetxp[1], vetyp[1])).getLength();
 
 		if (true) {
 			imp2.setRoi(new PointRoi(vetxp, vetyp, vetxp.length));
@@ -1479,8 +1434,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 			over2.addElement(imp2.getRoi());
 
 			for (int i1 = 0; i1 < vetxp.length; i1++) {
-				imp2.setRoi(new OvalRoi(vetxp[i1] - dia1 / 2, vetyp[i1] - dia1
-						/ 2, dia1, dia1));
+				imp2.setRoi(new OvalRoi(vetxp[i1] - dia1 / 2, vetyp[i1] - dia1 / 2, dia1, dia1));
 				imp2.getRoi().setStrokeColor(c1[i1]);
 				over2.addElement(imp2.getRoi());
 				imp2.deleteRoi();
@@ -1551,8 +1505,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		int diamRoi3 = (int) Math.round(diamRoi * 2.5);
 
-		imp2.setRoi(new OvalRoi(xRoi - diamRoi3 / 2, yRoi - diamRoi3 / 2,
-				diamRoi3, diamRoi3));
+		imp2.setRoi(new OvalRoi(xRoi - diamRoi3 / 2, yRoi - diamRoi3 / 2, diamRoi3, diamRoi3));
 		imp2.getRoi().setStrokeColor(Color.red);
 		over2.addElement(imp2.getRoi());
 		imp2.deleteRoi();
@@ -1593,8 +1546,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		IJ.log("lato/2= " + lato / 2 + " lato1= " + lato1);
 
-		double[] cross5 = ImageUtils.crossingFrame(halfX1, halfY1, halfX2,
-				halfY2, imp1.getWidth(), imp1.getHeight());
+		double[] cross5 = ImageUtils.crossingFrame(halfX1, halfY1, halfX2, halfY2, imp1.getWidth(), imp1.getHeight());
 		Line linea5 = new Line(cross5[0], cross5[1], cross5[2], cross5[3]);
 		imp2.setRoi(linea5);
 		imp2.updateAndDraw();
@@ -1623,8 +1575,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		else
 			halfY2 = (vety[1] - vety[2]) / 2 + vety[2];
 
-		double[] cross6 = ImageUtils.crossingFrame(halfX1, halfY1, halfX2,
-				halfY2, imp1.getWidth(), imp1.getHeight());
+		double[] cross6 = ImageUtils.crossingFrame(halfX1, halfY1, halfX2, halfY2, imp1.getWidth(), imp1.getHeight());
 		Line linea6 = new Line(cross6[0], cross6[1], cross6[2], cross6[3]);
 		imp2.setRoi(linea6);
 		imp2.updateAndDraw();
@@ -1733,8 +1684,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		double[] vetOrder = new double[vetX.length];
 
 		for (int i1 = 0; i1 < vetX.length; i1++) {
-			vetDist[i1] = MyGeometry.pointToLineDistance(cal.getX(cross5[0]),
-					cal.getY(cross5[1]), cal.getX(cross5[2]),
+			vetDist[i1] = MyGeometry.pointToLineDistance(cal.getX(cross5[0]), cal.getY(cross5[1]), cal.getX(cross5[2]),
 					cal.getY(cross5[3]), vetX[i1], vetY[i1]);
 			vetOrder[i1] = (double) i1;
 		}
@@ -1760,12 +1710,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 			newX[i1] = vetX[(int) vetOrder[i1]];
 			newY[i1] = vetY[(int) vetOrder[i1]];
 
-			Point p1 = new Point((int) Math.round(newX[i1]),
-					(int) Math.round(newY[i1]));
-			Point a1 = new Point((int) Math.round(cross5[0]),
-					(int) Math.round(cross5[1]));
-			Point a2 = new Point((int) Math.round(cross5[2]),
-					(int) Math.round(cross5[3]));
+			Point p1 = new Point((int) Math.round(newX[i1]), (int) Math.round(newY[i1]));
+			Point a1 = new Point((int) Math.round(cross5[0]), (int) Math.round(cross5[1]));
+			Point a2 = new Point((int) Math.round(cross5[2]), (int) Math.round(cross5[3]));
 
 			Point p4 = MyGeometry.getProjectedPointOnLineFast(a1, a2, p1);
 			double d1 = MyGeometry.pointsDistance(a1, p4);
@@ -1776,8 +1723,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		int i2 = 0;
 		for (int i1 = 0; i1 < 8; i1++) {
 			i2 = i1 / 2;
-			imp2.setRoi(new PointRoi(cal.getRawX(newX[i1]), cal
-					.getRawY(newY[i1])));
+			imp2.setRoi(new PointRoi(cal.getRawX(newX[i1]), cal.getRawY(newY[i1])));
 			imp2.getRoi().setStrokeColor(c1[i2]);
 			over2.addElement(imp2.getRoi());
 			imp2.deleteRoi();
@@ -1866,8 +1812,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// MyLog.waitHere("strategia 4");
 		ImagePlus imp11 = imp1.duplicate();
 		IJ.run(imp11, "Invert", "");
-		ImagePlus imp2 = MyAutoThreshold.threshold(imp11, "Li", noBlack,
-				noWhite, doWhite, doSet, doLog);
+		ImagePlus imp2 = MyAutoThreshold.threshold(imp11, "Li", noBlack, noWhite, doWhite, doSet, doLog);
 		IJ.run(imp2, "Invert", "");
 		imp2.setTitle("strategia1: Invert+Li+Invert");
 		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
@@ -1900,15 +1845,14 @@ public class p17rmn_ implements PlugIn, Measurements {
 		return imp112;
 	}
 
-	public static ResultsTable analisi1(ImagePlus imp1, double minSize,
-			double maxSize, double minCirc, double maxCirc) {
+	public static ResultsTable analisi1(ImagePlus imp1, double minSize, double maxSize, double minCirc,
+			double maxCirc) {
 		int options = ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES;
 		int measurements = Measurements.CENTER_OF_MASS + Measurements.AREA;
 
 		ResultsTable rt0 = new ResultsTable();
 
-		ParticleAnalyzer pa1 = new ParticleAnalyzer(options, measurements, rt0,
-				minSize, maxSize, minCirc, maxCirc);
+		ParticleAnalyzer pa1 = new ParticleAnalyzer(options, measurements, rt0, minSize, maxSize, minCirc, maxCirc);
 		pa1.setHideOutputImage(true);
 		pa1.analyze(imp1);
 		return rt0;
@@ -1916,8 +1860,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 	}
 
 	/***
-	 * La strategia 0 è dedicata al circolo esterno di rods nelle macchine
-	 * HITACHI
+	 * La strategia 0 è dedicata al circolo esterno di rods nelle macchine HITACHI
 	 * 
 	 * @param imp1
 	 * @return
@@ -1931,8 +1874,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean doLog = false;
 
 		// MyLog.waitHere("strategia 5");
-		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "RenyiEntropy",
-				noBlack, noWhite, doWhite, doSet, doLog);
+		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "RenyiEntropy", noBlack, noWhite, doWhite, doSet, doLog);
 		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
 		// riempirò l'esterno di nero
 		// UtilAyv.showImageMaximized(imp12);
@@ -1976,13 +1918,11 @@ public class p17rmn_ implements PlugIn, Measurements {
 		return imp112;
 	}
 
-	public static ResultsTable analisi(ImagePlus imp1, boolean verbose,
-			int timeout, int numRoi) {
+	public static ResultsTable analisi(ImagePlus imp1, boolean verbose, int timeout, int numRoi) {
 
 		if (imp1 == null)
 			return null;
-		int options = ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES
-				+ ParticleAnalyzer.SHOW_OUTLINES;
+		int options = ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES + ParticleAnalyzer.SHOW_OUTLINES;
 		int measurements = Measurements.CENTER_OF_MASS + Measurements.AREA;
 		double minSize = 50;
 		double maxSize = 100;
@@ -1992,8 +1932,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ParticleAnalyzer pa1 = null;
 		do {
 			rt0.reset();
-			pa1 = new ParticleAnalyzer(options, measurements, rt0, minSize,
-					maxSize, minCirc, maxCirc);
+			pa1 = new ParticleAnalyzer(options, measurements, rt0, minSize, maxSize, minCirc, maxCirc);
 			pa1.setHideOutputImage(true);
 			boolean ok = pa1.analyze(imp1);
 			minSize--;
@@ -2024,10 +1963,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 		double by = rec2.getY();
 		double bw = rec2.getWidth() / imp1.getWidth();
 		CustomCanvasGeneric ccg1 = new CustomCanvasGeneric(imp1);
-		double[] cx1 = { 245, 105, 245, 380, 175, 310, 75, 160, 335, 425, 175,
-				310, 105, 245, 380, 245 };
-		double[] cy1 = { 40, 95, 130, 95, 160, 160, 230, 230, 230, 230, 305,
-				305, 370, 330, 370, 430 };
+		double[] cx1 = { 245, 105, 245, 380, 175, 310, 75, 160, 335, 425, 175, 310, 105, 245, 380, 245 };
+		double[] cy1 = { 40, 95, 130, 95, 160, 160, 230, 230, 230, 230, 305, 305, 370, 330, 370, 430 };
 		double[] cx2 = { 250, 270, 250, 230 };
 		double[] cy2 = { 240, 260, 280, 260 };
 		ccg1.setOffset(bx, by, bw);
@@ -2079,8 +2016,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 	void selfTestSilent() {
 		String[] list = { "HWSA2_testP7" };
-		String[] path2 = new InputOutput().findListTestImages2(
-				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
+		String[] path2 = new InputOutput().findListTestImages2(MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 		String path1 = path2[0];
 
 		int[] vetX = MyConst.P7_X_POINTS_TESTSIEMENS;
@@ -2094,18 +2030,15 @@ public class p17rmn_ implements PlugIn, Measurements {
 		return;
 	}
 
-	boolean testExcecution(String path1, int[] vetX, int[] vetY, int offX,
-			int offY, boolean verbose) {
+	boolean testExcecution(String path1, int[] vetX, int[] vetY, int offX, int offY, boolean verbose) {
 		ImagePlus imp1 = null;
 		if (verbose) {
 			imp1 = UtilAyv.openImageMaximized(path1);
 		} else {
 			imp1 = UtilAyv.openImageNoDisplay(path1, false);
 		}
-		double dimPixel2 = ReadDicom
-				.readDouble(ReadDicom.readSubstring(ReadDicom
-						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
-						1));
+		double dimPixel2 = ReadDicom.readDouble(
+				ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
 		double diamRoi1 = (double) MyConst.P7_DIAM_ROI / dimPixel2;
 		int diamRoi = (int) diamRoi1;
 		boolean circular = true;
@@ -2114,14 +2047,12 @@ public class p17rmn_ implements PlugIn, Measurements {
 			IJ.wait(500);
 		overlayRodNumbers(imp1, diamRoi, verbose);
 		Polygon poli1 = UtilAyv.clickSimulation(imp1, vetX, vetY);
-		boolean ok = UtilAyv.verifyResults2(poli1.xpoints, poli1.ypoints, vetX,
-				vetY, "della ROD ");
+		boolean ok = UtilAyv.verifyResults2(poli1.xpoints, poli1.ypoints, vetX, vetY, "della ROD ");
 		return ok;
 	}
 
 	/**
-	 * genera una directory temporanea e vi estrae le immagini di test da
-	 * test2.jar
+	 * genera una directory temporanea e vi estrae le immagini di test da test2.jar
 	 * 
 	 * @return home1 path della directory temporanea con le immagini di test
 	 */
@@ -2129,20 +2060,17 @@ public class p17rmn_ implements PlugIn, Measurements {
 		InputOutput io = new InputOutput();
 		io.extractFromJAR(MyConst.TEST_FILE, "HWSA_testP7", "./Test2/");
 		io.extractFromJAR(MyConst.TEST_FILE, "HWSA2_testP7", "./Test2/");
-		String home1 = this.getClass().getResource(MyConst.TEST_DIRECTORY)
-				.getPath();
+		String home1 = this.getClass().getResource(MyConst.TEST_DIRECTORY).getPath();
 		return (home1);
 	}
 
 	private static void msgPositionRoi() {
-		ButtonMessages.ModelessMsg("Posizionare la ROI  e premere CONTINUA",
-				"CONTINUA");
+		ButtonMessages.ModelessMsg("Posizionare la ROI  e premere CONTINUA", "CONTINUA");
 	}
 
 	private static void msgRedo(int nPunti) {
 		IJ.showMessage("--- A T T E N Z I O N E ---",
-				"Sono stati selezionati solo " + nPunti
-						+ " anzichè 36  punti,\n--- R I F A R E ---");
+				"Sono stati selezionati solo " + nPunti + " anzichè 36  punti,\n--- R I F A R E ---");
 	}
 
 	/**
@@ -2157,23 +2085,19 @@ public class p17rmn_ implements PlugIn, Measurements {
 	 */
 	static int[][] referenceSiemens() {
 
-		int[][] vetReference = { { 3, 0 }, { 257, 86 }, { 252, 105 },
-				{ 384, 138 }, { 123, 139 }, { 127, 156 }, { 380, 157 },
-				{ 254, 177 }, { 253, 196 }, { 189, 203 }, { 317, 203 },
-				{ 189, 222 }, { 318, 222 }, { 90, 267 }, { 171, 267 },
-				{ 334, 267 }, { 417, 267 }, { 88, 286 }, { 170, 287 },
-				{ 335, 286 }, { 417, 286 }, { 315, 331 }, { 187, 332 },
-				{ 189, 351 }, { 317, 351 }, { 251, 358 }, { 252, 377 },
-				{ 124, 397 }, { 381, 397 }, { 380, 414 }, { 124, 416 },
-				{ 251, 448 }, { 252, 467 }, { 256, 247 }, { 223, 279 },
-				{ 288, 282 }, { 254, 313 }, { 0, 0 } };
+		int[][] vetReference = { { 3, 0 }, { 257, 86 }, { 252, 105 }, { 384, 138 }, { 123, 139 }, { 127, 156 },
+				{ 380, 157 }, { 254, 177 }, { 253, 196 }, { 189, 203 }, { 317, 203 }, { 189, 222 }, { 318, 222 },
+				{ 90, 267 }, { 171, 267 }, { 334, 267 }, { 417, 267 }, { 88, 286 }, { 170, 287 }, { 335, 286 },
+				{ 417, 286 }, { 315, 331 }, { 187, 332 }, { 189, 351 }, { 317, 351 }, { 251, 358 }, { 252, 377 },
+				{ 124, 397 }, { 381, 397 }, { 380, 414 }, { 124, 416 }, { 251, 448 }, { 252, 467 }, { 256, 247 },
+				{ 223, 279 }, { 288, 282 }, { 254, 313 }, { 0, 0 } };
 
 		return vetReference;
 	}
 
 	/**
-	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo è
-	 * facilitata la eventuale modifica / traduzione dei messaggi.
+	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo è facilitata
+	 * la eventuale modifica / traduzione dei messaggi.
 	 * 
 	 * @param select
 	 * @return

@@ -108,12 +108,10 @@ public class p6rmn_ implements PlugIn, Measurements {
 			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
 			return;
 		}
-		
+
 		String className = this.getClass().getName();
 
-		VERSION = className + "_build_" + MyVersion.getVersion()
-				+ "_iw2ayv_build_" + MyVersionUtils.getVersion();
-
+		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -138,8 +136,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 				return 0;
 			case 2:
 				// new AboutBox().about("Controllo Thickness", this.getClass());
-				new AboutBox().about("Controllo Thickness",
-						MyVersion.CURRENT_VERSION);
+				new AboutBox().about("Controllo Thickness", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -159,8 +156,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 				boolean test = false;
 				ImagePlus imp0 = UtilAyv.openImageNoDisplay(path[0], true);
 				double[] oldPosition = readReferences(imp0);
-				new p6rmn_().wrapThickness(path, "0", oldPosition, autoCalled,
-						step, verbose, test);
+				new p6rmn_().wrapThickness(path, "0", oldPosition, autoCalled, step, verbose, test);
 				UtilAyv.afterWork();
 				retry = true;
 			}
@@ -192,8 +188,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 			return 0;
 		}
 
-		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
-				+ MyConst.SEQUENZE_FILE);
+		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir + MyConst.SEQUENZE_FILE);
 
 		boolean retry = false;
 		boolean step = false;
@@ -202,15 +197,13 @@ public class p6rmn_ implements PlugIn, Measurements {
 			if (nTokens == 1)
 				// userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE1);
 				userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE1,
-						TableSequence.getCode(iw2ayvTable, vetRiga[0]),
-						TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
+						TableSequence.getCode(iw2ayvTable, vetRiga[0]), TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
 						vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
 
 			else
 				// userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE2);
 				userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE2,
-						TableSequence.getCode(iw2ayvTable, vetRiga[0]),
-						TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
+						TableSequence.getCode(iw2ayvTable, vetRiga[0]), TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
 						vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
 
 			step = false;
@@ -220,8 +213,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 				return 0;
 			case 2:
 				// new AboutBox().about("Controllo Thickness", this.getClass());
-				new AboutBox().about("Controllo Thickness",
-						MyVersion.CURRENT_VERSION);
+				new AboutBox().about("Controllo Thickness", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -236,8 +228,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 				String[] path = loadPath(autoArgs);
 				ImagePlus imp0 = UtilAyv.openImageNoDisplay(path[0], true);
 				double[] vetRefPosition = readReferences(imp0);
-				ResultsTable rt = new p6rmn_().wrapThickness(path, autoArgs,
-						vetRefPosition, autoCalled, step, verbose, test);
+				ResultsTable rt = new p6rmn_().wrapThickness(path, autoArgs, vetRefPosition, autoCalled, step, verbose,
+						test);
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 
 				break;
@@ -258,8 +250,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 			if (name1 == null)
 				return null;
 			listPath.add(directory1 + name1);
-			int userSelection = ButtonMessages.ModelessMsg("Finito ?",
-					"SELEZIONA ALTRA IMMAGINE", "FINE SELEZIONE");
+			int userSelection = ButtonMessages.ModelessMsg("Finito ?", "SELEZIONA ALTRA IMMAGINE", "FINE SELEZIONE");
 			if (userSelection == 1)
 				endsel = true;
 		} while (!endsel);
@@ -277,8 +268,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 			case 1: {
 				// GE
 				String[] list = { "HT5A2_testP6" };
-				String[] path1 = new InputOutput().findListTestImages2(
-						MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
+				String[] path1 = new InputOutput().findListTestImages2(MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 				double[] vetRefPosition = MyConst.P6_REFERENCE_LINE_GE;
 				// String[] path={"./Test2/BT2A_testP6"};
 				String autoArgs = "0";
@@ -286,13 +276,12 @@ public class p6rmn_ implements PlugIn, Measurements {
 				boolean step = false;
 				boolean verbose = false;
 				boolean test = true;
-				ResultsTable rt = new p6rmn_().mainThickness(path1, autoArgs,
-						vetRefPosition, autoCalled, step, verbose, test);
+				ResultsTable rt = new p6rmn_().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
+						test);
 				rt.show("Results");
 				MyLog.waitHere("verifica results table");
 				double[] vetResults = UtilAyv.vectorizeResults(rt);
-				boolean ok = UtilAyv.verifyResults1(vetResults, referenceGe(),
-						MyConst.P6_vetName);
+				boolean ok = UtilAyv.verifyResults1(vetResults, referenceGe(), MyConst.P6_vetName);
 				if (ok)
 					MyMsg.msgTestPassed();
 				else
@@ -304,8 +293,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 			case 2:
 				// Siemens
 				String[] list = { "BT2A_testP6" };
-				String[] path1 = new InputOutput().findListTestImages2(
-						MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
+				String[] path1 = new InputOutput().findListTestImages2(MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 				double[] vetRefPosition = MyConst.P6_REFERENCE_LINE_SIEMENS;
 				// String[] path={"./Test2/BT2A_testP6"};
 				String autoArgs = "0";
@@ -314,12 +302,11 @@ public class p6rmn_ implements PlugIn, Measurements {
 				boolean verbose = false;
 				boolean test = true;
 
-				ResultsTable rt = new p6rmn_().mainThickness(path1, autoArgs,
-						vetRefPosition, autoCalled, step, verbose, test);
+				ResultsTable rt = new p6rmn_().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
+						test);
 
 				double[] vetResults = UtilAyv.vectorizeResults(rt);
-				boolean ok = UtilAyv.verifyResults1(vetResults,
-						referenceSiemens(), MyConst.P6_vetName);
+				boolean ok = UtilAyv.verifyResults1(vetResults, referenceSiemens(), MyConst.P6_vetName);
 				if (ok)
 					MyMsg.msgTestPassed();
 				else
@@ -339,8 +326,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	public void selfTestSilent() {
 		// Siemens
 		String[] list = { "BT2A_testP6" };
-		String[] path1 = new InputOutput().findListTestImages2(
-				MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
+		String[] path1 = new InputOutput().findListTestImages2(MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 
 		double[] vetRefPosition = MyConst.P6_REFERENCE_LINE_SIEMENS;
 		String autoArgs = "-1";
@@ -349,12 +335,10 @@ public class p6rmn_ implements PlugIn, Measurements {
 		boolean verbose = false;
 		boolean test = true;
 
-		ResultsTable rt = new p6rmn_().mainThickness(path1, autoArgs,
-				vetRefPosition, autoCalled, step, verbose, test);
+		ResultsTable rt = new p6rmn_().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt);
-		boolean ok = UtilAyv.verifyResults1(vetResults, referenceSiemens(),
-				MyConst.P6_vetName);
+		boolean ok = UtilAyv.verifyResults1(vetResults, referenceSiemens(), MyConst.P6_vetName);
 		if (ok)
 			IJ.log("Il test di p6rmn_ THICKNESS � stato SUPERATO");
 		else
@@ -363,8 +347,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 
 	public String[] loadPath(String autoArgs) {
 		String fileDir = Prefs.get("prefer.string1", "./test2/");
-		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
-				+ MyConst.SEQUENZE_FILE);
+		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir + MyConst.SEQUENZE_FILE);
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
 		String[] path = new String[vetRiga.length];
 		for (int i1 = 0; i1 < vetRiga.length; i1++) {
@@ -376,19 +359,13 @@ public class p6rmn_ implements PlugIn, Measurements {
 	public double[] readReferences(ImagePlus imp1) {
 		int rows = imp1.getHeight();
 		float dimPixel = ReadDicom
-				.readFloat(ReadDicom.readSubstring(ReadDicom
-						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
-						1));
+				.readFloat(ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
 
 		double[] vetReference = new double[4];
-		vetReference[0] = ReadDicom.readDouble(Prefs.get("prefer.p6rmnAx", ""
-				+ 50.0 / dimPixel));
-		vetReference[1] = ReadDicom.readDouble(Prefs.get("prefer.p6rmnAy", ""
-				+ 60.0 / dimPixel));
-		vetReference[2] = ReadDicom.readDouble(Prefs.get("prefer.p6rmnBx", ""
-				+ 50.0 / dimPixel));
-		vetReference[3] = ReadDicom.readDouble(Prefs.get("prefer.p6rmnBy", ""
-				+ 215.0 / dimPixel));
+		vetReference[0] = ReadDicom.readDouble(Prefs.get("prefer.p6rmnAx", "" + 50.0 / dimPixel));
+		vetReference[1] = ReadDicom.readDouble(Prefs.get("prefer.p6rmnAy", "" + 60.0 / dimPixel));
+		vetReference[2] = ReadDicom.readDouble(Prefs.get("prefer.p6rmnBx", "" + 50.0 / dimPixel));
+		vetReference[3] = ReadDicom.readDouble(Prefs.get("prefer.p6rmnBy", "" + 215.0 / dimPixel));
 		if (interdiction(vetReference, rows)) {
 			vetReference[0] = 50.0 / dimPixel;
 			vetReference[1] = 60.0 / dimPixel;
@@ -406,15 +383,13 @@ public class p6rmn_ implements PlugIn, Measurements {
 		Prefs.set("prefer.p6rmnBy", "" + line1.y2);
 	}
 
-	public ResultsTable wrapThickness(String[] path, String autoArgs,
-			double[] vetRefPosition, boolean autoCalled, boolean step,
-			boolean verbose, boolean test) {
+	public ResultsTable wrapThickness(String[] path, String autoArgs, double[] vetRefPosition, boolean autoCalled,
+			boolean step, boolean verbose, boolean test) {
 		boolean accetta = false;
 		ResultsTable rt = null;
 
 		do {
-			rt = mainThickness(path, autoArgs, vetRefPosition, autoCalled,
-					step, verbose, test);
+			rt = mainThickness(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
 			rt.show("Results");
 
 			if (autoCalled && !test) {
@@ -432,9 +407,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 	}
 
 	@SuppressWarnings("deprecation")
-	public ResultsTable mainThickness(String[] path, String autoArgs,
-			double[] vetRefPosition, boolean autoCalled, boolean step,
-			boolean verbose, boolean test) {
+	public ResultsTable mainThickness(String[] path, String autoArgs, double[] vetRefPosition, boolean autoCalled,
+			boolean step, boolean verbose, boolean test) {
 
 		int nFrames = 0;
 		double vetProfile[] = { 0, 0, 0, 0 }; // [xStart,yStart,xEnd,yEnd]
@@ -467,10 +441,9 @@ public class p6rmn_ implements PlugIn, Measurements {
 
 		if (verbose)
 			UtilAyv.showImageMaximized(impStack);
-		float dimPixel = ReadDicom.readFloat(ReadDicom.readSubstring(ReadDicom
-				.readDicomParameter(impStack, MyConst.DICOM_PIXEL_SPACING), 1));
-		impStack.setRoi(new Line((int) vetRefPosition[0],
-				(int) vetRefPosition[1], (int) vetRefPosition[2],
+		float dimPixel = ReadDicom.readFloat(
+				ReadDicom.readSubstring(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_PIXEL_SPACING), 1));
+		impStack.setRoi(new Line((int) vetRefPosition[0], (int) vetRefPosition[1], (int) vetRefPosition[2],
 				(int) vetRefPosition[3]));
 		impStack.updateAndDraw();
 		if (!test)
@@ -497,17 +470,15 @@ public class p6rmn_ implements PlugIn, Measurements {
 
 		nFrames = impStack.getStackSize();
 
-		double thick = ReadDicom.readDouble(ReadDicom.readDicomParameter(
-				impStack, MyConst.DICOM_SLICE_THICKNESS));
-		double spacing = ReadDicom.readDouble(ReadDicom.readDicomParameter(
-				impStack, MyConst.DICOM_SPACING_BETWEEN_SLICES));
+		double thick = ReadDicom.readDouble(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_SLICE_THICKNESS));
+		double spacing = ReadDicom
+				.readDouble(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_SPACING_BETWEEN_SLICES));
 
 		for (int w1 = 0; w1 < nFrames; w1++) {
 
 			ImagePlus imp3 = MyStackUtils.imageFromStack(impStack, w1 + 1);
 
-			String pos2 = ReadDicom.readDicomParameter(imp3,
-					MyConst.DICOM_IMAGE_POSITION);
+			String pos2 = ReadDicom.readDicomParameter(imp3, MyConst.DICOM_IMAGE_POSITION);
 			slicePos2[w1] = ReadDicom.readSubstring(pos2, 3);
 
 			if (verbose)
@@ -543,8 +514,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 				imp3.getWindow().toFront();
 			}
 
-			double[] dsd1 = analProf(imp3, vetRefPosition, vetProfile, ra1,
-					isSlab, invertErf, step, putLabelSx, dimPixel);
+			double[] dsd1 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
+					dimPixel);
 
 			fwhmSlice1[w1] = dsd1[0];
 			peakPositionSlice1[w1] = dsd1[1];
@@ -571,15 +542,14 @@ public class p6rmn_ implements PlugIn, Measurements {
 			if (step) {
 				imp3.getWindow().toFront();
 			}
-			double[] dsd2 = analProf(imp3, vetRefPosition, vetProfile, ra1,
-					isSlab, invertErf, step, putLabelSx, dimPixel);
+			double[] dsd2 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
+					dimPixel);
 			fwhmSlice2[w1] = dsd2[0];
 			peakPositionSlice2[w1] = dsd2[1];
 
 			if (imp3.isVisible())
 				imp3.getWindow().toFront();
-			double[] spessCor1 = spessStrato(dsd1[0], dsd2[0], (double) thick,
-					dimPixel);
+			double[] spessCor1 = spessStrato(dsd1[0], dsd2[0], (double) thick, dimPixel);
 
 			vetS1CorSlab[w1] = spessCor1[0];
 			vetS2CorSlab[w1] = spessCor1[1];
@@ -606,8 +576,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 				imp3.getWindow().toFront();
 			}
 
-			double[] dsd3 = analProf(imp3, vetRefPosition, vetProfile, ra1,
-					isSlab, invertErf, step, putLabelSx, dimPixel);
+			double[] dsd3 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
+					dimPixel);
 
 			fwhmCuneo3[w1] = dsd3[0];
 			peakPositionCuneo3[w1] = dsd3[1];
@@ -634,15 +604,14 @@ public class p6rmn_ implements PlugIn, Measurements {
 			if (step) {
 				imp3.getWindow().toFront();
 			}
-			double[] dsd4 = analProf(imp3, vetRefPosition, vetProfile, ra1,
-					isSlab, invertErf, step, putLabelSx, dimPixel);
+			double[] dsd4 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
+					dimPixel);
 			fwhmCuneo4[w1] = dsd4[0];
 			peakPositionCuneo4[w1] = dsd4[1];
 
 			if (imp3.isVisible())
 				imp3.getWindow().toFront();
-			double[] spessCor2 = spessStrato(dsd3[0], dsd4[0], (double) thick,
-					dimPixel);
+			double[] spessCor2 = spessStrato(dsd3[0], dsd4[0], (double) thick, dimPixel);
 			vetS1CorCuneo[w1] = spessCor2[0];
 			vetS2CorCuneo[w1] = spessCor2[1];
 			vetErrSpessCuneo[w1] = spessCor2[2];
@@ -657,10 +626,11 @@ public class p6rmn_ implements PlugIn, Measurements {
 		// String[][] tabCodici = new InputOutput().readFile1(MyConst.CODE_FILE,
 		// MyConst.TOKENS4);
 
-		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		TableCode tc1 = new TableCode();
+		String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 
-		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path[0],
-				impStack, tabCodici, VERSION , autoCalled);
+		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path[0], impStack, tabCodici, VERSION, autoCalled);
 		rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 
 		String t1 = "TESTO";
@@ -794,14 +764,13 @@ public class p6rmn_ implements PlugIn, Measurements {
 		rt.incrementCounter();
 		rt.addLabel(t1, "Spacing");
 		rt.addValue(s2 + 0, spacing);
-		
 
 		return rt;
 	}
 
 	/**
-	 * Costruisce uno stack a partire dal path delle immagini e lo riordina
-	 * secondo la posizione delle fette.
+	 * Costruisce uno stack a partire dal path delle immagini e lo riordina secondo
+	 * la posizione delle fette.
 	 * 
 	 * @param path
 	 *            vettore contenente il path delle immagini
@@ -822,8 +791,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 
 		for (int w1 = 0; w1 < path.length; w1++) {
 			imp0 = UtilAyv.openImageNoDisplay(path[w1], true);
-			String dicomPosition = ReadDicom.readDicomParameter(imp0,
-					MyConst.DICOM_IMAGE_POSITION);
+			String dicomPosition = ReadDicom.readDicomParameter(imp0, MyConst.DICOM_IMAGE_POSITION);
 			slicePos2[w1] = ReadDicom.readSubstring(dicomPosition, 3);
 		}
 
@@ -901,8 +869,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 *            Coordinate riferimento posizionato dall'operatore [ xStart,
 	 *            yStart, xEnd, yEnd ]
 	 * @param vetProfile
-	 *            Coordinate profilo (da rototraslare)[ xStart, yStart, xEnd,
-	 *            yEnd ]
+	 *            Coordinate profilo (da rototraslare)[ xStart, yStart, xEnd, yEnd ]
 	 * @param ra1
 	 *            Diametro della Roi per calcolo baseline correction
 	 * @param slab
@@ -917,9 +884,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * @return outFwhm[1]=peak position (mm)
 	 */
 
-	public double[] analProf(ImagePlus imp1, double[] vetRefPosition,
-			double[] vetProfile, int ra1, boolean slab, boolean invert,
-			boolean step, boolean bLabelSx, double dimPixel) {
+	public double[] analProf(ImagePlus imp1, double[] vetRefPosition, double[] vetProfile, int ra1, boolean slab,
+			boolean invert, boolean step, boolean bLabelSx, double dimPixel) {
 
 		/*
 		 * Aggiornamento del 29 gennaio 2007 analProf da' in uscita i valori in
@@ -931,8 +897,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 
 		int mra = ra1 / 2;
 		double[] msd1; // vettore output rototrasl coordinate
-		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[0] - mra,
-				vetProfile[1] - mra, false);
+		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[0] - mra, vetProfile[1] - mra, false);
 		int c2x = (int) msd1[0]; // coord rototrasl centro roi sx
 		int c2y = (int) msd1[1]; // coord rototrasl centro roi sx
 
@@ -948,12 +913,11 @@ public class p6rmn_ implements PlugIn, Measurements {
 		if (step) {
 			imp1.updateAndDraw();
 			ButtonMessages.ModelessMsg(
-					"primo centro c2x=" + c2x + " c2y=" + c2y + " ra1=" + ra1
-							+ "  media=" + statC.mean + "   <51>", "CONTINUA");
+					"primo centro c2x=" + c2x + " c2y=" + c2y + " ra1=" + ra1 + "  media=" + statC.mean + "   <51>",
+					"CONTINUA");
 		}
 
-		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[2] - mra,
-				vetProfile[3] - mra, false);
+		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[2] - mra, vetProfile[3] - mra, false);
 		int d2x = (int) msd1[0];
 		int d2y = (int) msd1[1];
 
@@ -963,17 +927,15 @@ public class p6rmn_ implements PlugIn, Measurements {
 		if (step) {
 			imp1.updateAndDraw();
 			ButtonMessages.ModelessMsg(
-					"secondo centro d2x=" + d2x + " d2y=" + d2y + " ra1=" + ra1
-							+ "  media=" + statD.mean + "   <52>", "CONTINUA");
+					"secondo centro d2x=" + d2x + " d2y=" + d2y + " ra1=" + ra1 + "  media=" + statD.mean + "   <52>",
+					"CONTINUA");
 		}
 		// inizio wideline
-		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[0], vetProfile[1],
-				false);
+		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[0], vetProfile[1], false);
 		c2x = (int) msd1[0];
 		c2y = (int) msd1[1];
 		// fine wideline
-		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[2], vetProfile[3],
-				false);
+		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[2], vetProfile[3], false);
 		d2x = (int) msd1[0];
 		d2y = (int) msd1[1];
 
@@ -991,8 +953,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		double[] profiB1 = baselineCorrection(profiM1, statC.mean, statD.mean);
 
 		if (step) {
-			createPlot2(profiB1, true, bLabelSx,
-					"Profilo mediato + baseline correction", true);
+			createPlot2(profiB1, true, bLabelSx, "Profilo mediato + baseline correction", true);
 			msgBaseline();
 		}
 		int isd3[];
@@ -1001,8 +962,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 			isd3 = analPlot1(profiB1, slab);
 			outFwhm = calcFwhm(isd3, profiB1, slab, dimPixel);
 			if (step) {
-				createPlot2(profiB1, slab, bLabelSx,
-						"plot mediato + baseline + FWHM", true);
+				createPlot2(profiB1, slab, bLabelSx, "plot mediato + baseline + FWHM", true);
 				msgFwhm();
 			}
 			Line.setWidth(1);
@@ -1015,8 +975,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 			outFwhm = calcFwhm(isd3, profiE1, slab, dimPixel);
 
 			if (step) {
-				createPlot2(profiE1, slab, bLabelSx,
-						"plot ERF con smooth 3x3 e FWHM", true);
+				createPlot2(profiE1, slab, bLabelSx, "plot ERF con smooth 3x3 e FWHM", true);
 				msgErf();
 			}
 			Line.setWidth(1);
@@ -1036,8 +995,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * @return out[0] fwhm calcolata (mm)
 	 * @return out[1] peak position (mm)
 	 */
-	public double[] calcFwhm(int[] isd, double[] profile, boolean bslab,
-			double dimPixel) {
+	public double[] calcFwhm(int[] isd, double[] profile, boolean bslab, double dimPixel) {
 
 		double peak = 0;
 		double[] a = Tools.getMinMax(profile);
@@ -1107,8 +1065,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 *            media sul fondo a dx
 	 * @return profilo corretto
 	 */
-	public double[] baselineCorrection(double[] profile1, double media1,
-			double media2) {
+	public double[] baselineCorrection(double[] profile1, double media1, double media2) {
 
 		int len1 = profile1.length;
 		double diff1;
@@ -1257,8 +1214,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * @param bFw
 	 *            true=scritte x FWHM
 	 */
-	public void createPlot2(double[] profile1, boolean bslab, boolean bLabelSx,
-			String sTitolo, boolean bFw) {
+	public void createPlot2(double[] profile1, boolean bslab, boolean bLabelSx, String sTitolo, boolean bFw) {
 		int isd2[];
 		double ddd[];
 		double eee[];
@@ -1329,26 +1285,10 @@ public class p6rmn_ implements PlugIn, Measurements {
 			labPos = 0.60;
 		if (bFw) {
 			plot.addLabel(labPos, 0.45, "peak / 2=   " + IJ.d2s(max1 / 2, 2));
-			plot.addLabel(
-					labPos,
-					0.50,
-					"down sx " + isd2[0] + "  =   "
-							+ IJ.d2s(profile1[isd2[0]], 2));
-			plot.addLabel(
-					labPos,
-					0.55,
-					"down dx " + isd2[2] + "  =   "
-							+ IJ.d2s(profile1[isd2[2]], 2));
-			plot.addLabel(
-					labPos,
-					0.60,
-					"up      sx " + isd2[1] + "  =   "
-							+ IJ.d2s(profile1[isd2[1]], 2));
-			plot.addLabel(
-					labPos,
-					0.65,
-					"up      dx " + isd2[3] + "  =   "
-							+ IJ.d2s(profile1[isd2[3]], 2));
+			plot.addLabel(labPos, 0.50, "down sx " + isd2[0] + "  =   " + IJ.d2s(profile1[isd2[0]], 2));
+			plot.addLabel(labPos, 0.55, "down dx " + isd2[2] + "  =   " + IJ.d2s(profile1[isd2[2]], 2));
+			plot.addLabel(labPos, 0.60, "up      sx " + isd2[1] + "  =   " + IJ.d2s(profile1[isd2[1]], 2));
+			plot.addLabel(labPos, 0.65, "up      dx " + isd2[3] + "  =   " + IJ.d2s(profile1[isd2[3]], 2));
 			plot.addLabel(labPos, 0.70, "sx interp       =  " + IJ.d2s(sx, 2));
 			plot.addLabel(labPos, 0.75, "dx interp       =  " + IJ.d2s(dx, 2));
 			plot.addLabel(labPos, 0.80, "fwhm            =  " + IJ.d2s(fwhm, 2));
@@ -1367,8 +1307,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * analisi di un profilo normale con ricerca punti sopra e sotto met�
-	 * altezza
+	 * analisi di un profilo normale con ricerca punti sopra e sotto met� altezza
 	 * 
 	 * @param profile1
 	 *            profilo da analizzare
@@ -1449,8 +1388,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 *            spessore teorico
 	 * @return spessore dello strato
 	 */
-	public double[] spessStrato(double R1, double R2, double sTeor,
-			double dimPix2) {
+	public double[] spessStrato(double R1, double R2, double sTeor, double dimPix2) {
 
 		double spessArray[]; // qui verranno messi i risultati
 		spessArray = new double[4];
@@ -1478,9 +1416,9 @@ public class p6rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * impedisce che nelle preferenze di ImageJ vengano memorizzati segmenti con
-	 * valori assurdi, crea un area al di fuori della quale il valore
-	 * memorizzato e' quello di default, inoltre non permette che il segmento sia
-	 * piu' corto di 10 pixel
+	 * valori assurdi, crea un area al di fuori della quale il valore memorizzato e'
+	 * quello di default, inoltre non permette che il segmento sia piu' corto di 10
+	 * pixel
 	 * 
 	 * @param vetLine
 	 *            coordinate linea [ xStart, yStart, xEnd, yEnd ]
@@ -1498,8 +1436,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 			return true;
 		if (vetLine[2] > (matrix - 10))
 			return true;
-		double len = Math.sqrt(Math.pow(vetLine[0] - vetLine[2], 2)
-				+ Math.pow(vetLine[1] - vetLine[3], 2));
+		double len = Math.sqrt(Math.pow(vetLine[0] - vetLine[2], 2) + Math.pow(vetLine[1] - vetLine[3], 2));
 		if (len < 10)
 			return true;
 		// se viene ribaltato il segmento interviene
@@ -1538,17 +1475,15 @@ public class p6rmn_ implements PlugIn, Measurements {
 		double DimPix = 0.78125;
 		double Thick = 2.0;
 		double Spacing = 0.0;
-		double[] vetReference = { slicePos, fwhmSlab1, peak_slab1, fwhm_slab2,
-				peak_slab2, fwhm_cuneo3, peak_cuneo3, fwhm_cuneo4, peak_cuneo4,
-				S1CorSlab, S2CorSlab, ErrSperSlab, AccurSpesSlab, S1CorCuneo,
-				S2CorCuneo, ErrSperCuneo, AccurSpesCuneo, Accettab, DimPix,
-				Thick, Spacing };
+		double[] vetReference = { slicePos, fwhmSlab1, peak_slab1, fwhm_slab2, peak_slab2, fwhm_cuneo3, peak_cuneo3,
+				fwhm_cuneo4, peak_cuneo4, S1CorSlab, S2CorSlab, ErrSperSlab, AccurSpesSlab, S1CorCuneo, S2CorCuneo,
+				ErrSperCuneo, AccurSpesCuneo, Accettab, DimPix, Thick, Spacing };
 		return vetReference;
 	}
 
 	/**
-	 * Restituisce i valori di riferimento per le immagini Ge (e simili), i
-	 * valori non dovrebbero mai cambiare, salvo che per modifiche a ImageJ
+	 * Restituisce i valori di riferimento per le immagini Ge (e simili), i valori
+	 * non dovrebbero mai cambiare, salvo che per modifiche a ImageJ
 	 * 
 	 * @return
 	 */
@@ -1576,29 +1511,23 @@ public class p6rmn_ implements PlugIn, Measurements {
 		double Thick = 5.0;
 		double Spacing = 5.0;
 
-		double[] vetReference = { slicePos, fwhmSlab1, peak_slab1, fwhm_slab2,
-				peak_slab2, fwhm_cuneo3, peak_cuneo3, fwhm_cuneo4, peak_cuneo4,
-				S1CorSlab, S2CorSlab, ErrSperSlab, AccurSpesSlab, S1CorCuneo,
-				S2CorCuneo, ErrSperCuneo, AccurSpesCuneo, Accettab, DimPix,
-				Thick, Spacing };
+		double[] vetReference = { slicePos, fwhmSlab1, peak_slab1, fwhm_slab2, peak_slab2, fwhm_cuneo3, peak_cuneo3,
+				fwhm_cuneo4, peak_cuneo4, S1CorSlab, S2CorSlab, ErrSperSlab, AccurSpesSlab, S1CorCuneo, S2CorCuneo,
+				ErrSperCuneo, AccurSpesCuneo, Accettab, DimPix, Thick, Spacing };
 		return vetReference;
 	}
 
 	public static void msgSquare() {
-		ButtonMessages.ModelessMsg(
-				"Far coincidere il segmento  con il lato sx del quadrato",
-				"CONTINUA");
+		ButtonMessages.ModelessMsg("Far coincidere il segmento  con il lato sx del quadrato", "CONTINUA");
 	}
 
 	public static void msgSquareCoordinates(double[] vetReference) {
-		ButtonMessages.ModelessMsg("coordinate posizionamento ax= "
-				+ vetReference[0] + "   ay = " + vetReference[1] + "   bx = "
-				+ vetReference[2] + "  by = " + vetReference[3], "CONTINUA");
+		ButtonMessages.ModelessMsg("coordinate posizionamento ax= " + vetReference[0] + "   ay = " + vetReference[1]
+				+ "   bx = " + vetReference[2] + "  by = " + vetReference[3], "CONTINUA");
 	}
 
 	public static int msgAccept() {
-		int userSelection = ButtonMessages.ModelessMsg(
-				"Accettabilita' immagine   <08>", "ELABORA", "SALTA");
+		int userSelection = ButtonMessages.ModelessMsg("Accettabilita' immagine   <08>", "ELABORA", "SALTA");
 		return userSelection;
 	}
 
@@ -1615,18 +1544,15 @@ public class p6rmn_ implements PlugIn, Measurements {
 	}
 
 	public static void msgBaseline() {
-		ButtonMessages.ModelessMsg("Profilo mediato e baseline correction",
-				"CONTINUA");
+		ButtonMessages.ModelessMsg("Profilo mediato e baseline correction", "CONTINUA");
 	}
 
 	public static void msgFwhm() {
-		ButtonMessages.ModelessMsg("Profilo mediato + baseline + FWHM",
-				"CONTINUA");
+		ButtonMessages.ModelessMsg("Profilo mediato + baseline + FWHM", "CONTINUA");
 	}
 
 	public static void msgErf() {
-		ButtonMessages.ModelessMsg("Profilo ERF + smooth 3x3 + FWHM",
-				"CONTINUA");
+		ButtonMessages.ModelessMsg("Profilo ERF + smooth 3x3 + FWHM", "CONTINUA");
 	}
 
 }

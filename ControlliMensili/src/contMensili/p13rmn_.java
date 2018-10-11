@@ -1,13 +1,16 @@
 package contMensili;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
 import ij.gui.NewImage;
+import ij.gui.Roi;
 import ij.io.FileSaver;
+import ij.measure.Calibration;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
@@ -15,6 +18,7 @@ import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 import ij.process.ShortProcessor;
 import utils.AboutBox;
+import utils.ArrayUtils;
 import utils.ButtonMessages;
 import utils.ImageUtils;
 import utils.InputOutput;
@@ -332,6 +336,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 				msgMainRoiPositioning();
 			Rectangle boundingRectangle = imp1.getProcessor().getRoi();
 			writeStoredRoiData(boundingRectangle);
+
 			int latoRoi2 = (int) (boundingRectangle.width);
 			int xRoi2 = boundingRectangle.x + ((boundingRectangle.width - latoRoi2) / 2);
 			int yRoi2 = boundingRectangle.y + ((boundingRectangle.height - latoRoi2) / 2);
@@ -342,6 +347,10 @@ public class p13rmn_ implements PlugIn, Measurements {
 				msgRoiData(step, mean1);
 
 			double uiPerc1 = uiPercCalculation(stat1.max, stat1.min);
+
+			int[] pixels1 = pixVectorize(imp1);
+			
+			double naad1 = naadCalculation(pixels1);
 
 			ImagePlus impDiff = UtilAyv.genImaDifference(imp1, imp2);
 			if (verbose)
@@ -378,7 +387,9 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 			int[][] classiSimulata = generaSimulata(xRoi2, yRoi2, latoRoi2, imp1, fileDir, step, verbose, test);
 
-			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+			// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+			TableCode tc1 = new TableCode();
+			String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 
 			// String[][] tabCodici = new InputOutput().readFile1(
 			// MyConst.CODE_FILE, MyConst.TOKENS4);
@@ -390,14 +401,14 @@ public class p13rmn_ implements PlugIn, Measurements {
 			// MyLog.logVector(info1, "info1");
 			// MyLog.waitHere();
 
-			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
-			
 			String t1 = "TESTO";
 			String s2 = "VALORE";
 			String s3 = "roi_x";
 			String s4 = "roi_y";
 			String s5 = "roi_b";
 			String s6 = "roi_h";
+
+			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 
 			rt.addValue(t1, "Segnale");
 			rt.addValue(s2, mean1);
@@ -423,8 +434,48 @@ public class p13rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, stat1.roiHeight);
 
 			rt.incrementCounter();
+			rt.addValue(t1, "Ghost_1");
+			rt.addValue(s2, 0);
+			rt.addValue(s3, 0);
+			rt.addValue(s4, 0);
+			rt.addValue(s5, 0);
+			rt.addValue(s6, 0);
+
+			rt.incrementCounter();
+			rt.addValue(t1, "Ghost_2");
+			rt.addValue(s2, 0);
+			rt.addValue(s3, 0);
+			rt.addValue(s4, 0);
+			rt.addValue(s5, 0);
+			rt.addValue(s6, 0);
+
+			rt.incrementCounter();
+			rt.addValue(t1, "Ghost_3");
+			rt.addValue(s2, 0);
+			rt.addValue(s3, 0);
+			rt.addValue(s4, 0);
+			rt.addValue(s5, 0);
+			rt.addValue(s6, 0);
+
+			rt.incrementCounter();
+			rt.addValue(t1, "Ghost_4");
+			rt.addValue(s2, 0);
+			rt.addValue(s3, 0);
+			rt.addValue(s4, 0);
+			rt.addValue(s5, 0);
+			rt.addValue(s6, 0);
+
+			rt.incrementCounter();
 			rt.addValue(t1, "Unif.Integr.%");
 			rt.addValue(s2, uiPerc1);
+			rt.addValue(s3, stat1.roiX);
+			rt.addValue(s4, stat1.roiY);
+			rt.addValue(s5, stat1.roiWidth);
+			rt.addValue(s6, stat1.roiHeight);
+
+			rt.incrementCounter();
+			rt.addValue(t1, "NAAD");
+			rt.addValue(s2, naad1);
 			rt.addValue(s3, stat1.roiX);
 			rt.addValue(s4, stat1.roiY);
 			rt.addValue(s5, stat1.roiWidth);
@@ -437,6 +488,10 @@ public class p13rmn_ implements PlugIn, Measurements {
 			rt.addValue(s4, statBkg.roiY);
 			rt.addValue(s5, statBkg.roiWidth);
 			rt.addValue(s6, statBkg.roiHeight);
+
+			rt.incrementCounter();
+			rt.addValue(t1, "Pos");
+			rt.addValue(s2, 0);
 
 			String[] levelString = { "+20%", "+10%", "-10%", "-20%", "fondo" };
 
@@ -478,11 +533,6 @@ public class p13rmn_ implements PlugIn, Measurements {
 		int lato = (int) MyConst.P13_LATO_ROI;
 		int xRoi1 = ReadDicom.readInt(Prefs.get("prefer.p13rmnXRoi1", Integer.toString(height / 2 - lato / 2)));
 		int yRoi1 = ReadDicom.readInt(Prefs.get("prefer.p13rmnYRoi1", Integer.toString(width / 2 - lato / 2)));
-
-		if (xRoi1 < lato)
-			xRoi1 = height / 2 - lato / 2;
-		if (yRoi1 < lato)
-			yRoi1 = width / 2 - lato / 2;
 		int[] defaults = { xRoi1, yRoi1, lato };
 		return defaults;
 	}
@@ -848,5 +898,88 @@ public class p13rmn_ implements PlugIn, Measurements {
 			ButtonMessages.ModelessMsg("Uniformita' integrale=" + uiPerc1 + "  Rapporto segnale/rumore sn2=" + snRatio,
 					"CONTINUA");
 	}
+
+	/**
+	 * 13/11/2016 Nuovo algoritmo per uniformita' per immagini con grappa datomi da
+	 * Lorella CHIAMASI NAAD
+	 * 
+	 * @param pixListSignal
+	 * @return
+	 */
+
+	public static double naadCalculation(int[] pixListSignal) {
+
+		double mean1 = ArrayUtils.vetMean(pixListSignal);
+		// MyLog.waitHere("mean1= "+mean1);
+		double val = 0;
+		double sum1 = 0;
+		for (int i1 = 0; i1 < pixListSignal.length; i1++) {
+			val = Math.abs(pixListSignal[i1] - mean1);
+			sum1 = sum1 + val;
+		}
+		// MyLog.waitHere("sum1= "+sum1);
+		double result = sum1 / (mean1 * pixListSignal.length);
+		return result;
+	}
+
+//	public static int[] pixVectorize(ImagePlus imp1) {
+//
+//		if (imp1 == null)
+//			MyLog.waitHere("imp1==null");
+//		Roi roi1 = imp1.getRoi();
+//		MyLog.waitHere();
+//		ArrayList<Integer> pixList1 = new ArrayList<Integer>();
+//		ImageProcessor ip1 = imp1.getProcessor();
+//		if (ip1 == null)
+//			MyLog.waitHere("ip1==null");
+//		ImageProcessor mask1 = roi1 != null ? roi1.getMask() : null;
+//		Rectangle r1 = roi1 != null ? roi1.getBounds() : new Rectangle(0, 0, ip1.getWidth(), ip1.getHeight());
+//		for (int y = 0; y < r1.height; y++) {
+//			for (int x = 0; x < r1.width; x++) {
+//				if (mask1 == null || mask1.getPixel(x, y) != 0) {
+//					pixList1.add((int) ip1.getPixelValue(x + r1.x, y + r1.y));
+//					if (debug)
+//						ip1.putPixel(x, y, 10000);
+//				}
+//			}
+//		}
+//		int[] pixels = new int[pixList1.size()];
+//		int i1 = 0;
+//		for (Integer n : pixList1) {
+//			pixels[i1++] = n;
+//		}
+//		return pixels;
+//	}
+	
+	public static int[] pixVectorize(ImagePlus imp1) {
+
+		
+		ArrayList<Integer> pixList1 = new ArrayList<Integer>();
+		Calibration cal1 = imp1.getCalibration();
+
+		Roi roi1 = imp1.getRoi();
+		if (roi1!=null && !roi1.isArea()) roi1 = null;
+		ImageProcessor ip1 = imp1.getProcessor();
+		ImageProcessor mask1 = roi1!=null?roi1.getMask():null;
+		Rectangle r1 = roi1!=null?roi1.getBounds():new Rectangle(0,0,ip1.getWidth(),ip1.getHeight());
+		int aux1=0;
+		for (int y1=0; y1<r1.height; y1++) {
+			for (int x1=0; x1<r1.width; x1++) {
+				if (mask1==null||mask1.getPixel(x1,y1)!=0) {
+					aux1=(int) ip1.getPixelValue(x1+r1.x, y1+r1.y);
+					pixList1.add(aux1);
+//					if (debug)
+//					ip1.putPixel(x1+r1.x,y1+r1.y, 10000);
+				}
+			}
+		}
+		int[] pixels = new int[pixList1.size()];
+		int i1 = 0;
+		for (Integer n : pixList1) {
+			pixels[i1++] = n;
+		}
+		return pixels;
+	}
+
 
 }

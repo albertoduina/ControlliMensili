@@ -858,7 +858,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 				//
 				// Salvataggio dei risultati nella ResultsTable
 
-				String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+	//			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+				TableCode tc1= new TableCode();
+				String[][] tabCodici = tc1.loadMultipleTable( "codici", ".csv");
+
 
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici,
 						VERSION + "_P11__ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_"

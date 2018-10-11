@@ -117,7 +117,24 @@ public class Sequenze_ implements PlugIn {
 
 		boolean startingDirExist = new File(startingDir).exists();
 
-		String[][] tableCode = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		// String[][] tableCode = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+
+		/// ATTENZIONE L'ATTUALE VERSIONE DI SEQUENZE SUPPORTA UN UNICO FILE CON I CODICI,
+		/// ESSO SI CHIAMA ATTUALMENTE CODICI090218.CSV E DELA SUA MANUTENZIONE NON
+		/// SI OCCUPA PIU'IL PROGRAMMATORE, MA GLI UTILIZZATORI, CHE SI OCCUPERANNO DEL SUO 
+		/// AGGIORNAMENTO E DELL'INTERSCAMBIO DELLA VERSIONE AGGIORNATA. QUESTO PERCHE'
+		/// MI E'STATO CHIESTO DI RENDERE IL FILE CON I CODICI LIBERAMENTE ACCESSIBILE,
+		/// QUINDI DA GENNAIO 2018 NON E' PIU' NELLE MIE DISPONIBILITA' (QUINDI LO
+		/// POSSONO MODIFICARE TUTTI, INCLUSI DOGS AND PIGS)
+		
+		
+		TableCode tc1 = new TableCode();
+		String[][] tableCode = tc1.loadMultipleTable("codici", ".csv");
+		
+		TableCode tc2 = new TableCode();
+		boolean flag=  tc2.ricercaDoppioni(tableCode);
+		if (flag) MyLog.waitHere("E VUALA': doppione rilevato");
+		
 		if (debugTables) {
 			IJ.log("\\Clear");
 			MyLog.logMatrix(tableCode, "tableCode");

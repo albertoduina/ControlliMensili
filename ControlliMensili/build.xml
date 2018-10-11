@@ -19,7 +19,7 @@
 	<property name="productDir1" location="${disk}/Programmi/ImageJ/Plugins/ContMensili2" />
 	<property name="productDir2" location="${disk}/Programmi2/ImageJ/Plugins/ContMensili2" />
 	<property name="productDir3" location="${disk}/Programmi2/FIJI/fiji-win64/Fiji.app/Plugins/ContMensili2" />
-	
+
 
 	<property name="pluginsDir" location="${disk}/Repository/git/imagej/plugins/ContMensili2" />
 	<echo message="pluginsDir= ${pluginsDir}" />
@@ -67,7 +67,7 @@
 
 
 	<!-- ##############			MAIN ROUTINE 		############## -->
-	<target name="main" depends="init, libraries, compile, move1, jar, zipp, wipe, zipp2, cond_INS, cond_OLD, cond_WIN7, cond_FIJI" />
+	<target name="main" depends="init, libraries, compile, move1,  jar, zipp, wipe, zipp2, move2, cond_INS, cond_OLD, cond_WIN7, cond_FIJI" />
 	<!--target name="main" depends="init, libraries, compile, move1, jar, zipp, wipe, move2, zipp2, installXp, installOthers" /-->
 	<!--target name="main" depends="init, libraries, compile, move1, jar, zipp, wipe, move2, zipp2, installXp, installOthers" /-->
 
@@ -126,6 +126,15 @@
 		</copy>
 	</target>
 
+
+	<!-- MOVE1 move the csv into dist -->
+	<target name="move2" description="Move the csv.">
+		<copy verbose="true" todir="${dist}">
+			<fileset dir="." includes=" *.csv" />
+		</copy>
+	</target>
+
+
 	<!-- Create MANIFEST and JARS application  -->
 	<target name="jar" description="JARs the Task">
 		<echo message="Eseguo CREA JAR" />
@@ -169,6 +178,14 @@
 		</delete -->
 	</target>
 
+	<!--WIPE2 Delete the jar files into production  -->
+	<target name="wipe2" description="Delete the production *.jar files.">
+		<delete failonerror="false" verbose="true">
+			<fileset dir="${output}" includes="*.jar" />
+		</delete>
+	</target>
+
+
 	<target name="zipp2" description="Zip executable files">
 		<echo message="Eseguo ZIPP2" />
 		<zip destfile="${output}/ContMensili_b${build.number}.zip">
@@ -188,8 +205,13 @@
 
 	<target name="cond_INS" depends="init" if="ins">
 		<echo message="Eseguo cond_INS" />
-		<delete dir="${productDirINSIDE}/ContMensili" />
-		<mkdir dir="${productDirINSIDE}/ContMensili" />
+		<!--delete dir="${productDirINSIDE}/ContMensili" /-->
+		<!--mkdir dir="${productDirINSIDE}/ContMensili" /-->
+		<delete failonerror="false" verbose="true">
+			<fileset dir="${output}">
+				<include name="*.jar" />
+			</fileset>
+		</delete>
 		<copy todir="${productDirINSIDE}/ContMensili">
 			<fileset dir="${dist}" includes="*.jar" />
 			<fileset dir="${output}" includes="*.jar" />
@@ -198,28 +220,58 @@
 
 	<target name="cond_OLD" depends="init" if="old">
 		<echo message="Eseguo cond_OLD" />
-		<delete dir="${productDirOLD}/ContMensili" />
-		<mkdir dir="${productDirOLD}/ContMensili" />
+		<!--delete dir="${productDirOLD}/ContMensili" /-->
+		<!--mkdir dir="${productDirOLD}/ContMensili" /-->
+		<delete failonerror="false" verbose="true">
+			<fileset dir="${output}">
+				<include name="*.jar" />
+			</fileset>
+		</delete>
 		<copy todir="${productDirOLD}/ContMensili">
 			<fileset dir="${dist}" includes="*.jar" />
+			<!--fileset dir="${dist}" includes="*.csv" /-->
 			<fileset dir="${output}" includes="*.jar" />
 		</copy>
 	</target>
 	<target name="cond_WIN7" depends="init" if="win7">
 		<echo message="Eseguo cond_WIN7" />
-		<delete dir="${productDirWIN7}/ContMensili" />
-		<mkdir dir="${productDirWIN7}/ContMensili" />
+		<!--delete dir="${productDirWIN7}/ContMensili" /-->
+		<!--mkdir dir="${productDirWIN7}/ContMensili" /-->
+		<!--delete failonerror="true" verbose="true">
+			<fileset dir="${productDirWIN7}/ContMensili">
+				<include name="*.jar" />
+			</fileset>
+		</delete-->
+		
+		<delete failonerror="false" verbose="true">
+			<fileset dir="${productDirWIN7}/ContMensili">
+					<include name="*.jar" />
+			</fileset>
+		</delete>
+		
+		
+		
+		
 		<copy todir="${productDirWIN7}/ContMensili">
 			<fileset dir="${dist}" includes="*.jar" />
+			<!--fileset dir="${dist}" includes="*.csv" /-->
 			<fileset dir="${output}" includes="*.jar" />
 		</copy>
 	</target>
+			
 	<target name="cond_FIJI" depends="init" if="win7">
 		<echo message="Eseguo cond_FIJI" />
-		<delete dir="${productDirFIJI}/ContMensili" />
-		<mkdir dir="${productDirFIJI}/ContMensili" />
+		<!--delete dir="${productDirFIJI}/ContMensili" /-->
+		<!--mkdir dir="${productDirFIJI}/ContMensili" /-->
+		<delete failonerror="false" verbose="true">
+			<fileset dir="${output}">
+					<include name="*.jar" />
+			</fileset>
+		</delete>
+
 		<copy todir="${productDirFIJI}/ContMensili">
 			<fileset dir="${dist}" includes="*.jar" />
+			<!--fileset dir="${dist}" includes="*.csv" /-->
 			<fileset dir="${output}" includes="*.jar" />
 		</copy>
 	</target>

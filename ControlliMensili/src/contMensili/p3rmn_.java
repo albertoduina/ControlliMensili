@@ -422,7 +422,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 			int[][] classiSimulata = generaSimulata(xRoi2, yRoi2, diamRoi2, imp1, fileDir, step, verbose, test);
 
-			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		//	String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+			TableCode tc1= new TableCode();
+			String[][] tabCodici = tc1.loadMultipleTable( "codici", ".csv");
 
 			// String[][] tabCodici = new InputOutput().readFile1(
 			// MyConst.CODE_FILE, MyConst.TOKENS4);

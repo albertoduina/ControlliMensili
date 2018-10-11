@@ -95,8 +95,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 		String className = this.getClass().getName();
 
-		VERSION = className + "_build_" + MyVersion.getVersion()
-				+ "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -107,8 +106,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 		} else if (nTokens == 1) {
 			autoMenu(args);
 		} else {
-			ButtonMessages.ModelessMsg(VERSION
-					+ " >> p8rmn ERRORE PARAMETRI CHIAMATA  <03>", "CHIUDI");
+			ButtonMessages.ModelessMsg(VERSION + " >> p8rmn ERRORE PARAMETRI CHIAMATA  <03>", "CHIUDI");
 			IJ.log(" p8rmn ERRORE PARAMETRI CHIAMATA =" + args);
 			return;
 		}
@@ -129,8 +127,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 				return 0;
 			case 2:
 				// new AboutBox().about("Controllo DGP", this.getClass());
-				new AboutBox()
-						.about("Controllo DGP", MyVersion.CURRENT_VERSION);
+				new AboutBox().about("Controllo DGP", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -141,8 +138,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 				step = true;
 			case 5:
 				boolean test = false;
-				String path1 = UtilAyv
-						.imageSelection("SELEZIONARE IMMAGINE...");
+				String path1 = UtilAyv.imageSelection("SELEZIONARE IMMAGINE...");
 				if (path1 == null)
 					return 5;
 				mainDgp(path1, riga1, autoCalled, step, test);
@@ -168,16 +164,14 @@ public class p8rmn_ implements PlugIn, Measurements {
 		}
 		int riga1 = vetRiga[0];
 
-		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
-				+ MyConst.SEQUENZE_FILE);
+		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir + MyConst.SEQUENZE_FILE);
 
 		boolean retry = false;
 		boolean step = false;
 		do {
 			// int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE);
 			int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
-					TableSequence.getCode(iw2ayvTable, vetRiga[0]),
-					TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
+					TableSequence.getCode(iw2ayvTable, vetRiga[0]), TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
 					vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
 
 			switch (userSelection1) {
@@ -186,8 +180,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 				return 0;
 			case 2:
 				// new AboutBox().about("Controllo DGP", this.getClass());
-				new AboutBox()
-						.about("Controllo DGP", MyVersion.CURRENT_VERSION);
+				new AboutBox().about("Controllo DGP", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
@@ -210,8 +203,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 	}
 
 	@SuppressWarnings("deprecation")
-	public ResultsTable mainDgp(String path1, int riga1, boolean autoCalled,
-			boolean step, boolean test) {
+	public ResultsTable mainDgp(String path1, int riga1, boolean autoCalled, boolean step, boolean test) {
 		boolean accetta = false;
 		ResultsTable rt = null;
 
@@ -219,16 +211,16 @@ public class p8rmn_ implements PlugIn, Measurements {
 		// String[][] tabCodici = new InputOutput().readFile1(MyConst.CODE_FILE,
 		// MyConst.P8_TOKENS4);
 
-//		if (autoCalled) {
-//			String[][] tabCodici = TableCode
-//					.loadMultipleTable(MyConst.CODE_GROUP);
-//
-//			String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
-//					+ MyConst.SEQUENZE_FILE);
-//
-//			MyLog.waitHere();
-//
-//		}
+		// if (autoCalled) {
+		// String[][] tabCodici = TableCode
+		// .loadMultipleTable(MyConst.CODE_GROUP);
+		//
+		// String[][] iw2ayvTable = new TableSequence().loadTable(fileDir
+		// + MyConst.SEQUENZE_FILE);
+		//
+		// MyLog.waitHere();
+		//
+		// }
 		//
 		// Qui si torna se la misura è da rifare
 		//
@@ -237,22 +229,19 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 			ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
 
-			String slicePos = ReadDicom.readSubstring(ReadDicom
-					.readDicomParameter(imp1, MyConst.DICOM_IMAGE_POSITION), 3);
+			String slicePos = ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_IMAGE_POSITION),
+					3);
 
 			overlayNumbers(imp1, true);
 
 			imp1.updateAndDraw();
 
-			double dimPixel = ReadDicom.readDouble(ReadDicom.readSubstring(
-					ReadDicom.readDicomParameter(imp1,
-							MyConst.DICOM_PIXEL_SPACING), 1));
+			double dimPixel = ReadDicom.readDouble(
+					ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
 
-			Polygon poli1 = UtilAyv
-					.selectionPointsClick(
-							imp1,
-							"Cliccare nell'ordine sui 4 angoli del quadrato, poi premere FINE POSIZIONAMENTO",
-							"FINE POSIZIONAMENTO");
+			Polygon poli1 = UtilAyv.selectionPointsClick(imp1,
+					"Cliccare nell'ordine sui 4 angoli del quadrato, poi premere FINE POSIZIONAMENTO",
+					"FINE POSIZIONAMENTO");
 			if (howmanyPoints(poli1) == MyConst.P8_NUM_POINTS4) {
 				double[] vetResults = mainCalculation(poli1, dimPixel);
 
@@ -266,19 +255,18 @@ public class p8rmn_ implements PlugIn, Measurements {
 				double dgp5 = vetResults[10];
 				double dgp6 = vetResults[11];
 
-				
-//				String[][] info1 = ReportStandardInfo.getStandardInfo(iw2ayvTable,
-//						riga1, tabCodici, VERSION, autoCalled);
-				
-				String[][] tabCodici = TableCode
-						.loadMultipleTable(MyConst.CODE_GROUP);
+				// String[][] info1 = ReportStandardInfo.getStandardInfo(iw2ayvTable,
+				// riga1, tabCodici, VERSION, autoCalled);
 
-				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1,
-						imp1, tabCodici, VERSION, autoCalled);
+				// String[][] tabCodici = TableCode
+				// .loadMultipleTable(MyConst.CODE_GROUP);
+				TableCode tc1 = new TableCode();
+				String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
+
+				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
 				rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 
-
-//				rt = ReportStandardInfo.putStandardInfoRT(info1);
+				// rt = ReportStandardInfo.putStandardInfoRT(info1);
 				int col = 2;
 				String t1 = "TESTO";
 				String s2 = "VALORE";
@@ -341,8 +329,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 				rt.show("Results");
 			} else {
 				IJ.beep();
-				IJ.showMessage("--- A T T E N Z I O N E ---",
-						"Non sono stati selezionati 4 punti,--- R I F A R E ---");
+				IJ.showMessage("--- A T T E N Z I O N E ---", "Non sono stati selezionati 4 punti,--- R I F A R E ---");
 
 			}
 
@@ -357,7 +344,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 			// if (autoCalled) {
 			// int userSelection3 = ButtonMessages.ModelessMsg(
-			// "Accettare il risultato delle misure?    <06>",
+			// "Accettare il risultato delle misure? <06>",
 			// "ACCETTA", "RIFAI");
 			// switch (userSelection3) {
 			// case 1:
@@ -377,7 +364,8 @@ public class p8rmn_ implements PlugIn, Measurements {
 			// } else {
 			// ButtonMessages
 			// .ModelessMsg(
-			// "Fine programma, in modo STAND-ALONE salvare A MANO la finestra Risultati   <07>",
+			// "Fine programma, in modo STAND-ALONE salvare A MANO la finestra Risultati
+			// <07>",
 			// "CONTINUA");
 			// accetta = true;
 			// }
@@ -391,12 +379,9 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 	}
 
-	public static double segmentCalculation(double xStart, double yStart,
-			double xEnd, double yEnd, double dimPixel) {
+	public static double segmentCalculation(double xStart, double yStart, double xEnd, double yEnd, double dimPixel) {
 		// segm= sqrt((xStart-xEnd)^2 +(yStart-yEnd)^2)
-		double len1 = Math.sqrt(Math.pow((xStart - xEnd), 2.0)
-				+ Math.pow((yStart - yEnd), 2.0))
-				* dimPixel;
+		double len1 = Math.sqrt(Math.pow((xStart - xEnd), 2.0) + Math.pow((yStart - yEnd), 2.0)) * dimPixel;
 		return len1;
 	}
 
@@ -436,8 +421,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 		double dgp5 = 0.9169048779063401;
 		double dgp6 = 0.9169048779063401;
 
-		double[] vetReference = { len1, len2, len3, len4, len5, len6, dgp1,
-				dgp2, dgp3, dgp4, dgp5, dgp6 };
+		double[] vetReference = { len1, len2, len3, len4, len5, len6, dgp1, dgp2, dgp3, dgp4, dgp5, dgp6 };
 		return vetReference;
 	}
 
@@ -456,36 +440,30 @@ public class p8rmn_ implements PlugIn, Measurements {
 		double dgp5 = -0.37753639801478867;
 		double dgp6 = -0.6683650905156869;
 
-		double[] vetReference = { len1, len2, len3, len4, len5, len6, dgp1,
-				dgp2, dgp3, dgp4, dgp5, dgp6 };
+		double[] vetReference = { len1, len2, len3, len4, len5, len6, dgp1, dgp2, dgp3, dgp4, dgp5, dgp6 };
 		return vetReference;
 	}
 
-	public boolean verifyResults(double[] vetResults, double[] vetReference,
-			boolean verbose) {
+	public boolean verifyResults(double[] vetResults, double[] vetReference, boolean verbose) {
 		boolean testok = true;
 
 		for (int i1 = 0; i1 < 6; i1++) {
 			if (vetResults[i1] != vetReference[i1]) {
-				IJ.log("len" + (i1 + 1) + " ERRATA " + vetResults[i1]
-						+ " anzichè " + vetReference[i1]);
+				IJ.log("len" + (i1 + 1) + " ERRATA " + vetResults[i1] + " anzichè " + vetReference[i1]);
 				testok = false;
 			}
 		}
 		for (int i1 = 0; i1 < 6; i1++) {
 			if (vetResults[i1 + 6] != vetReference[i1 + 6]) {
-				IJ.log("dgp" + (i1 + 1) + " ERRATA " + vetResults[i1 + 6]
-						+ " anzichè " + vetReference[i1 + 6]);
+				IJ.log("dgp" + (i1 + 1) + " ERRATA " + vetResults[i1 + 6] + " anzichè " + vetReference[i1 + 6]);
 				testok = false;
 			}
 		}
 		if (verbose) {
 			if (testok == true)
-				ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OK  <42>",
-						"CONTINUA");
+				ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OK  <42>", "CONTINUA");
 			else
-				ButtonMessages.ModelessMsg("Fine SelfTest CON ERRORI  <43>",
-						"CONTINUA");
+				ButtonMessages.ModelessMsg("Fine SelfTest CON ERRORI  <43>", "CONTINUA");
 		}
 		return testok;
 	}
@@ -537,8 +515,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 		}
 	}
 
-	boolean testExcecution(String path1, int[] vetX, int[] vetY,
-			double[] vetReference, boolean verbose) {
+	boolean testExcecution(String path1, int[] vetX, int[] vetY, double[] vetReference, boolean verbose) {
 
 		ImagePlus imp1 = null;
 		if (verbose) {
@@ -547,10 +524,8 @@ public class p8rmn_ implements PlugIn, Measurements {
 			imp1 = UtilAyv.openImageNoDisplay(path1, false);
 		}
 		overlayNumbers(imp1, verbose);
-		double dimPixel = ReadDicom
-				.readDouble(ReadDicom.readSubstring(ReadDicom
-						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
-						1));
+		double dimPixel = ReadDicom.readDouble(
+				ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
 
 		Polygon poli1 = UtilAyv.clickSimulation(imp1, vetX, vetY);
 		int num = howmanyPoints(poli1);
@@ -561,10 +536,10 @@ public class p8rmn_ implements PlugIn, Measurements {
 		boolean ok = verifyResults(vetResults, vetReference, verbose);
 		// if (verbose) {
 		// if (ok)
-		// ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OK  <42>",
+		// ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OK <42>",
 		// "CONTINUA");
 		// else
-		// ButtonMessages.ModelessMsg("Fine SelfTest CON ERRORI  <43>",
+		// ButtonMessages.ModelessMsg("Fine SelfTest CON ERRORI <43>",
 		// "CONTINUA");
 		// }
 		// UtilAyv.afterWork();
@@ -575,27 +550,20 @@ public class p8rmn_ implements PlugIn, Measurements {
 		// input check in the calling routine
 		int[] xPoints = poli1.xpoints;
 		int[] yPoints = poli1.ypoints;
-		double len1 = segmentCalculation(xPoints[0], yPoints[0], xPoints[1],
-				yPoints[1], dimPixel);
+		double len1 = segmentCalculation(xPoints[0], yPoints[0], xPoints[1], yPoints[1], dimPixel);
 		double dgp1 = dgpCalculation(len1, MyConst.P8_PHANTOM_SIDE);
-		double len2 = segmentCalculation(xPoints[1], yPoints[1], xPoints[2],
-				yPoints[2], dimPixel);
+		double len2 = segmentCalculation(xPoints[1], yPoints[1], xPoints[2], yPoints[2], dimPixel);
 		double dgp2 = dgpCalculation(len2, MyConst.P8_PHANTOM_SIDE);
-		double len3 = segmentCalculation(xPoints[2], yPoints[2], xPoints[3],
-				yPoints[3], dimPixel);
+		double len3 = segmentCalculation(xPoints[2], yPoints[2], xPoints[3], yPoints[3], dimPixel);
 		double dgp3 = dgpCalculation(len3, MyConst.P8_PHANTOM_SIDE);
-		double len4 = segmentCalculation(xPoints[3], yPoints[3], xPoints[0],
-				yPoints[0], dimPixel);
+		double len4 = segmentCalculation(xPoints[3], yPoints[3], xPoints[0], yPoints[0], dimPixel);
 		double dgp4 = dgpCalculation(len4, MyConst.P8_PHANTOM_SIDE);
-		double len5 = segmentCalculation(xPoints[0], yPoints[0], xPoints[2],
-				yPoints[2], dimPixel);
+		double len5 = segmentCalculation(xPoints[0], yPoints[0], xPoints[2], yPoints[2], dimPixel);
 		double dgp5 = dgpCalculation(len5, MyConst.P8_PHANTOM_DIAGONAL);
-		double len6 = segmentCalculation(xPoints[1], yPoints[1], xPoints[3],
-				yPoints[3], dimPixel);
+		double len6 = segmentCalculation(xPoints[1], yPoints[1], xPoints[3], yPoints[3], dimPixel);
 		double dgp6 = dgpCalculation(len6, MyConst.P8_PHANTOM_DIAGONAL);
 
-		double[] vetResults = { len1, len2, len3, len4, len5, len6, dgp1, dgp2,
-				dgp3, dgp4, dgp5, dgp6 };
+		double[] vetResults = { len1, len2, len3, len4, len5, len6, dgp1, dgp2, dgp3, dgp4, dgp5, dgp6 };
 		return vetResults;
 	}
 
@@ -619,8 +587,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 		io.extractFromJAR(MyConst.TEST_FILE, "HT2A_testP8", "./Test2/");
 		io.extractFromJAR(MyConst.TEST_FILE, "HT5A2_testP8", "./Test2/");
-		String home1 = this.getClass().getResource(MyConst.TEST_DIRECTORY)
-				.getPath();
+		String home1 = this.getClass().getResource(MyConst.TEST_DIRECTORY).getPath();
 		return (home1);
 	}
 

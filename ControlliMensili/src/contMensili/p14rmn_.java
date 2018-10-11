@@ -305,7 +305,9 @@ public class p14rmn_ implements PlugIn {
 		// int lato = 140;
 		// manualSearchPosition(imp1, lato);
 
-		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		TableCode tc1 = new TableCode();
+		String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 
 		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp2, tabCodici, VERSION + "_P14__ContMensili_"
 				+ MyVersion.CURRENT_VERSION + "__iw2ayv_" + MyVersionUtils.CURRENT_VERSION, autoCalled);
@@ -543,7 +545,8 @@ public class p14rmn_ implements PlugIn {
 		MyLog.appendLog(postmortem, "grafic per sSize= " + sSize);
 
 		int sFrequnits = 1;
-		MyLog.waitHere("SIZE= "+sSize+" MTF= "+MTFVector.length+ " LSF= "+LSFVector.length+" ESF= "+ESFVector.length+ " SPP= "+SPPVector.length);
+		MyLog.waitHere("SIZE= " + sSize + " MTF= " + MTFVector.length + " LSF= " + LSFVector.length + " ESF= "
+				+ ESFVector.length + " SPP= " + SPPVector.length);
 
 		generatePlot(MTFVector, "MTF", title, sFrequnits);
 		generatePlot(LSFVector, "LSF", title, sFrequnits);
@@ -680,8 +683,8 @@ public class p14rmn_ implements PlugIn {
 	}
 
 	/***
-	 * Allinea l'Array utilizzando la posizione del massimo in LSF, preleva
-	 * mezzo size a sinistra e mezzo a destra
+	 * Allinea l'Array utilizzando la posizione del massimo in LSF, preleva mezzo
+	 * size a sinistra e mezzo a destra
 	 * 
 	 * @param Array
 	 * @return
@@ -720,9 +723,8 @@ public class p14rmn_ implements PlugIn {
 	}
 
 	/***
-	 * Allinea l'Array utilizzando la posizione del massimo in LSF, preleva
-	 * mezzo size a sinistra e mezzo a destra, gestisce anche le linee non
-	 * allineabili
+	 * Allinea l'Array utilizzando la posizione del massimo in LSF, preleva mezzo
+	 * size a sinistra e mezzo a destra, gestisce anche le linee non allineabili
 	 * 
 	 * @param Array
 	 * @return
@@ -812,11 +814,10 @@ public class p14rmn_ implements PlugIn {
 	 * Mitja: Calculate maximum value and find 32 positions to align
 	 * 
 	 * Calcolo della posizione del massimo in LSFArray, per ogni linea di pixels
-	 * dell'area selezionatavengono calcolati: la posizione del max (posMax)
-	 * sulla linea, il valore del massimo sulla linea, le posizioni inizio e
-	 * fine di un campione di pixel largo come il sample size (pixels) centrato
-	 * sul posMax. I risultati vengono inseriti in un array di dimensioni
-	 * [selectionHeight]x[4]
+	 * dell'area selezionatavengono calcolati: la posizione del max (posMax) sulla
+	 * linea, il valore del massimo sulla linea, le posizioni inizio e fine di un
+	 * campione di pixel largo come il sample size (pixels) centrato sul posMax. I
+	 * risultati vengono inseriti in un array di dimensioni [selectionHeight]x[4]
 	 */
 	double[][] calculateMax(double[][] LSFArray, Roi roi1, int sSize) {
 		Rectangle r = roi1.getBounds();
@@ -1002,7 +1003,7 @@ public class p14rmn_ implements PlugIn {
 				// xValues[i]=xValues[i-1]+(0.5/(N-1));
 				xValues[i2] = xValues[i2 - 1] + (1 / ((double) N - 1));
 			}
-	//		MyLog.logVector(xValues, "xValues");
+			// MyLog.logVector(xValues, "xValues");
 		} else {
 			for (int i2 = 0; i2 < N; i2++) {
 				xValues[i2] = i2 + 1;

@@ -348,8 +348,12 @@ public class p20rmn_ implements PlugIn, Measurements {
 					MyLog.waitHere("imp111 == null");
 
 				boolean autocalled = false;
-				String[][] tabCodici = TableCode
-						.loadMultipleTable(MyConst.CODE_GROUP);
+//				String[][] tabCodici = TableCode
+//						.loadMultipleTable(MyConst.CODE_GROUP);
+//
+				
+				TableCode tc1= new TableCode();
+				String[][] tabCodici = tc1.loadMultipleTable( "codici", ".csv");
 
 				// String[] info1 = ReportStandardInfo.getSimpleStandardInfo(
 				// vetPath[0], imp100, tabCodici, VERSION, autocalled);
@@ -413,7 +417,11 @@ public class p20rmn_ implements PlugIn, Measurements {
 		if (imp111 == null)
 			MyLog.waitHere("imp111 == null");
 
-		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		
+		TableCode tc1= new TableCode();
+		String[][] tabCodici = tc1.loadMultipleTable( "codici", ".csv");
+
+//		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
 		boolean autocalled = false;
 		// String[] info1 = ReportStandardInfo.getSimpleStandardInfo(vetPath[0],

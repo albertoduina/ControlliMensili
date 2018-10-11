@@ -337,7 +337,10 @@ public class p15rmn_ implements PlugIn {
 		// int lato = 140;
 		// manualSearchPosition(imp1, lato);
 
-		String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+	//	String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+		TableCode tc1= new TableCode();
+		String[][] tabCodici = tc1.loadMultipleTable( "codici", ".csv");
+
 		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION + "_P10__ContMensili_"
 				+ MyVersion.CURRENT_VERSION + "__iw2ayv_" + MyVersionUtils.CURRENT_VERSION, autoCalled);
 
