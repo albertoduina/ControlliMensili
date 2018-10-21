@@ -23,6 +23,7 @@ import ij.plugin.PlugIn;
  */
 
 /**
+ * 
  * Il Plugin none_ viene chiamato per le immagini da non analizzare
  * 
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
