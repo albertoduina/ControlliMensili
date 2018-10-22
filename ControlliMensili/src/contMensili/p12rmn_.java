@@ -2124,7 +2124,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			diamMROI = diamCircle80;
 		}
 
-		imp12.setRoi(new OvalRoi(xCenterMROI, yCenterMROI, diamMROI, diamMROI));
+		imp12.setRoi(new OvalRoi(xCenterMROI-diamMROI/2, yCenterMROI-diamMROI/2, diamMROI, diamMROI));
 
 		if (demo)
 
@@ -2135,7 +2135,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 			MyLog.waitHere(listaMessaggi(9), debug, timeout1);
 			MyCircleDetector.drawCenter(imp12, over12, xCenterCircle + xcorr, yCenterCircle + ycorr, colore2);
 			MyLog.waitHere(listaMessaggi(10), debug, timeout1);
-			MyLog.waitHere("15");
 		}
 
 		imp12.close();

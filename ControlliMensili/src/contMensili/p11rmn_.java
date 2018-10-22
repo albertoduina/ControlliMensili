@@ -138,11 +138,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 	public int manualMenu(int preset, String testDirectory) {
 		boolean retry = false;
 		boolean step = false;
-		int timeout = 333;
+		int timeout = 0;
 		int mode = 0;
 		do {
 			int userSelection1 = UtilAyv.userSelectionManual(VERSION, TYPE);
-			MyLog.waitHere("MANUAL userSelection1=" + userSelection1);
+			// MyLog.waitHere("MANUAL userSelection1=" + userSelection1);
 
 			switch (userSelection1) {
 			case ABORT:
@@ -165,7 +165,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				break;
 			case 4:
 				mode = 3;
-				// step = true;
+		//		step = true;
 			case 5:
 				if (mode == 0)
 					mode = 2;
@@ -357,8 +357,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * @param direzione
 	 * @param profond
 	 * @param info10
-	 * @param mode
-	 *            0=silent, 1=fast, 2=step, 3=step, 4=verbose, 10=step
+	 * @param mode      0=silent, 1=fast, 2=step, 3=step, 4=verbose, 10=step
 	 * @param timeout
 	 * @return
 	 */
@@ -396,6 +395,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 			break;
 		case 4:
 			verbose = true;
+			step = true;
+			break;
+		case 5:
+			verbose = true;
+			step = true;
 			break;
 		case 10:
 			verbose = true;
@@ -403,7 +407,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 			break;
 		}
 
-		// MyLog.waitHere("mode=" + mode);
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		do {
@@ -530,16 +533,15 @@ public class p11rmn_ implements PlugIn, Measurements {
 					imp1.getRoi().setName("MROI");
 					imp1.killRoi();
 					imp1.updateAndDraw();
-					MyLog.waitHere("Manuale", debug, timeout);
+					MyLog.waitHere("Modo Manuale", debug, timeout);
 
 					// ------------------------
 					imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7, sq7);
 
 				}
 
-				// MyLog.waitHere();
 				if (step)
-					MyLog.waitHere();
+					MyLog.waitHere("posizione MROI");
 
 				ImageStatistics stat1 = imp1.getStatistics();
 				double signal1 = stat1.mean;
@@ -858,10 +860,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 				//
 				// Salvataggio dei risultati nella ResultsTable
 
-	//			String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
-				TableCode tc1= new TableCode();
-				String[][] tabCodici = tc1.loadMultipleTable( "codici", ".csv");
-
+				// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+				TableCode tc1 = new TableCode();
+				String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici,
 						VERSION + "_P11__ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_"
@@ -1172,12 +1173,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 	/**
 	 * Calcola la deviazione standard
 	 * 
-	 * @param num
-	 *            Numero dei pixel
-	 * @param sum
-	 *            Somma dei valori pixel
-	 * @param sum2
-	 *            Somma dei quadrati dei valori dei pixel
+	 * @param num  Numero dei pixel
+	 * @param sum  Somma dei valori pixel
+	 * @param sum2 Somma dei quadrati dei valori dei pixel
 	 * @return deviazione standard
 	 */
 
@@ -1197,18 +1195,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 	/**
 	 * Conta i pixel che oltrepassano la soglia di conteggio
 	 * 
-	 * @param imp1
-	 *            immagine in input
-	 * @param sqX
-	 *            coordinata della Roi
-	 * @param sqY
-	 *            coordinata della Roi
-	 * @param sqR
-	 *            lato della Roi
-	 * @param limit
-	 *            soglia di conteggio
-	 * @param paintPixels
-	 *            switch per test
+	 * @param imp1        immagine in input
+	 * @param sqX         coordinata della Roi
+	 * @param sqY         coordinata della Roi
+	 * @param sqR         lato della Roi
+	 * @param limit       soglia di conteggio
+	 * @param paintPixels switch per test
 	 * @return pixel che superano la soglia
 	 */
 	public static int countPixTest(ImagePlus imp1, int sqX, int sqY, int sqR, double limit, boolean paintPixels) {
@@ -1254,18 +1246,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * differenza i cui corrispondenti pixel della prima immagine oltrepassano la
 	 * soglia di conteggio, secondo il protocollo NEMA
 	 * 
-	 * @param imp1
-	 *            immagine in input
-	 * @param imp3
-	 *            immagine differenza
-	 * @param sqX
-	 *            coordinata della Roi
-	 * @param sqY
-	 *            coordinata della Roi
-	 * @param sqR
-	 *            lato della Roi
-	 * @param limit
-	 *            soglia di conteggio
+	 * @param imp1  immagine in input
+	 * @param imp3  immagine differenza
+	 * @param sqX   coordinata della Roi
+	 * @param sqY   coordinata della Roi
+	 * @param sqR   lato della Roi
+	 * @param limit soglia di conteggio
 	 * @return [0] sum / pixelcount [1] devStan
 	 */
 
@@ -1328,16 +1314,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 	/**
 	 * Analisi di un profilo NON mediato
 	 * 
-	 * @param imp1
-	 *            Immagine da analizzare
-	 * @param ax
-	 *            Coordinata x inizio segmento
-	 * @param ay
-	 *            Coordinata y inizio segmento
-	 * @param bx
-	 *            Coordinata x fine segmento
-	 * @param by
-	 *            Coordinata x fine segmento
+	 * @param imp1 Immagine da analizzare
+	 * @param ax   Coordinata x inizio segmento
+	 * @param ay   Coordinata y inizio segmento
+	 * @param bx   Coordinata x fine segmento
+	 * @param by   Coordinata x fine segmento
 	 * 
 	 * @return outFwhm[0]=FWHM, outFwhm[1]=peak position
 	 */
@@ -1377,11 +1358,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 	/**
 	 * Calcolo dell'FWHM su di un vettore profilo
 	 * 
-	 * @param vetUpDwPoints
-	 *            Vettore restituito da AnalPlot2 con le posizioni dei punti sopra e
-	 *            sotto la meta' altezza
-	 * @param profile
-	 *            Profilo da analizzare
+	 * @param vetUpDwPoints Vettore restituito da AnalPlot2 con le posizioni dei
+	 *                      punti sopra e sotto la meta' altezza
+	 * @param profile       Profilo da analizzare
 	 * @return out[0]=FWHM, out[1]=peak position
 	 */
 
@@ -1426,10 +1405,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 	/**
 	 * Mostra a video un profilo con linea a meta' picco
 	 * 
-	 * @param profile1
-	 *            Vettore con il profilo da analizzare
-	 * @param bslab
-	 *            Flag slab che qui mettiamo sempre true
+	 * @param profile1 Vettore con il profilo da analizzare
+	 * @param bslab    Flag slab che qui mettiamo sempre true
 	 */
 
 	private static void createPlotP11(double profile1[], boolean bslab, boolean bLabelSx) {
@@ -1601,9 +1578,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * 
 	 * @param imp11
 	 * @param autoCalled
-	 * @param direzioneTabella
-	 *            1=verticale a salire, 2=verticale a scendere, 3=orizzontale
-	 *            sinistra, 4=orizzontale destra
+	 * @param direzioneTabella 1=verticale a salire, 2=verticale a scendere,
+	 *                         3=orizzontale sinistra, 4=orizzontale destra
 	 * @param profond
 	 * @param info10
 	 * @param mode
@@ -1623,6 +1599,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		boolean test = false;
 		boolean fast = false;
 
+
 		switch (mode) {
 		case 0:
 			silent = true;
@@ -1641,6 +1618,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 			break;
 		case 4:
 			verbose = true;
+			step = true;
+			break;
+		case 5:
+			verbose = true;
+			step = true;
 			break;
 		case 10:
 			verbose = true;
@@ -1789,6 +1771,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			over11.addElement(imp11.getRoi());
 			over11.setStrokeColor(color1);
 			imp11.updateAndDraw();
+
 			if (step || test)
 				MyLog.waitHere("Selezione automatica direzione = " + strDirez, debug, timeout);
 
@@ -1811,6 +1794,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			double xCenter[] = { centro };
 			double yCenter[] = { profi1[(int) centro] };
 
+	
 			if (step || test) {
 				Plot plot1 = MyPlot.basePlot(profi1, "PROFILO SEGNALE LUNGO LINEA VERDE", Color.blue);
 				plot1.draw();
