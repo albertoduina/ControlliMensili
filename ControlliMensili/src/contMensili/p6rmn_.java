@@ -19,6 +19,7 @@ import ij.util.Tools;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -630,8 +631,10 @@ public class p6rmn_ implements PlugIn, Measurements {
 		TableCode tc1 = new TableCode();
 		String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 
+//		MyLog.waitHere("path1= "+path[0]);
 		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path[0], impStack, tabCodici, VERSION, autoCalled);
 		rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+		rt.showRowNumbers(true);
 
 		String t1 = "TESTO";
 		String s2 = "SLICE";
@@ -772,8 +775,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * Costruisce uno stack a partire dal path delle immagini e lo riordina secondo
 	 * la posizione delle fette.
 	 * 
-	 * @param path
-	 *            vettore contenente il path delle immagini
+	 * @param path vettore contenente il path delle immagini
 	 * @return ImagePlus contenente lo stack generato
 	 */
 	public ImagePlus stackBuilder(String[] path, boolean verbose) {
@@ -809,7 +811,12 @@ public class p6rmn_ implements PlugIn, Measurements {
 				sliceInfo1 += "\n" + sliceInfo2;
 			newStack.addSlice(sliceInfo1, ip1);
 		}
-		ImagePlus newImpStack = new ImagePlus("newSTACK", newStack);
+		// 180419 aggiunto eventuale codice del nome immagine anche allo stack
+		File f = new File(path[0]);
+		String nome1 = f.getName();
+		String nome2 = nome1.substring(0, 5);
+		// MyLog.waitHere("nome2= "+nome2);
+		ImagePlus newImpStack = new ImagePlus(nome2 + "_newSTACK", newStack);
 		if (pathSortato.length == 1) {
 			String sliceInfo3 = imp0.getTitle();
 			sliceInfo3 += "\n" + (String) imp0.getProperty("Info");
@@ -863,23 +870,16 @@ public class p6rmn_ implements PlugIn, Measurements {
 	/**
 	 * analisi di un profilo
 	 * 
-	 * @param imp1
-	 *            Immagine da analizzare
-	 * @param vetRefPosition
-	 *            Coordinate riferimento posizionato dall'operatore [ xStart,
-	 *            yStart, xEnd, yEnd ]
-	 * @param vetProfile
-	 *            Coordinate profilo (da rototraslare)[ xStart, yStart, xEnd, yEnd ]
-	 * @param ra1
-	 *            Diametro della Roi per calcolo baseline correction
-	 * @param slab
-	 *            Flag true=slab, false=cuneo
-	 * @param invert
-	 *            Flag true=erf invertita false=erf diritta
-	 * @param step
-	 *            Flag true=messaggi on, false=messaggi off
-	 * @param bLabelSx
-	 *            Flag true= label a sx, false=label a dx
+	 * @param imp1           Immagine da analizzare
+	 * @param vetRefPosition Coordinate riferimento posizionato dall'operatore [
+	 *                       xStart, yStart, xEnd, yEnd ]
+	 * @param vetProfile     Coordinate profilo (da rototraslare)[ xStart, yStart,
+	 *                       xEnd, yEnd ]
+	 * @param ra1            Diametro della Roi per calcolo baseline correction
+	 * @param slab           Flag true=slab, false=cuneo
+	 * @param invert         Flag true=erf invertita false=erf diritta
+	 * @param step           Flag true=messaggi on, false=messaggi off
+	 * @param bLabelSx       Flag true= label a sx, false=label a dx
 	 * @return outFwhm[0]=FWHM (mm)
 	 * @return outFwhm[1]=peak position (mm)
 	 */
@@ -986,12 +986,9 @@ public class p6rmn_ implements PlugIn, Measurements {
 	/**
 	 * calcolo FWHM del profilo assegnato
 	 * 
-	 * @param isd
-	 *            coordinate sul profilo sopra e sotto met� altezza
-	 * @param profile
-	 *            profilo da analizzare
-	 * @param bslab
-	 *            true se slab, false se cuneo
+	 * @param isd     coordinate sul profilo sopra e sotto met� altezza
+	 * @param profile profilo da analizzare
+	 * @param bslab   true se slab, false se cuneo
 	 * @return out[0] fwhm calcolata (mm)
 	 * @return out[1] peak position (mm)
 	 */
@@ -1034,16 +1031,11 @@ public class p6rmn_ implements PlugIn, Measurements {
 	/**
 	 * assegna un profilo su cui effettuare i calcoli
 	 * 
-	 * @param imp1
-	 *            immagine su cui effettuare il profilo
-	 * @param x1
-	 *            coordinata x start profilo
-	 * @param y1
-	 *            coordinata y start profilo
-	 * @param x2
-	 *            coordinata x end profilo
-	 * @param y2
-	 *            coordinata y end profilo
+	 * @param imp1 immagine su cui effettuare il profilo
+	 * @param x1   coordinata x start profilo
+	 * @param y1   coordinata y start profilo
+	 * @param x2   coordinata x end profilo
+	 * @param y2   coordinata y end profilo
 	 * @return profilo wideline
 	 */
 	public double[] getLinePixels(ImagePlus imp1, int x1, int y1, int x2, int y2) {
@@ -1057,12 +1049,9 @@ public class p6rmn_ implements PlugIn, Measurements {
 	/**
 	 * calcolo baseline correction del profilo assegnato
 	 * 
-	 * @param profile1
-	 *            profilo da correggere
-	 * @param media1
-	 *            media sul fondo a sx
-	 * @param media2
-	 *            media sul fondo a dx
+	 * @param profile1 profilo da correggere
+	 * @param media1   media sul fondo a sx
+	 * @param media2   media sul fondo a dx
 	 * @return profilo corretto
 	 */
 	public double[] baselineCorrection(double[] profile1, double media1, double media2) {
@@ -1080,10 +1069,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 	/**
 	 * calcolo ERF
 	 * 
-	 * @param profile1
-	 *            profilo da elaborare
-	 * @param invert
-	 *            true se da invertire
+	 * @param profile1 profilo da elaborare
+	 * @param invert   true se da invertire
 	 * @return profilo con ERF
 	 */
 	public double[] createErfOld(double[] profile1, boolean invert) {
@@ -1131,10 +1118,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 	/**
 	 * calcolo ERF
 	 * 
-	 * @param profile1
-	 *            profilo da elaborare
-	 * @param invert
-	 *            true se da invertire
+	 * @param profile1 profilo da elaborare
+	 * @param invert   true se da invertire
 	 * @return profilo con ERF
 	 */
 	public double[] createErf(double[] profile1, boolean invert) {
@@ -1203,16 +1188,11 @@ public class p6rmn_ implements PlugIn, Measurements {
 	/**
 	 * display di un profilo con linea a met� altezza
 	 * 
-	 * @param profile1
-	 *            profilo in ingresso
-	 * @param bslab
-	 *            true=slab false=cuneo
-	 * @param bLabelSx
-	 *            true=label a sx nel plot, false=label a dx
-	 * @param sTitolo
-	 *            titolo del grafico
-	 * @param bFw
-	 *            true=scritte x FWHM
+	 * @param profile1 profilo in ingresso
+	 * @param bslab    true=slab false=cuneo
+	 * @param bLabelSx true=label a sx nel plot, false=label a dx
+	 * @param sTitolo  titolo del grafico
+	 * @param bFw      true=scritte x FWHM
 	 */
 	public void createPlot2(double[] profile1, boolean bslab, boolean bLabelSx, String sTitolo, boolean bFw) {
 		int isd2[];
@@ -1309,10 +1289,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 	/**
 	 * analisi di un profilo normale con ricerca punti sopra e sotto met� altezza
 	 * 
-	 * @param profile1
-	 *            profilo da analizzare
-	 * @param bSlab
-	 *            true=slab false=cuneo
+	 * @param profile1 profilo da analizzare
+	 * @param bSlab    true=slab false=cuneo
 	 * @return isd[0] punto profilo sotto half a sx
 	 * @return isd[1] punto profilo sopra half a sx
 	 * @return isd[2] punto profilo sotto half a dx
@@ -1384,8 +1362,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * 
 	 * @param R1
 	 * @param R2
-	 * @param sTeor
-	 *            spessore teorico
+	 * @param sTeor spessore teorico
 	 * @return spessore dello strato
 	 */
 	public double[] spessStrato(double R1, double R2, double sTeor, double dimPix2) {
@@ -1420,10 +1397,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * quello di default, inoltre non permette che il segmento sia piu' corto di 10
 	 * pixel
 	 * 
-	 * @param vetLine
-	 *            coordinate linea [ xStart, yStart, xEnd, yEnd ]
-	 * @param matrix
-	 *            matrice immagine
+	 * @param vetLine coordinate linea [ xStart, yStart, xEnd, yEnd ]
+	 * @param matrix  matrice immagine
 	 * @return true se interdetta memorizzazione
 	 */
 	public boolean interdiction(double[] vetLine, int matrix) {

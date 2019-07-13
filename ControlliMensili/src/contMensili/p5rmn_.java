@@ -587,6 +587,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 			//
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+			rt.showRowNumbers(true);
+
 			int col = 2;
 			String t1 = "TESTO";
 			String s2 = "VALORE";

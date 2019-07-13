@@ -119,22 +119,24 @@ public class Sequenze_ implements PlugIn {
 
 		// String[][] tableCode = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
-		/// ATTENZIONE L'ATTUALE VERSIONE DI SEQUENZE SUPPORTA UN UNICO FILE CON I CODICI,
+		/// ATTENZIONE L'ATTUALE VERSIONE DI SEQUENZE SUPPORTA UN UNICO FILE CON I
+		/// CODICI,
 		/// ESSO SI CHIAMA ATTUALMENTE CODICI090218.CSV E DELA SUA MANUTENZIONE NON
-		/// SI OCCUPA PIU'IL PROGRAMMATORE, MA GLI UTILIZZATORI, CHE SI OCCUPERANNO DEL SUO 
+		/// SI OCCUPA PIU'IL PROGRAMMATORE, MA GLI UTILIZZATORI, CHE SI OCCUPERANNO DEL
+		/// SUO
 		/// AGGIORNAMENTO E DELL'INTERSCAMBIO DELLA VERSIONE AGGIORNATA. QUESTO PERCHE'
 		/// MI E'STATO CHIESTO DI RENDERE IL FILE CON I CODICI LIBERAMENTE ACCESSIBILE,
 		/// QUINDI DA GENNAIO 2018 NON E' PIU' NELLE MIE DISPONIBILITA' (QUINDI LO
-		/// POSSONO MODIFICARE TUTTI, INCLUSI DOGS AND PIGS)
-		
-		
+		/// POSSONO MODIFICARE TUTTI, INCLUSI D&P (DOGS & PIGS))
+
 		TableCode tc1 = new TableCode();
 		String[][] tableCode = tc1.loadMultipleTable("codici", ".csv");
-		
+
 		TableCode tc2 = new TableCode();
-		boolean flag=  tc2.ricercaDoppioni(tableCode);
-		if (flag) MyLog.waitHere("E VUALA': doppione rilevato");
-		
+		boolean flag = tc2.ricercaDoppioni(tableCode);
+		if (flag)
+			MyLog.waitHere("E VUALA': doppione rilevato");
+
 		if (debugTables) {
 			IJ.log("\\Clear");
 			MyLog.logMatrix(tableCode, "tableCode");
@@ -293,6 +295,20 @@ public class Sequenze_ implements PlugIn {
 				// NUOVA CAZZATA INEDITA
 				// =============================================================
 
+				treviglioDevelop(tableSequenceLoaded, tableCode);
+
+				if (debugTables) {
+					IJ.log("\\Clear");
+					MyLog.logMatrix(tableSequenceLoaded, "tableSequenceTreviglio");
+					MyLog.waitHere("salvare il log come TableSequenceTreviglio");
+					IJ.log("\\Clear");
+					MyLog.logMatrix(tableCode, "tableCodeTreviglio");
+					MyLog.waitHere("salvare il log come TableCodeTreviglio");
+				}
+
+				// String[][] tableSequenceTreviglio =
+				// treviglioSequenceTable(tableSequenceLoaded, tableExpand);
+
 				String[][] tableSequenceSorted1 = TableSorter.minsort(tableSequenceLoaded, TableSequence.POSIZ);
 				if (debugTables) {
 					IJ.log("\\Clear");
@@ -374,8 +390,7 @@ public class Sequenze_ implements PlugIn {
 	 * 
 	 * copied from www.javapractices.com (Alex Wong
 	 * 
-	 * @param startingDir
-	 *            directory "radice"
+	 * @param startingDir directory "radice"
 	 * @return lista dei path dei file
 	 */
 	public List<File> getFileListing(File startingDir) {
@@ -402,13 +417,10 @@ public class Sequenze_ implements PlugIn {
 	 * elencati in codiciNew.csv, compila i vari campi della tabella dei file da
 	 * analizzare
 	 * 
-	 * @param pathList
-	 *            lista dei file presenti nelle directory e relative sottodirectory
-	 *            selezionate.
-	 * @param tableCode2
-	 *            contenuto di codici.txt
-	 * @param tableExpand4
-	 *            contenuto di expand.txt
+	 * @param pathList     lista dei file presenti nelle directory e relative
+	 *                     sottodirectory selezionate.
+	 * @param tableCode2   contenuto di codici.txt
+	 * @param tableExpand4 contenuto di expand.txt
 	 * @return restituisce una TableSequence le cui colonne contengono: vetConta,
 	 *         vetPath, vetCodice, vetCoil, vetImaDaPassare, vetimaGruppo,
 	 */
@@ -707,12 +719,9 @@ public class Sequenze_ implements PlugIn {
 	/**
 	 * Espande i codici delle immagini, utilizzando il file expand.txt
 	 * 
-	 * @param codice
-	 *            codice della misura da espandere
-	 * @param eco
-	 *            tempo di eco della misura da espandere
-	 * @param tableExpand4
-	 *            tabella contenente i dati di expand.txt
+	 * @param codice       codice della misura da espandere
+	 * @param eco          tempo di eco della misura da espandere
+	 * @param tableExpand4 tabella contenente i dati di expand.txt
 	 * @return vettore contenente i dati espansi
 	 */
 	public String[][] expandCode(String codice, String eco, String[][] tableExpand4) {
@@ -755,8 +764,7 @@ public class Sequenze_ implements PlugIn {
 	/**
 	 * Delete the dot in a string
 	 * 
-	 * @param strIn
-	 *            stringa contenente un numero separato dal punto
+	 * @param strIn stringa contenente un numero separato dal punto
 	 * @return stringa contenente il numero senza la separazione del punto
 	 */
 	public String deleteDot(String strIn) {
@@ -775,8 +783,7 @@ public class Sequenze_ implements PlugIn {
 	/**
 	 * Lettura di AcqTime di una immagine (Siemens + Philips)
 	 * 
-	 * @param imp1
-	 *            ImagePlus immagine
+	 * @param imp1 ImagePlus immagine
 	 * @return acqTime
 	 */
 	public static String readTime(ImagePlus imp1) {
@@ -790,12 +797,9 @@ public class Sequenze_ implements PlugIn {
 	/**
 	 * Scrive una riga nella tabella dei dati
 	 * 
-	 * @param inTable
-	 *            tabella su cui scrivere
-	 * @param vetData
-	 *            dati da scrivere in tabella
-	 * @param column
-	 *            numero della riga in cui scrivere
+	 * @param inTable tabella su cui scrivere
+	 * @param vetData dati da scrivere in tabella
+	 * @param column  numero della riga in cui scrivere
 	 * @return duplicato tabella con scritta la riga
 	 */
 	public String[][] writeTableColumn(String[][] inTable, List<String> vetData, int column) {
@@ -809,10 +813,8 @@ public class Sequenze_ implements PlugIn {
 	 * controlli gi� effettuati, per cui si pu� spegnere il PC e ripartire ad
 	 * analizzare dal file successivo all'ultimo analizzato con successo.
 	 * 
-	 * @param tableSequenze5
-	 *            e' il file iw2ayv.txt ricaricato da disco
-	 * @param tableCode5
-	 *            e' il file codiciXXXX.txt caricato da disco
+	 * @param tableSequenze5 e' il file iw2ayv.txt ricaricato da disco
+	 * @param tableCode5     e' il file codiciXXXX.txt caricato da disco
 	 */
 	public String[][] callPluginsFromSequenceTable(String[][] tableSequenze5, String[][] tableCode5, boolean test,
 			boolean superficiali, boolean p10p11p12, TextWindow tw) {
@@ -995,13 +997,10 @@ public class Sequenze_ implements PlugIn {
 	 * Cerca in tabella il nome del plugin da lanciare per il codice corrispondente
 	 * alla linea di ayv.txt elaborata al momento. Potremo avere ad esempio "p6rmn_"
 	 * 
-	 * @param lineNumber
-	 *            numero linea tableSequenze in elaborazione (la prima con "fatto"
-	 *            =0
-	 * @param tableSequenze
-	 *            tabella sequenze in memoria
-	 * @param tableCode
-	 *            tabella codici in memoria
+	 * @param lineNumber    numero linea tableSequenze in elaborazione (la prima con
+	 *                      "fatto" =0
+	 * @param tableSequenze tabella sequenze in memoria
+	 * @param tableCode     tabella codici in memoria
 	 * @return nome del plugin da chiamare
 	 */
 	public String pluginToBeCalled(int lineNumber, String[][] tableSequenze, String[][] tableCode) {
@@ -1026,13 +1025,10 @@ public class Sequenze_ implements PlugIn {
 	 * alla linea di ayv.txt elaborata al momento. Potremo avere ad esempio
 	 * "p6rmn_". Utilizza anche la colonna "COIL"
 	 * 
-	 * @param lineNumber
-	 *            numero linea tableSequenze in elaborazione (la prima con "fatto"
-	 *            =0
-	 * @param tableSequenze
-	 *            tabella sequenze in memoria
-	 * @param tableCode
-	 *            tabella codici in memoria
+	 * @param lineNumber    numero linea tableSequenze in elaborazione (la prima con
+	 *                      "fatto" =0
+	 * @param tableSequenze tabella sequenze in memoria
+	 * @param tableCode     tabella codici in memoria
 	 * @return nome del plugin da chiamare
 	 */
 	public String pluginToBeCalledWithCoil(int lineNumber, String[][] tableSequenze, String[][] tableCode) {
@@ -1078,14 +1074,12 @@ public class Sequenze_ implements PlugIn {
 	/**
 	 * Cerca in tabella il numero delle linee in cui sono elencate le immagini da
 	 * elaborare da parte del plugin e le mette in una stringa da passare come
-	 * argomento al plugin. Potremo avere ad esempio 12#13#14#15 , se � previsto
+	 * argomento al plugin. Potremo avere ad esempio 12#13#14#15 , se e' previsto
 	 * che quel determinato plugin processi 4 immagini
 	 * 
-	 * @param lineNumber
-	 *            numero linea tableSequenze in elaborazione (la prima con "fatto"
-	 *            =0
-	 * @param tableSequenze5
-	 *            tabella sequenze in memoria
+	 * @param lineNumber     numero linea tableSequenze in elaborazione (la prima
+	 *                       con "fatto" =0
+	 * @param tableSequenze5 tabella sequenze in memoria
 	 * @return argomento per il plugin da chiamare
 	 */
 	public String argumentForPluginToBeCalled(int lineNumber, String[][] tableSequenze5) {
@@ -1106,7 +1100,7 @@ public class Sequenze_ implements PlugIn {
 			return null;
 		} else {
 			// if (numImaGruppo > 0 && numImaDaPassare == 4) {
-			// // se numImaGruppo >0 � il caso della bobina breast, in questo
+			// // se numImaGruppo >0 e' il caso della bobina breast, in questo
 			// // caso abbiamo 2 immagini successive (i 2 echi), separate da
 			// // numImaGruppo dalle restanti
 			//
@@ -1143,9 +1137,9 @@ public class Sequenze_ implements PlugIn {
 
 	/**
 	 * Verifica che il numero di immagini rilevate da scanlist per un certo tipo di
-	 * codice immagine corrisponda al numero previsto in codiciNew.csv. Se ci� non
+	 * codice immagine corrisponda al numero previsto in codiciNew.csv. Se cio' non
 	 * accade viene passata una tabella di warnings a logVerifySequenceTable. Si
-	 * pu� comunque continuare a lavorare
+	 * puo' comunque continuare a lavorare
 	 * 
 	 * @param tableSequenze6
 	 * @param tableCode6
@@ -1478,8 +1472,7 @@ public class Sequenze_ implements PlugIn {
 	 * Effettua il riordino della tabella dati estraendo il risultato in base
 	 * all'ordine di codici.txt
 	 * 
-	 * @param tableSequenze
-	 *            tabella da riordinare
+	 * @param tableSequenze tabella da riordinare
 	 * @return tabella riordinata
 	 */
 	public String[][] reorderSequenceTable2(String[][] tableSequenze, String[][] tableCodici) {
@@ -1527,8 +1520,7 @@ public class Sequenze_ implements PlugIn {
 	 * Effettua il riordino della tabella dati estraendo il risultato in base
 	 * all'ordine di codici.txt
 	 * 
-	 * @param tableSequenze
-	 *            tabella da riordinare
+	 * @param tableSequenze tabella da riordinare
 	 * @return tabella riordinata
 	 */
 	public String[][] reorderSequenceTable(String[][] tableSequenze, String[][] tableCodici) {
@@ -1572,116 +1564,6 @@ public class Sequenze_ implements PlugIn {
 		return (tableSequenzeReordered);
 	}
 
-	/**
-	 * Effettua il bubble sort della tabella delle sequenze, utilizza l'algoritmo
-	 * bubblesort
-	 * 
-	 * @param tableIn
-	 * @return
-	 */
-	// public String[][] bubbleSortSequenceTable(String[][] tableIn) {
-	//
-	// if (tableIn == null) {
-	// IJ.log("bubbleSortTable.tableIn == null");
-	// return null;
-	// }
-	// long[] bubblesort = new long[tableIn.length];
-	// String[][] tableOut = new TableUtils().duplicateTable(tableIn);
-	// for (int i1 = 0; i1 < tableOut.length; i1++) {
-	// String acqTime = TableSequence.getAcqTime(tableOut, i1);
-	// if (acqTime == null)
-	// acqTime = "9999999999999999";
-	// bubblesort[i1] = Long.parseLong(acqTime);
-	// }
-	// String[] tempRiga = new String[tableOut[0].length];
-	// boolean sorted = false;
-	// while (!sorted) {
-	// sorted = true;
-	// for (int i1 = 0; i1 < (bubblesort.length - 1); i1++) {
-	// if (bubblesort[i1] > bubblesort[i1 + 1]) {
-	// long temp = bubblesort[i1];
-	// // N.B. i2 in questo caso partir� da 1, poich� la colonna 0
-	// // che contiene il numero della riga NON deve venire sortata
-	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
-	// tempRiga[i2] = tableOut[i1][i2];
-	// bubblesort[i1] = bubblesort[i1 + 1];
-	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
-	// tableOut[i1][i2] = tableOut[i1 + 1][i2];
-	// bubblesort[i1 + 1] = temp;
-	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
-	// tableOut[i1 + 1][i2] = tempRiga[i2];
-	// sorted = false;
-	// }
-	// }
-	// }
-	// return tableOut;
-	// }
-	//
-	// /**
-	// * Effettua il bubble sort della tabella delle sequenze, utilizza
-	// * l'algoritmo bubblesort
-	// *
-	// * @param tableIn
-	// * @return
-	// */
-	// public String[][] bubbleSortSequenceTable2(String[][] tableIn) {
-	//
-	// if (tableIn == null) {
-	// IJ.log("bubbleSortTable.tableIn == null");
-	// return null;
-	// }
-	// long[] bubblesort1 = new long[tableIn.length];
-	// int[] bubblesort2 = new int[tableIn.length];
-	// String[][] tableOut = new TableUtils().duplicateTable(tableIn);
-	// for (int i1 = 0; i1 < tableOut.length; i1++) {
-	// String acqTime = TableSequence.getAcqTime(tableOut, i1);
-	// if (acqTime == null)
-	// acqTime = "9999999999999999";
-	// bubblesort1[i1] = Long.parseLong(acqTime);
-	// }
-	// for (int i1 = 0; i1 < tableOut.length; i1++) {
-	// String numIma = TableSequence.getNumIma(tableOut, i1);
-	// bubblesort2[i1] = ReadDicom.readInt(numIma);
-	// }
-	//
-	// String[] tempRiga = new String[tableOut[0].length];
-	// boolean sorted = false;
-	// while (!sorted) {
-	// sorted = true;
-	// for (int i1 = 0; i1 < (bubblesort1.length - 1); i1++) {
-	// if (bubblesort1[i1] > bubblesort1[i1 + 1]) {
-	// long temp = bubblesort1[i1];
-	// // N.B. i2 in questo caso partir� da 1, poich� la colonna 0
-	// // che contiene il numero della riga NON deve venire sortata
-	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
-	// tempRiga[i2] = tableOut[i1][i2];
-	// bubblesort1[i1] = bubblesort1[i1 + 1];
-	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
-	// tableOut[i1][i2] = tableOut[i1 + 1][i2];
-	// bubblesort1[i1 + 1] = temp;
-	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
-	// tableOut[i1 + 1][i2] = tempRiga[i2];
-	// sorted = false;
-	// } else if ((bubblesort1[i1] == bubblesort1[i1 + 1])
-	// && (bubblesort2[i1] > bubblesort2[i1 + 1])) {
-	// int temp2 = bubblesort2[i1];
-	// // N.B. i2 in questo caso partir� da 1, poich� la colonna 0
-	// // che contiene il numero della riga NON deve venire sortata
-	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
-	// tempRiga[i2] = tableOut[i1][i2];
-	// bubblesort2[i1] = bubblesort2[i1 + 1];
-	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
-	// tableOut[i1][i2] = tableOut[i1 + 1][i2];
-	// bubblesort2[i1 + 1] = temp2;
-	// for (int i2 = 1; i2 < tableOut[0].length; i2++)
-	// tableOut[i1 + 1][i2] = tempRiga[i2];
-	// sorted = false;
-	// }
-	// }
-	// }
-	// return tableOut;
-	// }
-
 	public boolean checkSequenceTable(String source) {
 		URL url1 = this.getClass().getResource("/" + source);
 		if (url1 != null)
@@ -1705,7 +1587,7 @@ public class Sequenze_ implements PlugIn {
 	}
 
 	/***
-	 * Questo � un test per vedere se posso avere duefile di identico nome, uno
+	 * Questo era un test per vedere se posso avere duefile di identico nome, uno
 	 * esterno ed uno interno al file jar (in modo da tenere l'interno come default
 	 * ed eventualmente l'esterno come risorsa modificabile dall'utente)
 	 * 
@@ -1722,8 +1604,107 @@ public class Sequenze_ implements PlugIn {
 			String[][] mat1 = new InputOutput().readFile6LIKE(source, absolute);
 			MyLog.logMatrix(mat1, "mat1");
 			MyLog.waitHere();
-
 		}
+	}
+
+	/***
+	 * Effettua la sostituzione dello 0 utilizzato come wildcard, per indicare che
+	 * verranno elaborate tutte le immagini trovate con quel determinato codice.
+	 * L'esigenza si e'avuta per la prima volta con la MRI di Treviglio. Per non
+	 * dover aggiungere nuovi flag, ho deciso di modificare leggermente l'utilizzo
+	 * dei flag ImmaginiDaPassare ed ImmaginiTotali Per il codice HTMA4 Thickness
+	 * 2mm Multi Head 0 15 avremo ImmaginiDaPassare 0 ed ImmaginiTotali 15, il nuovo
+	 * significato diverra': ImmaginiDaPassare = 0 (che sta per le immagini
+	 * effettivamente disponibili) ed ImmaginiTotali 15 sara' il limite massimo del
+	 * numero di immagini, oltre cui viene dato il messaggio nel Log (potrebbero
+	 * essere state acquisite due volte).
+	 *
+	 * @param tableSequenze
+	 * @return
+	 */
+
+	public void treviglioDevelop(String[][] tableSequenze, String[][] tableCode) {
+
+		String codice = "";
+		int maximum = 0;
+		for (int i2 = 0; i2 < tableCode.length; i2++) {
+//			MyLog.waitHere("i2= " + i2 + " code= " + TableCode.getCode(tableCode, i2) + " imaPass= "
+//					+ TableCode.getImaPass(tableCode, i2));
+
+			if (Integer.valueOf(TableCode.getImaPass(tableCode, i2)) == 0) {
+				codice = TableCode.getCode(tableCode, i2);
+				maximum = Integer.valueOf(TableCode.getImaTotal(tableCode, i2));
+			}
+			if (codice.length() < 4)
+				continue;
+			int numero = treviglioCountImages(tableSequenze, codice);
+			// IJ.log("in treviglioDevelop codice= " + codice + " numero= " + numero);
+			treviglioTableSequence(tableSequenze, codice, numero);
+			treviglioTableCode(tableCode, codice, numero, maximum);
+		}
+		return;
+	}
+
+	/**
+	 * Conta le immagini con un determinato codice presenti nella tableSequenze
+	 * 
+	 * @param tableSequenze
+	 * @param codice
+	 * @return
+	 */
+	public int treviglioCountImages(String[][] tableSequenze, String codice) {
+		int count = 0;
+		for (int i2 = 0; i2 < tableSequenze.length; i2++) {
+			if (tableSequenze[i2][TableSequence.CODE].equals(codice)) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	/**
+	 * Modifica il campo IMA_PASS della tableSequenze per un determinato codice,
+	 * inserendovi il numero
+	 * 
+	 * @param tableSequenze
+	 * @param codice
+	 * @param numero
+	 */
+	public void treviglioTableSequence(String[][] tableSequenze, String codice, int numero) {
+		if (tableSequenze == null)
+			return;
+		// altero i dati in tableSequenceLoaded
+		for (int i2 = 0; i2 < tableSequenze.length; i2++) {
+			if (tableSequenze[i2][TableSequence.CODE].equals(codice)) {
+				tableSequenze[i2][TableSequence.IMA_PASS] = Integer.toString(numero);
+			}
+		}
+		return;
+	}
+
+	/**
+	 * Modifica i campi IMA_PASS della tableCode per un determinato codice
+	 * inserendovi il numero. La stessa operazione avviene anche per il campo
+	 * IMA_TOTAL a patto che non si superi il maximum
+	 * 
+	 * @param tableCode
+	 * @param codice
+	 * @param numero
+	 * @param maximum
+	 */
+	public void treviglioTableCode(String[][] tableCode, String codice, int numero, int maximum) {
+		if (tableCode == null)
+			return;
+		// altero i dati in tableSequenceLoaded
+		for (int i2 = 0; i2 < tableCode.length; i2++) {
+			if (tableCode[i2][TableCode.CODE].equals(codice)) {
+				tableCode[i2][TableCode.IMA_PASS] = Integer.toString(numero);
+				if (numero <= maximum) {
+					tableCode[i2][TableCode.IMA_TOTAL] = Integer.toString(numero);
+				}
+			}
+		}
+		return;
 	}
 
 } // ultima

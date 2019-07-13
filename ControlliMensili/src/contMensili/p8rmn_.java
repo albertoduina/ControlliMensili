@@ -265,6 +265,8 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
 				rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+				rt.showRowNumbers(true);
+
 
 				// rt = ReportStandardInfo.putStandardInfoRT(info1);
 				int col = 2;

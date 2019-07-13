@@ -409,7 +409,8 @@ public class p13rmn_ implements PlugIn, Measurements {
 			String s6 = "roi_h";
 
 			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
-
+			rt.showRowNumbers(true);
+			
 			rt.addValue(t1, "Segnale");
 			rt.addValue(s2, mean1);
 			rt.addValue(s3, stat1.roiX);
@@ -900,7 +901,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * 13/11/2016 Nuovo algoritmo per uniformita' per immagini con grappa datomi da
+	 * 13/11/2016 Nuovo algoritmo per uniformita' per immagini con grappa (prosit!) datomi da
 	 * Lorella CHIAMASI NAAD
 	 * 
 	 * @param pixListSignal

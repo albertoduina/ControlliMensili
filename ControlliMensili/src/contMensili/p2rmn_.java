@@ -613,6 +613,8 @@ public class p2rmn_ implements PlugIn, Measurements {
 			//
 			String t1 = "TESTO          ";
 			ResultsTable rt = ReportStandardInfo.putStandardInfoRT(info1);
+			rt.showRowNumbers(true);
+
 			int col = 0;
 			rt.setHeading(++col, t1);
 			rt.setHeading(++col, "media");

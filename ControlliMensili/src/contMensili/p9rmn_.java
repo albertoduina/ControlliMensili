@@ -549,6 +549,8 @@ public class p9rmn_ implements PlugIn, Measurements {
 			}
 
 			ResultsTable rt = ReportStandardInfo.putStandardInfoRT(info1);
+			rt.showRowNumbers(true);
+
 			int col = 0;
 
 			String t1 = "TESTO";

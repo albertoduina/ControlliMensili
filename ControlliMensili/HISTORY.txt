@@ -1,0 +1,26 @@
+HISTORY.txt
+===========
+===========
+CREAZIONE FILE 13lug2019
+-----------
+Serve per tenere traccia dei motivi che hanno portato alle successive modifiche.
+===========
+===========
+12lug2019
+-----------
+Treviglio_220619 set di misure su cui bisogna risolvere i seguenti problemi:
+HT2A4 thickness 2 mm: le immaginio esistono ma poi nel report non sono elaborate
+T2 ci sono delle immagini, vedere se si possono elaborare
+T2CNR si puo' fare in ogni caso. Aggiungerlo ad elaborazione e reports
+-----------
+Nei reports non appare il ghost medio per head e body
+Nei reports sagittale/coronale sono invertiti rispetto alla immagini reali BOH????
+===========
+===========
+13lug2019
+-----------
+aggiunto codici_ggmmaa.csv al repository git. Sperando che appaia anche in github
+in questo modo dovrei riuscire a tenerlo sotto controllo.
+-----------
+risolto il problema del ghost medio nei reports head e body nel file AutoReportsNew130719.xls
+-----------

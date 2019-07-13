@@ -234,6 +234,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 				boolean test = false;
 				boolean autoCalled = true;
 				ResultsTable rt = prepUnifor(path1, path2, autoArgs, autoCalled, step, verbose, test);
+				rt.showRowNumbers(true);
+
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 				retry = false;
 				break;
@@ -437,6 +439,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 			// MyLog.waitHere();
 
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+			rt.showRowNumbers(true);
+
 			String t1 = "TESTO";
 			String s2 = "VALORE";
 			String s3 = "roi_x";

@@ -925,6 +925,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			// put values in ResultsTable
 			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+			rt.showRowNumbers(true);
+
 
 			rt.addValue(t1, "Segnale");
 			rt.addValue(s2, mean1);

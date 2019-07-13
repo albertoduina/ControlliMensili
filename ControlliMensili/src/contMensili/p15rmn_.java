@@ -351,6 +351,8 @@ public class p15rmn_ implements PlugIn {
 		info1[0] = passo;
 
 		ResultsTable rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+		rt.showRowNumbers(true);
+
 
 		double minSizeInPixel = 5000;
 		double maxSizeInPixel = 100000;

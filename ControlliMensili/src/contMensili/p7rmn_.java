@@ -262,6 +262,8 @@ public class p7rmn_ implements PlugIn, Measurements {
 				String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
 				rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+				rt.showRowNumbers(true);
+
 				String t1 = "TESTO";
 				String s2 = "coord_x";
 				String s3 = "coord_y";

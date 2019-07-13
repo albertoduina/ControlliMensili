@@ -607,6 +607,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			//
 			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+			rt.showRowNumbers(true);
+
 
 			if (blackbox) {
 				// ===================================================================================

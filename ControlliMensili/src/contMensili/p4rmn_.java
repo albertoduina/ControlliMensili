@@ -519,6 +519,8 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 			// put values in ResultsTable
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+			rt.showRowNumbers(true);
+
 
 			String t1 = "TESTO";
 			String s2 = "VALORE";

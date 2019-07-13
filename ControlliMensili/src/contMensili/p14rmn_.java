@@ -354,6 +354,8 @@ public class p14rmn_ implements PlugIn {
 			}
 			MyLog.appendLog(postmortem, "title= " + title2 + "  calculateMTF level= " + level + " sSize= " + sSize);
 			ResultsTable rt = calculateMTF(imp3, info1, sSize);
+			rt.showRowNumbers(true);
+
 			if (!(rt == null)) {
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 			}
