@@ -753,9 +753,9 @@ public class Sequenze_ implements PlugIn {
 			out1[i1][1] = vetEcho.get(i1);
 			out1[i1][2] = vetNewCode.get(i1);
 			out1[i1][3] = vetImaPass.get(i1);
-			// IJ.log("expanded " + out1[i1][0] + " " + out1[i1][1] + " " +
-			// out1[i1][2] + " " + out1[i1][3]);
-			// MyLog.waitHere();
+//			IJ.log("expanded " + out1[i1][0] + " " + out1[i1][1] + " " +
+//			out1[i1][2] + " " + out1[i1][3]);
+//			MyLog.waitHere();
 
 		}
 		return out1;

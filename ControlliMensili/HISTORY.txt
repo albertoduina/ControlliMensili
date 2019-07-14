@@ -22,5 +22,20 @@ Nei reports sagittale/coronale sono invertiti rispetto alla immagini reali BOH??
 aggiunto codici_ggmmaa.csv al repository git. Sperando che appaia anche in github
 in questo modo dovrei riuscire a tenerlo sotto controllo.
 -----------
-risolto il problema del ghost medio nei reports head e body nel file AutoReportsNew130719.xls
+risolto il problema del ghost medio nei reports head e body nel file >>> AutoReportsNew130719.xls
 -----------
+risolto il problema del HT2A4 thickness 2 mm nel file >>> AutoReportsNew130719.xls
+in pratica la modifica riguarda gavardo, i cui codici BT1A4 e HT1A4 vengono modificati
+"al volo" durante l'importazione in BT2A4 e HT2A4
+-----------
+risolto il problema per le T2 treviglio a partire da  >>> ContMens_b215.jar
+risolto il problema per le CNR treviglio a partire da   >>> ContMens_b217.jar
+nota bene: in ContMensili DEVONO venire aggiornati anche i seguenti files
+expand140719.csv
+codici_140719.csv
+(ai vecchi expand e codici va modificata l'estensione in .vsc (cosi' non vengono piu' visti)
+va aggiornato anche il iw2ayv_a1269.jar
+-----------
+
+
+
