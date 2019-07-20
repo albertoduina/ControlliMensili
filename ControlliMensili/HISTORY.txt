@@ -36,6 +36,22 @@ codici_140719.csv
 (ai vecchi expand e codici va modificata l'estensione in .vsc (cosi' non vengono piu' visti)
 va aggiornato anche il iw2ayv_a1269.jar
 -----------
+Note sulle immagini Philips di Gavardo ed ImageJ
+
+Le immagini Dicom della MRI Philips di Gavardo hanno impostati i seguenti Tag Dicom, gia' nel 2015
+Data 17ott2015
+0028,1052  Rescale Intercept: 0 
+0028,1053  Rescale Slope: 1.25909645909645
+0028,1054  Rescale Type: normalized
+
+ImageJ, fino alla versione 1.52i45 apriva tutte queste immagini come 16 bit (come il resto delle nostre immagini MRI dicom)
+Dalla versione 1.52i46 (18nov2018) in poi, queste immagini vengono aperte come 32 bit. Questo comporta che il valore dei pixel 
+comparato tra 32 e 16 bit, sia diverso, appunto per il rescale slope.
+E’ possibile annullare l’apertura a 32 bit, impostando nei menu di ImageJ la nuova opzione, 
+in Edit/Options/DICOM/Ignore Rescale Slope.
+
+Da una rapida prova, in questo modo non cambiano i valori ottenuti dai nostri CDQ. 
+Vedo se e' possibile forzare l'opzione Esclude Rescale Slope dall'interno di ContMensili.
 
 
 

@@ -58,6 +58,7 @@ import utils.MyFwhm;
 import utils.MyLine;
 import utils.MyLog;
 import utils.MyPlot;
+import utils.MyPrefs;
 import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReadVersion;
@@ -128,6 +129,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 	public void run(String args) {
 
 		UtilAyv.setMyPrecision();
+		
+		
+		IJ.run("DICOM...", "ignore");
 
 		Count c1 = new Count();
 		if (!c1.jarCount("iw2ayv_"))
@@ -152,6 +156,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			autoMenu(args);
 		}
 
+		// MyPrefs.myOutput();
 		return;
 	}
 
@@ -2582,6 +2587,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 		ImageProcessor mask = roi1.getMask();
 		if (mask == null)
 			MyLog.waitHere("mask==null");
+		
+/// investigo su problema nelle immagini di cdqgav06052019 in cui pare vi sia un immagine a 32 bit		
+//		int depth = imp1.getBitDepth();
+//		if (depth > 16) MyLog.waitHere("ehi pirla immagine > 16 bitssssss!!!"); 
+		
 		// prevengo problemi con le immagini calibrate
 		short[] pixels = UtilAyv.truePixels(imp1);
 
