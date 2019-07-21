@@ -52,6 +52,11 @@ in Edit/Options/DICOM/Ignore Rescale Slope.
 
 Da una rapida prova, in questo modo non cambiano i valori ottenuti dai nostri CDQ. 
 Vedo se e' possibile forzare l'opzione Esclude Rescale Slope dall'interno di ContMensili.
+===========
+20lug2019
+-----------
+Miglioramenti al file di documentazione P10
+
 
 
 
