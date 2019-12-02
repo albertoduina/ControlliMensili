@@ -725,12 +725,22 @@ public class Sequenze_ implements PlugIn {
 	 * @return vettore contenente i dati espansi
 	 */
 	public String[][] expandCode(String codice, String eco, String[][] tableExpand4) {
-		if (codice == null)
+
+//		MyLog.logArrayList(tableExpand4);
+//		MyLog.waitHere("codice= " + codice + " eco= " + eco);
+
+		if (codice == null) {
+			MyLog.waitHere();
 			return null;
-		if (eco == null)
+		}
+		if (eco == null) {
+			MyLog.waitHere();
 			return null;
-		if (tableExpand4 == null)
+		}
+		if (tableExpand4 == null) {
+			MyLog.waitHere();
 			return null;
+		}
 		List<String> vetOldCode = new ArrayList<String>();
 		List<String> vetEcho = new ArrayList<String>();
 		List<String> vetNewCode = new ArrayList<String>();
@@ -739,6 +749,8 @@ public class Sequenze_ implements PlugIn {
 		for (int i2 = 0; i2 < tableExpand4.length; i2++) {
 			String codiceExpand = TableExpand.getOldCode(tableExpand4, i2);
 			String ecoExpand = TableExpand.getEcho(tableExpand4, i2);
+//			MyLog.waitHere("codice= " + codice + " codiceExpand= " + codiceExpand + "eco= " + eco + " ecoExpand= "
+//					+ ecoExpand);
 			if ((codice.equals(codiceExpand)) && (eco.equals(ecoExpand))) {
 				vetOldCode.add(tableExpand4[i2][TableExpand.OLD_CODE]);
 				vetEcho.add(tableExpand4[i2][TableExpand.ECHO]);
@@ -753,8 +765,7 @@ public class Sequenze_ implements PlugIn {
 			out1[i1][1] = vetEcho.get(i1);
 			out1[i1][2] = vetNewCode.get(i1);
 			out1[i1][3] = vetImaPass.get(i1);
-//			IJ.log("expanded " + out1[i1][0] + " " + out1[i1][1] + " " +
-//			out1[i1][2] + " " + out1[i1][3]);
+//			IJ.log("expanded " + out1[i1][0] + " " + out1[i1][1] + " " + out1[i1][2] + " " + out1[i1][3]);
 //			MyLog.waitHere();
 
 		}
