@@ -602,7 +602,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION
-					+ "_P10__ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_" + MyVersionUtils.CURRENT_VERSION,
+					+ "_P10__ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_" + MyVersionUtils.CURRENT_VERSION+"___",
 					autoCalled);
 
 			//

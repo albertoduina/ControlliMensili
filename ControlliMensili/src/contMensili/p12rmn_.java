@@ -129,8 +129,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 	public void run(String args) {
 
 		UtilAyv.setMyPrecision();
-		
-		
+
 		IJ.run("DICOM...", "ignore");
 
 		Count c1 = new Count();
@@ -163,10 +162,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 	/**
 	 * Menu funzionamento manuale (chiamato dal menu di ImageJ)
 	 * 
-	 * @param preset
-	 *            da utilizzare per eventuali test
-	 * @param testDirectory
-	 *            da utilizzare per eventuali test
+	 * @param preset        da utilizzare per eventuali test
+	 * @param testDirectory da utilizzare per eventuali test
 	 * @return
 	 */
 
@@ -220,8 +217,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 	/**
 	 * Menu funzionamento automatico (chiamato da Sequenze)
 	 * 
-	 * @param autoArgs
-	 *            parametri ricevuti da Sequenze ad esempio: "#2#3"
+	 * @param autoArgs parametri ricevuti da Sequenze ad esempio: "#2#3"
 	 * @return
 	 */
 
@@ -385,25 +381,16 @@ public class p12rmn_ implements PlugIn, Measurements {
 	/**
 	 * Main per il calcolo dell'uniformita' per bobine circolari
 	 * 
-	 * @param path1
-	 *            path prima immagine
-	 * @param path2
-	 *            path seconda immagine
-	 * @param autoArgs
-	 *            argomentoi ricevuti dalla chiamata
-	 * @param profond
-	 *            profondita' a cui porre la ROI
+	 * @param path1      path prima immagine
+	 * @param path2      path seconda immagine
+	 * @param autoArgs   argomentoi ricevuti dalla chiamata
+	 * @param profond    profondita' a cui porre la ROI
 	 * @param info10
-	 * @param autoCalled
-	 *            flag true se chiamato in automatico
-	 * @param step
-	 *            flag true se funzionamento passo-passo
-	 * @param verbose
-	 *            flag true se verbose
-	 * @param test
-	 *            flag true se in modo test
-	 * @param fast
-	 *            flag true se in modo batch
+	 * @param autoCalled flag true se chiamato in automatico
+	 * @param step       flag true se funzionamento passo-passo
+	 * @param verbose    flag true se verbose
+	 * @param test       flag true se in modo test
+	 * @param fast       flag true se in modo batch
 	 * @return
 	 */
 	@SuppressWarnings("deprecation")
@@ -932,7 +919,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 			rt.showRowNumbers(true);
 
-
 			rt.addValue(t1, "Segnale");
 			rt.addValue(s2, mean1);
 			rt.addValue(s3, stat1.roiX);
@@ -1176,20 +1162,16 @@ public class p12rmn_ implements PlugIn, Measurements {
 	/**
 	 * Conta i pixel che oltrepassano la soglia di conteggio
 	 * 
-	 * @param imp1
-	 *            immagine in input
-	 * @param sqX
-	 *            coordinata della Roi
-	 * @param sqY
-	 *            coordinata della Roi
-	 * @param sqR
-	 *            lato della Roi
-	 * @param limit
-	 *            soglia di conteggio, vengono contati i pixel che la superano
-	 * @param paintPixels
-	 *            switch per test, se attivato vengono colorati i pixels di cui
-	 *            viene effettuato il conteggio. Utilizzato per verificare che le
-	 *            varie ROI siano posizionate correttamente
+	 * @param imp1        immagine in input
+	 * @param sqX         coordinata della Roi
+	 * @param sqY         coordinata della Roi
+	 * @param sqR         lato della Roi
+	 * @param limit       soglia di conteggio, vengono contati i pixel che la
+	 *                    superano
+	 * @param paintPixels switch per test, se attivato vengono colorati i pixels di
+	 *                    cui viene effettuato il conteggio. Utilizzato per
+	 *                    verificare che le varie ROI siano posizionate
+	 *                    correttamente
 	 * @return pixel che superano la soglia
 	 */
 	public static int countPixTest(ImagePlus imp1, int sqX, int sqY, int sqR, double limit, boolean paintPixels) {
@@ -1241,10 +1223,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 	/***
 	 * Effettua lo smooth su 3 pixels di un profilo
 	 * 
-	 * @param profile1
-	 *            profilo
-	 * @param loops
-	 *            numerompassaggi
+	 * @param profile1 profilo
+	 * @param loops    numerompassaggi
 	 * @return profilo dopo smooth
 	 */
 	public static double[] smooth3(double[] profile1, int loops) {
@@ -1266,10 +1246,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 	/**
 	 * Calcolo della Edge Response Function (ERF)
 	 * 
-	 * @param profile1
-	 *            profilo da elaborare
-	 * @param invert
-	 *            true se da invertire
+	 * @param profile1 profilo da elaborare
+	 * @param invert   true se da invertire
 	 * @return profilo con ERF
 	 */
 	public static double[] createErf(double[] profile1, boolean invert) {
@@ -1292,16 +1270,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 	/**
 	 * Interpolazione lineare di un punto su di un segmento
 	 * 
-	 * @param x0
-	 *            coordinata X inizio
-	 * @param y0
-	 *            coordinata Y inizio
-	 * @param x1
-	 *            coordinata X fine
-	 * @param y1
-	 *            coordinata X fine
-	 * @param x2
-	 *            valore X di cui calcolare la Y
+	 * @param x0 coordinata X inizio
+	 * @param y0 coordinata Y inizio
+	 * @param x1 coordinata X fine
+	 * @param y1 coordinata X fine
+	 * @param x2 valore X di cui calcolare la Y
 	 * @return valore Y calcolato
 	 */
 	public static double linearInterpolation(double x0, double y0, double x1, double y1, double x2) {
@@ -1458,21 +1431,14 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 * Ricerca posizione ROI per calcolo uniformita'. Versione con Canny Edge
 	 * Detector
 	 * 
-	 * @param imp11
-	 *            immagine in input
-	 * @param info1
-	 *            messaggio esplicativo
-	 * @param autoCalled
-	 *            true se chiamato in automatico
-	 * @param step
-	 *            true se in modo passo passo
-	 * @param verbose
-	 *            true se in modo verbose
-	 * @param test
-	 *            true se in test con junit, nessuna visualizzazione e richiesta
-	 *            conferma
-	 * @param fast
-	 *            true se in modo batch
+	 * @param imp11      immagine in input
+	 * @param info1      messaggio esplicativo
+	 * @param autoCalled true se chiamato in automatico
+	 * @param step       true se in modo passo passo
+	 * @param verbose    true se in modo verbose
+	 * @param test       true se in test con junit, nessuna visualizzazione e
+	 *                   richiesta conferma
+	 * @param fast       true se in modo batch
 	 * @return
 	 */
 	public static double[] positionSearch11(ImagePlus imp11, double maxFitError, double maxBubbleGapLimit, String info1,
@@ -1513,8 +1479,18 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		int height = imp11.getHeight();
 		int width = imp11.getWidth();
-		int[] roiData = readPreferences(width, height, MyConst.P3_ROI_LIMIT);
+//		int[] roiData = readPreferences(width, height, MyConst.P3_ROI_LIMIT);
+
+		// per evitare che il cerchio della roi di default possa avere strane dimensioni
+		int aux1 = 0;
+		if (width >= height)
+			aux1 = height;
+		else
+			aux1 = width;
+
+		int[] roiData = readPreferences(width, height, width);
 		int diamRoiMan = roiData[2];
+		if (diamRoiMan>aux1) diamRoiMan=aux1;
 
 		ImageWindow iw11 = null;
 		ImageWindow iw12 = null;
@@ -2067,7 +2043,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			imp11.getRoi().setStrokeWidth(1.1);
 			MyLog.waitHere(motivo
 					+ "\nRichiesto ridimensionamento e riposizionamento della ROI, indicata in rosso,attorno al fantoccio"
-					+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova.\nPOI premere OK");
+					+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova. diamRoiMan= " + diamRoiMan
+					+ "\nPOI premere OK");
 			Rectangle boundRec11 = imp11.getProcessor().getRoi();
 			xCenterCircle = Math.round(boundRec11.x + boundRec11.width / 2);
 			yCenterCircle = Math.round(boundRec11.y + boundRec11.height / 2);
@@ -2131,7 +2108,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			diamMROI = diamCircle80;
 		}
 
-		imp12.setRoi(new OvalRoi(xCenterMROI-diamMROI/2, yCenterMROI-diamMROI/2, diamMROI, diamMROI));
+		imp12.setRoi(new OvalRoi(xCenterMROI - diamMROI / 2, yCenterMROI - diamMROI / 2, diamMROI, diamMROI));
 
 		if (demo)
 
@@ -2587,11 +2564,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 		ImageProcessor mask = roi1.getMask();
 		if (mask == null)
 			MyLog.waitHere("mask==null");
-		
+
 /// investigo su problema nelle immagini di cdqgav06052019 in cui pare vi sia un immagine a 32 bit		
 //		int depth = imp1.getBitDepth();
 //		if (depth > 16) MyLog.waitHere("ehi pirla immagine > 16 bitssssss!!!"); 
-		
+
 		// prevengo problemi con le immagini calibrate
 		short[] pixels = UtilAyv.truePixels(imp1);
 
@@ -2649,16 +2626,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 	/**
 	 * Calcolo della distanza tra un punto ed una circonferenza
 	 * 
-	 * @param x1
-	 *            coord. x punto
-	 * @param y1
-	 *            coord. y punto
-	 * @param x2
-	 *            coord. x centro
-	 * @param y2
-	 *            coord. y centro
-	 * @param r2
-	 *            raggio
+	 * @param x1 coord. x punto
+	 * @param y1 coord. y punto
+	 * @param x2 coord. x centro
+	 * @param y2 coord. y centro
+	 * @param r2 raggio
 	 * @return distanza
 	 */
 	public static double pointCirconferenceDistance(int x1, int y1, int x2, int y2, int r2) {
@@ -2670,10 +2642,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 	/**
 	 * Calculation of Integral Uniformity Percentual
 	 * 
-	 * @param max
-	 *            max signal
-	 * @param min
-	 *            min signal
+	 * @param max max signal
+	 * @param min min signal
 	 * @return
 	 */
 	public static double uiPercCalculation(double max, double min) {
@@ -2686,16 +2656,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 	/**
 	 * Ghost roi creation and calculation
 	 * 
-	 * @param xRoi
-	 *            x roi coordinate
-	 * @param yRoi
-	 *            y roi coordinate
-	 * @param imp
-	 *            image
-	 * @param count
-	 *            ghost number (for the message)
-	 * @param step
-	 *            step mode
+	 * @param xRoi  x roi coordinate
+	 * @param yRoi  y roi coordinate
+	 * @param imp   image
+	 * @param count ghost number (for the message)
+	 * @param step  step mode
 	 * @return statistics
 	 */
 	private static ImageStatistics ghostRoi(int xRoi, int yRoi, ImagePlus imp, int count, boolean step, boolean test) {
@@ -2711,12 +2676,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 	/**
 	 * Ghost percentual calculation
 	 * 
-	 * @param mediaGhost1
-	 *            mean signal of ghost roi
-	 * @param meanBkg
-	 *            mean signal of background roi
-	 * @param meanImage
-	 *            mean signal on image roi
+	 * @param mediaGhost1 mean signal of ghost roi
+	 * @param meanBkg     mean signal of background roi
+	 * @param meanImage   mean signal on image roi
 	 * @return
 	 */
 	public static double ghostPercCalculation(double mediaGhost1, double meanBkg, double meanImage) {
@@ -2727,18 +2689,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 	/**
 	 * Simulated 5 classes image
 	 * 
-	 * @param xRoi
-	 *            x roi coordinate
-	 * @param yRoi
-	 *            y roi coordinate
-	 * @param diamRoi
-	 *            roi diameter
-	 * @param imp
-	 *            original image
-	 * @param step
-	 *            step-by-step mode
-	 * @param test
-	 *            autotest mode
+	 * @param xRoi    x roi coordinate
+	 * @param yRoi    y roi coordinate
+	 * @param diamRoi roi diameter
+	 * @param imp     original image
+	 * @param step    step-by-step mode
+	 * @param test    autotest mode
 	 * @return pixel counts of classes of the simulated image
 	 */
 	private static int[][] generaSimulata(int xRoi, int yRoi, int diamRoi, ImagePlus imp, String filename, boolean step,
@@ -2884,12 +2840,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 	/**
 	 * Read preferences from IJ_Prefs.txt
 	 * 
-	 * @param width
-	 *            image width
-	 * @param height
-	 *            image height
-	 * @param limit
-	 *            border limit for object placement on image
+	 * @param width  image width
+	 * @param height image height
+	 * @param limit  border limit for object placement on image
 	 * @return
 	 */
 	public static int[] readPreferences(int width, int height, int limit) {

@@ -1,0 +1,40 @@
+TREVIGLIO
+
+inizialmente i tempi per l'acquisizione T2 erano
+immagine
+TOR_4_A		11
+TOR_4_A		22
+TOR_4_A		33
+TOR_4_A		44
+TOR_4_A		55
+TOR_4_A		66
+TOR_4_A		77
+TOR_4_A		88
+le immagini scelte per il CNR sono:
+T2W_T	11	T2M14
+T2W_T	44	T2M24
+T2W_T	88	T2M34
+dopo l'aggiornamento E PER SEMPRE i dati saranno
+T2BB4		20
+T2BB4		40
+T2BB4		60
+T2BB4		80
+T2BB4		100
+T2BB4		120
+T2BB4		140
+T2BB4		160
+le immagini scelte per il CNR sono:
+(notare che non siamo identici a GAVARDO, da cui il codice expand diverso)
+T2BB4	40	T2B14
+T2BB4	80	T2B24
+T2BB4	160	T2B34
+
+
+
+
+
+
+
+
+
+

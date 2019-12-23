@@ -143,7 +143,9 @@ public class Sequenze_ implements PlugIn {
 			MyLog.waitHere("salvare il log come tableCodeLoaded");
 		}
 
-		String[][] tableExpand = TableExpand.loadTable(MyConst.EXPAND_FILE);
+//		String[][] tableExpand = TableExpand.loadTable(MyConst.EXPAND_FILE);
+		TableExpand te1= new TableExpand();
+		String[][] tableExpand = te1.loadTableNew("expand", ".csv");
 
 		new AboutBox().about("Scansione automatica cartelle", MyVersion.CURRENT_VERSION);
 		IJ.wait(2000);
@@ -164,7 +166,7 @@ public class Sequenze_ implements PlugIn {
 		GenericDialog gd = new GenericDialog("", IJ.getInstance());
 		gd.addCheckbox("Nuovo controllo", aux2);
 		gd.addCheckbox("SelfTest", false);
-		gd.addCheckbox("p10_ p11_ p12_ p16_ p17_", true);
+		gd.addCheckbox("p10_ p11_ p12_ p16_ p17_ p19_", true);
 		gd.addCheckbox("Fast", true);
 		gd.addCheckbox("Superficiali", false);
 		gd.showDialog();
@@ -199,6 +201,7 @@ public class Sequenze_ implements PlugIn {
 			IJ.runPlugIn("contMensili.p11rmn_", "-1");
 			IJ.runPlugIn("contMensili.p12rmn_", "-1");
 			IJ.runPlugIn("contMensili.p16rmn_", "-1");
+			IJ.runPlugIn("contMensili.p19rmn_", "-1");
 			IJ.runPlugIn("contMensili.p20rmn_", "-1");
 			IJ.runPlugIn("contMensili.p10rmn_OLD1", "-1");
 			IJ.runPlugIn("contMensili.p11rmn_OLD1", "-1");
@@ -459,8 +462,10 @@ public class Sequenze_ implements PlugIn {
 		int count3 = 0;
 		for (int i1 = 0; i1 < pathList.length; i1++) {
 
-			String aux1 = "generateSequenceTable " + i1 + " / " + pathList.length;
+			String aux1 = "generateSequenceTable " + i1 + " / " + pathList.length;				
+			
 			IJ.redirectErrorMessages();
+
 			IJ.showStatus(aux1);
 
 			// boolean questo = false;
@@ -891,6 +896,8 @@ public class Sequenze_ implements PlugIn {
 
 				if (!p10p11p12) {
 					// MyLog.waitHere("MANUALE p10p11= " + p10p11);
+					if (plugin.equals("contMensili.p19rmn_"))
+						plugin = "contMensili.p5rmn_";
 					if (plugin.equals("contMensili.p10rmn_"))
 						plugin = "contMensili.p5rmn_";
 					if (plugin.equals("contMensili.p11rmn_"))
@@ -908,7 +915,7 @@ public class Sequenze_ implements PlugIn {
 				String argomento = argumentForPluginToBeCalled(j1, tableSequenze5);
 				boolean jump = false;
 				if (superficiali) {
-					if ((plugin.equals("contMensili.p10rmn_")) || (plugin.equals("contMensili.p11rmn_"))
+					if ((plugin.equals("contMensili.p19rmn_")) || (plugin.equals("contMensili.p10rmn_")) || (plugin.equals("contMensili.p11rmn_"))
 							|| (plugin.equals("contMensili.p12rmn_")) || (plugin.equals("contMensili.p13rmn_"))
 							|| (plugin.equals("contMensili.p5rmn_")) || (plugin.equals("contMensili.p5rmn_"))) {
 						jump = false;
