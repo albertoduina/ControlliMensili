@@ -10,6 +10,7 @@ import ij.gui.Overlay;
 import ij.gui.Roi;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
+import ij.plugin.ContrastEnhancer;
 import ij.plugin.PlugIn;
 import ij.plugin.filter.Analyzer;
 import ij.plugin.frame.RoiManager;
@@ -28,6 +29,7 @@ import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
+import utils.TableExpand;
 import utils.TableSequence;
 import utils.UtilAyv;
 
@@ -112,8 +114,16 @@ public class p4rmn_ implements PlugIn, Measurements {
 		}
 
 		String className = this.getClass().getName();
+		String user1 = System.getProperty("user.name");
+		TableCode tc1 = new TableCode();
+		String iw2ayv1 = tc1.nameTable("codici", "csv");
+		TableExpand tc2 = new TableExpand();
+		String iw2ayv2 = tc1.nameTable("expand", "csv");
 
-		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+
+//		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
@@ -279,6 +289,10 @@ public class p4rmn_ implements PlugIn, Measurements {
 				MyLog.waitHere("Immagine non trovata " + path1);
 				return null;
 			}
+			
+			// 291219 iw2ayv
+			new ContrastEnhancer().stretchHistogram(imp1.getProcessor(), 0.5);
+
 
 			double dimPixel = ReadDicom.readDouble(
 					ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
@@ -520,7 +534,6 @@ public class p4rmn_ implements PlugIn, Measurements {
 			// put values in ResultsTable
 			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 			rt.showRowNumbers(true);
-
 
 			String t1 = "TESTO";
 			String s2 = "VALORE";

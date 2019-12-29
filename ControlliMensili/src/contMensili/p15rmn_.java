@@ -64,6 +64,7 @@ import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
+import utils.TableExpand;
 import utils.TableSequence;
 import utils.UtilAyv;
 
@@ -139,7 +140,15 @@ public class p15rmn_ implements PlugIn {
 		if (!c1.jarCount("iw2ayv_"))
 			return;
 		String className = this.getClass().getName();
-		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		String user1 = System.getProperty("user.name");
+		TableCode tc1 = new TableCode();
+		String iw2ayv1 = tc1.nameTable("codici", "csv");
+		TableExpand tc2 = new TableExpand();
+		String iw2ayv2 = tc1.nameTable("expand", "csv");
+
+		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+//		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 		fileDir = Prefs.get("prefer.string1", "none");
 
 		if (IJ.versionLessThan("1.43k"))
@@ -341,7 +350,7 @@ public class p15rmn_ implements PlugIn {
 		TableCode tc1= new TableCode();
 		String[][] tabCodici = tc1.loadMultipleTable( "codici", ".csv");
 
-		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION + "_P10__ContMensili_"
+		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION + "_P15__ContMensili_"
 				+ MyVersion.CURRENT_VERSION + "__iw2ayv_" + MyVersionUtils.CURRENT_VERSION, autoCalled);
 
 		if (info1 == null) {

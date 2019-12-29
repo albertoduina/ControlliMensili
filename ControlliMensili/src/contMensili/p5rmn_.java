@@ -32,6 +32,7 @@ import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
+import utils.TableExpand;
 import utils.TableSequence;
 import utils.UtilAyv;
 import utils.CustomCanvasGeneric;
@@ -95,8 +96,17 @@ public class p5rmn_ implements PlugIn, Measurements {
 		}
 
 		String className = this.getClass().getName();
+		String user1 = System.getProperty("user.name");
+		TableCode tc1 = new TableCode();
+		String iw2ayv1 = tc1.nameTable("codici", "csv");
+		TableExpand tc2 = new TableExpand();
+		String iw2ayv2 = tc1.nameTable("expand", "csv");
 
-		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+
+		// VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" +
+		// MyVersionUtils.getVersion();
 
 		if (IJ.versionLessThan("1.43k"))
 			return;
@@ -841,12 +851,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 	/**
 	 * Calcola la deviazione standard
 	 * 
-	 * @param num
-	 *            Numero dei pixel
-	 * @param sum
-	 *            Somma dei valori pixel
-	 * @param sum2
-	 *            Somma dei quadrati dei valori dei pixel
+	 * @param num  Numero dei pixel
+	 * @param sum  Somma dei valori pixel
+	 * @param sum2 Somma dei quadrati dei valori dei pixel
 	 * @return deviazione standard
 	 */
 
@@ -866,16 +873,11 @@ public class p5rmn_ implements PlugIn, Measurements {
 	/**
 	 * Conta i pixel che oltrepassano la soglia di conteggio
 	 * 
-	 * @param imp1
-	 *            immagine in input
-	 * @param sqX
-	 *            coordinata della Roi
-	 * @param sqY
-	 *            coordinata della Roi
-	 * @param sqR
-	 *            lato della Roi
-	 * @param limit
-	 *            soglia di conteggio
+	 * @param imp1  immagine in input
+	 * @param sqX   coordinata della Roi
+	 * @param sqY   coordinata della Roi
+	 * @param sqR   lato della Roi
+	 * @param limit soglia di conteggio
 	 * @return pixel che superano la soglia
 	 */
 	private static int countPix(ImagePlus imp1, int sqX, int sqY, int sqR, double limit) {
@@ -907,21 +909,14 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 * differenza i cui corrispondenti pixel della prima immagine oltrepassano la
 	 * soglia di conteggio, secondo il protocollo NEMA
 	 * 
-	 * @param imp1
-	 *            immagine in input
-	 * @param imp3
-	 *            immagine differenza
-	 * @param sqX
-	 *            coordinata della Roi
-	 * @param sqY
-	 *            coordinata della Roi
-	 * @param sqR
-	 *            lato della Roi
-	 * @param limit
-	 *            soglia di conteggio
-	 * @param paintPixels
-	 *            ATTENZIONE da usare solo per test, altera i risultati !!!!! VA
-	 *            TENUTO FALSE
+	 * @param imp1        immagine in input
+	 * @param imp3        immagine differenza
+	 * @param sqX         coordinata della Roi
+	 * @param sqY         coordinata della Roi
+	 * @param sqR         lato della Roi
+	 * @param limit       soglia di conteggio
+	 * @param paintPixels ATTENZIONE da usare solo per test, altera i risultati
+	 *                    !!!!! VA TENUTO FALSE
 	 * 
 	 * @return [0] sum / pixelcount [1] devStan
 	 */
@@ -984,16 +979,11 @@ public class p5rmn_ implements PlugIn, Measurements {
 	/**
 	 * Analisi di un profilo NON mediato
 	 * 
-	 * @param imp1
-	 *            Immagine da analizzare
-	 * @param ax
-	 *            Coordinata x inizio segmento
-	 * @param ay
-	 *            Coordinata y inizio segmento
-	 * @param bx
-	 *            Coordinata x fine segmento
-	 * @param by
-	 *            Coordinata x fine segmento
+	 * @param imp1 Immagine da analizzare
+	 * @param ax   Coordinata x inizio segmento
+	 * @param ay   Coordinata y inizio segmento
+	 * @param bx   Coordinata x fine segmento
+	 * @param by   Coordinata x fine segmento
 	 * 
 	 * @return outFwhm[0]=FWHM, outFwhm[1]=peak position
 	 */
@@ -1046,11 +1036,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 	/**
 	 * Calcolo dell'FWHM su di un vettore profilo
 	 * 
-	 * @param vetUpDwPoints
-	 *            Vettore restituito da AnalPlot2 con le posizioni dei punti sopra e
-	 *            sotto la metà altezza
-	 * @param profile
-	 *            Profilo da analizzare
+	 * @param vetUpDwPoints Vettore restituito da AnalPlot2 con le posizioni dei
+	 *                      punti sopra e sotto la metà altezza
+	 * @param profile       Profilo da analizzare
 	 * @return out[0]=FWHM, out[1]=peak position
 	 */
 
@@ -1095,10 +1083,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 	/**
 	 * Mostra a video un profilo con linea a metà picco
 	 * 
-	 * @param profile1
-	 *            Vettore con il profilo da analizzare
-	 * @param bslab
-	 *            Flag slab che qui mettiamo sempre true
+	 * @param profile1 Vettore con il profilo da analizzare
+	 * @param bslab    Flag slab che qui mettiamo sempre true
 	 */
 
 	private static void createPlot(double profile1[], boolean bslab, boolean bLabelSx) {
@@ -1195,8 +1181,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	/**
 	 * ricerca dei punti a metà altezza
 	 * 
-	 * @param profile1
-	 *            Vettore con il profilo da analizzare
+	 * @param profile1 Vettore con il profilo da analizzare
 	 * @return isd[0] punto sotto half a sx, isd[1] punto sopra half a sx,
 	 * @return isd[2] punto sotto half a dx, isd[3] punto sopra half a dx
 	 */
@@ -1276,14 +1261,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 * scelta da parte dell'utente della posizione e direzione del profilo su cui
 	 * poi verrà calcolata l'FWHM
 	 * 
-	 * @param xPos
-	 *            posizione x MROI
-	 * @param yPos
-	 *            posizione y MROI
-	 * @param len
-	 *            lato MROI
-	 * @param imp1
-	 *            puntatore ImagePlus alla immagine originale
+	 * @param xPos posizione x MROI
+	 * @param yPos posizione y MROI
+	 * @param len  lato MROI
+	 * @param imp1 puntatore ImagePlus alla immagine originale
 	 * @return line parametri profilo selezionato
 	 */
 	private static Line selectProfilePosition(int xPos, int yPos, int len, ImagePlus imp1, boolean profiVert) {

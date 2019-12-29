@@ -24,6 +24,7 @@ import utils.MyConst;
 import utils.MyLog;
 import utils.MyVersionUtils;
 import utils.TableCode;
+import utils.TableExpand;
 import utils.TableSequence;
 import utils.UtilAyv;
 import utils.ButtonMessages;
@@ -64,7 +65,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 	static final int ABORT = 1;
 
-	public static final String VERSION = "CNR";
+	public static  String VERSION = "CNR";
 
 	private static String TYPE = " >>  CONTROLLO CNR____________________";
 
@@ -242,6 +243,17 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 		boolean selftest = false;
 		bstep = false;
+		
+		String className = this.getClass().getName();
+		String user1 = System.getProperty("user.name");
+//		TableCode tc1 = new TableCode();
+		String iw2ayv1 = tc1.nameTable("codici", "csv");
+		TableExpand tc2 = new TableExpand();
+		String iw2ayv2 = tc1.nameTable("expand", "csv");
+
+		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+
 
 		AboutBox ab = new AboutBox();
 		boolean retry = false;

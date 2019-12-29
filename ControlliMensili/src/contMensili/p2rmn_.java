@@ -30,10 +30,12 @@ import utils.ImageUtils;
 import utils.InputOutput;
 import utils.MyConst;
 import utils.MyLog;
+import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.SimplexBasedRegressor;
 import utils.TableCode;
+import utils.TableExpand;
 import utils.TableSequence;
 import utils.UtilAyv;
 import utils.AboutBox;
@@ -204,6 +206,9 @@ public class p2rmn_ implements PlugIn, Measurements {
 		double kDevStFiltroFondo = 3.0;
 
 		InputOutput io = new InputOutput();
+		
+		ResultsTable rt = null;
+
 
 		//
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
@@ -236,6 +241,20 @@ public class p2rmn_ implements PlugIn, Measurements {
 		}
 
 		String[] path1 = new String[MAX_IMAGES];
+		
+		
+		String className = this.getClass().getName();
+		String user1 = System.getProperty("user.name");
+//		TableCode tc1 = new TableCode();
+		String iw2ayv1 = tc1.nameTable("codici", "csv");
+		TableExpand tc2 = new TableExpand();
+		String iw2ayv2 = tc1.nameTable("expand", "csv");
+
+		
+		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+
+
 
 		selftest = false;
 		boolean retry = false;
@@ -396,7 +415,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 			if (nTokens == 1) {
 				ButtonMessages
 						.ModelessMsg(
-								"Non � possibile selezionare solo una immagine    <06>",
+								"Non e' possibile selezionare solo una immagine    <06>",
 								"CHIUDI");
 				return;
 			}
@@ -437,11 +456,14 @@ public class p2rmn_ implements PlugIn, Measurements {
 		} // if , else
 
 		int misure1 = UtilAyv.setMeasure(MEAN + STD_DEV);
-		String[][] info1 = ReportStandardInfo.getStandardInfo(strRiga3,
-				vetRiga1[0], tabCodici, VERSION + "_P2_", autoCalled);
+//		String[][] info1 = ReportStandardInfo.getStandardInfo(strRiga3,
+//				vetRiga1[0], tabCodici, VERSION + "_P2_", autoCalled);
+		
+		
+
 
 		//
-		// Qui si torna se la misura � da rifare
+		// Qui si torna se la misura e' da rifare
 		//
 		do {
 			UtilAyv.closeResultsWindow();
@@ -458,7 +480,16 @@ public class p2rmn_ implements PlugIn, Measurements {
 			ImagePlus imp8 = new ImagePlus("newStack", newStack);
 			if (imp8 == null)
 				return;
+//			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(vetPath1[0], imp8, tabCodici, VERSION, autoCalled);
+			
+			
+			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(vetPath1[0], imp8, tabCodici, VERSION
+					+ "_P2_ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_" + MyVersionUtils.CURRENT_VERSION+"___",
+					autoCalled);
 
+
+			
+			
 			UtilAyv.showImageMaximized(imp8);
 
 			int width = imp8.getWidth();
@@ -611,11 +642,32 @@ public class p2rmn_ implements PlugIn, Measurements {
 			//
 			// qui potrei anche chiudere le immagini
 			//
-			String t1 = "TESTO          ";
-			ResultsTable rt = ReportStandardInfo.putStandardInfoRT(info1);
+//			String t1 = "TESTO          ";
+//			ResultsTable rt = ReportStandardInfo.putStandardInfoRT_new(info1);
+			
+//			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+			
+			if (typeT2)
+				info1[0]="T2___";
+			else
+				info1[0]="T1___";
+
+			
+			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 			rt.showRowNumbers(true);
 
 			int col = 0;
+			
+			String t1 = "TESTO";
+			String s2 = "media";
+			String s3 = "devstan";
+			String s4 = "roi_x";
+			String s5 = "roi_y";
+			String s6 = "roi_b";
+			String s7 = "roi_h";
+
+			
+/**			
 			rt.setHeading(++col, t1);
 			rt.setHeading(++col, "media");
 			rt.setHeading(++col, "devstan");
@@ -623,10 +675,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 			rt.setHeading(++col, "roi_y");
 			rt.setHeading(++col, "roi_b");
 			rt.setHeading(++col, "roi_h");
-			if (typeT2)
-				rt.setLabel("T2___", 0);
-			else
-				rt.setLabel("T1___", 0);
+			**/
 
 			int gelNumber = 0;
 			for (int i1 = 0; i1 < vetRoi.length; i1++) {
@@ -636,13 +685,13 @@ public class p2rmn_ implements PlugIn, Measurements {
 				if (gelNumber == 12)
 					gelNumber = 14; // al posto 12 abbiamo il gel 14
 
-				rt.addLabel(t1, "Gel_" + gelNumber);
-				rt.addValue(2, medGels[i1]);
-				rt.addValue(3, devGels[i1]);
-				rt.addValue(4, vetXUpperLeftCornerRoiGels[i1]);
-				rt.addValue(5, vetYUpperLeftCornerRoiGels[i1]);
-				rt.addValue(6, roi_diam);
-				rt.addValue(7, roi_diam);
+				rt.addValue(t1, "Gel_" + gelNumber);
+				rt.addValue(s2, medGels[i1]);
+				rt.addValue(s3, devGels[i1]);
+				rt.addValue(s4, vetXUpperLeftCornerRoiGels[i1]);
+				rt.addValue(s5, vetYUpperLeftCornerRoiGels[i1]);
+				rt.addValue(s6, roi_diam);
+				rt.addValue(s7, roi_diam);
 			}
 			rt.show("Results");
 			// MyLog.waitHere();

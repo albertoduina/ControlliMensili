@@ -43,6 +43,7 @@ import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
+import utils.TableExpand;
 import utils.TableSequence;
 import utils.UtilAyv;
 
@@ -117,7 +118,18 @@ public class p11rmn_ implements PlugIn, Measurements {
 		// + "_iw2ayv_build_"
 		// + ReadVersion.readVersionInfoInManifest("utils");
 
-		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
+//		String className = this.getClass().getName();
+		String user1 = System.getProperty("user.name");
+		TableCode tc1 = new TableCode();
+		String iw2ayv1 = tc1.nameTable("codici", "csv");
+		TableExpand tc2 = new TableExpand();
+		String iw2ayv2 = tc1.nameTable("expand", "csv");
+
+		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+
+		// VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" +
+		// MyVersionUtils.getVersion();
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -165,7 +177,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				break;
 			case 4:
 				mode = 3;
-		//		step = true;
+				// step = true;
 			case 5:
 				if (mode == 0)
 					mode = 2;
@@ -406,7 +418,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 			test = true;
 			break;
 		}
-
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		do {
@@ -874,7 +885,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 				rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 				rt.showRowNumbers(true);
 
-				
 				int col = 2;
 				String t1 = "TESTO";
 				String s2 = "VALORE";
@@ -1602,7 +1612,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		boolean test = false;
 		boolean fast = false;
 
-
 		switch (mode) {
 		case 0:
 			silent = true;
@@ -1797,7 +1806,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 			double xCenter[] = { centro };
 			double yCenter[] = { profi1[(int) centro] };
 
-	
 			if (step || test) {
 				Plot plot1 = MyPlot.basePlot(profi1, "PROFILO SEGNALE LUNGO LINEA VERDE", Color.blue);
 				plot1.draw();

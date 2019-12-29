@@ -45,6 +45,7 @@ import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
+import utils.TableExpand;
 import utils.TableLimiti;
 import utils.TableSequence;
 import utils.UtilAyv;
@@ -110,8 +111,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 			return;
 
 		String className = this.getClass().getName();
+		String user1 = System.getProperty("user.name");
+		TableCode tc1 = new TableCode();
+		String iw2ayv1 = tc1.nameTable("codici", "csv");
+		TableExpand tc2 = new TableExpand();
+		String iw2ayv2 = tc1.nameTable("expand", "csv");
 
-		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+
+//		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -1951,7 +1960,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 				lw.setLocation(10, 10);
 
 			MyLog.waitHere(listaMessaggi(5), debug, timeout);
-
 		}
 
 		if (WindowManager.getFrame(title) != null) {

@@ -64,6 +64,12 @@
 
 	<property name="eclipse-home" value="${basedir}\..\.." />
 	<echo message="eclipse-home= ${eclipse-home}" />
+	
+	<tstamp>
+	    <format property="time.stamp" pattern="yyyyMMMdd_HHmm"/>
+	</tstamp>
+	<echo message="tstamp= ${time.stamp}" />		
+
 
 
 	<!-- ##############			MAIN ROUTINE 		############## -->
@@ -146,9 +152,11 @@
 			<attribute name="Built-Date" value="${TODAY}" />
 			<attribute name="Main-Class" value="contMensili.Sequenze_" />
 			<!--attribute name="Implementation-Version" value="${version.num}-b${build.number}" /-->
-			<attribute name="Implementation-Version" value="b${build.number}" />
+			<!-- attribute name="Implementation-Version" value="b${build.number}" /-->
+			<attribute name="Implementation-Version" value="${time.stamp}" />
 		</manifest>
-		<jar destfile="${output}/ContMens_b${build.number}.jar" manifest="MANIFEST.MF">
+		<jar destfile="${output}/ContMens_${time.stamp}.jar" manifest="MANIFEST.MF">
+			<!--jar destfile="${output}/ContMens_b${build.number}.jar" manifest="MANIFEST.MF"-->
 			<fileset dir="${output}" />
 		</jar>
 		<delete dir="${output}/contMensili" />

@@ -7,6 +7,7 @@ import ij.gui.ImageWindow;
 import ij.gui.OvalRoi;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
+import ij.plugin.ContrastEnhancer;
 import ij.plugin.PlugIn;
 
 import java.awt.Color;
@@ -24,6 +25,7 @@ import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
+import utils.TableExpand;
 import utils.TableSequence;
 import utils.UtilAyv;
 
@@ -94,8 +96,16 @@ public class p8rmn_ implements PlugIn, Measurements {
 		}
 
 		String className = this.getClass().getName();
+		String user1 = System.getProperty("user.name");
+		TableCode tc1 = new TableCode();
+		String iw2ayv1 = tc1.nameTable("codici", "csv");
+		TableExpand tc2 = new TableExpand();
+		String iw2ayv2 = tc1.nameTable("expand", "csv");
 
-		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+
+//		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -228,6 +238,9 @@ public class p8rmn_ implements PlugIn, Measurements {
 			UtilAyv.closeResultsWindow();
 
 			ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+			
+			// 291219 iw2ayv
+			new ContrastEnhancer().stretchHistogram(imp1.getProcessor(), 0.5);
 
 			String slicePos = ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_IMAGE_POSITION),
 					3);

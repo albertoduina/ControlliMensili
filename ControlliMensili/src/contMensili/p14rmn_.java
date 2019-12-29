@@ -39,6 +39,7 @@ import utils.MyMsg;
 import utils.MyVersionUtils;
 import utils.ReportStandardInfo;
 import utils.TableCode;
+import utils.TableExpand;
 import utils.TableSequence;
 import utils.UtilAyv;
 
@@ -112,8 +113,16 @@ public class p14rmn_ implements PlugIn {
 			return;
 
 		String className = this.getClass().getName();
+		String user1 = System.getProperty("user.name");
+		TableCode tc1 = new TableCode();
+		String iw2ayv1 = tc1.nameTable("codici", "csv");
+		TableExpand tc2 = new TableExpand();
+		String iw2ayv2 = tc1.nameTable("expand", "csv");
 
-		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+
+//		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 		fileDir = Prefs.get("prefer.string1", "none");
 
 		if (IJ.versionLessThan("1.43k"))
@@ -131,10 +140,8 @@ public class p14rmn_ implements PlugIn {
 	/**
 	 * Menu funzionamento manuale (chiamato dal menu di ImageJ)
 	 * 
-	 * @param preset
-	 *            da utilizzare per eventuali test
-	 * @param testDirectory
-	 *            da utilizzare per eventuali test
+	 * @param preset        da utilizzare per eventuali test
+	 * @param testDirectory da utilizzare per eventuali test
 	 * @return
 	 */
 

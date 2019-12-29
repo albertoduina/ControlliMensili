@@ -64,6 +64,7 @@ import utils.ReadDicom;
 import utils.ReadVersion;
 import utils.ReportStandardInfo;
 import utils.TableCode;
+import utils.TableExpand;
 import utils.TableLimiti;
 import utils.TableSequence;
 import utils.UtilAyv;
@@ -125,6 +126,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 	public static String blackpath = "";
 	public static String blackname = "";
 	public static String blacklog = "";
+	public static String simpath = "";
+	public static String simname = "";
 
 	public void run(String args) {
 
@@ -137,8 +140,14 @@ public class p12rmn_ implements PlugIn, Measurements {
 			return;
 
 		String className = this.getClass().getName();
+		String user1 = System.getProperty("user.name");
+		TableCode tc1 = new TableCode();
+		String iw2ayv1 = tc1.nameTable("codici", "csv");
+		TableExpand tc2 = new TableExpand();
+		String iw2ayv2 = tc1.nameTable("expand", "csv");
 
-		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -310,6 +319,29 @@ public class p12rmn_ implements PlugIn, Measurements {
 			MyLog.waitHere("errore creazione directory " + newdir);
 
 		blacklog = blackpath + "/blacklog.txt";
+		// =====================================================================
+		// ========================= 29/12/2019 ==================================
+		// IJ.log("path1= " + path1);
+		simpath = path1.substring(0, path1.lastIndexOf(File.separator));
+		File f2 = new File(path1);
+		simname = f2.getName();
+		simpath = simpath + "\\" + simname + "_BLACK";
+		File newdir3 = new File(simpath);
+//		MyLog.waitHere("simpath= "+simpath);
+//		MyLog.waitHere("simname= "+simname);
+		// IJ.log("blackpath= " + blackpath);
+		// MyLog.appendLog2(blacklog, blackpath);
+
+		boolean ok3 = false;
+		if (newdir3.exists()) {
+			ok3 = InputOutput.deleteDir(newdir3);
+			if (!ok3)
+				MyLog.waitHere("errore cancellazione directory " + newdir3);
+		}
+		boolean ok4 = InputOutput.createDir(newdir3);
+		if (!ok4)
+			MyLog.waitHere("errore creazione directory " + newdir3);
+
 		// =====================================================================
 
 		boolean step = true;
@@ -1490,7 +1522,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		int[] roiData = readPreferences(width, height, width);
 		int diamRoiMan = roiData[2];
-		if (diamRoiMan>aux1) diamRoiMan=aux1;
+		if (diamRoiMan > aux1)
+			diamRoiMan = aux1;
 
 		ImageWindow iw11 = null;
 		ImageWindow iw12 = null;
@@ -2717,9 +2750,13 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		String simName = filename + patName + codice + "sim.zip";
 
-		if (!test)
-
+		if (!test) {
+			// rinomino per evitare che si chiami "simulata.zip" per tutte le immagini
+			impSimulata.setTitle(patName + codice + "sim");
 			new FileSaver(impSimulata).saveAsZip(simName);
+//			MyLog.waitHere("simName= " + simName);
+		}
+
 		return classiSimulata;
 	}
 
