@@ -97,6 +97,7 @@ import utils.UtilAyv;
  * 
  * +++++++++++++++++ MA A ME SEMBRA CHE FUNZIONI ++++++++++++++++++++++
  * +++++++++++++++++ MA A ME SEMBRA CHE FUNZIONI ++++++++++++++++++++++
+ * +++++++++++++++++ MODIFICHE CARTELLA SIMULATE ++++++++++++++++++++++
  * 
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
@@ -115,7 +116,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 	/**
 	 * directory dati, dove vengono memorizzati ayv.txt e Results1.txt
 	 */
-	private static String fileDir = "";
 
 	private static final boolean debug = true;
 
@@ -123,11 +123,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 	private static int timeout = 0;
 	public static boolean forcesilent = false;
 	public static final boolean blackbox = false;
-	public static String blackpath = "";
-	public static String blackname = "";
-	public static String blacklog = "";
+//	public static String blackpath = "";
+//	public static String blackname = "";
+//	public static String blacklog = "";
+	private static String fileDir = "";
 	public static String simpath = "";
-	public static String simname = "";
+//	public static String simname = "";
 
 	public void run(String args) {
 
@@ -300,47 +301,57 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		// ========================= 12/06/16 ==================================
 		// IJ.log("path1= " + path1);
-		blackpath = path1.substring(0, path1.lastIndexOf(File.separator));
-		File f1 = new File(path1);
-		blackname = f1.getName();
-		blackpath = blackpath + "\\" + blackname + "_BLACK";
-		File newdir = new File(blackpath);
-		// IJ.log("blackpath= " + blackpath);
-		// MyLog.appendLog2(blacklog, blackpath);
-
-		boolean ok1 = false;
-		if (newdir.exists()) {
-			ok1 = InputOutput.deleteDir(newdir);
-			if (!ok1)
-				MyLog.waitHere("errore cancellazione directory " + newdir);
-		}
-		boolean ok2 = InputOutput.createDir(newdir);
-		if (!ok2)
-			MyLog.waitHere("errore creazione directory " + newdir);
-
-		blacklog = blackpath + "/blacklog.txt";
+//		blackpath = path1.substring(0, path1.lastIndexOf(File.separator));
+//		File f1 = new File(path1);
+//		blackname = f1.getName();
+//		blackpath = blackpath + "\\" + blackname + "_BLACK";
+//		File newdir = new File(blackpath);
+//		// IJ.log("blackpath= " + blackpath);
+//		// MyLog.appendLog2(blacklog, blackpath);
+//
+//		boolean ok1 = false;
+//		if (newdir.exists()) {
+//			ok1 = InputOutput.deleteDir(newdir);
+//			if (!ok1)
+//				MyLog.waitHere("errore cancellazione directory " + newdir);
+//		}
+//		boolean ok2 = InputOutput.createDir(newdir);
+//		if (!ok2)
+//			MyLog.waitHere("errore creazione directory " + newdir);
+//
+//		blacklog = blackpath + "/blacklog.txt";
 		// =====================================================================
 		// ========================= 29/12/2019 ==================================
-		// IJ.log("path1= " + path1);
-		simpath = path1.substring(0, path1.lastIndexOf(File.separator));
-		File f2 = new File(path1);
-		simname = f2.getName();
-		simpath = simpath + "\\" + simname + "_BLACK";
+//		String aux1="";
+//		aux1 = path1.substring(0, path1.lastIndexOf(File.separator));
+//		MyLog.waitHere("path1= "+path1);
+//		MyLog.waitHere("aux1= "+aux1);
+//
+//		String aux2="";
+//		aux2 = aux1.substring(0, aux1.lastIndexOf(File.separator));
+//		MyLog.waitHere("aux2= "+aux2);
+//
+//		String aux3="";
+//		aux3 = aux2.substring(0, aux2.lastIndexOf(File.separator));
+//		
+//		simpath=aux3;
+//		MyLog.waitHere("filedir= "+fileDir + "simpath= "+simpath);
+//
+//		File f2 = new File(simpath);
+//		simname = f2.getName();
+		simpath = fileDir + "SIMULATE";
 		File newdir3 = new File(simpath);
-//		MyLog.waitHere("simpath= "+simpath);
-//		MyLog.waitHere("simname= "+simname);
-		// IJ.log("blackpath= " + blackpath);
-		// MyLog.appendLog2(blacklog, blackpath);
-
 		boolean ok3 = false;
+		boolean ok4 = false;
 		if (newdir3.exists()) {
-			ok3 = InputOutput.deleteDir(newdir3);
-			if (!ok3)
-				MyLog.waitHere("errore cancellazione directory " + newdir3);
+//			ok3 = InputOutput.deleteDir(newdir3);
+//			if (!ok3)
+//				MyLog.waitHere("errore cancellazione directory " + newdir3);
+		} else {
+			ok4 = InputOutput.createDir(newdir3);
+			if (!ok4)
+				MyLog.waitHere("errore creazione directory " + newdir3);
 		}
-		boolean ok4 = InputOutput.createDir(newdir3);
-		if (!ok4)
-			MyLog.waitHere("errore creazione directory " + newdir3);
 
 		// =====================================================================
 
@@ -860,7 +871,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 			over1.addElement(imp1.getRoi());
 			drawLabel(imp1, "bkg", Color.red);
 			over1.addElement(imp1.getRoi());
-			// MyLog.waitHere("BKG");
 
 			imp1.deleteRoi();
 
@@ -884,7 +894,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			if (verbose)
 				MyLog.waitHere(listaMessaggi(44), debug, timeout);
 
-			String name1 = blackpath + "\\";
+			String name1 = simpath + "\\";
 
 			int[][] classiSimulata = generaSimulata(xCenter80 - diam80 / 2, yCenter80 - diam80 / 2, diam80, imp1, name1,
 					step, verbose, test);

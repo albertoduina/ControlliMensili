@@ -5,6 +5,7 @@ import ij.ImagePlus;
 import ij.Prefs;
 import ij.gui.OvalRoi;
 import ij.gui.Roi;
+import ij.io.Opener;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
@@ -26,6 +27,7 @@ import utils.MyVersionUtils;
 import utils.TableCode;
 import utils.TableExpand;
 import utils.TableSequence;
+import utils.TableUtils;
 import utils.UtilAyv;
 import utils.ButtonMessages;
 import utils.InputOutput;
@@ -65,7 +67,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 	static final int ABORT = 1;
 
-	public static  String VERSION = "CNR";
+	public static String VERSION = "CNR";
 
 	private static String TYPE = " >>  CONTROLLO CNR____________________";
 
@@ -224,8 +226,8 @@ public class p9rmn_ implements PlugIn, Measurements {
 		// tabl = io.readFile1(CODE_FILE, TOKENS4);
 
 		// tabl = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
-		TableCode tc1= new TableCode();
-		String[][] tabCodici = tc1.loadMultipleTable( "codici", ".csv");
+		TableCode tc1 = new TableCode();
+		String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 
 		StringTokenizer strTok = new StringTokenizer(args, "#");
 		int nTokens = strTok.countTokens();
@@ -243,17 +245,13 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 		boolean selftest = false;
 		bstep = false;
-		
+
 		String className = this.getClass().getName();
 		String user1 = System.getProperty("user.name");
 //		TableCode tc1 = new TableCode();
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
 		TableExpand tc2 = new TableExpand();
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
-
-		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
-				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
-
 
 		AboutBox ab = new AboutBox();
 		boolean retry = false;
@@ -400,17 +398,42 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 		}
 		int misure1 = UtilAyv.setMeasure(MEAN + STD_DEV);
-		
-		String[][] info1 = ReportStandardInfo.getStandardInfo(strRiga3, riga1, tabCodici, VERSION + "_P9__ContMensili_"
-				+ MyVersion.CURRENT_VERSION + "__iw2ayv_" + MyVersionUtils.CURRENT_VERSION, autoCalled);
+
+//		String[][] info0 = ReportStandardInfo.getStandardInfo(strRiga3, riga1, tabCodici, VERSION + "_P9__ContMensili_"
+//				+ MyVersion.CURRENT_VERSION + "__iw2ayv_" + MyVersionUtils.CURRENT_VERSION, autoCalled);
+//
+//		TableUtils.dumpTable2(info0);
 
 		//
-		// Qui si torna se la misura � da rifare
+		// Qui si torna se la misura e' da rifare
 		//
 		do {
 			UtilAyv.closeResultsWindow();
 
 			ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+
+			VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+					+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+
+			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
+
+//			String aux3 = imp1.getTitle();
+			String codice1 = TableSequence.getCode(strRiga3, riga1);
+//			String codice2 = "";
+
+//			TableUtils.dumpTable(tabCodici);
+//			MyLog.waitHere("riga1= " + riga1);
+
+//			if (InputOutput.isCode(aux3, tabCodici))
+//				codice2 = aux3.substring(0, 5).trim();
+//			else {
+//				aux3 = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION);
+//				codice2 = aux3.substring(0, 5).trim();
+//			}
+			info1[0] = codice1;
+
+//			MyLog.logVector(info1, "info1");
+//			MyLog.waitHere();
 
 			int Rows = ReadDicom.readInt(ReadDicom.readDicomParameter(imp1, DICOM_ROWS));
 			int Columns = ReadDicom.readInt(ReadDicom.readDicomParameter(imp1, DICOM_COLUMNS));
@@ -560,7 +583,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 			}
 
-			ResultsTable rt = ReportStandardInfo.putStandardInfoRT(info1);
+//			ResultsTable rt = ReportStandardInfo.putStandardInfoRT(info1);
+
+			ResultsTable rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 			rt.showRowNumbers(true);
 
 			int col = 0;
@@ -576,19 +601,19 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 			String label;
 			double echo = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1, DICOM_ECHO_TIME));
-			rt.addLabel(t1, "TE");
+			rt.addValue(t1, "TE");
 			rt.addValue(s2, echo);
 			rt.incrementCounter();
 
 			double inversion = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1, DICOM_INVERSION_TIME));
-			rt.addLabel(t1, "TI");
+			rt.addValue(t1, "TI");
 			rt.addValue(s2, inversion);
 			if (typeT2 && (inversion > 0))
 				IJ.showMessage("la sequenza di " + path1 + " dovrebbe essere una T2 ma ha un Inversion Time > 0!");
 			for (int i1 = 0; i1 < pointerGel1.length; i1++) {
 				rt.incrementCounter();
 				label = "gels_" + VET_NUMERI_GEL[pointerGel1[i1]] + "-" + VET_NUMERI_GEL[pointerGel2[i1]];
-				rt.addLabel(t1, label);
+				rt.addValue(t1, label);
 				rt.addValue(s2, vetCNR[i1]);
 				rt.addValue(s3, vetXUpperLeftCornerRoiGels[pointerGel1[i1]]);
 				rt.addValue(s4, vetYUpperLeftCornerRoiGels[pointerGel1[i1]]);
@@ -681,16 +706,11 @@ public class p9rmn_ implements PlugIn, Measurements {
 	/**
 	 * built-in test per la immagine Symphony in modo PROVA
 	 * 
-	 * @param medGel_a
-	 *            media gel2
-	 * @param devGel_a
-	 *            devStan gel2
-	 * @param medGel_b
-	 *            media gel1
-	 * @param devGel_b
-	 *            devstan gel1
-	 * @param cnrGel_ab
-	 *            cnrGel 1-2
+	 * @param medGel_a  media gel2
+	 * @param devGel_a  devStan gel2
+	 * @param medGel_b  media gel1
+	 * @param devGel_b  devstan gel1
+	 * @param cnrGel_ab cnrGel 1-2
 	 */
 	private void testSymphony(double medGel_a, double devGel_a, double medGel_b, double devGel_b, double cnrGel_ab) {
 		boolean testok = true;
@@ -732,16 +752,11 @@ public class p9rmn_ implements PlugIn, Measurements {
 	/**
 	 * built-in test per la immagine GE in modo PROVA
 	 * 
-	 * @param medGel_a
-	 *            media gel2
-	 * @param devGel_a
-	 *            devStan gel2
-	 * @param medGel_b
-	 *            media gel1
-	 * @param devGel_b
-	 *            devstan gel1
-	 * @param cnrGel_ab
-	 *            cnrGel 1-2
+	 * @param medGel_a  media gel2
+	 * @param devGel_a  devStan gel2
+	 * @param medGel_b  media gel1
+	 * @param devGel_b  devstan gel1
+	 * @param cnrGel_ab cnrGel 1-2
 	 */
 	private void testGe(double medGel_a, double devGel_a, double medGel_b, double devGel_b, double cnrGel_ab) {
 		boolean testok = true;

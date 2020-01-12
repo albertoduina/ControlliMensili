@@ -6,6 +6,7 @@ import ij.Prefs;
 import ij.WindowManager;
 import ij.gui.ImageWindow;
 import ij.gui.Line;
+import ij.gui.NewImage;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
 import ij.gui.Plot;
@@ -19,6 +20,7 @@ import ij.plugin.PlugIn;
 import ij.plugin.filter.RankFilters;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
+import ij.process.ShortProcessor;
 import ij.util.Tools;
 
 import java.awt.Color;
@@ -89,6 +91,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * directory dati, dove vengono memorizzati ayv.txt e Results1.txt
 	 */
 	private static String fileDir = "";
+	public static String simpath = "";
 
 	private static String simulataName = "";
 
@@ -177,10 +180,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	/**
 	 * Menu funzionamento manuale (chiamato dal menu di ImageJ)
 	 * 
-	 * @param preset
-	 *            da utilizzare per eventuali test
-	 * @param testDirectory
-	 *            da utilizzare per eventuali test
+	 * @param preset        da utilizzare per eventuali test
+	 * @param testDirectory da utilizzare per eventuali test
 	 * @return
 	 */
 
@@ -246,8 +247,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	/**
 	 * Menu funzionamento automatico (chiamato da Sequenze)
 	 * 
-	 * @param autoArgs
-	 *            parametri ricevuti da Sequenze ad esempio: "#2#3"
+	 * @param autoArgs parametri ricevuti da Sequenze ad esempio: "#2#3"
 	 * @return
 	 */
 
@@ -336,6 +336,20 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		blacklog = blackpath + "/blacklog.txt";
 		// =====================================================================
+
+		simpath = fileDir + "SIMULATE";
+		File newdir3 = new File(simpath);
+		boolean ok3 = false;
+		boolean ok4 = false;
+		if (newdir3.exists()) {
+//			ok3 = InputOutput.deleteDir(newdir3);
+//			if (!ok3)
+//				MyLog.waitHere("errore cancellazione directory " + newdir3);
+		} else {
+			ok4 = InputOutput.createDir(newdir3);
+			if (!ok4)
+				MyLog.waitHere("errore creazione directory " + newdir3);
+		}
 
 		// boolean step = false;
 		boolean retry = false;
@@ -443,25 +457,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * 0 1 2 4 8 16 32 ecc??? Da una prima occhiata mi sembrerebbe il caso di
 	 * mantenere autocalled (viene passato a molte subroutines)
 	 * 
-	 * @param path1
-	 *            path prima immagine
-	 * @param path2
-	 *            path seconda immagine
-	 * @param autoArgs
-	 *            argomentoi ricevuti dalla chiamata
-	 * @param profond
-	 *            profondita' a cui porre la ROI
+	 * @param path1      path prima immagine
+	 * @param path2      path seconda immagine
+	 * @param autoArgs   argomentoi ricevuti dalla chiamata
+	 * @param profond    profondita' a cui porre la ROI
 	 * @param info10
-	 * @param autoCalled
-	 *            flag true se chiamato in automatico
-	 * @param step
-	 *            flag true se funzionamento passo-passo
-	 * @param verbose
-	 *            flag true se verbose
-	 * @param test
-	 *            flag true se in modo test
-	 * @param fast
-	 *            flag true se in modo batch
+	 * @param autoCalled flag true se chiamato in automatico
+	 * @param step       flag true se funzionamento passo-passo
+	 * @param verbose    flag true se verbose
+	 * @param test       flag true se in modo test
+	 * @param fast       flag true se in modo batch
 	 * @return
 	 */
 	@SuppressWarnings("deprecation")
@@ -605,19 +610,18 @@ public class p10rmn_ implements PlugIn, Measurements {
 				MyLog.waitHere("Non trovato il file " + path2);
 			// ImageWindow iw1=WindowManager.getCurrentWindow();
 
-			//	String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
-			TableCode tc1= new TableCode();
-			String[][] tabCodici = tc1.loadMultipleTable( "codici", ".csv");
+			// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+			TableCode tc1 = new TableCode();
+			String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 
-			
-			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION
-					+ "_P10__ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_" + MyVersionUtils.CURRENT_VERSION+"___",
+			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici,
+					VERSION + "_P10__ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_"
+							+ MyVersionUtils.CURRENT_VERSION + "___",
 					autoCalled);
 
 			//
 			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 			rt.showRowNumbers(true);
-
 
 			if (blackbox) {
 				// ===================================================================================
@@ -973,10 +977,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 				// verifico che quando cresce il lato del quadrato non si
 				// esca
 				// dall'immagine
-				
-				String str32 = "ATTENZIONE la NEA esce dall'immagine senza riuscire a \n"
-						+ "trovare 121 pixel che superino il  test il programma \n" + "TERMINA PREMATURAMENTE,\n \n PREMERE OK";
 
+				String str32 = "ATTENZIONE la NEA esce dall'immagine senza riuscire a \n"
+						+ "trovare 121 pixel che superino il  test il programma \n"
+						+ "TERMINA PREMATURAMENTE,\n \n PREMERE OK";
 
 				if ((xCenterRoi + sqNEA - enlarge) >= width || (xCenterRoi - enlarge) <= 0) {
 					MyLog.waitHere(str32, debug, timeout);
@@ -1057,12 +1061,15 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			String codice = UtilAyv.getFiveLetters(codice1);
 
-			simulataName = blackpath + "\\" + patName + codice + "sim.zip";
+//			String name1 = simpath + "\\";
+
+			simulataName = simpath + "\\" + patName + codice + "sim.zip";
+			String aux1 = patName + codice;
 
 			// passo due volte step (al posto di verbose) per non vedere la
 			// simulata in fast
 			int[][] classiSimulata = ImageUtils.generaSimulata12classi(xCenterRoi, yCenterRoi, sq7, imp1, simulataName,
-					mode, timeout);
+					aux1, mode, timeout);
 
 			//
 			// calcolo posizione fwhm a meta' della MROI
@@ -1445,12 +1452,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 	/**
 	 * Calcola la deviazione standard
 	 * 
-	 * @param num
-	 *            Numero dei pixel
-	 * @param sum
-	 *            Somma dei valori pixel
-	 * @param sum2
-	 *            Somma dei quadrati dei valori dei pixel
+	 * @param num  Numero dei pixel
+	 * @param sum  Somma dei valori pixel
+	 * @param sum2 Somma dei quadrati dei valori dei pixel
 	 * @return deviazione standard
 	 */
 
@@ -1470,20 +1474,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 	/**
 	 * Conta i pixel che oltrepassano la soglia di conteggio
 	 * 
-	 * @param imp1
-	 *            immagine in input
-	 * @param sqX
-	 *            coordinata della Roi
-	 * @param sqY
-	 *            coordinata della Roi
-	 * @param sqR
-	 *            lato della Roi
-	 * @param limit
-	 *            soglia di conteggio, vengono contati i pixel che la superano
-	 * @param paintPixels
-	 *            switch per test, se attivato vengono colorati i pixels di cui
-	 *            viene effettuato il conteggio. Utilizzato per verificare che le
-	 *            varie ROI siano posizionate correttamente
+	 * @param imp1        immagine in input
+	 * @param sqX         coordinata della Roi
+	 * @param sqY         coordinata della Roi
+	 * @param sqR         lato della Roi
+	 * @param limit       soglia di conteggio, vengono contati i pixel che la
+	 *                    superano
+	 * @param paintPixels switch per test, se attivato vengono colorati i pixels di
+	 *                    cui viene effettuato il conteggio. Utilizzato per
+	 *                    verificare che le varie ROI siano posizionate
+	 *                    correttamente
 	 * @return pixel che superano la soglia
 	 */
 	public static int countPixOverLimitCentered(ImagePlus imp1, int sqX, int sqY, int sqR, double limit,
@@ -1549,22 +1549,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * differenza i cui corrispondenti pixel della prima immagine oltrepassano la
 	 * soglia di conteggio, secondo il protocollo NEMA
 	 * 
-	 * @param imp1
-	 *            immagine in input
-	 * @param imp3
-	 *            immagine differenza
-	 * @param sqX1
-	 *            coordinata del centro Roi
-	 * @param sqY1
-	 *            coordinata del centro Roi
-	 * @param sqR
-	 *            lato della Roi
-	 * @param limit
-	 *            soglia di conteggio
-	 * @param paintPixels
-	 *            marcatura Roi su overlay grafico
-	 * @param over1
-	 *            overlay grafico
+	 * @param imp1        immagine in input
+	 * @param imp3        immagine differenza
+	 * @param sqX1        coordinata del centro Roi
+	 * @param sqY1        coordinata del centro Roi
+	 * @param sqR         lato della Roi
+	 * @param limit       soglia di conteggio
+	 * @param paintPixels marcatura Roi su overlay grafico
+	 * @param over1       overlay grafico
 	 * @return [0] sum / pixelcount [1] devStan
 	 */
 
@@ -1656,16 +1648,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 	/**
 	 * Analisi di un profilo NON mediato
 	 * 
-	 * @param imp1
-	 *            Immagine da analizzare
-	 * @param ax
-	 *            Coordinata x inizio segmento
-	 * @param ay
-	 *            Coordinata y inizio segmento
-	 * @param bx
-	 *            Coordinata x fine segmento
-	 * @param by
-	 *            Coordinata x fine segmento
+	 * @param imp1 Immagine da analizzare
+	 * @param ax   Coordinata x inizio segmento
+	 * @param ay   Coordinata y inizio segmento
+	 * @param bx   Coordinata x fine segmento
+	 * @param by   Coordinata x fine segmento
 	 * 
 	 * @return outFwhm[0]=FWHM, outFwhm[1]=peak position
 	 */
@@ -1691,12 +1678,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 	/**
 	 * Read preferences from IJ_Prefs.txt
 	 * 
-	 * @param width
-	 *            image width
-	 * @param height
-	 *            image height
-	 * @param limit
-	 *            border limit for object placement on image
+	 * @param width  image width
+	 * @param height image height
+	 * @param limit  border limit for object placement on image
 	 * @return
 	 */
 	public static int[] readPreferences(int width, int height, int limit) {
@@ -1725,14 +1709,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * coordinata Y ha lo 0 in alto a sx, anziche' in basso a sx, come siamo soliti
 	 * a vedere il piano cartesiano
 	 * 
-	 * @param ax
-	 *            coordinata X inizio
-	 * @param ay
-	 *            coordinata Y inizio
-	 * @param bx
-	 *            coordinata X fine
-	 * @param by
-	 *            coordinata Y fine
+	 * @param ax coordinata X inizio
+	 * @param ay coordinata Y inizio
+	 * @param bx coordinata X fine
+	 * @param by coordinata Y fine
 	 * @return valore dell'angolo in radianti
 	 */
 	public static double angoloRad(double ax, double ay, double bx, double by) {
@@ -1749,16 +1729,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * Calcola le coordinate del centro ROI sul segmento circonferenza - centro,
 	 * alla profondita' desiderata
 	 * 
-	 * @param ax
-	 *            coordinata X su circonferenza
-	 * @param ay
-	 *            coordinata Y su circonferenza
-	 * @param bx
-	 *            coordinata X del centro
-	 * @param by
-	 *            coordinata Y del centro
-	 * @param prof
-	 *            profondita' centro ROI
+	 * @param ax   coordinata X su circonferenza
+	 * @param ay   coordinata Y su circonferenza
+	 * @param bx   coordinata X del centro
+	 * @param by   coordinata Y del centro
+	 * @param prof profondita' centro ROI
 	 * @return vettore coordinate centro ROI
 	 */
 	public static double[] interpolaProfondCentroROI(double ax, double ay, double bx, double by, double prof) {
@@ -1784,10 +1759,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	/***
 	 * Effettua lo smooth su 3 pixels di un profilo
 	 * 
-	 * @param profile1
-	 *            profilo
-	 * @param loops
-	 *            numerompassaggi
+	 * @param profile1 profilo
+	 * @param loops    numerompassaggi
 	 * @return profilo dopo smooth
 	 */
 	public static double[] smooth3(double[] profile1, int loops) {
@@ -1809,10 +1782,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	/***
 	 * Effettua lo smooth su 3 pixels di un profilo
 	 * 
-	 * @param profile1
-	 *            profilo
-	 * @param loops
-	 *            numerompassaggi
+	 * @param profile1 profilo
+	 * @param loops    numerompassaggi
 	 * @return profilo dopo smooth
 	 */
 	public static double[][] smooth3(double[][] profile1, int loops) {
@@ -1835,10 +1806,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	/**
 	 * Calcolo della Edge Response Function (ERF)
 	 * 
-	 * @param profile1
-	 *            profilo da elaborare
-	 * @param invert
-	 *            true se da invertire
+	 * @param profile1 profilo da elaborare
+	 * @param invert   true se da invertire
 	 * @return profilo con ERF
 	 */
 	public static double[] createErf(double[] profile1, boolean invert) {
@@ -1861,16 +1830,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 	/**
 	 * Interpolazione lineare di un punto su di un segmento
 	 * 
-	 * @param x0
-	 *            coordinata X inizio
-	 * @param y0
-	 *            coordinata Y inizio
-	 * @param x1
-	 *            coordinata X fine
-	 * @param y1
-	 *            coordinata X fine
-	 * @param x2
-	 *            valore X di cui calcolare la Y
+	 * @param x0 coordinata X inizio
+	 * @param y0 coordinata Y inizio
+	 * @param x1 coordinata X fine
+	 * @param y1 coordinata X fine
+	 * @param x2 valore X di cui calcolare la Y
 	 * @return valore Y calcolato
 	 */
 	public static double linearInterpolation(double x0, double y0, double x1, double y1, double x2) {
@@ -1974,14 +1938,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * Verifica se un valore e' all'interno dei limiti assegnati, con una certa
 	 * tolleranza
 	 * 
-	 * @param x1
-	 *            valore calcolato
-	 * @param low
-	 *            limite inferiore
-	 * @param high
-	 *            limite superiore
-	 * @param tolerance
-	 *            tolleranza
+	 * @param x1        valore calcolato
+	 * @param low       limite inferiore
+	 * @param high      limite superiore
+	 * @param tolerance tolleranza
 	 * @return true se il valore e' valido (entro i limiti)
 	 */
 	public static boolean isBetween(double x1, double low, double high, double tolerance) {
@@ -2012,22 +1972,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 	/**
 	 * Ricerca della posizione della ROI per il calcolo dell'uniformita'
 	 * 
-	 * @param imp11
-	 *            immagine di input
-	 * @param profond
-	 *            profondita' ROI
-	 * @param info1
-	 *            messaggio esplicativo
-	 * @param autoCalled
-	 *            flag true se chiamato in automatico
-	 * @param step
-	 *            flag true se funzionamento passo - passo
-	 * @param verbose
-	 *            flag true se funzionamento verbose
-	 * @param test
-	 *            flag true se in test
-	 * @param fast
-	 *            flag true se modo batch
+	 * @param imp11      immagine di input
+	 * @param profond    profondita' ROI
+	 * @param info1      messaggio esplicativo
+	 * @param autoCalled flag true se chiamato in automatico
+	 * @param step       flag true se funzionamento passo - passo
+	 * @param verbose    flag true se funzionamento verbose
+	 * @param test       flag true se in test
+	 * @param fast       flag true se modo batch
 	 * @return vettore con dati ROI
 	 */
 	public static double[] positionSearch(ImagePlus imp11, double profond, String info1, int mode, int timeout) {
@@ -2647,8 +2599,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	/**
 	 * Lettura di un valore double da una stringa
 	 * 
-	 * @param s1
-	 *            stringa di input
+	 * @param s1 stringa di input
 	 * @return double di output
 	 */
 	public static double readDouble(String s1) {
@@ -2940,5 +2891,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		String out = lista[select];
 		return out;
 	}
+	
+
 
 }

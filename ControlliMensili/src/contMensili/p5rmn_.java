@@ -19,6 +19,7 @@ import ij.util.Tools;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.io.File;
 import java.util.StringTokenizer;
 
 import utils.AboutBox;
@@ -534,9 +535,24 @@ public class p5rmn_ implements PlugIn, Measurements {
 			// .readDicomParameter(imp1,
 			// MyConst.DICOM_SERIES_DESCRIPTION)
 			// .substring(0, 4).trim();
+			String simpath = fileDir + "SIMULATE";
+			File newdir3 = new File(simpath);
+			boolean ok3 = false;
+			boolean ok4 = false;
+			if (newdir3.exists()) {
+//				ok3 = InputOutput.deleteDir(newdir3);
+//				if (!ok3)
+//					MyLog.waitHere("errore cancellazione directory " + newdir3);
+			} else {
+				ok4 = InputOutput.createDir(newdir3);
+				if (!ok4)
+					MyLog.waitHere("errore creazione directory " + newdir3);
+			}
 
-			simulataName = fileDir + patName + codice + "sim.zip";
 
+			simulataName = simpath +"\\"+ patName + codice + "sim.zip";
+
+		//	MyLog.waitHere(simulataName);
 			// int[][] classiSimulata = ImageUtils.generaSimulata12classi(sqX
 			// + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL, imp1, step,
 			// verbose, test);

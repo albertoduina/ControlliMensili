@@ -1,6 +1,7 @@
 package contMensili;
 
 import java.awt.Rectangle;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -55,6 +56,8 @@ import utils.UtilAyv;
 /**
  * Analizza UNIFORMITA' RETTANGOLARE, SNR, GHOSTS.
  * 
+ * +++++++++++++++++ MODIFICHE CARTELLA SIMULATE ++++++++++++++++++++++
+ * 
  * 
  * @author Alberto Duina
  * 
@@ -69,6 +72,10 @@ public class p19rmn_ implements PlugIn, Measurements {
 	private static String TYPE = " >> CONTROLLO UNIFORMITA'RETTANGOLARE";
 
 	private static String fileDir = "";
+	public static String simpath = "";
+
+	
+	
 	private static boolean debug = true;
 	private static boolean mylogger = true;
 
@@ -200,6 +207,21 @@ public class p19rmn_ implements PlugIn, Measurements {
 
 		String path1 = "";
 		String path2 = "";
+		simpath = fileDir + "SIMULATE";
+		File newdir3 = new File(simpath);
+		boolean ok3 = false;
+		boolean ok4 = false;
+		if (newdir3.exists()) {
+//			ok3 = InputOutput.deleteDir(newdir3);
+//			if (!ok3)
+//				MyLog.waitHere("errore cancellazione directory " + newdir3);
+		} else {
+			ok4 = InputOutput.createDir(newdir3);
+			if (!ok4)
+				MyLog.waitHere("errore creazione directory " + newdir3);
+		}
+
+		
 		if (nTokens == MyConst.TOKENS2) {
 			// UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
@@ -338,8 +360,6 @@ public class p19rmn_ implements PlugIn, Measurements {
 			int latoLungoRoi2 = (int) (boundingRectangle.width);
 			int latoCortoRoi2 = (int) (boundingRectangle.height);
 
-//			MyLog.waitHere("lungoRoi2= "+latoLungoRoi2+" cortoRoi2= "+latoCortoRoi2);
-
 			int xRoi2 = boundingRectangle.x + ((boundingRectangle.width - latoLungoRoi2) / 2);
 			int yRoi2 = boundingRectangle.y + ((boundingRectangle.height - latoCortoRoi2) / 2);
 
@@ -374,10 +394,8 @@ public class p19rmn_ implements PlugIn, Measurements {
 			if (!test)
 				msgSnRatio(step, uiPerc1, snRatio);
 
-			// TODO da provare
 			IJ.setMinAndMax(imp1, 10, 30);
 
-			//
 			int xRoi9 = MyConst.P19_X_ROI_BACKGROUND - MyConst.P19_LATO_ROI_BACKGROUND / 2;
 			int yRoi9 = MyConst.P19_Y_ROI_BACKGROUND - MyConst.P19_LATO_ROI_BACKGROUND / 2;
 			if (test)
@@ -386,8 +404,8 @@ public class p19rmn_ implements PlugIn, Measurements {
 			ImageStatistics statBkg = ImageUtils.backCalc(xRoi9, yRoi9, MyConst.P19_LATO_ROI_BACKGROUND, imp1, step,
 					false, test);
 			double meanBkg = statBkg.mean;
-
-			int[][] classiSimulata = generaSimulata(xRoi2, yRoi2, latoLungoRoi2, latoCortoRoi2, imp1, fileDir, step,
+			String name1 = simpath + "\\";
+			int[][] classiSimulata = generaSimulata(xRoi2, yRoi2, latoLungoRoi2, latoCortoRoi2, imp1, name1, step,
 					verbose, test);
 
 			// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
@@ -628,10 +646,12 @@ public class p19rmn_ implements PlugIn, Measurements {
 
 		String simName = filename + patName + codice + "sim.zip";
 
-		if (!test)
-
+		if (!test) {
+			impSimulata.setTitle(patName + codice + "sim");
 			new FileSaver(impSimulata).saveAsZip(simName);
+		}
 		return classiSimulata;
+
 	}
 
 	/**
