@@ -32,59 +32,64 @@ public class demo_ implements PlugIn, Measurements {
 
 	public void run(String args) {
 
-
-	}
-
-	public void old(String args) {
-
 		String home1 = findTestImages();
-		String path1 = home1 + "/HR2A2_testP4";
+		String path1 = "C:\\programmi2\\imagej\\H43_HUSSA";
+//		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
 		ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
+		imp1.show();
 		// ImageCanvas canvas = imp1.getWindow().getCanvas();
 
-		double dimPix = ReadDicom
-				.readDouble(ReadDicom.readSubstring(ReadDicom
-						.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING),
-						1));
+		double dimPix = ReadDicom.readDouble(
+				ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
 
-		// double mag = canvas.getMagnification();
-		// double wid = imp1.getWidth();
-		double xStartRefline = 45.0;
-		double yStartRefline = 113.0;
-		double xEndRefline = 150.0;
-		double yEndRefline = 187.0;
+		// xstart=256 ystart= 159 xend= 0yend= 90
+		double xStartRefline = 256.0;
+		double yStartRefline = 159.0;
+		double xEndRefline = 0;
+		double yEndRefline = 90.0;
 		IJ.log("dimPix= " + dimPix);
-		// int xStartReflineScreen = canvas.screenXD(xStartRefline);
-		// int yStartReflineScreen = canvas.screenYD(yStartRefline);
-		// int xEndReflineScreen = canvas.screenXD(xEndRefline);
-		// int yEndReflineScreen = canvas.screenYD(yEndRefline);
+		IJ.log("width= " + imp1.getWidth());
 
 		int xStartReflineScreen = (int) (xStartRefline / dimPix);
 		int yStartReflineScreen = (int) (yStartRefline / dimPix);
 		int xEndReflineScreen = (int) (xEndRefline / dimPix);
 		int yEndReflineScreen = (int) (yEndRefline / dimPix);
-		imp1.setRoi(new Line(xStartReflineScreen, yStartReflineScreen,
-				xEndReflineScreen, yEndReflineScreen));
-		imp1.updateAndDraw();
-		new WaitForUserDialog("Do something, then click OK.").show();
+		
+		xStartReflineScreen= limiter(imp1.getWidth(),xStartReflineScreen );
+		xEndReflineScreen= limiter(imp1.getWidth(),xEndReflineScreen );
+		yStartReflineScreen= limiter(imp1.getHeight(),yStartReflineScreen );
+		yEndReflineScreen= limiter(imp1.getHeight(),yEndReflineScreen );
+		
 
-		int[] vetX = new int[2];
-		int[] vetY = new int[2];
-		vetX[0] = (int) xStartRefline;
-		vetX[1] = (int) xEndRefline;
-		vetY[0] = (int) yStartRefline;
-		vetY[1] = (int) yEndRefline;
 
-		PointRoi pRoi = new PointRoi(vetX, vetY, vetX.length);
-		imp1.setOverlay(pRoi, Roi.getColor(), 2, Color.white);
+		imp1.setRoi(new Line(xStartReflineScreen, yStartReflineScreen, xEndReflineScreen, yEndReflineScreen));
 		imp1.updateAndDraw();
+		Roi roi1 = imp1.getRoi();
+
+		IJ.log("xstart= " + xStartReflineScreen + " ystart= " + yStartReflineScreen + " xend= " + xEndReflineScreen
+				+ " yend= " + yEndReflineScreen);
+//		imp1.killRoi();
+		double[] profi1 = ((Line) roi1).getPixels(); // profilo non mediato
+		for (int i1 = 0; i1 < profi1.length; i1++) {
+			IJ.log("pixel= " + i1 + " val= " + profi1[i1]);
+		}
+
+		IJ.log("pixel 0 of the line= " + profi1[0]);
 		new WaitForUserDialog("Do something, then click OK.").show();
 
 	}
 
+	public static int limiter(int limit, int val) {
+		
+		if (val<1) 
+		val=1;
+		if (val>limit-1)
+			val=limit-1;
+		return val;
+	}
+
 	/**
-	 * genera una directory temporanea e vi estrae le immagini di test da
-	 * test2.jar
+	 * genera una directory temporanea e vi estrae le immagini di test da test2.jar
 	 * 
 	 * @return home1 path della directory temporanea con le immagini di test
 	 */
@@ -94,8 +99,7 @@ public class demo_ implements PlugIn, Measurements {
 
 		io.extractFromJAR(MyConst.TEST_FILE, "HR2A_testP4", "./Test2/");
 		io.extractFromJAR(MyConst.TEST_FILE, "HR2A2_testP4", "./Test2/");
-		String home1 = this.getClass().getResource(MyConst.TEST_DIRECTORY)
-				.getPath();
+		String home1 = this.getClass().getResource(MyConst.TEST_DIRECTORY).getPath();
 		return (home1);
 	} // findTestImages
 

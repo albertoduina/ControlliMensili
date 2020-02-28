@@ -350,7 +350,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		double[] vetResults = UtilAyv.vectorizeResults(rt);
 		boolean ok = UtilAyv.verifyResults1(vetResults, referenceSiemens(), MyConst.P6_vetName);
 		if (ok)
-			IJ.log("Il test di p6rmn_ THICKNESS � stato SUPERATO");
+			IJ.log("Il test di p6rmn_ THICKNESS e' stato SUPERATO");
 		else
 			IJ.log("Il test di p6rmn_ THICKNESS evidenzia degli ERRORI");
 	}

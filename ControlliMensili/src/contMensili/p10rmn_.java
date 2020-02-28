@@ -1117,6 +1117,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 				yEndProfile = (int) Math.round(out3[1]);
 			}
 
+			xStartProfile = limiter(imp1.getWidth(), xStartProfile);
+			xEndProfile = limiter(imp1.getWidth(), xEndProfile);
+			yStartProfile = limiter(imp1.getHeight(), yStartProfile);
+			yEndProfile = limiter(imp1.getHeight(), yEndProfile);
+
 			if (!fast) {
 				imp1.setRoi(new Line(xStartProfile, yStartProfile, xEndProfile, yEndProfile));
 				imp1.updateAndDraw();
@@ -1126,6 +1131,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			double[] profile2 = getProfile(imp1, xStartProfile, yStartProfile, xEndProfile, yEndProfile, dimPixel,
 					step);
+
+//			MyLog.logVector(profile2, "profile2");
+//			new FileSaver(imp1).saveAsTiff("imp1debug.tif");
+//			IJ.log("ccordinate xstart="+xStartProfile+" ystart= "+ yStartProfile + " xend= "+ xEndProfile + "yend= "+ yEndProfile);
+//			
+//			MyLog.waitHere("iw2ayv");
+
 			double[] outFwhm2 = MyFwhm.analyzeProfile(profile2, dimPixel, codice, false, verbose);
 
 			if (verbose)
@@ -1667,7 +1679,11 @@ public class p10rmn_ implements PlugIn, Measurements {
 		Roi roi1 = imp1.getRoi();
 		imp1.killRoi();
 		double[] profi1 = ((Line) roi1).getPixels(); // profilo non mediato
-		profi1[profi1.length - 1] = 0; // azzero a mano l'ultimo pixel
+// iw2ayv		profi1[profi1.length - 1] = 0; // azzero a mano l'ultimo pixel
+		for (int i1 = 0; i1 < profi1.length; i1++) {
+			if (Double.isNaN(profi1[i1]))
+				profi1[i1] = 0;
+		}
 		if (step) {
 			imp1.updateAndDraw();
 			ButtonMessages.ModelessMsg("Profilo non mediato  <50>", "CONTINUA");
@@ -2820,6 +2836,22 @@ public class p10rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
+	 * limiter fa in modo che le coordinate fornita ad una lineRoi non escano mai
+	 * 
+	 * @param limit
+	 * @param val
+	 * @return
+	 */
+	public static int limiter(int limit, int val) {
+
+		if (val < 1)
+			val = 1;
+		if (val > limit - 1)
+			val = limit - 1;
+		return val;
+	}
+
+	/**
 	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo e'
 	 * facilitata la eventuale modifica / traduzione (quando mai?) dei messaggi.
 	 * 
@@ -2891,7 +2923,5 @@ public class p10rmn_ implements PlugIn, Measurements {
 		String out = lista[select];
 		return out;
 	}
-	
-
 
 }
