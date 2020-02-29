@@ -1117,10 +1117,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 				yEndProfile = (int) Math.round(out3[1]);
 			}
 
-			xStartProfile = limiter(imp1.getWidth(), xStartProfile);
-			xEndProfile = limiter(imp1.getWidth(), xEndProfile);
-			yStartProfile = limiter(imp1.getHeight(), yStartProfile);
-			yEndProfile = limiter(imp1.getHeight(), yEndProfile);
+			
+			// iw2ayv
+//			xStartProfile = limiter(imp1.getWidth(), xStartProfile);
+//			xEndProfile = limiter(imp1.getWidth(), xEndProfile);
+//			yStartProfile = limiter(imp1.getHeight(), yStartProfile);
+//			yEndProfile = limiter(imp1.getHeight(), yEndProfile);
 
 			if (!fast) {
 				imp1.setRoi(new Line(xStartProfile, yStartProfile, xEndProfile, yEndProfile));
@@ -1131,8 +1133,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			double[] profile2 = getProfile(imp1, xStartProfile, yStartProfile, xEndProfile, yEndProfile, dimPixel,
 					step);
+//			IJ.log("IJversion= "+IJ.getFullVersion());
+//			IJ.log("xstart= " + xStartProfile + " yStartProfile= " + yStartProfile + " xEndProfile= " + xEndProfile
+//					+ " yEndProfile= " + yEndProfile);
+//			for (int i1 = 0; i1 < profile2.length; i1++) {
+//				IJ.log("pixel= " + i1 + " val= " + profile2[i1]);
+//			}
+//			MyLog.waitHere("salvami!");
 
 //			MyLog.logVector(profile2, "profile2");
+//			MyLog.waitHere("SALVAMI!");
 //			new FileSaver(imp1).saveAsTiff("imp1debug.tif");
 //			IJ.log("ccordinate xstart="+xStartProfile+" ystart= "+ yStartProfile + " xend= "+ xEndProfile + "yend= "+ yEndProfile);
 //			
@@ -1671,6 +1681,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 	private static double[] getProfile(ImagePlus imp1, int ax, int ay, int bx, int by, double dimPixel, boolean step) {
 
+		// iw2ayv
 		if (imp1 == null) {
 			IJ.error("getProfile  ricevuto null");
 			return (null);
@@ -1679,7 +1690,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 		Roi roi1 = imp1.getRoi();
 		imp1.killRoi();
 		double[] profi1 = ((Line) roi1).getPixels(); // profilo non mediato
-// iw2ayv		profi1[profi1.length - 1] = 0; // azzero a mano l'ultimo pixel
+		profi1[profi1.length - 1] = 0; // azzero a mano l'ultimo pixel
+		// iw2ayv
 		for (int i1 = 0; i1 < profi1.length; i1++) {
 			if (Double.isNaN(profi1[i1]))
 				profi1[i1] = 0;

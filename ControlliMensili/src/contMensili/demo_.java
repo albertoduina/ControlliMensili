@@ -66,6 +66,7 @@ public class demo_ implements PlugIn, Measurements {
 		imp1.updateAndDraw();
 		Roi roi1 = imp1.getRoi();
 
+		IJ.log("IJversion= "+IJ.getFullVersion());
 		IJ.log("xstart= " + xStartReflineScreen + " ystart= " + yStartReflineScreen + " xend= " + xEndReflineScreen
 				+ " yend= " + yEndReflineScreen);
 //		imp1.killRoi();
@@ -74,7 +75,7 @@ public class demo_ implements PlugIn, Measurements {
 			IJ.log("pixel= " + i1 + " val= " + profi1[i1]);
 		}
 
-		IJ.log("pixel 0 of the line= " + profi1[0]);
+//		IJ.log("pixel 0 of the line= " + profi1[0]);
 		new WaitForUserDialog("Do something, then click OK.").show();
 
 	}
