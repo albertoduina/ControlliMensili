@@ -277,24 +277,25 @@ public class p8rmn_ implements PlugIn, Measurements {
 				String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
-				rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
-				rt.showRowNumbers(true);
 
 
 				// rt = ReportStandardInfo.putStandardInfoRT(info1);
-				int col = 2;
+				// int col = 2;
 				String t1 = "TESTO";
 				String s2 = "VALORE";
-
 				String s3 = "seg_ax";
 				String s4 = "seg_ay";
 				String s5 = "seg_bx";
 				String s6 = "seg_by";
 
-				rt.addLabel(t1, " slicePos");
+				rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+				rt.showRowNumbers(true);
+								
+				rt.addValue(t1, "slicePos");
 				rt.addValue(s2, UtilAyv.convertToDouble(slicePos));
+				
 				rt.incrementCounter();
-				rt.addLabel(t1, "DGP1");
+				rt.addValue(t1, "DGP1");
 				rt.addValue(s2, dgp1);
 				rt.addValue(s3, xPoints[0]);
 				rt.addValue(s4, yPoints[0]);
@@ -302,7 +303,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 				rt.addValue(s6, yPoints[1]);
 
 				rt.incrementCounter();
-				rt.addLabel(t1, "DGP2");
+				rt.addValue(t1, "DGP2");
 				rt.addValue(s2, dgp2);
 				rt.addValue(s3, xPoints[1]);
 				rt.addValue(s4, yPoints[1]);
@@ -310,7 +311,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 				rt.addValue(s6, yPoints[2]);
 
 				rt.incrementCounter();
-				rt.addLabel(t1, "DGP3");
+				rt.addValue(t1, "DGP3");
 				rt.addValue(s2, dgp3);
 				rt.addValue(s3, xPoints[2]);
 				rt.addValue(s4, yPoints[2]);
@@ -318,7 +319,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 				rt.addValue(s6, yPoints[3]);
 
 				rt.incrementCounter();
-				rt.addLabel(t1, "DGP4");
+				rt.addValue(t1, "DGP4");
 				rt.addValue(s2, dgp4);
 				rt.addValue(s3, xPoints[3]);
 				rt.addValue(s4, yPoints[3]);
@@ -326,7 +327,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 				rt.addValue(s6, yPoints[0]);
 
 				rt.incrementCounter();
-				rt.addLabel(t1, "DGP5");
+				rt.addValue(t1, "DGP5");
 				rt.addValue(s2, dgp5);
 				rt.addValue(s3, xPoints[0]);
 				rt.addValue(s4, yPoints[0]);
@@ -334,12 +335,16 @@ public class p8rmn_ implements PlugIn, Measurements {
 				rt.addValue(s6, yPoints[2]);
 
 				rt.incrementCounter();
-				rt.addLabel(t1, "DGP6");
+				rt.addValue(t1, "DGP6");
 				rt.addValue(s2, dgp6);
 				rt.addValue(s3, xPoints[1]);
 				rt.addValue(s4, yPoints[1]);
 				rt.addValue(s5, xPoints[3]);
 				rt.addValue(s6, yPoints[3]);
+				
+				rt.incrementCounter();
+				rt.addValue(t1, "DimPix");
+				rt.addValue(s2, dimPixel);
 
 				rt.show("Results");
 			} else {
@@ -397,12 +402,14 @@ public class p8rmn_ implements PlugIn, Measurements {
 	public static double segmentCalculation(double xStart, double yStart, double xEnd, double yEnd, double dimPixel) {
 		// segm= sqrt((xStart-xEnd)^2 +(yStart-yEnd)^2)
 		double len1 = Math.sqrt(Math.pow((xStart - xEnd), 2.0) + Math.pow((yStart - yEnd), 2.0)) * dimPixel;
+		// IJ.log("calcolo segmento xStart= "+xStart+" xEnd= "+xEnd+" yStart= "+yStart+ "yEnd= "+yEnd+" dimPixel= "+dimPixel+" lunhghezza= "+len1);
 		return len1;
 	}
 
 	public static double dgpCalculation(double segmCalc, double segmTeor) {
 
 		double dgp1 = 100 * ((segmCalc - segmTeor) / segmTeor);
+		// IJ.log("calcolo DGP segmCalc= "+segmCalc+" segmTeor= "+segmTeor+" dgp= "+dgp1);
 		return dgp1;
 	}
 
