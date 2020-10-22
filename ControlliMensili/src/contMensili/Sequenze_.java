@@ -144,7 +144,7 @@ public class Sequenze_ implements PlugIn {
 		}
 
 //		String[][] tableExpand = TableExpand.loadTable(MyConst.EXPAND_FILE);
-		TableExpand te1= new TableExpand();
+		TableExpand te1 = new TableExpand();
 		String[][] tableExpand = te1.loadTableNew("expand", ".csv");
 
 		new AboutBox().about("Scansione automatica cartelle", MyVersion.CURRENT_VERSION);
@@ -462,8 +462,8 @@ public class Sequenze_ implements PlugIn {
 		int count3 = 0;
 		for (int i1 = 0; i1 < pathList.length; i1++) {
 
-			String aux1 = "generateSequenceTable " + i1 + " / " + pathList.length;				
-			
+			String aux1 = "generateSequenceTable " + i1 + " / " + pathList.length;
+
 			IJ.redirectErrorMessages();
 
 			IJ.showStatus(aux1);
@@ -622,8 +622,7 @@ public class Sequenze_ implements PlugIn {
 							vetConta.add("" + (count3));
 							count3++;
 							vetPath.add(path1);
-							// IJ.log("espando con " + espansione[i2][2] + " " +
-							// espansione[i2][3]);
+//							IJ.log("espando con " + espansione[i2][2] + " " + espansione[i2][3]);
 							vetCodice.add(espansione[i2][2]);
 							vetCoil.add(coil);
 							vetImaDaPassare.add(espansione[i2][3]);
@@ -731,7 +730,7 @@ public class Sequenze_ implements PlugIn {
 	 */
 	public String[][] expandCode(String codice, String eco, String[][] tableExpand4) {
 
-//		MyLog.logArrayList(tableExpand4);
+//		MyLog.logMatrix(tableExpand4, "tableExpand");
 //		MyLog.waitHere("codice= " + codice + " eco= " + eco);
 
 		if (codice == null) {
@@ -915,9 +914,10 @@ public class Sequenze_ implements PlugIn {
 				String argomento = argumentForPluginToBeCalled(j1, tableSequenze5);
 				boolean jump = false;
 				if (superficiali) {
-					if ((plugin.equals("contMensili.p19rmn_")) || (plugin.equals("contMensili.p10rmn_")) || (plugin.equals("contMensili.p11rmn_"))
-							|| (plugin.equals("contMensili.p12rmn_")) || (plugin.equals("contMensili.p13rmn_"))
-							|| (plugin.equals("contMensili.p5rmn_")) || (plugin.equals("contMensili.p5rmn_"))) {
+					if ((plugin.equals("contMensili.p19rmn_")) || (plugin.equals("contMensili.p10rmn_"))
+							|| (plugin.equals("contMensili.p11rmn_")) || (plugin.equals("contMensili.p12rmn_"))
+							|| (plugin.equals("contMensili.p13rmn_")) || (plugin.equals("contMensili.p5rmn_"))
+							|| (plugin.equals("contMensili.p5rmn_"))) {
 						jump = false;
 						count++;
 						// IJ.log("" + count + " eseguito superficiali");
