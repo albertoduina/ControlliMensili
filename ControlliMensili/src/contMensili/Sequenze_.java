@@ -999,8 +999,8 @@ public class Sequenze_ implements PlugIn {
 	}
 
 	/***
-	 * Effettua il run di un plugin (abbiamo cos� il plugin sequenze che � in
-	 * grado di chiamare i plugins per le eleborazioni delle varie immagini.
+	 * Effettua il run di un plugin (abbiamo cos� il plugin sequenze che � in grado
+	 * di chiamare i plugins per le eleborazioni delle varie immagini.
 	 * 
 	 * @param plugin
 	 * @param argomento
@@ -1280,8 +1280,8 @@ public class Sequenze_ implements PlugIn {
 	/**
 	 * Verifica che il numero di immagini rilevate da scanlist per un certo tipo di
 	 * codice immagine corrisponda al numero previsto in iw2ayv.txt. Se ci� non
-	 * accade viene passata una tabella di warnings a logVerifySequenceTable. Si
-	 * pu� comunque continuare a lavorare
+	 * accade viene passata una tabella di warnings a logVerifySequenceTable. Si pu�
+	 * comunque continuare a lavorare
 	 * 
 	 * @param tableSequenze6
 	 * @param tableCode6
@@ -1650,16 +1650,20 @@ public class Sequenze_ implements PlugIn {
 //					+ TableCode.getImaPass(tableCode, i2));
 
 			if (Integer.valueOf(TableCode.getImaPass(tableCode, i2)) == 0) {
+//				MyLog.waitHere("sono qui allo 0");
 				codice = TableCode.getCode(tableCode, i2);
 				maximum = Integer.valueOf(TableCode.getImaTotal(tableCode, i2));
 			}
+//			if (codice.equals("T28_4"))
+//				MyLog.waitHere("codice 001=" + codice);
 			if (codice.length() < 4)
 				continue;
 			int numero = treviglioCountImages(tableSequenze, codice);
-			// IJ.log("in treviglioDevelop codice= " + codice + " numero= " + numero);
+//			IJ.log("in treviglioDevelop codice= " + codice + " numero= " + numero);
 			treviglioTableSequence(tableSequenze, codice, numero);
 			treviglioTableCode(tableCode, codice, numero, maximum);
 		}
+
 		return;
 	}
 
@@ -1691,6 +1695,7 @@ public class Sequenze_ implements PlugIn {
 	public void treviglioTableSequence(String[][] tableSequenze, String codice, int numero) {
 		if (tableSequenze == null)
 			return;
+
 		// altero i dati in tableSequenceLoaded
 		for (int i2 = 0; i2 < tableSequenze.length; i2++) {
 			if (tableSequenze[i2][TableSequence.CODE].equals(codice)) {
@@ -1713,6 +1718,7 @@ public class Sequenze_ implements PlugIn {
 	public void treviglioTableCode(String[][] tableCode, String codice, int numero, int maximum) {
 		if (tableCode == null)
 			return;
+
 		// altero i dati in tableSequenceLoaded
 		for (int i2 = 0; i2 < tableCode.length; i2++) {
 			if (tableCode[i2][TableCode.CODE].equals(codice)) {

@@ -706,8 +706,20 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			ImageStatistics stat1 = imp1.getStatistics();
 			double mean1 = stat1.mean;
+//			double debu1 = stat1.histMin;
+//			double debu2 = stat1.histMax;
+			double[] histDoubleArray = stat1.histogram();
+			double minNotZero = ArrayUtils.vetMinNotZero(histDoubleArray);
 
-			double uiPerc1 = uiPercCalculation(stat1.max, stat1.min);
+			double auxx = 0;
+			if (stat1.min <= 0) {
+				MyLog.waitHere("ATTENZIONE MODIFICA SPERIMENTALE IN P12rmn, per eliminare lo zero dalla UI%");
+				IJ.log("ATTENZIONE MODIFICA SPERIMENTALE IN P12rmn, per eliminare lo zero dalla UI%");
+				auxx = minNotZero;
+			} else
+				auxx = stat1.min;
+
+			double uiPerc1 = uiPercCalculation(stat1.max, auxx);
 
 			if (verbose) {
 				imp1.getRoi().setStrokeColor(Color.green);

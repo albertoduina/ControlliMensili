@@ -153,7 +153,6 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 		UtilAyv.setMyPrecision();
 
-		MyLog.appendLog(fileDir + "MyLog.txt", "p9 riceve " + args);
 
 		//
 		// CNR CON T1
@@ -171,9 +170,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 		// GEL 5,4 deltaT2 50 ms alto contrasto
 		// GEL 14,1 deltaT2 106 ms altissimo contrasto
 		//
-		// il CNR per immagini pesate T1 � valutato su una IR con TR=4000 ms,
+		// il CNR per immagini pesate T1 e' valutato su una IR con TR=4000 ms,
 		// TI=800 ms
-		// il CNR per immagini pesate T2 � valutato su 3 immagini SE TR=2000 ms,
+		// il CNR per immagini pesate T2 e' valutato su 3 immagini SE TR=2000 ms,
 		// TE=45,90,180 ms
 		//
 
@@ -214,9 +213,13 @@ public class p9rmn_ implements PlugIn, Measurements {
 		}
 
 		fileDir = Prefs.get("prefer.string1", "none");
+		
+		MyLog.appendLog(fileDir + "MyLog.txt", "====================");
+		MyLog.appendLog(fileDir + "MyLog.txt", "p9 riceve " + args);
+		MyLog.appendLog(fileDir + "MyLog.txt", "====================");
 
 		//
-		// questo plugin � organizzato per ricevere solo i numeri di riga,
+		// questo plugin e' organizzato per ricevere solo i numeri di riga,
 		// che fanno riferimento alla lista immagini COMMAND_FILE generata da
 		// Sequenze, i codici della misura vengono letti dall'header
 		// dell'immagine

@@ -105,12 +105,12 @@ public class p2rmn_ implements PlugIn, Measurements {
 	String[][] tabl;
 
 	/**
-	 * calibrazioni spaziali e di densit� dell'immagine
+	 * calibrazioni spaziali e di densita' dell'immagine
 	 */
 	Calibration cal8;
 
 	/**
-	 * true se l'immagine � una T2
+	 * true se l'immagine e' una T2
 	 */
 	boolean typeT2 = false;
 
@@ -182,7 +182,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	public boolean DEBUG2 = false; // true attiva il debug
 
-	private boolean selftest = false; // non � bello, lo uso per colpa del
+	private boolean selftest = false; // non e' bello, lo uso per colpa del
 
 	// maledetto filtro sul fondo
 
@@ -824,6 +824,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	public double[][][][] Alimentatore(ImageStack stack1) {
 
+
 		String name1 = "";
 		ImagePlus imp1 = new ImagePlus(name1, stack1);
 
@@ -842,7 +843,14 @@ public class p2rmn_ implements PlugIn, Measurements {
 			// ip1.setCalibrationTable(cal8.getCTable());
 			int width2 = ip1.getWidth();
 			int height2 = ip1.getHeight();
-			short[] sdata = (short[]) ip1.getPixels();
+			int bitDepth = imp1.getBitDepth();
+			short[] sdata=null;
+			if (bitDepth == 16) {
+				sdata = (short[]) ip1.getPixels();
+			} else {
+				ImageProcessor ip2= ip1.convertToShort(false);
+				sdata = (short[]) ip2.getPixels();
+			}
 			for (int y = 0; y < height2; y++) {
 				for (int x = 0; x < width2; x++) {
 					// pixValue serve per leggere correttamente i valori delle
@@ -938,10 +946,12 @@ public class p2rmn_ implements PlugIn, Measurements {
 			int reps = scan.length;
 
 			SimplexBasedRegressor simplexregressor;
+
 			if (DEBUG2)
 				IJ.log("sono in doCalculation");
 			if (!typeT2) {
 				// te values
+
 				tr_vals = getTRVals(stack4, DICOM_INVERSION_TIME);
 				sn_vals = new double[reps];
 				IJ.showStatus("Calculating T1 map");
@@ -952,7 +962,6 @@ public class p2rmn_ implements PlugIn, Measurements {
 			} else {
 				tr_vals = getTRVals(stack4, DICOM_ECHO_TIME);
 				// MyLog.logVector(tr_vals, "tr_vals");
-				// MyLog.waitHere();
 				sn_vals = new double[reps];
 				IJ.showStatus("Calculating T2 map");
 				t1_map = new double[1][slices][width2][height2];
@@ -1004,11 +1013,12 @@ public class p2rmn_ implements PlugIn, Measurements {
 							}
 						} else {
 							if (bMap[x + offset] == 1) {
+
 								int cut = 0;
 								double filtroFondo2 = filtroFondo;
 								// ##############################################
 								// applicazione del filtro sul fondo ai segnali
-								// in ingresso, ma solo se abbiamo pi� di 10
+								// in ingresso, ma solo se abbiamo piu' di 10
 								// immagini
 								// #############################################
 
@@ -1116,6 +1126,8 @@ public class p2rmn_ implements PlugIn, Measurements {
 			}
 		} catch (Exception e) {
 			IJ.log("riga:" + rig + "  pixel:" + col);
+			if (sn_vals == null)
+				IJ.log("sn_vals==null");
 			IJ.log("sn_vals=" + sn_vals.length);
 			for (int i1 = 0; i1 < sn_vals.length; i1++)
 				IJ.log("" + sn_vals[i1]);

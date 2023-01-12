@@ -1,0 +1,6 @@
+Lista problemi e modifiche
+
+221219
+
+notato che in p12rmn_, quando si arriva al messaggio in linea 2068, il cerchio proposto è troppo grande e non si vede, 
+è quasi totalmente (salvo un pixel) fuori dallo schermo.
