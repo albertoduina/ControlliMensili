@@ -1339,7 +1339,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 	}
 
 	public static Double toDouble(double in) {
-		Double out = new Double(in);
+		Double out = Double.valueOf(in);
 		return out;
 	}
 

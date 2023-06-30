@@ -1873,7 +1873,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 	}
 
 	public static Double toDouble(double in) {
-		Double out = new Double(in);
+	//	Double out = new Double(in);
+		Double out = Double.valueOf(in);
 		return out;
 	}
 
@@ -2633,7 +2634,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	public static double readDouble(String s1) {
 		double x = 0;
 		try {
-			x = (new Double(s1)).doubleValue();
+			x = Double.valueOf(s1);
 		} catch (Exception e) {
 			// MyLog.waitHere("input non numerico= " + s1);
 			// MyLog.caller("chiamante=");
