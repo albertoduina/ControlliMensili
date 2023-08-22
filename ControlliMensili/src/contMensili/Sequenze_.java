@@ -504,6 +504,7 @@ public class Sequenze_ implements PlugIn {
 
 				String codice = "-----";
 				String subCodice = "-----";
+				String blob1 = "DelRe";
 				if (fileName.length() >= 5) {
 					subCodice = fileName.substring(0, 5).trim();
 				}
@@ -514,6 +515,13 @@ public class Sequenze_ implements PlugIn {
 					String seriesDescription = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION);
 					if (seriesDescription.length() >= 5) {
 						codice = seriesDescription.substring(0, 5).trim();
+						// la seguente modifica permette di leggere le ultime 5 lettere dei codici che
+						// iniziano con "DelRe", modifica per il CAE (11/08/2023)- non dovrebbe
+						// intervenire in nessun altro caso
+						if (codice.equalsIgnoreCase(blob1)) {
+							int len1 = seriesDescription.length();
+							codice = seriesDescription.substring(len1 - 5, len1);
+						}
 					}
 				}
 				// String coil = ReadDicom.getFirstCoil(imp1);
