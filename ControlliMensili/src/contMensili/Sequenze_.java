@@ -78,7 +78,7 @@ public class Sequenze_ implements PlugIn {
 	// // ABILITA E DISABILITA LE STAMPE DI DEBUG
 	// // METTERE debugTables A FALSE PER NON AVERE LE STAMPE
 	// //
-	public boolean debugTables = false;
+	public boolean debugTables = true;
 	public static boolean forcesilent = false;
 
 	public static boolean blackbox = false;
@@ -290,7 +290,7 @@ public class Sequenze_ implements PlugIn {
 				}
 
 				if (tableSequenceLoaded == null) {
-					MyLog.here("non sono state trovate immagini da analizzare");
+					MyLog.waitHere("non sono state trovate immagini da analizzare");
 					return;
 				}
 
@@ -531,6 +531,29 @@ public class Sequenze_ implements PlugIn {
 					coil = new UtilAyv().kludge(pathList[i1]);
 				}
 
+				// 16/02/2024 modifiche per la so'la (romanesco)
+
+				String firstLetterOfCoil = coil.substring(0, 1);
+
+				// MyLog.waitHere("codice= "+codice);
+
+				if ((codice.equalsIgnoreCase("BL2F_") && (firstLetterOfCoil.equalsIgnoreCase("L") == false))) {
+					// MyLog.waitHere("BL2F XXX");
+					coil = "XXX";
+				}
+				if ((codice.equalsIgnoreCase("BR2F_") && (firstLetterOfCoil.equalsIgnoreCase("R") == false))) {
+					// MyLog.waitHere("BR2F XXX");
+					coil = "XXX";
+				}
+				if ((codice.equalsIgnoreCase("BL2S_") && (firstLetterOfCoil.equalsIgnoreCase("L") == false))) {
+					// MyLog.waitHere("BL2F XXX");
+					coil = "XXX";
+				}
+				if ((codice.equalsIgnoreCase("BR2S_") && (firstLetterOfCoil.equalsIgnoreCase("R") == false))) {
+					// MyLog.waitHere("BR2F XXX");
+					coil = "XXX";
+				}
+
 				String[] allCoils = ReadDicom.parseString(coil);
 
 				String numSerie = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SERIES_NUMBER);
@@ -709,11 +732,11 @@ public class Sequenze_ implements PlugIn {
 			if (allCoils[i1].equals(coil))
 				trovato = true;
 		}
-		// if (allCoils.length > 1) {
-		// MyLog.logVector(allCoils, "allCoils");
-		// IJ.log(coil + " " + trovato);
-		// MyLog.waitHere();
-		// }
+//		if (allCoils.length > 1) {
+		MyLog.logVector(allCoils, "allCoils");
+		IJ.log(coil + " " + trovato);
+		MyLog.waitHere();
+//		}
 		return trovato;
 	}
 
