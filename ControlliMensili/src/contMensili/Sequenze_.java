@@ -78,7 +78,7 @@ public class Sequenze_ implements PlugIn {
 	// // ABILITA E DISABILITA LE STAMPE DI DEBUG
 	// // METTERE debugTables A FALSE PER NON AVERE LE STAMPE
 	// //
-	public boolean debugTables = true;
+	public boolean debugTables = false;
 	public static boolean forcesilent = false;
 
 	public static boolean blackbox = false;
@@ -531,28 +531,42 @@ public class Sequenze_ implements PlugIn {
 					coil = new UtilAyv().kludge(pathList[i1]);
 				}
 
+				// ###########################################################################
 				// 16/02/2024 modifiche per la so'la (romanesco)
 
 				String firstLetterOfCoil = coil.substring(0, 1);
 
 				// MyLog.waitHere("codice= "+codice);
 
-				if ((codice.equalsIgnoreCase("BL2F_") && (firstLetterOfCoil.equalsIgnoreCase("L") == false))) {
+				// ===============================================================================
+
+
+				if ((codice.equalsIgnoreCase("BL2F_") && (firstLetterOfCoil.equalsIgnoreCase("R") == true))) {
 					// MyLog.waitHere("BL2F XXX");
 					coil = "XXX";
 				}
-				if ((codice.equalsIgnoreCase("BR2F_") && (firstLetterOfCoil.equalsIgnoreCase("R") == false))) {
+				if ((codice.equalsIgnoreCase("BR2F_") && (firstLetterOfCoil.equalsIgnoreCase("L") == true))) {
 					// MyLog.waitHere("BR2F XXX");
 					coil = "XXX";
 				}
-				if ((codice.equalsIgnoreCase("BL2S_") && (firstLetterOfCoil.equalsIgnoreCase("L") == false))) {
+				if ((codice.equalsIgnoreCase("BL2S_") && (firstLetterOfCoil.equalsIgnoreCase("R") == true))) {
 					// MyLog.waitHere("BL2F XXX");
 					coil = "XXX";
 				}
-				if ((codice.equalsIgnoreCase("BR2S_") && (firstLetterOfCoil.equalsIgnoreCase("R") == false))) {
+				if ((codice.equalsIgnoreCase("BR2S_") && (firstLetterOfCoil.equalsIgnoreCase("L") == true))) {
 					// MyLog.waitHere("BR2F XXX");
 					coil = "XXX";
 				}
+				
+				coil= coil.replace("BAL;BAR;BCL;BCR","BAL+BAR+BCL+BCR");
+				coil= coil.replace("BL;BR","BL+BR");
+				coil= coil.replace("PL;PR","PL+PR");
+		
+				
+
+				// ###########################################################################
+
+				// ===============================================================================
 
 				String[] allCoils = ReadDicom.parseString(coil);
 
@@ -733,9 +747,9 @@ public class Sequenze_ implements PlugIn {
 				trovato = true;
 		}
 //		if (allCoils.length > 1) {
-		MyLog.logVector(allCoils, "allCoils");
-		IJ.log(coil + " " + trovato);
-		MyLog.waitHere();
+//		MyLog.logVector(allCoils, "allCoils");
+//		IJ.log(coil + " " + trovato);
+//		MyLog.waitHere();
 //		}
 		return trovato;
 	}
@@ -1246,7 +1260,7 @@ public class Sequenze_ implements PlugIn {
 			for (int j2 = 0; j2 < tableSequenze6.length; j2++) {
 				new TableSequence();
 				String codiceImaAcquisite = TableSequence.getCode(tableSequenze6, j2);
-				codiceBobinaAcquisito = TableSequence.getCoil(tableSequenze6, j2);
+				codiceBobinaAcquisito = TableSequence.getCoil(tableSequenze6, j2).replace(';', '+');
 				// if (trigger)
 				// IJ.log("codiceBobinaAcquisito= " + codiceBobinaAcquisito);
 
@@ -1266,7 +1280,7 @@ public class Sequenze_ implements PlugIn {
 				for (int j3 = 0; j3 < tableSequenze6.length; j3++) {
 					new TableSequence();
 					String codiceImaAcquisite2 = TableSequence.getCode(tableSequenze6, j3);
-					codiceBobinaAcquisito = TableSequence.getCoil(tableSequenze6, j3);
+					codiceBobinaAcquisito = TableSequence.getCoil(tableSequenze6, j3).replace(';', '+');
 
 					if (codiceImaAcquisite2 == null)
 						break;
