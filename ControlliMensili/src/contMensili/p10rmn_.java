@@ -306,7 +306,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			path3 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
 			path4 = TableSequence.getPath(iw2ayvTable, vetRiga[3]);
 			ok = UtilAyv.checkImages4(path1, path2, path3, path4, debug);
-			if (ok) {
+			if (!ok) {
 				MyLog.appendLog(fileDir + "MyLog.txt", "fallito checkImages4");
 			}
 
@@ -519,8 +519,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		// boolean broken = false;
 		ResultsTable rt = null;
+		ResultsTable rt11 = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		double angle = Double.NaN;
+
+		TableCode tc1 = new TableCode();
+		String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 
 		String[][] limiti = TableLimiti.loadTable(MyConst.LIMITS_FILE);
 
@@ -575,8 +579,49 @@ public class p10rmn_ implements PlugIn, Measurements {
 			double out2[] = positionSearch(imp11, profond, info10, mode, timeout);
 
 			if (out2 == null) {
-				MyLog.waitHere("out2==null");
-				return null;
+
+				// hanno premuto ANNULLA, quindi la misura viene abortita e
+				// nei risultati vengono messi dei dati dummy
+				String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path1, imp11, tabCodici,
+						VERSION + "_P10__ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_"
+								+ MyVersionUtils.CURRENT_VERSION + "___",
+						autoCalled);
+//
+
+//				String t11 = "TESTO";
+//				String s12 = "VALORE";
+//				String s13 = "roi_x";
+//				String s14 = "roi_y";
+//				String s15 = "roi_b";
+//				String s16 = "roi_h";
+//				rt11 = ReportStandardInfo.putSimpleStandardInfoRT_new(info11);
+//				rt11.showRowNumbers(true);
+//				for (int i1 = 0; i1 < 5; i1++) {
+//					rt11.incrementCounter();
+//					rt11.addValue(t11, "dummy");
+//					rt11.addValue(s12, "----");
+//					rt11.addValue(s13, "----");
+//					rt11.addValue(s14, "----");
+//					rt11.addValue(s15, "----");
+//					rt11.addValue(s16, "----");
+//				}
+				double slicePosition11 = ReadDicom
+						.readDouble(ReadDicom.readDicomParameter(imp11, MyConst.DICOM_SLICE_LOCATION));
+//				// manca ancora la posizione
+//				rt11.incrementCounter();
+//				rt11.addValue(t11, "Pos");
+//				rt11.addValue(s12, slicePosition11);
+//				rt11.addValue(s13, 0);
+//				rt11.addValue(s14, 0);
+//				rt11.addValue(s15, 0);
+//				rt11.addValue(s16, 0);
+//				
+//				// rt.show("PROVVISORIO");
+//				// #############################################
+//				// #############################################
+//				// #############################################
+
+				return ReportStandardInfo.abortResultTable_P10(info11, slicePosition11);
 			}
 
 			if (imp11.isVisible())
@@ -611,17 +656,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// ImageWindow iw1=WindowManager.getCurrentWindow();
 
 			// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
-			TableCode tc1 = new TableCode();
-			String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
-
-			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici,
-					VERSION + "_P10__ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_"
-							+ MyVersionUtils.CURRENT_VERSION + "___",
-					autoCalled);
 
 			//
-			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
-			rt.showRowNumbers(true);
 
 			if (blackbox) {
 				// ===================================================================================
@@ -1117,7 +1153,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 				yEndProfile = (int) Math.round(out3[1]);
 			}
 
-			
 			// iw2ayv
 //			xStartProfile = limiter(imp1.getWidth(), xStartProfile);
 //			xEndProfile = limiter(imp1.getWidth(), xEndProfile);
@@ -1154,8 +1189,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 				MyLog.waitHere(listaMessaggi(28), debug, timeout);
 
 			// =================================================================
-			double slicePosition = ReadDicom
-					.readDouble(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SLICE_LOCATION));
+//			double slicePosition = ReadDicom
+//					.readDouble(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SLICE_LOCATION));
 
 			// =================================================================
 			// Effettuo dei controlli "di sicurezza" sui valori calcolati,
@@ -1183,6 +1218,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			if (blackbox)
 				MyLog.appendLog2(blacklog, "=============================================================");
+
+			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici,
+					VERSION + "_P10__ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_"
+							+ MyVersionUtils.CURRENT_VERSION + "___",
+					autoCalled);
+			double slicePosition = ReadDicom
+					.readDouble(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SLICE_LOCATION));
+
+			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+			rt.showRowNumbers(true);
 
 			rt.addValue(t1, simulataName);
 			rt.incrementCounter();
@@ -1873,7 +1918,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	}
 
 	public static Double toDouble(double in) {
-	//	Double out = new Double(in);
+		// Double out = new Double(in);
 		Double out = Double.valueOf(in);
 		return out;
 	}
@@ -2412,6 +2457,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		}
 
 		Rectangle boundRec = null;
+		boolean ko1 = false;
 		// MyLog.waitHere("xPoints3.length= " + xPoints3.length);
 
 		// ----------------------------------------------------------------------
@@ -2440,10 +2486,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 			imp11.updateAndDraw();
 			imp11.getRoi().setStrokeColor(Color.red);
 			imp11.getRoi().setStrokeWidth(1.1);
-			MyLog.waitHere("<<  SELEZIONE MANUALE ATTIVA >>\n \n" + "imp11= " + imp11.getTitle()
+			ko1 = MyLog.waitHereModeless("<<  SELEZIONE MANUALE ATTIVA >>\n \n" + "imp11= " + imp11.getTitle()
 					+ "\nNon si riescono a determinare le coordinate corrette del cerchio"
 					+ "\nRichiesto ridimensionamennto e riposizionamento della ROI indicata in rosso, attorno al fantoccio\n"
-					+ "POI premere  OK");
+					+ "POI premere  OK, altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive");
 
 			boundRec = imp11.getProcessor().getRoi();
 			xCenterCircle = boundRec.x + boundRec.width / 2;
@@ -2462,6 +2508,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// fantoccio (messaggi non visualizzati in junit)
 			//
 		}
+
+		if (ko1)
+			return null;
 
 		// ==========================================================================
 		// ==========================================================================

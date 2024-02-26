@@ -560,7 +560,10 @@ public class Sequenze_ implements PlugIn {
 				
 				coil= coil.replace("BAL;BAR;BCL;BCR","BAL+BAR+BCL+BCR");
 				coil= coil.replace("BL;BR","BL+BR");
-				coil= coil.replace("PL;PR","PL+PR");
+				coil= coil.replace("PL1;PR1","PL1+PR1");
+				coil= coil.replace("PL2;PR2","PL2+PR2");
+				coil= coil.replace("PL3;PR3","PL3+PR3");
+				coil= coil.replace("PL4;PR4","PL4+PR4");
 		
 				
 

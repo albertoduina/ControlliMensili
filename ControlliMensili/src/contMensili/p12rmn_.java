@@ -447,9 +447,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 			silent = true;
 		}
 
-		ResultsTable rt = null;
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		ImageWindow iw1 = null;
+		ResultsTable rt = null;
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		// double angle = Double.NaN;
@@ -682,6 +682,40 @@ public class p12rmn_ implements PlugIn, Measurements {
 			over1.setStrokeColor(Color.red);
 			imp1.setOverlay(over1);
 
+			//#############################################
+			//#############################################
+			//#############################################
+			TableCode tc1 = new TableCode();
+			String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
+			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
+			// in previsione di un possibile abort della misura, memorizzo comunque nella
+			// ResultTable
+			// i dati standard dell'immagine + la posizione fetta
+			String t1 = "TESTO";
+			String s2 = "VALORE";
+			String s3 = "roi_x";
+			String s4 = "roi_y";
+			String s5 = "roi_b";
+			String s6 = "roi_h";
+			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+			rt.showRowNumbers(true);
+			for (int i1 = 0; i1 < 8; i1++) {
+				rt.incrementCounter();
+				rt.addValue(t1, "dummy");
+				rt.addValue(s2, 0);
+			}
+			double slicePosition = ReadDicom
+					.readDouble(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SLICE_LOCATION));
+			// manca ancora la posizione
+			rt.incrementCounter();
+			rt.addValue(t1, "Pos");
+			rt.addValue(s2, slicePosition);
+			// rt.show("PROVVISORIO");
+			//#############################################
+			//#############################################
+			//#############################################
+			
+
 			// ---------------------------------
 			// Visualizzo sull'immagine il posizionamento che verra' utilizzato
 			// cerchio esterno fantoccio in rosso
@@ -891,9 +925,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 			double ghostPerc3 = ghostPercCalculation(mediaGhost3, mediaBkg, mean1);
 			double ghostPerc4 = ghostPercCalculation(mediaGhost4, mediaBkg, mean1);
 
-			double slicePosition = ReadDicom
-					.readDouble(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SLICE_LOCATION));
-
 			if (verbose) {
 				ImageUtils.imageToFront(imp1);
 
@@ -914,14 +945,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
-			TableCode tc1 = new TableCode();
-			String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
-
 			if (verbose)
 				MyLog.waitHere(listaMessaggi(45), debug, timeout);
 			// imp1.show();
 			// MyLog.waitHere("vedi imp1 and path1= " + path1);
-			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
 
 			if (iw1 != null) {
 				WindowManager.setCurrentWindow(iw1);
@@ -962,14 +989,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 			IJ.wait(MyConst.TEMPO_VISUALIZZ);
 
 			// int col = 2;
-			String t1 = "TESTO";
-			String s2 = "VALORE";
-			String s3 = "roi_x";
-			String s4 = "roi_y";
-			String s5 = "roi_b";
-			String s6 = "roi_h";
 
 			// put values in ResultsTable
+			rt.reset();
+
 			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 			rt.showRowNumbers(true);
 
