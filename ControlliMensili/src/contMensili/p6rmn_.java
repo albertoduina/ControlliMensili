@@ -166,7 +166,10 @@ public class p6rmn_ implements PlugIn, Measurements {
 				boolean test = false;
 				ImagePlus imp0 = UtilAyv.openImageNoDisplay(path[0], true);
 				double[] oldPosition = readReferences(imp0);
-				new p6rmn_().wrapThickness(path, "0", oldPosition, autoCalled, step, verbose, test);
+				// new p6rmn_().wrapThickness(path, "0", oldPosition, autoCalled, step, verbose,
+				// test);
+
+				new p6rmn_().mainThickness(path, "0", oldPosition, autoCalled, step, verbose, test);
 				UtilAyv.afterWork();
 				retry = true;
 			}
@@ -238,10 +241,52 @@ public class p6rmn_ implements PlugIn, Measurements {
 				String[] path = loadPath(autoArgs);
 				ImagePlus imp0 = UtilAyv.openImageNoDisplay(path[0], true);
 				double[] vetRefPosition = readReferences(imp0);
-				ResultsTable rt = new p6rmn_().wrapThickness(path, autoArgs, vetRefPosition, autoCalled, step, verbose,
-						test);
-				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 
+				ResultsTable rt = null;
+				boolean accetta = false;
+
+				MyLog.waitHere("sto per entrando");
+
+				do {
+					rt = mainThickness(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
+
+					MyLog.waitHere("sto uscendo con rt= " + rt);
+
+					if (rt != null) {
+						MyLog.here("verifyResultTable");
+						rt.show("Results");
+						if (autoCalled && !test) {
+							accetta = MyMsg.accettaMenu();
+						} else {
+							if (!test) {
+								accetta = MyMsg.msgStandalone();
+							} else {
+								accetta = test;
+							}
+						}
+					} else {
+						TableCode tc11 = new TableCode();
+						String[][] tabCodici11 = tc11.loadMultipleTable("codici", ".csv");
+						int len = path.length;
+						ImagePlus imp11 = null;
+						String[] info11 = null;
+						String[] slicePos = new String[vetRiga.length];
+						for (int i1 = 0; i1 < vetRiga.length; i1++) {
+							imp11 = UtilAyv.openImageNoDisplay(path[i1], true);
+							info11 = ReportStandardInfo.getSimpleStandardInfo(path[i1], imp11, tabCodici11, VERSION,
+									autoCalled);
+							slicePos[i1] = ReadDicom.readSubstring(
+									ReadDicom.readDicomParameter(imp11, MyConst.DICOM_IMAGE_POSITION), 3);
+						}
+						rt = ReportStandardInfo.abortResultTable_P6(info11, slicePos, vetRiga.length);
+						accetta = true;
+						MyLog.here("abortResultTable");
+					}
+					// MyLog.here();
+
+				} while (!accetta);
+
+				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 				break;
 			}
 		} while (retry);
@@ -393,28 +438,32 @@ public class p6rmn_ implements PlugIn, Measurements {
 		Prefs.set("prefer.p6rmnBy", "" + line1.y2);
 	}
 
-	public ResultsTable wrapThickness(String[] path, String autoArgs, double[] vetRefPosition, boolean autoCalled,
-			boolean step, boolean verbose, boolean test) {
-		boolean accetta = false;
-		ResultsTable rt = null;
-
-		do {
-			rt = mainThickness(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
-			rt.show("Results");
-
-			if (autoCalled && !test) {
-				accetta = MyMsg.accettaMenu();
-			} else {
-				if (!test) {
-					accetta = MyMsg.msgStandalone();
-				} else
-					accetta = test;
-			}
-			// MyLog.here();
-
-		} while (!accetta);
-		return rt;
-	}
+//	public ResultsTable wrapThickness(String[] path, String autoArgs, double[] vetRefPosition, boolean autoCalled,
+//			boolean step, boolean verbose, boolean test) {
+//		boolean accetta = false;
+//		ResultsTable rt = null;
+//
+//		do {
+//			rt = mainThickness(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
+//
+//			if (rt == null)
+//				return rt;
+//
+//			rt.show("Results");
+//
+//			if (autoCalled && !test) {
+//				accetta = MyMsg.accettaMenu();
+//			} else {
+//				if (!test) {
+//					accetta = MyMsg.msgStandalone();
+//				} else
+//					accetta = test;
+//			}
+//			// MyLog.here();
+//
+//		} while (!accetta);
+//		return rt;
+//	}
 
 	@SuppressWarnings("deprecation")
 	public ResultsTable mainThickness(String[] path, String autoArgs, double[] vetRefPosition, boolean autoCalled,
@@ -444,8 +493,10 @@ public class p6rmn_ implements PlugIn, Measurements {
 		double[] vetAccurSpessSlab = new double[len];
 		double[] vetAccurSpessCuneo = new double[len];
 		ResultsTable rt = null;
+		ResultsTable rt11 = null;
 
 		ImagePlus impStack = stackBuilder(path, true);
+		nFrames = path.length;
 
 		impStack.setSliceWithoutUpdate(1);
 
@@ -456,8 +507,32 @@ public class p6rmn_ implements PlugIn, Measurements {
 		impStack.setRoi(new Line((int) vetRefPosition[0], (int) vetRefPosition[1], (int) vetRefPosition[2],
 				(int) vetRefPosition[3]));
 		impStack.updateAndDraw();
-		if (!test)
-			msgSquare();
+		int userSelection = 0;
+		if (!test) {
+			userSelection = msgSquare();
+//			MyLog.waitHere("userSelection= " + userSelection);
+		}
+		if (userSelection == 1) {
+
+//			TableCode tc11 = new TableCode();
+//			String[][] tabCodici11 = tc11.loadMultipleTable("codici", ".csv");
+//
+////			MyLog.waitHere("path1= "+path[0]);
+//			String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path[0], impStack, tabCodici11, VERSION,
+//					autoCalled);
+//
+//			for (int w1 = 0; w1 < nFrames; w1++) {
+//
+//				ImagePlus imp3 = MyStackUtils.imageFromStack(impStack, w1 + 1);
+//
+//				String pos2 = ReadDicom.readDicomParameter(imp3, MyConst.DICOM_IMAGE_POSITION);
+//				slicePos2[w1] = ReadDicom.readSubstring(pos2, 3);
+//			}
+
+			return null;
+
+		}
+
 		//
 		// legge la posizione finale del segmento dopo il posizionamento
 		//
@@ -660,7 +735,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		// rt.setHeading(++col, "seg_bx");
 		// rt.setHeading(++col, "seg_by");
 
-		rt.addLabel(t1, " slicePos");
+		rt.addValue(t1, " slicePos");
 		for (int j1 = 0; j1 < nFrames; j1++)
 			rt.addValue(s2 + j1, UtilAyv.convertToDouble(slicePos2[j1]));
 		rt.addValue(s3, vetRefPosition[0]);
@@ -669,112 +744,112 @@ public class p6rmn_ implements PlugIn, Measurements {
 		rt.addValue(s6, vetRefPosition[3]);
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "fwhm_slab1");
+		rt.addValue(t1, "fwhm_slab1");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, fwhmSlice1[j1]);
 		}
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "peak_slab1");
+		rt.addValue(t1, "peak_slab1");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, peakPositionSlice1[j1]);
 		}
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "fwhm_slab2");
+		rt.addValue(t1, "fwhm_slab2");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, fwhmSlice2[j1]);
 		}
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "peak_slab2");
+		rt.addValue(t1, "peak_slab2");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, peakPositionSlice2[j1]);
 		}
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "fwhm_cuneo3");
+		rt.addValue(t1, "fwhm_cuneo3");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, fwhmCuneo3[j1]);
 		}
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "peak_cuneo3");
+		rt.addValue(t1, "peak_cuneo3");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, peakPositionCuneo3[j1]);
 		}
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "fwhm_cuneo4");
+		rt.addValue(t1, "fwhm_cuneo4");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, fwhmCuneo4[j1]);
 		}
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "peak_cuneo4");
+		rt.addValue(t1, "peak_cuneo4");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, peakPositionCuneo4[j1]);
 		}
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "S1CorSlab");
+		rt.addValue(t1, "S1CorSlab");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, vetS1CorSlab[j1]);
 		}
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "S2CorSlab");
+		rt.addValue(t1, "S2CorSlab");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, vetS2CorSlab[j1]);
 		}
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "ErrSperSlab");
+		rt.addValue(t1, "ErrSperSlab");
 		for (int j1 = 0; j1 < nFrames; j1++)
 			rt.addValue(s2 + j1, vetErrSpessSlab[j1]);
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "AccurSpesSlab");
+		rt.addValue(t1, "AccurSpesSlab");
 		for (int j1 = 0; j1 < nFrames; j1++)
 			rt.addValue(s2 + j1, vetAccurSpessSlab[j1]);
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "S1CorCuneo");
+		rt.addValue(t1, "S1CorCuneo");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, vetS1CorCuneo[j1]);
 		}
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "S2CorCuneo");
+		rt.addValue(t1, "S2CorCuneo");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, vetS2CorCuneo[j1]);
 		}
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "ErrSperCuneo");
+		rt.addValue(t1, "ErrSperCuneo");
 		for (int j1 = 0; j1 < nFrames; j1++)
 			rt.addValue(s2 + j1, vetErrSpessCuneo[j1]);
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "AccurSpesCuneo");
+		rt.addValue(t1, "AccurSpesCuneo");
 		for (int j1 = 0; j1 < nFrames; j1++)
 			rt.addValue(s2 + j1, vetAccurSpessCuneo[j1]);
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "Accettab");
+		rt.addValue(t1, "Accettab");
 		for (int j1 = 0; j1 < nFrames; j1++)
 			rt.addValue(s2 + j1, vetAccettab[j1]);
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "DimPix");
+		rt.addValue(t1, "DimPix");
 		rt.addValue(s2 + 0, dimPixel);
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "Thick");
+		rt.addValue(t1, "Thick");
 		rt.addValue(s2 + 0, thick);
 
 		rt.incrementCounter();
-		rt.addLabel(t1, "Spacing");
+		rt.addValue(t1, "Spacing");
 		rt.addValue(s2 + 0, spacing);
 
 		return rt;
@@ -1501,8 +1576,10 @@ public class p6rmn_ implements PlugIn, Measurements {
 		return vetReference;
 	}
 
-	public static void msgSquare() {
-		ButtonMessages.ModelessMsg("Far coincidere il segmento  con il lato sx del quadrato", "CONTINUA");
+	public static int msgSquare() {
+		int userSelection = ButtonMessages.ModelessMsg("Far coincidere il segmento  con il lato sx del quadrato",
+				"CONTINUA", "<ANNULLA>");
+		return userSelection;
 	}
 
 	public static void msgSquareCoordinates(double[] vetReference) {

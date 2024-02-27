@@ -201,6 +201,17 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 				String path1 = TableSequence.getPath(iw2ayvTable, riga1);
 				ResultsTable rt = mainDgp(path1, riga1, autoCalled, step, test);
+				if (rt == null) {
+					TableCode tc11 = new TableCode();
+					String[][] tabCodici11 = tc11.loadMultipleTable("codici", ".csv");
+					ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+					String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path1, imp11, tabCodici11, VERSION,
+							autoCalled);
+					String slicePos = ReadDicom
+							.readSubstring(ReadDicom.readDicomParameter(imp11, MyConst.DICOM_IMAGE_POSITION), 3);
+					rt = ReportStandardInfo.abortResultTable_P8(info11, slicePos);
+				}
+
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 
 				retry = false;
@@ -216,6 +227,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 	public ResultsTable mainDgp(String path1, int riga1, boolean autoCalled, boolean step, boolean test) {
 		boolean accetta = false;
 		ResultsTable rt = null;
+		ResultsTable rt11 = null;
 
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		// String[][] tabCodici = new InputOutput().readFile1(MyConst.CODE_FILE,
@@ -232,13 +244,13 @@ public class p8rmn_ implements PlugIn, Measurements {
 		//
 		// }
 		//
-		// Qui si torna se la misura è da rifare
+		// Qui si torna se la misura ï¿½ da rifare
 		//
 		do {
 			UtilAyv.closeResultsWindow();
 
 			ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
-			
+
 			// 291219 iw2ayv
 			new ContrastEnhancer().stretchHistogram(imp1.getProcessor(), 0.5);
 
@@ -255,6 +267,19 @@ public class p8rmn_ implements PlugIn, Measurements {
 			Polygon poli1 = UtilAyv.selectionPointsClick(imp1,
 					"Cliccare nell'ordine sui 4 angoli del quadrato, poi premere FINE POSIZIONAMENTO",
 					"FINE POSIZIONAMENTO");
+
+			if (poli1 == null)
+				return null;
+
+//			{
+//				TableCode tc11 = new TableCode();
+//				String[][] tabCodici11 = tc11.loadMultipleTable("codici", ".csv");
+//					String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici11, VERSION,
+//						autoCalled);
+//				return ReportStandardInfo.abortResultTable_P8(info11, slicePos);
+//
+//			}
+
 			if (howmanyPoints(poli1) == MyConst.P8_NUM_POINTS4) {
 				double[] vetResults = mainCalculation(poli1, dimPixel);
 
@@ -278,7 +303,6 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
 
-
 				// rt = ReportStandardInfo.putStandardInfoRT(info1);
 				// int col = 2;
 				String t1 = "TESTO";
@@ -288,12 +312,12 @@ public class p8rmn_ implements PlugIn, Measurements {
 				String s5 = "seg_bx";
 				String s6 = "seg_by";
 
-				rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+				rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);    
 				rt.showRowNumbers(true);
-								
+
 				rt.addValue(t1, "slicePos");
 				rt.addValue(s2, UtilAyv.convertToDouble(slicePos));
-				
+
 				rt.incrementCounter();
 				rt.addValue(t1, "DGP1");
 				rt.addValue(s2, dgp1);
@@ -341,7 +365,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 				rt.addValue(s4, yPoints[1]);
 				rt.addValue(s5, xPoints[3]);
 				rt.addValue(s6, yPoints[3]);
-				
+
 				rt.incrementCounter();
 				rt.addValue(t1, "DimPix");
 				rt.addValue(s2, dimPixel);
@@ -402,14 +426,16 @@ public class p8rmn_ implements PlugIn, Measurements {
 	public static double segmentCalculation(double xStart, double yStart, double xEnd, double yEnd, double dimPixel) {
 		// segm= sqrt((xStart-xEnd)^2 +(yStart-yEnd)^2)
 		double len1 = Math.sqrt(Math.pow((xStart - xEnd), 2.0) + Math.pow((yStart - yEnd), 2.0)) * dimPixel;
-		// IJ.log("calcolo segmento xStart= "+xStart+" xEnd= "+xEnd+" yStart= "+yStart+ "yEnd= "+yEnd+" dimPixel= "+dimPixel+" lunhghezza= "+len1);
+		// IJ.log("calcolo segmento xStart= "+xStart+" xEnd= "+xEnd+" yStart= "+yStart+
+		// "yEnd= "+yEnd+" dimPixel= "+dimPixel+" lunhghezza= "+len1);
 		return len1;
 	}
 
 	public static double dgpCalculation(double segmCalc, double segmTeor) {
 
 		double dgp1 = 100 * ((segmCalc - segmTeor) / segmTeor);
-		// IJ.log("calcolo DGP segmCalc= "+segmCalc+" segmTeor= "+segmTeor+" dgp= "+dgp1);
+		// IJ.log("calcolo DGP segmCalc= "+segmCalc+" segmTeor= "+segmTeor+" dgp=
+		// "+dgp1);
 		return dgp1;
 	}
 
@@ -471,13 +497,13 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 		for (int i1 = 0; i1 < 6; i1++) {
 			if (vetResults[i1] != vetReference[i1]) {
-				IJ.log("len" + (i1 + 1) + " ERRATA " + vetResults[i1] + " anzichè " + vetReference[i1]);
+				IJ.log("len" + (i1 + 1) + " ERRATA " + vetResults[i1] + " anzichï¿½ " + vetReference[i1]);
 				testok = false;
 			}
 		}
 		for (int i1 = 0; i1 < 6; i1++) {
 			if (vetResults[i1 + 6] != vetReference[i1 + 6]) {
-				IJ.log("dgp" + (i1 + 1) + " ERRATA " + vetResults[i1 + 6] + " anzichè " + vetReference[i1 + 6]);
+				IJ.log("dgp" + (i1 + 1) + " ERRATA " + vetResults[i1 + 6] + " anzichï¿½ " + vetReference[i1 + 6]);
 				testok = false;
 			}
 		}
@@ -527,7 +553,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 			double[] vetReference = referenceSiemens();
 			boolean ok = testExcecution(path1, vetX, vetY, vetReference, false);
 			if (ok) {
-				IJ.log("Il test di p8rmn_ DGP è stato SUPERATO");
+				IJ.log("Il test di p8rmn_ DGP ï¿½ stato SUPERATO");
 			} else {
 				IJ.log("Il test di p8rmn_ DGP evidenzia degli ERRORI");
 			}

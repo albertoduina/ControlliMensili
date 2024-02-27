@@ -1677,10 +1677,22 @@ public class p11rmn_ implements PlugIn, Measurements {
 		Overlay over11 = new Overlay();
 		imp11.setOverlay(over11);
 		imp11.updateAndDraw();
+		
 
-		double[] out1 = MyFilter.maxPosition1x1(imp11);
+//		double[] out11 = MyFilter.maxPosition1x1(imp11);
+//		double xMaximum1 = out11[0];
+//		double yMaximum1 = out11[1];
+		double[] out1 = MyFilter.maxPosition7x7(imp11);
 		double xMaximum = out1[0];
 		double yMaximum = out1[1];
+		
+//		if ((xMaximum1-xMaximum)>7 || (yMaximum1-yMaximum)>7){
+//			MyLog.waitHere("CACATA in arrivo!");
+//			
+//		}
+		
+		
+		
 
 		direzione = directionFinder(imp11, xMaximum, yMaximum, silent, timeout);
 
@@ -1726,6 +1738,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 		String strDirez = "";
 		double ax = Double.NaN;
 		double ay = Double.NaN;
+		
+		
 
 		// MyLog.waitHere("direzione= " + direzione);
 		// vup = 1 vdw = 2 hsx = 3 hdx = 4
@@ -1904,7 +1918,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		out[5] = endY;
 		out[6] = xMaximum;
 		out[7] = yMaximum;
-
+		
 		if (manualRequired)
 			return null;
 		else

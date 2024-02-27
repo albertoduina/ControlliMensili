@@ -993,7 +993,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			// put values in ResultsTable
 			rt.reset();
 
-			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);    ////// SIMPLE
 			rt.showRowNumbers(true);
 
 			rt.addValue(t1, "Segnale");
