@@ -246,7 +246,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 				do {
 					rt = mainThickness(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
 					if (rt != null) {
-						MyLog.here("verifyResultTable");
+						// MyLog.here("verifyResultTable");
 						rt.show("Results");
 						if (autoCalled && !test) {
 							accetta = MyMsg.accettaMenu();
@@ -271,7 +271,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 							slicePos[i1] = ReadDicom.readSubstring(
 									ReadDicom.readDicomParameter(imp11, MyConst.DICOM_IMAGE_POSITION), 3);
 						}
-						rt = ReportStandardInfo.abortResultTable_P6(info11, slicePos, vetRiga.length);
+						rt = ReportStandardInfo.abortResultTable_P6(info11, slicePos, nTokens);
 						accetta = true;
 						MyLog.here("abortResultTable");
 					}
