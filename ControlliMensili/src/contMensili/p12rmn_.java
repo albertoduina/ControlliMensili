@@ -54,6 +54,7 @@ import utils.MyCircleDetector;
 import utils.MyInput;
 import utils.MyMsg;
 import utils.MyConst;
+import utils.MyFileLogger;
 import utils.MyFwhm;
 import utils.MyLine;
 import utils.MyLog;
@@ -129,6 +130,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 	private static String fileDir = "";
 	public static String simpath = "";
 //	public static String simname = "";
+	public static boolean abort = false;
 
 	public void run(String args) {
 
@@ -136,28 +138,27 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		IJ.run("DICOM...", "ignore");
 
+		// -----------------------------
+		if (IJ.versionLessThan("1.43k"))
+			return;
+		// -----------------------------
 		Count c1 = new Count();
 		if (!c1.jarCount("iw2ayv_"))
 			return;
-
+		// -----------------------------
 		String className = this.getClass().getName();
 		String user1 = System.getProperty("user.name");
+		// -----------------------------
 		TableCode tc1 = new TableCode();
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
-		TableExpand tc2 = new TableExpand();
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
-
+		// -----------------------------
 		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
-
+		// -----------------------------
+		// directory dati, dove vengono memorizzati ayv.txt e Results1.xls
 		fileDir = Prefs.get("prefer.string1", "none");
-
-		if (IJ.versionLessThan("1.43k"))
-			return;
-
-		// IJ.run("Colors...",
-		// "foreground=white background=black selection=yellow");
-
+		// -----------------------------
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
 			manualMenu(0, "");
@@ -357,6 +358,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		boolean step = true;
 		boolean retry = false;
+		ResultsTable rt1 = null;
 
 		if (fast) {
 			retry = false;
@@ -367,10 +369,25 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			result1 = mainUnifor(path1, path2, autoArgs, info10, autoCalled, step, demo, test, fast, silent, timeout);
 
-			if (!(result1 == null))
+			if (abort) {
+				if (result1 == null) {
+					ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+					TableCode tc1 = new TableCode();
+					String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
+					String[] info12 = ReportStandardInfo.getSimpleStandardInfo(path1, imp11, tabCodici, VERSION, true);
+					double slicePosition11 = ReadDicom
+							.readDouble(ReadDicom.readDicomParameter(imp11, MyConst.DICOM_SLICE_LOCATION));
+					result1 = ReportStandardInfo.abortResultTable_P12(info12, slicePosition11);
+				}
+			}
+
+			if (result1 == null) {
+				MyLog.waitHere();
+			} else {
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, result1);
 
-			UtilAyv.afterWork();
+				UtilAyv.afterWork();
+			}
 
 		} else
 			do {
@@ -398,19 +415,32 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 					result1 = mainUnifor(path1, path2, autoArgs, info10, autoCalled, step, demo, test, fast, silent,
 							timeout);
-					if (result1 == null) {
-						break;
+					if (abort) {
+						if (result1 == null) {
+							ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+							TableCode tc1 = new TableCode();
+							String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
+							String[] info12 = ReportStandardInfo.getSimpleStandardInfo(path1, imp11, tabCodici, VERSION,
+									true);
+							double slicePosition11 = ReadDicom
+									.readDouble(ReadDicom.readDicomParameter(imp11, MyConst.DICOM_SLICE_LOCATION));
+							result1 = ReportStandardInfo.abortResultTable_P12(info12, slicePosition11);
+						}
 					}
 
-					UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, result1);
+					if (result1 == null) {
+						MyLog.waitHere();
+					} else {
+						UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, result1);
 
-					UtilAyv.afterWork();
+						UtilAyv.afterWork();
+					}
 					break;
 				}
 			} while (retry);
 		new AboutBox().close();
 		UtilAyv.afterWork();
-		if (result1 == null) {
+		if (result1 == null && !abort) {
 			int resp = MyLog.waitHere("A causa di problemi sulla immagine, \n"
 					+ "viene avviato il programma p3rmn_, che \n" + "ripete il controllo in maniera manuale", debug,
 					"Prosegui", "Annulla");
@@ -525,8 +555,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			double out2[] = positionSearch11(imp11, maxFitError, maxBubbleGapLimit, info10, autoCalled, step, verbose,
 					test, fast, timeout);
+
 			if (out2 == null) {
-				MyLog.waitHere("out2==null");
 				return null;
 			}
 
@@ -682,9 +712,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 			over1.setStrokeColor(Color.red);
 			imp1.setOverlay(over1);
 
-			//#############################################
-			//#############################################
-			//#############################################
+			// #############################################
+			// #############################################
+			// #############################################
 			TableCode tc1 = new TableCode();
 			String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
@@ -711,10 +741,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 			rt.addValue(t1, "Pos");
 			rt.addValue(s2, slicePosition);
 			// rt.show("PROVVISORIO");
-			//#############################################
-			//#############################################
-			//#############################################
-			
+			// #############################################
+			// #############################################
+			// #############################################
 
 			// ---------------------------------
 			// Visualizzo sull'immagine il posizionamento che verra' utilizzato
@@ -993,7 +1022,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			// put values in ResultsTable
 			rt.reset();
 
-			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);    ////// SIMPLE
+			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1); ////// SIMPLE
 			rt.showRowNumbers(true);
 
 			rt.addValue(t1, "Segnale");
@@ -2119,10 +2148,23 @@ public class p12rmn_ implements PlugIn, Measurements {
 			imp11.setRoi(new OvalRoi(width / 2 - diamRoiMan / 2, height / 2 - diamRoiMan / 2, diamRoiMan, diamRoiMan));
 			imp11.getRoi().setStrokeColor(Color.red);
 			imp11.getRoi().setStrokeWidth(1.1);
-			MyLog.waitHere(motivo
+
+//			MyLog.waitHere(motivo
+//					+ "\nRichiesto ridimensionamento e riposizionamento della ROI, indicata in rosso,attorno al fantoccio"
+//					+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova. diamRoiMan= " + diamRoiMan
+//					+ "\nPOI premere OK");
+
+			int resp = ButtonMessages.ModelessMsg(motivo
 					+ "\nRichiesto ridimensionamento e riposizionamento della ROI, indicata in rosso,attorno al fantoccio"
 					+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova. diamRoiMan= " + diamRoiMan
-					+ "\nPOI premere OK");
+					+ "\nPOI premere OK, altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA"
+					+ " per passare alle successive", "OK", "ANNULLA");
+
+			if (resp == 1) {
+				abort = true;
+				return null;
+			}
+
 			Rectangle boundRec11 = imp11.getProcessor().getRoi();
 			xCenterCircle = Math.round(boundRec11.x + boundRec11.width / 2);
 			yCenterCircle = Math.round(boundRec11.y + boundRec11.height / 2);

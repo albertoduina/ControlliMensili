@@ -249,6 +249,16 @@ public class p4rmn_ implements PlugIn, Measurements {
 				boolean autoCalled = true;
 				// double[] roiData = readPreferences();
 				ResultsTable rt = prepMTF(path1, autoArgs, autoCalled, step, verbose, test);
+
+				if (rt == null) {
+					ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, verbose);
+					TableCode tc1 = new TableCode();
+					String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
+					String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path1, imp11, tabCodici, VERSION,
+							autoCalled);
+					rt = ReportStandardInfo.abortResultTable_P4(info11);
+				}
+
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 				retry = false;
 				break;
@@ -284,15 +294,14 @@ public class p4rmn_ implements PlugIn, Measurements {
 			else
 				imp1 = UtilAyv.openImageNoDisplay(path1, verbose);
 
-			// l'immagine deve esere visualizzata perchè uso RoiManager
+			// l'immagine deve esere visualizzata perchï¿½ uso RoiManager
 			if (imp1 == null) {
 				MyLog.waitHere("Immagine non trovata " + path1);
 				return null;
 			}
-			
+
 			// 291219 iw2ayv
 			new ContrastEnhancer().stretchHistogram(imp1.getProcessor(), 0.5);
-
 
 			double dimPixel = ReadDicom.readDouble(
 					ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
@@ -338,8 +347,15 @@ public class p4rmn_ implements PlugIn, Measurements {
 			imp1.setRoi(new Line(xStartReflineScreen, yStartReflineScreen, xEndReflineScreen, yEndReflineScreen));
 			imp1.updateAndDraw();
 
+			int resp = 0;
+
 			if (verbose)
-				msgLinePositioning();
+				resp = ButtonMessages.ModelessMsg(
+						"Far coincidere il segmento  con il lato esterno sx delle linee 2 mm e premere CONTINUA, "
+								+ "altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive",
+						"CONTINUA", "ANNULA");
+			if (resp == 1)
+				return null;
 
 			//
 			// Leggo la posizione finale del segmento
@@ -410,7 +426,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 			// -------------------------------------------------------/
 
 			// offset rispetto al centro dell' immagine (nel nostro caso
-			// sarà rispetto al centro del fantoccio) espressi in pixel
+			// sarï¿½ rispetto al centro del fantoccio) espressi in pixel
 
 			int dRoi2mm = (int) (MyConst.P4_DIA_ROI[0] / dimPixel);
 			int xRoi2mm = (int) (dsd1[0] - dRoi2mm / 2);
@@ -532,7 +548,10 @@ public class p4rmn_ implements PlugIn, Measurements {
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp2, tabCodici, VERSION, autoCalled);
 
 			// put values in ResultsTable
-			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+			// rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+			
+			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);    ////// SIMPLE
+
 			rt.showRowNumbers(true);
 
 			String t1 = "TESTO";
@@ -546,7 +565,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 			// rt.setHeading(++col, "roi_y");
 			// rt.setHeading(++col, "roi_b");
 			// rt.setHeading(++col, "roi_h");
-			rt.addLabel(t1, "segm_riferim");
+			rt.addValue(t1, "segm_riferim");
 			rt.addValue(s2, 0);
 			rt.addValue(s3, xStartRefline);
 			rt.addValue(s4, yStartRefline);
@@ -555,7 +574,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 			rt.incrementCounter();
 
-			rt.addLabel(t1, "MTF_2.0_LPmm");
+			rt.addValue(t1, "MTF_2.0_LPmm");
 			rt.addValue(s2, mod20);
 			rt.addValue(s3, xRoi2mm);
 			rt.addValue(s4, yRoi2mm);
@@ -563,7 +582,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, dRoi2mm);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "MTF_1.5_LPmm");
+			rt.addValue(t1, "MTF_1.5_LPmm");
 			rt.addValue(s2, mod15);
 			rt.addValue(s3, xRoi1_5mm);
 			rt.addValue(s4, yRoi1_5mm);
@@ -571,7 +590,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, dRoi1_5mm);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "MTF_1.0_LPmm");
+			rt.addValue(t1, "MTF_1.0_LPmm");
 			rt.addValue(s2, mod10);
 			rt.addValue(s3, xRoi1mm);
 			rt.addValue(s4, yRoi1mm);
@@ -579,7 +598,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, dRoi1mm);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "MTF_0.5_LPmm");
+			rt.addValue(t1, "MTF_0.5_LPmm");
 			rt.addValue(s2, mod05);
 			rt.addValue(s3, xRoi_5mm);
 			rt.addValue(s4, yRoi_5mm);
@@ -587,7 +606,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, dRoi_5mm);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "MTF_0.3_LPmm");
+			rt.addValue(t1, "MTF_0.3_LPmm");
 			rt.addValue(s2, mod03);
 			rt.addValue(s3, xRoi_3mm);
 			rt.addValue(s4, yRoi_3mm);
@@ -595,11 +614,11 @@ public class p4rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, dRoi_3mm);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "DimPix");
+			rt.addValue(t1, "DimPix");
 			rt.addValue(s2, dimPixel);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "Visual");
+			rt.addValue(t1, "Visual");
 			rt.addValue(s2, visualResolution);
 
 			if (verbose && !test)
@@ -637,10 +656,10 @@ public class p4rmn_ implements PlugIn, Measurements {
 		Prefs.set("prefer.p4rmnBy", "" + selection[3]);
 	}
 
-	private static void msgLinePositioning() {
-		ButtonMessages.ModelessMsg(
-				"Far coincidere il segmento  con il lato esterno sx delle linee 2 mm e premere CONTINUA", "CONTINUA");
-	}
+//	private static void msgLinePositioning() {
+//		ButtonMessages.ModelessMsg(
+//				"Far coincidere il segmento  con il lato esterno sx delle linee 2 mm e premere CONTINUA", "CONTINUA", "ANNULA");
+//	}
 
 	private static void msgRefinePositioning() {
 
@@ -649,7 +668,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 	private static int msgLastVisiblePositioning() {
 
-		int userSelection1 = ButtonMessages.ModelessMsg("Quale è l'ultimo gruppo visibile?", "- 5 -", "- 4 -", "- 3 -",
+		int userSelection1 = ButtonMessages.ModelessMsg("Quale e' l'ultimo gruppo visibile?", "- 5 -", "- 4 -", "- 3 -",
 				"- 2 -", "- 1 -");
 		return (userSelection1);
 	}
@@ -824,7 +843,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 		// UtilAyv.closeResultsWindow();
 		if (ok) {
-			IJ.log("Il test di p4rmn_ MTF è stato SUPERATO");
+			IJ.log("Il test di p4rmn_ MTF ï¿½ stato SUPERATO");
 		} else {
 			IJ.log("Il test di p4rmn_ MTF evidenzia degli ERRORI");
 		}

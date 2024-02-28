@@ -79,37 +79,30 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 		UtilAyv.setMyPrecision();
 
+		// -----------------------------
 		if (IJ.versionLessThan("1.43k"))
 			return;
-
-		// ---------------------------------------------------------------------------
-		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
-		// modo il messaggio "manca il file" viene emesso, altrimenti si ha una
-		// eccezione
-		// ----------------------------------------------------------------------
-		try {
-			Class.forName("utils.IW2AYV");
-		} catch (ClassNotFoundException e) {
-			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
+		// -----------------------------
+		Count c1 = new Count();
+		if (!c1.jarCount("iw2ayv_"))
 			return;
-		}
-		// ----------------------------------------------------------------------------
-
+		// -----------------------------
 		String className = this.getClass().getName();
 		String user1 = System.getProperty("user.name");
+		// -----------------------------
 		TableCode tc1 = new TableCode();
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
 		TableExpand tc2 = new TableExpand();
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
-
+		// -----------------------------
 		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
-
-//		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
-
+		// -----------------------------
 		fileDir = Prefs.get("prefer.string1", "none");
+		// -----------------------------
 		if (mylogger)
 			MyFileLogger.logger.info("p3rmn_>>> fileDir= " + fileDir);
+		// -----------------------------
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
 			manualMenu(0, "");
@@ -224,6 +217,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 		boolean retry = false;
 		boolean step = false;
+		ResultsTable rt = null;
 		do {
 			// int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE);
 			int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
@@ -246,9 +240,15 @@ public class p3rmn_ implements PlugIn, Measurements {
 				boolean verbose = true;
 				boolean test = false;
 				boolean autoCalled = true;
-				ResultsTable rt = prepUnifor(path1, path2, autoArgs, autoCalled, step, verbose, test);
+				rt = prepUnifor(path1, path2, autoArgs, autoCalled, step, verbose, test);
+				if (rt == null) {
+					ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, verbose);
+					TableCode tc1 = new TableCode();
+					String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
+					String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path1, imp11, tabCodici, VERSION, autoCalled);
+					rt = ReportStandardInfo.abortResultTable_P3(info11);
+				}
 				rt.showRowNumbers(true);
-
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 				retry = false;
 				break;
@@ -344,9 +344,16 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 			if (!test)
 				msgElabImaDiff(step);
+			int resp = 0;
 
-			if (!test)
-				msgMainRoiPositioning();
+			if (!test) {
+				resp = ButtonMessages.ModelessMsg(
+						"Posizionare ROI diamFantoccio e premere CONTINUA,  altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive",
+						"CONTINUA", "ANNULLA");
+			}
+
+			if (resp == 1)
+				return null;
 
 			// leggo dove hanno posizionato la ROI fantoccio sull'immagine attiva, questi
 			// sono i dati definitivi
@@ -402,7 +409,6 @@ public class p3rmn_ implements PlugIn, Measurements {
 			double uiPerc1 = uiPercCalculation(stat1.max, stat1.min);
 			double slicePosition = ReadDicom
 					.readDouble(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SLICE_LOCATION));
-
 
 //			ImagePlus impDiff = UtilAyv.genImaDifference(imp1, imp2);
 //			if (verbose)
@@ -470,7 +476,6 @@ public class p3rmn_ implements PlugIn, Measurements {
 			double meanBkg = statBkg.mean;
 			over1.addElement(imp1.getRoi());
 
-
 			double ghostPerc1 = ghostPercCalculation(mediaGhost1, meanBkg, mean1);
 
 			double ghostPerc2 = ghostPercCalculation(mediaGhost2, meanBkg, mean1);
@@ -493,10 +498,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 			// MyLog.logVector(info1, "info1");
 			// MyLog.waitHere();
 
-			
 			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 			rt.showRowNumbers(true);
-
 
 			String t1 = "TESTO";
 			String s2 = "VALORE";
@@ -575,11 +578,10 @@ public class p3rmn_ implements PlugIn, Measurements {
 			rt.addValue(s4, statBkg.roiY);
 			rt.addValue(s5, statBkg.roiWidth);
 			rt.addValue(s6, statBkg.roiHeight);
-			
+
 			rt.incrementCounter();
 			rt.addValue(t1, "Pos");
 			rt.addValue(s2, slicePosition);
-
 
 			String[] levelString = { "+20%", "+10%", "-10%", "-20%", "fondo" };
 
@@ -1004,9 +1006,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	}
 
-	private static void msgMainRoiPositioning() {
-		ButtonMessages.ModelessMsg("Posizionare ROI diamFantoccio e premere CONTINUA", "CONTINUA");
-	}
+//	private static void msgMainRoiPositioning() {
+//		ButtonMessages.ModelessMsg("Posizionare ROI diamFantoccio e premere CONTINUA", "CONTINUA");
+//	}
 
 	private static void msgRoi85percPositioning() {
 		ButtonMessages.ModelessMsg("Puoi modificare la posizione ROI con area 80%", "CONTINUA");

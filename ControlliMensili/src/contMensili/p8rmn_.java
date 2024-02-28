@@ -201,6 +201,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 				String path1 = TableSequence.getPath(iw2ayvTable, riga1);
 				ResultsTable rt = mainDgp(path1, riga1, autoCalled, step, test);
+				
 				if (rt == null) {
 					TableCode tc11 = new TableCode();
 					String[][] tabCodici11 = tc11.loadMultipleTable("codici", ".csv");

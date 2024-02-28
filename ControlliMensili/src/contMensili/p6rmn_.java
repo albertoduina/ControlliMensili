@@ -241,17 +241,10 @@ public class p6rmn_ implements PlugIn, Measurements {
 				String[] path = loadPath(autoArgs);
 				ImagePlus imp0 = UtilAyv.openImageNoDisplay(path[0], true);
 				double[] vetRefPosition = readReferences(imp0);
-
 				ResultsTable rt = null;
 				boolean accetta = false;
-
-				MyLog.waitHere("sto per entrando");
-
 				do {
 					rt = mainThickness(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
-
-					MyLog.waitHere("sto uscendo con rt= " + rt);
-
 					if (rt != null) {
 						MyLog.here("verifyResultTable");
 						rt.show("Results");
@@ -282,8 +275,6 @@ public class p6rmn_ implements PlugIn, Measurements {
 						accetta = true;
 						MyLog.here("abortResultTable");
 					}
-					// MyLog.here();
-
 				} while (!accetta);
 
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);

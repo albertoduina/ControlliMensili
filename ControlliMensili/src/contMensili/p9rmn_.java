@@ -153,7 +153,6 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 		UtilAyv.setMyPrecision();
 
-
 		//
 		// CNR CON T1
 		// GEL 4,5 deltaT1 10 ms bassissimo contrasto
@@ -183,6 +182,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 		boolean accetta = false;
 		int riga1 = 0;
 		boolean bstep = false;
+		boolean abort = false;
 
 		double[] medGels = null;
 		double[] devGels = null;
@@ -213,7 +213,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 		}
 
 		fileDir = Prefs.get("prefer.string1", "none");
-		
+
 		MyLog.appendLog(fileDir + "MyLog.txt", "====================");
 		MyLog.appendLog(fileDir + "MyLog.txt", "p9 riceve " + args);
 		MyLog.appendLog(fileDir + "MyLog.txt", "====================");
@@ -255,6 +255,8 @@ public class p9rmn_ implements PlugIn, Measurements {
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
 		TableExpand tc2 = new TableExpand();
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
+		ResultsTable rt = null;
+		String[] info1 = null;
 
 		AboutBox ab = new AboutBox();
 		boolean retry = false;
@@ -375,6 +377,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 			} while (retry);
 			ab.close();
 		}
+
+		int[] vetRiga = new int[nTokens];
+
 		if (autoCalled) {
 			if (bstep)
 				ButtonMessages.ModelessMsg("Ricevuto=" + args, "CONTINUA");
@@ -384,14 +389,20 @@ public class p9rmn_ implements PlugIn, Measurements {
 				IJ.log("p9rmn ERRORE PARAMETRI CHIAMATA =" + args);
 				return;
 			}
-			riga1 = Integer.parseInt(strTok.nextToken());
+
+			for (int i1 = 0; i1 < nTokens; i1++) {
+				// vetRiga1 contiene i codici multipli passati da sequenze
+				vetRiga[i1] = Integer.parseInt(strTok.nextToken());
+			}
+
+			// riga1 = Integer.parseInt(strTok.nextToken());
 			//
 			// Carico la tabella SEQUENZE_FILE in memoria
 			//
 			strRiga3 = new TableSequence().loadTable(fileDir + SEQUENZE_FILE);
 
-			path1 = TableSequence.getPath(strRiga3, riga1);
-			codice = TableSequence.getCode(strRiga3, riga1);
+			path1 = TableSequence.getPath(strRiga3, vetRiga[0]);
+			codice = TableSequence.getCode(strRiga3, vetRiga[0]);
 			String cod = codice.substring(0, 2).trim();
 
 			if (cod.equals("T2"))
@@ -418,7 +429,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 			VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 					+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 
-			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
+			info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
 
 //			String aux3 = imp1.getTitle();
 			String codice1 = TableSequence.getCode(strRiga3, riga1);
@@ -434,6 +445,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 //				codice2 = aux3.substring(0, 5).trim();
 //			}
 			info1[0] = codice1;
+
+			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+			rt.showRowNumbers(true);
 
 //			MyLog.logVector(info1, "info1");
 //			MyLog.waitHere();
@@ -496,11 +510,11 @@ public class p9rmn_ implements PlugIn, Measurements {
 			for (int i1 = 0; i1 < vetRoi.length; i1++) {
 
 				if (selftest) {
+
 					imp1.setRoi(new OvalRoi(vetXUpperLeftCornerRoiGels[i1], vetYUpperLeftCornerRoiGels[i1], roi_diam,
-							roi_diam, imp1));
+							roi_diam));
 
 					imp1.updateAndDraw();
-
 				} else {
 
 					do {
@@ -518,14 +532,23 @@ public class p9rmn_ implements PlugIn, Measurements {
 						if (yRoi + roi_diam > Rows)
 							yRoi = Rows / 2;
 
-						imp1.setRoi(new OvalRoi(xRoi, yRoi, roi_diam, roi_diam, imp1));
+						imp1.setRoi(new OvalRoi(xRoi, yRoi, roi_diam, roi_diam));
 
 						imp1.updateAndDraw();
 						if (!selftest)
 							userSelection1 = ButtonMessages.ModelessMsg(
 									"Posizionare ROI su GEL" + (i1 + 1) + "  e premere Accetta      <08>", "ACCETTA",
-									"RIDISEGNA");
-					} while (userSelection1 == 1);
+									"RIDISEGNA", "ABBANDONA");
+
+						// MyLog.waitHere("userSelection1= " + userSelection1);
+
+						if (userSelection1 == 1)
+							abort = true;
+
+					} while (userSelection1 == 2);
+
+					if (abort)
+						break;
 				}
 
 				ImageStatistics stat1 = imp1.getStatistics();
@@ -588,8 +611,8 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 //			ResultsTable rt = ReportStandardInfo.putStandardInfoRT(info1);
 
-			ResultsTable rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
-			rt.showRowNumbers(true);
+//			ResultsTable rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+//			rt.showRowNumbers(true);
 
 			int col = 0;
 
@@ -658,23 +681,30 @@ public class p9rmn_ implements PlugIn, Measurements {
 			}
 		} while (!accetta); // do
 
+		if (abort) {
+			// MyLog.waitHere("abort");
+			rt = ReportStandardInfo.abortResultTable_P9(info1);
+		}
+
 		//
 		// Salvataggio dei risultati
 		//
 
 		if (autoCalled) {
 
-			try {
-				mySaveAs(fileDir + MyConst.TXT_FILE);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			UtilAyv.saveResults(vetRiga, fileDir, strRiga3, rt);
 
-			// IJ.run("Excel...", "select...=[" + fileDir + XLS_FILE + "]");
-			TableSequence lr = new TableSequence();
-			lr.putDone(strRiga3, riga1);
-			lr.writeTable(fileDir + SEQUENZE_FILE, strRiga3);
+//			try {
+//				mySaveAs(fileDir + MyConst.TXT_FILE);
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//
+//			// IJ.run("Excel...", "select...=[" + fileDir + XLS_FILE + "]");
+//			TableSequence lr = new TableSequence();
+//			lr.putDone(strRiga3, riga1);
+//			lr.writeTable(fileDir + SEQUENZE_FILE, strRiga3);
 		}
 		UtilAyv.resetResultsTable();
 		UtilAyv.resetMeasure(misure1);

@@ -257,8 +257,15 @@ public class p5rmn_ implements PlugIn, Measurements {
 				// ResultsTable rt1 = mainUnifor(path, sqX, sqY, autoArgs,
 				// verticalProfile, autoCalled, step, verbose, test);
 				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile, autoCalled, step, verbose, test);
-				if (rt1 == null)
-					return 0;
+
+				if (rt1 == null) {
+					ImagePlus imp11 = UtilAyv.openImageNoDisplay(path[0], verbose);
+					TableCode tc1 = new TableCode();
+					String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
+					String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path[0], imp11, tabCodici, VERSION,
+							autoCalled);
+					rt1 = ReportStandardInfo.abortResultTable_P5(info11);
+				}
 
 				rt1.show("Results");
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt1);
@@ -353,8 +360,16 @@ public class p5rmn_ implements PlugIn, Measurements {
 				do {
 					imp1.setRoi(posX, posY, sqNEA, sqNEA);
 					imp1.updateAndDraw();
-					userSelection1 = menuPositionMroi();
-				} while (userSelection1 == 1);
+					userSelection1 = ButtonMessages.ModelessMsg("Posizionare la MROI sull'area della bobina"
+							+ "  e premere Accetta, altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive",
+							"ACCETTA", "RIDISEGNA", "ANNULLA");
+
+				} while (userSelection1 == 2);
+
+				if (userSelection1 == 1) {
+						return null;
+				}
+
 				//
 				// rilettura posizione user-defined
 				//
@@ -448,7 +463,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
 			//
-			// qui, se il numero dei pixel < 121 dovrò incrementare sqR2 e
+			// qui, se il numero dei pixel < 121 dovrï¿½ incrementare sqR2 e
 			// ripetere il loop
 			//
 			double checkPixels = MyConst.P5_CHECK_PIXEL_MULTIPLICATOR * prelimImageNoiseEstimate_MROI;
@@ -549,10 +564,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 					MyLog.waitHere("errore creazione directory " + newdir3);
 			}
 
+			simulataName = simpath + "\\" + patName + codice + "sim.zip";
 
-			simulataName = simpath +"\\"+ patName + codice + "sim.zip";
-
-		//	MyLog.waitHere(simulataName);
+			// MyLog.waitHere(simulataName);
 			// int[][] classiSimulata = ImageUtils.generaSimulata12classi(sqX
 			// + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL, imp1, step,
 			// verbose, test);
@@ -560,13 +574,13 @@ public class p5rmn_ implements PlugIn, Measurements {
 			int[][] classiSimulata = ImageUtils.generaSimulata12classi(sqX + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL,
 					imp1, simulataName, step, verbose, test);
 			//
-			// calcolo posizione fwhm a metà della MROI
+			// calcolo posizione fwhm a metï¿½ della MROI
 			//
 			if (imp1.isVisible())
 				imp1.getWindow().toFront();
 			//
-			// 28feb05 qui dò la possibilità di modificare la posizione su cui
-			// verrà calcolato l'FWHM
+			// 28feb05 qui dï¿½ la possibilitï¿½ di modificare la posizione su cui
+			// verrï¿½ calcolato l'FWHM
 			//
 			int xStartProfile = 0;
 			int yStartProfile = 0;
@@ -612,7 +626,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path[0], imp1, tabCodici, VERSION, autoCalled);
 
 			//
-			rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+			// rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+			
+			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);    ////// SIMPLE
+
 			rt.showRowNumbers(true);
 
 			int col = 2;
@@ -623,10 +640,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 			String s5 = "roi_b";
 			String s6 = "roi_h";
 
-			rt.addLabel(t1, simulataName);
+			rt.addValue(t1, simulataName);
 			rt.incrementCounter();
 
-			rt.addLabel(t1, "Segnale");
+			rt.addValue(t1, "Segnale");
 			rt.addValue(s2, signal1);
 			rt.addValue(s3, sqX);
 			rt.addValue(s4, sqY);
@@ -634,7 +651,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, sqNEA);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "Rumore_Fondo222");
+			rt.addValue(t1, "Rumore_Fondo222");
 			rt.addValue(s2, (out1[1] / Math.sqrt(2)));
 			int xRoi = (int) statBkg.roiX;
 			int yRoi = (int) statBkg.roiY;
@@ -649,7 +666,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, heightRoi);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "SnR");
+			rt.addValue(t1, "SnR");
 			rt.addValue(s2, snr);
 			rt.addValue(s3, sqX);
 			rt.addValue(s4, sqY);
@@ -657,7 +674,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, sqNEA);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "FWHM");
+			rt.addValue(t1, "FWHM");
 			rt.addValue(s2, outFwhm2[0]);
 			rt.addValue(s3, xStartProfile);
 			rt.addValue(s4, yStartProfile);
@@ -665,7 +682,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			rt.addValue(s6, yEndProfile);
 
 			rt.incrementCounter();
-			rt.addLabel(t1, "Bkg");
+			rt.addValue(t1, "Bkg");
 			rt.addValue(s2, statBkg.mean);
 			rt.addValue(s3, statBkg.roiX);
 			rt.addValue(s4, statBkg.roiY);
@@ -677,7 +694,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 			for (int i1 = 0; i1 < classiSimulata.length; i1++) {
 				rt.incrementCounter();
-				rt.addLabel(t1, ("Classe" + classiSimulata[i1][0]) + "_" + levelString[i1]);
+				rt.addValue(t1, ("Classe" + classiSimulata[i1][0]) + "_" + levelString[i1]);
 				rt.addValue(s2, classiSimulata[i1][1]);
 			}
 			if (verbose && !test)
@@ -856,7 +873,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 		double[] vetResults = UtilAyv.vectorizeResults(rt1);
 		boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P5_vetName);
 		if (ok) {
-			IJ.log("Il test di p5rmn_ UNIFORMITA' SUPERFICIALE è stato SUPERATO");
+			IJ.log("Il test di p5rmn_ UNIFORMITA' SUPERFICIALE e' stato SUPERATO");
 		} else {
 			IJ.log("Il test di p5rmn_ UNIFORMITA' SUPERFICIALE evidenzia degli ERRORI");
 		}
@@ -1019,8 +1036,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 		/*
 		 * le seguenti istruzioni sono state superate dalla release 1.40a di ImageJ.
-		 * Tale cambiamento è dovuto alle modifiche apportate a ij\ImagePlus.java, in
-		 * pratica se l'immagine è calibrata la calibrazione viene automaticamente
+		 * Tale cambiamento ï¿½ dovuto alle modifiche apportate a ij\ImagePlus.java, in
+		 * pratica se l'immagine ï¿½ calibrata la calibrazione viene automaticamente
 		 * applicata anche ad ImagePlus
 		 */
 
@@ -1053,7 +1070,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 * Calcolo dell'FWHM su di un vettore profilo
 	 * 
 	 * @param vetUpDwPoints Vettore restituito da AnalPlot2 con le posizioni dei
-	 *                      punti sopra e sotto la metà altezza
+	 *                      punti sopra e sotto la metï¿½ altezza
 	 * @param profile       Profilo da analizzare
 	 * @return out[0]=FWHM, out[1]=peak position
 	 */
@@ -1097,7 +1114,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	} // calcFwhm
 
 	/**
-	 * Mostra a video un profilo con linea a metà picco
+	 * Mostra a video un profilo con linea a metï¿½ picco
 	 * 
 	 * @param profile1 Vettore con il profilo da analizzare
 	 * @param bslab    Flag slab che qui mettiamo sempre true
@@ -1195,7 +1212,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	} // createPlot2
 
 	/**
-	 * ricerca dei punti a metà altezza
+	 * ricerca dei punti a metï¿½ altezza
 	 * 
 	 * @param profile1 Vettore con il profilo da analizzare
 	 * @return isd[0] punto sotto half a sx, isd[1] punto sopra half a sx,
@@ -1203,7 +1220,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 */
 	private static int[] halfPointSearch(double profile1[]) {
 		/*
-		 * ATTENZIONE. il nostro profilo standard è il seguente:
+		 * ATTENZIONE. il nostro profilo standard ï¿½ il seguente:
 		 * 
 		 * ........... .......... max . . upSx * * upDx
 		 * -------------.--------------.------------ half downSx * * downDx . .
@@ -1234,7 +1251,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 		max = a[1];
 
-		// calcolo metà altezza
+		// calcolo metï¿½ altezza
 		double half = (max - min) / 2 + min;
 		// parto da sx e percorro il profilo in cerca del primo valore che
 		// supera half
@@ -1275,7 +1292,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * scelta da parte dell'utente della posizione e direzione del profilo su cui
-	 * poi verrà calcolata l'FWHM
+	 * poi verrï¿½ calcolata l'FWHM
 	 * 
 	 * @param xPos posizione x MROI
 	 * @param yPos posizione y MROI
@@ -1285,7 +1302,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 */
 	private static Line selectProfilePosition(int xPos, int yPos, int len, ImagePlus imp1, boolean profiVert) {
 
-		// partiamo da dove è stata posizionata la ROI
+		// partiamo da dove ï¿½ stata posizionata la ROI
 
 		int xStartProfile = 0;
 		int yStartProfile = 0;
@@ -1315,7 +1332,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			// effettuo la scelta all'interno del loop, in modo da poterla
 			// ripetere
 			int userSelection1 = ButtonMessages.ModelessMsg(
-					"Linea su cui verrà calcolata la FWHM, eventualmente" + " riposizionarla e premere CONTINUA   <24>",
+					"Linea su cui verrï¿½ calcolata la FWHM, eventualmente" + " riposizionarla e premere CONTINUA   <24>",
 					"CONTINUA", "ORIZZ", "VERT");
 
 			switch (userSelection1) {
@@ -1368,7 +1385,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	}
 
 	private static void msgSqr2OK(int pixx) {
-		ButtonMessages.ModelessMsg("sqR2 OK  poichè pixx=" + pixx, "CONTINUA");
+		ButtonMessages.ModelessMsg("sqR2 OK  poichï¿½ pixx=" + pixx, "CONTINUA");
 	}
 
 	private static void msgSnr(double snr) {

@@ -301,8 +301,13 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 			ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond, info11, mode, timeout);
 
-			if (rt1 == null)
-				return 0;
+			if (rt1 == null) {
+				ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+				TableCode tc1 = new TableCode();
+				String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
+				String[] info12 = ReportStandardInfo.getSimpleStandardInfo(path1, imp11, tabCodici, VERSION, true);
+				rt1 = ReportStandardInfo.abortResultTable_P11(info12);
+			}
 
 			// rt1.show("Results");
 			UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt1);
@@ -340,8 +345,15 @@ public class p11rmn_ implements PlugIn, Measurements {
 					// boolean silent = false;
 
 					ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond, "", mode, timeout);
-					if (rt1 == null)
-						return 0;
+					if (rt1 == null) {
+						MyLog.waitHere("processo annulla");
+						ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
+						TableCode tc1 = new TableCode();
+						String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
+						String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path1, imp11, tabCodici, VERSION,
+								true);
+						rt1 = ReportStandardInfo.abortResultTable_P11(info11);
+					}
 
 					// rt1.show("Results");
 					UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt1);
@@ -730,8 +742,25 @@ public class p11rmn_ implements PlugIn, Measurements {
 							imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA, sqNEA);
 							imp1.getRoi().setStrokeColor(Color.red);
 							imp1.getRoi().setStrokeWidth(1.1);
-							MyLog.waitHere(info10 + "\nimp1= " + imp1.getTitle() + "\nimp2= " + imp2.getTitle()
-									+ "\n \nRichiesto riposizionamento della ROI indicata in rosso,\nORA e' possibile spostarla, oppure lasciarla dove si trova.\nPOI premere OK");
+//							MyLog.waitHere(info10 + "\nimp1= " + imp1.getTitle() + "\nimp2= " + imp2.getTitle()
+//									+ "\n \nRichiesto riposizionamento della ROI indicata in rosso,\nORA e' possibile spostarla, oppure lasciarla dove si trova.\nPOI premere OK");
+
+							int ko1 = 0;
+
+//							 ko1 = MyLog.waitHereModeless(info10 + "\nimp1= " + imp1.getTitle() + "\nimp2= "
+//									+ imp2.getTitle()
+//									+ "\n \nRichiesto riposizionamento della ROI indicata in rosso,\nORA e' possibile spostarla, oppure lasciarla dove si trova."
+//									+ "POI premere  OK, altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive");
+
+							int resp = ButtonMessages.ModelessMsg((info10 + "\nimp1= " + imp1.getTitle() + "\nimp2= "
+									+ imp2.getTitle() + "\n \nRichiesto riposizionamento della ROI indicata in rosso,"
+									+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova.\n"
+									+ "POI premere  OK, altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA"
+									+ " per passare alle successive"), "OK", "ANNULLA");
+							if (resp == 1) {
+//								MyLog.waitHere("premuto annulla");
+								return null;
+							}
 
 							confirmed = true;
 							Rectangle boundRec4 = imp1.getProcessor().getRoi();
@@ -830,7 +859,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				// .readDicomParameter(imp1,
 				// MyConst.DICOM_SERIES_DESCRIPTION)
 				// .substring(0, 4).trim();
-				
+
 				simpath = fileDir + "SIMULATE";
 				File newdir3 = new File(simpath);
 				boolean ok3 = false;
@@ -845,8 +874,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 						MyLog.waitHere("errore creazione directory " + newdir3);
 				}
 
-
-				simulataName = simpath + "\\"+patName + codice + "sim.zip";
+				simulataName = simpath + "\\" + patName + codice + "sim.zip";
 
 				boolean visualizza = ((verbose || test) && !fast);
 
@@ -1677,7 +1705,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		Overlay over11 = new Overlay();
 		imp11.setOverlay(over11);
 		imp11.updateAndDraw();
-		
 
 //		double[] out11 = MyFilter.maxPosition1x1(imp11);
 //		double xMaximum1 = out11[0];
@@ -1685,14 +1712,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double[] out1 = MyFilter.maxPosition7x7(imp11);
 		double xMaximum = out1[0];
 		double yMaximum = out1[1];
-		
+
 //		if ((xMaximum1-xMaximum)>7 || (yMaximum1-yMaximum)>7){
 //			MyLog.waitHere("CACATA in arrivo!");
 //			
 //		}
-		
-		
-		
 
 		direzione = directionFinder(imp11, xMaximum, yMaximum, silent, timeout);
 
@@ -1738,8 +1762,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		String strDirez = "";
 		double ax = Double.NaN;
 		double ay = Double.NaN;
-		
-		
 
 		// MyLog.waitHere("direzione= " + direzione);
 		// vup = 1 vdw = 2 hsx = 3 hdx = 4
@@ -1918,7 +1940,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		out[5] = endY;
 		out[6] = xMaximum;
 		out[7] = yMaximum;
-		
+
 		if (manualRequired)
 			return null;
 		else

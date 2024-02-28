@@ -208,6 +208,18 @@ public class p7rmn_ implements PlugIn, Measurements {
 				iw2ayvTable = new TableSequence().loadTable(fileDir + MyConst.SEQUENZE_FILE);
 				String path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 				ResultsTable rt = mainWarp(path1, vetRiga[0], autoCalled, step, verbose, test);
+				
+				if (rt == null) {
+					ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, verbose);
+					TableCode tc1 = new TableCode();
+					String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
+					String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path1, imp11, tabCodici, VERSION,
+							autoCalled);
+					rt = ReportStandardInfo.abortResultTable_P7(info11);
+				}
+
+				
+				
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 
 				UtilAyv.afterWork();
@@ -227,7 +239,7 @@ public class p7rmn_ implements PlugIn, Measurements {
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		ResultsTable rt = null;
 		// --------------------------------------------------------------------------------------/
-		// Qui si torna se la misura è da rifare
+		// Qui si torna se la misura e' da rifare
 		// --------------------------------------------------------------------------------------/
 		do {
 			imp1 = UtilAyv.openImageMaximized(path1);
@@ -242,7 +254,12 @@ public class p7rmn_ implements PlugIn, Measurements {
 			int diamRoi = (int) diamRoi1;
 			boolean circular = true;
 			UtilAyv.presetRoi(imp1, diamRoi, circular);
-			msgPositionRoi();
+			int resp = ButtonMessages.ModelessMsg(
+					"Posizionare la ROI esterna e premere CONTINUA, altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive",
+					"CONTINUA", "ANNULLA");
+			if (resp == 1)
+				return null;
+
 			overlayRodNumbers(imp1, diamRoi, true);
 			Polygon poli1 = UtilAyv.selectionPointsClick(imp1,
 					"Cliccare nell'ordine su tutte le RODS, poi premere FINE POSIZIONAMENTO", "FINE POSIZIONAMENTO");
@@ -270,7 +287,8 @@ public class p7rmn_ implements PlugIn, Measurements {
 				TableCode tc1 = new TableCode();
 				String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 				String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
-				rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+				// rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+				rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1); ////// SIMPLE
 				rt.showRowNumbers(true);
 
 				String t1 = "TESTO";
@@ -281,7 +299,7 @@ public class p7rmn_ implements PlugIn, Measurements {
 				String s6 = "dummy3";
 				String s7 = "dummy4";
 
-				rt.addLabel(t1, "ShiftCentrat");
+				rt.addValue(t1, "ShiftCentrat");
 				rt.addValue(s2, UtilAyv.convertToDouble(slicePos));
 				String aux1 = "";
 				int aux2 = 0;
@@ -289,7 +307,7 @@ public class p7rmn_ implements PlugIn, Measurements {
 					aux2++;
 					aux1 = "Rod" + aux2 + "a";
 					rt.incrementCounter();
-					rt.addLabel(t1, aux1);
+					rt.addValue(t1, aux1);
 					rt.addValue(s2, tabPunti[i2][0]);
 					rt.addValue(s3, tabPunti[i2][1]);
 					rt.addValue(s4, 0);
@@ -298,7 +316,7 @@ public class p7rmn_ implements PlugIn, Measurements {
 					rt.addValue(s7, 0);
 					rt.incrementCounter();
 					aux1 = "Rod" + aux2 + "b";
-					rt.addLabel(t1, aux1);
+					rt.addValue(t1, aux1);
 					rt.addValue(s2, tabPunti[i2 + 1][0]);
 					rt.addValue(s3, tabPunti[i2 + 1][1]);
 					rt.addValue(s4, 0);
@@ -311,12 +329,12 @@ public class p7rmn_ implements PlugIn, Measurements {
 					aux2++;
 					aux1 = "Cubo" + aux2;
 					rt.incrementCounter();
-					rt.addLabel(t1, aux1);
+					rt.addValue(t1, aux1);
 					rt.addValue(s2, tabPunti[i2][0]);
 					rt.addValue(s3, tabPunti[i2][1]);
 				}
 				rt.incrementCounter();
-				rt.addLabel(t1, "Spacing");
+				rt.addValue(t1, "Spacing");
 				rt.addValue(s2, dimPixel2);
 				if (verbose && !test)
 					rt.show("Results");
@@ -405,7 +423,7 @@ public class p7rmn_ implements PlugIn, Measurements {
 		int[] vetY = MyConst.P7_Y_POINTS_TESTSIEMENS;
 		boolean ok = testExcecution(path1, vetX, vetY, 0, 0, false);
 		if (ok) {
-			IJ.log("Il test di p7rmn_ WARP è stato SUPERATO");
+			IJ.log("Il test di p7rmn_ WARP ï¿½ stato SUPERATO");
 		} else {
 			IJ.log("Il test di p7rmn_ WARP evidenzia degli ERRORI");
 		}
@@ -446,13 +464,13 @@ public class p7rmn_ implements PlugIn, Measurements {
 		return (home1);
 	}
 
-	private static void msgPositionRoi() {
-		ButtonMessages.ModelessMsg("Posizionare la ROI  e premere CONTINUA", "CONTINUA");
-	}
+//	private static void msgPositionRoi() {
+//		ButtonMessages.ModelessMsg("Posizionare la ROI  e premere CONTINUA", "CONTINUA");
+//	}
 
 	private static void msgRedo(int nPunti) {
 		IJ.showMessage("--- A T T E N Z I O N E ---",
-				"Sono stati selezionati solo " + nPunti + " anzichè 36  punti,\n--- R I F A R E ---");
+				"Sono stati selezionati solo " + nPunti + " anzichï¿½ 36  punti,\n--- R I F A R E ---");
 	}
 
 }

@@ -580,47 +580,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			if (out2 == null) {
 
-				// hanno premuto ANNULLA, quindi la misura viene abortita e
-				// nei risultati vengono messi dei dati dummy
 				String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path1, imp11, tabCodici,
 						VERSION + "_P10__ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_"
 								+ MyVersionUtils.CURRENT_VERSION + "___",
 						autoCalled);
-//
 
-//				String t11 = "TESTO";
-//				String s12 = "VALORE";
-//				String s13 = "roi_x";
-//				String s14 = "roi_y";
-//				String s15 = "roi_b";
-//				String s16 = "roi_h";
-//				rt11 = ReportStandardInfo.putSimpleStandardInfoRT_new(info11);
-//				rt11.showRowNumbers(true);
-//				for (int i1 = 0; i1 < 5; i1++) {
-//					rt11.incrementCounter();
-//					rt11.addValue(t11, "dummy");
-//					rt11.addValue(s12, "----");
-//					rt11.addValue(s13, "----");
-//					rt11.addValue(s14, "----");
-//					rt11.addValue(s15, "----");
-//					rt11.addValue(s16, "----");
-//				}
 				double slicePosition11 = ReadDicom
 						.readDouble(ReadDicom.readDicomParameter(imp11, MyConst.DICOM_SLICE_LOCATION));
-//				// manca ancora la posizione
-//				rt11.incrementCounter();
-//				rt11.addValue(t11, "Pos");
-//				rt11.addValue(s12, slicePosition11);
-//				rt11.addValue(s13, 0);
-//				rt11.addValue(s14, 0);
-//				rt11.addValue(s15, 0);
-//				rt11.addValue(s16, 0);
-//				
-//				// rt.show("PROVVISORIO");
-//				// #############################################
-//				// #############################################
-//				// #############################################
-
 				return ReportStandardInfo.abortResultTable_P10(info11, slicePosition11);
 			}
 
@@ -2488,7 +2454,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			imp11.getRoi().setStrokeWidth(1.1);
 			ko1 = MyLog.waitHereModeless("<<  SELEZIONE MANUALE ATTIVA >>\n \n" + "imp11= " + imp11.getTitle()
 					+ "\nNon si riescono a determinare le coordinate corrette del cerchio"
-					+ "\nRichiesto ridimensionamennto e riposizionamento della ROI indicata in rosso, attorno al fantoccio\n"
+					+ "\nRichiesto ridimensionamento e riposizionamento della ROI indicata in rosso, attorno al fantoccio\n"
 					+ "POI premere  OK, altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive");
 
 			boundRec = imp11.getProcessor().getRoi();
