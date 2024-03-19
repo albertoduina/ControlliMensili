@@ -540,7 +540,6 @@ public class Sequenze_ implements PlugIn {
 
 				// ===============================================================================
 
-
 				if ((codice.equalsIgnoreCase("BL2F_") && (firstLetterOfCoil.equalsIgnoreCase("R") == true))) {
 					// MyLog.waitHere("BL2F XXX");
 					coil = "XXX";
@@ -557,15 +556,13 @@ public class Sequenze_ implements PlugIn {
 					// MyLog.waitHere("BR2F XXX");
 					coil = "XXX";
 				}
-				
-				coil= coil.replace("BAL;BAR;BCL;BCR","BAL+BAR+BCL+BCR");
-				coil= coil.replace("BL;BR","BL+BR");
-				coil= coil.replace("PL1;PR1","PL1+PR1");
-				coil= coil.replace("PL2;PR2","PL2+PR2");
-				coil= coil.replace("PL3;PR3","PL3+PR3");
-				coil= coil.replace("PL4;PR4","PL4+PR4");
-		
-				
+
+				coil = coil.replace("BAL;BAR;BCL;BCR", "BAL+BAR+BCL+BCR");
+				coil = coil.replace("BL;BR", "BL+BR");
+				coil = coil.replace("PL1;PR1", "PL1+PR1");
+				coil = coil.replace("PL2;PR2", "PL2+PR2");
+				coil = coil.replace("PL3;PR3", "PL3+PR3");
+				coil = coil.replace("PL4;PR4", "PL4+PR4");
 
 				// ###########################################################################
 
@@ -633,7 +630,7 @@ public class Sequenze_ implements PlugIn {
 					// IJ.log(tableCode2[tableRow][0] + " " + coil + " "
 					// + tableCode2[tableRow][4]);
 					// count3++;
-					// se il codice � conosciuto aggiunge i dati
+					// se il codice e' conosciuto aggiunge i dati
 					vetConta.add("" + (count3));
 					count3++;
 					vetPath.add(path1);
@@ -779,7 +776,7 @@ public class Sequenze_ implements PlugIn {
 	public String[][] expandCode(String codice, String eco, String[][] tableExpand4) {
 
 //		MyLog.logMatrix(tableExpand4, "tableExpand");
-//		MyLog.waitHere("codice= " + codice + " eco= " + eco);
+//		MyLog.waitHere("esamino codice= " + codice + " eco= " + eco);
 
 		if (codice == null) {
 			MyLog.waitHere();
@@ -801,13 +798,15 @@ public class Sequenze_ implements PlugIn {
 		for (int i2 = 0; i2 < tableExpand4.length; i2++) {
 			String codiceExpand = TableExpand.getOldCode(tableExpand4, i2);
 			String ecoExpand = TableExpand.getEcho(tableExpand4, i2);
-//			MyLog.waitHere("codice= " + codice + " codiceExpand= " + codiceExpand + "eco= " + eco + " ecoExpand= "
-//					+ ecoExpand);
+//			MyLog.waitHere("ESPANDO codice= " + codice + " codiceExpand= " + codiceExpand + "eco= " + eco + " ecoExpand= "
+//			+ ecoExpand);
+
 			if ((codice.equals(codiceExpand)) && (eco.equals(ecoExpand))) {
 				vetOldCode.add(tableExpand4[i2][TableExpand.OLD_CODE]);
 				vetEcho.add(tableExpand4[i2][TableExpand.ECHO]);
 				vetNewCode.add(tableExpand4[i2][TableExpand.NEW_CODE]);
 				vetImaPass.add(tableExpand4[i2][TableExpand.IMA_PASS]);
+
 			}
 		}
 		String[][] out1 = new String[vetOldCode.size()][4];
@@ -817,10 +816,10 @@ public class Sequenze_ implements PlugIn {
 			out1[i1][1] = vetEcho.get(i1);
 			out1[i1][2] = vetNewCode.get(i1);
 			out1[i1][3] = vetImaPass.get(i1);
-//			IJ.log("expanded " + out1[i1][0] + " " + out1[i1][1] + " " + out1[i1][2] + " " + out1[i1][3]);
-//			MyLog.waitHere();
-
+			// IJ.log("-"+i1+"-HO EFFETTUATO oldCode=" + out1[i1][0] + " echo=" +
+			// out1[i1][1] + " newCode=" + out1[i1][2] + " ima=" + out1[i1][3]);
 		}
+
 		return out1;
 	}
 

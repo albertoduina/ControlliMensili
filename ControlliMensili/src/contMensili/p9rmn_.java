@@ -436,7 +436,8 @@ public class p9rmn_ implements PlugIn, Measurements {
 //			String codice2 = "";
 
 //			TableUtils.dumpTable(tabCodici);
-//			MyLog.waitHere("riga1= " + riga1);
+//			 MyLog.waitHere("riga1= " + riga1 + " codice= " + codice + " codice1= " +
+//			 codice1);
 
 //			if (InputOutput.isCode(aux3, tabCodici))
 //				codice2 = aux3.substring(0, 5).trim();
@@ -444,7 +445,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 //				aux3 = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION);
 //				codice2 = aux3.substring(0, 5).trim();
 //			}
-			info1[0] = codice1;
+			info1[0] = codice;
 
 			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 			rt.showRowNumbers(true);
