@@ -73,11 +73,12 @@ public class Sequenze_ implements PlugIn {
 	public static String VERSION = "Programma gestione automatica";
 
 	public int location;
-
-	// //
-	// // ABILITA E DISABILITA LE STAMPE DI DEBUG
-	// // METTERE debugTables A FALSE PER NON AVERE LE STAMPE
-	// //
+	//
+	// ----------------------------------------------------------
+	// ABILITA E DISABILITA LE STAMPE DI DEBUG
+	// METTERE debugTables A FALSE PER NON AVERE LE STAMPE
+	// ----------------------------------------------------------
+	//
 	public boolean debugTables = false;
 	public static boolean forcesilent = false;
 
@@ -89,9 +90,8 @@ public class Sequenze_ implements PlugIn {
 	public void run(String arg) {
 		// ============================================================================================
 		// nota bene: le seguenti istruzioni devono ASSOLUTAMENTE essere all'inizio, in
-		// questo
-		// modo il messaggio viene emesso, altrimenti si ha una eccezione
-		//
+		// questo modo il messaggio viene emesso, altrimenti si ha una eccezione
+		// --------------------------------------------------------------------------------------------
 		try {
 			Class.forName("utils.IW2AYV");
 		} catch (ClassNotFoundException e) {
@@ -119,15 +119,15 @@ public class Sequenze_ implements PlugIn {
 
 		// String[][] tableCode = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
+		/// --------------------------------------------------------------------------------------------
 		/// ATTENZIONE L'ATTUALE VERSIONE DI SEQUENZE SUPPORTA UN UNICO FILE CON I
-		/// CODICI,
-		/// ESSO SI CHIAMA ATTUALMENTE CODICI090218.CSV E DELA SUA MANUTENZIONE NON
-		/// SI OCCUPA PIU'IL PROGRAMMATORE, MA GLI UTILIZZATORI, CHE SI OCCUPERANNO DEL
-		/// SUO
-		/// AGGIORNAMENTO E DELL'INTERSCAMBIO DELLA VERSIONE AGGIORNATA. QUESTO PERCHE'
-		/// MI E'STATO CHIESTO DI RENDERE IL FILE CON I CODICI LIBERAMENTE ACCESSIBILE,
-		/// QUINDI DA GENNAIO 2018 NON E' PIU' NELLE MIE DISPONIBILITA' (QUINDI LO
-		/// POSSONO MODIFICARE TUTTI, INCLUSI D&P (DOGS & PIGS))
+		/// CODICI, ESSO SI CHIAMA ATTUALMENTE CODICI090218.CSV E DELLA SUA MANUTENZIONE
+		/// NON SI OCCUPA PIU'IL PROGRAMMATORE, MA GLI UTILIZZATORI, CHE SI OCCUPERANNO
+		/// DEL SUO AGGIORNAMENTO E DELL'INTERSCAMBIO DELLA VERSIONE AGGIORNATA. QUESTO
+		/// PERCHE'MI E'STATO CHIESTO DI RENDERE IL FILE CON I CODICI LIBERAMENTE
+		/// ACCESSIBILE, QUINDI DA GENNAIO 2018 NON E' PIU' NELLE MIE DISPONIBILITA'
+		/// (QUINDI LO POSSONO MODIFICARE TUTTI, INCLUSI D&P (DOGS & PIGS))
+		/// --------------------------------------------------------------------------------------------
 
 		TableCode tc1 = new TableCode();
 		String[][] tableCode = tc1.loadMultipleTable("codici", ".csv");
@@ -191,6 +191,7 @@ public class Sequenze_ implements PlugIn {
 				return;
 			}
 
+			// --------------------------------------------------------------------------------------------
 			IJ.runPlugIn("contMensili.p3rmn_", "-1");
 			IJ.runPlugIn("contMensili.p4rmn_", "-1");
 			IJ.runPlugIn("contMensili.p5rmn_", "-1");
@@ -206,6 +207,7 @@ public class Sequenze_ implements PlugIn {
 			IJ.runPlugIn("contMensili.p10rmn_OLD1", "-1");
 			IJ.runPlugIn("contMensili.p11rmn_OLD1", "-1");
 			IJ.runPlugIn("contMensili.p12rmn_OLD1", "-1");
+			// --------------------------------------------------------------------------------------------
 
 			ButtonMessages.ModelessMsg("Sequenze: fine selfTest, vedere Log per risultati", "CONTINUA");
 			return;
@@ -258,8 +260,7 @@ public class Sequenze_ implements PlugIn {
 			if (nuovo1) {
 				//
 				// se e' stato selezionato un nuovo set di misure cancello sia
-				// il
-				// file directory che il file excel dei risultati
+				// il file directory che il file excel dei risultati
 				//
 				File fx = new File(startingDir + MyConst.SEQUENZE_FILE);
 				if (fx.exists())
@@ -311,6 +312,11 @@ public class Sequenze_ implements PlugIn {
 
 				// String[][] tableSequenceTreviglio =
 				// treviglioSequenceTable(tableSequenceLoaded, tableExpand);
+				// --------------------------------------------------------------------------------------------
+				// eseguo un sort in base a POSIZ, TIME, poi riordino in base a tableCode infine
+				// verifico che siano presenti i giusti numeri di immagini. Per ultimo
+				// modifierSmart si occupa delle acquisizioni con più fette
+				// --------------------------------------------------------------------------------------------
 
 				String[][] tableSequenceSorted1 = TableSorter.minsort(tableSequenceLoaded, TableSequence.POSIZ);
 				if (debugTables) {
@@ -351,9 +357,9 @@ public class Sequenze_ implements PlugIn {
 					MyLog.waitHere("salvare il log come tableSequenceModified1");
 				}
 
-				boolean test = false;
 				// NOTA BENE: lasciare test a false, altrimenti non vengono piu'
 				// stampati gli errori e si hanno problemi in elaborazione!!!
+				boolean test = false;
 				logVerifySequenceTable(listProblems, test);
 
 				boolean success = new TableSequence().writeTable(startingDir + MyConst.SEQUENZE_FILE,
@@ -369,7 +375,11 @@ public class Sequenze_ implements PlugIn {
 				MyLog.waitHere("salvare il log come tableSequenceReloaded");
 			}
 
+			// --------------------------------------------------------------------------------------------
+			// motore di chiamata dei plugins
+			// --------------------------------------------------------------------------------------------
 			callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false, superficiali, p10p11p12, tw);
+			// --------------------------------------------------------------------------------------------
 
 		}
 		long endTime = System.currentTimeMillis();
@@ -532,7 +542,7 @@ public class Sequenze_ implements PlugIn {
 				}
 
 				// ###########################################################################
-				// 16/02/2024 modifiche per la so'la (romanesco)
+				// 16/02/2024 modifiche per la SOLA (romanesco)
 
 				String firstLetterOfCoil = coil.substring(0, 1);
 
@@ -556,6 +566,10 @@ public class Sequenze_ implements PlugIn {
 					// MyLog.waitHere("BR2F XXX");
 					coil = "XXX";
 				}
+
+				// --------------------------------------------------------------------------------------------
+				// sostituisco il ; col simbolo +
+				// --------------------------------------------------------------------------------------------
 
 				coil = coil.replace("BAL;BAR;BCL;BCR", "BAL+BAR+BCL+BCR");
 				coil = coil.replace("BL;BR", "BL+BR");
@@ -695,8 +709,8 @@ public class Sequenze_ implements PlugIn {
 			}
 		}
 
-		// a questo punto non mi resta che creare la tabella e riversarvi i dati
-		// dagli ArrayList
+		// a questo punto non mi resta che creare la tabella e riversarvi i dati degli
+		// ArrayList
 		String[][] tableVuota = TableSequence.createEmptyTable(count3, TableSequence.COLUMNS);
 
 		String[][] tablePass1 = TableSequence.writeColumn(tableVuota, ArrayUtils.arrayListToArrayString(vetConta),
@@ -754,16 +768,6 @@ public class Sequenze_ implements PlugIn {
 		return trovato;
 	}
 
-	// public static boolean coilPresent2(String coil, String coilCode) {
-	// boolean trovato;
-	// if (coil.equals(coilCode))
-	// trovato = true;
-	// else
-	// trovato = false;
-	// // IJ.log("coil= " + coil + " coilCode= " + coilCode + " trovato= "
-	// // + trovato);
-	// return trovato;
-	// }
 
 	/**
 	 * Espande i codici delle immagini, utilizzando il file expand.txt
