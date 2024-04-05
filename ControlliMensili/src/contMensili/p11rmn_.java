@@ -449,6 +449,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 			double out2[] = positionSearch(imp11, autoCalled, direzione, profond, info10, mode, timeout);
 
 			imp11.close();
+			
+			
 
 			if (out2 == null) {
 				manualRequired2 = true;
@@ -755,8 +757,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 							int resp = ButtonMessages.ModelessMsg((info10 + "\nimp1= " + imp1.getTitle() + "\nimp2= "
 									+ imp2.getTitle() + "\n \nRichiesto riposizionamento della ROI indicata in rosso,"
 									+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova.\n"
-									+ "POI premere  OK, altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA"
-									+ " per passare alle successive"), "OK", "ANNULLA");
+									+ "POI premere  OK, altrimenti, se l'immagine NON E'ACCETTABILE premere <ANNULLA>"
+									+ " per passare alle successive"), "OK", "<ANNULLA>");
 							if (resp == 1) {
 //								MyLog.waitHere("premuto annulla");
 								return null;

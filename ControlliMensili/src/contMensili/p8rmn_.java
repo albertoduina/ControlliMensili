@@ -201,7 +201,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 				String path1 = TableSequence.getPath(iw2ayvTable, riga1);
 				ResultsTable rt = mainDgp(path1, riga1, autoCalled, step, test);
-				
+
 				if (rt == null) {
 					TableCode tc11 = new TableCode();
 					String[][] tabCodici11 = tc11.loadMultipleTable("codici", ".csv");
@@ -266,7 +266,8 @@ public class p8rmn_ implements PlugIn, Measurements {
 					ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
 
 			Polygon poli1 = UtilAyv.selectionPointsClick(imp1,
-					"Cliccare nell'ordine sui 4 angoli del quadrato, poi premere FINE POSIZIONAMENTO",
+					"Cliccare nell'ordine sui 4 angoli del quadrato, poi premere FINE POSIZIONAMENTO." +
+					"\nSe l'immagine non fosse accettabile premere <ANNULLA> per passare alle successive",
 					"FINE POSIZIONAMENTO");
 
 			if (poli1 == null)
@@ -313,7 +314,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 				String s5 = "seg_bx";
 				String s6 = "seg_by";
 
-				rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);    
+				rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 				rt.showRowNumbers(true);
 
 				rt.addValue(t1, "slicePos");

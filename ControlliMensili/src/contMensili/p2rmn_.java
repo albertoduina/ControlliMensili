@@ -89,11 +89,10 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	// ---------------------------"01234567890123456789012345678901234567890"
 
-
 	/**
 	 * tabella coi dati di ayv.txt (generati da Sequenze)
 	 */
-	String[][] strRiga3;  // tabella coi dati di ayv.txt (generati da Sequenze)
+	String[][] strRiga3; // tabella coi dati di ayv.txt (generati da Sequenze)
 
 	/**
 	 * tabella coi dati di codici.txt
@@ -220,29 +219,28 @@ public class p2rmn_ implements PlugIn, Measurements {
 //			return;
 //		}
 
-		
 		// ----------------------------------------------------------------------------
 		if (IJ.versionLessThan("1.43k"))
 			return;
-		//-----------------------------
+		// -----------------------------
 		Count c1 = new Count();
 		if (!c1.jarCount("iw2ayv_"))
 			return;
-		//-----------------------------
+		// -----------------------------
 		String className = this.getClass().getName();
 		String user1 = System.getProperty("user.name");
-		//-----------------------------
-		TableCode tc1 = new TableCode();		
+		// -----------------------------
+		TableCode tc1 = new TableCode();
 		String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
-		//-----------------------------
+		// -----------------------------
 		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
-		//-----------------------------
+		// -----------------------------
 		// directory dati, dove vengono memorizzati ayv.txt e Results1.xls
 		String fileDir = Prefs.get("prefer.string1", "none");
-		//-----------------------------
+		// -----------------------------
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		boolean autoCalled = false;
 		boolean manualCalled = false;
@@ -257,7 +255,6 @@ public class p2rmn_ implements PlugIn, Measurements {
 		String[] path1 = new String[MAX_IMAGES];
 
 //		TableCode tc1 = new TableCode();
-
 
 		selftest = false;
 		boolean retry = false;
@@ -422,7 +419,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 				ButtonMessages.ModelessMsg("Ricevuto=" + args, "CONTINUA");
 			defaultVetXUpperLeftCornerRoiGels = X_ULC_ROI_TESTGE;
 			defaultVetYUpperLeftCornerRoiGels = Y_ULC_ROI_TESTGE;
-			
+
 			StringTokenizer strTok = new StringTokenizer(args, "#");
 			for (int i1 = 0; i1 < nTokens; i1++)
 				// vetRiga1 contiene i codici multipli passati da sequenze
@@ -533,9 +530,9 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 						imp8.updateAndDraw();
 
-						userSelection1 = ButtonMessages.ModelessMsg(
-								"Posizionare ROI su GEL" + (i1 + 1) + "  e premere Accetta      <08>", "ACCETTA",
-								"RIDISEGNA", "ABBANDONA");
+						userSelection1 = ButtonMessages.ModelessMsg("Posizionare ROI su GEL" + (i1 + 1)
+								+ "  e premere Accetta, se l'immagine NON E'ACCETTABILE premere <ANNULLA> per passare alle successive     <08>",
+								"ACCETTA", "RIDISEGNA", "<ANNULLA>");
 
 						// MyLog.waitHere("userSelection1= " + userSelection1);
 
@@ -647,42 +644,47 @@ public class p2rmn_ implements PlugIn, Measurements {
 			else
 				info1[0] = "T1___";
 
-			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
-			rt.showRowNumbers(true);
+			if (!abort) {
+				// rt = ReportStandardInfo.abortResultTable_P2(info1);
 
-			int col = 0;
+				// } else {
+				rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+				rt.showRowNumbers(true);
 
-			String t1 = "TESTO";
-			String s2 = "media";
-			String s3 = "devstan";
-			String s4 = "roi_x";
-			String s5 = "roi_y";
-			String s6 = "roi_b";
-			String s7 = "roi_h";
+				int col = 0;
 
-			/**
-			 * rt.setHeading(++col, t1); rt.setHeading(++col, "media"); rt.setHeading(++col,
-			 * "devstan"); rt.setHeading(++col, "roi_x"); rt.setHeading(++col, "roi_y");
-			 * rt.setHeading(++col, "roi_b"); rt.setHeading(++col, "roi_h");
-			 **/
+				String t1 = "TESTO";
+				String s2 = "media";
+				String s3 = "devstan";
+				String s4 = "roi_x";
+				String s5 = "roi_y";
+				String s6 = "roi_b";
+				String s7 = "roi_h";
 
-			int gelNumber = 0;
-			for (int i1 = 0; i1 < vetRoi.length; i1++) {
-				gelNumber++;
-				if (gelNumber > 1)
-					rt.incrementCounter();
-				if (gelNumber == 12)
-					gelNumber = 14; // al posto 12 abbiamo il gel 14
+				/**
+				 * rt.setHeading(++col, t1); rt.setHeading(++col, "media"); rt.setHeading(++col,
+				 * "devstan"); rt.setHeading(++col, "roi_x"); rt.setHeading(++col, "roi_y");
+				 * rt.setHeading(++col, "roi_b"); rt.setHeading(++col, "roi_h");
+				 **/
 
-				rt.addValue(t1, "Gel_" + gelNumber);
-				rt.addValue(s2, medGels[i1]);
-				rt.addValue(s3, devGels[i1]);
-				rt.addValue(s4, vetXUpperLeftCornerRoiGels[i1]);
-				rt.addValue(s5, vetYUpperLeftCornerRoiGels[i1]);
-				rt.addValue(s6, roi_diam);
-				rt.addValue(s7, roi_diam);
+				int gelNumber = 0;
+				for (int i1 = 0; i1 < vetRoi.length; i1++) {
+					gelNumber++;
+					if (gelNumber > 1)
+						rt.incrementCounter();
+					if (gelNumber == 12)
+						gelNumber = 14; // al posto 12 abbiamo il gel 14
+
+					rt.addValue(t1, "Gel_" + gelNumber);
+					rt.addValue(s2, medGels[i1]);
+					rt.addValue(s3, devGels[i1]);
+					rt.addValue(s4, vetXUpperLeftCornerRoiGels[i1]);
+					rt.addValue(s5, vetYUpperLeftCornerRoiGels[i1]);
+					rt.addValue(s6, roi_diam);
+					rt.addValue(s7, roi_diam);
+				}
+				rt.show("Results");
 			}
-			rt.show("Results");
 			// MyLog.waitHere();
 			//
 			// MyLog.waitHere("85, 29, 20, 20");
@@ -729,7 +731,13 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 		if (abort) {
 			// MyLog.waitHere("abort");
-			rt = ReportStandardInfo.abortResultTable_P2(info11);
+			if (typeT2)
+				info1[0] = "T2___";
+			else
+				info1[0] = "T1___";
+
+			
+			rt = ReportStandardInfo.abortResultTable_P2(info1);
 		}
 
 		//

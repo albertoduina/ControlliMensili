@@ -577,6 +577,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				MyLog.waitHere("Non trovato il file " + path1);
 			// ImageWindow iw11 = WindowManager.getCurrentWindow();
 			double out2[] = positionSearch(imp11, profond, info10, mode, timeout);
+			
 
 			if (out2 == null) {
 
@@ -2392,7 +2393,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 						yCenterCircle, diamCircle / 2);
 				sumError += Math.abs(vetDist[i1]);
 			}
-			if (sumError > maxFitError) {
+			
+			
+			
+				if (sumError > maxFitError) { 
 				// MyLog.waitHere("maxFitError");
 				// -------------------------------------------------------------
 				// disegno il cerchio ed i punti, in modo da date un feedback
@@ -2455,7 +2459,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			ko1 = MyLog.waitHereModeless("<<  SELEZIONE MANUALE ATTIVA >>\n \n" + "imp11= " + imp11.getTitle()
 					+ "\nNon si riescono a determinare le coordinate corrette del cerchio"
 					+ "\nRichiesto ridimensionamento e riposizionamento della ROI indicata in rosso, attorno al fantoccio\n"
-					+ "POI premere  OK, altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive");
+					+ "POI premere  OK. Altrimenti, se l'immagine NON E'ACCETTABILE premere <ANNULLA> per passare alle successive\");\r\n"
+					+ "");
 
 			boundRec = imp11.getProcessor().getRoi();
 			xCenterCircle = boundRec.x + boundRec.width / 2;

@@ -447,9 +447,6 @@ public class p9rmn_ implements PlugIn, Measurements {
 //			}
 			info1[0] = codice;
 
-			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
-			rt.showRowNumbers(true);
-
 //			MyLog.logVector(info1, "info1");
 //			MyLog.waitHere();
 
@@ -537,9 +534,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 						imp1.updateAndDraw();
 						if (!selftest)
-							userSelection1 = ButtonMessages.ModelessMsg(
-									"Posizionare ROI su GEL" + (i1 + 1) + "  e premere Accetta      <08>", "ACCETTA",
-									"RIDISEGNA", "ABBANDONA");
+							userSelection1 = ButtonMessages.ModelessMsg("Posizionare ROI su GEL" + (i1 + 1)
+									+ "  e premere Accetta,  se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive     <08>",
+									"ACCETTA", "RIDISEGNA", "ANNULLA");
 
 						// MyLog.waitHere("userSelection1= " + userSelection1);
 
@@ -609,48 +606,57 @@ public class p9rmn_ implements PlugIn, Measurements {
 				}
 
 			}
+			
+			if (abort)
+				break;
+
 
 //			ResultsTable rt = ReportStandardInfo.putStandardInfoRT(info1);
 
 //			ResultsTable rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 //			rt.showRowNumbers(true);
 
-			int col = 0;
+			if (!abort) {
+				rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+				rt.showRowNumbers(true);
 
-			String t1 = "TESTO";
-			String s2 = "VALORE";
-			String s3 = "roi_x1";
-			String s4 = "roi_y1";
-			String s5 = "roi_r1";
-			String s6 = "roi_x2";
-			String s7 = "roi_y2";
-			String s8 = "roi_r2";
+				int col = 0;
 
-			String label;
-			double echo = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1, DICOM_ECHO_TIME));
-			rt.addValue(t1, "TE");
-			rt.addValue(s2, echo);
-			rt.incrementCounter();
+				String t1 = "TESTO";
+				String s2 = "VALORE";
+				String s3 = "roi_x1";
+				String s4 = "roi_y1";
+				String s5 = "roi_r1";
+				String s6 = "roi_x2";
+				String s7 = "roi_y2";
+				String s8 = "roi_r2";
 
-			double inversion = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1, DICOM_INVERSION_TIME));
-			rt.addValue(t1, "TI");
-			rt.addValue(s2, inversion);
-			if (typeT2 && (inversion > 0))
-				IJ.showMessage("la sequenza di " + path1 + " dovrebbe essere una T2 ma ha un Inversion Time > 0!");
-			for (int i1 = 0; i1 < pointerGel1.length; i1++) {
+				String label;
+				double echo = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1, DICOM_ECHO_TIME));
+				rt.addValue(t1, "TE");
+				rt.addValue(s2, echo);
 				rt.incrementCounter();
-				label = "gels_" + VET_NUMERI_GEL[pointerGel1[i1]] + "-" + VET_NUMERI_GEL[pointerGel2[i1]];
-				rt.addValue(t1, label);
-				rt.addValue(s2, vetCNR[i1]);
-				rt.addValue(s3, vetXUpperLeftCornerRoiGels[pointerGel1[i1]]);
-				rt.addValue(s4, vetYUpperLeftCornerRoiGels[pointerGel1[i1]]);
-				rt.addValue(s5, vetRx[pointerGel1[i1]]);
-				rt.addValue(s6, vetXUpperLeftCornerRoiGels[pointerGel2[i1]]);
-				rt.addValue(s7, vetYUpperLeftCornerRoiGels[pointerGel2[i1]]);
-				rt.addValue(s8, vetRx[pointerGel2[i1]]);
-			}
 
-			rt.show("Results");
+				double inversion = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1, DICOM_INVERSION_TIME));
+				rt.addValue(t1, "TI");
+				rt.addValue(s2, inversion);
+				if (typeT2 && (inversion > 0))
+					IJ.showMessage("la sequenza di " + path1 + " dovrebbe essere una T2 ma ha un Inversion Time > 0!");
+				for (int i1 = 0; i1 < pointerGel1.length; i1++) {
+					rt.incrementCounter();
+					label = "gels_" + VET_NUMERI_GEL[pointerGel1[i1]] + "-" + VET_NUMERI_GEL[pointerGel2[i1]];
+					rt.addValue(t1, label);
+					rt.addValue(s2, vetCNR[i1]);
+					rt.addValue(s3, vetXUpperLeftCornerRoiGels[pointerGel1[i1]]);
+					rt.addValue(s4, vetYUpperLeftCornerRoiGels[pointerGel1[i1]]);
+					rt.addValue(s5, vetRx[pointerGel1[i1]]);
+					rt.addValue(s6, vetXUpperLeftCornerRoiGels[pointerGel2[i1]]);
+					rt.addValue(s7, vetYUpperLeftCornerRoiGels[pointerGel2[i1]]);
+					rt.addValue(s8, vetRx[pointerGel2[i1]]);
+				}
+
+				rt.show("Results");
+			}
 
 			if (autoCalled) {
 				userSelection3 = ButtonMessages.ModelessMsg("Accettare il risultato delle misure?     <11>", "ACCETTA",
@@ -680,6 +686,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 				}
 				accetta = true;
 			}
+
 		} while (!accetta); // do
 
 		if (abort) {
