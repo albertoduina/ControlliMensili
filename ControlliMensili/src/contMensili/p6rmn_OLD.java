@@ -75,7 +75,7 @@ import utils.UtilAyv;
  * 
  */
 
-public class p16rmn_ implements PlugIn, Measurements {
+public class p6rmn_OLD implements PlugIn, Measurements {
 
 	static final int ABORT = 1;
 
@@ -169,7 +169,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 				// new p6rmn_().wrapThickness(path, "0", oldPosition, autoCalled, step, verbose,
 				// test);
 
-				new p16rmn_().mainThickness(path, "0", oldPosition, autoCalled, step, verbose, test);
+				new p6rmn_OLD().mainThickness(path, "0", oldPosition, autoCalled, step, verbose, test);
 				UtilAyv.afterWork();
 				retry = true;
 			}
@@ -322,7 +322,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 				boolean step = false;
 				boolean verbose = false;
 				boolean test = true;
-				ResultsTable rt = new p16rmn_().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
+				ResultsTable rt = new p6rmn_OLD().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
 						test);
 				rt.show("Results");
 				MyLog.waitHere("verifica results table");
@@ -348,7 +348,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 				boolean verbose = false;
 				boolean test = true;
 
-				ResultsTable rt = new p16rmn_().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
+				ResultsTable rt = new p6rmn_OLD().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
 						test);
 
 				double[] vetResults = UtilAyv.vectorizeResults(rt);
@@ -381,7 +381,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 		boolean verbose = false;
 		boolean test = true;
 
-		ResultsTable rt = new p16rmn_().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
+		ResultsTable rt = new p6rmn_OLD().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt);
 		boolean ok = UtilAyv.verifyResults1(vetResults, referenceSiemens(), MyConst.P6_vetName);

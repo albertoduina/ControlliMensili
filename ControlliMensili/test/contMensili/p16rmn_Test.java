@@ -83,7 +83,7 @@ public class p16rmn_Test {
 		// N.B: mettendo verbose a true si puo' vedere la grafica funzionare
 		boolean verbose = true;
 		boolean bLabelSx = false;
-		double[] dsd1 = new p16rmn_().analProf(imp3, vetRefPosition,
+		double[] dsd1 = new p16rmn_OLD().analProf(imp3, vetRefPosition,
 				vetProfile, ra1, slab, invert, verbose, bLabelSx, dimPixel, over3);
 		
 		double fwhm = dsd1[0];
@@ -131,7 +131,7 @@ public class p16rmn_Test {
 		// N.B: mettendo verbose a true si puo' vedere la grafica funzionare
 		boolean verbose = false;
 		boolean bLabelSx = false;
-		double[] dsd1 = new p16rmn_().analProf(imp3, vetRefPosition,
+		double[] dsd1 = new p16rmn_OLD().analProf(imp3, vetRefPosition,
 				vetProfile, ra1, slab, invert, verbose, bLabelSx, dimPixel, over3);
 		
 		double fwhm = dsd1[0];
@@ -171,7 +171,7 @@ public class p16rmn_Test {
 		boolean invert = true;
 		boolean verbose = true;
 		boolean bLabelSx = false;
-		double[] dsd1 = new p16rmn_().analProf(imp3, vetRefPosition,
+		double[] dsd1 = new p16rmn_OLD().analProf(imp3, vetRefPosition,
 				vetProfile, ra1, slab, invert, verbose, bLabelSx, dimPixel, over3);	
 		double fwhm = dsd1[0];
 		double peak = dsd1[1];
@@ -208,7 +208,7 @@ public class p16rmn_Test {
 		boolean invert = false;
 		boolean verbose = true;
 		boolean bLabelSx = false;
-		double[] dsd1 = new p16rmn_().analProf(imp3, vetRefPosition,
+		double[] dsd1 = new p16rmn_OLD().analProf(imp3, vetRefPosition,
 				vetProfile, ra1, slab, invert, verbose, bLabelSx, dimPixel, over3);	
 		double fwhm = dsd1[0];
 		double peak = dsd1[1];
@@ -244,7 +244,7 @@ public class p16rmn_Test {
 		boolean invert = true;
 		boolean verbose = true;
 		boolean bLabelSx = false;
-		double[] dsd1 = new p16rmn_().analProf(imp3, vetRefPosition,
+		double[] dsd1 = new p16rmn_OLD().analProf(imp3, vetRefPosition,
 				vetProfile, ra1, slab, invert, verbose, bLabelSx, dimPixel, over3);	
 		double fwhm = dsd1[0];
 		double peak = dsd1[1];

@@ -2456,11 +2456,12 @@ public class p10rmn_ implements PlugIn, Measurements {
 			imp11.updateAndDraw();
 			imp11.getRoi().setStrokeColor(Color.red);
 			imp11.getRoi().setStrokeWidth(1.1);
-			ko1 = MyLog.waitHereModeless("<<  SELEZIONE MANUALE ATTIVA >>\n \n" + "imp11= " + imp11.getTitle()
+			ko1 = MyLog.waitHereModeless("<<  SELEZIONE MANUALE ATTIVA >>\n \n" + "immagine= " + imp11.getTitle()
 					+ "\nNon si riescono a determinare le coordinate corrette del cerchio"
-					+ "\nRichiesto ridimensionamento e riposizionamento della ROI indicata in rosso, attorno al fantoccio\n"
-					+ "POI premere  OK. Altrimenti, se l'immagine NON E'ACCETTABILE premere <ANNULLA> per passare alle successive\");\r\n"
-					+ "");
+					+ "\nRichiesto ridimensionamento e riposizionamento della ROI circolare indicata in rosso, attorno al fantoccio\n"
+					+"\nORA e' possibile modificarla, spostarla, oppure lasciarla dove si trova."
+					+ "\n--- POI premere  OK ---"
+					+ "\nAltrimenti, se l'immagine NON FOSSE UTILIZZABILE premere <ANNULLA> per passare alle successive\n \n");
 
 			boundRec = imp11.getProcessor().getRoi();
 			xCenterCircle = boundRec.x + boundRec.width / 2;

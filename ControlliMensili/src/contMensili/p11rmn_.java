@@ -754,12 +754,23 @@ public class p11rmn_ implements PlugIn, Measurements {
 //									+ "\n \nRichiesto riposizionamento della ROI indicata in rosso,\nORA e' possibile spostarla, oppure lasciarla dove si trova."
 //									+ "POI premere  OK, altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive");
 
-							int resp = ButtonMessages.ModelessMsg((info10 + "\nimp1= " + imp1.getTitle() + "\nimp2= "
-									+ imp2.getTitle() + "\n \nRichiesto riposizionamento della ROI indicata in rosso,"
-									+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova.\n"
-									+ "POI premere  OK, altrimenti, se l'immagine NON E'ACCETTABILE premere <ANNULLA>"
-									+ " per passare alle successive"), "OK", "<ANNULLA>");
-							if (resp == 1) {
+//							int resp = ButtonMessages.ModelessMsg((info10 + "\nimp1= " + imp1.getTitle() + "\nimp2= "
+//									+ imp2.getTitle() + "\n \nRichiesto riposizionamento della ROI indicata in rosso,"
+//									+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova.\n"
+//									+ "POI premere  OK, altrimenti, se l'immagine NON E'ACCETTABILE premere <ANNULLA>"
+//									+ " per passare alle successive"), "OK", "<ANNULLA>");
+							
+							boolean resp = MyLog.waitHereModeless("<<  SELEZIONE MANUALE ATTIVA >>\n \nimmagine= " + imp11.getTitle()
+							+ "\n\nRichiesto riposizionamento della ROI quadrata indicata in rosso, dentro al fantoccio\n"
+									+"\nORA e' possibile spostarla, oppure lasciarla dove si trova."
+									+ "\n--- POI premere OK ---"
+									+ "\nAltrimenti, se l'immagine NON FOSSE UTILIZZABILE premere <ANNULLA> per passare alle successive\n \n");
+
+							
+							
+							
+							
+							if (resp) {
 //								MyLog.waitHere("premuto annulla");
 								return null;
 							}

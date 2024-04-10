@@ -2154,13 +2154,23 @@ public class p12rmn_ implements PlugIn, Measurements {
 //					+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova. diamRoiMan= " + diamRoiMan
 //					+ "\nPOI premere OK");
 
-			int resp = ButtonMessages.ModelessMsg(motivo
-					+ "\nRichiesto ridimensionamento e riposizionamento della ROI, indicata in rosso,attorno al fantoccio"
-					+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova. diamRoiMan= " + diamRoiMan
-					+ "\nPOI premere OK, altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA"
-					+ " per passare alle successive", "OK", "ANNULLA");
+//			int resp = ButtonMessages.ModelessMsg(motivo
+//					+ "\nRichiesto ridimensionamento e riposizionamento della ROI, indicata in rosso,attorno al fantoccio"
+//					+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova. diamRoiMan= " + diamRoiMan
+//					+ "\nPOI premere OK, altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA"
+//					+ " per passare alle successive", "OK", "ANNULLA");
+			
+			
+			boolean resp = MyLog.waitHereModeless("<<  SELEZIONE MANUALE ATTIVA >>\n \nimmagine= " + imp11.getTitle()
+			+ "\nNon si riescono a determinare le coordinate corrette del cerchio"
+			+ "\nRichiesto ridimensionamento e riposizionamento della ROI circolare indicata in rosso, attorno al fantoccio\n"
+					+"\nORA e' possibile modificarla, spostarla, oppure lasciarla dove si trova."
+					+ "\n--- POI premere OK ---"
+					+ "\nAltrimenti, se l'immagine NON FOSSE UTILIZZABILE premere <ANNULLA> per passare alle successive\n \n");
 
-			if (resp == 1) {
+			
+
+			if (resp) {
 				abort = true;
 				return null;
 			}
@@ -3030,7 +3040,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				+ "una ROI circolare di diametro corrispondente a quello esterno \n" + "del fantoccio";
 		lista[15] = "Verifica posizionamento cerchio";
 		lista[16] = "Troppa distanza tra i punti forniti ed il fit del cerchio";
-		lista[17] = "Non si riescono a determinare le coordinate di almeno 3 punti del cerchio \n"
+		lista[17] = "aa Non si riescono a determinare le coordinate di almeno 3 punti del cerchio \n"
 				+ "posizionare manualmente una ROI circolare di diametro uguale al fantoccio e\n" + "premere  OK";
 		lista[18] = "Eventualmente spostare la MROI circolare di area pari all'80% del fantoccio";
 		lista[19] = "19";

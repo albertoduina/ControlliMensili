@@ -6,6 +6,7 @@ import ij.ImageStack;
 import ij.Prefs;
 import ij.gui.Line;
 import ij.gui.OvalRoi;
+import ij.gui.Overlay;
 import ij.gui.Plot;
 import ij.gui.PlotWindow;
 import ij.gui.Roi;
@@ -19,6 +20,7 @@ import ij.util.Tools;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -488,6 +490,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 
 		ImagePlus impStack = stackBuilder(path, true);
 		nFrames = path.length;
+		int userSelection = 0;
+		int selection = 0;
 
 		impStack.setSliceWithoutUpdate(1);
 
@@ -498,30 +502,13 @@ public class p6rmn_ implements PlugIn, Measurements {
 		impStack.setRoi(new Line((int) vetRefPosition[0], (int) vetRefPosition[1], (int) vetRefPosition[2],
 				(int) vetRefPosition[3]));
 		impStack.updateAndDraw();
-		int userSelection = 0;
+
 		if (!test) {
 			userSelection = msgSquare();
-//			MyLog.waitHere("userSelection= " + userSelection);
 		}
+
 		if (userSelection == 1) {
-
-//			TableCode tc11 = new TableCode();
-//			String[][] tabCodici11 = tc11.loadMultipleTable("codici", ".csv");
-//
-////			MyLog.waitHere("path1= "+path[0]);
-//			String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path[0], impStack, tabCodici11, VERSION,
-//					autoCalled);
-//
-//			for (int w1 = 0; w1 < nFrames; w1++) {
-//
-//				ImagePlus imp3 = MyStackUtils.imageFromStack(impStack, w1 + 1);
-//
-//				String pos2 = ReadDicom.readDicomParameter(imp3, MyConst.DICOM_IMAGE_POSITION);
-//				slicePos2[w1] = ReadDicom.readSubstring(pos2, 3);
-//			}
-
 			return null;
-
 		}
 
 		//
@@ -553,19 +540,16 @@ public class p6rmn_ implements PlugIn, Measurements {
 		for (int w1 = 0; w1 < nFrames; w1++) {
 
 			ImagePlus imp3 = MyStackUtils.imageFromStack(impStack, w1 + 1);
-
 			String pos2 = ReadDicom.readDicomParameter(imp3, MyConst.DICOM_IMAGE_POSITION);
 			slicePos2[w1] = ReadDicom.readSubstring(pos2, 3);
 
-			if (verbose)
-				UtilAyv.showImageMaximized(imp3);
 			if (nFrames > 1) {
 				int userSelection3 = msgAccept();
 				vetAccettab[w1] = userSelection3;
 			}
 
-			if (!step)
-				imp3.hide();
+//			if (!step)
+//				imp3.hide();
 			// Phantom positioning: the phantom MUST have the slabs in high
 			// position and the wedges in lower position
 			//
@@ -590,8 +574,14 @@ public class p6rmn_ implements PlugIn, Measurements {
 				imp3.getWindow().toFront();
 			}
 
-			double[] dsd1 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
-					dimPixel);
+			boolean step2 = step;
+			boolean stack=false;
+			
+			if (nFrames > 1)
+				stack=true;
+
+			double[] dsd1 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step2, putLabelSx,
+					dimPixel, stack);
 
 			fwhmSlice1[w1] = dsd1[0];
 			peakPositionSlice1[w1] = dsd1[1];
@@ -618,8 +608,10 @@ public class p6rmn_ implements PlugIn, Measurements {
 			if (step) {
 				imp3.getWindow().toFront();
 			}
-			double[] dsd2 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
-					dimPixel);
+
+			step2 = step;
+			double[] dsd2 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step2, putLabelSx,
+					dimPixel, stack);
 			fwhmSlice2[w1] = dsd2[0];
 			peakPositionSlice2[w1] = dsd2[1];
 
@@ -652,8 +644,9 @@ public class p6rmn_ implements PlugIn, Measurements {
 				imp3.getWindow().toFront();
 			}
 
-			double[] dsd3 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
-					dimPixel);
+			step2 = step;
+			double[] dsd3 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step2, putLabelSx,
+					dimPixel, stack);
 
 			fwhmCuneo3[w1] = dsd3[0];
 			peakPositionCuneo3[w1] = dsd3[1];
@@ -680,8 +673,9 @@ public class p6rmn_ implements PlugIn, Measurements {
 			if (step) {
 				imp3.getWindow().toFront();
 			}
-			double[] dsd4 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
-					dimPixel);
+			step2 = step;
+			double[] dsd4 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step2, putLabelSx,
+					dimPixel, stack);
 			fwhmCuneo4[w1] = dsd4[0];
 			peakPositionCuneo4[w1] = dsd4[1];
 
@@ -960,7 +954,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 */
 
 	public double[] analProf(ImagePlus imp1, double[] vetRefPosition, double[] vetProfile, int ra1, boolean slab,
-			boolean invert, boolean step, boolean bLabelSx, double dimPixel) {
+			boolean invert, boolean step, boolean bLabelSx, double dimPixel, boolean stack) {
 
 		/*
 		 * Aggiornamento del 29 gennaio 2007 analProf da' in uscita i valori in
@@ -969,54 +963,111 @@ public class p6rmn_ implements PlugIn, Measurements {
 
 		if (imp1 == null)
 			return null;
+		
+		boolean esegui=	false;
+		if (!stack && slab) {
+			esegui = true;
+		}
+		Overlay over1 = new Overlay();
+		UtilAyv.showImageMaximized(imp1);
+
+		imp1.setOverlay(over1); // serve a visualizzare l'overlay
+		Rectangle boundRec1 = null;
+		Rectangle boundRec2 = null;
+
+		int c0x = (int) Math.round(vetRefPosition[0]);
+		int c0y = (int) Math.round(vetRefPosition[1]);
+		int c1x = (int) Math.round(vetRefPosition[2]);
+		int c1y = (int) Math.round(vetRefPosition[3]);
+		Line.setWidth(2);
+		imp1.setRoi(new Line(c0x, c0y, c1x, c1y));
+		imp1.getRoi().setStrokeColor(Color.yellow);
+		over1.addElement(imp1.getRoi());
+		imp1.deleteRoi();
 
 		int mra = ra1 / 2;
-		double[] msd1; // vettore output rototrasl coordinate
-		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[0] - mra, vetProfile[1] - mra, false);
-		int c2x = (int) msd1[0]; // coord rototrasl centro roi sx
-		int c2y = (int) msd1[1]; // coord rototrasl centro roi sx
-
-		// nota tecnica: quando si definisce una ROI con setRoi (ovale o
-		// rettangolare che sia) passiamo a ImageJ le coordinate dell'angolo in
-		// alto a Sx del BoundingRectangle per cui dobbiamo sempre includere nei
-		// calcoli il raggio Roi
-
-		// prima roi per baseline correction
-		imp1.setRoi(new OvalRoi(c2x, c2y, ra1, ra1));
-		imp1.updateAndDraw();
+		// calcolo la rototraslazione inizio linea centrale
+		double[] msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[0], vetProfile[1], false);
+		int c2x = (int) Math.round(msd1[0]);
+		int c2y = (int) Math.round(msd1[1]);
+		// calcolo la rototraslazione fine linea centrale
+		double[] msd2 = UtilAyv.coord2D2(vetRefPosition, vetProfile[2], vetProfile[3], false);
+		int d2x = (int) Math.round(msd2[0]);
+		int d2y = (int) Math.round(msd2[1]);
+		// calcolo la rototraslazione roi circolare sx
+		double[] msd3 = UtilAyv.coord2D2(vetRefPosition, vetProfile[0] - mra, vetProfile[1] - mra, false);
+		int c3x = (int) Math.round(msd3[0]);
+		int c3y = (int) Math.round(msd3[1]);
+		if (esegui) {
+			// disegno la linea di riferimento
+			Line.setWidth(2);
+			imp1.setRoi(new Line(c2x, c2y, d2x, d2y));
+			imp1.getRoi().setStrokeColor(Color.green);
+			over1.addElement(imp1.getRoi());
+			imp1.deleteRoi();
+			// proposta prima roi per baseline correction
+			imp1.setRoi(new OvalRoi(c3x, c3y, ra1, ra1));
+			imp1.getRoi().setStrokeColor(Color.red);
+			ButtonMessages.ModelessMsg(
+					"Posizionare la ROI circolare sinistra per calcolo baseline correction, poi premere OK", "OK");
+		} else {
+			imp1.setRoi(new OvalRoi(c3x, c3y, ra1, ra1));
+		}
+		boundRec1 = imp1.getProcessor().getRoi();
 		ImageStatistics statC = imp1.getStatistics();
+		imp1.getRoi().setStrokeWidth(2.0);
+		over1.addElement(imp1.getRoi());
+		imp1.deleteRoi();
+
+		c3x = boundRec1.x;
+		c3y = boundRec1.y + boundRec1.height / 2;
+		ra1 = boundRec1.width;
+
 		if (step) {
-			imp1.updateAndDraw();
 			ButtonMessages.ModelessMsg(
 					"primo centro c2x=" + c2x + " c2y=" + c2y + " ra1=" + ra1 + "  media=" + statC.mean + "   <51>",
 					"CONTINUA");
 		}
 
-		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[2] - mra, vetProfile[3] - mra, false);
-		int d2x = (int) msd1[0];
-		int d2y = (int) msd1[1];
-
-		// seconda roi per baseline correction
-		imp1.setRoi(new OvalRoi(d2x, d2y, ra1, ra1));
-		ImageStatistics statD = imp1.getStatistics();
-		if (step) {
-			imp1.updateAndDraw();
+		// calcolo la rototraslazione roi circolare dx
+		double[] msd4 = UtilAyv.coord2D2(vetRefPosition, vetProfile[2] - mra, vetProfile[3] - mra, false);
+		int d3x = (int) Math.round(msd4[0]);
+		int d3y = (int) Math.round(msd4[1]);
+		if (esegui) {
+			// disegno la linea di riferimento
+			Line.setWidth(2);
+			imp1.setRoi(new Line(c2x, c2y, d2x, d2y));
+			imp1.getRoi().setStrokeColor(Color.green);
+			over1.addElement(imp1.getRoi());
+			imp1.deleteRoi();
+			// proposta prima roi per baseline correction
+			imp1.setRoi(new OvalRoi(d3x, d3y, ra1, ra1));
+			imp1.getRoi().setStrokeColor(Color.red);
 			ButtonMessages.ModelessMsg(
-					"secondo centro d2x=" + d2x + " d2y=" + d2y + " ra1=" + ra1 + "  media=" + statD.mean + "   <52>",
+					"Posizionare la ROI circolare sinistra per calcolo baseline correction, poi premere OK", "OK");
+		} else {
+			imp1.setRoi(new OvalRoi(d3x, d3y, ra1, ra1));
+		}
+		boundRec2 = imp1.getProcessor().getRoi();
+		ImageStatistics statD = imp1.getStatistics();
+		imp1.getRoi().setStrokeWidth(2.0);
+		over1.addElement(imp1.getRoi());
+		imp1.deleteRoi();
+
+		d3x = boundRec2.x + boundRec2.width;
+		d3y = boundRec2.y + boundRec2.height / 2;
+		ra1 = boundRec1.width;
+
+		if (step) {
+			ButtonMessages.ModelessMsg(
+					"secondo centro d3x=" + d3x + " d3y=" + d3y + " ra1=" + ra1 + "  media=" + statD.mean + "   <52>",
 					"CONTINUA");
 		}
-		// inizio wideline
-		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[0], vetProfile[1], false);
-		c2x = (int) msd1[0];
-		c2y = (int) msd1[1];
-		// fine wideline
-		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[2], vetProfile[3], false);
-		d2x = (int) msd1[0];
-		d2y = (int) msd1[1];
 
 		// linea calcolo segnale mediato
 		Line.setWidth(11);
-		double[] profiM1 = getLinePixels(imp1, c2x, c2y, d2x, d2y);
+		double[] profiM1 = getLinePixels(imp1, c3x, c3y, d3x, d3y); // accorciata
+//		double[] profiM1 = getLinePixels(imp1, c2x, d3y, d2x, d3y); // boh
 
 		if (step) {
 			imp1.updateAndDraw();
@@ -1025,15 +1076,19 @@ public class p6rmn_ implements PlugIn, Measurements {
 			msgSlab();
 		}
 
+//		double[] profBaseline = simpleBaseline(profiM1, statC.mean, statD.mean);
 		double[] profiB1 = baselineCorrection(profiM1, statC.mean, statD.mean);
+
+//		multiplePlot(profBaseline, profiB1, "Confronto");
 
 		if (step) {
 			createPlot2(profiB1, true, bLabelSx, "Profilo mediato + baseline correction", true);
 			msgBaseline();
 		}
+
 		int isd3[];
 		double[] outFwhm;
-		if (slab) {
+		if (step) {
 			isd3 = analPlot1(profiB1, slab);
 			outFwhm = calcFwhm(isd3, profiB1, slab, dimPixel);
 			if (step) {
@@ -1142,6 +1197,26 @@ public class p6rmn_ implements PlugIn, Measurements {
 	} // baselineCorrection
 
 	/**
+	 * Vorrei vedere la semplice correzione, per capire se va bene.
+	 * 
+	 * @param profile1
+	 * @param media1
+	 * @param media2
+	 * @return
+	 */
+	public double[] simpleBaseline(double[] profile1, double media1, double media2) {
+
+		int len1 = profile1.length;
+		double diff1;
+		double profile2[];
+		profile2 = new double[len1];
+		diff1 = (media1 - media2) / len1;
+		for (int i1 = 0; i1 < len1; i1++)
+			profile2[i1] = diff1 * i1;
+		return profile2;
+	} // simpleCorrection
+
+	/**
 	 * calcolo ERF
 	 * 
 	 * @param profile1 profilo da elaborare
@@ -1223,10 +1298,10 @@ public class p6rmn_ implements PlugIn, Measurements {
 		// }
 		erf[len1 - 1] = erf[len1 - 2];
 
-		// Anzich� utilizzare algoritmi di ricerca dei picchi, cerco il minimo
-		// ed il massimo. Il valore assoluto pi� grande corrisponder� all'angolo
-		// a 90� che non ci interessa. A questo punto posso portare a zero tutti
-		// i valori del medesimo segno. Rester� cos� solo il
+		// Anziche' utilizzare algoritmi di ricerca dei picchi, cerco il minimo
+		// ed il massimo. Il valore assoluto piu' grande corrispondera' all'angolo
+		// a 90 che non ci interessa. A questo punto posso portare a zero tutti
+		// i valori del medesimo segno. Restera' cosi' solo il
 		// picco meno alto, corrispondente all'erf della rampa del cuneo.
 
 		double[] minMax = Tools.getMinMax(erf);
@@ -1234,20 +1309,20 @@ public class p6rmn_ implements PlugIn, Measurements {
 		double max = minMax[1];
 
 		if (Math.abs(min) > Math.abs(max) && min < 0) {
-			// se il minimo � di valore assoluto pi� grande, allora porto a 0
+			// se il minimo e' di valore assoluto piu' grande, allora porto a 0
 			// tutti i valori minori di 0
 			for (int i1 = 0; i1 < erf.length; i1++) {
 				if (erf[i1] < 0)
 					erf[i1] = 0;
 			}
-			// e poi cambio il tutto di segno, poich� voglio il picco verso il
+			// e poi cambio il tutto di segno, poiche' voglio il picco verso il
 			// basso
 			for (int i1 = 0; i1 < erf.length; i1++) {
 				erf[i1] *= -1;
 			}
 
 		} else if (Math.abs(min) < Math.abs(max) && max > 0) {
-			// se il massimo � di valore assoluto pi� grande, allora porto a 0
+			// se il massimo e' di valore assoluto piu' grande, allora porto a 0
 			// tutti i valori maggiori di 0
 			for (int i1 = 0; i1 < erf.length; i1++) {
 				if (erf[i1] > 0)
@@ -1260,8 +1335,27 @@ public class p6rmn_ implements PlugIn, Measurements {
 		return (erf);
 	} // createErf
 
+	public void multiplePlot(double[] profile1, double[] profile2, String titolo) {
+
+		int len1 = profile1.length;
+		double[] xcoord1 = new double[len1];
+		for (int i1 = 0; i1 < len1; i1++)
+			xcoord1[i1] = i1;
+//		MyLog.logVector(profile1, "profile1");
+//		MyLog.logVector(profile2, "profile2");
+//		MyLog.waitHere();
+
+		Plot plot1 = new Plot("Multiple Plot", "X Axis", "Y Axis");
+		plot1.add("line", profile2);
+		plot1.add("line", profile1);
+
+		plot1.show();
+		MyLog.waitHere();
+
+	}
+
 	/**
-	 * display di un profilo con linea a met� altezza
+	 * display di un profilo con linea a meta' altezza
 	 * 
 	 * @param profile1 profilo in ingresso
 	 * @param bslab    true=slab false=cuneo
@@ -1362,7 +1456,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * analisi di un profilo normale con ricerca punti sopra e sotto met� altezza
+	 * analisi di un profilo normale con ricerca punti sopra e sotto meta' altezza
 	 * 
 	 * @param profile1 profilo da analizzare
 	 * @param bSlab    true=slab false=cuneo
@@ -1394,7 +1488,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		else
 			max1 = 0;
 
-		// calcolo met� altezza
+		// calcolo meta' altezza
 		double half = (max1 - min1) / 2 + min1;
 		// ricerca valore < half partendo da SX
 		for (i1 = 0; i1 < len1 - 1; i1++) {
