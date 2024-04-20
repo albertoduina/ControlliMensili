@@ -9,10 +9,13 @@ import ij.gui.OvalRoi;
 import ij.gui.Plot;
 import ij.gui.PlotWindow;
 import ij.gui.Roi;
+import ij.io.FileSaver;
 import ij.io.OpenDialog;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
+import ij.measure.SplineFitter;
 import ij.plugin.PlugIn;
+import ij.plugin.ScreenGrabber;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 import ij.util.Tools;
@@ -75,9 +78,23 @@ import utils.UtilAyv;
  * 
  */
 
-public class p6rmn_OLD implements PlugIn, Measurements {
+//SPLINE SPLINE SPLINE GNEGNEGNE
+
+public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 
 	static final int ABORT = 1;
+
+	public static final boolean SPY = true;
+	// public static int preset=1;
+	public static String spypath = "";
+	public static String spyname = "";
+	public static String spylog = "";
+	public static String spyparent = "";
+	public static String spyfirst = "";
+	public static String spysecond = "";
+	public static String spythird = "";
+	public static int contaxx = 1;
+	public static double ottusangolo = 0.0;
 
 	public static String VERSION = "SPESSORE FETTA";
 
@@ -134,7 +151,7 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 		return;
 	}
 
-	public int manualMenu(int preset, String testDirectory) {
+	public int manualMenu(int preset2, String testDirectory) {
 		boolean retry = false;
 		boolean step = false;
 		do {
@@ -169,7 +186,7 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 				// new p6rmn_().wrapThickness(path, "0", oldPosition, autoCalled, step, verbose,
 				// test);
 
-				new p6rmn_OLD().mainThickness(path, "0", oldPosition, autoCalled, step, verbose, test);
+				new p6rmn_SPLINE1().mainThickness(path, "0", oldPosition, autoCalled, step, verbose, test);
 				UtilAyv.afterWork();
 				retry = true;
 			}
@@ -249,7 +266,10 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 						// MyLog.here("verifyResultTable");
 						rt.show("Results");
 						if (autoCalled && !test) {
-							accetta = MyMsg.accettaMenu();
+							if (SPY)
+								accetta = true;
+							else
+								accetta = MyMsg.accettaMenu();
 						} else {
 							if (!test) {
 								accetta = MyMsg.msgStandalone();
@@ -278,6 +298,8 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 				} while (!accetta);
 
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
+				UtilAyv.saveResults(vetRiga, spyfirst + spysecond + "\\" + spythird, iw2ayvTable, rt);
+				MyLog.waitHere();
 				break;
 			}
 		} while (retry);
@@ -322,8 +344,8 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 				boolean step = false;
 				boolean verbose = false;
 				boolean test = true;
-				ResultsTable rt = new p6rmn_OLD().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
-						test);
+				ResultsTable rt = new p6rmn_SPLINE1().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step,
+						verbose, test);
 				rt.show("Results");
 				MyLog.waitHere("verifica results table");
 				double[] vetResults = UtilAyv.vectorizeResults(rt);
@@ -348,8 +370,8 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 				boolean verbose = false;
 				boolean test = true;
 
-				ResultsTable rt = new p6rmn_OLD().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
-						test);
+				ResultsTable rt = new p6rmn_SPLINE1().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step,
+						verbose, test);
 
 				double[] vetResults = UtilAyv.vectorizeResults(rt);
 				boolean ok = UtilAyv.verifyResults1(vetResults, referenceSiemens(), MyConst.P6_vetName);
@@ -381,7 +403,8 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 		boolean verbose = false;
 		boolean test = true;
 
-		ResultsTable rt = new p6rmn_OLD().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
+		ResultsTable rt = new p6rmn_SPLINE1().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
+				test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt);
 		boolean ok = UtilAyv.verifyResults1(vetResults, referenceSiemens(), MyConst.P6_vetName);
@@ -419,6 +442,7 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 			vetReference[3] = 215.0 / dimPixel;
 		}
 		return vetReference;
+
 	}
 
 	public void saveReferences(ImagePlus imp1) {
@@ -428,33 +452,6 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 		Prefs.set("prefer.p6rmnBx", "" + line1.x2);
 		Prefs.set("prefer.p6rmnBy", "" + line1.y2);
 	}
-
-//	public ResultsTable wrapThickness(String[] path, String autoArgs, double[] vetRefPosition, boolean autoCalled,
-//			boolean step, boolean verbose, boolean test) {
-//		boolean accetta = false;
-//		ResultsTable rt = null;
-//
-//		do {
-//			rt = mainThickness(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
-//
-//			if (rt == null)
-//				return rt;
-//
-//			rt.show("Results");
-//
-//			if (autoCalled && !test) {
-//				accetta = MyMsg.accettaMenu();
-//			} else {
-//				if (!test) {
-//					accetta = MyMsg.msgStandalone();
-//				} else
-//					accetta = test;
-//			}
-//			// MyLog.here();
-//
-//		} while (!accetta);
-//		return rt;
-//	}
 
 	@SuppressWarnings("deprecation")
 	public ResultsTable mainThickness(String[] path, String autoArgs, double[] vetRefPosition, boolean autoCalled,
@@ -485,6 +482,7 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 		double[] vetAccurSpessCuneo = new double[len];
 		ResultsTable rt = null;
 		ResultsTable rt11 = null;
+		step = SPY;
 
 		ImagePlus impStack = stackBuilder(path, true);
 		nFrames = path.length;
@@ -505,25 +503,45 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 		}
 		if (userSelection == 1) {
 
-//			TableCode tc11 = new TableCode();
-//			String[][] tabCodici11 = tc11.loadMultipleTable("codici", ".csv");
-//
-////			MyLog.waitHere("path1= "+path[0]);
-//			String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path[0], impStack, tabCodici11, VERSION,
-//					autoCalled);
-//
-//			for (int w1 = 0; w1 < nFrames; w1++) {
-//
-//				ImagePlus imp3 = MyStackUtils.imageFromStack(impStack, w1 + 1);
-//
-//				String pos2 = ReadDicom.readDicomParameter(imp3, MyConst.DICOM_IMAGE_POSITION);
-//				slicePos2[w1] = ReadDicom.readSubstring(pos2, 3);
-//			}
-
 			return null;
 
 		}
 
+		if (SPY) {
+			String aux1 = path[0];
+			String aux2 = "";
+			File f1 = new File(aux1);
+			// --------------------------------------
+			spyname = f1.getName();
+			spythird = f1.getName();
+			spyparent = f1.getParent();
+			aux2 = spyparent;
+			int pos1 = aux2.lastIndexOf(File.separatorChar);
+			spyfirst = aux2.substring(0, pos1 + 1) + "STICAZZI";
+			spysecond = aux2.substring(pos1);
+
+			File theDir1 = new File(spyfirst);
+
+			boolean via = Prefs.get("prefer.p6rmnSTART", false);
+			Prefs.set("prefer.p6rmnSTART", false);
+
+			if (via) {
+				boolean ok1 = InputOutput.deleteDir(theDir1);
+				MyLog.here("cancellata cartella " + spyfirst);
+
+				if (!ok1)
+					MyLog.waitHere("errore cancellazione " + spyfirst);
+			}
+			boolean ok2 = InputOutput.createDirMultiple(spyfirst + spysecond + "\\");
+			if (!ok2)
+				MyLog.waitHere("errore creazione " + spyfirst + spysecond + "\\");
+			if (ok2)
+				MyLog.here("create cartelle " + spyfirst + spysecond + "\\");
+
+			// File newdir = new File(spypath);
+		}
+
+		MyLog.waitHere();
 		//
 		// legge la posizione finale del segmento dopo il posizionamento
 		//
@@ -534,11 +552,15 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 		vetRefPosition[2] = line1.x2;
 		vetRefPosition[3] = line1.y2;
 		lato = line1.getRawLength();
+		ottusangolo = line1.getAngle();
 
 		if (!test)
 			saveReferences(impStack);
-		if (step)
+		if (step && !SPY)
 			msgSquareCoordinates(vetRefPosition);
+		saveDebugImage(impStack, spyfirst, spysecond, spyname);
+
+		MyLog.here("dopo salvataggio prima immagine");
 
 		//
 		// elaborazione immagini dello stack
@@ -557,7 +579,7 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 			String pos2 = ReadDicom.readDicomParameter(imp3, MyConst.DICOM_IMAGE_POSITION);
 			slicePos2[w1] = ReadDicom.readSubstring(pos2, 3);
 
-			if (verbose)
+			if (verbose || SPY)
 				UtilAyv.showImageMaximized(imp3);
 			if (nFrames > 1) {
 				int userSelection3 = msgAccept();
@@ -574,7 +596,7 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 			// refPosition [startX = 13, startY=65, endX = 147, endY=65,
 			// radius=10]
 
-			if (step)
+			if (step && !SPY)
 				msgProfile();
 
 			int ra1 = (int) (lato / 12.0);
@@ -601,7 +623,7 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 			//
 			// Second slab analysis
 			//
-			if (step)
+			if (step && !SPY)
 				msgProfile();
 			// refPosition [startX = 13, startY=65, endX = 147, endY=65,
 			// radius=10]
@@ -634,7 +656,7 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 			//
 			// First wedge analysis
 			//
-			if (step)
+			if (step && !SPY)
 				msgProfile();
 			// refPosition [startX = 13, startY=98, endX = 147, endY=98,
 			// radius=10]
@@ -663,7 +685,7 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 			//
 			// Second wedge analysis
 			//
-			if (step)
+			if (step && !SPY)
 				msgProfile();
 			// refPosition [startX = 13, startY=133, endX = 147, endY=133,
 			// radius=10]
@@ -846,6 +868,14 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 		return rt;
 	}
 
+	public void saveDebugImage(ImagePlus imp1, String first, String second, String name) {
+		ImagePlus impS3 = imp1.flatten();
+		String newName = first + second + "\\" + name + "@" + contaxx++ + ".jpg";
+		FileSaver fs = new FileSaver(impS3);
+		// FileSaver.setJpegQuality(100);
+		fs.saveAsJpeg(newName);
+	}
+
 	/**
 	 * Costruisce uno stack a partire dal path delle immagini e lo riordina secondo
 	 * la posizione delle fette.
@@ -969,6 +999,7 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 
 		if (imp1 == null)
 			return null;
+		ImagePlus imp4 = null;
 
 		int mra = ra1 / 2;
 		double[] msd1; // vettore output rototrasl coordinate
@@ -984,12 +1015,17 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 		// prima roi per baseline correction
 		imp1.setRoi(new OvalRoi(c2x, c2y, ra1, ra1));
 		imp1.updateAndDraw();
+
+		saveDebugImage(imp1, spyfirst, spysecond, spyname);
+		MyLog.here("dopo salvataggio seconda immagine");
+
 		ImageStatistics statC = imp1.getStatistics();
 		if (step) {
 			imp1.updateAndDraw();
-			ButtonMessages.ModelessMsg(
-					"primo centro c2x=" + c2x + " c2y=" + c2y + " ra1=" + ra1 + "  media=" + statC.mean + "   <51>",
-					"CONTINUA");
+			if (!SPY)
+				ButtonMessages.ModelessMsg(
+						"primo centro c2x=" + c2x + " c2y=" + c2y + " ra1=" + ra1 + "  media=" + statC.mean + "   <51>",
+						"CONTINUA", 1, 1);
 		}
 
 		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[2] - mra, vetProfile[3] - mra, false);
@@ -998,13 +1034,17 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 
 		// seconda roi per baseline correction
 		imp1.setRoi(new OvalRoi(d2x, d2y, ra1, ra1));
+		saveDebugImage(imp1, spyfirst, spysecond, spyname);
+		MyLog.here("dopo salvataggio terza immagine");
+
 		ImageStatistics statD = imp1.getStatistics();
 		if (step) {
 			imp1.updateAndDraw();
-			ButtonMessages.ModelessMsg(
-					"secondo centro d2x=" + d2x + " d2y=" + d2y + " ra1=" + ra1 + "  media=" + statD.mean + "   <52>",
-					"CONTINUA");
+			if (!SPY)
+				ButtonMessages.ModelessMsg("secondo centro d2x=" + d2x + " d2y=" + d2y + " ra1=" + ra1 + "  media="
+						+ statD.mean + "   <52>", "CONTINUA", 1, 1);
 		}
+
 		// inizio wideline
 		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[0], vetProfile[1], false);
 		c2x = (int) msd1[0];
@@ -1017,19 +1057,32 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 		// linea calcolo segnale mediato
 		Line.setWidth(11);
 		double[] profiM1 = getLinePixels(imp1, c2x, c2y, d2x, d2y);
+		saveDebugImage(imp1, spyfirst, spysecond, spyname);
+		MyLog.waitHere("dopo salvataggio quarta immagine");
 
 		if (step) {
 			imp1.updateAndDraw();
-			msgWideline();
-			createPlot2(profiM1, true, bLabelSx, "Profilo mediato", false);
-			msgSlab();
+			if (!SPY)
+				msgWideline();
+			imp4 = createPlot2(profiM1, true, bLabelSx, "Profilo mediato grezzo", false);
+			saveDebugImage(imp4, spyfirst, spysecond, spyname);
+			MyLog.waitHere("dopo salvataggio quarta immagine profilo");
+
+			// ImagePlus imp4 = createPlot2(profiM1, true, bLabelSx, "Profilo mediato",
+			// false);
+			if (!SPY)
+				msgSlab();
+
 		}
 
 		double[] profiB1 = baselineCorrection(profiM1, statC.mean, statD.mean);
 
 		if (step) {
-			createPlot2(profiB1, true, bLabelSx, "Profilo mediato + baseline correction", true);
-			msgBaseline();
+			// ImagePlus imp5 = createPlot2(profiB1, true, bLabelSx, "Profilo mediato +
+			// baseline correction", true);
+			if (!SPY)
+				msgBaseline();
+			// saveDebugImage(imp5, spyfirst, spysecond, spyname);
 		}
 		int isd3[];
 		double[] outFwhm;
@@ -1037,8 +1090,11 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 			isd3 = analPlot1(profiB1, slab);
 			outFwhm = calcFwhm(isd3, profiB1, slab, dimPixel);
 			if (step) {
-				createPlot2(profiB1, slab, bLabelSx, "plot mediato + baseline + FWHM", true);
-				msgFwhm();
+				imp4 = createPlot2(profiB1, slab, bLabelSx, "plot mediato corretto baseline + FWHM", true);
+				if (!SPY)
+					msgFwhm();
+				saveDebugImage(imp4, spyfirst, spysecond, spyname);
+
 			}
 			Line.setWidth(1);
 			return (outFwhm);
@@ -1050,8 +1106,199 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 			outFwhm = calcFwhm(isd3, profiE1, slab, dimPixel);
 
 			if (step) {
-				createPlot2(profiE1, slab, bLabelSx, "plot ERF con smooth 3x3 e FWHM", true);
-				msgErf();
+				imp4 = createPlot2(profiE1, slab, bLabelSx, "plot ERF con smooth 3x3 e FWHM", true);
+				if (!SPY)
+					msgErf();
+				saveDebugImage(imp4, spyfirst, spysecond, spyname);
+
+			}
+			Line.setWidth(1);
+			return (outFwhm);
+		}
+	}
+
+	/**
+	 * analisi di un profilo
+	 * 
+	 * @param imp1           Immagine da analizzare
+	 * @param vetRefPosition Coordinate riferimento posizionato dall'operatore [
+	 *                       xStart, yStart, xEnd, yEnd ]
+	 * @param vetProfile     Coordinate profilo (da rototraslare)[ xStart, yStart,
+	 *                       xEnd, yEnd ]
+	 * @param ra1            Diametro della Roi per calcolo baseline correction
+	 * @param slab           Flag true=slab, false=cuneo
+	 * @param invert         Flag true=erf invertita false=erf diritta
+	 * @param step           Flag true=messaggi on, false=messaggi off
+	 * @param bLabelSx       Flag true= label a sx, false=label a dx
+	 * @return outFwhm[0]=FWHM (mm)
+	 * @return outFwhm[1]=peak position (mm)
+	 */
+
+	public double[] analProf2(ImagePlus imp1, double[] vetRefPosition, double[] vetProfile, boolean slab,
+			boolean invert, boolean step, boolean bLabelSx, double dimPixel, int linewidth) {
+
+		/*
+		 * Aggiornamento del 29 gennaio 2007 analProf da' in uscita i valori in
+		 * millimetri, anziche' in pixel
+		 */
+
+		if (imp1 == null)
+			return null;
+		ImagePlus imp4 = null;
+
+		// nota tecnica: quando si definisce una ROI con setRoi (ovale o
+		// rettangolare che sia) passiamo a ImageJ le coordinate dell'angolo in
+		// alto a Sx del BoundingRectangle per cui dobbiamo sempre includere nei
+		// calcoli il raggio Roi
+
+		IJ.log("inizio wideline slab");
+		double[] msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[0], vetProfile[1], true, ottusangolo);
+		double c2x = msd1[0];
+		double c2y = msd1[1];
+		IJ.log("fine wideline slab");
+		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[2], vetProfile[3], true, ottusangolo);
+		double d2x = msd1[0];
+		double d2y = msd1[1];
+		//
+		// linea calcolo segnale mediato oggetto
+		//
+		Line.setWidth(linewidth); ////////////////// 11
+		double[] profiM2 = getLinePixels(imp1, c2x, c2y, d2x, d2y);
+		saveDebugImage(imp1, spyfirst, spysecond, spyname);
+		//
+		// esperimento con la erf
+		//
+
+//		MyLog.waitHere();
+		imp4 = createPlot2(profiM2, true, bLabelSx, "Profilo mediato grezzo", false);
+
+		// PROVIAMOCI
+
+		double[] out1 = determinePoints(profiM2);
+
+		float[] assex1 = new float[7];
+		float[] assey1 = new float[7];
+
+		assex1[0] = (float) out1[0];
+		assex1[1] = (float) out1[2];
+		assex1[2] = (float) out1[4];
+		assex1[3] = (float) out1[6];
+		assex1[4] = (float) out1[8];
+		assex1[5] = (float) out1[10];
+		assex1[6] = (float) out1[12];
+
+		assey1[0] = (float) out1[1];
+		assey1[1] = (float) out1[3];
+		assey1[2] = (float) out1[5];
+		assey1[3] = (float) out1[7];
+		assey1[4] = (float) out1[9];
+		assey1[5] = (float) out1[11];
+		assey1[6] = (float) out1[13];
+
+//		MyLog.logVector(assex1, "assex1");
+//		MyLog.logVector(assey1, "assey1");
+//		MyLog.waitHere();
+
+		SplineFitter sf2 = new SplineFitter(assex1, assey1, assex1.length);
+
+		double aa = 0;
+		double[] spliney = new double[profiM2.length];
+		for (int i1 = 0; i1 < profiM2.length; i1++) {
+			aa = sf2.evalSpline(assex1, assey1, assex1.length, i1);
+			spliney[i1] = aa;
+		}
+
+		ImagePlus imp5 = createPlot2super(profiM2, spliney, assex1, assey1, true, false, "SPLINE sovrapposta a profilo",
+				true);
+		MyLog.waitHere();
+
+//		MyLog.waitHere();
+		smooth(profiM2);
+//		imp4 = createPlot2(profiM2, true, bLabelSx, "SMOOTH 1", false);
+//		MyLog.waitHere();
+		smooth(profiM2);
+//		imp4 = createPlot2(profiM2, true, bLabelSx, "SMOOTH 2", false);
+//		MyLog.waitHere();
+		smooth(profiM2);
+//		imp4 = createPlot2(profiM2, true, bLabelSx, "SMOOTH 3", false);
+//		MyLog.waitHere();
+
+		double[] profiM1 = new double[profiM2.length];
+		// if (invert) {
+		for (int j = 0; j < profiM2.length - 1; j++)
+			profiM1[j] = (profiM2[j] - profiM2[j + 1]) * (-1);
+//		imp4 = createPlot2(profiM1, true, bLabelSx, "ERF 1", false);
+//		MyLog.waitHere();
+
+		smooth(profiM1);
+		imp4 = createPlot2(profiM1, true, bLabelSx, "SMOOTH ERF1", false);
+//		MyLog.waitHere();
+
+		double[] profiM3 = new double[profiM1.length];
+		// if (invert) {
+		for (int j = 0; j < profiM3.length - 1; j++)
+			profiM3[j] = (profiM1[j] - profiM1[j + 1]) * (-1);
+		imp4 = createPlot2(profiM3, true, bLabelSx, "ERF 2", false);
+		MyLog.waitHere();
+		//
+		//
+		// ALGORITMO DELL'IMBECILLE CHE PERO'FUNZIONA
+		//
+		//
+
+		if (step) {
+			imp1.updateAndDraw();
+			if (!SPY)
+				msgWideline();
+			imp4 = createPlot2(profiM1, true, bLabelSx, "profilo ERF grezzo", false);
+			saveDebugImage(imp4, spyfirst, spysecond, spyname);
+			// ImagePlus imp4 = createPlot2(profiM1, true, bLabelSx, "Profilo mediato",
+			// false);
+			if (!SPY)
+				msgSlab();
+
+		}
+		MyLog.waitHere();
+
+		double[] profiB1 = profiM1;
+
+		ImagePlus imp6 = createPlot2(profiB1, true, true, "Profilo DIFFERENZA", false);
+
+		MyLog.waitHere();
+		if (step) {
+			// ImagePlus imp5 = createPlot2(profiB1, true, bLabelSx, "Profilo mediato +
+			// baseline correction", true);
+			if (!SPY)
+				msgBaseline();
+			// saveDebugImage(imp5, spyfirst, spysecond, spyname);
+		}
+		int isd3[];
+		double[] outFwhm;
+		if (slab) {
+			isd3 = analPlot1(profiB1, slab);
+			outFwhm = calcFwhm(isd3, profiB1, slab, dimPixel);
+			if (step) {
+				imp4 = createPlot2(profiB1, slab, bLabelSx, "plot mediato corretto baseline + FWHM", true);
+				if (!SPY)
+					msgFwhm();
+				saveDebugImage(imp4, spyfirst, spysecond, spyname);
+
+			}
+			Line.setWidth(1);
+			return (outFwhm);
+		} else {
+			double[] profiE1 = createErf(profiB1, invert); // profilo con ERF
+
+			isd3 = analPlot1(profiE1, slab);
+
+			outFwhm = calcFwhm(isd3, profiE1, slab, dimPixel);
+
+			if (step) {
+				imp4 = createPlot2(profiE1, slab, bLabelSx, "plot ERF con smooth 3x3 e FWHM", true);
+				if (!SPY)
+					msgErf();
+				saveDebugImage(imp4, spyfirst, spysecond, spyname);
+
 			}
 			Line.setWidth(1);
 			return (outFwhm);
@@ -1114,12 +1361,97 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 	 * @return profilo wideline
 	 */
 	public double[] getLinePixels(ImagePlus imp1, int x1, int y1, int x2, int y2) {
+
+		IJ.log("ricevo x1= " + x1 + " y1= " + y1 + " x2= " + x2 + " y2= " + y2);
 		imp1.setRoi(new Line(x1, y1, x2, y2));
 		imp1.updateAndDraw();
 		Roi roi1 = imp1.getRoi();
 		double[] profiM1 = ((Line) roi1).getPixels();
+		double novusangolo = ((Line) roi1).getAngle();
+		IJ.log("Angolo ottenuto= " + novusangolo);
 		return profiM1;
 	}
+
+	public double[] getLinePixels(ImagePlus imp1, double x1, double y1, double x2, double y2) {
+
+		IJ.log("ricevo x1= " + x1 + " y1= " + y1 + " x2= " + x2 + " y2= " + y2);
+		imp1.setRoi(new Line(x1, y1, x2, y2));
+		imp1.updateAndDraw();
+		Roi roi1 = imp1.getRoi();
+		double[] profiM1 = ((Line) roi1).getPixels();
+		double novusangolo = ((Line) roi1).getAngle();
+		IJ.log("Angolo ottenuto= " + novusangolo + " gradi= " + Math.toDegrees(novusangolo));
+		return profiM1;
+	}
+
+	/**
+	 * calcolo baseline correction del profilo assegnato utilizzando la spline
+	 * 
+	 * @param profile1 profilo da correggere
+	 * @param media1   media sul fondo a sx
+	 * @param media2   media sul fondo a dx
+	 * @return profilo corretto
+	 */
+	public double[] baselineCorrectionOLD(double[] profile1, double media1, double media2) {
+
+		int len1 = profile1.length;
+		float assex[] = new float[len1];
+		float assey[] = new float[len1];
+		double spliney[] = new double[len1];
+		float assex1[] = new float[6];
+		float assey1[] = new float[6];
+
+		for (int i1 = 0; i1 < len1; i1++) {
+			assex[i1] = (float) i1;
+			if (i1 == 20)
+				assex1[0] = 20;
+			if (i1 == 30)
+				assex1[1] = 30;
+			if (i1 == 40)
+				assex1[2] = 40;
+			if (i1 == 90)
+				assex1[3] = 90;
+			if (i1 == 100)
+				assex1[4] = 100;
+			if (i1 == 120)
+				assex1[5] = 120;
+			assey[i1] = (float) profile1[i1];
+			if (i1 == 20)
+				assey1[0] = (float) profile1[i1];
+			if (i1 == 30)
+				assey1[1] = (float) profile1[i1];
+			if (i1 == 40)
+				assey1[2] = (float) profile1[i1];
+			if (i1 == 90)
+				assey1[3] = (float) profile1[i1];
+			if (i1 == 100)
+				assey1[4] = (float) profile1[i1];
+			if (i1 == 120)
+				assey1[5] = (float) profile1[i1];
+		}
+		int len2 = 6;
+
+		// poiche' ignoro tutto sulle spline, quindi sono un IGNORANTE, provo a
+		// utilizzare solo 6 punti, poiche' SENTO che potrei ottenre qualcos, magari una
+		// pedata nel BACKSIDE.
+
+		SplineFitter sf = new SplineFitter(assex1, assey1, len2 - 1);
+
+		double aa = 0;
+		for (int i1 = 0; i1 < len1; i1++) {
+			aa = sf.evalSpline((double) i1);
+			spliney[i1] = aa;
+		}
+
+		ImagePlus imp5 = createPlot2super(profile1, spliney, false, false, "SPLINE", true);
+		MyLog.waitHere("LA SPLINE, QUESTA SCONOSCIUTA");
+//		double diff1;
+//		double profile2[];
+//		diff1 = (media1 - media2) / len1;
+//		for (int i1 = 0; i1 < len1; i1++)
+//			profile2[i1] = profile1[i1] + diff1 * i1;
+		return spliney;
+	} // baselineCorrection
 
 	/**
 	 * calcolo baseline correction del profilo assegnato
@@ -1131,14 +1463,57 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 	 */
 	public double[] baselineCorrection(double[] profile1, double media1, double media2) {
 
+		
+		smooth(profile1);
+		smooth(profile1);
+		smooth(profile1);
+		smooth(profile1);
+		smooth(profile1);
+		smooth(profile1);
+		
 		int len1 = profile1.length;
-		double diff1;
-		double profile2[];
-		profile2 = new double[len1];
-		diff1 = (media1 - media2) / len1;
-		for (int i1 = 0; i1 < len1; i1++)
-			profile2[i1] = profile1[i1] + diff1 * i1;
-		return profile2;
+		float assex[] = new float[6];
+		float assey[] = new float[6];
+		int i2 = 0;
+		assex[0] = 1;
+		assey[0] = (float) profile1[1];
+		assex[1] = (float) 10;
+		assey[1] = (float) profile1[10];
+		assex[2] = (float) 20;
+		assey[2] = (float) profile1[20];
+		assex[3] = (float) len1 - 21;
+		assey[3] = (float) profile1[len1 - 21];
+		assex[4] = (float) len1 - 11;
+		assey[4] = (float) profile1[len1 - 11];
+		assex[5] = (float) len1 - 1;
+		assey[5] = (float) profile1[len1 - 1];
+
+		MyLog.logVector(assex, "assex");
+		MyLog.logVector(assey, "assey");
+		MyLog.waitHere("n= " + (assex.length));
+
+		SplineFitter sf1 = new SplineFitter(assex, assey, assex.length);
+
+
+		double splinex[] = new double[len1];
+		double spliney[] = new double[len1];
+
+		for (int i1 = 0; i1 < len1; i1++) {
+			splinex[i1] =  (double) i1;
+			spliney[i1] =  sf1.evalSpline((double) i1);
+		}
+		
+		ImagePlus imp5 = createPlot2special(profile1, spliney, true, false, "SPLINE BASTARDA", true);
+
+//		ImagePlus imp5 = createPlot2(spliney, false, false, "SPLINE PURA E DURA", true);
+
+		MyLog.waitHere();
+//		double diff1;
+//		double profile2[];
+//		diff1 = (media1 - media2) / len1;
+//		for (int i1 = 0; i1 < len1; i1++)
+//			profile2[i1] = profile1[i1] + diff1 * i1;
+		return spliney;
 	} // baselineCorrection
 
 	/**
@@ -1223,10 +1598,10 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 		// }
 		erf[len1 - 1] = erf[len1 - 2];
 
-		// Anzich� utilizzare algoritmi di ricerca dei picchi, cerco il minimo
-		// ed il massimo. Il valore assoluto pi� grande corrisponder� all'angolo
-		// a 90� che non ci interessa. A questo punto posso portare a zero tutti
-		// i valori del medesimo segno. Rester� cos� solo il
+		// Anziche' utilizzare algoritmi di ricerca dei picchi, cerco il minimo
+		// ed il massimo. Il valore assoluto piu' grande corrispondera' all'angolo
+		// a 90 che non ci interessa. A questo punto posso portare a zero tutti
+		// i valori del medesimo segno. Restera' cosi' solo il
 		// picco meno alto, corrispondente all'erf della rampa del cuneo.
 
 		double[] minMax = Tools.getMinMax(erf);
@@ -1234,20 +1609,20 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 		double max = minMax[1];
 
 		if (Math.abs(min) > Math.abs(max) && min < 0) {
-			// se il minimo � di valore assoluto pi� grande, allora porto a 0
+			// se il minimo e' di valore assoluto piu' grande, allora porto a 0
 			// tutti i valori minori di 0
 			for (int i1 = 0; i1 < erf.length; i1++) {
 				if (erf[i1] < 0)
 					erf[i1] = 0;
 			}
-			// e poi cambio il tutto di segno, poich� voglio il picco verso il
+			// e poi cambio il tutto di segno, poiche' voglio il picco verso il
 			// basso
 			for (int i1 = 0; i1 < erf.length; i1++) {
 				erf[i1] *= -1;
 			}
 
 		} else if (Math.abs(min) < Math.abs(max) && max > 0) {
-			// se il massimo � di valore assoluto pi� grande, allora porto a 0
+			// se il massimo e' di valore assoluto piu' grande, allora porto a 0
 			// tutti i valori maggiori di 0
 			for (int i1 = 0; i1 < erf.length; i1++) {
 				if (erf[i1] > 0)
@@ -1261,7 +1636,7 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 	} // createErf
 
 	/**
-	 * display di un profilo con linea a met� altezza
+	 * display di un profilo con linea a meta' altezza
 	 * 
 	 * @param profile1 profilo in ingresso
 	 * @param bslab    true=slab false=cuneo
@@ -1269,7 +1644,7 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 	 * @param sTitolo  titolo del grafico
 	 * @param bFw      true=scritte x FWHM
 	 */
-	public void createPlot2(double[] profile1, boolean bslab, boolean bLabelSx, String sTitolo, boolean bFw) {
+	public ImagePlus createPlot2(double[] profile1, boolean bslab, boolean bLabelSx, String sTitolo, boolean bFw) {
 		int isd2[];
 		double ddd[];
 		double eee[];
@@ -1297,7 +1672,12 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 		double[] xcoord1 = new double[len1];
 		for (int j = 0; j < len1; j++)
 			xcoord1[j] = j;
-		Plot plot = new Plot(sTitolo, "pixel", "valore", xcoord1, profile1);
+
+		Plot plot = new Plot(sTitolo, "pixel", "valore");
+		plot.setColor(Color.black);
+		plot.addLabel(0.01, 0.99, sTitolo);
+		plot.setColor(Color.red);
+		plot.add("line", xcoord1, profile1);
 		if (bslab)
 			plot.setLimits(0, len1, min1, max1);
 		else
@@ -1313,7 +1693,7 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 		ddd[1] = (double) isd2[3];
 		eee[0] = profile1[isd2[1]];
 		eee[1] = profile1[isd2[3]];
-		plot.addPoints(ddd, eee, PlotWindow.CIRCLE);
+		plot.addPoints(ddd, eee, Plot.CIRCLE);
 		plot.changeFont(new Font("Helvetica", Font.PLAIN, 10));
 		// interpolazione lineare sinistra
 		double px0 = isd2[0];
@@ -1353,13 +1733,357 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 		fff[1] = len1;
 		ggg[0] = half;
 		ggg[1] = half;
-		plot.addPoints(fff, ggg, PlotWindow.LINE);
+		// plot.addPoints(fff, ggg, PlotWindow.LINE);
+		plot.addPoints(fff, ggg, Plot.LINE);
 		plot.setColor(Color.red);
 		plot.show();
 
-		plot.draw();
+//		plot.draw();
+		return plot.getImagePlus();
 
 	}
+
+	/**
+	 * display di un profilo con linea a meta' altezza
+	 * 
+	 * @param profile1 profilo in ingresso
+	 * @param bslab    true=slab false=cuneo
+	 * @param bLabelSx true=label a sx nel plot, false=label a dx
+	 * @param sTitolo  titolo del grafico
+	 * @param bFw      true=scritte x FWHM
+	 */
+	public ImagePlus createPlot2super(double[] profile1, double[] profile2, float[] assex, float[] assey, boolean bslab,
+			boolean bLabelSx, String sTitolo, boolean bFw) {
+		int isd2[];
+		double ddd[];
+		double eee[];
+		double fff[];
+		double ggg[];
+		double labPos;
+
+		isd2 = analPlot1(profile1, bslab);
+
+		double[] a = Tools.getMinMax(profile1);
+		double min1 = a[0];
+		double max1 = 0;
+		if (bslab)
+			max1 = a[1];
+		else
+			max1 = 0;
+
+		double half = (max1 - min1) / 2 + min1;
+
+		ddd = new double[2];
+		eee = new double[2];
+		fff = new double[2];
+		ggg = new double[2];
+		int len1 = profile1.length;
+		double[] xcoord1 = new double[len1];
+		for (int j = 0; j < len1; j++)
+			xcoord1[j] = j;
+//		Plot plot = new Plot(sTitolo, "pixel", "valore", xcoord1, profile1);
+		Plot plot = new Plot(sTitolo, "pixel", "valore");
+		plot.setColor(Color.red);
+		plot.add("line", xcoord1, profile1);
+		plot.setLineWidth(2);
+		plot.setColor(Color.green);
+		plot.add("triangle", xcoord1, profile2);
+		if (bslab)
+			plot.setLimits(0, len1, min1, max1);
+		else
+			plot.setLimits(0, len1, min1, 30);
+		plot.setLineWidth(1);
+		plot.setColor(Color.blue);
+		ddd[0] = (double) isd2[0];
+		ddd[1] = (double) isd2[2];
+		eee[0] = profile1[isd2[0]];
+		eee[1] = profile1[isd2[2]];
+		plot.addPoints(ddd, eee, PlotWindow.X);
+		ddd[0] = (double) isd2[1];
+		ddd[1] = (double) isd2[3];
+		eee[0] = profile1[isd2[1]];
+		eee[1] = profile1[isd2[3]];
+		plot.setLineWidth(2);
+		plot.addPoints(ddd, eee, Plot.CIRCLE);
+		plot.setLineWidth(1);
+		plot.changeFont(new Font("Helvetica", Font.PLAIN, 10));
+		double[] assexx = new double[assex.length];
+		double[] asseyy = new double[assey.length];
+		for (int i1 = 0; i1 < assex.length; i1++) {
+			assexx[i1] = (double) assex[i1];
+			asseyy[i1] = (double) assey[i1];
+		}
+
+		plot.setColor(Color.red);
+		plot.addPoints(assexx, asseyy, Plot.CIRCLE);
+		// interpolazione lineare sinistra
+		double px0 = isd2[0];
+		double px1 = isd2[1];
+		double px2 = 0;
+		double py0 = profile1[isd2[0]];
+		double py1 = profile1[isd2[1]];
+		double py2 = 0;
+		py2 = half;
+		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+		double sx = px2;
+		// interpolazione lineare destra
+		px0 = isd2[2];
+		px1 = isd2[3];
+		py0 = profile1[isd2[2]];
+		py1 = profile1[isd2[3]];
+		py2 = half;
+		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+		double dx = px2;
+		double fwhm = dx - sx;
+		if (bLabelSx)
+			labPos = 0.10;
+		else
+			labPos = 0.60;
+		if (bFw) {
+			plot.addLabel(labPos, 0.45, "peak / 2=   " + IJ.d2s(max1 / 2, 2));
+			plot.addLabel(labPos, 0.50, "down sx " + isd2[0] + "  =   " + IJ.d2s(profile1[isd2[0]], 2));
+			plot.addLabel(labPos, 0.55, "down dx " + isd2[2] + "  =   " + IJ.d2s(profile1[isd2[2]], 2));
+			plot.addLabel(labPos, 0.60, "up      sx " + isd2[1] + "  =   " + IJ.d2s(profile1[isd2[1]], 2));
+			plot.addLabel(labPos, 0.65, "up      dx " + isd2[3] + "  =   " + IJ.d2s(profile1[isd2[3]], 2));
+			plot.addLabel(labPos, 0.70, "sx interp       =  " + IJ.d2s(sx, 2));
+			plot.addLabel(labPos, 0.75, "dx interp       =  " + IJ.d2s(dx, 2));
+			plot.addLabel(labPos, 0.80, "fwhm            =  " + IJ.d2s(fwhm, 2));
+			plot.setColor(Color.green);
+		}
+		fff[0] = 0;
+		fff[1] = len1;
+		ggg[0] = half;
+		ggg[1] = half;
+		// plot.addPoints(fff, ggg, PlotWindow.LINE);
+		plot.addPoints(fff, ggg, Plot.LINE);
+		plot.setColor(Color.red);
+		plot.show();
+
+//		plot.draw();
+		return plot.getImagePlus();
+
+	}
+
+	/**
+	 * display di un profilo con linea a meta' altezza
+	 * 
+	 * @param profile1 profilo in ingresso
+	 * @param bslab    true=slab false=cuneo
+	 * @param bLabelSx true=label a sx nel plot, false=label a dx
+	 * @param sTitolo  titolo del grafico
+	 * @param bFw      true=scritte x FWHM
+	 */
+	public ImagePlus createPlot2super(double[] profile1, double[] profile2, boolean bslab, boolean bLabelSx,
+			String sTitolo, boolean bFw) {
+		int isd2[];
+		double ddd[];
+		double eee[];
+		double fff[];
+		double ggg[];
+		double labPos;
+
+		isd2 = analPlot1(profile1, bslab);
+
+		double[] a = Tools.getMinMax(profile1);
+		double min1 = a[0];
+		double max1 = 0;
+		if (bslab)
+			max1 = a[1];
+		else
+			max1 = 0;
+
+		double half = (max1 - min1) / 2 + min1;
+
+		ddd = new double[2];
+		eee = new double[2];
+		fff = new double[2];
+		ggg = new double[2];
+		int len1 = profile1.length;
+		double[] xcoord1 = new double[len1];
+		for (int j = 0; j < len1; j++)
+			xcoord1[j] = j;
+//		Plot plot = new Plot(sTitolo, "pixel", "valore", xcoord1, profile1);
+		Plot plot = new Plot(sTitolo, "pixel", "valore");
+		plot.setColor(Color.black);
+		plot.addLabel(0.01, 0.99, sTitolo);
+		plot.setColor(Color.red);
+		plot.add("line", xcoord1, profile1);
+		if (bslab)
+			plot.setLimits(0, len1, min1, max1);
+		else
+			plot.setLimits(0, len1, min1, 30);
+		plot.setLineWidth(1);
+		plot.setColor(Color.blue);
+		ddd[0] = (double) isd2[0];
+		ddd[1] = (double) isd2[2];
+		eee[0] = profile1[isd2[0]];
+		eee[1] = profile1[isd2[2]];
+		plot.addPoints(ddd, eee, PlotWindow.X);
+		ddd[0] = (double) isd2[1];
+		ddd[1] = (double) isd2[3];
+		eee[0] = profile1[isd2[1]];
+		eee[1] = profile1[isd2[3]];
+		plot.addPoints(ddd, eee, Plot.CIRCLE);
+		plot.changeFont(new Font("Helvetica", Font.PLAIN, 10));
+		// interpolazione lineare sinistra
+		double px0 = isd2[0];
+		double px1 = isd2[1];
+		double px2 = 0;
+		double py0 = profile1[isd2[0]];
+		double py1 = profile1[isd2[1]];
+		double py2 = 0;
+		py2 = half;
+		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+		double sx = px2;
+		// interpolazione lineare destra
+		px0 = isd2[2];
+		px1 = isd2[3];
+		py0 = profile1[isd2[2]];
+		py1 = profile1[isd2[3]];
+		py2 = half;
+		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+		double dx = px2;
+		double fwhm = dx - sx;
+		if (bLabelSx)
+			labPos = 0.10;
+		else
+			labPos = 0.60;
+		if (bFw) {
+			plot.addLabel(labPos, 0.45, "peak / 2=   " + IJ.d2s(max1 / 2, 2));
+			plot.addLabel(labPos, 0.50, "down sx " + isd2[0] + "  =   " + IJ.d2s(profile1[isd2[0]], 2));
+			plot.addLabel(labPos, 0.55, "down dx " + isd2[2] + "  =   " + IJ.d2s(profile1[isd2[2]], 2));
+			plot.addLabel(labPos, 0.60, "up      sx " + isd2[1] + "  =   " + IJ.d2s(profile1[isd2[1]], 2));
+			plot.addLabel(labPos, 0.65, "up      dx " + isd2[3] + "  =   " + IJ.d2s(profile1[isd2[3]], 2));
+			plot.addLabel(labPos, 0.70, "sx interp       =  " + IJ.d2s(sx, 2));
+			plot.addLabel(labPos, 0.75, "dx interp       =  " + IJ.d2s(dx, 2));
+			plot.addLabel(labPos, 0.80, "fwhm            =  " + IJ.d2s(fwhm, 2));
+			plot.setColor(Color.green);
+		}
+		fff[0] = 0;
+		fff[1] = len1;
+		ggg[0] = half;
+		ggg[1] = half;
+		// plot.addPoints(fff, ggg, PlotWindow.LINE);
+		plot.addPoints(fff, ggg, Plot.LINE);
+		plot.setColor(Color.red);
+		plot.show();
+
+//		plot.draw();
+		return plot.getImagePlus();
+
+	}
+	
+	
+	
+	/**
+	 * display di un profilo con linea a meta' altezza
+	 * 
+	 * @param profile1 profilo in ingresso
+	 * @param bslab    true=slab false=cuneo
+	 * @param bLabelSx true=label a sx nel plot, false=label a dx
+	 * @param sTitolo  titolo del grafico
+	 * @param bFw      true=scritte x FWHM
+	 */
+	public ImagePlus createPlot2special(double[] profile1, double[] profile2, boolean bslab, boolean bLabelSx,
+			String sTitolo, boolean bFw) {
+		int isd2[];
+		double ddd[];
+		double eee[];
+		double fff[];
+		double ggg[];
+		double labPos;
+
+		isd2 = analPlot1(profile1, bslab);
+
+		double[] a = Tools.getMinMax(profile1);
+		double min1 = a[0];
+		double max1 = 0;
+		if (bslab)
+			max1 = a[1];
+		else
+			max1 = 0;
+
+		double half = (max1 - min1) / 2 + min1;
+
+		ddd = new double[2];
+		eee = new double[2];
+		fff = new double[2];
+		ggg = new double[2];
+		int len1 = profile1.length;
+		double[] xcoord1 = new double[len1];
+		for (int j = 0; j < len1; j++)
+			xcoord1[j] = j;
+//		Plot plot = new Plot(sTitolo, "pixel", "valore", xcoord1, profile1);
+		Plot plot = new Plot(sTitolo, "pixel", "valore");
+		plot.setColor(Color.red);
+		plot.add("line", xcoord1, profile1);
+		plot.setColor(Color.green);
+		plot.add("cross", xcoord1, profile2);
+		if (bslab)
+			plot.setLimits(0, len1, min1, max1);
+		else
+			plot.setLimits(0, len1, min1, 30);
+		plot.setLineWidth(1);
+		plot.setColor(Color.blue);
+		ddd[0] = (double) isd2[0];
+		ddd[1] = (double) isd2[2];
+		eee[0] = profile1[isd2[0]];
+		eee[1] = profile1[isd2[2]];
+		plot.addPoints(ddd, eee, PlotWindow.X);
+		ddd[0] = (double) isd2[1];
+		ddd[1] = (double) isd2[3];
+		eee[0] = profile1[isd2[1]];
+		eee[1] = profile1[isd2[3]];
+		plot.addPoints(ddd, eee, Plot.CIRCLE);
+		plot.changeFont(new Font("Helvetica", Font.PLAIN, 10));
+		// interpolazione lineare sinistra
+		double px0 = isd2[0];
+		double px1 = isd2[1];
+		double px2 = 0;
+		double py0 = profile1[isd2[0]];
+		double py1 = profile1[isd2[1]];
+		double py2 = 0;
+		py2 = half;
+		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+		double sx = px2;
+		// interpolazione lineare destra
+		px0 = isd2[2];
+		px1 = isd2[3];
+		py0 = profile1[isd2[2]];
+		py1 = profile1[isd2[3]];
+		py2 = half;
+		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+		double dx = px2;
+		double fwhm = dx - sx;
+		if (bLabelSx)
+			labPos = 0.10;
+		else
+			labPos = 0.60;
+		if (bFw) {
+			plot.addLabel(labPos, 0.45, "peak / 2=   " + IJ.d2s(max1 / 2, 2));
+			plot.addLabel(labPos, 0.50, "down sx " + isd2[0] + "  =   " + IJ.d2s(profile1[isd2[0]], 2));
+			plot.addLabel(labPos, 0.55, "down dx " + isd2[2] + "  =   " + IJ.d2s(profile1[isd2[2]], 2));
+			plot.addLabel(labPos, 0.60, "up      sx " + isd2[1] + "  =   " + IJ.d2s(profile1[isd2[1]], 2));
+			plot.addLabel(labPos, 0.65, "up      dx " + isd2[3] + "  =   " + IJ.d2s(profile1[isd2[3]], 2));
+			plot.addLabel(labPos, 0.70, "sx interp       =  " + IJ.d2s(sx, 2));
+			plot.addLabel(labPos, 0.75, "dx interp       =  " + IJ.d2s(dx, 2));
+			plot.addLabel(labPos, 0.80, "fwhm            =  " + IJ.d2s(fwhm, 2));
+			plot.setColor(Color.green);
+		}
+		fff[0] = 0;
+		fff[1] = len1;
+		ggg[0] = half;
+		ggg[1] = half;
+		// plot.addPoints(fff, ggg, PlotWindow.LINE);
+		plot.addPoints(fff, ggg, Plot.LINE);
+		plot.setColor(Color.red);
+		plot.show();
+
+//		plot.draw();
+		return plot.getImagePlus();
+
+	}
+
 
 	/**
 	 * analisi di un profilo normale con ricerca punti sopra e sotto met� altezza
@@ -1430,6 +2154,125 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 		isd[3] = sopra2;
 		return isd;
 	} // analPlot1
+
+	/**
+	 * un semplicissimo ma funzionale smoothing
+	 * 
+	 * @param profile1 array su cui eseguire lo smoothing
+	 */
+	public void smooth(double profile1[]) {
+
+		for (int i1 = 1; i1 < profile1.length - 1; i1++)
+			profile1[i1] = (profile1[i1 - 1] + profile1[i1] + profile1[i1 + 1]) / 3.0;
+
+		return;
+	}
+
+	public double[] determinePoints(double profile1[]) {
+
+		double max = Double.MIN_VALUE;
+		int maxpos = 0;
+		double min = Double.MAX_VALUE;
+		int minpos = 0;
+		int left1 = 0;
+		int right1 = 0;
+		int left2 = 0;
+		int right2 = 0;
+		int left3 = 0;
+		int right3 = 0;
+		double[] out1 = new double[14];
+
+		// il primo punto che determino e' il massimo, oltre al valore mi interessa la
+		// posizione
+
+		for (int i1 = 1; i1 < profile1.length - 1; i1++) {
+			if (profile1[i1] > max) {
+				max = profile1[i1];
+				maxpos = i1;
+			}
+			if (profile1[i1] < min) {
+				min = profile1[i1];
+				minpos = i1;
+			}
+		}
+		// determinato massimo e minimo calcolo il range
+		double range = max - min;
+		double value1 = min + range * 1 / 8;
+		double value2 = min + range * 1 / 4;
+		double value3 = min + range * 1 / 2;
+//		IJ.log("STICAZZI max= " + max + " range= " + range + " maxpos= " + maxpos + "minpos= " + minpos);
+
+		// una coppia di punti la metto a max-1/8 range
+		// ora parto dal max
+		for (int i1 = minpos; i1 > 0; i1--) {
+			IJ.log("ricerca value1 i1= " + i1);
+			if (profile1[i1] >= value1) {
+				left1 = i1;
+//				MyLog.waitHere("profile1[i1]= " + profile1[i1] + " value1" + value1 + " left1= " + left1);
+				break;
+			}
+		}
+
+		for (int i1 = minpos; i1 < profile1.length; i1++) {
+			if (profile1[i1] >= value1) {
+				right1 = i1;
+//				MyLog.waitHere("profile1[i1]= " + profile1[i1] + " value1" + value1 + " right1= " + right1);
+				break;
+			}
+		}
+
+		// una coppia di punti la metto a max-1/4 range
+		// ora parto dal max
+		for (int i1 = minpos; i1 > 0; i1--) {
+			if (profile1[i1] >= value2) {
+				left2 = i1;
+				break;
+			}
+		}
+		for (int i1 = minpos; i1 < profile1.length; i1++) {
+			if (profile1[i1] >= value2) {
+				right2 = i1;
+				break;
+			}
+		}
+
+		// una coppia di punti la metto a max-1/4 range
+		// ora parto dal max
+		for (int i1 = minpos; i1 > 0; i1--) {
+			if (profile1[i1] >= value3) {
+				left3 = i1;
+				break;
+			}
+		}
+		for (int i1 = minpos; i1 < profile1.length; i1++) {
+			if (profile1[i1] >= value3) {
+				right3 = i1;
+				break;
+			}
+		}
+		// e ora come cazzabibbola li restituisco, visto che faceva comodo dare anche i
+		// valori double?
+		// IDEONA da volgare elettricista: tutto double, ole' e, come ho visto fare in
+		// spline, faccio un unico array con i valori messi come lo dico io e basta !
+
+		out1[0] = (double) left3;
+		out1[1] = value3;
+		out1[2] = (double) left2;
+		out1[3] = value2;
+		out1[4] = (double) left1;
+		out1[5] = value1;
+		out1[6] = (double) minpos;
+		out1[7] = min;
+		out1[8] = (double) right1;
+		out1[9] = value1;
+		out1[10] = (double) right2;
+		out1[11] = value2;
+		out1[12] = (double) right3;
+		out1[13] = value3;
+		MyLog.logVector(out1, "out1");
+
+		return out1;
+	}
 
 	/**
 	 * calcolo spessore di strato effettivo, apportando le correzioni per
@@ -1569,42 +2412,42 @@ public class p6rmn_OLD implements PlugIn, Measurements {
 
 	public static int msgSquare() {
 		int userSelection = ButtonMessages.ModelessMsg("Far coincidere il segmento  con il lato sx del quadrato",
-				"CONTINUA", "<ANNULLA>");
+				"CONTINUA", "<ANNULLA>", 2, 1);
 		return userSelection;
 	}
 
 	public static void msgSquareCoordinates(double[] vetReference) {
 		ButtonMessages.ModelessMsg("coordinate posizionamento ax= " + vetReference[0] + "   ay = " + vetReference[1]
-				+ "   bx = " + vetReference[2] + "  by = " + vetReference[3], "CONTINUA");
+				+ "   bx = " + vetReference[2] + "  by = " + vetReference[3], "CONTINUA", 1, 1);
 	}
 
 	public static int msgAccept() {
-		int userSelection = ButtonMessages.ModelessMsg("Accettabilita' immagine   <08>", "ELABORA", "SALTA");
+		int userSelection = ButtonMessages.ModelessMsg("Accettabilita' immagine   <08>", "ELABORA", "SALTA", 1, 1);
 		return userSelection;
 	}
 
 	public static void msgProfile() {
-		ButtonMessages.ModelessMsg("Analisi profilo e fwhm", "CONTINUA");
+		ButtonMessages.ModelessMsg("Analisi profilo e fwhm", "CONTINUA", 1, 1);
 	}
 
 	public static void msgWideline() {
-		ButtonMessages.ModelessMsg("Profilo wideline", "CONTINUA");
+		ButtonMessages.ModelessMsg("Profilo wideline", "CONTINUA", 1, 1);
 	}
 
 	public static void msgSlab() {
-		ButtonMessages.ModelessMsg("Profilo mediato slab", "CONTINUA");
+		ButtonMessages.ModelessMsg("Profilo mediato slab", "CONTINUA", 1, 1);
 	}
 
 	public static void msgBaseline() {
-		ButtonMessages.ModelessMsg("Profilo mediato e baseline correction", "CONTINUA");
+		ButtonMessages.ModelessMsg("Profilo mediato e baseline correction", "CONTINUA", 1, 1);
 	}
 
 	public static void msgFwhm() {
-		ButtonMessages.ModelessMsg("Profilo mediato + baseline + FWHM", "CONTINUA");
+		ButtonMessages.ModelessMsg("Profilo mediato + baseline + FWHM", "CONTINUA", 1, 1);
 	}
 
 	public static void msgErf() {
-		ButtonMessages.ModelessMsg("Profilo ERF + smooth 3x3 + FWHM", "CONTINUA");
+		ButtonMessages.ModelessMsg("Profilo ERF + smooth 3x3 + FWHM", "CONTINUA", 1, 1);
 	}
 
 }

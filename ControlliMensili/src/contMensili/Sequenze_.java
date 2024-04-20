@@ -195,6 +195,7 @@ public class Sequenze_ implements PlugIn {
 			IJ.runPlugIn("contMensili.p3rmn_", "-1");
 			IJ.runPlugIn("contMensili.p4rmn_", "-1");
 			IJ.runPlugIn("contMensili.p5rmn_", "-1");
+//			IJ.runPlugIn("contMensili.p6rmn_", "-1");
 			IJ.runPlugIn("contMensili.p6rmn_", "-1");
 			IJ.runPlugIn("contMensili.p7rmn_", "-1");
 			IJ.runPlugIn("contMensili.p8rmn_", "-1");
@@ -272,6 +273,8 @@ public class Sequenze_ implements PlugIn {
 				if (fz.exists())
 					fz.delete();
 				MyLog.initLog(startingDir + "MyLog.txt");
+
+				Prefs.set("prefer.p6rmnSTART", true);
 
 				List<File> result = getFileListing(new File(startingDir));
 				if (result == null) {
@@ -374,6 +377,9 @@ public class Sequenze_ implements PlugIn {
 				MyLog.logMatrix(tableSequenceReloaded, "tableSequenceReloaded");
 				MyLog.waitHere("salvare il log come tableSequenceReloaded");
 			}
+
+			// ECCO COME RINCOGLIONIRSI E PERDERE UN ORA, IL PLUGIN VIENE LANCIATO IN
+			// AUTOMATICO DA QUI, BISOGNA FARE QUI EVENTUALI MAGHEGGI SUI NOMI DURATE I TEST
 
 			// --------------------------------------------------------------------------------------------
 			// motore di chiamata dei plugins
@@ -768,7 +774,6 @@ public class Sequenze_ implements PlugIn {
 		return trovato;
 	}
 
-
 	/**
 	 * Espande i codici delle immagini, utilizzando il file expand.txt
 	 * 
@@ -876,7 +881,7 @@ public class Sequenze_ implements PlugIn {
 	/**
 	 * E' il motore che si preoccupa di chiamare i vari plugin, passando sulla linea
 	 * di comando il numero della linea di iw2ayv.txt da analizzare. Tiene conto dei
-	 * controlli gi� effettuati, per cui si pu� spegnere il PC e ripartire ad
+	 * controlli gia' effettuati, per cui si puo' spegnere il PC e ripartire ad
 	 * analizzare dal file successivo all'ultimo analizzato con successo.
 	 * 
 	 * @param tableSequenze5 e' il file iw2ayv.txt ricaricato da disco
@@ -962,6 +967,15 @@ public class Sequenze_ implements PlugIn {
 						plugin = "contMensili.p6rmn_";
 				}
 
+				
+				// usato durante i test 2024_04_20
+				
+				
+				if (plugin.equals("contMensili.p6rmn_"))
+					plugin = "contMensili.p6rmn_SPLINE1";
+
+				
+				
 				String argomento = argumentForPluginToBeCalled(j1, tableSequenze5);
 				boolean jump = false;
 				if (superficiali) {

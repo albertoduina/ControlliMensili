@@ -278,7 +278,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// MyLog.waitHere("mainWarp " + path1);
 
 		// --------------------------------------------------------------------------------------/
-		// Qui si torna se la misura è da rifare
+		// Qui si torna se la misura ï¿½ da rifare
 		// --------------------------------------------------------------------------------------/
 
 		ImagePlus imp1 = UtilAyv.openImageNoDisplay(path1, verbose);
@@ -356,7 +356,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 	/***
 	 * Ricerca automatica delle posizioni rods con AutoTreshold ed AnalyzeParticles,
-	 * può utilizzare diverse strategie (valori di preset) se la prima dovesse
+	 * puï¿½ utilizzare diverse strategie (valori di preset) se la prima dovesse
 	 * fallire
 	 * 
 	 * @param imp1
@@ -387,8 +387,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// ANALIZZARE OGGETTI NERI SU SFONDO BIANCO
 		// dovrei ottenere per l'esterno 32 oggetti con area
 		// nel range tra 5.0 e 12.0 e per l'interno 4 oggetti
-		// altrimenti effettuerò il threshold manuale
-		// UTILIZZO 5 diverse strategie (in realtà sono un mix tra i settaggi di
+		// altrimenti effettuerï¿½ il threshold manuale
+		// UTILIZZO 5 diverse strategie (in realtï¿½ sono un mix tra i settaggi di
 		// MyAutoThreshold e l'uso di invert
 		// -------------------------------------------------------------------
 
@@ -574,8 +574,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// ANALIZZARE OGGETTI NERI SU SFONDO BIANCO
 		// dovrei ottenere per l'esterno 32 oggetti con area
 		// nel range tra 5.0 e 12.0 e per l'interno 4 oggetti
-		// altrimenti effettuerò il threshold manuale
-		// UTILIZZO 5 diverse strategie (in realtà sono un mix tra i settaggi di
+		// altrimenti effettuerï¿½ il threshold manuale
+		// UTILIZZO 5 diverse strategie (in realtï¿½ sono un mix tra i settaggi di
 		// MyAutoThreshold e l'uso di invert
 		// -------------------------------------------------------------------
 
@@ -688,7 +688,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		MyLog.waitHere("questi sono i 32 esterni");
 
 		// se nessuna delle strategie ha trovato tutte le roi, accetto la
-		// strategia migliore, poi interverrà l'operatore a correggere e/o
+		// strategia migliore, poi interverrï¿½ l'operatore a correggere e/o
 		// completare le ROI
 
 		int[] array1 = new int[5];
@@ -792,7 +792,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 			imp1.getWindow().toFront();
 			IJ.setTool("multipoint");
 			MyLog.waitHere(listaMessaggi(7), debug, timeout);
-			MyLog.waitHere("Sono state trovate " + vetX.length + " RODS anzichè " + numRods1
+			MyLog.waitHere("Sono state trovate " + vetX.length + " RODS anzichï¿½ " + numRods1
 					+ "\nCliccare sulle RODS non selezionate, per annullare le RODS sbagliate,\n"
 					+ "cliccare sul puntino rosso mentre si tiene premuto ALT,\nalla fine premere OK");
 		}
@@ -1038,7 +1038,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 	}
 
 	/***
-	 * La strategia 0 è dedicata al circolo esterno di rods nelle macchine Siemens
+	 * La strategia 0 ï¿½ dedicata al circolo esterno di rods nelle macchine Siemens
 	 * 
 	 * @param imp1
 	 * @return
@@ -1054,7 +1054,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// MyLog.waitHere("strategia 0");
 		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "Mean", noBlack, noWhite, doWhite, doSet, doLog);
 		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
-		// riempirò l'esterno di nero
+		// riempirï¿½ l'esterno di nero
 		int minSizePixels = 10000;
 		int maxSizePixels = 300000;
 		boolean excludeEdges = false;
@@ -1071,7 +1071,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ip2.setColor(Color.BLACK);
 		ip2.fillOutside(roi0);
 		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
-		// riempirò l'interno di nero
+		// riempirï¿½ l'interno di nero
 		ip2.invert();
 		minSizePixels = 1000;
 		maxSizePixels = 30000;
@@ -1116,7 +1116,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 	}
 
 	/***
-	 * La strategia 1 è dedicata al circolo interno di rods nelle macchine Siemens
+	 * La strategia 1 ï¿½ dedicata al circolo interno di rods nelle macchine Siemens
 	 * 
 	 * @param imp1
 	 * @return
@@ -1133,7 +1133,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ImageProcessor ip12 = imp12.getProcessor();
 		ip12.setColor(Color.BLACK);
 		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
-		// riempirò l'esterno di nero
+		// riempirï¿½ l'esterno di nero
 		int minSizePixels = 100;
 		int maxSizePixels = 10000;
 		// importante exclude edges true!!!
@@ -1172,7 +1172,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		IJ.run(imp2, "Invert", "");
 
 		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
-		// riempirò l'esterno di nero
+		// riempirï¿½ l'esterno di nero
 		int minSizePixels = 10000;
 		int maxSizePixels = 300000;
 		boolean excludeEdges = false;
@@ -1185,7 +1185,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ip12.setColor(Color.BLACK);
 		ip12.fillOutside(roi0);
 		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
-		// riempirò l'interno di nero
+		// riempirï¿½ l'interno di nero
 		ip12.invert();
 		minSizePixels = 1000;
 		maxSizePixels = 30000;
@@ -1207,7 +1207,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		MyRats rat1 = new MyRats();
 		ImagePlus imp2 = rat1.execute(imp1, null);
 		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
-		// riempirò l'esterno di nero, in modo da cercare una seconda volta
+		// riempirï¿½ l'esterno di nero, in modo da cercare una seconda volta
 		// l'inserto senza oggetti di disturbo
 		UtilAyv.showImageMaximized(imp2);
 		// ricerca del quadrato interno
@@ -1337,7 +1337,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 			imp11.getRoi().setStrokeColor(Color.red);
 			over11.addElement(imp11.getRoi());
 
-			// NB: il red è il primo vertice
+			// NB: il red ï¿½ il primo vertice
 
 			for (int i1 = 0; i1 < vetxp.length; i1++) {
 				imp11.setRoi(new OvalRoi(vetxp[i1] - dia1 / 2, vetyp[i1] - dia1 / 2, dia1, dia1));
@@ -1366,7 +1366,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		MyRats rat1 = new MyRats();
 		ImagePlus imp2 = rat1.execute(imp1, null);
 		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
-		// riempirò l'esterno di nero prima di ricercare nuovamente i RATS. I
+		// riempirï¿½ l'esterno di nero prima di ricercare nuovamente i RATS. I
 		// dati geometrici dell'inserto
 		UtilAyv.showImageMaximized(imp2);
 		// ricerca del quadrato interno
@@ -1566,7 +1566,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		imp2.deleteRoi();
 		imp2.getWindow().toFront();
 
-		// la bisettrice opposta sarà:
+		// la bisettrice opposta sarï¿½:
 		if (vetx[0] <= vetx[3])
 			halfX1 = (vetx[3] - vetx[0]) / 2 + vetx[0];
 		else
@@ -1708,7 +1708,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		MyLog.logVector(vetDist, "vetDist");
 		MyLog.waitHere("le prime 8 distanze sono quelle bbone");
 		// metto le coordinate delle prime 8 distanze in due vettori. Ora ne
-		// calcolo la proiezione sulla retta e andrò a vedere la distanza della
+		// calcolo la proiezione sulla retta e andrï¿½ a vedere la distanza della
 		// proiezione dal punto di partenza. Questo mi dovrebbe identificare le
 		// diverse rod e la loro appartenenza ad una determinata coppia. ABBIAMO
 		// QUASI FINITO
@@ -1749,7 +1749,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 	public static ImagePlus[] strategiaGENERALE(ImagePlus imp1) {
 
 		// Questa potrebbe essere la strategia generale. Nel primo passaggio
-		// viene effettuato il threshold automatico con RATS. Otterrò il cerchio
+		// viene effettuato il threshold automatico con RATS. Otterrï¿½ il cerchio
 		// esterno, le RODS esterne ed il quadrato interno.
 
 		MyRats rat1 = new MyRats();
@@ -1757,7 +1757,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ImageProcessor ip2 = imp2.getProcessor();
 		ip2.invert();
 		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
-		// riempirò l'esterno di nero
+		// riempirï¿½ l'esterno di nero
 		int minSizePixels = 10000;
 		int maxSizePixels = 300000;
 		boolean excludeEdges = false;
@@ -1770,7 +1770,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ip2.invert();
 		imp2.updateAndDraw();
 		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
-		// riempirò l'interno di bianco
+		// riempirï¿½ l'interno di bianco
 		minSizePixels = 1000;
 		maxSizePixels = 30000;
 		excludeEdges = true;
@@ -1827,7 +1827,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		IJ.run(imp2, "Invert", "");
 		imp2.setTitle("strategia1: Invert+Li+Invert");
 		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
-		// riempirò l'esterno di nero
+		// riempirï¿½ l'esterno di nero
 		int minSizePixels = 10000;
 		int maxSizePixels = 300000;
 		boolean excludeEdges = false;
@@ -1840,7 +1840,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ip12.setColor(Color.BLACK);
 		ip12.fillOutside(roi0);
 		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
-		// riempirò l'interno di nero
+		// riempirï¿½ l'interno di nero
 		ip12.invert();
 		minSizePixels = 1000;
 		maxSizePixels = 30000;
@@ -1871,7 +1871,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 	}
 
 	/***
-	 * La strategia 0 è dedicata al circolo esterno di rods nelle macchine HITACHI
+	 * La strategia 0 ï¿½ dedicata al circolo esterno di rods nelle macchine HITACHI
 	 * 
 	 * @param imp1
 	 * @return
@@ -1887,7 +1887,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// MyLog.waitHere("strategia 5");
 		ImagePlus imp12 = MyAutoThreshold.threshold(imp1, "RenyiEntropy", noBlack, noWhite, doWhite, doSet, doLog);
 		// ora analizzo l'immagine cercando il profilo tondo del fantoccio,
-		// riempirò l'esterno di nero
+		// riempirï¿½ l'esterno di nero
 		// UtilAyv.showImageMaximized(imp12);
 		// MyLog.waitHere();
 		int minSizePixels = 10000;
@@ -1906,7 +1906,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		ip2.setColor(Color.BLACK);
 		ip2.fillOutside(roi0);
 		// ora analizzo l'immagine cercando il profilo quadro dell'inserto,
-		// riempirò l'interno di nero
+		// riempirï¿½ l'interno di nero
 		ip2.invert();
 		minSizePixels = 1000;
 		maxSizePixels = 30000;
@@ -2034,7 +2034,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		int[] vetY = MyConst.P7_Y_POINTS_TESTSIEMENS;
 		boolean ok = testExcecution(path1, vetX, vetY, 0, 0, false);
 		if (ok) {
-			IJ.log("Il test di p7rmn_ WARP è stato SUPERATO");
+			IJ.log("Il test di p7rmn_ WARP ï¿½ stato SUPERATO");
 		} else {
 			IJ.log("Il test di p7rmn_ WARP evidenzia degli ERRORI");
 		}
@@ -2081,7 +2081,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 	private static void msgRedo(int nPunti) {
 		IJ.showMessage("--- A T T E N Z I O N E ---",
-				"Sono stati selezionati solo " + nPunti + " anzichè 36  punti,\n--- R I F A R E ---");
+				"Sono stati selezionati solo " + nPunti + " anzichï¿½ 36  punti,\n--- R I F A R E ---");
 	}
 
 	/**
@@ -2107,7 +2107,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo è facilitata
+	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo ï¿½ facilitata
 	 * la eventuale modifica / traduzione dei messaggi.
 	 * 
 	 * @param select
