@@ -484,7 +484,11 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 		double[] vetAccurSpessCuneo = new double[len];
 		ResultsTable rt = null;
 		ResultsTable rt11 = null;
+		// =============================================================================
+		// =============================================================================
 		step = true;
+		// =============================================================================
+		// =============================================================================
 
 		ImagePlus impStack = stackBuilder(path, true);
 		nFrames = path.length;
@@ -1767,7 +1771,6 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 //
 //		ImagePlus imp15 = plot2points(profile11, xpoints1, ypoints1, spyname);
 //
-		MyLog.waitHere("BASELINE CORRECTION QUESTA QUI 001");
 
 		double[] profile4 = smooth2(profile1);
 		smooth(profile4);
@@ -1783,38 +1786,37 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 		// ho visto sperimentalmente durante lo sviluppo che il minimo sindacale sono
 		// due passaggi di smooting, three is melius che two
 		//
-//		double[] profile6 = derivataPrima(profile4);
+	
 		double[] profile2 = derivataPrima(profile4);
+		spyname= "DERIVATA PRIMA";
+		ImagePlus imp15 = plot1(profile2, spyname);
+		double[] profile6 = derivataSeconda(profile4);
+		spyname= "DERIVATA SECONDA";
+		ImagePlus imp16 = plot1(profile6, spyname);
+		
+		MyLog.waitHere("DERIVATE PRIMA E SECONDA");
+
+		
+//		ImagePlus imp15 = plot2(profile6, profile2, spyname);
+//		saveDebugImage(imp15, spyfirst, spysecond, spyname);
+//		MyLog.waitHere("DERIVATE PRIMA E SECONDA");
+
+
 		// gradino rappresenta la percentuiale di massimo e minimo che viene usata al
-		// posto dello zero per analizzare quella chiavica di immagini usate nei test
+		// posto dello zero per analizzare (quelle chiaviche di) immagini usate nei test
 		// (HEAD SOLA GAVARDO, per la cronaca)
-		double gradino = 0.6;
-		double[][] zeri = derivateZeroCrossing(profile2, gradino);
-		double[] xpoints = new double[6];
-		double[] ypoints = new double[6];
+		double[] spanx = derivateSpan(profile2);
+		MyLog.logVector(spanx, "spanx");
 
-		xpoints[0] = zeri[0][0];
-		xpoints[1] = zeri[1][0];
-		xpoints[2] = zeri[2][0];
-		xpoints[3] = zeri[3][0];
-		xpoints[4] = zeri[4][0];
-		xpoints[5] = zeri[5][0];
+		double[] spany = new double[2];
+		spany[0] = profile2[(int) spanx[0]];
+		spany[1] = profile2[(int) spanx[1]];
 
-		ypoints[0] = zeri[0][1];
-		ypoints[1] = zeri[1][1];
-		ypoints[2] = zeri[2][1];
-		ypoints[3] = zeri[3][1];
-		ypoints[4] = zeri[4][1];
-		ypoints[5] = zeri[5][1];
-
-		MyLog.logVector(xpoints, "xpoints");
-		MyLog.logVector(ypoints, "ypoints");
-
-		MyLog.waitHere("vettori pronti");
+		MyLog.logVector(spany, "spany");
 
 		if (SPY) {
 			spyname = "DERIVATA PRIMA";
-			ImagePlus imp5 = plot2points(profile2, xpoints, ypoints, spyname);
+			ImagePlus imp5 = plot2points(profile2, spanx, spany, spyname);
 			saveDebugImage(imp5, spyfirst, spysecond, spyname);
 			if (step)
 				MyLog.waitHere(spyname);
@@ -1841,17 +1843,6 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 		// dell'operatore.
 		//
 
-		if (xpoints[0] == profile1.length && ypoints[0] == 0 || xpoints[3] == 0 && ypoints[3] == 0) {
-			MyLog.waitHere("QUESTO E'IL CASO IN CUI FACCIO DA SOLO PER TROVARE IL CROSSING");
-			double[] vetPeppa = ImageUtils.findLineIntersection(xpoints[1], ypoints[1], xpoints[2], ypoints[2], 0, 0,
-					profile1.length, 0);
-			double[] vetPig = ImageUtils.findLineIntersection(xpoints[4], ypoints[4], xpoints[5], ypoints[5], 0, 0,
-					profile1.length, 0);
-			MyLog.waitHere("la seconda intersezione avviene in x= " + vetPeppa[0] + " y= " + vetPeppa[1]);
-			MyLog.waitHere("la prima intersezione avviene in x= " + vetPig[0] + " y= " + vetPig[1]);
-
-		}
-
 		// ====================================================
 		float assex[] = new float[6];
 		float assey[] = new float[6];
@@ -1860,21 +1851,22 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 		// MyLog.logVector(zeri, "zeri");
 		// inizio a sinistra
 		assex[0] = (float) 5;
-		assey[0] = mediaY(profile4, 5, 2);
-		assex[1] = (float) xpoints[0];
-		assey[1] = mediaY(profile4, ypoints[0] / 2, 2);
-		assex[2] = (float) xpoints[0] - 7;
-		assey[2] = mediaY(profile4, xpoints[0] - 7, 2);
+		assey[0] = mediaY(profile4, 6, 2);
+		assex[1] = (float) spanx[0] / 2;
+		assey[1] = mediaY(profile4, spanx[0] / 2, 2);
+		assex[2] = (float) spanx[0];
+		assey[2] = mediaY(profile4, spanx[0], 2);
 		// passo a destra
-		assex[3] = (float) ypoints[0] + 7;
-		assey[3] = mediaY(profile4, ypoints[3] + 7, 2);
-		double aux3 = ypoints[3] + 1 / 2 * (len1 - ypoints[3] - 5);
+		assex[3] = (float) spanx[1];
+		assey[3] = mediaY(profile4, spanx[1], 2);
+		double aux3 = spanx[1] + 0.5 * (len1 - spanx[1]);
+
 		assex[4] = (float) aux3;
 		assey[4] = mediaY(profile4, aux3, 2);
-		assex[5] = (float) len1 - 5;
-		assey[5] = mediaY(profile4, len1 - 5, 2);
-//		MyLog.logVector(assex, "assex");
-//		MyLog.logVector(assey, "assey");
+		assex[5] = (float) len1 - 6;
+		assey[5] = mediaY(profile4, len1 - 6, 2);
+//		MyLog.logVector(assex, "assex spline");
+//		MyLog.logVector(assey, "assey spline");
 
 		SplineFitter sf1 = new SplineFitter(assex, assey, assex.length);
 
@@ -1993,8 +1985,9 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 
 		int len1 = profile1.length;
 		//
+
 		// eseguo tre smooth 07-02-05, questo ci permette di ottenere risultati
-		// affidabili non falsati da spikes
+		// "affidabili" non falsati da spikes
 		//
 		for (int j = 1; j < len1 - 1; j++)
 			profile1[j] = (profile1[j - 1] + profile1[j] + profile1[j + 1]) / 3;
@@ -2029,8 +2022,10 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 			// se il minimo e' di valore assoluto piu' grande, allora porto a 0
 			// tutti i valori minori di 0
 			for (int i1 = 0; i1 < erf.length; i1++) {
+				// ################################################
 				if (erf[i1] < 0)
 					erf[i1] = 0;
+				// ################################################
 			}
 			// e poi cambio il tutto di segno, poiche' voglio il picco verso il
 			// basso
@@ -2042,8 +2037,10 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 			// se il massimo e' di valore assoluto piu' grande, allora porto a 0
 			// tutti i valori maggiori di 0
 			for (int i1 = 0; i1 < erf.length; i1++) {
+				// ################################################
 				if (erf[i1] > 0)
 					erf[i1] = 0;
+				// ################################################
 			}
 
 		} else
@@ -2764,6 +2761,71 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 		zeri[1] = zeroRight;
 
 		return zeri;
+	}
+
+	/**
+	 * In questa versione cerco la distanza tra massimo e minimo in x della
+	 * derivata. Poi, basandomi sullo zero compreso tra minimo e massimo applico la
+	 * distanza sia a dx che sx e assumo che la larghezza della slab sia questa. Al
+	 * di fuori posso prendere i punti su cui poi fare la spline. NON SO SE HA
+	 * SENSO, MA CI PROVO
+	 * 
+	 * @param profile1
+	 * @param gradino
+	 * @return
+	 */
+
+	public double[] derivateSpan(double profile1[]) {
+
+		double max = Double.MIN_VALUE;
+		int maxpos = 0;
+		double min = Double.MAX_VALUE;
+		int minpos = 0;
+//		int zeropoint = 0;
+
+		spyname = "DEBUG DERIVATA";
+		ImagePlus imp4 = plot1(profile1, spyname);
+		saveDebugImage(imp4, spyfirst, spysecond, spyname);
+	
+		for (int i1 = 1; i1 < profile1.length; i1++) {
+			if (profile1[i1] > max) {
+				max = profile1[i1];
+				maxpos = i1;
+			}
+			if (profile1[i1] < min) {
+				min = profile1[i1];
+				minpos = i1;
+			}
+		}
+
+		double span = maxpos - minpos;
+
+//		if (maxpos > minpos) {
+//			for (int i1 = minpos; i1 < maxpos; i1++) {
+//
+//				//
+//				// vado a cercare lo zero sempre presente tra min e max
+//				//
+//
+//				if (profile1[i1] <= 0) {
+//					zeropoint = i1;
+//					break;
+//				}
+//
+//			}
+//		}
+
+		double leftpoint = minpos - 0.5 * span;
+		double rightpoint = maxpos + 0.5 * span;
+		double[] out1 = new double[2];
+		out1[0] = leftpoint;
+		out1[1] = rightpoint;
+		IJ.log("maxpos= " + maxpos);
+		IJ.log("minpos= " + minpos);
+		IJ.log("span= " + span);
+		IJ.log("leftpoint= " + leftpoint);
+		IJ.log("rightpoint= " + rightpoint);
+		return out1;
 	}
 
 	/**
