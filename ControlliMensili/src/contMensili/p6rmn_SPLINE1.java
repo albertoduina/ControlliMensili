@@ -1707,15 +1707,6 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 	/**
 	 * calcolo baseline correction del profilo assegnato
 	 * 
-	 * @param profile1 profilo da correggere
-	 * @param media1   media sul fondo a sx
-	 * @param media2   media sul fondo a dx
-	 * @return profilo corretto
-	 */
-
-	/**
-	 * calcolo baseline correction del profilo assegnato
-	 * 
 	 * @param imp1     immagine di origine
 	 * @param profile1 profilo da analizzare
 	 * @param step     non usato !
@@ -1743,36 +1734,13 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 			profileXY[i1][1] = profile11[i1];
 		}
 
-//		double delta = 10.0;
-//
-//		ArrayList<ArrayList<Double>> matOut = ImageUtils.peakDet(profileXY, delta);
-//		double[][] peaks1 = new InputOutput().fromArrayListToDoubleTable(matOut);
-//
-//		if (peaks1 == null) {
-//			MyLog.waitHere("peaks1 == null");
-//			return null;
-//		}
-//
-//		if (peaks1.length == 0) {
-//			MyLog.waitHere("peaks1.length == 0");
-//			return null;
-//		}
-//		if (peaks1[0].length == 0) {
-//			MyLog.waitHere("peaks1[0].length == 0");
-//			return null;
-//		}
-//
-//		double[] xpoints1 = new double[peaks1[0].length];
-//		double[] ypoints1 = new double[peaks1[1].length];
-//		for (int i1 = 0; i1 < peaks1[0].length; i1++) {
-//			xpoints1[i1] = peaks1[0][i1];
-//			ypoints1[i1] = peaks1[1][i1];
-//		}
-//
-//		ImagePlus imp15 = plot2points(profile11, xpoints1, ypoints1, spyname);
-//
-
 		double[] profile4 = smooth2(profile1);
+		//
+		// ho visto sperimentalmente durante lo sviluppo che il minimo sindacale sono
+		// due passaggi di smooting, three is melius che two
+		//
+
+		smooth(profile4);
 		smooth(profile4);
 		smooth(profile4);
 		if (SPY) {
@@ -1782,45 +1750,102 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 			if (step)
 				MyLog.waitHere("Dopo SMOOTH");
 		}
-		//
-		// ho visto sperimentalmente durante lo sviluppo che il minimo sindacale sono
-		// due passaggi di smooting, three is melius che two
-		//
-	
-		double[] profile2 = derivataPrima(profile4);
-		spyname= "DERIVATA PRIMA";
-		ImagePlus imp15 = plot1(profile2, spyname);
-		double[] profile6 = derivataSeconda(profile4);
-		spyname= "DERIVATA SECONDA";
-		ImagePlus imp16 = plot1(profile6, spyname);
-		
-		MyLog.waitHere("DERIVATE PRIMA E SECONDA");
 
-		
+		double[] profile2 = derivataPrima(profile4);
+		spyname = "DERIVATA PRIMA";
+//		ImagePlus imp15 = plot1(profile2, spyname);
+		double[] profile6 = derivataSeconda(profile4);
+		spyname = "DERIVATA SECONDA";
+//		ImagePlus imp16 = plot1(profile6, spyname);
+
+//		MyLog.waitHere("DERIVATE PRIMA e SECONDA");
+
 //		ImagePlus imp15 = plot2(profile6, profile2, spyname);
 //		saveDebugImage(imp15, spyfirst, spysecond, spyname);
 //		MyLog.waitHere("DERIVATE PRIMA E SECONDA");
 
-
 		// gradino rappresenta la percentuiale di massimo e minimo che viene usata al
 		// posto dello zero per analizzare (quelle chiaviche di) immagini usate nei test
 		// (HEAD SOLA GAVARDO, per la cronaca)
-		double[] spanx = derivateSpan(profile2);
-		MyLog.logVector(spanx, "spanx");
+
+		// ----------------------------------------------
+		// ULTERIORE ALGORITMO DELL'IGNORANTE
+		//
+		// GUARDO I DUE PICCHI SULLA DERIVATA PRIMA. A QUESTI PICCHI CORRISPONDONO DUE
+		// ZERO CROSSING DELLA DERIVATA SECONDA. DI SEGUITO CERCO I DUE SUCCESSIVI ZERO
+		// CROSSING DELLA DERIVATA SECONDA, QUESTI SONO I PUNTI SU CUI POSSO CONSIDERARE
+		// TERMINATO L'OGGETTO DA LOCALIZZARE.
+		//
+		// E ADESSO PèROVAO ANCHE A PROGRAMMARE QUESTA FARLOCCATA !
+		// ----------------------------------------------
+
+		double[] minmax = Tools.getMinMax(profile2);
+		int maxpos = 9999;
+		int minpos = 9999;
+		int sinistra = 9999;
+		int destra = 9999;
+
+		for (int i1 = 0; i1 < profile2.length; i1++) {
+			if (profile2[i1] == minmax[0]) {
+				minpos = i1;
+			}
+			if (profile2[i1] == minmax[1]) {
+				maxpos = i1;
+			}
+		}
+
+		if (minpos < maxpos) {
+			// cerco lo zero della derivata seconda a sinistra del minimo
+			for (int i1 = minpos - 1; i1 >= 0; i1--) {
+				if (profile6[i1] >= 0) {
+					sinistra = i1;
+					break;
+				}
+			}
+			for (int i1 = maxpos + 1; i1 < profile6.length; i1++) {
+				if (profile6[i1] >= 0) {
+					destra = i1;
+					break;
+				}
+			}
+
+		} else {
+			MyLog.waitHere("HO IL MONDO AL CONTRARIO");
+		}
+
+		double[] spanx = new double[2];
+		spanx[0] = (double) minpos;
+		spanx[1] = (double) maxpos;
+
+//		double[] spanx = derivateSpan(profile2);
+//		MyLog.logVector(spanx, "spanx");
 
 		double[] spany = new double[2];
-		spany[0] = profile2[(int) spanx[0]];
-		spany[1] = profile2[(int) spanx[1]];
+		spany[0] = profile2[minpos];
+		spany[1] = profile2[maxpos];
 
 		MyLog.logVector(spany, "spany");
 
 		if (SPY) {
-			spyname = "DERIVATA PRIMA";
+			spyname = "DERIVATA PRIMA CON MIN MAX";
+			spanx[0] = (double) minpos;
+			spanx[1] = (double) maxpos;
+			spany[0] = profile2[minpos];
+			spany[1] = profile2[maxpos];
 			ImagePlus imp5 = plot2points(profile2, spanx, spany, spyname);
 			saveDebugImage(imp5, spyfirst, spysecond, spyname);
+			spyname = "DERIVATA SECONDA CON ZEROCROSSING";
+			spanx[0] = (double) sinistra;
+			spanx[1] = (double) destra;
+			spany[0] = profile6[sinistra];
+			spany[1] = profile6[destra];
+			ImagePlus imp17 = plot2points(profile6, spanx, spany, spyname);
+			saveDebugImage(imp5, spyfirst, spysecond, spyname);
 			if (step)
-				MyLog.waitHere(spyname);
+				MyLog.waitHere("DERIVATE PRIMA E SECONDA CON PUNTI");
 		}
+
+		// ----------------------------------------------
 
 		// ora guardo i risultati, possiamo avere alcuni casi
 		//
@@ -1843,28 +1868,28 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 		// dell'operatore.
 		//
 
-		// ====================================================
+		// --------------------------------------------
+		// SCELTA DEI PUNTI SU CUI PASSA LA SPLINE
+		// --------------------------------------------
 		float assex[] = new float[6];
 		float assey[] = new float[6];
-		int i2 = 0;
-		// if (!SPY)
-		// MyLog.logVector(zeri, "zeri");
 		// inizio a sinistra
 		assex[0] = (float) 5;
-		assey[0] = mediaY(profile4, 6, 2);
-		assex[1] = (float) spanx[0] / 2;
-		assey[1] = mediaY(profile4, spanx[0] / 2, 2);
-		assex[2] = (float) spanx[0];
-		assey[2] = mediaY(profile4, spanx[0], 2);
+		assey[0] = (float) profile4[5];
+		assex[1] = (float) sinistra / 2;
+		assey[1] = (float) profile4[sinistra / 2];
+		assex[2] = (float) sinistra;
+		assey[2] = (float) profile4[sinistra];
+
 		// passo a destra
-		assex[3] = (float) spanx[1];
-		assey[3] = mediaY(profile4, spanx[1], 2);
-		double aux3 = spanx[1] + 0.5 * (len1 - spanx[1]);
+		assex[3] = (float) destra;
+		assey[3] = (float) profile4[destra];
+		double aux3 = destra + 0.5 * (len1 - destra);
 
 		assex[4] = (float) aux3;
-		assey[4] = mediaY(profile4, aux3, 2);
-		assex[5] = (float) len1 - 6;
-		assey[5] = mediaY(profile4, len1 - 6, 2);
+		assey[4] = (float) profile4[(int) aux3];
+		assex[5] = (float) len1 - 5;
+		assey[5] = (float) profile4[len1 - 5];
 //		MyLog.logVector(assex, "assex spline");
 //		MyLog.logVector(assey, "assey spline");
 
@@ -1880,7 +1905,9 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 		}
 		if (SPY) {
 			spyname = "SPLINE";
-			ImagePlus imp6 = plot2(profile1, spliney, spyname);
+			double[] assexx = UtilAyv.toDouble(assex);
+			double[] asseyy = UtilAyv.toDouble(assey);
+			ImagePlus imp6 = plot3points(profile1, spliney, assexx, asseyy, spyname);
 			saveDebugImage(imp6, spyfirst, spysecond, spyname);
 			if (step)
 				MyLog.waitHere("SPLINE");
@@ -2158,7 +2185,7 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 	}
 
 	/**
-	 * display di un profilo con linea a meta' altezza
+	 * Plotta un profilo con linea a meta' altezza
 	 * 
 	 * @param profile1 profilo in ingresso
 	 * @param bslab    true=slab false=cuneo
@@ -2174,6 +2201,8 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 		double fff[];
 		double ggg[];
 		double labPos;
+
+		MyLog.waitHere("entro in CERATE PLOT 3");
 
 		isd2 = analPlot1(profile1, bslab);
 
@@ -2202,9 +2231,9 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 
 		plot.setColor(Color.red);
 		plot.add("line", xcoord1, profile1);
-		plot.setLineWidth(1);
-		plot.setColor(Color.green);
-		plot.add("triangle", xcoord1, profile2);
+//		plot.setLineWidth(2);
+//		plot.setColor(Color.green);
+//		plot.add("circle", xcoord1, profile2);
 		if (bslab)
 			plot.setLimits(0, len1, min1, max1);
 		else
@@ -2231,10 +2260,16 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 			asseyy[i1] = (double) assey[i1];
 		}
 
+		MyLog.logVector(assexx, "assexx");
+		MyLog.logVector(asseyy, "asseyy");
+		MyLog.waitHere();
+
 		plot.setLineWidth(3);
 		plot.setColor(Color.red);
 		plot.addPoints(assexx, asseyy, Plot.CIRCLE);
 		plot.setLineWidth(1);
+
+		MyLog.waitHere();
 		// interpolazione lineare sinistra
 		double px0 = isd2[0];
 		double px1 = isd2[1];
@@ -2287,7 +2322,7 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 	}
 
 	/**
-	 * display di un profilo con linea a meta' altezza
+	 * Plotta un profilo con linea a meta' altezza
 	 * 
 	 * @param profile1 profilo in ingresso
 	 * @param bslab    true=slab false=cuneo
@@ -2303,6 +2338,8 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 		double fff[];
 		double ggg[];
 		double labPos;
+
+		MyLog.waitHere("entro in CREATE PLOT 2 SUPER");
 
 		isd2 = analPlot1(profile1, bslab);
 
@@ -2399,7 +2436,7 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 	}
 
 	/**
-	 * plot semplificato di due linee
+	 * Plotta due profili
 	 * 
 	 * @param profile1
 	 * @param profile2
@@ -2432,6 +2469,15 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 		return plot.getImagePlus();
 	}
 
+	/**
+	 * Plotta un profilo con punti sovrapposti
+	 * 
+	 * @param profile1
+	 * @param xpoints2
+	 * @param ypoints2
+	 * @param sTitolo
+	 * @return
+	 */
 	public ImagePlus plot2points(double[] profile1, double[] xpoints2, double[] ypoints2, String sTitolo) {
 
 		int len1 = profile1.length;
@@ -2446,6 +2492,43 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 
 		plot.setColor(Color.red);
 		plot.add("line", xcoord, profile1);
+		plot.setLineWidth(2);
+		plot.setColor(Color.blue);
+		plot.addPoints(xpoints2, ypoints2, Plot.CIRCLE);
+		plot.setLineWidth(1);
+
+		plot.show();
+		return plot.getImagePlus();
+	}
+
+	/**
+	 * Plotta due profili con punti sovrapposti
+	 * 
+	 * @param profile1
+	 * @param profile2
+	 * @param xpoints2
+	 * @param ypoints2
+	 * @param sTitolo
+	 * @return
+	 */
+	public ImagePlus plot3points(double[] profile1, double[] profile2, double[] xpoints2, double[] ypoints2,
+			String sTitolo) {
+
+		int len1 = profile1.length;
+		double[] xcoord = new double[len1];
+		for (int i1 = 0; i1 < len1; i1++) {
+			xcoord[i1] = (double) i1;
+		}
+
+		Plot plot = new Plot(sTitolo, "pixel", "valore");
+		plot.setColor(Color.black);
+		plot.addLabel(0.01, 0.99, sTitolo);
+
+		plot.setColor(Color.red);
+		plot.add("line", xcoord, profile1);
+		plot.setColor(Color.blue);
+		plot.add("line", xcoord, profile2);
+
 		plot.setLineWidth(2);
 		plot.setColor(Color.blue);
 		plot.addPoints(xpoints2, ypoints2, Plot.CIRCLE);
@@ -2694,6 +2777,14 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 	 * 
 	 * @param profile1 array su cui eseguire l'operazione
 	 */
+	public double[] derivataPrimaFARLOCCA(double profile1[]) {
+
+		double[] profile2 = new double[profile1.length];
+		for (int i1 = 1; i1 < profile1.length - 1; i1++)
+			profile2[i1] = -2 * profile1[i1 - 1] + 2 * profile1[i1 + 1];
+		return profile2;
+	}
+
 	public double[] derivataPrima(double profile1[]) {
 
 		double[] profile2 = new double[profile1.length];
@@ -2786,7 +2877,7 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 		spyname = "DEBUG DERIVATA";
 		ImagePlus imp4 = plot1(profile1, spyname);
 		saveDebugImage(imp4, spyfirst, spysecond, spyname);
-	
+
 		for (int i1 = 1; i1 < profile1.length; i1++) {
 			if (profile1[i1] > max) {
 				max = profile1[i1];
@@ -3048,6 +3139,15 @@ public class p6rmn_SPLINE1 implements PlugIn, Measurements {
 		MyLog.logVector(out1, "out1");
 
 		return out1;
+	}
+
+	public boolean myDoubleCompare(double uno, double due, double tolleranza) {
+
+		double diff = Math.abs(uno - due);
+		if (diff <= tolleranza)
+			return true;
+		else
+			return false;
 	}
 
 	/**
