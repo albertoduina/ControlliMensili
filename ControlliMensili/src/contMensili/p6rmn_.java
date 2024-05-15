@@ -97,7 +97,6 @@ public class p6rmn_ implements PlugIn, Measurements {
 		// slabs) slices
 
 		UtilAyv.setMyPrecision();
-		MyLog.waitHere("p6rmn_");
 
 		if (IJ.versionLessThan("1.43k"))
 			return;
@@ -548,14 +547,18 @@ public class p6rmn_ implements PlugIn, Measurements {
 		nFrames = impStack.getStackSize();
 
 		double thick = ReadDicom.readDouble(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_SLICE_THICKNESS));
+		IJ.log("thick= "+thick);
 		double spacing = ReadDicom
 				.readDouble(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_SPACING_BETWEEN_SLICES));
+		IJ.log("spacing= "+spacing);
 
 		for (int w1 = 0; w1 < nFrames; w1++) {
 
 			ImagePlus imp3 = MyStackUtils.imageFromStack(impStack, w1 + 1);
 
 			String pos2 = ReadDicom.readDicomParameter(imp3, MyConst.DICOM_IMAGE_POSITION);
+			IJ.log("pos2= "+pos2);
+
 			slicePos2[w1] = ReadDicom.readSubstring(pos2, 3);
 
 			if (verbose)
@@ -739,6 +742,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		rt.addValue(t1, "fwhm_slab1");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, fwhmSlice1[j1]);
+			IJ.log("slab1 slice= " + j1 + " fwhm= " + fwhmSlice1[j1]);
 		}
 
 		rt.incrementCounter();
@@ -751,6 +755,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		rt.addValue(t1, "fwhm_slab2");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, fwhmSlice2[j1]);
+			IJ.log("slab2 slice= " + j1 + " fwhm= " + fwhmSlice2[j1]);
 		}
 
 		rt.incrementCounter();
@@ -763,6 +768,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		rt.addValue(t1, "fwhm_cuneo3");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, fwhmCuneo3[j1]);
+			IJ.log("cuneo3 slice= " + j1 + " fwhm= " + fwhmCuneo3[j1]);
 		}
 
 		rt.incrementCounter();
@@ -775,6 +781,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		rt.addValue(t1, "fwhm_cuneo4");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, fwhmCuneo4[j1]);
+			IJ.log("cuneo4 slice= " + j1 + " fwhm= " + fwhmCuneo4[j1]);
 		}
 
 		rt.incrementCounter();
@@ -1036,7 +1043,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		double[] outFwhm;
 		if (slab) {
 			isd3 = analPlot1(profiB1, slab);
-			outFwhm = calcFwhm(isd3, profiB1, slab, dimPixel);
+			outFwhm = calcFwhmTraditional(isd3, profiB1, slab, dimPixel);
 			if (step) {
 				createPlot2(profiB1, slab, bLabelSx, "plot mediato + baseline + FWHM", true);
 				msgFwhm();
@@ -1048,7 +1055,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 
 			isd3 = analPlot1(profiE1, slab);
 
-			outFwhm = calcFwhm(isd3, profiE1, slab, dimPixel);
+			outFwhm = calcFwhmTraditional(isd3, profiE1, slab, dimPixel);
 
 			if (step) {
 				createPlot2(profiE1, slab, bLabelSx, "plot ERF con smooth 3x3 e FWHM", true);
@@ -1068,7 +1075,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * @return out[0] fwhm calcolata (mm)
 	 * @return out[1] peak position (mm)
 	 */
-	public double[] calcFwhm(int[] isd, double[] profile, boolean bslab, double dimPixel) {
+	public double[] calcFwhmTraditional(int[] isd, double[] profile, boolean bslab, double dimPixel) {
 
 		double peak = 0;
 		double[] a = Tools.getMinMax(profile);

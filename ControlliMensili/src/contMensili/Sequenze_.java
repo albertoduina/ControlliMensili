@@ -86,6 +86,7 @@ public class Sequenze_ implements PlugIn {
 	public static String blackpath = "";
 	public static String blackname = "";
 	public static String blacklog = "";
+	public static boolean testP6 = true;    // usato durante i test 2024_04_20
 
 	public void run(String arg) {
 		// ============================================================================================
@@ -101,6 +102,9 @@ public class Sequenze_ implements PlugIn {
 		if (!UtilAyv.jarCount("iw2ayv_"))
 			return;
 		// ============================================================================================
+		// EQUIVALENZE DURANTE I TEST
+
+		// ==============================================================================================
 
 		UtilAyv.setMyPrecision();
 		// MyFileLogger.logger.info("<-- INIZIO Sequenze -->");
@@ -967,15 +971,13 @@ public class Sequenze_ implements PlugIn {
 						plugin = "contMensili.p6rmn_";
 				}
 
-				
 				// usato durante i test 2024_04_20
-				
-				
-				if (plugin.equals("contMensili.p6rmn_"))
-					plugin = "contMensili.p6rmn_SPLINE1";
 
-				
-				
+				if (testP6) {
+					if (plugin.equals("contMensili.p6rmn_"))
+						plugin = "contMensili.p6rmn_FITTER";
+				}
+
 				String argomento = argumentForPluginToBeCalled(j1, tableSequenze5);
 				boolean jump = false;
 				if (superficiali) {
