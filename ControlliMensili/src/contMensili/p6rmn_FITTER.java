@@ -1495,6 +1495,9 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 
 		// ----------------------------------------------------------
 		//
+		
+		
+		
 		CurveFitter curveFitter = new CurveFitter(profiX, profiY);
 
 		double[] initialGuessing = new double[5];
@@ -1502,7 +1505,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		initialGuessing[1] = -ArrayUtils.vetMax(profiY);
 		initialGuessing[2] = -ArrayUtils.vetMean(profiY);
 		initialGuessing[3] = -ArrayUtils.vetSd(profiY);
-		initialGuessing[4] = -1.5;
+		initialGuessing[4] = -1.6;
 
 		MyLog.logVector(initialGuessing, "initialGuessing");
 
