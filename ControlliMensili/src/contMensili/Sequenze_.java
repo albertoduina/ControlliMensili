@@ -199,8 +199,8 @@ public class Sequenze_ implements PlugIn {
 			IJ.runPlugIn("contMensili.p3rmn_", "-1");
 			IJ.runPlugIn("contMensili.p4rmn_", "-1");
 			IJ.runPlugIn("contMensili.p5rmn_", "-1");
-//			IJ.runPlugIn("contMensili.p6rmn_", "-1");
-			IJ.runPlugIn("contMensili.p6rmn_", "-1");
+//			IJ.runPlugIn("contMensili.p6rmn_ORIGINAL", "-1");
+			IJ.runPlugIn("contMensili.p6rmn_ORIGINAL", "-1");
 			IJ.runPlugIn("contMensili.p7rmn_", "-1");
 			IJ.runPlugIn("contMensili.p8rmn_", "-1");
 			IJ.runPlugIn("contMensili.p10rmn_", "-1");
@@ -316,7 +316,7 @@ public class Sequenze_ implements PlugIn {
 					MyLog.logMatrix(tableCode, "tableCodeTreviglio");
 					MyLog.waitHere("salvare il log come TableCodeTreviglio");
 				}
-
+			
 				// String[][] tableSequenceTreviglio =
 				// treviglioSequenceTable(tableSequenceLoaded, tableExpand);
 				// --------------------------------------------------------------------------------------------
@@ -718,6 +718,8 @@ public class Sequenze_ implements PlugIn {
 				}
 			}
 		}
+		
+
 
 		// a questo punto non mi resta che creare la tabella e riversarvi i dati degli
 		// ArrayList
@@ -968,13 +970,13 @@ public class Sequenze_ implements PlugIn {
 					if (plugin.equals("contMensili.p17rmn_"))
 						plugin = "contMensili.p7rmn_";
 					if (plugin.equals("contMensili.p16rmn_"))
-						plugin = "contMensili.p6rmn_";
+						plugin = "contMensili.p6rmn_ORIGINAL";
 				}
 
 				// usato durante i test 2024_04_20
 
 				if (testP6) {
-					if (plugin.equals("contMensili.p6rmn_"))
+					if (plugin.equals("contMensili.p6rmn_ORIGINAL"))
 						plugin = "contMensili.p6rmn_FITTER";
 				}
 

@@ -75,7 +75,7 @@ import utils.UtilAyv;
  * 
  */
 
-public class p6rmn_ implements PlugIn, Measurements {
+public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 
 	static final int ABORT = 1;
 
@@ -169,7 +169,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 				// new p6rmn_().wrapThickness(path, "0", oldPosition, autoCalled, step, verbose,
 				// test);
 
-				new p6rmn_().mainThickness(path, "0", oldPosition, autoCalled, step, verbose, test);
+				new p6rmn_ORIGINAL().mainThickness(path, "0", oldPosition, autoCalled, step, verbose, test);
 				UtilAyv.afterWork();
 				retry = true;
 			}
@@ -243,6 +243,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 				double[] vetRefPosition = readReferences(imp0);
 				ResultsTable rt = null;
 				boolean accetta = false;
+
 				do {
 					rt = mainThickness(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
 					if (rt != null) {
@@ -322,7 +323,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 				boolean step = false;
 				boolean verbose = false;
 				boolean test = true;
-				ResultsTable rt = new p6rmn_().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
+				ResultsTable rt = new p6rmn_ORIGINAL().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
 						test);
 				rt.show("Results");
 				MyLog.waitHere("verifica results table");
@@ -348,7 +349,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 				boolean verbose = false;
 				boolean test = true;
 
-				ResultsTable rt = new p6rmn_().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
+				ResultsTable rt = new p6rmn_ORIGINAL().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
 						test);
 
 				double[] vetResults = UtilAyv.vectorizeResults(rt);
@@ -381,7 +382,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		boolean verbose = false;
 		boolean test = true;
 
-		ResultsTable rt = new p6rmn_().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
+		ResultsTable rt = new p6rmn_ORIGINAL().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt);
 		boolean ok = UtilAyv.verifyResults1(vetResults, referenceSiemens(), MyConst.P6_vetName);
@@ -491,10 +492,12 @@ public class p6rmn_ implements PlugIn, Measurements {
 
 		impStack.setSliceWithoutUpdate(1);
 
+
 		if (verbose)
 			UtilAyv.showImageMaximized(impStack);
 		float dimPixel = ReadDicom.readFloat(
 				ReadDicom.readSubstring(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_PIXEL_SPACING), 1));
+		IJ.log("dimPixel= " + dimPixel);
 		impStack.setRoi(new Line((int) vetRefPosition[0], (int) vetRefPosition[1], (int) vetRefPosition[2],
 				(int) vetRefPosition[3]));
 		impStack.updateAndDraw();
@@ -547,17 +550,17 @@ public class p6rmn_ implements PlugIn, Measurements {
 		nFrames = impStack.getStackSize();
 
 		double thick = ReadDicom.readDouble(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_SLICE_THICKNESS));
-		IJ.log("thick= "+thick);
+		IJ.log("thick= " + thick);
 		double spacing = ReadDicom
 				.readDouble(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_SPACING_BETWEEN_SLICES));
-		IJ.log("spacing= "+spacing);
+		IJ.log("spacing= " + spacing);
 
 		for (int w1 = 0; w1 < nFrames; w1++) {
 
 			ImagePlus imp3 = MyStackUtils.imageFromStack(impStack, w1 + 1);
 
 			String pos2 = ReadDicom.readDicomParameter(imp3, MyConst.DICOM_IMAGE_POSITION);
-			IJ.log("pos2= "+pos2);
+			IJ.log("pos2= " + pos2);
 
 			slicePos2[w1] = ReadDicom.readSubstring(pos2, 3);
 
@@ -594,7 +597,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 				imp3.getWindow().toFront();
 			}
 
-			double[] dsd1 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
+			double[] dsd1 = analProf_ORIGINAL(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
 					dimPixel);
 
 			fwhmSlice1[w1] = dsd1[0];
@@ -622,7 +625,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 			if (step) {
 				imp3.getWindow().toFront();
 			}
-			double[] dsd2 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
+			double[] dsd2 = analProf_ORIGINAL(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
 					dimPixel);
 			fwhmSlice2[w1] = dsd2[0];
 			peakPositionSlice2[w1] = dsd2[1];
@@ -656,7 +659,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 				imp3.getWindow().toFront();
 			}
 
-			double[] dsd3 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
+			double[] dsd3 = analProf_ORIGINAL(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
 					dimPixel);
 
 			fwhmCuneo3[w1] = dsd3[0];
@@ -684,7 +687,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 			if (step) {
 				imp3.getWindow().toFront();
 			}
-			double[] dsd4 = analProf(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
+			double[] dsd4 = analProf_ORIGINAL(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
 					dimPixel);
 			fwhmCuneo4[w1] = dsd4[0];
 			peakPositionCuneo4[w1] = dsd4[1];
@@ -742,7 +745,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		rt.addValue(t1, "fwhm_slab1");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, fwhmSlice1[j1]);
-			IJ.log("slab1 slice= " + j1 + " fwhm= " + fwhmSlice1[j1]);
+			IJ.log("slab1 slice= " + j1 + " FWHM [mm]= " + fwhmSlice1[j1] * dimPixel * Math.sin(Math.toRadians(11.3)));
 		}
 
 		rt.incrementCounter();
@@ -755,7 +758,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		rt.addValue(t1, "fwhm_slab2");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, fwhmSlice2[j1]);
-			IJ.log("slab2 slice= " + j1 + " fwhm= " + fwhmSlice2[j1]);
+			IJ.log("slab2 slice= " + j1 + " FWHM [mm]= " + fwhmSlice2[j1]* dimPixel * Math.sin(Math.toRadians(11.3)));
 		}
 
 		rt.incrementCounter();
@@ -768,7 +771,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		rt.addValue(t1, "fwhm_cuneo3");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, fwhmCuneo3[j1]);
-			IJ.log("cuneo3 slice= " + j1 + " fwhm= " + fwhmCuneo3[j1]);
+			IJ.log("cuneo3 slice= " + j1 + " FWHM [mm]= " + fwhmCuneo3[j1]* dimPixel * Math.sin(Math.toRadians(11.3)));
 		}
 
 		rt.incrementCounter();
@@ -781,7 +784,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		rt.addValue(t1, "fwhm_cuneo4");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, fwhmCuneo4[j1]);
-			IJ.log("cuneo4 slice= " + j1 + " fwhm= " + fwhmCuneo4[j1]);
+			IJ.log("cuneo4 slice= " + j1 + " FWHM [mm]= " + fwhmCuneo4[j1]* dimPixel * Math.sin(Math.toRadians(11.3)));
 		}
 
 		rt.incrementCounter();
@@ -949,6 +952,8 @@ public class p6rmn_ implements PlugIn, Measurements {
 		// bubblesort end
 		return sortedPath;
 	}
+	
+	
 
 	/**
 	 * analisi di un profilo
@@ -967,7 +972,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * @return outFwhm[1]=peak position (mm)
 	 */
 
-	public double[] analProf(ImagePlus imp1, double[] vetRefPosition, double[] vetProfile, int ra1, boolean slab,
+	public double[] analProf_ORIGINAL(ImagePlus imp1, double[] vetRefPosition, double[] vetProfile, int ra1, boolean slab,
 			boolean invert, boolean step, boolean bLabelSx, double dimPixel) {
 
 		/*
@@ -1024,41 +1029,41 @@ public class p6rmn_ implements PlugIn, Measurements {
 
 		// linea calcolo segnale mediato
 		Line.setWidth(11);
-		double[] profiM1 = getLinePixels(imp1, c2x, c2y, d2x, d2y);
+		double[] profiM1 = getLinePixels_ORIGINAL(imp1, c2x, c2y, d2x, d2y);
 
 		if (step) {
 			imp1.updateAndDraw();
 			msgWideline();
-			createPlot2(profiM1, true, bLabelSx, "Profilo mediato", false);
+			createPlot2_ORIGINAL(profiM1, true, bLabelSx, "Profilo mediato", false);
 			msgSlab();
 		}
 
-		double[] profiB1 = baselineCorrection(profiM1, statC.mean, statD.mean);
+		double[] profiB1 = baselineCorrection_ORIGINAL(profiM1, statC.mean, statD.mean);
 
 		if (step) {
-			createPlot2(profiB1, true, bLabelSx, "Profilo mediato + baseline correction", true);
+			createPlot2_ORIGINAL(profiB1, true, bLabelSx, "Profilo mediato + baseline correction", true);
 			msgBaseline();
 		}
 		int isd3[];
 		double[] outFwhm;
 		if (slab) {
-			isd3 = analPlot1(profiB1, slab);
-			outFwhm = calcFwhmTraditional(isd3, profiB1, slab, dimPixel);
+			isd3 = analPlot1_ORIGINAL(profiB1, slab);
+			outFwhm = calcFwhm_ORIGINAL(isd3, profiB1, slab, dimPixel);
 			if (step) {
-				createPlot2(profiB1, slab, bLabelSx, "plot mediato + baseline + FWHM", true);
+				createPlot2_ORIGINAL(profiB1, slab, bLabelSx, "plot mediato + baseline + FWHM", true);
 				msgFwhm();
 			}
 			Line.setWidth(1);
 			return (outFwhm);
 		} else {
-			double[] profiE1 = createErf(profiB1, invert); // profilo con ERF
+			double[] profiE1 = createErf_ORIGINAL(profiB1, invert); // profilo con ERF
+			
+			isd3 = analPlot1_ORIGINAL(profiE1, slab);
 
-			isd3 = analPlot1(profiE1, slab);
-
-			outFwhm = calcFwhmTraditional(isd3, profiE1, slab, dimPixel);
+			outFwhm = calcFwhm_ORIGINAL(isd3, profiE1, slab, dimPixel);
 
 			if (step) {
-				createPlot2(profiE1, slab, bLabelSx, "plot ERF con smooth 3x3 e FWHM", true);
+				createPlot2_ORIGINAL(profiE1, slab, bLabelSx, "plot ERF con smooth 3x3 e FWHM", true);
 				msgErf();
 			}
 			Line.setWidth(1);
@@ -1075,7 +1080,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * @return out[0] fwhm calcolata (mm)
 	 * @return out[1] peak position (mm)
 	 */
-	public double[] calcFwhmTraditional(int[] isd, double[] profile, boolean bslab, double dimPixel) {
+	public double[] calcFwhm_ORIGINAL(int[] isd, double[] profile, boolean bslab, double dimPixel) {
 
 		double peak = 0;
 		double[] a = Tools.getMinMax(profile);
@@ -1121,7 +1126,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * @param y2   coordinata y end profilo
 	 * @return profilo wideline
 	 */
-	public double[] getLinePixels(ImagePlus imp1, int x1, int y1, int x2, int y2) {
+	public double[] getLinePixels_ORIGINAL(ImagePlus imp1, int x1, int y1, int x2, int y2) {
 		imp1.setRoi(new Line(x1, y1, x2, y2));
 		imp1.updateAndDraw();
 		Roi roi1 = imp1.getRoi();
@@ -1137,7 +1142,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * @param media2   media sul fondo a dx
 	 * @return profilo corretto
 	 */
-	public double[] baselineCorrection(double[] profile1, double media1, double media2) {
+	public double[] baselineCorrection_ORIGINAL(double[] profile1, double media1, double media2) {
 
 		int len1 = profile1.length;
 		double diff1;
@@ -1149,54 +1154,6 @@ public class p6rmn_ implements PlugIn, Measurements {
 		return profile2;
 	} // baselineCorrection
 
-	/**
-	 * calcolo ERF
-	 * 
-	 * @param profile1 profilo da elaborare
-	 * @param invert   true se da invertire
-	 * @return profilo con ERF
-	 */
-	public double[] createErfOld(double[] profile1, boolean invert) {
-
-		int len1 = profile1.length;
-		//
-		// eseguo tre smooth 07-02-05, questo ci permette di ottenere risultati
-		// affidabili non falsati da spikes
-		//
-		for (int j = 1; j < len1 - 1; j++)
-			profile1[j] = (profile1[j - 1] + profile1[j] + profile1[j + 1]) / 3;
-		for (int j = 1; j < len1 - 1; j++)
-			profile1[j] = (profile1[j - 1] + profile1[j] + profile1[j + 1]) / 3;
-		for (int j = 1; j < len1 - 1; j++)
-			profile1[j] = (profile1[j - 1] + profile1[j] + profile1[j + 1]) / 3;
-		for (int j = 1; j < len1 - 1; j++)
-			profile1[j] = (profile1[j - 1] + profile1[j] + profile1[j + 1]) / 3;
-
-		double[] sorted = new double[len1];
-		for (int j = 0; j < sorted.length; j++)
-			sorted[j] = profile1[j];
-		Arrays.sort(sorted);
-		// ora il valore minimo dell'array corrisponde a quello di indice 0
-		// possiamo interrompere la generazione dell'erf quando il
-		// segnale del cuneo raggiunge questo valore
-		int stop = 0;
-
-		for (int j = 0; j < len1 - 1; j++)
-			if (profile1[j] == sorted[0]) {
-				stop = j;
-				break;
-			}
-		double[] erf = new double[len1];
-		if (invert) {
-			for (int j = 0; j < stop; j++)
-				erf[j] = (profile1[j] - profile1[j + 1]) * (-1);
-		} else {
-			for (int j = profile1.length - 1; j > stop; j--)
-				erf[j] = (profile1[j] - profile1[j - 1]) * (-1);
-		}
-		erf[len1 - 1] = erf[len1 - 2];
-		return (erf);
-	} // createErf
 
 	/**
 	 * calcolo ERF
@@ -1205,8 +1162,10 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * @param invert   true se da invertire
 	 * @return profilo con ERF
 	 */
-	public double[] createErf(double[] profile1, boolean invert) {
+	public double[] createErf_ORIGINAL(double[] profile1, boolean invert) {
 
+		// non utilizza altre routine
+		
 		int len1 = profile1.length;
 		//
 		// eseguo tre smooth 07-02-05, questo ci permette di ottenere risultati
@@ -1231,10 +1190,10 @@ public class p6rmn_ implements PlugIn, Measurements {
 		// }
 		erf[len1 - 1] = erf[len1 - 2];
 
-		// Anzich� utilizzare algoritmi di ricerca dei picchi, cerco il minimo
-		// ed il massimo. Il valore assoluto pi� grande corrisponder� all'angolo
-		// a 90� che non ci interessa. A questo punto posso portare a zero tutti
-		// i valori del medesimo segno. Rester� cos� solo il
+		// Anziche' utilizzare algoritmi di ricerca dei picchi, cerco il minimo
+		// ed il massimo. Il valore assoluto piu' grande corrispondera' all'angolo
+		// a 90 che non ci interessa. A questo punto posso portare a zero tutti
+		// i valori del medesimo segno. Restera' cosi' solo il
 		// picco meno alto, corrispondente all'erf della rampa del cuneo.
 
 		double[] minMax = Tools.getMinMax(erf);
@@ -1242,20 +1201,20 @@ public class p6rmn_ implements PlugIn, Measurements {
 		double max = minMax[1];
 
 		if (Math.abs(min) > Math.abs(max) && min < 0) {
-			// se il minimo � di valore assoluto pi� grande, allora porto a 0
+			// se il minimo e' di valore assoluto piu' grande, allora porto a 0
 			// tutti i valori minori di 0
 			for (int i1 = 0; i1 < erf.length; i1++) {
 				if (erf[i1] < 0)
 					erf[i1] = 0;
 			}
-			// e poi cambio il tutto di segno, poich� voglio il picco verso il
+			// e poi cambio il tutto di segno, poiche' voglio il picco verso il
 			// basso
 			for (int i1 = 0; i1 < erf.length; i1++) {
 				erf[i1] *= -1;
 			}
 
 		} else if (Math.abs(min) < Math.abs(max) && max > 0) {
-			// se il massimo � di valore assoluto pi� grande, allora porto a 0
+			// se il massimo e' di valore assoluto piu' grande, allora porto a 0
 			// tutti i valori maggiori di 0
 			for (int i1 = 0; i1 < erf.length; i1++) {
 				if (erf[i1] > 0)
@@ -1277,7 +1236,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * @param sTitolo  titolo del grafico
 	 * @param bFw      true=scritte x FWHM
 	 */
-	public void createPlot2(double[] profile1, boolean bslab, boolean bLabelSx, String sTitolo, boolean bFw) {
+	public void createPlot2_ORIGINAL(double[] profile1, boolean bslab, boolean bLabelSx, String sTitolo, boolean bFw) {
 		int isd2[];
 		double ddd[];
 		double eee[];
@@ -1285,7 +1244,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 		double ggg[];
 		double labPos;
 
-		isd2 = analPlot1(profile1, bslab);
+		isd2 = analPlot1_ORIGINAL(profile1, bslab);
 
 		double[] a = Tools.getMinMax(profile1);
 		double min1 = a[0];
@@ -1379,7 +1338,7 @@ public class p6rmn_ implements PlugIn, Measurements {
 	 * @return isd[2] punto profilo sotto half a dx
 	 * @return isd[3] punto profilo sopra half a dx
 	 */
-	public int[] analPlot1(double profile1[], boolean bSlab) {
+	public int[] analPlot1_ORIGINAL(double profile1[], boolean bSlab) {
 
 		int sopra1 = 0;
 		int sotto1 = 0;
