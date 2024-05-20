@@ -3,6 +3,8 @@ package contMensili;
 import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -307,15 +309,15 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 				break;
 			}
 		} while (retry);
-		saveLog(spyfirst + spysecond);
+		saveLog(spyfirst + spysecond, "Log1.txt");
 		new AboutBox().close();
 		UtilAyv.afterWork();
 		return 0;
 	}
 
-	public void saveLog(String path) {
+	public void saveLog(String path, String name) {
 		IJ.selectWindow("Log");
-		IJ.saveAs("text", path + "\\Log.txt");
+		IJ.saveAs("text", path + "\\" + name);
 	}
 
 	public String[] manualImageSelection() {
@@ -520,6 +522,8 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		nFrames = path.length;
 
 		impStack.setSliceWithoutUpdate(1);
+
+		String stationName = ReadDicom.readDicomParameter(impStack, MyConst.DICOM_STATION_NAME);
 
 		if (verbose)
 			UtilAyv.showImageMaximized(impStack);
@@ -907,6 +911,10 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 			}
 		}
 
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+		LocalDateTime now = LocalDateTime.now();
+		String ora2 = dtf.format(now);
+
 		//
 		// ##################################################################################################
 		// ##################################################################################################
@@ -922,11 +930,14 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		IJ.log("wedge1 R^2= " + dsd3[7] + " FWHM [mm]= " + dsd3[4] * dimPixel * Math.sin(Math.toRadians(11.3)));
 		IJ.log("wedge2 R^2= " + dsd4[7] + " FWHM [mm]= " + dsd4[4] * dimPixel * Math.sin(Math.toRadians(11.3)));
 		IJ.log("-------------------------------------------------------------------");
+		IJ.log("Test del " + ora2);
+		IJ.log("macchina " + stationName);
+
 		// ##################################################################################################
 		// ##################################################################################################
 		//
 
-		MyLog.waitHere();
+		saveLog(spyfirst + spysecond, "Log2Results.txt");
 
 		//
 		// Salvataggio dei risultati nella results table
@@ -1431,6 +1442,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		// ora che ho sottratto la baseline posso eseguire finalmente il fit del picco
 
 		double[] outFWHM1 = peakFitterFWHM_GAUSSIAN(imp1, profi10, slab, step);
+
 		double[] outFWHM2 = peakFitterFWHM_SUPERGAUSSIAN(imp1, profi10, slab, step);
 
 		double sTeorico = (double) ReadDicom.readFloat(
@@ -1468,7 +1480,13 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		return outFWHMtotal;
 	}
 
-	public int[] analPlot1_ORIGINAL(double profile1[], boolean bSlab) {
+	public int[] analPlot1_ORIGINAL(double[] profile1, boolean bSlab) {
+		String title = "";
+		int[] out1 = analPlot1_ORIGINAL(profile1, bSlab, title);
+		return out1;
+	}
+
+	public int[] analPlot1_ORIGINAL(double[] profile1, boolean bSlab, String title) {
 
 		int sopra1 = 0;
 		int sotto1 = 0;
@@ -1484,15 +1502,23 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		isd[3] = 0;
 		int len1 = profile1.length;
 
+		IJ.log(title);
+
+		// MyLog.logVectorVertical(profile1, "profile1");
+
 		double[] a = Tools.getMinMax(profile1);
+
+		// MyLog.logVectorVertical(a, "a");
+
 		double min1 = a[0];
 		if (bSlab)
 			max1 = a[1];
 		else
 			max1 = 0;
 
-		// calcolo met� altezza
+		// calcolo meta' altezza
 		double half = (max1 - min1) / 2 + min1;
+		IJ.log("half= " + half);
 		// ricerca valore < half partendo da SX
 		for (i1 = 0; i1 < len1 - 1; i1++) {
 			if (profile1[i1] < half) {
@@ -1520,6 +1546,127 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 				sopra2 = i1;
 				break;
 			}
+		}
+		isd[0] = sotto1;
+		isd[1] = sopra1;
+		isd[2] = sotto2;
+		isd[3] = sopra2;
+//		MyLog.logVector(isd, "isd");
+//		MyLog.waitHere();
+		return isd;
+	} // analPlot1
+
+	/**
+	 * 
+	 * @param profile1
+	 * @param step
+	 * @return
+	 */
+	public int[] analPlot1_FITTER(double[] profile1, boolean step) {
+		String title = "";
+		int[] out1 = analPlot1_FITTER(profile1, step, title);
+		return out1;
+	}
+
+	public int[] analPlot1_FITTER(double[] profile1, boolean step, String title) {
+
+		int sopra1 = 0;
+		int sotto1 = 0;
+		int sopra2 = 0;
+		int sotto2 = 0;
+		double max1 = 0;
+		double min1 = 0;
+		int i1;
+		int[] isd;
+		isd = new int[4];
+		isd[0] = 0;
+		isd[1] = 0;
+		isd[2] = 0;
+		isd[3] = 0;
+		int len1 = profile1.length;
+		double[] a = Tools.getMinMax(profile1);
+
+		IJ.log(title);
+
+		if (Math.abs(a[1]) > Math.abs(a[0])) {
+			max1 = a[1];
+			min1 = a[0];
+		} else {
+			max1 = a[0];
+			min1 = a[1];
+		}
+
+		// calcolo meta' altezza
+		double half = (max1 - min1) / 2 + min1;
+		double[] half2 = new double[4];
+		half2[0] = (double) 0;
+		half2[1] = (double) half;
+		half2[2] = (double) profile1.length;
+		half2[3] = (double) half;
+
+		if (false) {
+			double[][] profile11 = ProfileUtils.encode(profile1);
+			Plot plot2 = createPlot1(profile11, half2, true, true, true, (title+ " NO FWHM"), 5.0, 0.75);
+			plot2.show();
+		}
+
+		// a seconda che half sia positiva o negativa devo fare due ricerche diverse
+		if (half < 0) {
+			// ricerca valore < half partendo da SX
+			for (i1 = 0; i1 < len1 - 1; i1++) {
+				if (profile1[i1] < half) {
+					sotto1 = i1;
+					break;
+				}
+			}
+			// torno indietro e cerco il primo valore > half
+			for (i1 = sotto1; i1 > 0; i1--) {
+				if (profile1[i1] > half) {
+					sopra1 = i1;
+					break;
+				}
+			}
+			// ricerca valore < half partendo da DX
+			for (i1 = len1 - 1; i1 > 0; i1--) {
+				if (profile1[i1] < half) {
+					sotto2 = i1;
+					break;
+				}
+			}
+			// torno indietro e cerco il primo valore > half
+			for (i1 = sotto2; i1 < len1 - 1; i1++) {
+				if (profile1[i1] > half) {
+					sopra2 = i1;
+					break;
+				}
+			}
+		} else {
+			// ricerca valore > half partendo da SX
+			for (i1 = 0; i1 < len1 - 1; i1++) {
+				if (profile1[i1] > half) {
+					sotto1 = i1;
+					break;
+				}
+			}
+			for (i1 = sotto1; i1 > 0; i1--) {
+				if (profile1[i1] < half) {
+					sopra1 = i1;
+					break;
+				}
+			}
+			for (i1 = len1 - 1; i1 > 0; i1--) {
+				if (profile1[i1] > half) {
+					sotto2 = i1;
+					break;
+				}
+			}
+			for (i1 = sotto2; i1 < len1 - 1; i1++) {
+				if (profile1[i1] < half) {
+					sopra2 = i1;
+					break;
+				}
+			}
+
 		}
 		isd[0] = sotto1;
 		isd[1] = sopra1;
@@ -1565,6 +1712,13 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		return out1;
 	}
 
+	public double[] calcFwhm_FITTER(int[] isd, double[] profile, boolean bslab, double dimPixel, boolean step) {
+
+		String title = "";
+		double[] out1 = calcFwhm_FITTER(isd, profile, bslab, dimPixel, step, title);
+		return out1;
+	}
+
 	/**
 	 * calcolo FWHM del profilo assegnato
 	 * 
@@ -1574,18 +1728,25 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 	 * @return out[0] fwhm calcolata (mm)
 	 * @return out[1] peak position (mm)
 	 */
-	public double[] calcFwhm_FITTER(int[] isd, double[] profile, boolean bslab, double dimPixel) {
+	public double[] calcFwhm_FITTER(int[] isd, double[] profile, boolean bslab, double dimPixel, boolean step,
+			String title) {
 
 		IJ.showStatus("calcFwhmFITTER");
 
 		double peak = 0;
 		double[] a = Tools.getMinMax(profile);
 		double min1 = a[0];
-		double max1 = 0;
-		if (bslab)
+		double max1 = a[1];
+		if (Math.abs(max1) > Math.abs(min1)) {
 			max1 = a[1];
-		else
-			max1 = 0;
+			min1 = a[0];
+		} else {
+			max1 = a[0];
+			min1 = a[1];
+		}
+
+		// MyLog.waitHere("GUARDA QUEL CAZZO DI PLOT!");
+
 		// interpolazione lineare sinistra
 		double px0 = isd[0];
 		double px1 = isd[1];
@@ -1602,21 +1763,25 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		py2 = (max1 - min1) / 2.0 + min1;
 		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
 		double dx = px2;
+
 		double fwhm = (dx - sx) * dimPixel;
-		MyLog.waitHere("calcFwhmFITTER fwhm [mm]= " + fwhm * Math.sin(Math.toRadians(11.3)));
 
 		for (int i1 = 0; i1 < profile.length; i1++) {
-			if (profile[i1] == min1)
+			if (profile[i1] == max1)
 				peak = i1 * dimPixel;
 		}
 		double[] out = { fwhm, peak };
+//		IJ.log("calcFwhm_FITTER sx= " + sx + " dx= " + dx + " fwhm= " + fwhm + " max1= " + max1 + "  min1=  " + min1
+//				+ " peak= " + peak);
+//		MyLog.waitHere();
+
 		return (out);
 	} // calcFwhm
 
 	/**
 	 * calcolo FWHM del profilo assegnato
 	 * 
-	 * @param isd     coordinate sul profilo sopra e sotto met� altezza
+	 * @param isd     coordinate sul profilo sopra e sotto meta' altezza
 	 * @param profile profilo da analizzare
 	 * @param bslab   true se slab, false se cuneo
 	 * @return out[0] fwhm calcolata (mm)
@@ -1624,6 +1789,14 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 	 */
 	public double[] calcFwhm_ORIGINAL(int[] isd, double[] profile, boolean bslab, double dimPixel) {
 
+		String title = "";
+		double[] out1 = calcFwhm_ORIGINAL(isd, profile, bslab, dimPixel, title);
+		return out1;
+	}
+
+	public double[] calcFwhm_ORIGINAL(int[] isd, double[] profile, boolean bslab, double dimPixel, String title) {
+
+		IJ.log(title);
 		double peak = 0;
 		double[] a = Tools.getMinMax(profile);
 		double min1 = a[0];
@@ -1904,6 +2077,20 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		double sTeorico = (double) ReadDicom.readFloat(
 				ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SLICE_THICKNESS), 1));
 
+		// ===================================================================================
+		// calcolo la FWHM anche col vecchio metodo ORIGINAL andando a cercare i pixels
+		// sopra e sotto la mezza altezza con analplot e poi calcolando la FWHM con
+		// calcFWHM
+		// ===================================================================================
+
+		int[] isd = analPlot1_FITTER(fitY, step, "GAUSSIAN");
+		// MyLog.logVector(isd, "GAUSSIAN isd");
+		double[] outFwhm = calcFwhm_FITTER(isd, fitY, slab, dimPixel, step);
+		MyLog.logVector(outFwhm, "GAUSSIAN outFwhm");
+		// MyLog.waitHere();
+		// ===================================================================================
+		// ===================================================================================
+
 		// devo trasformare la FWHM da pixels su di un piano inclinato di 11.3 gradi a
 		// millimetri di spessore
 		//
@@ -2004,7 +2191,6 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 				+ " , e/2 ) ) )";
 
 		// ----------------------------------------------------------
-		//
 
 		CurveFitter curveFitter = new CurveFitter(profiX, profiY);
 		if (verbose) {
@@ -2029,15 +2215,15 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		initialGuessing[3] = ArrayUtils.vetSd(profiY);
 		initialGuessing[4] = +4.0;
 
-//		IJ.log("--------------------------------");
-//		MyLog.logVector(initialGuessing, "initialGuessing");
-//		IJ.log("--------------------------------");
-
 //		curveFitter.setRestarts(100);
 //		curveFitter.setMaxError(0.00001);
 
 		boolean showSettings = false;
 		curveFitter.doCustomFit(superGaussianFormula3, initialGuessing, showSettings);
+		IJ.log("--------------------------------");
+		IJ.log(curveFitter.getFormula());
+		MyLog.logVector(initialGuessing, "initialGuessing");
+		IJ.log("--------------------------------");
 
 //		String results = curveFitter.getResultString();
 //		double goodness = curveFitter.getFitGoodness();
@@ -2096,6 +2282,20 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 				.readFloat(ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
 		double sTeorico = (double) ReadDicom.readFloat(
 				ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SLICE_THICKNESS), 1));
+
+		// ===================================================================================
+		// calcolo la FWHM anche col vecchio metodo ORIGINAL andando a cercare i pixels
+		// sopra e sotto la mezza altezza con analplot e poi calcolando la FWHM con
+		// calcFWHM
+		// ===================================================================================
+
+		int[] isd = analPlot1_FITTER(fitY, step, "SUPERGAUSSIAN");
+		// MyLog.logVector(isd, "SUPERGAUSSIAN isd");
+		double[] outFwhm = calcFwhm_FITTER(isd, fitY, slab, dimPixel, step);
+		MyLog.logVector(outFwhm, "SUPERGAUSSIAN outFwhm");
+		// MyLog.waitHere();
+		// ===================================================================================
+		// ===================================================================================
 
 		spyname = "005 - OUTPUT DI CURVEFITTER PER LA SUPER-GAUSSIANA";
 
@@ -2394,12 +2594,16 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 
 		double[] profileY = ProfileUtils.decodeY(profile1);
 		double[] a = Tools.getMinMax(profileY);
+
 		double min1 = a[0];
-		double max1 = 0;
-		if (bslab)
+		double max1 = a[1];
+		if (Math.abs(max1) > Math.abs(min1)) {
 			max1 = a[1];
-		else
-			max1 = 0;
+			min1 = a[0];
+		} else {
+			max1 = a[0];
+			min1 = a[1];
+		}
 
 		double half = (max1 - min1) / 2 + min1;
 
