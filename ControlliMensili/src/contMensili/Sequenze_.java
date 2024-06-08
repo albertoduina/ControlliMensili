@@ -86,7 +86,8 @@ public class Sequenze_ implements PlugIn {
 	public static String blackpath = "";
 	public static String blackname = "";
 	public static String blacklog = "";
-	public static boolean testP6 = true;    // usato durante i test 2024_04_20
+	public static boolean testP6 = true; // AAAAATTENZIONE se messo FALSE utilizza il vecchio plugin rinominato
+											// p6rmn_ORIGINAL
 
 	public void run(String arg) {
 		// ============================================================================================
@@ -316,7 +317,7 @@ public class Sequenze_ implements PlugIn {
 					MyLog.logMatrix(tableCode, "tableCodeTreviglio");
 					MyLog.waitHere("salvare il log come TableCodeTreviglio");
 				}
-			
+
 				// String[][] tableSequenceTreviglio =
 				// treviglioSequenceTable(tableSequenceLoaded, tableExpand);
 				// --------------------------------------------------------------------------------------------
@@ -718,8 +719,6 @@ public class Sequenze_ implements PlugIn {
 				}
 			}
 		}
-		
-
 
 		// a questo punto non mi resta che creare la tabella e riversarvi i dati degli
 		// ArrayList
