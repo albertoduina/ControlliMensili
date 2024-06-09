@@ -86,8 +86,10 @@ public class Sequenze_ implements PlugIn {
 	public static String blackpath = "";
 	public static String blackname = "";
 	public static String blacklog = "";
-	public static boolean testP6 = true; // AAAAATTENZIONE se messo FALSE utilizza il vecchio plugin rinominato
-											// p6rmn_ORIGINAL
+	public static String testP6_1 = "contMensili.p6rmn_ORIGINAL";
+	public static String testP6_2 = "contMensili.p6rmn_IMPROVED";
+	public static String testP6_3 = "contMensili.p6rmn_FITTER";
+	public static int testP6 = 2; /// <<< SELEZIONA QUI
 
 	public void run(String arg) {
 		// ============================================================================================
@@ -974,9 +976,28 @@ public class Sequenze_ implements PlugIn {
 
 				// usato durante i test 2024_04_20
 
-				if (testP6) {
-					if (plugin.equals("contMensili.p6rmn_ORIGINAL"))
+//				IJ.log(MyLog.qui() + " SELEZIONE con testP6= " + testP6 + "plugin= " + plugin);
+//				MyLog.waitHere();
+
+				switch (testP6) {
+				case 1:
+					if (plugin.equals("contMensili.p6rmn_")) {
+						// IJ.log(MyLog.qui() + " eseguo p6rmn_ORIGINAL");
+						plugin = "contMensili.p6rmn_ORIGINAL";
+					}
+					break;
+				case 2:
+					if (plugin.equals("contMensili.p6rmn_")) {
+						// IJ.log(MyLog.qui() + " eseguo p6rmn_IMPROVED");
+						plugin = "contMensili.p6rmn_IMPROVED";
+					}
+					break;
+				case 3:
+					if (plugin.equals("contMensili.p6rmn_")) {
+						// IJ.log(MyLog.qui() + " eseguo p6rmn_FITTER");
 						plugin = "contMensili.p6rmn_FITTER";
+					}
+					break;
 				}
 
 				String argomento = argumentForPluginToBeCalled(j1, tableSequenze5);
@@ -1067,8 +1088,8 @@ public class Sequenze_ implements PlugIn {
 	}
 
 	/***
-	 * Effettua il run di un plugin (abbiamo cos� il plugin sequenze che � in grado
-	 * di chiamare i plugins per le eleborazioni delle varie immagini.
+	 * Effettua il run di un plugin (abbiamo cosi' il plugin sequenze che e' in
+	 * grado di chiamare i plugins per le eleborazioni delle varie immagini.
 	 * 
 	 * @param plugin
 	 * @param argomento

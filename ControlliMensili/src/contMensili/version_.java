@@ -58,7 +58,7 @@ public class version_ implements PlugIn {
 		IJ.log("p3_rmn        " + p3rmn_.VERSION);
 		IJ.log("p4_rmn        " + p4rmn_.VERSION);
 		IJ.log("p5_rmn        " + p5rmn_.VERSION);
-		IJ.log("p6_rmn        " + p6rmn_ORIGINAL.VERSION);
+		IJ.log("p6_rmn        " + p6rmn_IMPROVED.VERSION);
 		IJ.log("p7_rmn        " + p7rmn_.VERSION);
 		IJ.log("p8_rmn        " + p8rmn_.VERSION);
 		IJ.log("p9_rmn        " + p9rmn_.VERSION);

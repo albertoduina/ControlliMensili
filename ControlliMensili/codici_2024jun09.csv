@@ -13,9 +13,9 @@ BUSC_;Uniformità Coronale Body;2;2;0;0;0;888;999;xxx;x;x;p12rmn_
 BDSA_;DGP Single Body;1;1;0;0;0;888;999;xxx;x;x;p8rmn_
 BDMA_;DGP Multi Body;1;3;0;0;0;888;999;xxx;x;x;p8rmn_
 // BTLX_;Localizer Thickness Body;0;0;0;0;0;888;999;xxx;x;x;none_
-BT2A_;Thickness 2mm Sing.Body;1;1;0;0;0;888;999;xxx;x;x;p6rmn_ORIGINAL
-BT5A_;Thickness 5mm Sing.Body;1;1;0;0;0;888;999;xxx;x;x;p6rmn_ORIGINAL
-BTMA_;Thickness 2mm Multi Body;0;15;0;0;0;888;999;xxx;x;x;p6rmn_ORIGINAL
+BT2A_;Thickness 2mm Sing.Body;1;1;0;0;0;888;999;xxx;x;x;p6rmn_
+BT5A_;Thickness 5mm Sing.Body;1;1;0;0;0;888;999;xxx;x;x;p6rmn_
+BTMA_;Thickness 2mm Multi Body;0;15;0;0;0;888;999;xxx;x;x;p6rmn_
 BRKA_;Risoluzione 1024 Body;1;1;0;0;0;888;999;xxx;x;x;p4rmn_
 BR5A_;Risoluzione 512 Body;1;1;0;0;0;888;999;xxx;x;x;p4rmn_
 BR2A_;Risoluzione 256 Body;1;1;0;0;0;888;999;xxx;x;x;p4rmn_
@@ -27,9 +27,9 @@ HUSC_;Uniformità Coronale Head;2;2;0;0;0;888;999;xxx;x;x;p12rmn_
 HDSA_;DGP Single Head;1;1;0;0;0;888;999;xxx;x;x;p8rmn_
 HDMA_;DGP Multi Head;1;3;0;0;0;888;999;xxx;x;x;p8rmn_
 // HTLX_;Localizer Thickness Head;0;0;0;0;0;888;999;xxx;x;x;none_
-HT2A_;Thickness 2mm Sing.Head;1;1;0;0;0;888;999;xxx;x;x;p6rmn_ORIGINAL
-HT5A_;Thickness 5mm Sing.Head;1;1;0;0;0;888;999;xxx;x;x;p6rmn_ORIGINAL
-HTMA_;Thickness 2mm Multi Head;0;15;0;0;0;888;999;xxx;x;x;p6rmn_ORIGINAL
+HT2A_;Thickness 2mm Sing.Head;1;1;0;0;0;888;999;xxx;x;x;p6rmn_
+HT5A_;Thickness 5mm Sing.Head;1;1;0;0;0;888;999;xxx;x;x;p6rmn_
+HTMA_;Thickness 2mm Multi Head;0;15;0;0;0;888;999;xxx;x;x;p6rmn_
 // HWLX_;Localizer Warp Head;0;0;0;0;0;888;999;xxx;x;x;none_
 HWSA_;Warp Assiale Head;1;1;0;0;0;888;999;xxx;x;x;p7rmn_
 HRKA_;Risoluzione 1024 Head;1;1;0;0;0;888;999;xxx;x;x;p4rmn_
@@ -546,10 +546,10 @@ O12F_;Flash NECK ARRAY;4;4;0;0;0;888;999;NE1,2;hsx;30;p11rmn_
 // LOOP AND FLEXIBLE;;;;;;;;;;;;
 LLFS_;Flash LARGE LOOP;4;4;0;0;0;888;999;xxx;x;x;p12rmn_
 LLSS_;SpinEcho LARGE LOOP;4;4;0;0;0;888;999;xxx;x;x;p12rmn_
-SLFS_;Flash SMALL LOOP;4;4;0;0;0;888;999;L4;vup;30;p11rmn_
-SLSS_;SpinEcho SMALL LOOP;4;4;0;0;0;888;999;L4;vup;30;p11rmn_
-FXFS_;Flash SMALL LOOP;4;4;0;0;0;888;999;L4;vup;30;p11rmn_
-FXSS_;SpinEcho SMALL LOOP;4;4;0;0;0;888;999;L4;vup;30;p11rmn_
+SLFS_;Flash SMALL LOOP;4;4;0;0;0;888;999;xxx;vup;30;p11rmn_
+SLSS_;SpinEcho SMALL LOOP;4;4;0;0;0;888;999;xxx;vup;30;p11rmn_
+FXFS_;Flash SMALL LOOP;4;4;0;0;0;888;999;xxx;vup;30;p11rmn_
+FXSS_;SpinEcho SMALL LOOP;4;4;0;0;0;888;999;xxx;vup;30;p11rmn_
 LFFS_;Flash LARGE FLEXIBLE;4;4;0;0;0;888;999;xxx;x;x;p12rmn_
 LFSS_;SpinEcho LARGE FLEXIBLE;4;4;0;0;0;888;999;xxx;x;x;p12rmn_
 SFFS_;Flash SMALL FLEXIBLE;4;4;0;0;0;888;999;xxx;x;x;p12rmn_
@@ -624,50 +624,6 @@ U1CF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;FL35;x;30;p10rmn_
 U1CS_;SpinEcho LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;FL35;x;30;p10rmn_
 U1CF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;FL36;x;30;p10rmn_
 U1CS_;SpinEcho LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;FL36;x;30;p10rmn_
-//####;;;;;;;;;;;;
-// NUOVE BOBINE SOLA SAVE UNCOMBINED;;;;;;;;;;;;
-E1AF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;BO1;x;x;p12rmn_
-E1BF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;BO2;x;x;p12rmn_
-E1CF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;BO3;x;x;p12rmn_
-E1AF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B11;x;30;p10rmn_
-E1AF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B12;x;30;p10rmn_
-E1AF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B13;x;30;p10rmn_
-E1AF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B14;x;30;p10rmn_
-E1AF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B15;x;30;p10rmn_
-E1AF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B16;x;30;p10rmn_
-E1BF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B21;x;30;p10rmn_
-E1BF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B22;x;30;p10rmn_
-E1BF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B23;x;30;p10rmn_
-E1BF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B24;x;30;p10rmn_
-E1BF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B25;x;30;p10rmn_
-E1BF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B26;x;30;p10rmn_
-E1CF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B31;x;30;p10rmn_
-E1CF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B32;x;30;p10rmn_
-E1CF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B33;x;30;p10rmn_
-E1CF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B34;x;30;p10rmn_
-E1CF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B35;x;30;p10rmn_
-E1CF_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B36;x;30;p10rmn_
-E1AS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;BO1;x;x;p12rmn_
-E1BS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;BO2;x;x;p12rmn_
-E1CS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;BO3;x;x;p12rmn_
-E1AS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B11;x;30;p10rmn_
-E1AS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B12;x;30;p10rmn_
-E1AS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B13;x;30;p10rmn_
-E1AS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B14;x;30;p10rmn_
-E1AS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B15;x;30;p10rmn_
-E1AS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B16;x;30;p10rmn_
-E1BS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B21;x;30;p10rmn_
-E1BS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B22;x;30;p10rmn_
-E1BS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B23;x;30;p10rmn_
-E1BS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B24;x;30;p10rmn_
-E1BS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B25;x;30;p10rmn_
-E1BS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B26;x;30;p10rmn_
-E1CS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B31;x;30;p10rmn_
-E1CS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B32;x;30;p10rmn_
-E1CS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B33;x;30;p10rmn_
-E1CS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B34;x;30;p10rmn_
-E1CS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B35;x;30;p10rmn_
-E1CS_;Flash LARGE ULTRAFLEXIBLE;4;4;0;0;0;888;999;B36;x;30;p10rmn_
 
 // MATRIX PERIPHERIC ANGIO AERA SAVE UNCOMBINED;;;;;;;;;;;;
 PA1F_;Flash PERIF ARRAY PA1;4;4;0;0;0;888;999;xxx;x;x;p12rmn_
@@ -1406,9 +1362,9 @@ HUSS3;Uniformità Sagittale Head;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 HUSC3;Uniformità Coronale Head;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 HDSA3;DGP Single Head;1;1;0;0;0;0;0;xxx;x;x;p8rmn_
 HDMA3;DGP Multi Head;1;3;0;0;0;0;0;xxx;x;x;p8rmn_
-HT2A3;Thickness 2mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-HT5A3;Thickness 5mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-HTMA3;Thickness 2mm Multi Head;0;15;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
+HT2A3;Thickness 2mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+HT5A3;Thickness 5mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+HTMA3;Thickness 2mm Multi Head;0;15;0;0;0;0;0;xxx;x;x;p6rmn_
 HWSA3;Warp Assiale Head;1;1;0;0;0;0;0;xxx;x;x;p7rmn_
 HRKA3;Risoluzione 1024 Head;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 HR5A3;Risoluzione 512 Head;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
@@ -1428,9 +1384,9 @@ BUSS3;Uniformità Sagittale Body;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 BUSC3;Uniformità Coronale Body;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 BDSA3;DGP Single Body;1;1;0;0;0;0;0;xxx;x;x;p8rmn_
 BDMA3;DGP Multi Body;1;3;0;0;0;0;0;xxx;x;x;p8rmn_
-BT2A3;Thickness 2mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-BT5A3;Thickness 5mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-BTMA3;Thickness 2mm Multi Body;0;15;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
+BT2A3;Thickness 2mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+BT5A3;Thickness 5mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+BTMA3;Thickness 2mm Multi Body;0;15;0;0;0;0;0;xxx;x;x;p6rmn_
 BRKA3;Risoluzione 1024 Body;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 BR5A3;Risoluzione 512 Body;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 BR2A3;Risoluzione 256 Body;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
@@ -1473,10 +1429,10 @@ HUSS4;Uniformità Sagittale Head;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 HUSC4;Uniformità Coronale Head;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 HDSA4;DGP Single Head;1;1;0;0;0;0;0;xxx;x;x;p8rmn_
 HDMA4;DGP Multi Head;1;3;0;0;0;0;0;xxx;x;x;p8rmn_
-HT1A4;Thickness 1mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-HT2A4;Thickness 2mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-HT5A4;Thickness 5mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-HTMA4;Thickness 2mm Multi Head;0;15;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
+HT1A4;Thickness 1mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+HT2A4;Thickness 2mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+HT5A4;Thickness 5mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+HTMA4;Thickness 2mm Multi Head;0;15;0;0;0;0;0;xxx;x;x;p6rmn_
 HWSA4;Warp Assiale Head;1;1;0;0;0;0;0;xxx;x;x;p7rmn_
 HRKA4;Risoluzione 1024 Head;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 HR5A4;Risoluzione 512 Head;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
@@ -1491,10 +1447,10 @@ BUSS4;Uniformità Sagittale Body;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 BUSC4;Uniformità Coronale Body;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 BDSA4;DGP Single Body;1;1;0;0;0;0;0;xxx;x;x;p8rmn_
 BDMA4;DGP Multi Body;1;3;0;0;0;0;0;xxx;x;x;p8rmn_
-BT1A4;Thickness 1mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-BT2A4;Thickness 1mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-BT5A4;Thickness 5mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-BTMA4;Thickness 2mm Multi Body;0;15;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
+BT1A4;Thickness 1mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+BT2A4;Thickness 1mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+BT5A4;Thickness 5mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+BTMA4;Thickness 2mm Multi Body;0;15;0;0;0;0;0;xxx;x;x;p6rmn_
 BRKA4;Risoluzione 1024 Body;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 BR5A4;Risoluzione 512 Body;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 BR2A4;Risoluzione 256 Body;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
@@ -1525,16 +1481,16 @@ BUSC2;Uniformità Coronale Body;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 BDSA2;DGP Single Body;1;1;0;0;0;0;0;xxx;x;x;p8rmn_
 BDMA2;DGP Multi Body;1;3;0;0;0;0;0;xxx;x;x;p8rmn_
 BWSA2;Warp Assiale Body;1;1;0;0;0;0;0;xxx;x;x;p7rmn_
-BT2A2;Thickness 2mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-BT5A2;Thickness 5mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-BTMA2;Thickness 2mm Multi Body;0;15;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
+BT2A2;Thickness 2mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+BT5A2;Thickness 5mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+BTMA2;Thickness 2mm Multi Body;0;15;0;0;0;0;0;xxx;x;x;p6rmn_
 BR5A2;Risoluzione 512 Head;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 HUSA2;Uniformità Assiale Head;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 HUSS2;Uniformità Sagittale Head;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 HUSC2;Uniformità Coronale Head;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
-HUT2A;Thickness 2mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-HUT5A;Thickness 5mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-HUTMA;Thickness 2mm Multi Head;0;15;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
+HUT2A;Thickness 2mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+HUT5A;Thickness 5mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+HUTMA;Thickness 2mm Multi Head;0;15;0;0;0;0;0;xxx;x;x;p6rmn_
 HDSA2;DGP Single Head;1;1;0;0;0;0;0;xxx;x;x;p8rmn_
 HDMA2;DGP Multi Head;1;3;0;0;0;0;0;xxx;x;x;p8rmn_
 HWSA2;Warp Assiale Head;1;1;0;0;0;0;0;xxx;x;x;p7rmn_
@@ -1641,9 +1597,9 @@ HUSS5;Uniformità Sagittale Head;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 HUSC5;Uniformità Coronale Head;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 HDSA5;DGP Single Head;1;1;0;0;0;0;0;xxx;x;x;p8rmn_
 HDMA5;DGP Multi Head;1;3;0;0;0;0;0;xxx;x;x;p8rmn_
-HT2A5;Thickness 2mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-HT5A5;Thickness 5mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-HTMA5;Thickness 2mm Multi Head;0;15;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
+HT2A5;Thickness 2mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+HT5A5;Thickness 5mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+HTMA5;Thickness 2mm Multi Head;0;15;0;0;0;0;0;xxx;x;x;p6rmn_
 HWSA5;Warp Assiale Head;1;1;0;0;0;0;0;xxx;x;x;p7rmn_
 HRKA5;Risoluzione 1024 Head;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 HR5A5;Risoluzione 512 Head;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
@@ -1663,9 +1619,9 @@ PKCA5;Polso;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 BUSA6;Uniformità Assiale Body;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 BUSS6;Uniformità Sagittale Body;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 BUSC6;Uniformità Coronale Body;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
-BT2A6;Thickness 2mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-BT5A6;Thickness 5mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-BTMA6;Thickness 2mm Multi Body;0;15;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
+BT2A6;Thickness 2mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+BT5A6;Thickness 5mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+BTMA6;Thickness 2mm Multi Body;0;15;0;0;0;0;0;xxx;x;x;p6rmn_
 BR5A6;Risoluzione 512 Head;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 BDSA6;DGP Single Body;1;1;0;0;0;0;0;xxx;x;x;p8rmn_
 BDMA6;DGP Multi Body;1;3;0;0;0;0;0;xxx;x;x;p8rmn_
@@ -1674,9 +1630,9 @@ HUSS6;Uniformità Sagittale Head;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 HUSC6;Uniformità Coronale Head;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 HDSA6;DGP Single Head;1;1;0;0;0;0;0;xxx;x;x;p8rmn_
 HDMA6;DGP Multi Head;1;3;0;0;0;0;0;xxx;x;x;p8rmn_
-HT2A6;Thickness 2mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-HT5A6;Thickness 5mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-HTMA6;Thickness 2mm Multi Head;0;15;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
+HT2A6;Thickness 2mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+HT5A6;Thickness 5mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+HTMA6;Thickness 2mm Multi Head;0;15;0;0;0;0;0;xxx;x;x;p6rmn_
 HWSA6;Warp Assiale Head;1;1;0;0;0;0;0;xxx;x;x;p7rmn_
 HR5A6;Risoluzione 512 Head;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 T2MA6;T2 multi SpinEcho Body;8;8;0;0;0;0;0;xxx;x;x;p2rmn_
@@ -1706,9 +1662,9 @@ HESP6;HEADSPINE;2;6;0;0;0;0;0;xxx;x;x;p12rmn_
 BUSA7;Uniformità Assiale Body;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 BUSS7;Uniformità Sagittale Body;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 BUSC7;Uniformità Coronale Body;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
-BT2A7;Thickness 2mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-BT5A7;Thickness 5mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-BTMA7;Thickness 2mm Multi Body;0;15;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
+BT2A7;Thickness 2mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+BT5A7;Thickness 5mm Sing.Body;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+BTMA7;Thickness 2mm Multi Body;0;15;0;0;0;0;0;xxx;x;x;p6rmn_
 BR5A7;Risoluzione 512 Head;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 BDSA7;DGP Single Body;1;1;0;0;0;0;0;xxx;x;x;p8rmn_
 BDMA7;DGP Multi Body;1;3;0;0;0;0;0;xxx;x;x;p8rmn_
@@ -1717,9 +1673,9 @@ HUSS7;Uniformità Sagittale Head;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 HUSC7;Uniformità Coronale Head;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 HDSA7;DGP Single Head;1;1;0;0;0;0;0;xxx;x;x;p8rmn_
 HDMA7;DGP Multi Head;1;3;0;0;0;0;0;xxx;x;x;p8rmn_
-HT2A7;Thickness 2mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-HT5A7;Thickness 5mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-HTMA7;Thickness 2mm Multi Head;0;15;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
+HT2A7;Thickness 2mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+HT5A7;Thickness 5mm Sing.Head;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+HTMA7;Thickness 2mm Multi Head;0;15;0;0;0;0;0;xxx;x;x;p6rmn_
 HWSA7;Warp Assiale Head;1;1;0;0;0;0;0;xxx;x;x;p7rmn_
 HR5A7;Risoluzione 512 Head;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 T2MA7;T2 multi SpinEcho Body;8;8;0;0;0;0;0;xxx;x;x;p2rmn_
@@ -1742,9 +1698,9 @@ mamd7;ANTERIOR;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 BUSA8;Uniformità Assiale Body COMBINATA;2;2;0;0;0;0;0;xxx;x;x;p3rmn_
 BUSS8;Uniformità Sagittale Body COMBINATA;2;2;0;0;0;0;0;xxx;x;x;p3rmn_
 BUSC8;Uniformità Coronale Body COMBINATA;2;2;0;0;0;0;0;xxx;x;x;p3rmn_
-BT2A8;Thickness 2mm Sing.Body COMBINATA;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-BT5A8;Thickness 5mm Sing.Body COMBINATA;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-BTMA8;Thickness 2mm Multi Body COMBINATA;0;15;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
+BT2A8;Thickness 2mm Sing.Body COMBINATA;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+BT5A8;Thickness 5mm Sing.Body COMBINATA;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+BTMA8;Thickness 2mm Multi Body COMBINATA;0;15;0;0;0;0;0;xxx;x;x;p6rmn_
 BR2A8;Risoluzione 256 Body COMBINATA;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 BR5A8;Risoluzione 512 Body COMBINATA;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 BRKA8;Risoluzione 1024 Body COMBINATA;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
@@ -1755,9 +1711,9 @@ HUSS8;Uniformità Sagittale Head COMBINATA;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 HUSC8;Uniformità Coronale Head COMBINATA;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 HDSA8;DGP Single Head COMBINATA;1;1;0;0;0;0;0;xxx;x;x;p8rmn_
 HDMA8;DGP Multi Head COMBINATA;1;3;0;0;0;0;0;xxx;x;x;p8rmn_
-HT2A8;Thickness 2mm Sing.Head COMBINATA;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-HT5A8;Thickness 5mm Sing.Head COMBINATA;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-HTMA8;Thickness 2mm Multi Head COMBINATA;0;15;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
+HT2A8;Thickness 2mm Sing.Head COMBINATA;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+HT5A8;Thickness 5mm Sing.Head COMBINATA;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+HTMA8;Thickness 2mm Multi Head COMBINATA;0;15;0;0;0;0;0;xxx;x;x;p6rmn_
 HWSA8;Warp Assiale Head COMBINATA;1;1;0;0;0;0;0;xxx;x;x;p7rmn_
 HR2A8;Risoluzione 256 Head COMBINATA;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 HR5A8;Risoluzione 512 Head COMBINATA;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
@@ -1784,9 +1740,9 @@ XUSC8;Uniformità Coronale Head  POSTERIOR;2;2;0;0;0;0;0;xxx;x;30;p10rmn_
 QUSA8;Uniformità Assiale Body BODY_QUAD;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 QUSS8;Uniformità Sagittale Body BODY_QUAD;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 QUSC8;Uniformità Coronale Body BODY_QUAD;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
-QT2A8;Thickness 2mm Sing.Body BODY_QUAD;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-QT5A8;Thickness 5mm Sing.Body BODY_QUAD;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-QTMA8;Thickness 2mm Multi Body BODY_QUAD;0;15;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
+QT2A8;Thickness 2mm Sing.Body BODY_QUAD;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+QT5A8;Thickness 5mm Sing.Body BODY_QUAD;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+QTMA8;Thickness 2mm Multi Body BODY_QUAD;0;15;0;0;0;0;0;xxx;x;x;p6rmn_
 QR2A8;Risoluzione 256 Body BODY_QUAD;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 QR5A8;Risoluzione 512 Body BODY_QUAD;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 QRKA8;Risoluzione 1024 Body BODY_QUAD;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
@@ -1797,9 +1753,9 @@ RUSS8;Uniformità Sagittale Head BODY_QUAD;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 RUSC8;Uniformità Coronale Head BODY_QUAD;2;2;0;0;0;0;0;xxx;x;x;p12rmn_
 RDSA8;DGP Single Head BODY_QUAD;1;1;0;0;0;0;0;xxx;x;x;p8rmn_
 RDMA8;DGP Multi Head BODY_QUAD;1;3;0;0;0;0;0;xxx;x;x;p8rmn_
-RT2A8;Thickness 2mm Sing.Head BODY_QUAD;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-RT5A8;Thickness 5mm Sing.Head BODY_QUAD;1;1;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
-RTMA8;Thickness 2mm Multi Head BODY_QUAD;0;15;0;0;0;0;0;xxx;x;x;p6rmn_ORIGINAL
+RT2A8;Thickness 2mm Sing.Head BODY_QUAD;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+RT5A8;Thickness 5mm Sing.Head BODY_QUAD;1;1;0;0;0;0;0;xxx;x;x;p6rmn_
+RTMA8;Thickness 2mm Multi Head BODY_QUAD;0;15;0;0;0;0;0;xxx;x;x;p6rmn_
 RWSA8;Warp Assiale Head BODY_QUAD;1;1;0;0;0;0;0;xxx;x;x;p7rmn_
 RR2A8;Risoluzione 256 Head BODY_QUAD;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
 RR5A8;Risoluzione 512 Head BODY_QUAD;1;1;0;0;0;0;0;xxx;x;x;p4rmn_
