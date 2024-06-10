@@ -90,6 +90,7 @@ public class Sequenze_ implements PlugIn {
 	public static String testP6_2 = "contMensili.p6rmn_IMPROVED";
 	public static String testP6_3 = "contMensili.p6rmn_FITTER";
 	public static int testP6 = 2; /// <<< SELEZIONA QUI
+	public static String choice = "";
 
 	public void run(String arg) {
 		// ============================================================================================
@@ -167,6 +168,9 @@ public class Sequenze_ implements PlugIn {
 		boolean superficiali = false;
 		boolean aux2 = false;
 		boolean aux3 = false;
+		choice = Prefs.get("prefer.choice", "none");
+
+		String[] items = { "p6rmn_ORIGINAL", "p6rmn_IMPROVED", "p6rmn_FITTER" };
 
 		List<String> arrayStartingDir = new ArrayList<String>();
 
@@ -176,6 +180,7 @@ public class Sequenze_ implements PlugIn {
 		gd.addCheckbox("p10_ p11_ p12_ p16_ p17_ p19_", true);
 		gd.addCheckbox("Fast", true);
 		gd.addCheckbox("Superficiali", false);
+		gd.addChoice("  ", items, choice);
 		gd.showDialog();
 		if (gd.wasCanceled()) {
 			return;
@@ -186,11 +191,15 @@ public class Sequenze_ implements PlugIn {
 		p10p11p12 = gd.getNextBoolean();
 		fast = gd.getNextBoolean();
 		superficiali = gd.getNextBoolean();
+		choice = gd.getNextChoice();
 		if (fast) {
 			Prefs.set("prefer.fast", "true");
 		} else {
 			Prefs.set("prefer.fast", "false");
 		}
+		Prefs.set("prefer.choice", choice);
+
+//		IJ.log("CHOICE= " + choice);
 
 		if (self1) {
 			if (!new InputOutput().checkJar(MyConst.TEST_FILE)) {
@@ -979,26 +988,8 @@ public class Sequenze_ implements PlugIn {
 //				IJ.log(MyLog.qui() + " SELEZIONE con testP6= " + testP6 + "plugin= " + plugin);
 //				MyLog.waitHere();
 
-				switch (testP6) {
-				case 1:
-					if (plugin.equals("contMensili.p6rmn_")) {
-						// IJ.log(MyLog.qui() + " eseguo p6rmn_ORIGINAL");
-						plugin = "contMensili.p6rmn_ORIGINAL";
-					}
-					break;
-				case 2:
-					if (plugin.equals("contMensili.p6rmn_")) {
-						// IJ.log(MyLog.qui() + " eseguo p6rmn_IMPROVED");
-						plugin = "contMensili.p6rmn_IMPROVED";
-					}
-					break;
-				case 3:
-					if (plugin.equals("contMensili.p6rmn_")) {
-						// IJ.log(MyLog.qui() + " eseguo p6rmn_FITTER");
-						plugin = "contMensili.p6rmn_FITTER";
-					}
-					break;
-				}
+				if (plugin.equals("contMensili.p6rmn_"))
+					plugin = "contMensili." + choice;
 
 				String argomento = argumentForPluginToBeCalled(j1, tableSequenze5);
 				boolean jump = false;

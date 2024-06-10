@@ -483,8 +483,8 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 		double[] pixVetS2CorCuneo = new double[len];
 		double[] mmVetErrSpessSlab = new double[len];
 		double[] mmVetErrSpessCuneo = new double[len];
-		double[] mmVetAccurSpessSlab = new double[len];
-		double[] mmVetAccurSpessCuneo = new double[len];
+		double[] percVetAccurSpessSlab = new double[len];
+		double[] percVetAccurSpessCuneo = new double[len];
 		ResultsTable rt = null;
 		ResultsTable rt11 = null;
 
@@ -636,7 +636,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 			mmVetS1CorSlab[w1] = mmSpessCor1[0];
 			mmVetS2CorSlab[w1] = mmSpessCor1[1];
 			mmVetErrSpessSlab[w1] = mmSpessCor1[2];
-			mmVetAccurSpessSlab[w1] = mmSpessCor1[3];
+			percVetAccurSpessSlab[w1] = mmSpessCor1[3];
 			//
 			// First wedge analysis
 			//
@@ -697,7 +697,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 			pixVetS1CorCuneo[w1] = mixSpessCor2[0];
 			pixVetS2CorCuneo[w1] = mixSpessCor2[1];
 			mmVetErrSpessCuneo[w1] = mixSpessCor2[2];
-			mmVetAccurSpessCuneo[w1] = mixSpessCor2[3];
+			percVetAccurSpessCuneo[w1] = mixSpessCor2[3];
 
 		}
 
@@ -816,7 +816,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 		rt.incrementCounter();
 		rt.addValue(t1, "AccurSpesSlab");
 		for (int j1 = 0; j1 < nFrames; j1++)
-			rt.addValue(s2 + j1, mmVetAccurSpessSlab[j1]);
+			rt.addValue(s2 + j1, percVetAccurSpessSlab[j1]);
 
 		rt.incrementCounter();
 		rt.addValue(t1, "S1CorCuneo");
@@ -838,7 +838,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 		rt.incrementCounter();
 		rt.addValue(t1, "AccurSpesCuneo");
 		for (int j1 = 0; j1 < nFrames; j1++)
-			rt.addValue(s2 + j1, mmVetAccurSpessCuneo[j1]);
+			rt.addValue(s2 + j1, percVetAccurSpessCuneo[j1]);
 
 		rt.incrementCounter();
 		rt.addValue(t1, "Accettab");
@@ -1419,6 +1419,21 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 		// l'output e'mixed tra pixel e millimetri
 		// ------FUNZIONA ANCORA COME IN ORIGINE----
 
+		/*
+		 * double S1 = R1 * Math.tan(Math.toRadians(11)); double S2 = R2 *
+		 * Math.tan(Math.toRadians(11)); double Sen22 = Math.sin(Math.toRadians(22));
+		 * double aux1 = -(S1 - S2) / (S1 + S2); double aux4 = Math.asin(Sen22 * aux1);
+		 * double tilt1Ramp = Math.toDegrees(0.5 * aux4); double aux2 =
+		 * Math.tan(Math.toRadians(11.0 - tilt1Ramp)); double aux3 =
+		 * Math.tan(Math.toRadians(11.0 + tilt1Ramp)); double S1Cor = aux3 * R1; double
+		 * S2Cor = aux2 * R2; double accurSpess = 100.0 * (S1Cor - sTeor) / sTeor;
+		 * double erroreR1 = dimPix2 * aux3; double erroreR2 = dimPix2 * aux2; double
+		 * erroreTot = Math.sqrt(erroreR1 * erroreR1 + erroreR2 * erroreR2); double
+		 * erroreSper = 100.0 * erroreTot / sTeor;
+		 */
+		IJ.log("==============================================================");
+		IJ.log("spessStrato pixR1= " + pixR1 + " pixR2= " + pixR2 + " dimPix= " + dimPix);
+
 		double pixS1 = pixR1 * Math.tan(Math.toRadians(11));
 		double pixS2 = pixR2 * Math.tan(Math.toRadians(11));
 		double Sen22 = Math.sin(Math.toRadians(22));
@@ -1429,16 +1444,21 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 		double aux3 = Math.tan(Math.toRadians(11.0 + tilt1Ramp));
 		double pixS1Cor = aux3 * pixR1;
 		double pixS2Cor = aux2 * pixR2;
-		double mmAccurSpess = 100.0 * (pixS1Cor * dimPix - mmSteor) / mmSteor;
+		double percAccurSpess = 100.0 * (pixS1Cor - mmSteor) / mmSteor;
 		double mmErroreR1 = dimPix * aux3;
 		double mmErroreR2 = dimPix * aux2;
 		double mmErroreTot = Math.sqrt(mmErroreR1 * mmErroreR1 + mmErroreR2 * mmErroreR2);
 		double mmErroreSper = 100.0 * mmErroreTot / mmSteor;
 		double[] mixSpessArray = new double[4];
+
+		IJ.log("spessStrato pixS1Cor= " + pixS1Cor + " pixS2Cor= " + pixS2Cor + "\nmmErroreSper= " + mmErroreSper
+				+ " percAccurSpess= " + percAccurSpess);
+		IJ.log("==============================================================");
+
 		mixSpessArray[0] = pixS1Cor;
 		mixSpessArray[1] = pixS2Cor;
 		mixSpessArray[2] = mmErroreSper;
-		mixSpessArray[3] = mmAccurSpess;
+		mixSpessArray[3] = percAccurSpess;
 
 		return mixSpessArray;
 	}
