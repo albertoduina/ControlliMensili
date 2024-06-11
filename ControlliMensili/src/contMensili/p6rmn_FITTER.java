@@ -3488,7 +3488,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 	 * @param sTeor spessore teorico
 	 * @return spessore dello strato
 	 */
-	public double[] spessStrato(double pixR1, double pixR2, double sTeor, double dimPix) {
+	public static double[] spessStrato(double pixR1, double pixR2, double sTeor, double dimPix) {
 
 		// NOTA BENE CHE I VALORI: R1 ED R2 SONO ESPRESSI IN PIXELS
 		// QUINDI LI RINOMINO COME pixR1 E pixR2

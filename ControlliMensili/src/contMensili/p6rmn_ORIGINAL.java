@@ -1410,27 +1410,53 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 	 * @param mmSteor spessore teorico
 	 * @return spessore dello strato
 	 */
-	public double[] spessStrato(double pixR1, double pixR2, double mmSteor, double dimPix) {
+	public static double[] spessStrato(double pixR1, double pixR2, double mmSteor, double dimPix) {
 
-		// FACCIAMO ATTENZIONE AI VALORI: R1 ED R2 SONO ESPRESSI IN PIXELS
-		// QUINDI LI RINOMINO COME pixR1 E pixR2
-		// ergo lo stesso per S1 e S2 pixS1 e pixS2
-		// ergo lo stesso per S1Cor ed S2Cor pixS1Cor e pixS2Cor
-		// l'output e'mixed tra pixel e millimetri
-		// ------FUNZIONA ANCORA COME IN ORIGINE----
+		IJ.log("==============================================================");
+		IJ.log("spessStrato pixR1= " + pixR1 + " pixR2= " + pixR2 + " dimPix= " + dimPix);
 
-		/*
-		 * double S1 = R1 * Math.tan(Math.toRadians(11)); double S2 = R2 *
-		 * Math.tan(Math.toRadians(11)); double Sen22 = Math.sin(Math.toRadians(22));
-		 * double aux1 = -(S1 - S2) / (S1 + S2); double aux4 = Math.asin(Sen22 * aux1);
-		 * double tilt1Ramp = Math.toDegrees(0.5 * aux4); double aux2 =
-		 * Math.tan(Math.toRadians(11.0 - tilt1Ramp)); double aux3 =
-		 * Math.tan(Math.toRadians(11.0 + tilt1Ramp)); double S1Cor = aux3 * R1; double
-		 * S2Cor = aux2 * R2; double accurSpess = 100.0 * (S1Cor - sTeor) / sTeor;
-		 * double erroreR1 = dimPix2 * aux3; double erroreR2 = dimPix2 * aux2; double
-		 * erroreTot = Math.sqrt(erroreR1 * erroreR1 + erroreR2 * erroreR2); double
-		 * erroreSper = 100.0 * erroreTot / sTeor;
-		 */
+		double angolo=11.3;
+		double pixS1 = pixR1 * Math.tan(Math.toRadians(angolo));
+		double pixS2 = pixR2 * Math.tan(Math.toRadians(angolo));
+		double Sen22 = Math.sin(Math.toRadians(angolo*2));
+		double aux1 = -(pixS1 - pixS2) / (pixS1 + pixS2);
+		double aux4 = Math.asin(Sen22 * aux1);
+		double tilt1Ramp = Math.toDegrees(0.5 * aux4);
+		double aux2 = Math.tan(Math.toRadians(angolo - tilt1Ramp));
+		double aux3 = Math.tan(Math.toRadians(angolo + tilt1Ramp));
+		double pixS1Cor = aux3 * pixR1;
+		double pixS2Cor = aux2 * pixR2;
+		double percAccurSpess = 100.0 * (pixS1Cor - mmSteor) / mmSteor;
+		double mmErroreR1 = dimPix * aux3;
+		double mmErroreR2 = dimPix * aux2;
+		double mmErroreTot = Math.sqrt(mmErroreR1 * mmErroreR1 + mmErroreR2 * mmErroreR2);
+		double mmErroreSper = 100.0 * mmErroreTot / mmSteor;
+
+		IJ.log("spessStrato pixS1Cor= " + pixS1Cor + " pixS2Cor= " + pixS2Cor + "\nmmErroreSper= " + mmErroreSper
+				+ " percAccurSpess= " + percAccurSpess);
+		IJ.log("==============================================================");
+
+		double[] spessArray = new double[4];
+		spessArray[0] = pixS1Cor;
+		spessArray[1] = pixS2Cor;
+		spessArray[2] = mmErroreSper;
+		spessArray[3] = percAccurSpess;
+
+		return spessArray;
+	}
+	
+	
+	/**
+	 * calcolo spessore di strato effettivo, apportando le correzioni per
+	 * inclinazione e tilt (cio' che veniva effettuato dal foglio Excel)
+	 * 
+	 * @param pixR1
+	 * @param pixR2
+	 * @param mmSteor spessore teorico
+	 * @return spessore dello strato
+	 */
+	public static double[] spessStrato_OLD(double pixR1, double pixR2, double mmSteor, double dimPix) {
+
 		IJ.log("==============================================================");
 		IJ.log("spessStrato pixR1= " + pixR1 + " pixR2= " + pixR2 + " dimPix= " + dimPix);
 
@@ -1449,19 +1475,20 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 		double mmErroreR2 = dimPix * aux2;
 		double mmErroreTot = Math.sqrt(mmErroreR1 * mmErroreR1 + mmErroreR2 * mmErroreR2);
 		double mmErroreSper = 100.0 * mmErroreTot / mmSteor;
-		double[] mixSpessArray = new double[4];
 
 		IJ.log("spessStrato pixS1Cor= " + pixS1Cor + " pixS2Cor= " + pixS2Cor + "\nmmErroreSper= " + mmErroreSper
 				+ " percAccurSpess= " + percAccurSpess);
 		IJ.log("==============================================================");
 
-		mixSpessArray[0] = pixS1Cor;
-		mixSpessArray[1] = pixS2Cor;
-		mixSpessArray[2] = mmErroreSper;
-		mixSpessArray[3] = percAccurSpess;
+		double[] spessArray = new double[4];
+		spessArray[0] = pixS1Cor;
+		spessArray[1] = pixS2Cor;
+		spessArray[2] = mmErroreSper;
+		spessArray[3] = percAccurSpess;
 
-		return mixSpessArray;
+		return spessArray;
 	}
+
 
 	/**
 	 * impedisce che nelle preferenze di ImageJ vengano memorizzati segmenti con

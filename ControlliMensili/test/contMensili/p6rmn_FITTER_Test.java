@@ -76,6 +76,7 @@ public class p6rmn_FITTER_Test {
 
 	@Test
 	public final void testBaselineCorrection_FITTER() {
+		
 		String path1 = "data/P6/SolaGavardo_HT5A";
 //	ImagePlus imp1 = UtilAyv.openImageMaximized(path1);
 
