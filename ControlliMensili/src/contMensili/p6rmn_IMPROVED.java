@@ -254,7 +254,10 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				ResultsTable rt = null;
 				boolean accetta = false;
 
+				IJ.log(MyLog.qui() + " ====================================================================");
 				IJ.log(MyLog.qui() + " FORZO STEP SEMPRE ATTIVO perche' SONO STUFO DI DIMENTICARLO");
+				IJ.log(MyLog.qui() + " ATTENZIONE: HO MODIFICATO L'OUTPUT: ORA STAMPO LA MEDIA GEOMETRICA");
+				IJ.log(MyLog.qui() + " ====================================================================");
 				step = true;
 
 				do {
@@ -494,8 +497,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		double[] mmVetMedCuneo = new double[len];
 		double[] mmVetS1CorSlab = new double[len];
 		double[] mmVetS2CorSlab = new double[len];
-		double[] pixVetS1CorCuneo = new double[len];
-		double[] pixVetS2CorCuneo = new double[len];
+		double[] mmVetS1CorCuneo = new double[len];
+		double[] mmVetS2CorCuneo = new double[len];
 		double[] mmVetErrSpessSlab = new double[len];
 		double[] mmVetErrSpessCuneo = new double[len];
 		double[] mmVetAccurSpessSlab = new double[len];
@@ -503,6 +506,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		ResultsTable rt = null;
 		ResultsTable rt11 = null;
 
+		IJ.log(MyLog.qui());
 		ImagePlus impStack = stackBuilder(path, true);
 		nFrames = path.length;
 
@@ -577,8 +581,13 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		double[] dsd4 = null;
 		double[] spessCor1 = null;
 		double[] spessCor2 = null;
+		double[] spessCor4 = null;
+		double[] spessCor5 = null;
+
 		double spessMed1 = 0;
 		double spessMed2 = 0;
+		double geomMed1 = 0;
+		double geomMed2 = 0;
 
 		for (int w1 = 0; w1 < nFrames; w1++) {
 
@@ -666,13 +675,18 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 
 				if (imp3.isVisible())
 					imp3.getWindow().toFront();
-				spessCor1 = spessStrato(dsd1[0], dsd2[0], (double) thick, dimPixel);
-				spessMed1 = (pix2mm(dsd1[0], dimPixel) + pix2mm(dsd2[0], dimPixel)) / 2;
-				mmVetMedSlab[w1] = spessMed1;
-				mmVetS1CorSlab[w1] = spessCor1[0];
-				mmVetS2CorSlab[w1] = spessCor1[1];
-				mmVetErrSpessSlab[w1] = spessCor1[2];
-				mmVetAccurSpessSlab[w1] = spessCor1[3];
+
+//				spessCor1 = spessStrato_CORRETTO_NEW(dsd1[0], dsd2[0], (double) thick, dimPixel);
+
+				//####################################################################################
+				spessCor4 = spessStrato_CORRETTO_AAPM100(dsd1[0], dsd2[0], (double) thick, dimPixel);
+				//####################################################################################
+
+
+				mmVetS1CorSlab[w1] = spessCor4[0];
+				mmVetS2CorSlab[w1] = spessCor4[1];
+				mmVetErrSpessSlab[w1] = spessCor4[2];
+				mmVetAccurSpessSlab[w1] = spessCor4[3];
 				//
 				// First wedge analysis
 				//
@@ -729,13 +743,23 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 
 				if (imp3.isVisible())
 					imp3.getWindow().toFront();
-				spessCor2 = spessStrato(dsd3[0], dsd4[0], (double) thick, dimPixel);
-				spessMed2 = (pix2mm(dsd3[0], dimPixel) + pix2mm(dsd4[0], dimPixel)) / 2;
-				mmVetMedCuneo[w1] = spessMed2;
-				pixVetS1CorCuneo[w1] = spessCor2[0];
-				pixVetS2CorCuneo[w1] = spessCor2[1];
-				mmVetErrSpessCuneo[w1] = spessCor2[2];
-				mmVetAccurSpessCuneo[w1] = spessCor2[3];
+
+//				spessCor2 = spessStrato_CORRETTO_NEW(dsd3[0], dsd4[0], (double) thick, dimPixel);
+				
+				//####################################################################################
+				
+				spessCor5 = spessStrato_CORRETTO_AAPM100(dsd3[0], dsd4[0], (double) thick, dimPixel);
+
+				//####################################################################################
+//				spessMed2 = (pix2mm(dsd3[0], dimPixel) + pix2mm(dsd4[0], dimPixel)) / 2;
+//
+//				geomMed2 = Math.sqrt((pix2mm(dsd3[0], dimPixel) * pix2mm(dsd4[0], dimPixel)));
+
+//				mmVetMedCuneo[w1] = geomMed2;
+				mmVetS1CorCuneo[w1] = spessCor5[0];
+				mmVetS2CorCuneo[w1] = spessCor5[1];
+				mmVetErrSpessCuneo[w1] = spessCor5[2];
+				mmVetAccurSpessCuneo[w1] = spessCor5[3];
 
 			}
 
@@ -757,24 +781,28 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			resultsDialog.addMessage("FWHM SECONDA SLAB= " + String.format("%.4f", pix2mm(dsd2[0], dimPixel))
 					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd2[1]));
 			resultsDialog.addMessage("==================================================================");
-			resultsDialog.addMessage(
-					"FWHM CORRETTO SLAB= " + String.format("%.4f", spessCor1[0]) + " [mm] >>>> LOFFIO LOFFIO ! <<<<");
-			resultsDialog.addMessage(
-					"FWHM MEDIA SLAB= " + String.format("%.4f", spessMed1) + " [mm]   >>>>> MEGLIO MEGLIO ! <<<<<");
-			resultsDialog.addMessage("ERRORE SPERIMENTALE SLAB= " + String.format("%.4f", spessCor1[2]) + " [%] ");
-			resultsDialog.addMessage("ACCURATEZZA SPESSORE SLAB= " + String.format("%.4f", spessCor1[3]) + " [%] ");
+			resultsDialog.addMessage("FWHM CORRETTO SLAB= " + String.format("%.4f", spessCor4[0]) + " [mm]");
+			resultsDialog.addMessage("==================================================================");
+//			resultsDialog.addMessage(
+//					"FWHM MEDIA ARITM SLAB= " + String.format("%.4f", spessMed1) + " [mm]   >>>>> MEGLIO  <<<<<");
+//			resultsDialog.addMessage(
+//					"FWHM MEDIA GEOM SLAB= " + String.format("%.4f", geomMed1) + " [mm]   >>>>> MEGLIO MEGLIO ! <<<<<");
+			resultsDialog.addMessage("ERRORE SPERIMENTALE SLAB= " + String.format("%.4f", spessCor4[2]) + " [%] ");
+			resultsDialog.addMessage("ACCURATEZZA SPESSORE SLAB= " + String.format("%.4f", spessCor4[3]) + " [%] ");
 			resultsDialog.addMessage("==================================================================");
 			resultsDialog.addMessage("FWHM PRIMO CUNEO= " + String.format("%.4f", pix2mm(dsd3[0], dimPixel))
 					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd3[1]));
 			resultsDialog.addMessage("FWHM SECONDO CUNEO= " + String.format("%.4f", pix2mm(dsd4[0], dimPixel))
 					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd4[1]));
 			resultsDialog.addMessage("==================================================================");
-			resultsDialog.addMessage("FWHM CORRETTO CUNEI= " + String.format("%.4f", spessCor2[0])
-					+ " [mm] >>>> LOFFIO LOFFIO ! <<<<");
-			resultsDialog.addMessage(
-					"FWHM MEDIA CUNEI= " + String.format("%.4f", spessMed2) + " [mm]   >>>>> MEGLIO MEGLIO ! <<<<<");
-			resultsDialog.addMessage("ERRORE SPERIMENTALE CUNEI= " + String.format("%.4f", spessCor2[2]) + " [%] ");
-			resultsDialog.addMessage("ACCURATEZZA SPESSORE CUNEI= " + String.format("%.4f", spessCor2[3]) + " [%] ");
+			resultsDialog.addMessage("FWHM CORRETTO CUNEI= " + String.format("%.4f", spessCor5[0]) + " [mm]");
+			resultsDialog.addMessage("==================================================================");
+//			resultsDialog.addMessage(
+//					"FWHM MEDIA ARITM CUNEI= " + String.format("%.4f", spessMed2) + " [mm]   >>>>> MEGLIO  <<<<<");
+//			resultsDialog.addMessage("FWHM MEDIA GEOM CUNEI= " + String.format("%.4f", geomMed2)
+//					+ " [mm]   >>>>> MEGLIO MEGLIO ! <<<<<");
+			resultsDialog.addMessage("ERRORE SPERIMENTALE CUNEI= " + String.format("%.4f", spessCor5[2]) + " [%] ");
+			resultsDialog.addMessage("ACCURATEZZA SPESSORE CUNEI= " + String.format("%.4f", spessCor5[3]) + " [%] ");
 			resultsDialog.addMessage("==================================================================");
 
 			resultsDialog.showDialog();
@@ -929,6 +957,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			rt.incrementCounter();
 			rt.addValue(t1, "S1CorSlab");
 			for (int j1 = 0; j1 < nFrames; j1++) {
+//				rt.addValue(s2 + j1, mmVetS1CorSlab[j1]);
 				rt.addValue(s2 + j1, mmVetS1CorSlab[j1]);
 			}
 
@@ -951,13 +980,13 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			rt.incrementCounter();
 			rt.addValue(t1, "S1CorCuneo");
 			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, pixVetS1CorCuneo[j1]);
+				rt.addValue(s2 + j1, mmVetS1CorCuneo[j1]);
+//				rt.addValue(s2 + j1, mmVetMedCuneo[j1]);
 			}
-
 			rt.incrementCounter();
 			rt.addValue(t1, "S2CorCuneo");
 			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, pixVetS2CorCuneo[j1]);
+				rt.addValue(s2 + j1, mmVetS2CorCuneo[j1]);
 			}
 
 			rt.incrementCounter();
@@ -1111,6 +1140,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		 * Aggiornamento del 29 gennaio 2007 analProf da' in uscita i valori in
 		 * millimetri, anziche' in pixel
 		 */
+		IJ.log(MyLog.qui());
 
 		if (imp1 == null)
 			return null;
@@ -1757,7 +1787,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 	 * @param mmSteor spessore teorico
 	 * @return spessore dello strato
 	 */
-	public static double[] spessStrato(double pixR1, double pixR2, double mmSteor, double dimPix) {
+	public static double[] spessStrato_CORRETTO_OLD(double pixR1, double pixR2, double mmSteor, double dimPix) {
 
 		IJ.log("==============================================================");
 		IJ.log("spessStrato pixR1= " + pixR1 + " pixR2= " + pixR2 + " dimPix= " + dimPix);
@@ -1769,6 +1799,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		double aux1 = -(pixS1 - pixS2) / (pixS1 + pixS2);
 		double aux4 = Math.asin(Sen22 * aux1);
 		double tilt1Ramp = Math.toDegrees(0.5 * aux4);
+		MyLog.waitHere("TILT= " + tilt1Ramp);
+
 		double aux2 = Math.tan(Math.toRadians(angolo - tilt1Ramp));
 		double aux3 = Math.tan(Math.toRadians(angolo + tilt1Ramp));
 		double pixS1Cor = aux3 * pixR1;
@@ -1783,6 +1815,12 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				+ " percAccurSpess= " + percAccurSpess);
 		IJ.log("==============================================================");
 
+		double errore = spessStrato_AngError_CANCELLABILE(pixR1, pixR2);
+
+//		double FWHM = spessStrato_CORRETTO_AAPM100(pixR1, pixR2, dimPix);
+//		MyLog.waitHere(
+//				"SPESSORE TEORICO= " + mmSteor + "\nERRORE ANGOLARE POSIZIONAMENTO= " + errore + "\nFWHM= " + FWHM);
+
 		double[] spessArray = new double[4];
 		spessArray[0] = pixS1Cor;
 		spessArray[1] = pixS2Cor;
@@ -1790,6 +1828,181 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		spessArray[3] = percAccurSpess;
 
 		return spessArray;
+	}
+
+	/**
+	 * calcolo spessore di strato effettivo, apportando le correzioni per
+	 * inclinazione e tilt (cio' che veniva effettuato dal foglio Excel)
+	 * 
+	 * @param pixR1
+	 * @param pixR2
+	 * @param mmSteor spessore teorico
+	 * @return spessore dello strato
+	 */
+	public static double[] spessStrato_CORRETTO_NEW(double pixR1, double pixR2, double mmSteor, double dimPix) {
+
+		IJ.log("==============================================================");
+		IJ.log("spessStrato pixR1= " + pixR1 + " pixR2= " + pixR2 + " dimPix= " + dimPix);
+		IJ.log(MyLog.qui());
+
+		double angolo = 11.3;
+
+		double tan = Math.tan(Math.toRadians(angolo));
+		double tan2 = tan * tan;
+		double tan3 = 1 + tan2;
+
+		double pixS1 = tan * pixR1;
+		double pixS2 = tan * pixR2;
+
+//		double errore = angularError(pixR1, pixR2, dimPix);
+
+		double Sen22 = Math.sin(Math.toRadians(angolo * 2));
+		double aux1 = -(pixS1 - pixS2) / (pixS1 + pixS2);
+		double aux4 = Math.asin(Sen22 * aux1);
+		double tilt1Ramp = Math.toDegrees(0.5 * aux4);
+
+		// MyLog.waitHere("TILT= "+tilt1Ramp);
+		double aux2 = Math.tan(Math.toRadians(angolo - tilt1Ramp));
+		double aux3 = Math.tan(Math.toRadians(angolo + tilt1Ramp));
+		double pixS1Cor = aux3 * pixR1;
+		double pixS2Cor = aux2 * pixR2;
+		double percAccurSpess = 100.0 * (pixS1Cor - mmSteor) / mmSteor;
+		double mmErroreR1 = dimPix * aux3;
+		double mmErroreR2 = dimPix * aux2;
+		double mmErroreTot = Math.sqrt(mmErroreR1 * mmErroreR1 + mmErroreR2 * mmErroreR2);
+		double mmErroreSper = 100.0 * mmErroreTot / mmSteor;
+
+		IJ.log("spessStrato pixS1Cor= " + pixS1Cor + " pixS2Cor= " + pixS2Cor + "\nmmErroreSper= " + mmErroreSper
+				+ " percAccurSpess= " + percAccurSpess);
+		IJ.log("==============================================================");
+
+		double errore = spessStrato_AngError_CANCELLABILE(pixR1, pixR2);
+
+//		double FWHM = spessStrato_CORRETTO_AAPM100(pixR1, pixR2, dimPix);
+
+		MyLog.waitHere("SPESSORE TEORICO= " + mmSteor + "\nERRORE ANGOLARE POSIZIONAMENTO= " + errore);
+
+		double[] spessArray = new double[4];
+		spessArray[0] = pixS1Cor;
+		spessArray[1] = pixS2Cor;
+		spessArray[2] = mmErroreSper;
+		spessArray[3] = percAccurSpess;
+
+		return spessArray;
+	}
+
+	/**
+	 * Dall'articolo di Magnetic Resonance Imaging, Volume 6, Number 2, 1988, pag
+	 * 201 (ricavato da immagine ricevuta da Lorella)
+	 * 
+	 * @param pixR1
+	 * @param pixR2
+	 * @param dimPix
+	 * @return
+	 */
+	public static double spessStrato_AngError_CANCELLABILE(double pixR1, double pixR2) {
+
+		double angolo = 11.3;
+		double tan = Math.tan(Math.toRadians(angolo));
+		double tan2 = tan * tan;
+		double tan3 = 1 + tan2;
+
+		double pixS1 = tan * pixR1;
+		double pixS2 = tan * pixR2;
+		double Sen22 = Math.sin(Math.toRadians(angolo * 2));
+		double aux1 = -(pixS1 - pixS2) / (pixS1 + pixS2);
+		double aux4 = Math.asin(Sen22 * aux1);
+		double tilt1Ramp = Math.toDegrees(0.5 * aux4);
+
+		double X = 0;
+		if (pixR1 >= pixR2) {
+			X = pixR1 / pixR2;
+		} else {
+			X = pixR2 / pixR1;
+		}
+
+		double tilt2Ramp = Math.atan(
+
+				(tan3 * (X + 1) + (Math.pow((tan3 * tan3 * ((X + 1) * (X + 1)) - 1), 0.5) * (X - 1)) / (X - 1))
+
+		);
+
+		MyLog.waitHere("angErrWazzapp= " + tilt2Ramp + "\nangErrVecchio= " + tilt1Ramp);
+
+		return tilt2Ramp;
+	}
+
+	/**
+	 * La formula della correzione FWHM applicata e'ricavata dalla pubblicazione
+	 * AAPM 100. In un primo momento pareva dare risultati fasulli, poi ho capito
+	 * che l'angolo a chi fanno riferimento non e'quello del materiale del wedge ma
+	 * quello posto tra le due superfici inclinate, wedge o slab che siano
+	 * 
+	 * @param a2
+	 * @param b2
+	 * @param dimPix
+	 * @return
+	 */
+	public static double[] spessStrato_CORRETTO_AAPM100(double a2, double b2, double spessTeor, double dimPix) {
+
+		double FWHM = spessStratoAAPM100(a2, b2, dimPix);
+
+		// attenzione, devo VERIFICARE o CHIEDERE quale deve essere ora la formula per
+		// ACCURATEZZA ed ERRORE SPERIMENTALE
+
+		double percAccurSpess = 100.0 * ((FWHM - spessTeor) / spessTeor);
+
+//		MyLog.waitHere("percAccurSpess= " + percAccurSpess + " FWHM= " + FWHM + " spessTeor= " + spessTeor);
+		double mma2 = a2 * dimPix;
+		double mmb2 = b2 * dimPix;
+
+//		double mmErroreTot = Math
+//				.sqrt((mma2 - spessTeor) * (mma2 - spessTeor) + (mmb2 - spessTeor) * (mmb2 - spessTeor));
+//		double mmErroreSper = 100.0 * (mmErroreTot / ((mma2 + mmb2) / 2));
+		
+		
+		double mmErroreSper = 100.0 * ((FWHM - spessTeor) / ((mma2 + mmb2) / 2));
+
+		double[] out = new double[4];
+		out[0] = FWHM;
+		out[1] = FWHM;
+		out[2] = mmErroreSper;
+		out[3] = percAccurSpess;
+
+		return out;
+	}
+
+	/**
+	 * La formula della correzione FWHM applicata e'ricavata dalla pubblicazione
+	 * AAPM 100. In un primo momento pareva dare risultati fasulli, poi ho capito
+	 * che l'angolo a chi fanno riferimento non e'quello del materiale del wedge ma
+	 * quello posto tra le due superfici inclinate, wedge o slab che siano
+	 * 
+	 * @param a2
+	 * @param b2
+	 * @param dimPix
+	 * @return
+	 */
+	public static double spessStratoAAPM100(double a2, double b2, double dimPix) {
+
+		// calcolo dell'angolo tra le sue slab / wedges
+
+		double angolo = 180 - 11.3 * 2;
+		double a1 = a2 * dimPix;
+		double b1 = b2 * dimPix;
+
+		double cos = Math.cos(Math.toRadians(angolo));
+		double sin = Math.sin(Math.toRadians(angolo));
+		double sum = a1 + b1;
+		double product = a1 * b1;
+
+		// la formula e'quella data nella pubblicazione. Per semplificare ho calcolato
+		// esternamente somme e prodotti. Ho preferito elevare al quadrato
+		// moltiplicando e non usare le libreria matematica.
+
+		double mmFWHM = (sum * cos + Math.sqrt((sum * sum) * (cos * cos) + (4 * product * (sin * sin)))) / (2 * sin);
+
+		return mmFWHM;
 	}
 
 	/**
