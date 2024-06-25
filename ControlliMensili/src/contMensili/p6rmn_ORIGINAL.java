@@ -78,6 +78,7 @@ import utils.UtilAyv;
 public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 
 	static final int ABORT = 1;
+	public static final boolean SPY = true; // attiva diagnostica e salvataggio immagini e log
 
 	public static String VERSION = "SPESSORE FETTA";
 
@@ -86,6 +87,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 	private static String TYPE2 = " >> CONTROLLO THICKNESS MULTISLICE___";
 
 	private static String fileDir = "";
+	public static String spydir = "";
 
 	// ---------------------------"01234567890123456789012345678901234567890"
 
@@ -172,6 +174,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 				new p6rmn_ORIGINAL().mainThickness(path, "0", oldPosition, autoCalled, step, verbose, test);
 				UtilAyv.afterWork();
 				retry = true;
+
 			}
 		} while (retry);
 		new AboutBox().close();
@@ -279,9 +282,15 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 				} while (!accetta);
 
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
+				if (SPY)
+					UtilAyv.saveResults(vetRiga, spydir + "\\", iw2ayvTable, rt);
+
 				break;
 			}
 		} while (retry);
+		if (SPY)
+			p6rmn_COMMON.saveLog_COMMON(spydir, "Log1.txt", SPY);
+
 		new AboutBox().close();
 		UtilAyv.afterWork();
 		return 0;
@@ -359,6 +368,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 				else
 					MyMsg.msgTestFault();
 				UtilAyv.afterWork();
+
 				break;
 			}
 		} else {
@@ -493,6 +503,13 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 
 		impStack.setSliceWithoutUpdate(1);
 
+		String thename = "";
+		if (SPY) {
+			spydir = p6rmn_COMMON.spyDirTree_COMMON(path, step);
+			File f1 = new File(path[0]);
+			thename = f1.getName();
+		}
+
 		if (verbose)
 			UtilAyv.showImageMaximized(impStack);
 		float dimPixel = ReadDicom.readFloat(
@@ -554,8 +571,22 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 				.readDouble(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_SPACING_BETWEEN_SLICES));
 		// IJ.log("spacing= " + spacing);
 
+		IJ.log("==================================================================");
+		IJ.log("======================= p6rmn_ORIGINAL ===========================");
+		IJ.log("==================================================================");
+		IJ.log("Results FWHM");
+
+
 		for (int w1 = 0; w1 < nFrames; w1++) {
 
+			IJ.log("Dati ottenuti per slice " + (w1 + 1) + " / " + nFrames);
+			IJ.log("==================================================================");
+
+			
+			IJ.log("SPESSORE TEORICO= " + String.format("%.4f", thick) + " [mm]   SPACING TEORICO= "
+					+ String.format("%.4f", spacing) + " [mm] ");
+			IJ.log("==================================================================");
+			
 			ImagePlus imp3 = MyStackUtils.imageFromStack(impStack, w1 + 1);
 
 			String pos2 = ReadDicom.readDicomParameter(imp3, MyConst.DICOM_IMAGE_POSITION);
@@ -602,6 +633,9 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 			fwhmSlice1[w1] = dsd1[0];
 			peakPositionSlice1[w1] = dsd1[1];
 
+			IJ.log("FWHM PRIMA SLAB= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd1[0], dimPixel)) + " [mm]   PEAK POSITION= "
+					+ String.format("%.4f", dsd1[1]));
+
 			if (imp3.isVisible())
 				imp3.getWindow().toFront();
 			//
@@ -628,10 +662,21 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 					putLabelSx, dimPixel);
 			fwhmSlice2[w1] = dsd2[0];
 			peakPositionSlice2[w1] = dsd2[1];
+			
+			IJ.log("FWHM SECONDA SLAB= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd2[0], dimPixel)) + " [mm]   PEAK POSITION= "
+					+ String.format("%.4f", dsd2[1]));
 
+			IJ.log("==================================================================");
+	
 			if (imp3.isVisible())
 				imp3.getWindow().toFront();
 			double[] mmSpessCor1 = spessStrato(dsd1[0], dsd2[0], (double) thick, dimPixel);
+			
+			IJ.log("FWHM CORRETTO OLD SLAB= " + String.format("%.4f", mmSpessCor1[0]) + " [mm]");
+
+			double[] sliceAapm100= p6rmn_COMMON.spessStrato_AAPM100_COMMON(dsd1[0], dsd2[0],  (double) thick, dimPixel);
+			IJ.log("FWHM CORRETTO AAPM100 SLAB= " + String.format("%.4f", sliceAapm100[0]) + " [mm]");
+			IJ.log("==================================================================");
 
 			mmVetS1CorSlab[w1] = mmSpessCor1[0];
 			mmVetS2CorSlab[w1] = mmSpessCor1[1];
@@ -663,6 +708,8 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 
 			fwhmCuneo3[w1] = dsd3[0];
 			peakPositionCuneo3[w1] = dsd3[1];
+			IJ.log("FWHM PRIMO CUNEO= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd3[0], dimPixel)) + " [mm]   PEAK POSITION= "
+					+ String.format("%.4f", dsd3[1]));
 
 			if (imp3.isVisible())
 				imp3.getWindow().toFront();
@@ -689,11 +736,22 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 			double[] dsd4 = analProf_ORIGINAL(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step,
 					putLabelSx, dimPixel);
 			fwhmCuneo4[w1] = dsd4[0];
+			IJ.log("FWHM SECONDO CUNEO= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd4[0], dimPixel)) + " [mm]   PEAK POSITION= "
+					+ String.format("%.4f", dsd4[1]));
+			IJ.log("==================================================================");
+			
 			peakPositionCuneo4[w1] = dsd4[1];
 
 			if (imp3.isVisible())
 				imp3.getWindow().toFront();
 			double[] mixSpessCor2 = spessStrato(dsd3[0], dsd4[0], (double) thick, dimPixel);
+
+			IJ.log("FWHM CORRETTO OLD CUNEI= " + String.format("%.4f", mixSpessCor2[0]) + " [mm]");
+
+			double[] cuneoAapm100= p6rmn_COMMON.spessStrato_AAPM100_COMMON(dsd3[0], dsd4[0],  (double) thick, dimPixel);
+			IJ.log("FWHM CORRETTO AAPM100 CUNEI= " + String.format("%.4f", cuneoAapm100[0]) + " [mm]");
+			IJ.log("==================================================================");
+
 			pixVetS1CorCuneo[w1] = mixSpessCor2[0];
 			pixVetS2CorCuneo[w1] = mixSpessCor2[1];
 			mmVetErrSpessCuneo[w1] = mixSpessCor2[2];
@@ -1332,7 +1390,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 	}
 
 	/**
-	 * analisi di un profilo normale con ricerca punti sopra e sotto met� altezza
+	 * analisi di un profilo normale con ricerca punti sopra e sotto meta' altezza
 	 * 
 	 * @param profile1 profilo da analizzare
 	 * @param bSlab    true=slab false=cuneo
@@ -1412,13 +1470,13 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 	 */
 	public static double[] spessStrato(double pixR1, double pixR2, double mmSteor, double dimPix) {
 
-		IJ.log("==============================================================");
-		IJ.log("spessStrato pixR1= " + pixR1 + " pixR2= " + pixR2 + " dimPix= " + dimPix);
+//		IJ.log("==============================================================");
+//		IJ.log("spessStrato pixR1= " + pixR1 + " pixR2= " + pixR2 + " dimPix= " + dimPix);
 
-		double angolo=11.3;
+		double angolo = 11.3;
 		double pixS1 = pixR1 * Math.tan(Math.toRadians(angolo));
 		double pixS2 = pixR2 * Math.tan(Math.toRadians(angolo));
-		double Sen22 = Math.sin(Math.toRadians(angolo*2));
+		double Sen22 = Math.sin(Math.toRadians(angolo * 2));
 		double aux1 = -(pixS1 - pixS2) / (pixS1 + pixS2);
 		double aux4 = Math.asin(Sen22 * aux1);
 		double tilt1Ramp = Math.toDegrees(0.5 * aux4);
@@ -1432,9 +1490,9 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 		double mmErroreTot = Math.sqrt(mmErroreR1 * mmErroreR1 + mmErroreR2 * mmErroreR2);
 		double mmErroreSper = 100.0 * mmErroreTot / mmSteor;
 
-		IJ.log("spessStrato pixS1Cor= " + pixS1Cor + " pixS2Cor= " + pixS2Cor + "\nmmErroreSper= " + mmErroreSper
-				+ " percAccurSpess= " + percAccurSpess);
-		IJ.log("==============================================================");
+//		IJ.log("spessStrato pixS1Cor= " + pixS1Cor + " pixS2Cor= " + pixS2Cor + "\nmmErroreSper= " + mmErroreSper
+//				+ " percAccurSpess= " + percAccurSpess);
+//		IJ.log("==============================================================");
 
 		double[] spessArray = new double[4];
 		spessArray[0] = pixS1Cor;
@@ -1444,8 +1502,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 
 		return spessArray;
 	}
-	
-	
+
 	/**
 	 * calcolo spessore di strato effettivo, apportando le correzioni per
 	 * inclinazione e tilt (cio' che veniva effettuato dal foglio Excel)
@@ -1488,7 +1545,6 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 
 		return spessArray;
 	}
-
 
 	/**
 	 * impedisce che nelle preferenze di ImageJ vengano memorizzati segmenti con
