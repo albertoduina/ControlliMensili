@@ -306,7 +306,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 				if (SPY)
-					UtilAyv.saveResults(vetRiga, spydir+ "\\" + spyname, iw2ayvTable, rt);
+					UtilAyv.saveResults(vetRiga, spydir + "\\" + spyname, iw2ayvTable, rt);
 
 				if (step)
 					MyLog.waitHere();
@@ -524,7 +524,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		double fwhmSuper2 = 0;
 		double fwhmSuper3 = 0;
 		double fwhmSuper4 = 0;
-		
+
 		double scSlab1AAPMOrig = 0;
 		double scSlab2AAPMOrig = 0;
 		double scSlab1Orig = 0;
@@ -574,7 +574,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 			return null;
 
 		}
-		String thename="";
+		String thename = "";
 
 		if (SPY) {
 			IJ.log("------------ SELEZIONATI IN COMPILAZIONE --------------");
@@ -584,14 +584,10 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 			IJ.log("P6_SUPERGAUSS= " + P6_SUPERGAUSS);
 			IJ.log("---------------------------------------- --------------");
 
-			spydir= p6rmn_COMMON.spyDirTree_COMMON(path, step);
-			File f1= new File(path[0]);
-			thename= f1.getName();
+			spydir = p6rmn_COMMON.spyDirTree_COMMON(path, step);
+			File f1 = new File(path[0]);
+			thename = f1.getName();
 		}
-		
-
-	
-		
 
 		//
 		// legge la posizione finale del segmento dopo il posizionamento
@@ -603,7 +599,6 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		vetRefPosition[2] = line1.x2;
 		vetRefPosition[3] = line1.y2;
 		lato = line1.getRawLength();
-
 
 		if (!test)
 			p6rmn_COMMON.saveReferences_COMMON(impStack);
@@ -741,12 +736,10 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 
 					if (imp3.isVisible())
 						imp3.getWindow().toFront();
-					 double[] spessCorSlabOrig = spessStrato(fwhm1, fwhm2, (double) thick,
-					 dimPixel);
+					double[] spessCorSlabOrig = spessStrato(fwhm1, fwhm2, (double) thick, dimPixel);
 
-					double[] spessCorSlabAAPMOrig = p6rmn_COMMON.spessStrato_AAPM100_COMMON(fwhm1, fwhm2, (double) thick,
-							dimPixel);
-					
+					double[] spessCorSlabAAPMOrig = p6rmn_COMMON.spessStrato_AAPM100_COMMON(fwhm1, fwhm2,
+							(double) thick, dimPixel);
 
 					vetS1CorSlab[w1] = spessCorSlabAAPMOrig[0];
 					vetS2CorSlab[w1] = spessCorSlabAAPMOrig[1];
@@ -831,10 +824,9 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 						imp3.getWindow().toFront();
 //					if (SPY)
 //						IJ.log("--------------------  ORIGINAL ------------------------");
-					 double[] spessCorCuneoOrig = spessStrato(fwhm3, fwhm4, (double) thick,
-					 dimPixel);
-					double[] spessCorCuneoAAPMOrig = p6rmn_COMMON.spessStrato_AAPM100_COMMON(fwhm3, fwhm4, (double) thick,
-							dimPixel);
+					double[] spessCorCuneoOrig = spessStrato(fwhm3, fwhm4, (double) thick, dimPixel);
+					double[] spessCorCuneoAAPMOrig = p6rmn_COMMON.spessStrato_AAPM100_COMMON(fwhm3, fwhm4,
+							(double) thick, dimPixel);
 
 					vetS1CorCuneo[w1] = spessCorCuneoAAPMOrig[0];
 					vetS2CorCuneo[w1] = spessCorCuneoAAPMOrig[1];
@@ -880,13 +872,13 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 
 					if (P6_GAUSS) {
 						fwhmSlice1[w1] = totalFWHM1[0];
-						fwhmGaus1=totalFWHM1[0];
+						fwhmGaus1 = totalFWHM1[0];
 						peakPositionSlice1[w1] = totalFWHM1[1];
 					}
 
 					if (P6_SUPERGAUSS) {
 						fwhmSlice1[w1] = totalFWHM1[5];
-						fwhmSuper1=totalFWHM1[5];
+						fwhmSuper1 = totalFWHM1[5];
 						peakPositionSlice1[w1] = totalFWHM1[7];
 					}
 
@@ -910,12 +902,11 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 							putLabelSx, dimPixel);
 					if (P6_GAUSS) {
 						fwhmSlice2[w1] = totalFWHM2[0];
-						fwhmGaus2=totalFWHM2[0];
+						fwhmGaus2 = totalFWHM2[0];
 						peakPositionSlice2[w1] = totalFWHM2[1];
 //						if (SPY)
 //							IJ.log("--------------------  GAUSSIAN ------------------------");
-						 double[] spessCor3Gauss = spessStrato(fwhmGaus1, fwhmGaus2, (double)
-						 thick, dimPixel);
+						double[] spessCor3Gauss = spessStrato(fwhmGaus1, fwhmGaus2, (double) thick, dimPixel);
 						double[] spessCor1Gauss = p6rmn_COMMON.spessStrato_AAPM100_COMMON(fwhmGaus1, fwhmGaus2,
 								(double) thick, dimPixel);
 
@@ -926,13 +917,12 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 					}
 					if (P6_SUPERGAUSS) {
 						fwhmSlice2[w1] = totalFWHM2[5];
-						fwhmSuper2=totalFWHM2[5];
+						fwhmSuper2 = totalFWHM2[5];
 
 						peakPositionSlice2[w1] = totalFWHM2[7];
 //						if (SPY)
 //							IJ.log("------------------ SUPERGAUSSIAN ----------------------");
-						 double[] spessCor3Super = spessStrato(fwhmSuper1, fwhmSuper2, (double)
-						 thick, dimPixel);
+						double[] spessCor3Super = spessStrato(fwhmSuper1, fwhmSuper2, (double) thick, dimPixel);
 						double[] spessCor1Super = p6rmn_COMMON.spessStrato_AAPM100_COMMON(fwhmSuper1, fwhmSuper2,
 								(double) thick, dimPixel);
 						sc41Super = spessCor1Super[0];
@@ -963,13 +953,13 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 							putLabelSx, dimPixel);
 					if (P6_GAUSS) {
 						fwhmCuneo3[w1] = totalFWHM3[0];
-						fwhmGaus3=totalFWHM3[0];
+						fwhmGaus3 = totalFWHM3[0];
 						peakPositionCuneo3[w1] = totalFWHM3[1];
 					}
 
 					if (P6_SUPERGAUSS) {
 						fwhmCuneo3[w1] = totalFWHM3[5];
-						fwhmSuper3=totalFWHM3[5];
+						fwhmSuper3 = totalFWHM3[5];
 						peakPositionCuneo3[w1] = totalFWHM3[7];
 					}
 
@@ -995,13 +985,12 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 				// ----
 				if (P6_GAUSS) {
 					fwhmCuneo4[w1] = totalFWHM4[0];
-					fwhmGaus4=totalFWHM4[0];
+					fwhmGaus4 = totalFWHM4[0];
 
 					peakPositionCuneo4[w1] = totalFWHM4[1];
 //					if (SPY)
 //						IJ.log("--------------------  GAUSSIAN ------------------------");
-					 double[] spessCor4Gauss = spessStrato(fwhmGaus3, fwhmGaus4, (double)
-					 thick, dimPixel);
+					double[] spessCor4Gauss = spessStrato(fwhmGaus3, fwhmGaus4, (double) thick, dimPixel);
 					double[] spessCor2Gauss = p6rmn_COMMON.spessStrato_AAPM100_COMMON(fwhmGaus3, fwhmGaus4,
 							(double) thick, dimPixel);
 					sc31Gaus = spessCor2Gauss[0];
@@ -1012,12 +1001,11 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 				// ----
 				if (P6_SUPERGAUSS) {
 					fwhmCuneo4[w1] = totalFWHM4[5];
-					fwhmSuper4=totalFWHM4[5];
+					fwhmSuper4 = totalFWHM4[5];
 					peakPositionCuneo4[w1] = totalFWHM4[7];
 //					if (SPY)
 //						IJ.log("------------------ SUPERGAUSSIAN ----------------------");
-					 double[] spessCor4Super = spessStrato(fwhmSuper3, fwhmSuper4, (double)
-					 thick, dimPixel);
+					double[] spessCor4Super = spessStrato(fwhmSuper3, fwhmSuper4, (double) thick, dimPixel);
 					double[] spessCor2Super = p6rmn_COMMON.spessStrato_AAPM100_COMMON(fwhmSuper3, fwhmSuper4,
 							(double) thick, dimPixel);
 					sc51Super = spessCor2Super[0];
@@ -1035,35 +1023,41 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		LocalDateTime now = LocalDateTime.now();
 		String ora2 = dtf.format(now);
 
-		// ###################### RIEPILOGO DIFFERENZE IN MILLIMETRI ORIGINALE ##########################
+		// ###################### RIEPILOGO DIFFERENZE IN MILLIMETRI ORIGINALE
+		// ##########################
 		String or1 = addPlus(IJ.d2s((fwhm1 * dimPixel * Math.sin(Math.toRadians(11.3))) - thick, 4));
 		String or2 = addPlus(IJ.d2s((fwhm2 * dimPixel * Math.sin(Math.toRadians(11.3))) - thick, 4));
 		String or3 = addPlus(IJ.d2s((fwhm3 * dimPixel * Math.sin(Math.toRadians(11.3))) - thick, 4));
 		String or4 = addPlus(IJ.d2s((fwhm4 * dimPixel * Math.sin(Math.toRadians(11.3))) - thick, 4));
-		// ###################### RIEPILOGO DIFFERENZE IN MILLIMETRI GAUSSIANO ##########################
+		// ###################### RIEPILOGO DIFFERENZE IN MILLIMETRI GAUSSIANO
+		// ##########################
 		String gg1 = addPlus(IJ.d2s(fwhmGaus1 * dimPixel * Math.sin(Math.toRadians(11.3)) - thick, 4));
 		String gg2 = addPlus(IJ.d2s(fwhmGaus2 * dimPixel * Math.sin(Math.toRadians(11.3)) - thick, 4));
 		String gg3 = addPlus(IJ.d2s(fwhmGaus3 * dimPixel * Math.sin(Math.toRadians(11.3)) - thick, 4));
 		String gg4 = addPlus(IJ.d2s(fwhmGaus4 * dimPixel * Math.sin(Math.toRadians(11.3)) - thick, 4));
-		// ###################### RIEPILOGO DIFFERENZE IN MILLIMETRI SUPERGAUSSIANO ##########################
+		// ###################### RIEPILOGO DIFFERENZE IN MILLIMETRI SUPERGAUSSIANO
+		// ##########################
 		String sg1 = addPlus(IJ.d2s(fwhmSuper1 * dimPixel * Math.sin(Math.toRadians(11.3)) - thick, 4));
 		String sg2 = addPlus(IJ.d2s(fwhmSuper2 * dimPixel * Math.sin(Math.toRadians(11.3)) - thick, 4));
 		String sg3 = addPlus(IJ.d2s(fwhmSuper3 * dimPixel * Math.sin(Math.toRadians(11.3)) - thick, 4));
 		String sg4 = addPlus(IJ.d2s(fwhmSuper4 * dimPixel * Math.sin(Math.toRadians(11.3)) - thick, 4));
 
-		//######################  ORIG_CORREZIONE TILT     ##############################################
+		// ###################### ORIG_CORREZIONE TILT
+		// ##############################################
 		String cor01 = addPlus(IJ.d2s((scSlab1AAPMOrig * dimPixel - thick), 4));
 		String cor03 = addPlus(IJ.d2s((scSlab1Orig * dimPixel - thick), 4));
 //		String cor02 = addPlus(IJ.d2s((sc02Orig * dimPixel - thick), 4));
 		String cor11 = addPlus(IJ.d2s((scWedge1AAPMOrig * dimPixel - thick), 4));
 		String cor13 = addPlus(IJ.d2s((scWedge1Orig * dimPixel - thick), 4));
 //		String cor12 = addPlus(IJ.d2s((sc12Orig * dimPixel - thick), 4));
-		//######################  GAUSS_CORREZIONE TILT     ##############################################		
+		// ###################### GAUSS_CORREZIONE TILT
+		// ##############################################
 		String cor21 = addPlus(IJ.d2s((sc21Gaus * dimPixel - thick), 4));
 //		String cor22 = addPlus(IJ.d2s((sc22Gaus * dimPixel - thick), 4));
 		String cor31 = addPlus(IJ.d2s((sc31Gaus * dimPixel - thick), 4));
 //		String cor32 = addPlus(IJ.d2s((sc32Gaus * dimPixel - thick), 4));
-		//######################  SUPERGAUSS_CORREZIONE TILT     ##############################################
+		// ###################### SUPERGAUSS_CORREZIONE TILT
+		// ##############################################
 		String cor41 = addPlus(IJ.d2s((sc41Super * dimPixel - thick), 4));
 //		String cor42 = addPlus(IJ.d2s((sc42Super * dimPixel - thick), 4));
 		String cor51 = addPlus(IJ.d2s((sc51Super * dimPixel - thick), 4));
@@ -1073,37 +1067,42 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		String mm03 = addPlus(IJ.d2s((scSlab1Orig * dimPixel), 4));
 		String mm11 = addPlus(IJ.d2s((scWedge1AAPMOrig * dimPixel), 4));
 		String mm13 = addPlus(IJ.d2s((scSlab2Orig * dimPixel), 4));
-		
+
 		String mm21 = addPlus(IJ.d2s((sc21Gaus * dimPixel), 4));
 		String mm31 = addPlus(IJ.d2s((sc31Gaus * dimPixel), 4));
 		String mm41 = addPlus(IJ.d2s((sc41Super * dimPixel), 4));
 		String mm51 = addPlus(IJ.d2s((sc51Super * dimPixel), 4));
 
-		// ###################### RIEPILOGO RISULTATI IN MILLIMETRI ORIGINALE ##########################
+		// ###################### RIEPILOGO RISULTATI IN MILLIMETRI ORIGINALE
+		// ##########################
 		String res1 = IJ.d2s((fwhm1 * dimPixel * Math.sin(Math.toRadians(11.3))), 4);
 		String res2 = IJ.d2s((fwhm2 * dimPixel * Math.sin(Math.toRadians(11.3))), 4);
 		String res3 = IJ.d2s((fwhm3 * dimPixel * Math.sin(Math.toRadians(11.3))), 4);
 		String res4 = IJ.d2s((fwhm4 * dimPixel * Math.sin(Math.toRadians(11.3))), 4);
 
-		// ###################### RIEPILOGO RISULTATI IN MILLIMETRI FIT_GAUSS ##########################
+		// ###################### RIEPILOGO RISULTATI IN MILLIMETRI FIT_GAUSS
+		// ##########################
 		String fgaus1 = IJ.d2s((fwhmGaus1 * dimPixel * Math.sin(Math.toRadians(11.3))), 4);
 		String fgaus2 = IJ.d2s((fwhmGaus2 * dimPixel * Math.sin(Math.toRadians(11.3))), 4);
 		String fgaus3 = IJ.d2s((fwhmGaus3 * dimPixel * Math.sin(Math.toRadians(11.3))), 4);
 		String fgaus4 = IJ.d2s((fwhmGaus4 * dimPixel * Math.sin(Math.toRadians(11.3))), 4);
 
-		// ###################### RIEPILOGO RISULTATI IN MILLIMETRI FIT_GAUSS R^2 ##########################
+		// ###################### RIEPILOGO RISULTATI IN MILLIMETRI FIT_GAUSS R^2
+		// ##########################
 		String rg1 = IJ.d2s(totalFWHM1[4], 4);
 		String rg2 = IJ.d2s(totalFWHM2[4], 4);
 		String rg3 = IJ.d2s(totalFWHM3[4], 4);
 		String rg4 = IJ.d2s(totalFWHM4[4], 4);
 
-		// ###################### RIEPILOGO RISULTATI IN MILLIMETRI FIT_SUPERGAUSS ##########################
+		// ###################### RIEPILOGO RISULTATI IN MILLIMETRI FIT_SUPERGAUSS
+		// ##########################
 		String fsuper01 = IJ.d2s((fwhmSuper1 * dimPixel * Math.sin(Math.toRadians(11.3))), 4);
 		String fsuper02 = IJ.d2s((fwhmSuper2 * dimPixel * Math.sin(Math.toRadians(11.3))), 4);
 		String fsuper03 = IJ.d2s((fwhmSuper3 * dimPixel * Math.sin(Math.toRadians(11.3))), 4);
 		String fsuper04 = IJ.d2s((fwhmSuper4 * dimPixel * Math.sin(Math.toRadians(11.3))), 4);
 
-		// ###################### RIEPILOGO RISULTATI IN MILLIMETRI FIT_SUPERGAUSS R^2 ##########################
+		// ###################### RIEPILOGO RISULTATI IN MILLIMETRI FIT_SUPERGAUSS R^2
+		// ##########################
 		String rs1 = IJ.d2s(totalFWHM1[9], 4);
 		String rs2 = IJ.d2s(totalFWHM2[9], 4);
 		String rs3 = IJ.d2s(totalFWHM3[9], 4);
@@ -1125,7 +1124,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 //		String psuper04 = IJ.d2s((totalFWHM4[5]), 4);
 
 		if (true) {
-			
+
 			IJ.log("==================================================================");
 			IJ.log("======================= p6rmn_FITTER ===========================");
 			IJ.log("==================================================================");
@@ -1580,7 +1579,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		if (step) {
 			imp1.updateAndDraw();
 			ButtonMessages.ModelessMsg(
-					"primo centro c2x=" + c2x + " c2y=" + c2y + " ra1=" + ra1 + "  media=" + statC.mean + "   <51>",
+					"<51> - primo centro c2x=" + c2x + " c2y=" + c2y + " ra1=" + ra1 + "  media=" + statC.mean + "  ",
 					"CONTINUA");
 		}
 		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[2] - mra, vetProfile[3] - mra, false);
@@ -1594,9 +1593,8 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		ImageStatistics statD = imp1.getStatistics();
 		if (step) {
 			imp1.updateAndDraw();
-			ButtonMessages.ModelessMsg(
-					"secondo centro d2x=" + d2x + " d2y=" + d2y + " ra1=" + ra1 + "  media=" + statD.mean + "   <52>",
-					"CONTINUA");
+			ButtonMessages.ModelessMsg("<52> - secondo centro d2x=" + d2x + " d2y=" + d2y + " ra1=" + ra1 + "  media="
+					+ statD.mean + "   <52>", "CONTINUA");
 		}
 		// inizio wideline
 		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[0], vetProfile[1], false);
@@ -1617,28 +1615,30 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		if (step) {
 			imp1.updateAndDraw();
 			msgWideline();
-			createPlot2_ORIGINAL(profiM1, dimPixel, true, bLabelSx, "Profilo mediato", false);
+			createPlot2_ORIGINAL(profiM1, dimPixel, true, bLabelSx, "ORIGINAL Profilo mediato", false);
 			msgSlab();
 		}
 
 		double[] profiB1 = baselineCorrection_ORIGINAL(profiM1, statC.mean, statD.mean, step);
 
 		if (step) {
-			createPlot2_ORIGINAL(profiB1, dimPixel, true, bLabelSx, "Profilo mediato + baseline correction", true);
+			createPlot2_ORIGINAL(profiB1, dimPixel, true, bLabelSx, "ORIGINAL Profilo mediato + baseline correction",
+					true);
 			msgBaseline();
 		}
 
 		int isd3[];
 		double[] outFwhm;
 		if (slab) {
-		//	 isd3 = analPlot1_ORIGINAL(profiB1, slab);
-		//	isd3= p6rmn_COMMON.analPlot1_ORIGINAL_COMMON(profiB1, slab);
-			isd3= p6rmn_COMMON.analPlot1_MODIF_COMMON(profiB1, slab);
+			// isd3 = analPlot1_ORIGINAL(profiB1, slab);
+			// isd3= p6rmn_COMMON.analPlot1_ORIGINAL_COMMON(profiB1, slab);
+			isd3 = p6rmn_COMMON.analPlot1_MODIF_COMMON(profiB1, slab);
 
 			outFwhm = calcFwhm_ORIGINAL(isd3, profiB1, slab, dimPixel);
 
 			if (step) {
-				createPlot2_ORIGINAL(profiB1, dimPixel, slab, bLabelSx, "plot mediato + baseline + FWHM", true);
+				createPlot2_ORIGINAL(profiB1, dimPixel, slab, bLabelSx, "ORIGINAL plot mediato + baseline + FWHM",
+						true);
 				msgFwhm();
 			}
 			Line.setWidth(1);
@@ -1648,16 +1648,15 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		} else {
 			double[] profiE1 = createErf_ORIGINAL(profiB1, invert); // profilo con ERF
 
-		//	 isd3 = analPlot1_ORIGINAL(profiE1, slab);
-		//	isd3= p6rmn_COMMON.analPlot1_ORIGINAL_COMMON(profiE1, slab);
-			isd3= p6rmn_COMMON.analPlot1_MODIF_COMMON(profiE1, slab);
-			
-			
+			// isd3 = analPlot1_ORIGINAL(profiE1, slab);
+			// isd3= p6rmn_COMMON.analPlot1_ORIGINAL_COMMON(profiE1, slab);
+			isd3 = p6rmn_COMMON.analPlot1_MODIF_COMMON(profiE1, slab);
 
 			outFwhm = calcFwhm_ORIGINAL(isd3, profiE1, slab, dimPixel);
 
 			if (step) {
-				createPlot2_ORIGINAL(profiE1, dimPixel, slab, bLabelSx, "plot ERF con smooth 3x3 e FWHM", true);
+				createPlot2_ORIGINAL(profiE1, dimPixel, slab, bLabelSx, "ORIGINAL plot ERF con smooth 3x3 e FWHM",
+						true);
 				msgErf();
 			}
 			Line.setWidth(1);
@@ -1759,7 +1758,8 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 			ImagePlus imp3 = plot3.show().getPlot().getImagePlus();
 			if (SPY)
 				p6rmn_COMMON.saveDebugImage_COMMON(imp3, spydir, spyname, contaxx++, SPY);
-			MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
+			msgContinua("<61> - " + spyname);
+			// MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
 		}
 
 		double[][] profi11 = profi1.clone();
@@ -1789,12 +1789,13 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 			Plot plot2 = MyPlot.plot1(profi11, spyname);
 			ImagePlus imp2 = plot2.show().getPlot().getImagePlus();
 
-			// caso della slab, mi limito a copiare i dati su profi9
-			profi9 = ProfileUtils.devStanMobile(profi11, 10);
-			spyname = " PROFILO DEVIAZIONE STANDARD";
-			Plot plot3 = MyPlot.plot1(profi9, spyname);
-			ImagePlus imp3 = plot3.show().getPlot().getImagePlus();
+//			// caso della slab, mi limito a copiare i dati su profi9
+//			profi9 = ProfileUtils.devStanMobile(profi11, 10);
+//			spyname = " PROFILO DEVIAZIONE STANDARD";
+//			Plot plot3 = MyPlot.plot1(profi9, spyname);
+//			ImagePlus imp3 = plot3.show().getPlot().getImagePlus();
 			// MyLog.waitHere("VISUALIZZA I DUE PLOT");
+			profi9 = profi11;
 
 		} else {
 			// caso del cuneo, calcolo la ERF tentando di fare la background correction
@@ -2304,8 +2305,6 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		return (out);
 	} // calcFwhm
 
-	
-	
 	/**
 	 * calcolo FWHM del profilo assegnato
 	 * 
@@ -2322,7 +2321,8 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		return out1;
 	}
 
-	public double[] calcFwhm_ORIGINAL_MODIFIED(int[] isd, double[] profile, boolean bslab, double dimPixel, String title) {
+	public double[] calcFwhm_ORIGINAL_MODIFIED(int[] isd, double[] profile, boolean bslab, double dimPixel,
+			String title) {
 
 		if (title != "")
 			IJ.log(title);
@@ -2408,8 +2408,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 			ImagePlus imp6 = plot6.show().getImagePlus();
 			if (SPY)
 				p6rmn_COMMON.saveDebugImage_COMMON(imp6, spydir, spyname, contaxx++, SPY);
-
-			MyLog.waitHere(spyname + " (punti blu) " + "@" + IJ.pad(contaxx++, 3));
+			msgContinua("<66> - " + spyname + " (punti blu) ");
 		}
 
 		// ----------------------------------------------------------
@@ -2426,8 +2425,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 			ImagePlus imp6 = plot1.show().getImagePlus();
 			if (SPY)
 				p6rmn_COMMON.saveDebugImage_COMMON(imp6, spydir, spyname, contaxx++, SPY);
-
-			MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
+			msgContinua("<67> - " + spyname);
 		}
 
 		double[] fitY = new double[len1];
@@ -2445,8 +2443,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 			ImagePlus imp6 = plot6.show().getImagePlus();
 			if (SPY)
 				p6rmn_COMMON.saveDebugImage_COMMON(imp6, spydir, spyname, contaxx++, SPY);
-
-			MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
+			msgContinua("<68> - " + spyname);
 		}
 
 		if (verbose) {
@@ -2477,8 +2474,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 			ImagePlus imp6 = plot6.show().getImagePlus();
 			if (SPY)
 				p6rmn_COMMON.saveDebugImage_COMMON(imp6, spydir, spyname, contaxx++, SPY);
-
-			MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
+			msgContinua("<69> - " + spyname);
 		}
 
 		return profileCorrect;
@@ -2515,14 +2511,17 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 		// MyLog.waitHere("BASELINE");
 
 		if (step) {
-			spyname = "P035 - PROFILO E CORREZIONE";
+			spyname = "ORIGINAL - PROFILO E CORREZIONE";
 			Plot plot6 = MyPlot.plot2(prof1, prof2, spyname);
 			ImagePlus imp6 = plot6.show().getImagePlus();
 			p6rmn_COMMON.saveDebugImage_COMMON(imp6, spydir, spyname, contaxx++, SPY);
 
 			plot6.show();
-			if (step)
-				MyLog.waitHere(spyname);
+			if (step) {
+				// MyLog.waitHere(spyname);
+				ButtonMessages.ModelessMsg("<60> - Profilo e correzione", "CONTINUA");
+			}
+
 		}
 
 		return profile2;
@@ -2538,13 +2537,16 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 	 */
 	public static int[] localizzatoreDerivata(double[][] profile2, boolean smooth, boolean step) {
 
+		
+		
+		step=true;
 		spyname = "P003 - INPUT LOCALIZZATORE DERIVATA";
 		double[][] dd1 = profile2;
 		if (step) {
 			Plot plot11 = MyPlot.plot1(dd1, spyname);
 			ImagePlus imp11 = plot11.show().getImagePlus();
 			if (step)
-				MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
+				msgContinua("<62> - " + spyname);
 		}
 
 		double[][] dd141 = null;
@@ -2562,7 +2564,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 				Plot plot14 = MyPlot.plot1(dd14, spyname);
 				ImagePlus imp14 = plot14.show().getImagePlus();
 				if (step)
-					MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
+					msgContinua("<63> - " + spyname);
 			}
 		} else {
 			dd14 = profile2;
@@ -2573,19 +2575,26 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 			spyname = "P005 - DERIVATA PRIMA";
 			Plot plot13 = MyPlot.plot1(dd13, spyname);
 			ImagePlus imp13 = plot13.show().getImagePlus();
-			MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
+			msgContinua("<64> - " + spyname);
 		}
+		
+		
+		double[][] aa1= ProfileUtils.limitiOggettoDerivataPrima(dd13);
 
 		double[][] dd15 = ProfileUtils.smooth5(dd13);
 
 		double[][] dd17 = ProfileUtils.derivataPrima(dd15);
+		
+		
 		if (step) {
 			spyname = "P006 - DERIVATA SECONDA";
 			Plot plot17 = MyPlot.plot1(dd17, spyname);
 			ImagePlus imp17 = plot17.show().getImagePlus();
-			MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
+			msgContinua("<65> - " + spyname);
 		}
 
+		MyLog.waitHere("CAZZABUBBOLE");
+		
 		int[] lim = ProfileUtils.zeroCrossing(dd17, spydir, spyname, contaxx++, SPY, step);
 
 //		saveDebugImage(imp6, spydir, spyname);
@@ -2783,7 +2792,9 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 			p6rmn_COMMON.saveDebugImage_COMMON(imp6, spydir, spyname, contaxx++, SPY);
 
 			if (step)
-				MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
+				msgContinua("<70> - " + spyname);
+
+			// MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
 			plot1.show();
 		}
 
@@ -2832,7 +2843,8 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 			p6rmn_COMMON.saveDebugImage_COMMON(imp6, spydir, spyname, contaxx++, SPY);
 
 			if (step)
-				MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
+				msgContinua("<71> - " + spyname);
+			// MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
 		}
 
 		return outFWHM;
@@ -3081,7 +3093,9 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 			ImagePlus imp6 = plot1.show().getImagePlus();
 			if (SPY)
 				p6rmn_COMMON.saveDebugImage_COMMON(imp6, spydir, spyname, contaxx++, SPY);
-			MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
+
+			msgContinua("<72> - " + spyname);
+			// MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
 			plot1.show();
 		}
 
@@ -3120,7 +3134,8 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 				p6rmn_COMMON.saveDebugImage_COMMON(imp6, spydir, spyname, contaxx++, SPY);
 
 			if (step)
-				MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
+				msgContinua("<73> - " + spyname);
+			// MyLog.waitHere(spyname + " " + "@" + IJ.pad(contaxx++, 3));
 		}
 //		if (rsq < 0.8) {
 //			MyLog.waitHere("il fit supergaussiano teste' fatto fa superCAGARE!");
@@ -3769,44 +3784,48 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 	}
 
 	public static int msgSquare() {
-		int userSelection = ButtonMessages.ModelessMsg("001 - Far coincidere il segmento  con il lato sx del quadrato",
+		int userSelection = ButtonMessages.ModelessMsg("<01> - Far coincidere il segmento  con il lato sx del quadrato",
 				"CONTINUA", "<ANNULLA>", 2, 1);
 		return userSelection;
 	}
 
 	public static void msgSquareCoordinates(double[] vetReference) {
-		ButtonMessages.ModelessMsg("052 - coordinate posizionamento ax= " + vetReference[0] + "   ay = "
+		ButtonMessages.ModelessMsg("<52> - coordinate posizionamento ax= " + vetReference[0] + "   ay = "
 				+ vetReference[1] + "   bx = " + vetReference[2] + "  by = " + vetReference[3], "CONTINUA", 1, 1);
 	}
 
 	public static int msgAccept() {
-		int userSelection = ButtonMessages.ModelessMsg("053 - Accettabilita' immagine   <08>", "ELABORA", "SALTA", 1,
+		int userSelection = ButtonMessages.ModelessMsg("<53> - Accettabilita' immagine   <08>", "ELABORA", "SALTA", 1,
 				1);
 		return userSelection;
 	}
 
 	public static void msgProfile() {
-		ButtonMessages.ModelessMsg("054 - Analisi profilo e fwhm", "CONTINUA", 1, 1);
+		ButtonMessages.ModelessMsg("<54> - Analisi profilo e fwhm", "CONTINUA", 1, 1);
 	}
 
 	public static void msgWideline() {
-		ButtonMessages.ModelessMsg("055 - Profilo wideline", "CONTINUA", 1, 1);
+		ButtonMessages.ModelessMsg("<55> - Profilo wideline", "CONTINUA", 1, 1);
 	}
 
 	public static void msgSlab() {
-		ButtonMessages.ModelessMsg("056 - Profilo mediato slab", "CONTINUA", 1, 1);
+		ButtonMessages.ModelessMsg("<56> - Profilo mediato slab", "CONTINUA", 1, 1);
 	}
 
 	public static void msgBaseline() {
-		ButtonMessages.ModelessMsg("057 - Profilo mediato e baseline correction", "CONTINUA", 1, 1);
+		ButtonMessages.ModelessMsg("<57> - Profilo mediato e baseline correction", "CONTINUA", 1, 1);
 	}
 
 	public static void msgFwhm() {
-		ButtonMessages.ModelessMsg("058 - Profilo mediato + baseline + FWHM", "CONTINUA", 1, 1);
+		ButtonMessages.ModelessMsg("<58> - Profilo mediato + baseline + FWHM", "CONTINUA", 1, 1);
 	}
 
 	public static void msgErf() {
-		ButtonMessages.ModelessMsg("059 - Profilo ERF + smooth 3x3 + FWHM", "CONTINUA", 1, 1);
+		ButtonMessages.ModelessMsg("<59> - Profilo ERF + smooth 3x3 + FWHM", "CONTINUA", 1, 1);
+	}
+
+	public static void msgContinua(String msg) {
+		ButtonMessages.ModelessMsg(msg, "CONTINUA", 1, 1);
 	}
 
 	public static String addPlus(String in1) {

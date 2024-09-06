@@ -643,8 +643,6 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				skip = false;
 			}
 
-			if (!step || skip)
-				imp3.hide();
 			// Phantom positioning: the phantom MUST have the slabs in high
 			// position and the wedges in lower position
 			//
@@ -663,16 +661,23 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			vetProfile[3] = lato / 5.0;
 
 			boolean isSlab = true;
+			boolean step2=isSlab || step;
+			if (!step2 || skip)
+				imp3.hide();
+
 			boolean invertErf = false;
 			boolean putLabelSx = false;
 			if (imp3.isVisible()) {
 				imp3.getWindow().toFront();
 			}
+			
 
-			if (!skip) {
+			if (skip) {
+				// entro se selezionato SALTA e non faccio nulla (forse)
+			} else {
 				// entro solo se selezionato ESAMINA
 
-				dsd1 = analProf_IMPROVED(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
+				dsd1 = analProf_IMPROVED(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step2, putLabelSx,
 						"PRIMA SLAB");
 
 				fwhmSlice1[w1] = dsd1[0];
@@ -694,13 +699,18 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				vetProfile[2] = lato - lato / 13.0;
 				vetProfile[3] = lato * 2.0 / 5.0;
 
+				
 				isSlab = true;
+				step2=isSlab || step;
+				if (!step2 || skip)
+					imp3.hide();
+
 				invertErf = false;
 				putLabelSx = true;
 				if (step) {
 					imp3.getWindow().toFront();
 				}
-				dsd2 = analProf_IMPROVED(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
+				dsd2 = analProf_IMPROVED(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step2, putLabelSx,
 						"SECONDA SLAB");
 				fwhmSlice2[w1] = dsd2[0];
 				peakPositionSlice2[w1] = dsd2[1];
@@ -733,13 +743,17 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				vetProfile[3] = lato * 3.0 / 5.0;
 
 				isSlab = false;
+				step2=isSlab || step;
+				if (!step2 || skip)
+					imp3.hide();
+
 				invertErf = true;
 				putLabelSx = false;
 				if (imp3.isVisible()) {
 					imp3.getWindow().toFront();
 				}
 
-				dsd3 = analProf_IMPROVED(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
+				dsd3 = analProf_IMPROVED(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step2, putLabelSx,
 						"PRIMO CUNEO");
 
 				fwhmCuneo3[w1] = dsd3[0];
@@ -761,13 +775,17 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				vetProfile[2] = lato - lato / 13.0;
 				vetProfile[3] = lato * 4.0 / 5.0;
 
-				isSlab = false;
+				isSlab = false;			
+				step2=isSlab || step;
+				if (!step2 || skip)
+					imp3.hide();
+
 				invertErf = false;
 				putLabelSx = true;
 				if (step) {
 					imp3.getWindow().toFront();
 				}
-				dsd4 = analProf_IMPROVED(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step, putLabelSx,
+				dsd4 = analProf_IMPROVED(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step2, putLabelSx,
 						"SECONDO CUNEO");
 				fwhmCuneo4[w1] = dsd4[0];
 				peakPositionCuneo4[w1] = dsd4[1];
@@ -792,46 +810,47 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				mmVetErrSpessCuneo[w1] = spessCor5[2];
 				mmVetAccurSpessCuneo[w1] = spessCor5[3];
 
-			}
+				// }
 
-			String fontStyle = "Arial";
-			Font defaultFont = FontUtil.getFont(fontStyle, Font.PLAIN, 13);
-			Font textFont = FontUtil.getFont(fontStyle, Font.ITALIC, 16);
-			Font titleFont = FontUtil.getFont(fontStyle, Font.BOLD, 16);
-			IJ.log("==================================================================");
-			IJ.log("======================= p6rmn_IMPROVED ===========================");
-			IJ.log("==================================================================");
+				String fontStyle = "Arial";
+				Font defaultFont = FontUtil.getFont(fontStyle, Font.PLAIN, 13);
+				Font textFont = FontUtil.getFont(fontStyle, Font.ITALIC, 16);
+				Font titleFont = FontUtil.getFont(fontStyle, Font.BOLD, 16);
+				IJ.log("==================================================================");
+				IJ.log("======================= p6rmn_IMPROVED ===========================");
+				IJ.log("==================================================================");
 
-			NonBlockingGenericDialog resultsDialog = new NonBlockingGenericDialog("SV07 - Results FWHM");
-			IJ.log("SV07 - Results FWHM");
-			resultsDialog.addMessage("Dati ottenuti per slice " + (w1 + 1) + " / " + nFrames, titleFont);
-			IJ.log("Dati ottenuti per slice " + (w1 + 1) + " / " + nFrames);
-			resultsDialog.setFont(defaultFont);
+				NonBlockingGenericDialog resultsDialog = new NonBlockingGenericDialog("SV07 - Results FWHM");
+				IJ.log("SV07 - Results FWHM");
+				resultsDialog.addMessage("Dati ottenuti per slice " + (w1 + 1) + " / " + nFrames, titleFont);
+				IJ.log("Dati ottenuti per slice " + (w1 + 1) + " / " + nFrames);
+				resultsDialog.setFont(defaultFont);
 
-			resultsDialog.addMessage("==================================================================");
-			IJ.log("==================================================================");
-			resultsDialog.addMessage("SPESSORE TEORICO= " + String.format("%.4f", thick) + " [mm]   SPACING TEORICO= "
-					+ String.format("%.4f", spacing) + " [mm] ");
-			IJ.log("SPESSORE TEORICO= " + String.format("%.4f", thick) + " [mm]   SPACING TEORICO= "
-					+ String.format("%.4f", spacing) + " [mm] ");
-			resultsDialog.addMessage("==================================================================");
-			IJ.log("==================================================================");
-			resultsDialog.addMessage("FWHM PRIMA SLAB= " + String.format("%.4f", pix2mm(dsd1[0], dimPixel))
-					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd1[1]));
-			IJ.log("FWHM PRIMA SLAB= " + String.format("%.4f", pix2mm(dsd1[0], dimPixel)) + " [mm]   PEAK POSITION= "
-					+ String.format("%.4f", dsd1[1]));
-			resultsDialog.addMessage("FWHM SECONDA SLAB= " + String.format("%.4f", pix2mm(dsd2[0], dimPixel))
-					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd2[1]));
-			IJ.log("FWHM SECONDA SLAB= " + String.format("%.4f", pix2mm(dsd2[0], dimPixel)) + " [mm]   PEAK POSITION= "
-					+ String.format("%.4f", dsd2[1]));
-			resultsDialog.addMessage("==================================================================");
-			IJ.log("==================================================================");
-			resultsDialog.addMessage("FWHM CORRETTO OLD SLAB= " + String.format("%.4f", spessCor1[0]) + " [mm]");
-			IJ.log("FWHM CORRETTO OLD SLAB= " + String.format("%.4f", spessCor1[0]) + " [mm]");
-			resultsDialog.addMessage("FWHM CORRETTO AAPM100 SLAB= " + String.format("%.4f", spessCor4[0]) + " [mm]");
-			IJ.log("FWHM CORRETTO AAPM100 SLAB= " + String.format("%.4f", spessCor4[0]) + " [mm]");
-			resultsDialog.addMessage("==================================================================");
-			IJ.log("==================================================================");
+				resultsDialog.addMessage("==================================================================");
+				IJ.log("==================================================================");
+				resultsDialog.addMessage("SPESSORE TEORICO= " + String.format("%.4f", thick)
+						+ " [mm]   SPACING TEORICO= " + String.format("%.4f", spacing) + " [mm] ");
+				IJ.log("SPESSORE TEORICO= " + String.format("%.4f", thick) + " [mm]   SPACING TEORICO= "
+						+ String.format("%.4f", spacing) + " [mm] ");
+				resultsDialog.addMessage("==================================================================");
+				IJ.log("==================================================================");
+				resultsDialog.addMessage("FWHM PRIMA SLAB= " + String.format("%.4f", pix2mm(dsd1[0], dimPixel))
+						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd1[1]));
+				IJ.log("FWHM PRIMA SLAB= " + String.format("%.4f", pix2mm(dsd1[0], dimPixel))
+						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd1[1]));
+				resultsDialog.addMessage("FWHM SECONDA SLAB= " + String.format("%.4f", pix2mm(dsd2[0], dimPixel))
+						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd2[1]));
+				IJ.log("FWHM SECONDA SLAB= " + String.format("%.4f", pix2mm(dsd2[0], dimPixel))
+						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd2[1]));
+				resultsDialog.addMessage("==================================================================");
+				IJ.log("==================================================================");
+				resultsDialog.addMessage("FWHM CORRETTO OLD SLAB= " + String.format("%.4f", spessCor1[0]) + " [mm]");
+				IJ.log("FWHM CORRETTO OLD SLAB= " + String.format("%.4f", spessCor1[0]) + " [mm]");
+				resultsDialog
+						.addMessage("FWHM CORRETTO AAPM100 SLAB= " + String.format("%.4f", spessCor4[0]) + " [mm]");
+				IJ.log("FWHM CORRETTO AAPM100 SLAB= " + String.format("%.4f", spessCor4[0]) + " [mm]");
+				resultsDialog.addMessage("==================================================================");
+				IJ.log("==================================================================");
 //			resultsDialog.addMessage(
 //					"FWHM MEDIA ARITM SLAB= " + String.format("%.4f", spessMed1) + " [mm]   >>>>> MEGLIO  <<<<<");
 //			resultsDialog.addMessage(
@@ -842,22 +861,23 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 //			IJ.log("ACCURATEZZA SPESSORE SLAB= " + String.format("%.4f", spessCor4[3]) + " [%] ");
 //			resultsDialog.addMessage("==================================================================");
 //			IJ.log("==================================================================");
-			resultsDialog.addMessage("FWHM PRIMO CUNEO= " + String.format("%.4f", pix2mm(dsd3[0], dimPixel))
-					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd3[1]));
-			IJ.log("FWHM PRIMO CUNEO= " + String.format("%.4f", pix2mm(dsd3[0], dimPixel)) + " [mm]   PEAK POSITION= "
-					+ String.format("%.4f", dsd3[1]));
-			resultsDialog.addMessage("FWHM SECONDO CUNEO= " + String.format("%.4f", pix2mm(dsd4[0], dimPixel))
-					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd4[1]));
-			IJ.log("FWHM SECONDO CUNEO= " + String.format("%.4f", pix2mm(dsd4[0], dimPixel)) + " [mm]   PEAK POSITION= "
-					+ String.format("%.4f", dsd4[1]));
-			resultsDialog.addMessage("==================================================================");
-			IJ.log("==================================================================");
-			resultsDialog.addMessage("FWHM CORRETTO OLD CUNEI= " + String.format("%.4f", spessCor2[0]) + " [mm]");
-			IJ.log("FWHM CORRETTO OLD CUNEI= " + String.format("%.4f", spessCor2[0]) + " [mm]");
-			resultsDialog.addMessage("FWHM CORRETTO AAPM100 CUNEI= " + String.format("%.4f", spessCor5[0]) + " [mm]");
-			IJ.log("FWHM CORRETTO AAPM100 CUNEI= " + String.format("%.4f", spessCor5[0]) + " [mm]");
-			resultsDialog.addMessage("==================================================================");
-			IJ.log("==================================================================");
+				resultsDialog.addMessage("FWHM PRIMO CUNEO= " + String.format("%.4f", pix2mm(dsd3[0], dimPixel))
+						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd3[1]));
+				IJ.log("FWHM PRIMO CUNEO= " + String.format("%.4f", pix2mm(dsd3[0], dimPixel))
+						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd3[1]));
+				resultsDialog.addMessage("FWHM SECONDO CUNEO= " + String.format("%.4f", pix2mm(dsd4[0], dimPixel))
+						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd4[1]));
+				IJ.log("FWHM SECONDO CUNEO= " + String.format("%.4f", pix2mm(dsd4[0], dimPixel))
+						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd4[1]));
+				resultsDialog.addMessage("==================================================================");
+				IJ.log("==================================================================");
+				resultsDialog.addMessage("FWHM CORRETTO OLD CUNEI= " + String.format("%.4f", spessCor2[0]) + " [mm]");
+				IJ.log("FWHM CORRETTO OLD CUNEI= " + String.format("%.4f", spessCor2[0]) + " [mm]");
+				resultsDialog
+						.addMessage("FWHM CORRETTO AAPM100 CUNEI= " + String.format("%.4f", spessCor5[0]) + " [mm]");
+				IJ.log("FWHM CORRETTO AAPM100 CUNEI= " + String.format("%.4f", spessCor5[0]) + " [mm]");
+				resultsDialog.addMessage("==================================================================");
+				IJ.log("==================================================================");
 //			resultsDialog.addMessage(
 //					"FWHM MEDIA ARITM CUNEI= " + String.format("%.4f", spessMed2) + " [mm]   >>>>> MEGLIO  <<<<<");
 //			resultsDialog.addMessage("FWHM MEDIA GEOM CUNEI= " + String.format("%.4f", geomMed2)
@@ -869,9 +889,9 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 //			resultsDialog.addMessage("==================================================================");
 //			IJ.log("==================================================================");
 
-			if (step)
-				resultsDialog.showDialog();
-
+				if (step)
+					resultsDialog.showDialog();
+			}
 		}
 
 		//
@@ -1269,6 +1289,9 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			int ra11 = (int) boundingRectangle1.width;
 			int xRoi1 = boundingRectangle1.x;
 			int yRoi1 = boundingRectangle1.y;
+			// qui potrei anche rilevare le coordinate della ROI ed utilizzarle per marcarle sul profile plot
+			
+			
 			// acquisisco le statistiche
 			ImageStatistics statC = imp1.getStatistics();
 			// disegno la ROI sull'overlay, verificando in questo modo la correttezza dei
@@ -1447,14 +1470,18 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		puntiY2[0] = half;
 		puntiY2[1] = half;
 
-//				MyLog.logVector(puntiX2, "puntiX2");
-//				MyLog.logVector(puntiY2, "puntiY2");
 
 		plot1.setColor(Color.GREEN);
 		plot1.addPoints(puntiX2, puntiY2, Plot.LINE);
-
-//				plot1.setColor(Color.BLUE);
-//				plot1.addPoints(puntiX3, puntiY3, Plot.CIRCLE);
+		
+		//-------------------------------------------------
+		// MODIFICA 040924
+		//-------------------------------------------------
+		MyLog.logVector(puntiXX, "puntiXX");
+		MyLog.logVector(puntiYY, "puntiYY");
+		plot1.setColor(Color.BLUE);
+		plot1.addPoints(puntiXX, puntiYY, Plot.CIRCLE);
+		//-------------------------------------------------
 
 		plot1.setColor(Color.BLUE);
 		plot1.addPoints(puntiX4, puntiY4, Plot.CIRCLE);

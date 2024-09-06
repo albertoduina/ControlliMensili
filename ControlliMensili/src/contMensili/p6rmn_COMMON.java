@@ -19,6 +19,11 @@ import utils.ReadDicom;
 import utils.TableSequence;
 import utils.UtilAyv;
 
+/***************************************************************
+ * 
+ * CONTIENE LE PARTI COMUNI INDISPENSABILI ALLE ALTRE VERSIONI
+ * 
+ **************************************************************/
 public class p6rmn_COMMON {
 
 	public static void saveLog_COMMON(String path, String name, boolean thisSPY) {
@@ -97,10 +102,9 @@ public class p6rmn_COMMON {
 		Prefs.set("prefer.p6rmnBy", "" + line1.y2);
 	}
 
-	public static void saveDebugImage_COMMON(ImagePlus imp1, String spydir, String name, int contaxx,
-			boolean thisSPY) {
+	public static void saveDebugImage_COMMON(ImagePlus imp1, String spydir, String name, int contaxx, boolean thisSPY) {
 		ImagePlus impS3 = imp1.flatten();
-	//	IJ.log(MyLog.qui() + " spydir= " + spydir + " name= " + name);
+		// IJ.log(MyLog.qui() + " spydir= " + spydir + " name= " + name);
 
 		String newName = spydir + "\\" + name + "@" + IJ.pad(contaxx, 3) + ".jpg";
 		FileSaver fs = new FileSaver(impS3);
@@ -324,6 +328,9 @@ public class p6rmn_COMMON {
 	 * che l'angolo a chi fanno riferimento non e'quello del materiale del wedge ma
 	 * quello posto tra le due superfici inclinate, wedge o slab che siano
 	 * 
+	 * ATTENZIONE, QUESTO E'NEL FILE COMMON PERCHE' USATO SIA DA OLD CHE IMPROVED
+	 * CHE FITTER
+	 * 
 	 * @param a2
 	 * @param b2
 	 * @param dimPix
@@ -333,7 +340,7 @@ public class p6rmn_COMMON {
 
 		// calcolo dell'angolo tra le sue slab / wedges
 
-		double angolo = 180 - 11.3 * 2;
+		double angolo = 180 - 11.3 * 2; // QUESTO E'L'ANGOLO CONTRO CUI PICCHIARE IL NASO
 		double a1 = a2 * dimPix;
 		double b1 = b2 * dimPix;
 
@@ -350,12 +357,12 @@ public class p6rmn_COMMON {
 
 		return mmFWHM;
 	}
-	
+
 	/**
 	 * si occupa di gestire cancellazione e creazione della cartella in cui salvare
 	 * log e immagini di SPY
 	 */
-	public  static String spyDirTree_COMMON(String path[], boolean step) {
+	public static String spyDirTree_COMMON(String path[], boolean step) {
 
 		// IJ.log("---------------------------------------- --------------");
 		File f1 = new File(path[0]);
@@ -383,12 +390,11 @@ public class p6rmn_COMMON {
 //		} else {
 //			IJ.log(MyLog.qui() + " method= " + MyLog.method() + ">> errore creazione " + spyfirst + spysecond);
 //		}
-		
-		String spyout= spyfirst+"\\"+spysecond;
+
+		String spyout = spyfirst + "\\" + spysecond;
 		return spyout;
 	}
-	
-	
+
 	/**
 	 * analisi di un profilo normale con ricerca punti sopra e sotto meta' altezza
 	 * verificato risultato identico ad ORIGINALE
@@ -459,14 +465,14 @@ public class p6rmn_COMMON {
 		isd[3] = sopra2;
 		return isd;
 	} // analPlot1
-	
+
 	/**
 	 * analisi di un profilo normale con ricerca punti sopra e sotto meta' altezza
 	 * questa versione modificata effettua la ricerca partendo dal picco invece che
 	 * dalle estremita'.
 	 * 
-	 * A RIPOSO DA'LO STESSO RISULTATO DI ORIGINAL
-	 * VENGONO RESTITUITE LE COORDINATE X DEI PUNTI
+	 * A RIPOSO DA'LO STESSO RISULTATO DI ORIGINAL VENGONO RESTITUITE LE COORDINATE
+	 * X DEI PUNTI
 	 * 
 	 * @param profile1 profilo da analizzare
 	 * @param bSlab    true=slab false=cuneo
@@ -544,7 +550,5 @@ public class p6rmn_COMMON {
 
 		return out1;
 	}
-
-
 
 }
