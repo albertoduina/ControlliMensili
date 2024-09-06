@@ -661,7 +661,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			vetProfile[3] = lato / 5.0;
 
 			boolean isSlab = true;
-			boolean step2=isSlab || step;
+			boolean step2 = isSlab || step;
 			if (!step2 || skip)
 				imp3.hide();
 
@@ -670,7 +670,6 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			if (imp3.isVisible()) {
 				imp3.getWindow().toFront();
 			}
-			
 
 			if (skip) {
 				// entro se selezionato SALTA e non faccio nulla (forse)
@@ -699,9 +698,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				vetProfile[2] = lato - lato / 13.0;
 				vetProfile[3] = lato * 2.0 / 5.0;
 
-				
 				isSlab = true;
-				step2=isSlab || step;
+				step2 = isSlab || step;
 				if (!step2 || skip)
 					imp3.hide();
 
@@ -743,7 +741,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				vetProfile[3] = lato * 3.0 / 5.0;
 
 				isSlab = false;
-				step2=isSlab || step;
+				step2 = isSlab || step;
 				if (!step2 || skip)
 					imp3.hide();
 
@@ -775,8 +773,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				vetProfile[2] = lato - lato / 13.0;
 				vetProfile[3] = lato * 4.0 / 5.0;
 
-				isSlab = false;			
-				step2=isSlab || step;
+				isSlab = false;
+				step2 = isSlab || step;
 				if (!step2 || skip)
 					imp3.hide();
 
@@ -1266,12 +1264,21 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		// ora in base alla wideline, preposiziono le ROI su cui calcolare la baseline
 
 		int mra = ra1 / 2;
-		int c2x = c3x - mra;
+//		int c2x = c3x - mra;
+		int c2x = c3x; // ============= MODIFICA 040924 ==================
 		int c2y = c3y - mra;
-		int d2x = d3x - mra;
+//		int d2x = d3x - mra;
+		int d2x = d3x -ra1; // ============= MODIFICA 040924 ==================
 		int d2y = d3y - mra;
 
 		double mediabaseline = 0;
+
+		double[] puntiXX1 = null;
+		double[] puntiYY1 = null;
+		double[] puntiXX2 = null;
+		double[] puntiYY2 = null;
+		ImageStatistics statC=null;
+		ImageStatistics statD=null;
 
 		if (slab) {
 
@@ -1289,11 +1296,11 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			int ra11 = (int) boundingRectangle1.width;
 			int xRoi1 = boundingRectangle1.x;
 			int yRoi1 = boundingRectangle1.y;
-			// qui potrei anche rilevare le coordinate della ROI ed utilizzarle per marcarle sul profile plot
-			
-			
+			// qui potrei anche rilevare le coordinate della ROI ed utilizzarle per marcarle
+			// sul profile plot
+
 			// acquisisco le statistiche
-			ImageStatistics statC = imp1.getStatistics();
+			statC = imp1.getStatistics();
 			// disegno la ROI sull'overlay, verificando in questo modo la correttezza dei
 			// miei calcoli
 
@@ -1312,7 +1319,18 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			int ra12 = (int) boundingRectangle2.width;
 			int xRoi2x = boundingRectangle2.x;
 			int yRoi2x = boundingRectangle2.y;
-			ImageStatistics statD = imp1.getStatistics();
+			puntiXX1 = new double[ra11];
+			puntiYY1 = new double[ra11];
+			puntiXX2 = new double[ra12];
+			puntiYY2 = new double[ra12];
+			for (int i1 = 0; i1 < ra11; i1++) {
+				puntiXX1[i1] = (double) xRoi1 + (double) i1 - (double) c3x;
+			}
+			for (int i1 = 0; i1 < ra12; i1++) {
+				puntiXX2[i1] = (double) xRoi2x + i1 - (double) c3x;
+			}
+
+			statD = imp1.getStatistics();
 
 			mySetRoi(imp1, xRoi2x, yRoi2x, ra12, Color.green);
 
@@ -1332,6 +1350,16 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		double peak = 9999;
 
 		if (slab) {
+
+			for (int i1 = 0; i1 < puntiXX1.length; i1++) {
+//				puntiYY1[i1] = profiM1[(int) puntiXX1[i1]];
+				puntiYY1[i1] = statC.mean;;
+			}
+			for (int i1 = 0; i1 < puntiXX2.length; i1++) {
+//				puntiYY2[i1] = profiM1[(int) puntiXX2[i1]];
+				puntiYY2[i1] = statD.mean;
+			}
+
 			// NOTARE CHE analPlot1_IMPROVED non viene utilizzato, tale eleborazione viene
 			// eseguita di seguito, partendo dal picco e non dalle due estremita'
 			// isd3 = analPlot1_IMPROVED(profiM1, slab);
@@ -1340,7 +1368,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		} else {
 			double[] profiE2 = createErf_IMPROVED(profiM1, invert); // profilo con ERF
 			// NOTARE CHE analPlot1_IMPROVED non viene utilizzato, tale eleborazione viene
-			// eseguita di seguito, partendo dal picco e non adlle due estremita'
+			// eseguita di seguito, partendo dal picco e non dalle due estremita'
 			// isd3 = analPlot1_IMPROVED(profiE2, slab);
 			// outFwhm = calcFwhm_IMPROVED(isd3, profiE2, slab, dimPixel);
 			myOut = profiE2;
@@ -1454,6 +1482,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		// ====================================================================
 		// Plot plot1 = new Plot("plot mediato + baseline + FWHM", "pixel", "valore");
 		Plot plot1 = new Plot(titolo, "pixel", "valore");
+
 		plot1.setColor(Color.RED);
 
 		double[] profi1X = ProfileUtils.autoprofile(myOut.length);
@@ -1470,18 +1499,23 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		puntiY2[0] = half;
 		puntiY2[1] = half;
 
+		// ================================================
+		// ================================================
+		// ============= MODIFICA 040924 ==================
+		// ================================================
+		// ================================================
+		if (slab) {
+			plot1.setColor(Color.YELLOW);
+			plot1.add("filled", puntiXX1, puntiYY1);
+			plot1.add("filled", puntiXX2, puntiYY2);
+		}
+		// ==================================================
+		// ripeto profilo altrimenti il giallo lo copre
+		plot1.setColor(Color.RED);
+		plot1.addPoints(profi1X, myOut, Plot.LINE);
 
 		plot1.setColor(Color.GREEN);
 		plot1.addPoints(puntiX2, puntiY2, Plot.LINE);
-		
-		//-------------------------------------------------
-		// MODIFICA 040924
-		//-------------------------------------------------
-		MyLog.logVector(puntiXX, "puntiXX");
-		MyLog.logVector(puntiYY, "puntiYY");
-		plot1.setColor(Color.BLUE);
-		plot1.addPoints(puntiXX, puntiYY, Plot.CIRCLE);
-		//-------------------------------------------------
 
 		plot1.setColor(Color.BLUE);
 		plot1.addPoints(puntiX4, puntiY4, Plot.CIRCLE);
