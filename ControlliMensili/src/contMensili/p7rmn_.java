@@ -1,5 +1,10 @@
 package contMensili;
 
+import java.awt.Color;
+import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.util.StringTokenizer;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
@@ -9,19 +14,13 @@ import ij.gui.Roi;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
-
-import java.awt.Color;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.util.StringTokenizer;
-
 import utils.AboutBox;
 import utils.ButtonMessages;
-import utils.MyLog;
-import utils.MyMsg;
-import utils.MyConst;
 import utils.CustomCanvasGeneric;
 import utils.InputOutput;
+import utils.MyConst;
+import utils.MyLog;
+import utils.MyMsg;
 import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
@@ -51,13 +50,13 @@ import utils.UtilAyv;
 /**
  * Analizza il WARP , le rods vengono selezionate manualmente. Dalla v4.00
  * risultati in pixels
- * 
+ *
  * Per salvare i dati in formato xls necessita di Excel_Writer.jar nella
  * directory plugins
- * 
+ *
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
- * 
+ *
  */
 
 public class p7rmn_ implements PlugIn, Measurements {
@@ -87,12 +86,14 @@ public class p7rmn_ implements PlugIn, Measurements {
 
 	double dimPixel2;
 
+	@Override
 	public void run(String args) {
 
 		UtilAyv.setMyPrecision();
 
-		if (IJ.versionLessThan("1.43k"))
+		if (IJ.versionLessThan("1.43k")) {
 			return;
+		}
 		//
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
 		// modo il messaggio viene emesso, altrimenti si ha una eccezione
@@ -151,8 +152,9 @@ public class p7rmn_ implements PlugIn, Measurements {
 				step = true;
 			case 5:
 				String path1 = UtilAyv.imageSelection("SELEZIONARE IMMAGINE...");
-				if (path1 == null)
+				if (path1 == null) {
 					return 5;
+				}
 				boolean autoCalled = false;
 				boolean verbose = true;
 				boolean test = false;
@@ -208,7 +210,7 @@ public class p7rmn_ implements PlugIn, Measurements {
 				iw2ayvTable = new TableSequence().loadTable(fileDir + MyConst.SEQUENZE_FILE);
 				String path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 				ResultsTable rt = mainWarp(path1, vetRiga[0], autoCalled, step, verbose, test);
-				
+
 				if (rt == null) {
 					ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, verbose);
 					TableCode tc1 = new TableCode();
@@ -218,8 +220,8 @@ public class p7rmn_ implements PlugIn, Measurements {
 					rt = ReportStandardInfo.abortResultTable_P7(info11);
 				}
 
-				
-				
+
+
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 
 				UtilAyv.afterWork();
@@ -250,15 +252,16 @@ public class p7rmn_ implements PlugIn, Measurements {
 					ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
 			String slicePos = ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_IMAGE_POSITION),
 					3);
-			double diamRoi1 = (double) MyConst.P7_DIAM_ROI / dimPixel2;
+			double diamRoi1 = MyConst.P7_DIAM_ROI / dimPixel2;
 			int diamRoi = (int) diamRoi1;
 			boolean circular = true;
 			UtilAyv.presetRoi(imp1, diamRoi, circular);
 			int resp = ButtonMessages.ModelessMsg(
 					"Posizionare la ROI esterna e premere CONTINUA, altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive",
 					"CONTINUA", "ANNULLA");
-			if (resp == 1)
+			if (resp == 1) {
 				return null;
+			}
 
 			overlayRodNumbers(imp1, diamRoi, true);
 			Polygon poli1 = UtilAyv.selectionPointsClick(imp1,
@@ -336,8 +339,9 @@ public class p7rmn_ implements PlugIn, Measurements {
 				rt.incrementCounter();
 				rt.addValue(t1, "Spacing");
 				rt.addValue(s2, dimPixel2);
-				if (verbose && !test)
+				if (verbose && !test) {
 					rt.show("Results");
+				}
 			} else {
 				msgRedo(nPunti);
 			}
@@ -347,8 +351,9 @@ public class p7rmn_ implements PlugIn, Measurements {
 			} else {
 				if (!test) {
 					accetta = MyMsg.msgStandalone();
-				} else
+				} else {
 					accetta = test;
+				}
 			}
 		} while (!accetta);
 		return rt;
@@ -389,10 +394,11 @@ public class p7rmn_ implements PlugIn, Measurements {
 				int[] vetX = MyConst.P7_X_POINTS_TESTGE;
 				int[] vetY = MyConst.P7_Y_POINTS_TESTGE;
 				boolean ok = testExcecution(path1, vetX, vetY, -10, -17, true);
-				if (ok)
+				if (ok) {
 					MyMsg.msgTestPassed();
-				else
+				} else {
 					MyMsg.msgTestFault();
+				}
 				UtilAyv.afterWork();
 				return;
 			}
@@ -403,10 +409,11 @@ public class p7rmn_ implements PlugIn, Measurements {
 				int[] vetX = MyConst.P7_X_POINTS_TESTSIEMENS;
 				int[] vetY = MyConst.P7_Y_POINTS_TESTSIEMENS;
 				boolean ok = testExcecution(path1, vetX, vetY, 0, 20, true);
-				if (ok)
+				if (ok) {
 					MyMsg.msgTestPassed();
-				else
+				} else {
 					MyMsg.msgTestFault();
+				}
 				UtilAyv.afterWork();
 				return;
 			}
@@ -439,12 +446,13 @@ public class p7rmn_ implements PlugIn, Measurements {
 		}
 		double dimPixel2 = ReadDicom.readDouble(
 				ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
-		double diamRoi1 = (double) MyConst.P7_DIAM_ROI / dimPixel2;
+		double diamRoi1 = MyConst.P7_DIAM_ROI / dimPixel2;
 		int diamRoi = (int) diamRoi1;
 		boolean circular = true;
 		UtilAyv.presetRoi(imp1, diamRoi, offX, offY, circular);
-		if (verbose)
+		if (verbose) {
 			IJ.wait(500);
+		}
 		overlayRodNumbers(imp1, diamRoi, verbose);
 		Polygon poli1 = UtilAyv.clickSimulation(imp1, vetX, vetY);
 		boolean ok = UtilAyv.verifyResults2(poli1.xpoints, poli1.ypoints, vetX, vetY, "della ROD ");
@@ -453,7 +461,7 @@ public class p7rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * genera una directory temporanea e vi estrae le immagini di test da test2.jar
-	 * 
+	 *
 	 * @return home1 path della directory temporanea con le immagini di test
 	 */
 	private String findTestImages() {

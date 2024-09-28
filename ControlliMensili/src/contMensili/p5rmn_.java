@@ -1,5 +1,11 @@
 package contMensili;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Rectangle;
+import java.io.File;
+import java.util.StringTokenizer;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
@@ -15,20 +21,15 @@ import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 import ij.util.Tools;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Rectangle;
-import java.io.File;
-import java.util.StringTokenizer;
-
 import utils.AboutBox;
 import utils.ButtonMessages;
+import utils.CustomCanvasGeneric;
+import utils.ImageUtils;
 import utils.InputOutput;
-import utils.MyMsg;
 import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyLog;
+import utils.MyMsg;
 import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
@@ -36,8 +37,6 @@ import utils.TableCode;
 import utils.TableExpand;
 import utils.TableSequence;
 import utils.UtilAyv;
-import utils.CustomCanvasGeneric;
-import utils.ImageUtils;
 
 /*
  * Copyright (C) 2007 Alberto Duina, SPEDALI CIVILI DI BRESCIA, Brescia ITALY
@@ -59,13 +58,13 @@ import utils.ImageUtils;
 
 /**
  * Analizza UNIFORMITA', SNR, FWHM per le bobine superficiali
- * 
+ *
  * Per salvare i dati in formato xls necessita di Excel_Writer.jar nella
  * directory plugins
- * 
+ *
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
- * 
+ *
  */
 public class p5rmn_ implements PlugIn, Measurements {
 
@@ -81,6 +80,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	// private boolean profiVert = false;
 
+	@Override
 	public void run(String args) {
 		UtilAyv.setMyPrecision();
 
@@ -109,8 +109,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 		// VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" +
 		// MyVersionUtils.getVersion();
 
-		if (IJ.versionLessThan("1.43k"))
+		if (IJ.versionLessThan("1.43k")) {
 			return;
+		}
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -151,16 +152,19 @@ public class p5rmn_ implements PlugIn, Measurements {
 			case 5:
 				String[] path = new String[3];
 				path[0] = UtilAyv.imageSelection("SELEZIONARE PRIMA ACQUISIZIONE PRIMO ECO...");
-				if (path[0] == null)
+				if (path[0] == null) {
 					return 0;
+				}
 
 				path[1] = UtilAyv.imageSelection("SELEZIONARE SECONDA ACQUISIZIONE PRIMO ECO...");
-				if (path[1] == null)
+				if (path[1] == null) {
 					return 0;
+				}
 
 				path[2] = UtilAyv.imageSelection("SELEZIONARE PRIMA  ACQUISIZIONE SECONDO ECO...");
-				if (path[2] == null)
+				if (path[2] == null) {
 					return 0;
+				}
 				boolean verticalProfile = true;
 				boolean autoCalled = false;
 				boolean verbose = true;
@@ -170,8 +174,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 				// ResultsTable rt1 = mainUnifor(path, sqX, sqY, "0",
 				// verticalProfile, autoCalled, step, verbose, test);
 				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile, autoCalled, step, verbose, test);
-				if (rt1 == null)
+				if (rt1 == null) {
 					return 0;
+				}
 
 				rt1.show("Results");
 
@@ -326,9 +331,10 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 			double dimPixel = ReadDicom.readDouble(
 					ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 2));
-			if (verbose)
-				imp1.setTitle("DIMENSIONI RETICOLO= " + (dimPixel * (double) height / (double) MyConst.P5_GRID_NUMBER)
+			if (verbose) {
+				imp1.setTitle("DIMENSIONI RETICOLO= " + (dimPixel * height / MyConst.P5_GRID_NUMBER)
 						+ " mm");
+			}
 
 			int sqNEA = MyConst.P5_NEA_11X11_PIXEL;
 			imp1.setOverlay(over2);
@@ -340,14 +346,17 @@ public class p5rmn_ implements PlugIn, Measurements {
 			//
 			if (!test) {
 				int posX = ReadDicom.readInt(Prefs.get("prefer.p5rmnPosX", Integer.toString(height / 2)));
-				if ((posX < 10) || (posX > (height - 10)))
+				if ((posX < 10) || (posX > (height - 10))) {
 					posX = height / 2;
+				}
 				int posY = ReadDicom.readInt(Prefs.get("prefer.p5rmnPosY", Integer.toString(width / 2)));
-				if ((posY < 10) || (posY > (width - 10)))
+				if ((posY < 10) || (posY > (width - 10))) {
 					posY = width / 2;
+				}
 				// UtilAyv.autoAdjust(imp1, ip1);
-				if (imp1.isVisible())
+				if (imp1.isVisible()) {
 					ImageUtils.backgroundEnhancement(0, 0, 10, imp1);
+				}
 				int userSelection1 = 0;
 
 				// TODO posizione di test
@@ -405,10 +414,12 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 			int xFondo = MyConst.P5_X_ROI_BACKGROUND;
 			int yFondo = MyConst.P5_Y_ROI_BACKGROUND;
-			if (test)
+			if (test) {
 				yFondo = yFondo + 40;
-			if (step)
+			}
+			if (step) {
 				msgMroi();
+			}
 			//
 			// disegno RoiFondo su imp1
 			//
@@ -438,11 +449,13 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 			ImageStatistics statImaDiff = imaDiff.getStatistics();
 			imaDiff.updateAndDraw();
-			if (imaDiff.isVisible())
+			if (imaDiff.isVisible()) {
 				imaDiff.getWindow().toFront();
+			}
 
-			if (step)
+			if (step) {
 				msgMroi();
+			}
 			//
 			// calcolo P su imaDiff
 			//
@@ -460,8 +473,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 			over2.addElement(imp1.getRoi());
 			over2.setStrokeColor(Color.red);
 
-			if (imp1.isVisible())
+			if (imp1.isVisible()) {
 				imp1.getWindow().toFront();
+			}
 			//
 			// qui, se il numero dei pixel < 121 dovr� incrementare sqR2 e
 			// ripetere il loop
@@ -480,8 +494,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 				over2.setStrokeColor(Color.red);
 
 				// imp1.getWindow().toFront();
-				if (step)
+				if (step) {
 					msgDisplayNEA();
+				}
 
 				if (pixx < area11x11) {
 					sqNEA = sqNEA + 2; // accrescimento area
@@ -494,23 +509,21 @@ public class p5rmn_ implements PlugIn, Measurements {
 				// verifico che quando cresce il lato del quadrato non si esca
 				// dall'immagine
 
-				if ((sqX + sqNEA - enlarge) >= width || (sqX - enlarge) <= 0) {
+				if ((sqX + sqNEA - enlarge) >= width || (sqX - enlarge) <= 0 || (sqY + sqNEA - enlarge) >= height || (sqY - enlarge) <= 0) {
 					msgNot121();
 					return null;
 				}
-				if ((sqY + sqNEA - enlarge) >= height || (sqY - enlarge) <= 0) {
-					msgNot121();
-					return null;
-				}
-				if (step && pixx >= area11x11)
+				if (step && pixx >= area11x11) {
 					msgSqr2OK(pixx);
+				}
 
 			} while (pixx < area11x11);
 
 			imp1.setRoi(sqX - enlarge, sqY - enlarge, sqNEA, sqNEA);
 			imp1.updateAndDraw();
-			if (imp1.isVisible())
+			if (imp1.isVisible()) {
 				imp1.getWindow().toFront();
+			}
 
 			// MyLog.waitHere("verificare la roi");
 
@@ -524,14 +537,17 @@ public class p5rmn_ implements PlugIn, Measurements {
 					paintPixels);
 
 			if (step)
+			 {
 				msgDisplayMean4(out1[0], out1[1]);
 			//
 			// calcolo SNR finale
 			//
+			}
 
 			double snr = signal1 / (out1[1] / Math.sqrt(2));
-			if (step)
+			if (step) {
 				msgSnr(snr);
+			}
 
 			//
 			// calcolo simulata
@@ -560,8 +576,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 //					MyLog.waitHere("errore cancellazione directory " + newdir3);
 			} else {
 				ok4 = InputOutput.createDir(newdir3);
-				if (!ok4)
+				if (!ok4) {
 					MyLog.waitHere("errore creazione directory " + newdir3);
+				}
 			}
 
 			simulataName = simpath + "\\" + patName + codice + "sim.zip";
@@ -576,8 +593,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 			//
 			// calcolo posizione fwhm a met� della MROI
 			//
-			if (imp1.isVisible())
+			if (imp1.isVisible()) {
 				imp1.getWindow().toFront();
+			}
 			//
 			// 28feb05 qui d� la possibilit� di modificare la posizione su cui
 			// verr� calcolato l'FWHM
@@ -627,7 +645,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 			//
 			// rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
-			
+
 			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);    ////// SIMPLE
 
 			rt.showRowNumbers(true);
@@ -697,8 +715,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 				rt.addValue(t1, ("Classe" + classiSimulata[i1][0]) + "_" + levelString[i1]);
 				rt.addValue(s2, classiSimulata[i1][1]);
 			}
-			if (verbose && !test)
+			if (verbose && !test) {
 				rt.show("Results");
+			}
 
 			if (autoCalled && !test) {
 				accetta = MyMsg.accettaMenu();
@@ -737,15 +756,17 @@ public class p5rmn_ implements PlugIn, Measurements {
 				double[] vetReference = referenceGe();
 				boolean verticalProfile = false;
 				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile, autoCalled, step, verbose, test);
-				if (rt1 == null)
+				if (rt1 == null) {
 					return;
+				}
 
 				double[] vetResults = UtilAyv.vectorizeResults(rt1);
 				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P5_vetName);
-				if (ok)
+				if (ok) {
 					MyMsg.msgTestPassed();
-				else
+				} else {
 					MyMsg.msgTestFault();
+				}
 				UtilAyv.afterWork();
 				break;
 			}
@@ -768,14 +789,16 @@ public class p5rmn_ implements PlugIn, Measurements {
 				ResultsTable rt1 = mainUnifor(path, sqX, sqY, verticalProfile, autoCalled, step, verbose, test);
 				// ResultsTable rt1 = mainUnifor(path, sqX, sqY, autoArgs,
 				// verticalProfile, autoCalled, step, verbose, test);
-				if (rt1 == null)
+				if (rt1 == null) {
 					return;
+				}
 				double[] vetResults = UtilAyv.vectorizeResults(rt1);
 				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P5_vetName);
-				if (ok)
+				if (ok) {
 					MyMsg.msgTestPassed();
-				else
+				} else {
 					MyMsg.msgTestFault();
+				}
 				UtilAyv.afterWork();
 				break;
 			}
@@ -787,7 +810,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Siemens test image expected results
-	 * 
+	 *
 	 * @return
 	 */
 	double[] referenceSiemens() {
@@ -820,7 +843,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Ge test image expected results
-	 * 
+	 *
 	 * @return
 	 */
 	double[] referenceGe() {
@@ -883,7 +906,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Calcola la deviazione standard
-	 * 
+	 *
 	 * @param num  Numero dei pixel
 	 * @param sum  Somma dei valori pixel
 	 * @param sum2 Somma dei quadrati dei valori dei pixel
@@ -894,18 +917,20 @@ public class p5rmn_ implements PlugIn, Measurements {
 		double sd1;
 		if (num > 0) {
 			sd1 = (num * sum2 - sum * sum) / num;
-			if (sd1 > 0.0)
+			if (sd1 > 0.0) {
 				sd1 = Math.sqrt(sd1 / (num - 1.0));
-			else
+			} else {
 				sd1 = 0.0;
-		} else
+			}
+		} else {
 			sd1 = 0.0;
+		}
 		return (sd1);
 	}
 
 	/**
 	 * Conta i pixel che oltrepassano la soglia di conteggio
-	 * 
+	 *
 	 * @param imp1  immagine in input
 	 * @param sqX   coordinata della Roi
 	 * @param sqY   coordinata della Roi
@@ -941,7 +966,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 * Effettua il calcolo della deviazione standard per i pixel della immagine
 	 * differenza i cui corrispondenti pixel della prima immagine oltrepassano la
 	 * soglia di conteggio, secondo il protocollo NEMA
-	 * 
+	 *
 	 * @param imp1        immagine in input
 	 * @param imp3        immagine differenza
 	 * @param sqX         coordinata della Roi
@@ -950,12 +975,12 @@ public class p5rmn_ implements PlugIn, Measurements {
 	 * @param limit       soglia di conteggio
 	 * @param paintPixels ATTENZIONE da usare solo per test, altera i risultati
 	 *                    !!!!! VA TENUTO FALSE
-	 * 
+	 *
 	 * @return [0] sum / pixelcount [1] devStan
 	 */
 
 	/***
-	 * 
+	 *
 	 * @param imp1
 	 * @param imp3
 	 * @param sqX
@@ -997,8 +1022,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 					sumValues += value4;
 					sumSquare += value4 * value4;
 					// IJ.log("p5 x1=" + x1 + " y1=" + y1 + " s1=" + value4);
-					if (paintPixels)
+					if (paintPixels) {
 						pixels2[offset] = 4096;
+					}
 				}
 			}
 		}
@@ -1011,13 +1037,13 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Analisi di un profilo NON mediato
-	 * 
+	 *
 	 * @param imp1 Immagine da analizzare
 	 * @param ax   Coordinata x inizio segmento
 	 * @param ay   Coordinata y inizio segmento
 	 * @param bx   Coordinata x fine segmento
 	 * @param by   Coordinata x fine segmento
-	 * 
+	 *
 	 * @return outFwhm[0]=FWHM, outFwhm[1]=peak position
 	 */
 
@@ -1029,7 +1055,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 			return (null);
 		}
 
-		imp1.setRoi(new Line((int) ax, (int) ay, (int) bx, (int) by));
+		imp1.setRoi(new Line(ax, ay, bx, by));
 		Roi roi1 = imp1.getRoi();
 
 		double[] profi1 = ((Line) roi1).getPixels(); // profilo non mediato
@@ -1059,16 +1085,18 @@ public class p5rmn_ implements PlugIn, Measurements {
 		vetHalfPoint = halfPointSearch(profi1);
 		outFwhm = calcFwhm(vetHalfPoint, profi1, dimPixel);
 		if (step)
-
+		 {
 			createPlot(profi1, true, true); // plot della fwhm
-		if (step)
+		}
+		if (step) {
 			ButtonMessages.ModelessMsg("Continuare?   <51>", "CONTINUA");
+		}
 		return (outFwhm);
 	} // analProf2
 
 	/**
 	 * Calcolo dell'FWHM su di un vettore profilo
-	 * 
+	 *
 	 * @param vetUpDwPoints Vettore restituito da AnalPlot2 con le posizioni dei
 	 *                      punti sopra e sotto la met� altezza
 	 * @param profile       Profilo da analizzare
@@ -1105,8 +1133,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 		// double fwhm = (dx - sx);
 
 		for (int i1 = 0; i1 < profile.length; i1++) {
-			if (profile[i1] == min)
+			if (profile[i1] == min) {
 				peak = i1;
+			}
 		}
 
 		double[] out = { fwhm, peak };
@@ -1115,7 +1144,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Mostra a video un profilo con linea a met� picco
-	 * 
+	 *
 	 * @param profile1 Vettore con il profilo da analizzare
 	 * @param bslab    Flag slab che qui mettiamo sempre true
 	 */
@@ -1138,25 +1167,27 @@ public class p5rmn_ implements PlugIn, Measurements {
 		double[] yVetLineHalf = new double[2];
 		int len1 = profile1.length;
 		double[] xcoord1 = new double[len1];
-		for (int j = 0; j < len1; j++)
+		for (int j = 0; j < len1; j++) {
 			xcoord1[j] = j;
+		}
 		// PlotWindow plot = new PlotWindow("Plot profilo penetrazione",
 		// "pixel",
 		// "valore", xcoord1, profile1);
 		Plot plot = new Plot("Plot profilo penetrazione", "pixel", "valore", xcoord1, profile1);
-		if (bslab)
+		if (bslab) {
 			plot.setLimits(0, len1, min, max);
-		else
+		} else {
 			plot.setLimits(0, len1, min, 30);
+		}
 		plot.setLineWidth(1);
 		plot.setColor(Color.blue);
-		xVectPointsX[0] = (double) vetUpDwPoints[0];
-		xVectPointsX[1] = (double) vetUpDwPoints[2];
+		xVectPointsX[0] = vetUpDwPoints[0];
+		xVectPointsX[1] = vetUpDwPoints[2];
 		yVectPointsX[0] = profile1[vetUpDwPoints[0]];
 		yVectPointsX[1] = profile1[vetUpDwPoints[2]];
 		plot.addPoints(xVectPointsX, yVectPointsX, PlotWindow.X);
-		xVectPointsO[0] = (double) vetUpDwPoints[1];
-		xVectPointsO[1] = (double) vetUpDwPoints[3];
+		xVectPointsO[0] = vetUpDwPoints[1];
+		xVectPointsO[1] = vetUpDwPoints[3];
 		yVectPointsO[0] = profile1[vetUpDwPoints[1]];
 		yVectPointsO[1] = profile1[vetUpDwPoints[3]];
 		plot.addPoints(xVectPointsO, yVectPointsO, PlotWindow.CIRCLE);
@@ -1183,10 +1214,11 @@ public class p5rmn_ implements PlugIn, Measurements {
 		double fwhm = dx - sx;
 		double labelPosition = 0;
 
-		if (bLabelSx)
+		if (bLabelSx) {
 			labelPosition = 0.10;
-		else
+		} else {
 			labelPosition = 0.60;
+		}
 		plot.addLabel(labelPosition, 0.45, "peak / 2=   " + IJ.d2s(max / 2, 2));
 		plot.addLabel(labelPosition, 0.50,
 				"down sx " + vetUpDwPoints[0] + "  =   " + IJ.d2s(profile1[vetUpDwPoints[0]], 2));
@@ -1213,7 +1245,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * ricerca dei punti a met� altezza
-	 * 
+	 *
 	 * @param profile1 Vettore con il profilo da analizzare
 	 * @return isd[0] punto sotto half a sx, isd[1] punto sopra half a sx,
 	 * @return isd[2] punto sotto half a dx, isd[3] punto sopra half a dx
@@ -1221,7 +1253,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	private static int[] halfPointSearch(double profile1[]) {
 		/*
 		 * ATTENZIONE. il nostro profilo standard � il seguente:
-		 * 
+		 *
 		 * ........... .......... max . . upSx * * upDx
 		 * -------------.--------------.------------ half downSx * * downDx . .
 		 * ......... min
@@ -1293,7 +1325,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 	/**
 	 * scelta da parte dell'utente della posizione e direzione del profilo su cui
 	 * poi verr� calcolata l'FWHM
-	 * 
+	 *
 	 * @param xPos posizione x MROI
 	 * @param yPos posizione y MROI
 	 * @param len  lato MROI
@@ -1326,7 +1358,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 				xEndProfile = width;
 				yEndProfile = yPos + len / 2;
 			}
-			imp1.setRoi(new Line((int) xStartProfile, (int) yStartProfile, (int) xEndProfile, (int) yEndProfile));
+			imp1.setRoi(new Line(xStartProfile, yStartProfile, xEndProfile, yEndProfile));
 			imp1.updateAndDraw();
 
 			// effettuo la scelta all'interno del loop, in modo da poterla

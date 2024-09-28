@@ -1,5 +1,11 @@
 package contMensili;
 
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.StringTokenizer;
+
 // set debug 290607
 
 import ij.IJ;
@@ -17,14 +23,7 @@ import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
-
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.StringTokenizer;
-
+import utils.AboutBox;
 import utils.ButtonMessages;
 import utils.ImageUtils;
 import utils.InputOutput;
@@ -35,10 +34,8 @@ import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.SimplexBasedRegressor;
 import utils.TableCode;
-import utils.TableExpand;
 import utils.TableSequence;
 import utils.UtilAyv;
-import utils.AboutBox;
 
 /*
  * Copyright (C) 2007 Alberto Duina, SPEDALI CIVILI DI BRESCIA, Brescia ITALY
@@ -60,24 +57,24 @@ import utils.AboutBox;
 
 /**
  * Calcola T1 e T2 utilizzando l'algoritmo simplex di Nelder & Mead.
- * 
+ *
  * Da MRI Analysis Calculator e da MRI Analysis Pack di Karl Schmidt i cui
  * sorgenti sono raggiungibili da http://www.quickvol.com/launch.html e su
  * sourceforge.net
- * 
+ *
  * Per salvare i dati in formato xls necessita di Excel_Writer.jar nella
  * directory plugins
- * 
+ *
  * Le formule di minimizzazione sono nella classe SimplexBasedRegressor
- * 
+ *
  * 29jan07 v 3.00 i risultati sono praticamente identici a MriCalc
- * 
+ *
  * @author Karl Schmidt - karl.schmidt@umassmed.edu
- * 
+ *
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
- * 
- * 
+ *
+ *
  */
 public class p2rmn_ implements PlugIn, Measurements {
 
@@ -163,15 +160,17 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	private final String CODE_FILE = "/codici.txt";
 
-	private final String DICOM_ROWS = "0028,0010";
+//	private final String DICOM_ROWS = "0028,0010";
 
-	private final String DICOM_COLUMNS = "0028,0011";
+//	private final String DICOM_COLUMNS = "0028,0011";
 
-	private final String DICOM_INVERSION_TIME = "0018,0082";
+//	private final String DICOM_INVERSION_TIME = "0018,0082";
 
-	private final String DICOM_ECHO_TIME = "0018,0081";
+//	private final String DICOM_ECHO_TIME = "0018,0081";
 
-	private final String DICOM_PIXEL_SPACING = "0028,0030";
+//	private final String DICOM_EFFECTIVE_ECHO_TIME = "0018,9082";
+
+//	private final String DICOM_PIXEL_SPACING = "0028,0030";
 
 	public boolean debug1 = false;
 
@@ -181,6 +180,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	// maledetto filtro sul fondo
 
+	@Override
 	public void run(String args) {
 
 		UtilAyv.setMyPrecision();
@@ -220,12 +220,14 @@ public class p2rmn_ implements PlugIn, Measurements {
 //		}
 
 		// ----------------------------------------------------------------------------
-		if (IJ.versionLessThan("1.43k"))
+		if (IJ.versionLessThan("1.43k")) {
 			return;
+		}
 		// -----------------------------
 		Count c1 = new Count();
-		if (!c1.jarCount("iw2ayv_"))
+		if (!c1.jarCount("iw2ayv_")) {
 			return;
+		}
 		// -----------------------------
 		String className = this.getClass().getName();
 		String user1 = System.getProperty("user.name");
@@ -329,14 +331,16 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 				do {
 					path0 = UtilAyv.imageSelection("SELEZIONARE IMMAGINE...");
-					if (path0 == null)
+					if (path0 == null) {
 						return;
+					}
 					path1[num] = path0;
 					num++;
 					nTokens = num;
 					userSelection2 = ButtonMessages.ModelessMsg("Finito ?    <04>", "SELEZIONA", "FINE");
-					if (userSelection2 == 1)
+					if (userSelection2 == 1) {
 						endsel = true;
+					}
 				} while (!endsel);
 			}
 		}
@@ -353,10 +357,11 @@ public class p2rmn_ implements PlugIn, Measurements {
 			MyLog.waitHere();
 
 			for (int i1 = 0; i1 < T2_TEST_IMAGES; i1++) {
-				if (i1 < SINGLE_DIGIT)
+				if (i1 < SINGLE_DIGIT) {
 					path1[i1] = home1 + "/T2MA_0" + (i1 + 1) + "testP2";
-				else
+				} else {
 					path1[i1] = home1 + "/T2MA_" + (i1 + 1) + "testP2";
+				}
 			}
 			nTokens = T2_TEST_IMAGES;
 			typeT2 = true;
@@ -415,25 +420,28 @@ public class p2rmn_ implements PlugIn, Measurements {
 		}
 
 		if (autoCalled) {
-			if (bstep)
+			if (bstep) {
 				ButtonMessages.ModelessMsg("Ricevuto=" + args, "CONTINUA");
+			}
 			defaultVetXUpperLeftCornerRoiGels = X_ULC_ROI_TESTGE;
 			defaultVetYUpperLeftCornerRoiGels = Y_ULC_ROI_TESTGE;
 
 			StringTokenizer strTok = new StringTokenizer(args, "#");
-			for (int i1 = 0; i1 < nTokens; i1++)
+			for (int i1 = 0; i1 < nTokens; i1++) {
 				// vetRiga1 contiene i codici multipli passati da sequenze
 				vetRiga[i1] = Integer.parseInt(strTok.nextToken());
+			}
 			//
 			// Carico la tabella in memoria
 			//
 			strRiga3 = new TableSequence().loadTable(fileDir + SEQUENZE_FILE);
 			String codice = TableSequence.getCode(strRiga3, vetRiga[0]);
 			String cod = codice.substring(0, 2).trim();
-			if (cod.equals("T2"))
+			if (cod.equals("T2")) {
 				typeT2 = true;
-			else
+			} else {
 				typeT2 = false;
+			}
 
 			for (int i1 = 0; i1 < nTokens; i1++) {
 				vetPath1[i1] = TableSequence.getPath(strRiga3, vetRiga[i1]);
@@ -458,17 +466,21 @@ public class p2rmn_ implements PlugIn, Measurements {
 			IJ.showStatus("Ricordiamo il comando RestoreSelection CTRL+SHIFT+E");
 
 			ImageStack newStack = null;
-			if (manualCalled)
+			if (manualCalled) {
 				newStack = stackOpener1(path2, typeT2);
-			else
+			} else {
 				newStack = stackOpener1(vetPath1, typeT2);
+			}
 
-			if (newStack == null)
+			if (newStack == null) {
 				return;
+			}
 			ImagePlus imp8 = new ImagePlus("newStack", newStack);
 			if (imp8 == null)
+			 {
 				return;
 //			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(vetPath1[0], imp8, tabCodici, VERSION, autoCalled);
+			}
 
 			info1 = ReportStandardInfo.getSimpleStandardInfo(vetPath1[0], imp8, tabCodici, VERSION, autoCalled);
 			info11 = ReportStandardInfo.getSimpleStandardInfo(vetPath1[0], imp8, tabCodici, VERSION, autoCalled);
@@ -478,13 +490,13 @@ public class p2rmn_ implements PlugIn, Measurements {
 			int width = imp8.getWidth();
 			int height = imp8.getHeight();
 
-			int Rows = ReadDicom.readInt(ReadDicom.readDicomParameter(imp8, DICOM_ROWS));
-			int Columns = ReadDicom.readInt(ReadDicom.readDicomParameter(imp8, DICOM_COLUMNS));
+			int Rows = ReadDicom.readInt(ReadDicom.readDicomParameter(imp8, MyConst.DICOM_ROWS));
+			int Columns = ReadDicom.readInt(ReadDicom.readDicomParameter(imp8, MyConst.DICOM_COLUMNS));
 
-			dimPixel = ReadDicom
-					.readDouble(ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp8, DICOM_PIXEL_SPACING), 2));
+			dimPixel = ReadDicom.readDouble(
+					ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp8, MyConst.DICOM_PIXEL_SPACING), 2));
 
-			int roi_diam = (int) ((double) ROI_DIAM * DIM_PIXEL_FOV_220 / dimPixel);
+			int roi_diam = (int) (ROI_DIAM * DIM_PIXEL_FOV_220 / dimPixel);
 
 			Roi[] vetRoi = new Roi[N_GELS];
 			String saveVetXUpperLeftCornerRoiGels = Prefs.get("prefer.p2rmnGx", defaultVetXUpperLeftCornerRoiGels);
@@ -516,14 +528,18 @@ public class p2rmn_ implements PlugIn, Measurements {
 						// avere una roi al di fuori dell'immagine
 						int xRoi = vetXUpperLeftCornerRoiGels[i1];
 						int yRoi = vetYUpperLeftCornerRoiGels[i1];
-						if (xRoi < 0)
+						if (xRoi < 0) {
 							xRoi = Columns / 2;
-						if (xRoi + roi_diam > Columns)
+						}
+						if (xRoi + roi_diam > Columns) {
 							xRoi = Columns / 2;
-						if (yRoi < 0)
+						}
+						if (yRoi < 0) {
 							yRoi = Rows / 2;
-						if (yRoi + roi_diam > Rows)
+						}
+						if (yRoi + roi_diam > Rows) {
 							yRoi = Rows / 2;
+						}
 
 //						imp8.setRoi(new OvalRoi(xRoi, yRoi, roi_diam, roi_diam, imp8));
 						imp8.setRoi(new OvalRoi(xRoi, yRoi, roi_diam, roi_diam));
@@ -536,8 +552,9 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 						// MyLog.waitHere("userSelection1= " + userSelection1);
 
-						if (userSelection1 == 1)
+						if (userSelection1 == 1) {
 							abort = true;
+						}
 
 //						userSelection1 = ButtonMessages.ModelessMsg(
 //								"Posizionare ROI su GEL" + (i1 + 1) + "  e premere Accetta      <08>", "ACCETTA",
@@ -566,8 +583,9 @@ public class p2rmn_ implements PlugIn, Measurements {
 				vetRoi[i1] = imp8.getRoi();
 			}
 
-			if (abort)
+			if (abort) {
 				break;
+			}
 
 			saveVetXUpperLeftCornerRoiGels = UtilAyv.putPos2(vetXUpperLeftCornerRoiGels, Columns);
 			saveVetYUpperLeftCornerRoiGels = UtilAyv.putPos2(vetYUpperLeftCornerRoiGels, Rows);
@@ -610,14 +628,17 @@ public class p2rmn_ implements PlugIn, Measurements {
 				offset = y * width;
 				for (int x = 0; x < width; x++) {
 					bMap[x + offset] = 0;
-					for (int i1 = 0; i1 < vetRoi.length; i1++)
-						if (vetRoi[i1].contains(x, y))
+					for (Roi element : vetRoi) {
+						if (element.contains(x, y)) {
 							bMap[x + offset] = 1;
+						}
+					}
 				}
 			}
 			int[] imaID = doCalculation(newStack, filtroFondo);
-			if (imaID == null)
+			if (imaID == null) {
 				ButtonMessages.ModelessMsg("errore p2_rmn riga 523", "continua");
+			}
 
 			double[] medGels = new double[vetXUpperLeftCornerRoiGels.length];
 			double[] devGels = new double[vetXUpperLeftCornerRoiGels.length];
@@ -639,10 +660,11 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 //			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 
-			if (typeT2)
+			if (typeT2) {
 				info1[0] = "T2___";
-			else
+			} else {
 				info1[0] = "T1___";
+			}
 
 			if (!abort) {
 				// rt = ReportStandardInfo.abortResultTable_P2(info1);
@@ -670,10 +692,13 @@ public class p2rmn_ implements PlugIn, Measurements {
 				int gelNumber = 0;
 				for (int i1 = 0; i1 < vetRoi.length; i1++) {
 					gelNumber++;
-					if (gelNumber > 1)
+					if (gelNumber > 1) {
 						rt.incrementCounter();
+					}
 					if (gelNumber == 12)
+					 {
 						gelNumber = 14; // al posto 12 abbiamo il gel 14
+					}
 
 					rt.addValue(t1, "Gel_" + gelNumber);
 					rt.addValue(s2, medGels[i1]);
@@ -709,11 +734,13 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 			if (manualCalled) {
 				if (selftest) {
-					if (testSiemens)
+					if (testSiemens) {
 						testSymphony(medGels[0], devGels[0], medGels[1], devGels[1], medGels[2], devGels[2]);
+					}
 
-					if (testGe)
+					if (testGe) {
 						testGe(medGels[0], devGels[0], medGels[1], devGels[1], medGels[2], devGels[2]);
+					}
 				} else {
 					userSelection4 = ButtonMessages.ModelessMsg(
 							"Fine programma, in modo STAND-ALONE salvare A MANO la finestra Risultati    <12>",
@@ -731,12 +758,12 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 		if (abort) {
 			// MyLog.waitHere("abort");
-			if (typeT2)
+			if (typeT2) {
 				info1[0] = "T2___";
-			else
+			} else {
 				info1[0] = "T1___";
+			}
 
-			
 			rt = ReportStandardInfo.abortResultTable_P2(info1);
 		}
 
@@ -786,8 +813,9 @@ public class p2rmn_ implements PlugIn, Measurements {
 	public static void mySaveAs(String path) throws IOException {
 
 		ResultsTable rt = ResultsTable.getResultsTable();
-		if (rt.getCounter() == 0)
+		if (rt.getCounter() == 0) {
 			return;
+		}
 		PrintWriter pw = null;
 		boolean append = true;
 		FileOutputStream fos = new FileOutputStream(path, append);
@@ -795,36 +823,41 @@ public class p2rmn_ implements PlugIn, Measurements {
 		pw = new PrintWriter(bos);
 		String headings = rt.getColumnHeadings();
 		pw.println("## " + headings);
-		for (int i = 0; i < rt.getCounter(); i++)
+		for (int i = 0; i < rt.getCounter(); i++) {
 			pw.println(rt.getRowAsString(i));
+		}
 		pw.close();
 	}
 
 	/**
 	 * crea uno stack contenente le immagini di vetDir1, in ordine crescente
 	 * rispetto al parametro selezionato
-	 * 
+	 *
 	 * @param vetDir1 vettore coi path immagini
 	 * @param typeT2  selezione parametro ordinamento
 	 * @return stack con le immagini
-	 * 
+	 *
 	 *         by Alberto Duina
 	 */
 	public ImageStack stackOpener1(String[] vetDir1, boolean typeT2) {
 
-		String aux1;
-		String aux2;
+		String aux1 = "";
+		String aux2 = "";
 
 		ImageStack newStack1 = null;
 		int count1 = 0;
 		String[] para1 = new String[vetDir1.length];
 		for (int i1 = 0; i1 < vetDir1.length; i1++) {
 			ImagePlus imp1 = new Opener().openImage(vetDir1[i1]);
-			if (typeT2)
-				aux1 = DICOM_ECHO_TIME;
-			else
-				aux1 = DICOM_INVERSION_TIME;
-			aux2 = ReadDicom.readDicomParameter(imp1, aux1);
+			if (typeT2) {
+				// aux1 = MyConst.DICOM_ECHO_TIME;
+				aux2 = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_ECHO_TIME, MyConst.DICOM_EFFECTIVE_ECHO_TIME);
+				// MyLog.waitHere("aux2= "+aux2);
+			} else {
+				aux1 = MyConst.DICOM_INVERSION_TIME;
+				aux2 = ReadDicom.readDicomParameter(imp1, aux1);
+				// MyLog.waitHere("aux2= "+aux2);
+			}
 			if (aux2.compareTo("MISS") == 0) {
 				ButtonMessages.ModelessMsg("Errore selezione tipo immagine T1 o T2 " + aux1, "CONTINUA");
 				return (null);
@@ -852,19 +885,20 @@ public class p2rmn_ implements PlugIn, Measurements {
 			}
 		}
 		/** bubblesort end */
-		for (int i1 = 0; i1 < vetDir1.length; i1++) {
+		for (String element : vetDir1) {
 			count1++;
-			ImagePlus imp1 = new Opener().openImage(vetDir1[i1]);
+			ImagePlus imp1 = new Opener().openImage(element);
 			if (count1 == 1) {
-				int Rows = ReadDicom.readInt(ReadDicom.readDicomParameter(imp1, DICOM_ROWS));
-				int Columns = ReadDicom.readInt(ReadDicom.readDicomParameter(imp1, DICOM_COLUMNS));
+				int Rows = ReadDicom.readInt(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_ROWS));
+				int Columns = ReadDicom.readInt(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_COLUMNS));
 				cal8 = imp1.getCalibration();
 				newStack1 = new ImageStack(Rows, Columns);
 			}
 			String label1 = imp1.getTitle();
 			String info2 = (String) imp1.getProperty("Info");
-			if (info2 != null)
+			if (info2 != null) {
 				label1 += "\n" + info2;
+			}
 			ImageProcessor ip1 = imp1.getProcessor();
 			ImageProcessor ip2 = ip1.duplicate();
 			newStack1.addSlice(label1, ip2);
@@ -877,12 +911,12 @@ public class p2rmn_ implements PlugIn, Measurements {
 	 * Nellla tabella abbiamo: tabella[rep][slice][x][y] in cui slice � sempre 0
 	 * (usato per compatibilit� con le librerie che sono fatte per processare dei
 	 * volumi.
-	 * 
+	 *
 	 * @param stack1 stack di immagini da processare
 	 * @return valori dei pixel nel formato double[a][b][c][d], in cui a=posiz.
 	 *         immagine nello stack b=dummy sempre 0, c=coord. x pixel, d=coord. y
 	 *         pixel
-	 * 
+	 *
 	 *         by Alberto Duina
 	 */
 
@@ -918,7 +952,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 				for (int x = 0; x < width2; x++) {
 					// pixValue serve per leggere correttamente i valori delle
 					// immagini signed (calibrate, GE)
-					pixValue = (double) cal8.getRawValue(sdata[x + y * width2]);
+					pixValue = cal8.getRawValue(sdata[x + y * width2]);
 					ret[rep][slice][x][y] = pixValue;
 				}
 			}
@@ -929,16 +963,16 @@ public class p2rmn_ implements PlugIn, Measurements {
 	/**
 	 * legge un valore nell'header delle immagini contenute nello stack e lo
 	 * restituisce in un vettore
-	 * 
+	 *
 	 * @param stack1    stack immagini da processare
 	 * @param userinput parametro da leggere
 	 * @return vettore col TR / TI
-	 * 
+	 *
 	 *         by Alberto Duina
 	 */
 	private double[] getTRVals(ImageStack stack1, String userinput) {
 		//
-		// attenzione nel caso del T1, viene chiamato TR ma in realt� � il TI
+		// attenzione nel caso del T1, viene chiamato TR ma in realta' e' il TI
 		//
 		String attribute = "???";
 		String value = "???";
@@ -958,14 +992,78 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 						ret[w1] = ReadDicom.readDouble(value);
 					} catch (Throwable e) {
-
+						MyLog.waitHere("getTRVals error= " + attribute);
 						ButtonMessages.ModelessMsg("getTRVals error value >> " + value, "CONTINUA");
 					}
 				} else {
+					MyLog.waitHere("getTRVals error= " + attribute);
 					attribute = "MISSING";
 					ButtonMessages.ModelessMsg("getTRVals error attribute >> " + attribute + userinput, "CONTINUA");
 				}
 			} else {
+				MyLog.waitHere("getTRVals error= " + attribute);
+				attribute = "HEADERNULL";
+				ButtonMessages.ModelessMsg("getTRVals error attribute >> " + attribute, "CONTINUA");
+			}
+
+		}
+		return ret;
+
+	}
+
+	/**
+	 * legge un valore nell'header delle immagini contenute nello stack e lo
+	 * restituisce in un vettore
+	 *
+	 * @param stack1    stack immagini da processare
+	 * @param userinput parametro da leggere
+	 * @return vettore col TR / TI
+	 *
+	 *         by Alberto Duina
+	 */
+	private double[] getTRVals(ImageStack stack1, String userinput1, String userinput2) {
+		//
+		// attenzione nel caso del T1, viene chiamato TR ma in realta' e' il TI
+		//
+		String attribute = "???";
+		String value = "???";
+
+		int nFrames = stack1.getSize();
+		double[] ret = new double[nFrames];
+		for (int w1 = 0; w1 < nFrames; w1++) {
+			String header = stack1.getSliceLabel(w1 + 1);
+			if (header != null) {
+
+				int uno = header.indexOf(userinput1);
+				int due = header.indexOf(userinput2);
+				String userinput = "";
+
+				if (due > 0) {
+					userinput = userinput2;
+				} else {
+					userinput = userinput1;
+				}
+
+				int idx1 = header.indexOf(userinput);
+				int idx2 = header.indexOf(":", idx1);
+				int idx3 = header.indexOf("\n", idx2);
+				if (idx1 >= 0 && idx2 >= 0 && idx3 >= 0) {
+					try {
+						attribute = header.substring(idx1 + 9, idx2).trim();
+						value = header.substring(idx2 + 1, idx3).trim();
+
+						ret[w1] = ReadDicom.readDouble(value);
+					} catch (Throwable e) {
+						MyLog.waitHere("getTRVals error= " + attribute);
+						ButtonMessages.ModelessMsg("getTRVals error value >> " + value, "CONTINUA");
+					}
+				} else {
+					MyLog.waitHere("getTRVals error= " + attribute);
+					attribute = "MISSING";
+					ButtonMessages.ModelessMsg("getTRVals error attribute >> " + attribute + userinput, "CONTINUA");
+				}
+			} else {
+				MyLog.waitHere("getTRVals error= " + attribute);
 				attribute = "HEADERNULL";
 				ButtonMessages.ModelessMsg("getTRVals error attribute >> " + attribute, "CONTINUA");
 			}
@@ -977,10 +1075,10 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * main che effettua la minimizzazione
-	 * 
+	 *
 	 * @param stack4 stack contenente le immagini
 	 * @return ID delle immagini da passare a WindowManager
-	 * 
+	 *
 	 *         by Karl Schmidt, (modified version)
 	 */
 	public int[] doCalculation(ImageStack stack4, double filtroFondo) {
@@ -1010,12 +1108,13 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 			SimplexBasedRegressor simplexregressor;
 
-			if (DEBUG2)
+			if (DEBUG2) {
 				IJ.log("sono in doCalculation");
+			}
 			if (!typeT2) {
 				// te values
 
-				tr_vals = getTRVals(stack4, DICOM_INVERSION_TIME);
+				tr_vals = getTRVals(stack4, MyConst.DICOM_INVERSION_TIME);
 				sn_vals = new double[reps];
 				IJ.showStatus("Calculating T1 map");
 				t1_map = new double[1][slices][width2][height2];
@@ -1023,7 +1122,8 @@ public class p2rmn_ implements PlugIn, Measurements {
 				r2_map = new double[1][slices][width2][height2];
 				simplexregressor = new SimplexBasedRegressor();
 			} else {
-				tr_vals = getTRVals(stack4, DICOM_ECHO_TIME);
+				// tr_vals = getTRVals(stack4, MyConst.DICOM_ECHO_TIME);
+				tr_vals = getTRVals(stack4, MyConst.DICOM_ECHO_TIME, MyConst.DICOM_EFFECTIVE_ECHO_TIME);
 				// MyLog.logVector(tr_vals, "tr_vals");
 				sn_vals = new double[reps];
 				IJ.showStatus("Calculating T2 map");
@@ -1040,13 +1140,14 @@ public class p2rmn_ implements PlugIn, Measurements {
 				for (int y = 0; y < height2; y++) {
 					offset = y * width2;
 					rig = y;
-					progress = (double) (100 * (s * width2 * height2 + y * width2) / (width2 * height2 * slices));
+					progress = 100 * (s * width2 * height2 + y * width2) / (width2 * height2 * slices);
 					IJ.showStatus("riga:" + y);
 					IJ.showProgress(progress);
 					for (int x = 0; x < width2; x++) {
 						if ((x == 47 || x == 46 || x == 48) && (y == 88 || y == 87 || y == 89)) {
-							if (DEBUG2 == true)
+							if (DEBUG2) {
 								debug1 = true;
+							}
 						} else {
 							debug1 = false;
 						}
@@ -1056,8 +1157,9 @@ public class p2rmn_ implements PlugIn, Measurements {
 						// for each pixel, collect values for each te
 						for (int r = 0; r < reps; r++) {
 							sn_vals[r] = scan[r][s][x][y];
-							if (sn_vals[r] == 0)
+							if (sn_vals[r] == 0) {
 								sn_vals[r] = 1.0d;
+							}
 						}
 
 						double[] regressed;
@@ -1085,10 +1187,12 @@ public class p2rmn_ implements PlugIn, Measurements {
 								// immagini
 								// #############################################
 
-								if (sn_vals.length < 10)
+								if (sn_vals.length < 10) {
 									filtroFondo2 = -32768;
-								if (selftest)
+								}
+								if (selftest) {
 									filtroFondo2 = -32768;
+								}
 								for (int i1 = 0; i1 < sn_vals.length; i1++) {
 									if (sn_vals[i1] > filtroFondo2) {
 										cut = i1;
@@ -1110,8 +1214,9 @@ public class p2rmn_ implements PlugIn, Measurements {
 								if (shot++ > shotInterval) {
 									shot = 0;
 									xx = true;
-								} else
+								} else {
 									xx = false;
+								}
 								xx = false; // debug spento
 								// if (xx) {
 								if (debug1) {
@@ -1177,10 +1282,11 @@ public class p2rmn_ implements PlugIn, Measurements {
 				String name1 = "none";
 
 				imaID = new int[3];
-				if (!typeT2)
+				if (!typeT2) {
 					name1 = "T1_map_secs";
-				else
+				} else {
 					name1 = "T2_map_secs";
+				}
 				imaID[0] = takeImage(name1, t1_map);
 				imaID[1] = takeImage("S0_map", s0_map);
 				imaID[2] = takeImage("R^2_map", r2_map);
@@ -1189,11 +1295,13 @@ public class p2rmn_ implements PlugIn, Measurements {
 			}
 		} catch (Exception e) {
 			IJ.log("riga:" + rig + "  pixel:" + col);
-			if (sn_vals == null)
+			if (sn_vals == null) {
 				IJ.log("sn_vals==null");
+			}
 			IJ.log("sn_vals=" + sn_vals.length);
-			for (int i1 = 0; i1 < sn_vals.length; i1++)
-				IJ.log("" + sn_vals[i1]);
+			for (double sn_val : sn_vals) {
+				IJ.log("" + sn_val);
+			}
 			IJ.log("In DoCalculation eccezione: " + e);
 		}
 		return (imaID);
@@ -1201,11 +1309,11 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * crea uno stack a 32 bit in cui mette i risultati
-	 * 
+	 *
 	 * @param name   nome da assegnare allo stack
 	 * @param data4d matrice risultati elaborazione
 	 * @return ID immagine
-	 * 
+	 *
 	 *         by Karl Schmidt, (modified version)
 	 */
 	public int takeImage(String name, double[][][][] data4d) {
@@ -1241,12 +1349,12 @@ public class p2rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * inserisce nei pixel delle immagini dello stack i valori della matrice dati
-	 * 
+	 *
 	 * @param stack stack immagini
 	 * @param data  dati da inserire
 	 * @param slice numero immagine nello stack
 	 * @param type  numero livelli colore
-	 * 
+	 *
 	 *              by Karl Schmidt, (modified version)
 	 */
 	private void setPixels(ImageStack stack, double[][] data, int slice, int type) {
@@ -1284,7 +1392,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 	/**
 	 * sets the number of slices for a particular image in system memory for
 	 * retreival later by other plugins [width, height, slices, reps]
-	 * 
+	 *
 	 * @param id   ID dell'immagine
 	 * @param dims dimensioni matrice immagine
 	 */
@@ -1330,10 +1438,11 @@ public class p2rmn_ implements PlugIn, Measurements {
 			testok = false;
 		}
 
-		if (testok)
+		if (testok) {
 			ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OKEY   <25>", "CONTINUA");
-		else
+		} else {
 			ButtonMessages.ModelessMsg("Fine SelfTest CON ERRORI, vedi Log   <26>", "CONTINUA");
+		}
 		UtilAyv.cleanUp();
 
 	}
@@ -1377,27 +1486,29 @@ public class p2rmn_ implements PlugIn, Measurements {
 			testok = false;
 		}
 
-		if (testok)
+		if (testok) {
 			ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OKEY   <25>", "CONTINUA");
-		else
+		} else {
 			ButtonMessages.ModelessMsg("Fine SelfTest CON ERRORI, vedi Log   <26>", "CONTINUA");
+		}
 		UtilAyv.cleanUp();
 
 	}
 
 	/**
 	 * genera una directory temporanea e vi estrae le immagini di test da test2.jar
-	 * 
+	 *
 	 * @return home1 path della directory temporanea con le immagini di test
 	 */
 	private String findTestImages() {
 		InputOutput io = new InputOutput();
 
 		for (int i1 = 0; i1 < T2_TEST_IMAGES; i1++) {
-			if (i1 < 9)
+			if (i1 < 9) {
 				io.extractFromJAR(TEST_FILE, "T2MA_0" + (i1 + 1) + "testP2", "./Test2/");
-			else
+			} else {
 				io.extractFromJAR(TEST_FILE, "T2MA_" + (i1 + 1) + "testP2", "./Test2/");
+			}
 		}
 		for (int i1 = 0; i1 < T1_TEST_IMAGES; i1++) {
 			io.extractFromJAR(TEST_FILE, "HT1A2_0" + (i1 + 1) + "testP2", "./Test2/");

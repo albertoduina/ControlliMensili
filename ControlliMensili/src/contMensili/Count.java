@@ -1,5 +1,7 @@
 package contMensili;
 
+
+
 import ij.IJ;
 
 import java.io.File;
@@ -7,22 +9,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 /**
- * Lo scopo di questa classe è di verificare la presenza di un solo file jar con
- * la parte fissa del nome corrispondente a nome1. questo per prevenire blocchi
- * dei programmi dovuti alla mancanza di un file jar, oppure malfunzionamenti
- * dovuti alla contemporanea presenza di versioni successive del file jar.
- * 
+ * Lo scopo di questa classe e' di verificare la presenza di un solo file jar
+ * con la parte fissa del nome corrispondente a nome1. questo per prevenire
+ * blocchi dei programmi dovuti alla mancanza di un file jar, oppure
+ * malfunzionamenti dovuti alla contemporanea presenza di versioni successive
+ * del file jar.
+ *
  * @author alberto
- * 
+ *
  */
-public class Count {
+public class Count{
 
 	/**
 	 * Conteggio dei files jar con la parte comune del nome uguale.
-	 * 
-	 * @param nome1
-	 *            parte comune del nome
+	 *
+	 * @param nome1 parte comune del nome
 	 * @return true se il conteggio dei files == 1, false se diverso
 	 */
 	public boolean jarCount(String nome1) {
@@ -50,20 +53,21 @@ public class Count {
 					msg = msg + "\n" + file.getPath();
 				}
 			}
-			IJ.error("ATTENZIONE, si vedono versioni multiple del file "
-					+ nome1 + "xxx.jar" + msg);
+			IJ.error("ATTENZIONE, si vedono versioni multiple del file " + nome1 + "xxx.jar" + msg);
 		}
-		if (count == 1)
+		if (count == 1) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 
 	public List<File> listJars2(File startingDir) {
 		List<File> result = new ArrayList<File>();
 		File[] filesAndDirs = startingDir.listFiles();
-		if (filesAndDirs == null)
+		if (filesAndDirs == null) {
 			return null;
+		}
 		List<File> filesDirs = Arrays.asList(filesAndDirs);
 		for (File file : filesDirs) {
 			if (!file.isFile()) {

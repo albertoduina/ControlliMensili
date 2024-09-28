@@ -3,11 +3,11 @@ package contMensili;
 /***
 *
 * Copied from https://github.com/oskrebkova/mtf_analyzer
-* 
+*
 * Authors: Olga Skrebkova   (not sure, lack author informations)
-* 
+*
 * Adapted by Alberto Duina  01/02/2017
-* 
+*
 *************************************************************************/
 
 import java.awt.Color;
@@ -16,14 +16,8 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Window;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -133,12 +127,14 @@ public class p15rmn_ implements PlugIn {
 	public static final boolean forcesilent = false;
 
 	// Message that asks the user what to do
+	@Override
 	public void run(String args) {
 
 		UtilAyv.setMyPrecision();
 		Count c1 = new Count();
-		if (!c1.jarCount("iw2ayv_"))
+		if (!c1.jarCount("iw2ayv_")) {
 			return;
+		}
 		String className = this.getClass().getName();
 		String user1 = System.getProperty("user.name");
 		TableCode tc1 = new TableCode();
@@ -151,8 +147,9 @@ public class p15rmn_ implements PlugIn {
 //		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 		fileDir = Prefs.get("prefer.string1", "none");
 
-		if (IJ.versionLessThan("1.43k"))
+		if (IJ.versionLessThan("1.43k")) {
 			return;
+		}
 
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
@@ -164,7 +161,7 @@ public class p15rmn_ implements PlugIn {
 
 	/**
 	 * Menu funzionamento manuale (chiamato dal menu di ImageJ)
-	 * 
+	 *
 	 * @param preset
 	 *            da utilizzare per eventuali test
 	 * @param testDirectory
@@ -198,12 +195,14 @@ public class p15rmn_ implements PlugIn {
 				// step = true;
 				mode = 3;
 			case 5:
-				if (mode == 0)
+				if (mode == 0) {
 					mode = 2;
+				}
 				String path1 = UtilAyv.imageSelection("SELEZIONARE IMMAGINE...");
 				auxPath1 = path1;
-				if (path1 == null)
+				if (path1 == null) {
 					return 0;
+				}
 				mainMTF(path1, "0", "", mode, 0, "");
 				UtilAyv.afterWork();
 				retry = true;
@@ -251,12 +250,13 @@ public class p15rmn_ implements PlugIn {
 				mode = 1;
 				result1 = mainMTF(path1, autoArgs, info10, mode, timeout, passo);
 
-				if (!(result1 == null))
+				if (!(result1 == null)) {
 					UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, result1);
+				}
 
 				UtilAyv.afterWork();
 
-			} else
+			} else {
 				do {
 					int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
 							TableSequence.getCode(iw2ayvTable, vetRiga[0]),
@@ -290,6 +290,7 @@ public class p15rmn_ implements PlugIn {
 						break;
 					}
 				} while (retry);
+			}
 			new AboutBox().close();
 		}
 		return 0;
@@ -303,8 +304,9 @@ public class p15rmn_ implements PlugIn {
 		boolean fast = false;
 		boolean silent = false;
 
-		if (forcesilent)
+		if (forcesilent) {
 			mode = 0;
+		}
 
 		switch (mode) {
 		case 0:
@@ -338,10 +340,11 @@ public class p15rmn_ implements PlugIn {
 		}
 
 		ImagePlus imp1 = null;
-		if (verbose)
+		if (verbose) {
 			imp1 = UtilAyv.openImageMaximized(path1);
-		else
+		} else {
 			imp1 = UtilAyv.openImageNoDisplay(path1, true);
+		}
 
 		// int lato = 140;
 		// manualSearchPosition(imp1, lato);
@@ -370,8 +373,9 @@ public class p15rmn_ implements PlugIn {
 		// MyLog.waitHere("p15");
 		p15rmn_ p15 = new p15rmn_();
 		Roi roi4 = p15.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc, step, fast);
-		if (roi4 == null)
+		if (roi4 == null) {
 			return null;
+		}
 		Rectangle r1 = roi4.getBounds();
 		imp1.setRoi(r1);
 		ImagePlus imp3 = imp1.crop();
@@ -408,9 +412,10 @@ public class p15rmn_ implements PlugIn {
 
 		int options = ParticleAnalyzer.SHOW_OUTLINES + ParticleAnalyzer.ADD_TO_MANAGER;
 		boolean excludeEdges = true;
-		if (excludeEdges)
+		if (excludeEdges) {
 			options = ParticleAnalyzer.SHOW_OUTLINES + ParticleAnalyzer.ADD_TO_MANAGER
 					+ ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES;
+		}
 
 		int measurements = 0;
 
@@ -432,8 +437,9 @@ public class p15rmn_ implements PlugIn {
 		roi0 = vetRoi[0];
 		imp2.setRoi(roi0);
 		imp2.updateAndDraw();
-		if (step)
+		if (step) {
 			MyLog.waitHere("particle analyzer");
+		}
 
 		Rectangle rect = roi0.getBounds();
 		int rx = rect.x;
@@ -445,8 +451,9 @@ public class p15rmn_ implements PlugIn {
 			imp2.getRoi().setStrokeColor(Color.red);
 			over2.addElement(imp2.getRoi());
 		}
-		if (step)
+		if (step) {
 			MyLog.waitHere("bounding rectangle");
+		}
 		imp2.setRoi(new Line(rx + w - 1, ry + h, rx + w - 1, ry));
 		double[][] aaa = MyLine.decomposer(imp2);
 		boolean search = true;
@@ -454,10 +461,11 @@ public class p15rmn_ implements PlugIn {
 		double find1y = 0;
 		for (int i1 = 0; i1 < aaa[0].length; i1++) {
 			boolean aux1 = false;
-			if (i1 < aaa[0].length - 1)
+			if (i1 < aaa[0].length - 1) {
 				aux1 = (int) aaa[2][i1] == 0 && aaa[2][i1 + 1] > 0;
-			else
+			} else {
 				aux1 = (int) aaa[2][i1] == 0;
+			}
 
 			if (aux1 && search) {
 				search = false;
@@ -485,10 +493,11 @@ public class p15rmn_ implements PlugIn {
 			// IJ.log("i1:" + i1 + " x:" + (int) bbb[0][i1] + " y:" + (int)
 			// bbb[1][i1] + " val:" + (int) bbb[2][i1]);
 			boolean aux2 = false;
-			if (i1 < bbb[0].length - 1)
+			if (i1 < bbb[0].length - 1) {
 				aux2 = (int) bbb[2][i1] == 0 && bbb[2][i1 + 1] > 0;
-			else
+			} else {
 				aux2 = (int) bbb[2][i1] == 0;
+			}
 
 			if (aux2 && search) {
 				search = false;
@@ -504,8 +513,9 @@ public class p15rmn_ implements PlugIn {
 			roi1.setStrokeColor(Color.green);
 			over2.addElement(imp2.getRoi());
 		}
-		if (step)
+		if (step) {
 			MyLog.waitHere("vertici");
+		}
 
 		double find4x = find2x;
 		double find4y = 4;
@@ -530,8 +540,9 @@ public class p15rmn_ implements PlugIn {
 			roi1.setStrokeColor(Color.red);
 			over2.addElement(imp2.getRoi());
 		}
-		if (step)
+		if (step) {
 			MyLog.waitHere("centro roi MTF");
+		}
 
 		int lato = (int) (Math.abs(find1y - find2y));
 
@@ -543,10 +554,11 @@ public class p15rmn_ implements PlugIn {
 			int ysotto = (int) (find3y + lato / 2);
 			double val1 = imp2.getPixel(xsopra, ysopra)[0];
 			double val2 = imp2.getPixel(xsotto, ysotto)[0];
-			if (val1 > 0 || val2 > 0)
+			if (val1 > 0 || val2 > 0) {
 				lato = lato - 1;
-			else
+			} else {
 				trovato = true;
+			}
 		} while (!trovato);
 
 		int xsel = (int) find3x - lato / 2;
@@ -556,8 +568,9 @@ public class p15rmn_ implements PlugIn {
 		roi1 = imp2.getRoi();
 		roi1.setStrokeColor(Color.green);
 		over2.addElement(imp2.getRoi());
-		if (step)
+		if (step) {
 			MyLog.waitHere("roi MTF");
+		}
 		IJ.wait(timeout);
 		return roi1;
 	}
@@ -734,12 +747,13 @@ public class p15rmn_ implements PlugIn {
 			}
 			if (outX) {
 				return plotX;
-			} else
+			} else {
 				return plotY;
+			}
 		}
 
 		public static void resetRoiColor() {
-			roi.setColor(Color.YELLOW);
+			Roi.setColor(Color.YELLOW);
 		}
 
 		public static void setDescriptionStyle(Component c) {
@@ -941,7 +955,7 @@ public class p15rmn_ implements PlugIn {
 					}
 				}
 				if (max != 0.) {
-					xVal.add((double) x);
+					xVal.add(x);
 					yVal.add((double) i);
 				}
 			}
@@ -959,7 +973,7 @@ public class p15rmn_ implements PlugIn {
 				}
 				if (max != 0.) {
 					xVal.add((double) i);
-					yVal.add((double) y);
+					yVal.add(y);
 				}
 			}
 		}
@@ -990,13 +1004,14 @@ public class p15rmn_ implements PlugIn {
 
 		Roi rect = new Roi(0, 0, currentRegion.getWidth(), currentRegion.getHeight());
 		Roi line;
-		if (angle == "VERTICAL_ANGLE")
+		if (angle == "VERTICAL_ANGLE") {
 			line = new Line((1 - lineFitter.getParams()[0]) / lineFitter.getParams()[1], 1,
 					(proc.getHeight() - 1 - lineFitter.getParams()[0]) / lineFitter.getParams()[1],
 					proc.getHeight() - 1);
-		else
+		} else {
 			line = new Line(1, lineFitter.getParams()[0] + lineFitter.getParams()[1], proc.getWidth() - 1,
 					lineFitter.getParams()[0] + lineFitter.getParams()[1] * (proc.getWidth() - 1));
+		}
 		if (angle == "VERTICAL_ANGLE") {
 			rect.setStrokeColor(Color.RED);
 			line.setStrokeColor(Color.RED);
@@ -1051,7 +1066,7 @@ public class p15rmn_ implements PlugIn {
 
 		TreeMap<Double, Double> distanceValueMap = new TreeMap<Double, Double>();
 		for (int i = 0; i < pixelsValues.length; i++) {
-			distanceValueMap.put(distanceToLine[i], (double) pixelsValues[i]);
+			distanceValueMap.put(distanceToLine[i], pixelsValues[i]);
 			// if(i<200)IJ.log("KEY:"+proection[i]+"
 			// "+"VALUE:"+distanceValueBeinding.get(proection[i]));
 		}
@@ -1111,7 +1126,7 @@ public class p15rmn_ implements PlugIn {
 			previousVal = averageMap.get(AMKeys.next());
 		}
 		while (AMKeys.hasNext()) {
-			double AMkey = (double) AMKeys.next();
+			double AMkey = AMKeys.next();
 			if (AMKeys.hasNext()) {
 				difrMap.put(AMkey, (averageMap.get(averageMap.higherKey(AMkey)) - previousVal) / 2);// *deltaS);
 				previousVal = averageMap.get(AMkey);
@@ -1192,7 +1207,7 @@ public class p15rmn_ implements PlugIn {
 
 		// IJ.log("quotient= " + quotient);
 		for (int i = 0; i < DFT.length * quotient; i++) {
-			double IMkey = (double) i / (DFT.length * quotient);
+			double IMkey = i / (DFT.length * quotient);
 			double val = DFT[i] * normalizer;
 			intensityMTFMap.put(IMkey, val);
 		}
@@ -1307,10 +1322,11 @@ public class p15rmn_ implements PlugIn {
 		byte[] sourcePixels = (byte[]) ip2.getPixels();
 		double[] bwValues = new double[sourcePixels.length];
 		for (int i = 0; i < sourcePixels.length; i++) {
-			if (sourcePixels[i] == 0)
+			if (sourcePixels[i] == 0) {
 				bwValues[i] = 0;
-			else
+			} else {
 				bwValues[i] = 255.0;
+			}
 		}
 		ArrayList<Double> xVal = new ArrayList<Double>();
 		ArrayList<Double> yVal = new ArrayList<Double>();
@@ -1326,7 +1342,7 @@ public class p15rmn_ implements PlugIn {
 				}
 			}
 			if (max != 0.) {
-				xVal.add((double) x);
+				xVal.add(x);
 				yVal.add((double) i1);
 			}
 		}

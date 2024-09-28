@@ -1,38 +1,34 @@
 package contMensili;
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.Prefs;
-import ij.gui.OvalRoi;
-import ij.gui.Roi;
-import ij.io.Opener;
-import ij.measure.Measurements;
-import ij.measure.ResultsTable;
-import ij.plugin.PlugIn;
-import ij.process.ImageProcessor;
-import ij.process.ImageStatistics;
-
 import java.awt.Rectangle;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
+import ij.IJ;
+import ij.ImagePlus;
+import ij.Prefs;
+import ij.gui.OvalRoi;
+import ij.gui.Roi;
+import ij.measure.Measurements;
+import ij.measure.ResultsTable;
+import ij.plugin.PlugIn;
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
 import utils.AboutBox;
+import utils.ButtonMessages;
+import utils.InputOutput;
 import utils.MyConst;
 import utils.MyLog;
 import utils.MyVersionUtils;
+import utils.ReadDicom;
+import utils.ReportStandardInfo;
 import utils.TableCode;
 import utils.TableExpand;
 import utils.TableSequence;
-import utils.TableUtils;
 import utils.UtilAyv;
-import utils.ButtonMessages;
-import utils.InputOutput;
-import utils.ReadDicom;
-import utils.ReportStandardInfo;
 
 /*
  * Copyright (C) 2007 Alberto Duina, SPEDALI CIVILI DI BRESCIA, Brescia ITALY
@@ -54,14 +50,14 @@ import utils.ReportStandardInfo;
 
 /**
  * Calcolo Contrast to Noise Ratio
- * 
+ *
  * Per salvare i dati in formato xls necessita di Excel_Writer.jar nella
  * directory plugins
- * 
+ *
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
- * 
- * 
+ *
+ *
  */
 public class p9rmn_ implements PlugIn, Measurements {
 
@@ -149,6 +145,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 	private final double DIM_PIXEL_FOV_220 = 0.859375;
 
+	@Override
 	public void run(String args) {
 
 		UtilAyv.setMyPrecision();
@@ -318,8 +315,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 				// dell'immagine)
 				//
 				path1 = UtilAyv.imageSelection("SELEZIONARE IMMAGINE...");
-				if (path1 == null)
+				if (path1 == null) {
 					return;
+				}
 
 				userSelection1 = ButtonMessages.ModalMsg("Cosa vuoi elaborare?   <03>", "T1", "T2");
 				switch (userSelection1) {
@@ -381,8 +379,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 		int[] vetRiga = new int[nTokens];
 
 		if (autoCalled) {
-			if (bstep)
+			if (bstep) {
 				ButtonMessages.ModelessMsg("Ricevuto=" + args, "CONTINUA");
+			}
 
 			if (nTokens != 1) {
 				ButtonMessages.ModelessMsg(VERSION + " >> p9rmn ERRORE PARAMETRI CHIAMATA", "CHIUDI");
@@ -405,10 +404,11 @@ public class p9rmn_ implements PlugIn, Measurements {
 			codice = TableSequence.getCode(strRiga3, vetRiga[0]);
 			String cod = codice.substring(0, 2).trim();
 
-			if (cod.equals("T2"))
+			if (cod.equals("T2")) {
 				typeT2 = true;
-			else
+			} else {
 				typeT2 = false;
+			}
 
 		}
 		int misure1 = UtilAyv.setMeasure(MEAN + STD_DEV);
@@ -465,7 +465,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 			dimPixel = ReadDicom
 					.readDouble(ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, DICOM_PIXEL_SPACING), 2));
 
-			int roi_diam = (int) ((double) ROI_DIAM * DIM_PIXEL_FOV_220 / dimPixel);
+			int roi_diam = (int) (ROI_DIAM * DIM_PIXEL_FOV_220 / dimPixel);
 
 			Roi[] vetRoi = new Roi[N_GELS];
 			//
@@ -521,32 +521,39 @@ public class p9rmn_ implements PlugIn, Measurements {
 						// avere una roi al di fuori dell'immagine
 						int xRoi = vetXUpperLeftCornerRoiGels[i1];
 						int yRoi = vetYUpperLeftCornerRoiGels[i1];
-						if (xRoi < 0)
+						if (xRoi < 0) {
 							xRoi = Columns / 2;
-						if (xRoi + roi_diam > Columns)
+						}
+						if (xRoi + roi_diam > Columns) {
 							xRoi = Columns / 2;
-						if (yRoi < 0)
+						}
+						if (yRoi < 0) {
 							yRoi = Rows / 2;
-						if (yRoi + roi_diam > Rows)
+						}
+						if (yRoi + roi_diam > Rows) {
 							yRoi = Rows / 2;
+						}
 
 						imp1.setRoi(new OvalRoi(xRoi, yRoi, roi_diam, roi_diam));
 
 						imp1.updateAndDraw();
-						if (!selftest)
+						if (!selftest) {
 							userSelection1 = ButtonMessages.ModelessMsg("Posizionare ROI su GEL" + (i1 + 1)
 									+ "  e premere Accetta,  se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive     <08>",
 									"ACCETTA", "RIDISEGNA", "ANNULLA");
+						}
 
 						// MyLog.waitHere("userSelection1= " + userSelection1);
 
-						if (userSelection1 == 1)
+						if (userSelection1 == 1) {
 							abort = true;
+						}
 
 					} while (userSelection1 == 2);
 
-					if (abort)
+					if (abort) {
 						break;
+					}
 				}
 
 				ImageStatistics stat1 = imp1.getStatistics();
@@ -606,9 +613,10 @@ public class p9rmn_ implements PlugIn, Measurements {
 				}
 
 			}
-			
-			if (abort)
+
+			if (abort) {
 				break;
+			}
 
 
 //			ResultsTable rt = ReportStandardInfo.putStandardInfoRT(info1);
@@ -640,8 +648,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 				double inversion = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1, DICOM_INVERSION_TIME));
 				rt.addValue(t1, "TI");
 				rt.addValue(s2, inversion);
-				if (typeT2 && (inversion > 0))
+				if (typeT2 && (inversion > 0)) {
 					IJ.showMessage("la sequenza di " + path1 + " dovrebbe essere una T2 ma ha un Inversion Time > 0!");
+				}
 				for (int i1 = 0; i1 < pointerGel1.length; i1++) {
 					rt.incrementCounter();
 					label = "gels_" + VET_NUMERI_GEL[pointerGel1[i1]] + "-" + VET_NUMERI_GEL[pointerGel2[i1]];
@@ -673,11 +682,13 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 			} else {
 				if (selftest) {
-					if (testSiemens)
+					if (testSiemens) {
 						testSymphony(medGels[1], devGels[1], medGels[0], devGels[0], vetCNR[1]);
+					}
 
-					if (testGe)
+					if (testGe) {
 						testGe(medGels[1], devGels[1], medGels[0], devGels[0], vetCNR[2]);
+					}
 				} else {
 					userSelection3 = ButtonMessages.ModelessMsg(
 							"Fine programma, in modo STAND-ALONE salvare A MANO la finestra Risultati    <12>",
@@ -717,8 +728,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 		UtilAyv.resetResultsTable();
 		UtilAyv.resetMeasure(misure1);
 		// InputOutput.deleteDir(new File(TEST_DIRECTORY));
-		if (autoCalled)
+		if (autoCalled) {
 			UtilAyv.cleanUp();
+		}
 	} // close run
 
 	/**
@@ -730,8 +742,9 @@ public class p9rmn_ implements PlugIn, Measurements {
 	public static void mySaveAs(String path) throws IOException {
 
 		ResultsTable rt = ResultsTable.getResultsTable();
-		if (rt.getCounter() == 0)
+		if (rt.getCounter() == 0) {
 			return;
+		}
 		PrintWriter pw = null;
 		boolean append = true;
 		FileOutputStream fos = new FileOutputStream(path, append);
@@ -739,14 +752,15 @@ public class p9rmn_ implements PlugIn, Measurements {
 		pw = new PrintWriter(bos);
 		String headings = rt.getColumnHeadings();
 		pw.println("## " + headings);
-		for (int i = 0; i < rt.getCounter(); i++)
+		for (int i = 0; i < rt.getCounter(); i++) {
 			pw.println(rt.getRowAsString(i));
+		}
 		pw.close();
 	}
 
 	/**
 	 * built-in test per la immagine Symphony in modo PROVA
-	 * 
+	 *
 	 * @param medGel_a  media gel2
 	 * @param devGel_a  devStan gel2
 	 * @param medGel_b  media gel1
@@ -782,17 +796,18 @@ public class p9rmn_ implements PlugIn, Measurements {
 			IJ.log("cnrGel_2_1 ERRATA  > " + cnrGel_ab + " anzich� " + rightValue);
 			testok = false;
 		}
-		if (testok == true)
+		if (testok) {
 			ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OK  <42>", "CONTINUA");
-		else
+		} else {
 			ButtonMessages.ModelessMsg("Fine SelfTest CON ERRORI, vedi LOG  <43>", "CONTINUA");
+		}
 		UtilAyv.cleanUp();
 
 	} // testSymphony
 
 	/**
 	 * built-in test per la immagine GE in modo PROVA
-	 * 
+	 *
 	 * @param medGel_a  media gel2
 	 * @param devGel_a  devStan gel2
 	 * @param medGel_b  media gel1
@@ -828,17 +843,18 @@ public class p9rmn_ implements PlugIn, Measurements {
 			IJ.log("cnrGel_2_1 ERRATA  > " + cnrGel_ab + " anzich� " + rightValue);
 			testok = false;
 		}
-		if (testok == true)
+		if (testok) {
 			ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OK  <42>", "CONTINUA");
-		else
+		} else {
 			ButtonMessages.ModelessMsg("Fine SelfTest CON ERRORI, vedi LOG  <43>", "CONTINUA");
+		}
 		UtilAyv.cleanUp();
 
 	} // testGe
 
 	/**
 	 * genera una directory temporanea e vi estrae le immagini di test da test2.jar
-	 * 
+	 *
 	 * @return home1 path della directory temporanea con le immagini di test
 	 */
 	private String findTestImages() {

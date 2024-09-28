@@ -1,0 +1,129 @@
+// Funzione principale per l'elaborazione delle immagini
+function processImages() {
+    // Passo 0: Pulisci i risultati e chiudi tutte le immagini aperte
+    run("Clear Results"); // Pulisce la tabella dei risultati
+    close("*");
+    
+    // Passo 1: Fissa il percorso della cartella e carica le immagini come stack
+    dir = getDir("Choose the directory with the files to analyze");
+    list = getFileList(dir); // Ottieni l'elenco dei file
+    print("Directory: " + dir); // Stampa il percorso della cartella per verifica
+
+    // Carica le immagini nello stack
+    run("Image Sequence...", "open=[" + dir + "] sort");
+
+    defaultRadius = 10; // Raggio predefinito
+    radius = getNumber("Enter the radius for the circular ROI (in pixels):", defaultRadius);
+
+    // Verifica che il raggio sia valido
+    if (radius <= 0) {
+        radius = defaultRadius; // Usa il valore predefinito se l'input non è valido
+    }
+
+    // Chiedi all'utente di posizionare il cursore e cliccare OK
+    setTool(7);
+    waitForUser("Posiziona il cursore al centro del fantoccio e clicca OK.");
+    getSelectionCoordinates(xpoints, ypoints);
+    //getCursorLoc(x, y, z, flags);
+
+
+    // Misura la ROI per tutte le slice
+    for (i = 1; i <= nSlices; i++) {
+        setSlice(i);
+        makeOval(xpoints[0]-radius, ypoints[0]-radius, radius*2, radius*2);
+        run("Set Measurements...", "area mean decimal=6");
+        run("Measure");
+    }
+
+    // Calcola il valore normale di "mean" rispetto alla prima slice
+    meanBase = getResult("Mean", 0);
+    for (i = 0; i < nResults(); i++) {
+        meanRow = getResult("Mean", i);
+        setResult("meanNorm", i, meanRow / meanBase);
+    }
+
+    // Aggiungi la colonna per B e direzione del gradiente
+    if (nSlices == 31) {
+        for (i = 1; i < nResults(); i++) {
+            if (i <= 3) {
+                B = 100;
+            } else if (i <= 6) {
+                B = 200;
+            } else if (i <= 9) {
+                B = 300;
+            } else if (i <= 12) {
+                B = 400;
+            } else if (i <= 15) {
+                B = 500;
+            } else if (i <= 18) {
+                B = 600;
+            } else if (i <= 21) {
+                B = 700;
+            } else if (i <= 24) {
+                B = 800;
+            } else if (i <= 27) {
+                B = 900;
+            } else {
+                B = 1000;
+            }
+            setResult("B", i, B);
+            
+            // Assegna la direzione del gradiente (x, y, z)
+            if ((i-1) % 3 == 0) {
+                gradient = "x";
+            } else if ((i-1) % 3 == 1) {
+                gradient = "y";
+            } else {
+                gradient = "z";
+            }
+            setResult("Gradient", i, gradient);
+        }
+    } else if (nSlices == 19) {
+        for (i = 1; i < nResults(); i++) {
+            if (i <= 3) {
+                B = 500;
+            } else if (i <= 6) {
+                B = 1000;
+            } else if (i <= 9) {
+                B = 1500;
+            } else if (i <= 12) {
+                B = 2000;
+            } else if (i <= 15) {
+                B = 2500;
+            } else {
+                B = 3000;
+            }
+            setResult("B", i, B);
+            
+            // Assegna la direzione del gradiente (x, y, z)
+            if ((i-1) % 3 == 0) {
+                gradient = "x";
+            } else if ((i-1) % 3 == 1) {
+                gradient = "y";
+            } else {
+                gradient = "z";
+            }
+            setResult("Gradient", i, gradient);
+        }
+    } else {
+        print("Numero di slice non riconosciuto per impostare i valori di B e la direzione del gradiente.");
+    }
+
+    updateResults();
+
+    // Passo 4: Salva i risultati in un file CSV
+    outputPath = "risultati.csv"; // Percorso dove salvare il CSV
+    saveAs("Results", dir + outputPath);
+    print("Risultati salvati in: " + outputPath);
+}
+
+// Ciclo principale per l'esecuzione multipla
+do {
+    processImages();
+    response = getBoolean("Vuoi iniziare una nuova analisi?", "Sì", "No");
+} while (response);
+
+// Mostra un messaggio di termine
+close("Results");
+showMessage("Programma Terminato.");
+

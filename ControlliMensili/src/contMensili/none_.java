@@ -1,6 +1,5 @@
 package contMensili;
 
-import ij.IJ;
 import ij.measure.Measurements;
 import ij.plugin.PlugIn;
 
@@ -23,21 +22,22 @@ import ij.plugin.PlugIn;
  */
 
 /**
- * 
+ *
  * Il Plugin none_ viene chiamato per le immagini da non analizzare
- * 
+ *
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
- * 
+ *
  */
 public class none_ implements PlugIn, Measurements {
 
+	@Override
 	public void run(String args) {
 		none2("");
 	}
 
 	public void none2 (String msg){
 	}
-	
+
 
 }

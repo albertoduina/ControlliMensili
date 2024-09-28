@@ -1,5 +1,9 @@
 package contMensili;
 
+import java.awt.Color;
+
+// Compiling for Java version '1.6' is no longer supported. Minimal supported version is '1.8'
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
@@ -9,15 +13,9 @@ import ij.gui.Line;
 import ij.gui.PointRoi;
 import ij.gui.Roi;
 import ij.gui.WaitForUserDialog;
-import ij.io.Opener;
-import ij.measure.Measurements;
 import ij.plugin.PlugIn;
-
-import java.awt.Color;
-
 import utils.InputOutput;
 import utils.MyConst;
-import utils.MyLine;
 import utils.MyLog;
 import utils.ReadDicom;
 import utils.UtilAyv;
@@ -25,18 +23,22 @@ import utils.UtilAyv;
 /**
  * Questo plugin serve a testare eventuali problemi, prima di segnalarli a Wayne
  * Rasband od altri.
- * 
+ *
  * @author alberto
- * 
+ *
  */
 public class demo_2 implements PlugIn {
 
+	@Override
 	public void run(String args) {
 		Prefs prefs1 = new Prefs();
-		boolean ignoreOld = prefs1.get("ignoreRescaleSlope", false);
-		prefs1.set("ignoreRescaleSlope", true);
+		boolean ignoreOld = Prefs.get("ignoreRescaleSlope", false);
+		Prefs.set("ignoreRescaleSlope", true);
 	}
-
+/***
+ *
+ * @param args
+ */
 	public void old(String args) {
 
 		String home1 = findTestImages();
@@ -87,7 +89,7 @@ public class demo_2 implements PlugIn {
 	/**
 	 * genera una directory temporanea e vi estrae le immagini di test da
 	 * test2.jar
-	 * 
+	 *
 	 * @return home1 path della directory temporanea con le immagini di test
 	 */
 	private String findTestImages() {

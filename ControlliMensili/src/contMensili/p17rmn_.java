@@ -1,5 +1,11 @@
 package contMensili;
 
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.util.StringTokenizer;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
@@ -19,13 +25,6 @@ import ij.plugin.filter.ParticleAnalyzer;
 import ij.plugin.frame.RoiManager;
 import ij.process.ImageProcessor;
 import ij.util.Tools;
-
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.util.StringTokenizer;
-
 import utils.AboutBox;
 import utils.ArrayUtils;
 import utils.ButtonMessages;
@@ -68,11 +67,11 @@ import utils.UtilAyv;
 
 /**
  * Analizza il WARP , le rods vengono selezionate in automatico
- * 
- * 
+ *
+ *
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
- * 
+ *
  */
 
 public class p17rmn_ implements PlugIn, Measurements {
@@ -104,12 +103,14 @@ public class p17rmn_ implements PlugIn, Measurements {
 	 */
 	ImagePlus imp1;
 
+	@Override
 	public void run(String args) {
 
 		UtilAyv.setMyPrecision();
 
-		if (IJ.versionLessThan("1.43k"))
+		if (IJ.versionLessThan("1.43k")) {
 			return;
+		}
 		//
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
 		// modo il messaggio viene emesso, altrimenti si ha una eccezione
@@ -168,8 +169,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 				step = true;
 			case 5:
 				String path1 = UtilAyv.imageSelection("SELEZIONARE IMMAGINE...");
-				if (path1 == null)
+				if (path1 == null) {
 					return 5;
+				}
 				boolean autoCalled = false;
 				boolean verbose = true;
 				boolean test = false;
@@ -222,8 +224,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 			result1 = mainWarp(path1, autoCalled, step, silent, verbose, test, demo, timeout);
 
-			if (!(result1 == null))
+			if (!(result1 == null)) {
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, result1);
+			}
 
 			UtilAyv.afterWork();
 
@@ -348,8 +351,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 		rt.incrementCounter();
 		rt.addLabel(t1, "Spacing");
 		rt.addValue(s2, dimPixel2);
-		if (verbose && !test)
+		if (verbose && !test) {
 			rt.show("Results");
+		}
 
 		return rt;
 	}
@@ -358,7 +362,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 	 * Ricerca automatica delle posizioni rods con AutoTreshold ed AnalyzeParticles,
 	 * pu� utilizzare diverse strategie (valori di preset) se la prima dovesse
 	 * fallire
-	 * 
+	 *
 	 * @param imp1
 	 * @param diam2
 	 * @param timeout
@@ -417,8 +421,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		// per prima cosa effettuo il threshold "GENERALE"
 
-		if (!imp1.isVisible())
+		if (!imp1.isVisible()) {
 			UtilAyv.showImageMaximized(imp1);
+		}
 
 		if (cerca) {
 			imp9 = strategiaGENERALE(imp4);
@@ -438,8 +443,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 				rtOut = rt9;
 				MyLog.waitHere("sufficiente strategia generale");
 			}
-			if (cerca)
+			if (cerca) {
 				MyLog.waitHere("fallita strategia generale");
+			}
 		}
 
 		// MyLog.waitHere();
@@ -459,57 +465,65 @@ public class p17rmn_ implements PlugIn, Measurements {
 				rtOut = rt10;
 				// MyLog.waitHere("sufficiente strategia SIEMENS");
 			}
-			if (cerca)
+			if (cerca) {
 				MyLog.waitHere("fallita strategia SIEMENS");
+			}
 		}
 
 		if (cerca) {
 			imp11 = strategiaHITACHI(imp4);
 			rt11 = analisi(imp11, verbose, timeout, numRods1);
-			if (rt11 != null)
+			if (rt11 != null) {
 				trovati11 = rt11.getCounter();
+			}
 			if (trovati11 == numRods1) {
 				cerca = false;
 				impOut = imp11;
 				rtOut = rt11;
 				// MyLog.waitHere("sufficiente strategia HITACHI");
 			}
-			if (cerca)
+			if (cerca) {
 				MyLog.waitHere("fallita strategia HITACHI");
+			}
 		}
 
 		if (cerca) {
 			imp12 = strategiaGEMS(imp4);
 			rt12 = analisi(imp12, verbose, timeout, numRods1);
-			if (rt12 != null)
+			if (rt12 != null) {
 				trovati12 = rt12.getCounter();
+			}
 			if (trovati12 == numRods1) {
 				cerca = false;
 				impOut = imp12;
 				rtOut = rt12;
 				// MyLog.waitHere("sufficiente strategia GEMS");
 			}
-			if (cerca)
+			if (cerca) {
 				MyLog.waitHere("fallita strategia GEMS");
+			}
 		}
 
 		if (cerca) {
 			imp11 = strategiaHITACHI2(imp4);
 			rt13 = analisi(imp11, verbose, timeout, numRods1);
-			if (rt13 != null)
+			if (rt13 != null) {
 				trovati13 = rt13.getCounter();
+			}
 			if (trovati13 == numRods1) {
 				cerca = false;
 				impOut = imp13;
 				rtOut = rt13;
 				// MyLog.waitHere("sufficiente strategia HITACHI2");
 			}
-			if (cerca)
+			if (cerca) {
 				MyLog.waitHere("fallita strategia HITACHI2");
+			}
 		}
 
-		if (cerca)
+		if (cerca) {
 			MyLog.waitHere("trovato un Kaiser");
+		}
 
 		// / ora marco le posizioni delle 32 ROI
 
@@ -543,7 +557,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 	/***
 	 * Ricerca automatica delle posizioni gels con AutoTreshold ed AnalyzeParticles
-	 * 
+	 *
 	 * @param imp1
 	 * @param diam2
 	 * @param timeout
@@ -604,8 +618,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		// per prima cosa effettuo il threshold "GENERALE"
 
-		if (!imp1.isVisible())
+		if (!imp1.isVisible()) {
 			UtilAyv.showImageMaximized(imp1);
+		}
 
 		if (cerca) {
 			imp9 = strategiaGENERALE(imp4);
@@ -649,8 +664,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 		if (cerca) {
 			imp11 = strategiaHITACHI(imp4);
 			rt11 = analisi(imp11, verbose, timeout, numRods1);
-			if (rt11 != null)
+			if (rt11 != null) {
 				trovati11 = rt11.getCounter();
+			}
 			if (trovati11 == numRods1) {
 				cerca = false;
 				impOut = imp11;
@@ -662,8 +678,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 		if (cerca) {
 			imp12 = strategiaGEMS(imp4);
 			rt12 = analisi(imp12, verbose, timeout, numRods1);
-			if (rt12 != null)
+			if (rt12 != null) {
 				trovati12 = rt12.getCounter();
+			}
 			if (trovati12 == numRods1) {
 				cerca = false;
 				impOut = imp12;
@@ -675,8 +692,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 		if (cerca) {
 			imp11 = strategiaHITACHI2(imp4);
 			rt13 = analisi(imp11, verbose, timeout, numRods1);
-			if (rt13 != null)
+			if (rt13 != null) {
 				trovati13 = rt13.getCounter();
+			}
 			if (trovati13 == numRods1) {
 				cerca = false;
 				impOut = imp13;
@@ -732,8 +750,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 			break;
 		}
 
-		if (rtOut == null)
+		if (rtOut == null) {
 			MyLog.waitHere(">>>> INFERNAL ERROR <<<<<");
+		}
 
 		// ====================== centrale ==================
 		//
@@ -787,8 +806,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 			// cw2.close();
 			// if (imp3 != null)
 			// imp3.flush();
-			if (!imp1.isVisible())
+			if (!imp1.isVisible()) {
 				UtilAyv.showImageMaximized(imp1);
+			}
 			imp1.getWindow().toFront();
 			IJ.setTool("multipoint");
 			MyLog.waitHere(listaMessaggi(7), debug, timeout);
@@ -988,7 +1008,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		short[] pixels = (short[]) ip112.getPixels();
 		double[] dpixels = new double[pixels.length];
 		for (int i1 = 0; i1 < pixels.length; i1++) {
-			dpixels[i1] = (double) pixels[i1];
+			dpixels[i1] = pixels[i1];
 		}
 		double maxThreshold = Tools.getMinMax(dpixels)[1];
 		double minThreshold = Tools.getMinMax(dpixels)[0];
@@ -1003,8 +1023,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 			ip1122.setBinaryThreshold();
 			imp112.updateAndRepaintWindow();
 			ResultsTable rt1 = analisi1(imp112, minSizePixels, maxSizePixels, 0, 1);
-			if (rt1 == null)
+			if (rt1 == null) {
 				return null;
+			}
 			trovati = rt1.getCounter();
 			// MyLog.waitHere("threshold= " + minThreshold + " , " +
 			// maxThreshold
@@ -1039,7 +1060,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 	/***
 	 * La strategia 0 � dedicata al circolo esterno di rods nelle macchine Siemens
-	 * 
+	 *
 	 * @param imp1
 	 * @return
 	 */
@@ -1096,9 +1117,10 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 	public static Roi analisi0(ImagePlus imp1, int minSizePixel, int maxSizePixel, boolean excludeEdges) {
 		int options = ParticleAnalyzer.SHOW_OUTLINES + ParticleAnalyzer.ADD_TO_MANAGER;
-		if (excludeEdges)
+		if (excludeEdges) {
 			options = ParticleAnalyzer.SHOW_OUTLINES + ParticleAnalyzer.ADD_TO_MANAGER
 					+ ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES;
+		}
 
 		int measurements = 0;
 		ResultsTable rt0 = new ResultsTable();
@@ -1111,13 +1133,14 @@ public class p17rmn_ implements PlugIn, Measurements {
 			Roi[] vetRoi = rm0.getRoisAsArray();
 			Roi roi0 = vetRoi[0];
 			return roi0;
-		} else
+		} else {
 			return null;
+		}
 	}
 
 	/***
 	 * La strategia 1 � dedicata al circolo interno di rods nelle macchine Siemens
-	 * 
+	 *
 	 * @param imp1
 	 * @return
 	 */
@@ -1150,10 +1173,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 	}
 
 	public static ImagePlus combina(ImagePlus imp1, ImagePlus imp2) {
-		if (imp1 == null)
+		if ((imp1 == null) || (imp2 == null)) {
 			return null;
-		if (imp2 == null)
-			return null;
+		}
 		ImageCalculator ic1 = new ImageCalculator();
 		ImagePlus imp3 = ic1.run("OR create", imp1, imp2);
 		IJ.run(imp3, "Invert", "");
@@ -1178,8 +1200,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean excludeEdges = false;
 
 		Roi roi0 = analisi0(imp2, minSizePixels, maxSizePixels, excludeEdges);
-		if (roi0 == null)
+		if (roi0 == null) {
 			return null;
+		}
 		ImagePlus imp12 = imp2.duplicate();
 		ImageProcessor ip12 = imp12.getProcessor();
 		ip12.setColor(Color.BLACK);
@@ -1191,8 +1214,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 		maxSizePixels = 30000;
 		excludeEdges = true;
 		Roi roi1 = analisi0(imp12, minSizePixels, maxSizePixels, excludeEdges);
-		if (roi1 == null)
+		if (roi1 == null) {
 			return null;
+		}
 		ImagePlus imp112 = imp12.duplicate();
 		ImageProcessor ip112 = imp112.getProcessor();
 		ip112.setColor(Color.WHITE);
@@ -1257,8 +1281,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// la pointRoi ricevuta ha i dati <ben disordinati>, per
 		// mettere in corretto ordine i vertici utilizzo il getConvexHull
 		Polygon p2 = pr22.getPolygon();
-		PolygonRoi pol2 = new PolygonRoi(p2, PolygonRoi.POLYGON);
-		PolygonRoi pol3 = new PolygonRoi(pol2.getConvexHull(), PolygonRoi.POLYGON);
+		PolygonRoi pol2 = new PolygonRoi(p2, Roi.POLYGON);
+		PolygonRoi pol3 = new PolygonRoi(pol2.getConvexHull(), Roi.POLYGON);
 		Polygon p3 = pol3.getPolygon();
 
 		int[] vetxp = p3.xpoints;
@@ -1270,14 +1294,14 @@ public class p17rmn_ implements PlugIn, Measurements {
 		double[] vetx;
 		double[] vety;
 		double[] vetdist = new double[vetxp.length];
-		;
+
 		double min = 99999;
 		int minPos = 9999;
 		double aux1 = 0;
 
 		for (int i1 = 0; i1 < vetxp.length; i1++) {
-			vetx1[i1] = (double) vetxp[i1];
-			vety1[i1] = (double) vetyp[i1];
+			vetx1[i1] = vetxp[i1];
+			vety1[i1] = vetyp[i1];
 			aux1 = MyGeometry.pointsDistance(0., vety1[i1], vetx1[i1], 0.);
 			vetdist[i1] = aux1;
 			if (aux1 < min) {
@@ -1295,8 +1319,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 		// ruoto le coordinate per portare la minPos al vertice iniziale
 
-		if (minPos > 0)
-
+		if (minPos > 0) {
 			do {
 				MyLog.logVector(vetx1, "vetx1");
 				MyLog.logVector(vety1, "vety1");
@@ -1323,6 +1346,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 				IJ.log("dopo minPos= " + minPos);
 
 			} while (minPos > 0);
+		}
 		MyLog.logVector(vetx1, "vetx1");
 		MyLog.logVector(vety1, "vety1");
 		MyLog.waitHere("finale minPos= " + minPos);
@@ -1356,7 +1380,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 	 * Analizza i dati delle 32 rods forniti da automatiCRoiPreparation,
 	 * prefiggendosi di identificare le diverse coppie di rods, in modo da poterle
 	 * scrivere nelle posizioni corrette del report finale
-	 * 
+	 *
 	 * @param imp1
 	 * @param rt1
 	 * @return
@@ -1419,8 +1443,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// la pointRoi ricevuta ha i dati <ben disordinati>, per
 		// mettere in corretto ordine i vertici utilizzo il getConvexHull
 		Polygon p2 = pr1.getPolygon();
-		PolygonRoi pol2 = new PolygonRoi(p2, PolygonRoi.POLYGON);
-		PolygonRoi pol3 = new PolygonRoi(pol2.getConvexHull(), PolygonRoi.POLYGON);
+		PolygonRoi pol2 = new PolygonRoi(p2, Roi.POLYGON);
+		PolygonRoi pol3 = new PolygonRoi(pol2.getConvexHull(), Roi.POLYGON);
 		Polygon p3 = pol3.getPolygon();
 
 		int[] vetxp = p3.xpoints;
@@ -1431,8 +1455,8 @@ public class p17rmn_ implements PlugIn, Measurements {
 		double[] vety = new double[vetxp.length];
 
 		for (int i1 = 0; i1 < vetxp.length; i1++) {
-			vetx[i1] = (double) vetxp[i1];
-			vety[i1] = (double) vetyp[i1];
+			vetx[i1] = vetxp[i1];
+			vety[i1] = vetyp[i1];
 		}
 
 		// marco i vertici ma solo per vedere se sono in ordine
@@ -1500,7 +1524,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// imp2.getRoi().setStrokeColor(Color.blue);
 		// over2.addElement(imp2.getRoi());
 
-		int diamRoi = (int) boundingRectangle2.width;
+		int diamRoi = boundingRectangle2.width;
 		int xRoi = boundingRectangle2.x + boundingRectangle2.width / 2;
 		int yRoi = boundingRectangle2.y + boundingRectangle2.height / 2;
 		// xRoi += 1;
@@ -1533,27 +1557,31 @@ public class p17rmn_ implements PlugIn, Measurements {
 		// la prima bisettrice dovrebbe avere le seguenti coordinate
 
 		double halfX1 = 0;
-		if (vetx[0] <= vetx[1])
+		if (vetx[0] <= vetx[1]) {
 			halfX1 = (vetx[1] - vetx[0]) / 2 + vetx[0];
-		else
+		} else {
 			halfX1 = (vetx[0] - vetx[1]) / 2 + vetx[1];
+		}
 		double halfY1 = 0;
-		if (vety[0] <= vety[1])
+		if (vety[0] <= vety[1]) {
 			halfY1 = (vety[1] - vety[0]) / 2 + vety[0];
-		else
+		} else {
 			halfY1 = (vety[0] - vety[1]) / 2 + vety[1];
+		}
 
 		double halfX2 = 0;
-		if (vetx[2] <= vetx[3])
+		if (vetx[2] <= vetx[3]) {
 			halfX2 = (vetx[3] - vetx[2]) / 2 + vetx[2];
-		else
+		} else {
 			halfX2 = (vetx[2] - vetx[3]) / 2 + vetx[3];
+		}
 
 		double halfY2 = 0;
-		if (vety[2] <= vety[3])
+		if (vety[2] <= vety[3]) {
 			halfY2 = (vety[3] - vety[2]) / 2 + vety[2];
-		else
+		} else {
 			halfY2 = (vety[2] - vety[3]) / 2 + vety[3];
+		}
 
 		IJ.log("lato/2= " + lato / 2 + " lato1= " + lato1);
 
@@ -1567,24 +1595,28 @@ public class p17rmn_ implements PlugIn, Measurements {
 		imp2.getWindow().toFront();
 
 		// la bisettrice opposta sar�:
-		if (vetx[0] <= vetx[3])
+		if (vetx[0] <= vetx[3]) {
 			halfX1 = (vetx[3] - vetx[0]) / 2 + vetx[0];
-		else
+		} else {
 			halfX1 = (vetx[0] - vetx[3]) / 2 + vetx[3];
-		if (vety[0] <= vety[3])
+		}
+		if (vety[0] <= vety[3]) {
 			halfY1 = (vety[3] - vety[0]) / 2 + vety[0];
-		else
+		} else {
 			halfY1 = (vety[0] - vety[3]) / 2 + vety[3];
+		}
 
-		if (vetx[1] <= vetx[2])
+		if (vetx[1] <= vetx[2]) {
 			halfX2 = (vetx[2] - vetx[1]) / 2 + vetx[1];
-		else
+		} else {
 			halfX2 = (vetx[1] - vetx[2]) / 2 + vetx[2];
+		}
 
-		if (vety[1] <= vety[2])
+		if (vety[1] <= vety[2]) {
 			halfY2 = (vety[2] - vety[1]) / 2 + vety[1];
-		else
+		} else {
 			halfY2 = (vety[1] - vety[2]) / 2 + vety[2];
+		}
 
 		double[] cross6 = ImageUtils.crossingFrame(halfX1, halfY1, halfX2, halfY2, imp1.getWidth(), imp1.getHeight());
 		Line linea6 = new Line(cross6[0], cross6[1], cross6[2], cross6[3]);
@@ -1697,7 +1729,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 		for (int i1 = 0; i1 < vetX.length; i1++) {
 			vetDist[i1] = MyGeometry.pointToLineDistance(cal.getX(cross5[0]), cal.getY(cross5[1]), cal.getX(cross5[2]),
 					cal.getY(cross5[3]), vetX[i1], vetY[i1]);
-			vetOrder[i1] = (double) i1;
+			vetOrder[i1] = i1;
 		}
 
 		UtilAyv.minsort(vetDist, vetOrder);
@@ -1775,8 +1807,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 		maxSizePixels = 30000;
 		excludeEdges = true;
 		Roi roi1 = analisi0(imp2, minSizePixels, maxSizePixels, excludeEdges);
-		if (roi1 == null)
+		if (roi1 == null) {
 			return null;
+		}
 		ip2.setColor(Color.WHITE);
 		ip2.fill(roi1);
 		// ip2.invert();
@@ -1833,8 +1866,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 		boolean excludeEdges = false;
 
 		Roi roi0 = analisi0(imp2, minSizePixels, maxSizePixels, excludeEdges);
-		if (roi0 == null)
+		if (roi0 == null) {
 			return null;
+		}
 		ImagePlus imp12 = imp2.duplicate();
 		ImageProcessor ip12 = imp12.getProcessor();
 		ip12.setColor(Color.BLACK);
@@ -1846,8 +1880,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 		maxSizePixels = 30000;
 		excludeEdges = true;
 		Roi roi1 = analisi0(imp12, minSizePixels, maxSizePixels, excludeEdges);
-		if (roi1 == null)
+		if (roi1 == null) {
 			return null;
+		}
 		ImagePlus imp112 = imp12.duplicate();
 		ImageProcessor ip112 = imp112.getProcessor();
 		ip112.setColor(Color.WHITE);
@@ -1872,7 +1907,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 	/***
 	 * La strategia 0 � dedicata al circolo esterno di rods nelle macchine HITACHI
-	 * 
+	 *
 	 * @param imp1
 	 * @return
 	 */
@@ -1931,8 +1966,9 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 	public static ResultsTable analisi(ImagePlus imp1, boolean verbose, int timeout, int numRoi) {
 
-		if (imp1 == null)
+		if (imp1 == null) {
 			return null;
+		}
 		int options = ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES + ParticleAnalyzer.SHOW_OUTLINES;
 		int measurements = Measurements.CENTER_OF_MASS + Measurements.AREA;
 		double minSize = 50;
@@ -2000,10 +2036,11 @@ public class p17rmn_ implements PlugIn, Measurements {
 				int[] vetX = MyConst.P7_X_POINTS_TESTGE;
 				int[] vetY = MyConst.P7_Y_POINTS_TESTGE;
 				boolean ok = testExcecution(path1, vetX, vetY, -10, -17, true);
-				if (ok)
+				if (ok) {
 					MyMsg.msgTestPassed();
-				else
+				} else {
 					MyMsg.msgTestFault();
+				}
 				UtilAyv.afterWork();
 				return;
 			}
@@ -2014,10 +2051,11 @@ public class p17rmn_ implements PlugIn, Measurements {
 				int[] vetX = MyConst.P7_X_POINTS_TESTSIEMENS;
 				int[] vetY = MyConst.P7_Y_POINTS_TESTSIEMENS;
 				boolean ok = testExcecution(path1, vetX, vetY, 0, 20, true);
-				if (ok)
+				if (ok) {
 					MyMsg.msgTestPassed();
-				else
+				} else {
 					MyMsg.msgTestFault();
+				}
 				UtilAyv.afterWork();
 				return;
 			}
@@ -2050,12 +2088,13 @@ public class p17rmn_ implements PlugIn, Measurements {
 		}
 		double dimPixel2 = ReadDicom.readDouble(
 				ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
-		double diamRoi1 = (double) MyConst.P7_DIAM_ROI / dimPixel2;
+		double diamRoi1 = MyConst.P7_DIAM_ROI / dimPixel2;
 		int diamRoi = (int) diamRoi1;
 		boolean circular = true;
 		UtilAyv.presetRoi(imp1, diamRoi, offX, offY, circular);
-		if (verbose)
+		if (verbose) {
 			IJ.wait(500);
+		}
 		overlayRodNumbers(imp1, diamRoi, verbose);
 		Polygon poli1 = UtilAyv.clickSimulation(imp1, vetX, vetY);
 		boolean ok = UtilAyv.verifyResults2(poli1.xpoints, poli1.ypoints, vetX, vetY, "della ROD ");
@@ -2064,7 +2103,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * genera una directory temporanea e vi estrae le immagini di test da test2.jar
-	 * 
+	 *
 	 * @return home1 path della directory temporanea con le immagini di test
 	 */
 	private String findTestImages() {
@@ -2086,12 +2125,12 @@ public class p17rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Siemens test image expected results
-	 * 
+	 *
 	 * @return
 	 */
 	/**
 	 * Siemens test image expected results
-	 * 
+	 *
 	 * @return
 	 */
 	static int[][] referenceSiemens() {
@@ -2109,7 +2148,7 @@ public class p17rmn_ implements PlugIn, Measurements {
 	/**
 	 * Qui sono raggruppati tutti i messaggi del plugin, in questo modo � facilitata
 	 * la eventuale modifica / traduzione dei messaggi.
-	 * 
+	 *
 	 * @param select
 	 * @return
 	 */

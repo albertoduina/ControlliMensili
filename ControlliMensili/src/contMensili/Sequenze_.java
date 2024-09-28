@@ -1,5 +1,12 @@
 package contMensili;
 
+import java.awt.Frame;
+import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
@@ -8,23 +15,12 @@ import ij.gui.GenericDialog;
 import ij.io.DirectoryChooser;
 import ij.io.Opener;
 import ij.plugin.PlugIn;
-import ij.text.TextPanel;
 import ij.text.TextWindow;
-
-import java.awt.Frame;
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
-
 import utils.AboutBox;
 import utils.ArrayUtils;
 import utils.ButtonMessages;
 import utils.InputOutput;
 import utils.MyConst;
-import utils.MyFileLogger;
 import utils.MyLog;
 import utils.ReadDicom;
 import utils.TableCode;
@@ -54,18 +50,18 @@ import utils.UtilAyv;
  */
 
 /**
- * 
- * 
+ *
+ *
  * Main plugin for the Quality Controls of MRI images.
- * 
+ *
  * The program, for a new search, make a recursive search in the selected
  * directory and sub-directories, write the list of processing files in ayv.txt.
  * After that it uses the list in ayv.txt to call the right plugin for
  * processing the different types of image.
- * 
+ *
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
- * 
+ *
  */
 public class Sequenze_ implements PlugIn {
 	private final static int ABORT = 1;
@@ -86,12 +82,13 @@ public class Sequenze_ implements PlugIn {
 	public static String blackpath = "";
 	public static String blackname = "";
 	public static String blacklog = "";
-	public static String testP6_1 = "contMensili.p6rmn_ORIGINAL";
-	public static String testP6_2 = "contMensili.p6rmn_IMPROVED";
-	public static String testP6_3 = "contMensili.p6rmn_FITTER";
+	// public static String testP6_1 = "contMensili.p6rmn_ORIGINAL";
+	// public static String testP6_2 = "contMensili.p6rmn_IMPROVED";
+	// public static String testP6_3 = "contMensili.p6rmn_FITTER";
 	public static int testP6 = 2; /// <<< SELEZIONA QUI
 	public static String choice = "";
 
+	@Override
 	public void run(String arg) {
 		// ============================================================================================
 		// nota bene: le seguenti istruzioni devono ASSOLUTAMENTE essere all'inizio, in
@@ -103,10 +100,11 @@ public class Sequenze_ implements PlugIn {
 			IJ.error("ATTENZIONE, manca il file iw2ayv_xxx.jar");
 			return;
 		}
-		if (!UtilAyv.jarCount("iw2ayv_"))
+		if (!UtilAyv.jarCount("iw2ayv_")) {
 			return;
-		// ============================================================================================
-		// EQUIVALENZE DURANTE I TEST
+			// ============================================================================================
+			// EQUIVALENZE DURANTE I TEST
+		}
 
 		// ==============================================================================================
 
@@ -114,8 +112,9 @@ public class Sequenze_ implements PlugIn {
 		// MyFileLogger.logger.info("<-- INIZIO Sequenze -->");
 		TextWindow tw = new TextWindow("Sequenze", "<-- INIZIO Sequenze -->", 300, 200);
 		Frame lw = WindowManager.getFrame("Sequenze");
-		if (lw == null)
+		if (lw == null) {
 			return;
+		}
 		lw.setLocation(10, 10);
 
 		String startingDir = Prefs.get(MyConst.PREFERENCES_1, MyConst.DEFAULT_PATH);
@@ -142,8 +141,9 @@ public class Sequenze_ implements PlugIn {
 
 		TableCode tc2 = new TableCode();
 		boolean flag = tc2.ricercaDoppioni(tableCode);
-		if (flag)
-			MyLog.waitHere("E VUALA': doppione rilevato");
+		if (flag) {
+			MyLog.waitHere("E VUALA': doppione rilevato in codici.csv");
+		}
 
 		if (debugTables) {
 			IJ.log("\\Clear");
@@ -170,7 +170,7 @@ public class Sequenze_ implements PlugIn {
 		boolean aux3 = false;
 		choice = Prefs.get("prefer.choice", "none");
 
-		String[] items = { "p6rmn_ORIGINAL", "p6rmn_IMPROVED", "p6rmn_FITTER" };
+		// String[] items = { "p6rmn_ORIGINAL", "p6rmn_IMPROVED", "p6rmn_FITTER" };
 
 		List<String> arrayStartingDir = new ArrayList<String>();
 
@@ -180,7 +180,7 @@ public class Sequenze_ implements PlugIn {
 		gd.addCheckbox("p10_ p11_ p12_ p16_ p17_ p19_", true);
 		gd.addCheckbox("Fast", true);
 		gd.addCheckbox("Superficiali", false);
-		gd.addChoice("  ", items, choice);
+		// gd.addChoice(" ", items, choice);
 		gd.showDialog();
 		if (gd.wasCanceled()) {
 			return;
@@ -191,7 +191,7 @@ public class Sequenze_ implements PlugIn {
 		p10p11p12 = gd.getNextBoolean();
 		fast = gd.getNextBoolean();
 		superficiali = gd.getNextBoolean();
-		choice = gd.getNextChoice();
+		// choice = gd.getNextChoice();
 		if (fast) {
 			Prefs.set("prefer.fast", "true");
 		} else {
@@ -238,8 +238,9 @@ public class Sequenze_ implements PlugIn {
 			DirectoryChooser od1 = new DirectoryChooser("Selezionare la cartella: ");
 			startingDir = od1.getDirectory();
 
-			if (startingDir == null)
+			if (startingDir == null) {
 				return;
+			}
 			Prefs.set("prefer.string1", startingDir);
 			arrayStartingDir.add(startingDir);
 		} else {
@@ -247,8 +248,8 @@ public class Sequenze_ implements PlugIn {
 		}
 
 		long startTime = System.currentTimeMillis();
-		for (int b1 = 0; b1 < arrayStartingDir.size(); b1++) {
-			startingDir = arrayStartingDir.get(b1);
+		for (String element : arrayStartingDir) {
+			startingDir = element;
 
 			boolean fileExist = new File(startingDir + MyConst.SEQUENZE_FILE).exists();
 
@@ -280,17 +281,24 @@ public class Sequenze_ implements PlugIn {
 				// il file directory che il file excel dei risultati
 				//
 				File fx = new File(startingDir + MyConst.SEQUENZE_FILE);
-				if (fx.exists())
+				if (fx.exists()) {
 					fx.delete();
+				}
 				File fy = new File(startingDir + MyConst.XLS_FILE);
-				if (fy.exists())
+				if (fy.exists()) {
 					fy.delete();
+				}
 				File fz = new File(startingDir + MyConst.TXT_FILE);
-				if (fz.exists())
+				if (fz.exists()) {
 					fz.delete();
+				}
 				MyLog.initLog(startingDir + "MyLog.txt");
 
 				Prefs.set("prefer.p6rmnSTART", true);
+				// MyLog.waitHere("metto valid a false");
+				// azzeramento del valid relativo a p16rmn, in modo che per la prossima immagine
+				// di diffusine si debba effettuare il posuizionamento della ROI
+				Prefs.set("prefer.p16rmn_valid", false);
 
 				List<File> result = getFileListing(new File(startingDir));
 				if (result == null) {
@@ -383,8 +391,9 @@ public class Sequenze_ implements PlugIn {
 
 				boolean success = new TableSequence().writeTable(startingDir + MyConst.SEQUENZE_FILE,
 						tableSequenceModified1);
-				if (!success)
+				if (!success) {
 					IJ.log("Problemi creazione file iw2ayv.txt");
+				}
 			}
 
 			String[][] tableSequenceReloaded = new TableSequence().loadTable(startingDir + MyConst.SEQUENZE_FILE);
@@ -422,17 +431,18 @@ public class Sequenze_ implements PlugIn {
 
 	/**
 	 * Legge ricorsivamente la directory e relative sottodirectory
-	 * 
+	 *
 	 * copied from www.javapractices.com (Alex Wong
-	 * 
+	 *
 	 * @param startingDir directory "radice"
 	 * @return lista dei path dei file
 	 */
 	public List<File> getFileListing(File startingDir) {
 		List<File> result = new ArrayList<File>();
 		File[] filesAndDirs = startingDir.listFiles();
-		if (filesAndDirs == null)
+		if (filesAndDirs == null) {
 			return null;
+		}
 		List<File> filesDirs = Arrays.asList(filesAndDirs);
 		for (File file : filesDirs) {
 			if (!file.isFile()) {
@@ -451,7 +461,7 @@ public class Sequenze_ implements PlugIn {
 	 * Analizza tutti i file e, se sono compatibili con i codici di sequenza
 	 * elencati in codiciNew.csv, compila i vari campi della tabella dei file da
 	 * analizzare
-	 * 
+	 *
 	 * @param pathList     lista dei file presenti nelle directory e relative
 	 *                     sottodirectory selezionate.
 	 * @param tableCode2   contenuto di codici.txt
@@ -508,12 +518,6 @@ public class Sequenze_ implements PlugIn {
 
 				ImagePlus imp1 = new Opener().openImage(pathList[i1]);
 
-				if (imp1 == null) {
-					// IJ.log("" + i1 + " file " + pathList[i1] +
-					// " problematic");
-					continue;
-				}
-
 				// if (imp1.getTitle().equals(
 				// "15_18130558_HE3,4vNE1,2vSP1,2_O12S_")) {
 				// // MyLog.waitHere("15_18130558_HE3,4vNE1,2vSP1,2_O12S_");
@@ -523,7 +527,7 @@ public class Sequenze_ implements PlugIn {
 				// if (questo)
 				// MyLog.waitHere("trovato");
 
-				if (!ReadDicom.hasHeader(imp1)) {
+				if ((imp1 == null) || !ReadDicom.hasHeader(imp1)) {
 					// IJ.log("" + i1 + " file " + pathList[i1] + " not dicom");
 					continue;
 				}
@@ -556,6 +560,10 @@ public class Sequenze_ implements PlugIn {
 						}
 					}
 				}
+
+//				if (ReadDicom.isDicomEnhanced(imp1))
+//					IJ.log("DICOM_ENHANCED");
+
 				// String coil = ReadDicom.getFirstCoil(imp1);
 				String coil = ReadDicom.getAllCoils(imp1);
 
@@ -572,19 +580,19 @@ public class Sequenze_ implements PlugIn {
 
 				// ===============================================================================
 
-				if ((codice.equalsIgnoreCase("BL2F_") && (firstLetterOfCoil.equalsIgnoreCase("R") == true))) {
+				if ((codice.equalsIgnoreCase("BL2F_") && firstLetterOfCoil.equalsIgnoreCase("R"))) {
 					// MyLog.waitHere("BL2F XXX");
 					coil = "XXX";
 				}
-				if ((codice.equalsIgnoreCase("BR2F_") && (firstLetterOfCoil.equalsIgnoreCase("L") == true))) {
+				if ((codice.equalsIgnoreCase("BR2F_") && firstLetterOfCoil.equalsIgnoreCase("L"))) {
 					// MyLog.waitHere("BR2F XXX");
 					coil = "XXX";
 				}
-				if ((codice.equalsIgnoreCase("BL2S_") && (firstLetterOfCoil.equalsIgnoreCase("R") == true))) {
+				if ((codice.equalsIgnoreCase("BL2S_") && firstLetterOfCoil.equalsIgnoreCase("R"))) {
 					// MyLog.waitHere("BL2F XXX");
 					coil = "XXX";
 				}
-				if ((codice.equalsIgnoreCase("BR2S_") && (firstLetterOfCoil.equalsIgnoreCase("L") == true))) {
+				if ((codice.equalsIgnoreCase("BR2S_") && firstLetterOfCoil.equalsIgnoreCase("L"))) {
 					// MyLog.waitHere("BR2F XXX");
 					coil = "XXX";
 				}
@@ -615,9 +623,11 @@ public class Sequenze_ implements PlugIn {
 
 				String acqTime = deleteDot(readTime(imp1));
 
-				String echoTime = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_ECHO_TIME);
-				if (echoTime.compareTo("") == 0)
+				String echoTime = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_ECHO_TIME,
+						MyConst.DICOM_EFFECTIVE_ECHO_TIME);
+				if (echoTime.compareTo("") == 0) {
 					echoTime = "0";
+				}
 				String slicePosition = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SLICE_LOCATION);
 
 				String done = "0";
@@ -645,9 +655,10 @@ public class Sequenze_ implements PlugIn {
 							String[] myNums = myString.split("x");
 
 							boolean trovato1 = false;
-							for (int i2 = 0; i2 < myNums.length; i2++) {
-								if (myNums[i2].equals(numIma))
+							for (String myNum : myNums) {
+								if (myNum.equals(numIma)) {
 									trovato1 = true;
+								}
 							}
 
 							if (myNums[0].equals("0") || trovato1) {
@@ -698,15 +709,15 @@ public class Sequenze_ implements PlugIn {
 					// List<String> vetImaPass = new ArrayList<String>();
 
 					if (espansione != null) {
-						for (int i2 = 0; i2 < espansione.length; i2++) {
+						for (String[] element : espansione) {
 							// count3++;
 							vetConta.add("" + (count3));
 							count3++;
 							vetPath.add(path1);
 //							IJ.log("espando con " + espansione[i2][2] + " " + espansione[i2][3]);
-							vetCodice.add(espansione[i2][2]);
+							vetCodice.add(element[2]);
 							vetCoil.add(coil);
-							vetImaDaPassare.add(espansione[i2][3]);
+							vetImaDaPassare.add(element[3]);
 							vetImaOrder.add(tableCode2[tableRow][TableCode.IMA_ORDER]);
 							vetImaIncrement.add(tableCode2[tableRow][TableCode.IMA_INCREMENT]);
 							vetSpare_1.add(tableCode2[tableRow][TableCode.SPARE_1]);
@@ -778,9 +789,10 @@ public class Sequenze_ implements PlugIn {
 
 	public static boolean coilPresent(String[] allCoils, String coil) {
 		boolean trovato = false;
-		for (int i1 = 0; i1 < allCoils.length; i1++) {
-			if (allCoils[i1].equals(coil))
+		for (String coil2 : allCoils) {
+			if (coil2.equals(coil)) {
 				trovato = true;
+			}
 		}
 //		if (allCoils.length > 1) {
 //		MyLog.logVector(allCoils, "allCoils");
@@ -792,29 +804,24 @@ public class Sequenze_ implements PlugIn {
 
 	/**
 	 * Espande i codici delle immagini, utilizzando il file expand.txt
-	 * 
+	 *
 	 * @param codice       codice della misura da espandere
 	 * @param eco          tempo di eco della misura da espandere
 	 * @param tableExpand4 tabella contenente i dati di expand.txt
 	 * @return vettore contenente i dati espansi
 	 */
-	public String[][] expandCode(String codice, String eco, String[][] tableExpand4) {
+	public String[][] expandCode(String codice, String eco1, String[][] tableExpand4) {
 
 //		MyLog.logMatrix(tableExpand4, "tableExpand");
-//		MyLog.waitHere("esamino codice= " + codice + " eco= " + eco);
 
-		if (codice == null) {
+		if ((codice == null) || (eco1 == null) || (tableExpand4 == null)) {
 			MyLog.waitHere();
 			return null;
 		}
-		if (eco == null) {
-			MyLog.waitHere();
-			return null;
-		}
-		if (tableExpand4 == null) {
-			MyLog.waitHere();
-			return null;
-		}
+
+		String eco = eco1.split("\\.")[0];
+		// MyLog.waitHere("esamino codice= " + codice + " eco= " + eco);
+
 		List<String> vetOldCode = new ArrayList<String>();
 		List<String> vetEcho = new ArrayList<String>();
 		List<String> vetNewCode = new ArrayList<String>();
@@ -850,7 +857,7 @@ public class Sequenze_ implements PlugIn {
 
 	/**
 	 * Delete the dot in a string
-	 * 
+	 *
 	 * @param strIn stringa contenente un numero separato dal punto
 	 * @return stringa contenente il numero senza la separazione del punto
 	 */
@@ -869,7 +876,7 @@ public class Sequenze_ implements PlugIn {
 
 	/**
 	 * Lettura di AcqTime di una immagine (Siemens + Philips)
-	 * 
+	 *
 	 * @param imp1 ImagePlus immagine
 	 * @return acqTime
 	 */
@@ -883,7 +890,7 @@ public class Sequenze_ implements PlugIn {
 
 	/**
 	 * Scrive una riga nella tabella dei dati
-	 * 
+	 *
 	 * @param inTable tabella su cui scrivere
 	 * @param vetData dati da scrivere in tabella
 	 * @param column  numero della riga in cui scrivere
@@ -899,7 +906,7 @@ public class Sequenze_ implements PlugIn {
 	 * di comando il numero della linea di iw2ayv.txt da analizzare. Tiene conto dei
 	 * controlli gia' effettuati, per cui si puo' spegnere il PC e ripartire ad
 	 * analizzare dal file successivo all'ultimo analizzato con successo.
-	 * 
+	 *
 	 * @param tableSequenze5 e' il file iw2ayv.txt ricaricato da disco
 	 * @param tableCode5     e' il file codiciXXXX.txt caricato da disco
 	 */
@@ -962,25 +969,33 @@ public class Sequenze_ implements PlugIn {
 				String plugin = pluginToBeCalledWithCoil(j1, tableSequenze5, tableCode5);
 				// qui altero il plugin per poter chiamare, durante i tests le
 				// vecchie versioni, senza dover modificare i sorgenti
-				if (plugin == null)
+				if (plugin == null) {
 					MyLog.waitHere("plugin == null");
+				}
 
 				if (!p10p11p12) {
 					// MyLog.waitHere("MANUALE p10p11= " + p10p11);
-					if (plugin.equals("contMensili.p19rmn_"))
+					if (plugin.equals("contMensili.p19rmn_")) {
 						plugin = "contMensili.p5rmn_";
-					if (plugin.equals("contMensili.p10rmn_"))
+					}
+					if (plugin.equals("contMensili.p10rmn_")) {
 						plugin = "contMensili.p5rmn_";
-					if (plugin.equals("contMensili.p11rmn_"))
+					}
+					if (plugin.equals("contMensili.p11rmn_")) {
 						plugin = "contMensili.p5rmn_";
-					if (plugin.equals("contMensili.p12rmn_"))
+					}
+					if (plugin.equals("contMensili.p12rmn_")) {
 						plugin = "contMensili.p3rmn_";
-					if (plugin.equals("contMensili.p20rmn_"))
+					}
+					if (plugin.equals("contMensili.p20rmn_")) {
 						plugin = "contMensili.p2rmn_";
-					if (plugin.equals("contMensili.p17rmn_"))
+					}
+					if (plugin.equals("contMensili.p17rmn_")) {
 						plugin = "contMensili.p7rmn_";
-					if (plugin.equals("contMensili.p16rmn_"))
+					}
+					if (plugin.equals("contMensili.p16rmn_")) {
 						plugin = "contMensili.p6rmn_ORIGINAL";
+					}
 				}
 
 				// usato durante i test 2024_04_20
@@ -988,8 +1003,9 @@ public class Sequenze_ implements PlugIn {
 //				IJ.log(MyLog.qui() + " SELEZIONE con testP6= " + testP6 + "plugin= " + plugin);
 //				MyLog.waitHere();
 
-				if (plugin.equals("contMensili.p6rmn_"))
+				if (plugin.equals("contMensili.p6rmn_")) {
 					plugin = "contMensili." + choice;
+				}
 
 				String argomento = argumentForPluginToBeCalled(j1, tableSequenze5);
 				boolean jump = false;
@@ -1081,20 +1097,21 @@ public class Sequenze_ implements PlugIn {
 	/***
 	 * Effettua il run di un plugin (abbiamo cosi' il plugin sequenze che e' in
 	 * grado di chiamare i plugins per le eleborazioni delle varie immagini.
-	 * 
+	 *
 	 * @param plugin
 	 * @param argomento
 	 * @param test
 	 */
 	public void pluginRunner(String plugin, String argomento, boolean test) {
-		if (!test)
+		if (!test) {
 			IJ.runPlugIn(plugin, argomento);
+		}
 	}
 
 	/**
 	 * Cerca in tabella il nome del plugin da lanciare per il codice corrispondente
 	 * alla linea di ayv.txt elaborata al momento. Potremo avere ad esempio "p6rmn_"
-	 * 
+	 *
 	 * @param lineNumber    numero linea tableSequenze in elaborazione (la prima con
 	 *                      "fatto" =0
 	 * @param tableSequenze tabella sequenze in memoria
@@ -1102,10 +1119,9 @@ public class Sequenze_ implements PlugIn {
 	 * @return nome del plugin da chiamare
 	 */
 	public String pluginToBeCalled(int lineNumber, String[][] tableSequenze, String[][] tableCode) {
-		if (tableSequenze == null)
+		if ((tableSequenze == null) || (tableCode == null)) {
 			return null;
-		if (tableCode == null)
-			return null;
+		}
 		String nome = null;
 		if (TableSequence.getDone(tableSequenze, lineNumber).equals("0")) {
 			for (int j2 = 0; j2 < tableCode.length; j2++) {
@@ -1122,7 +1138,7 @@ public class Sequenze_ implements PlugIn {
 	 * Cerca in tabella il nome del plugin da lanciare per il codice corrispondente
 	 * alla linea di ayv.txt elaborata al momento. Potremo avere ad esempio
 	 * "p6rmn_". Utilizza anche la colonna "COIL"
-	 * 
+	 *
 	 * @param lineNumber    numero linea tableSequenze in elaborazione (la prima con
 	 *                      "fatto" =0
 	 * @param tableSequenze tabella sequenze in memoria
@@ -1174,7 +1190,7 @@ public class Sequenze_ implements PlugIn {
 	 * elaborare da parte del plugin e le mette in una stringa da passare come
 	 * argomento al plugin. Potremo avere ad esempio 12#13#14#15 , se e' previsto
 	 * che quel determinato plugin processi 4 immagini
-	 * 
+	 *
 	 * @param lineNumber     numero linea tableSequenze in elaborazione (la prima
 	 *                       con "fatto" =0
 	 * @param tableSequenze5 tabella sequenze in memoria
@@ -1183,8 +1199,9 @@ public class Sequenze_ implements PlugIn {
 	public String argumentForPluginToBeCalled(int lineNumber, String[][] tableSequenze5) {
 
 		String argomento = "";
-		if (tableSequenze5 == null)
+		if (tableSequenze5 == null) {
 			return null;
+		}
 		new TableSequence();
 		int numImaDaPassare = Integer.parseInt(TableSequence.getImaPass(tableSequenze5, lineNumber));
 
@@ -1223,8 +1240,9 @@ public class Sequenze_ implements PlugIn {
 			//
 			// } else {
 			for (int j2 = 0; j2 < numImaDaPassare; j2++) {
-				if ((lineNumber + j2) >= tableSequenze5.length)
+				if ((lineNumber + j2) >= tableSequenze5.length) {
 					return null;
+				}
 				new TableSequence();
 				argomento = argomento + "#" + TableSequence.getRow(tableSequenze5, lineNumber + j2);
 			}
@@ -1238,7 +1256,7 @@ public class Sequenze_ implements PlugIn {
 	 * codice immagine corrisponda al numero previsto in codiciNew.csv. Se cio' non
 	 * accade viene passata una tabella di warnings a logVerifySequenceTable. Si
 	 * puo' comunque continuare a lavorare
-	 * 
+	 *
 	 * @param tableSequenze6
 	 * @param tableCode6
 	 * @return
@@ -1283,10 +1301,12 @@ public class Sequenze_ implements PlugIn {
 				// MyLog.waitHere("errore formato a j1= " + j1);
 			}
 			String codiceImaRichieste = TableCode.getCode(tableCode6, j1);
-			if (codiceImaRichieste == null)
+			if (codiceImaRichieste == null) {
 				break;
-			if (numeroImaRichieste == 0)
+			}
+			if (numeroImaRichieste == 0) {
 				continue;
+			}
 			String codiceBobinaRichiesto = TableCode.getCoil(tableCode6, j1);
 			// IJ.log("codiceBobinaRichiesto= "+codiceBobinaRichiesto);
 			// codiceBobinaRichiesto = codiceBobinaRichiesto.replaceAll("�",
@@ -1299,8 +1319,9 @@ public class Sequenze_ implements PlugIn {
 				// if (trigger)
 				// IJ.log("codiceBobinaAcquisito= " + codiceBobinaAcquisito);
 
-				if (codiceImaAcquisite == null)
+				if (codiceImaAcquisite == null) {
 					break;
+				}
 				if (compareAcqReq(codiceImaAcquisite, codiceImaRichieste, codiceBobinaAcquisito,
 						codiceBobinaRichiesto)) {
 					// IJ.log("codiceAcquisito=" + codiceBobinaAcquisito
@@ -1317,13 +1338,16 @@ public class Sequenze_ implements PlugIn {
 					String codiceImaAcquisite2 = TableSequence.getCode(tableSequenze6, j3);
 					codiceBobinaAcquisito = TableSequence.getCoil(tableSequenze6, j3).replace(';', '+');
 
-					if (codiceImaAcquisite2 == null)
+					if (codiceImaAcquisite2 == null) {
 						break;
+					}
 					int numeroImaAcquisite2 = 0;
 
 					boolean codiceBobinaOK = false;
-					if ((codiceBobinaRichiesto.equals(codiceBobinaAcquisito)) || (codiceBobinaRichiesto.equals("xxx")))
+					if ((codiceBobinaRichiesto.equals(codiceBobinaAcquisito))
+							|| (codiceBobinaRichiesto.equals("xxx"))) {
 						codiceBobinaOK = true;
+					}
 
 					if (codiceImaAcquisite2.equals(codiceImaRichieste) && (codiceBobinaOK)) {
 						numeroImaAcquisite2++;
@@ -1362,7 +1386,7 @@ public class Sequenze_ implements PlugIn {
 	 * codice immagine corrisponda al numero previsto in iw2ayv.txt. Se ci� non
 	 * accade viene passata una tabella di warnings a logVerifySequenceTable. Si pu�
 	 * comunque continuare a lavorare
-	 * 
+	 *
 	 * @param tableSequenze6
 	 * @param tableCode6
 	 * @return
@@ -1392,17 +1416,20 @@ public class Sequenze_ implements PlugIn {
 			int numeroImaAcquisite = 0;
 			int numeroImaRichieste = Integer.parseInt(TableCode.getImaTotal(tableCode6, j1));
 			String codiceImaRichieste = TableCode.getCode(tableCode6, j1);
-			if (codiceImaRichieste == null)
+			if (codiceImaRichieste == null) {
 				break;
-			if (numeroImaRichieste == 0)
+			}
+			if (numeroImaRichieste == 0) {
 				continue;
+			}
 			String codiceBobinaRichiesto = TableCode.getCoil(tableCode6, j1);
 			for (int j2 = 0; j2 < tableSequenze6.length; j2++) {
 				new TableSequence();
 				String codiceImaAcquisite = TableSequence.getCode(tableSequenze6, j2);
 				String codiceBobinaAcquisito = TableSequence.getCoil(tableSequenze6, j2);
-				if (codiceImaAcquisite == null)
+				if (codiceImaAcquisite == null) {
 					break;
+				}
 				if (compareAcqReq(codiceImaAcquisite, codiceImaRichieste, codiceBobinaAcquisito,
 						codiceBobinaRichiesto)) {
 					numeroImaAcquisite++;
@@ -1412,8 +1439,9 @@ public class Sequenze_ implements PlugIn {
 				for (int j3 = 0; j3 < tableSequenze6.length; j3++) {
 					new TableSequence();
 					String codiceImaAcquisite2 = TableSequence.getCode(tableSequenze6, j3);
-					if (codiceImaAcquisite2 == null)
+					if (codiceImaAcquisite2 == null) {
 						break;
+					}
 					int numeroImaAcquisite2 = 0;
 					if (codiceImaAcquisite2.equals(codiceImaRichieste)) {
 						numeroImaAcquisite2++;
@@ -1450,7 +1478,7 @@ public class Sequenze_ implements PlugIn {
 	/***
 	 * Verifica che i codici di bobina e sequenza richiesti ed effettivi siano
 	 * uguali
-	 * 
+	 *
 	 * @param codeImaAcq
 	 * @param codeImaReq
 	 * @param coilImaAcq
@@ -1515,61 +1543,68 @@ public class Sequenze_ implements PlugIn {
 	/**
 	 * Riceve da verifySequenceTable una tabella di codici a cui non corrisponde
 	 * l'esatto numero di immagini previste. Stampa a log i warnings.
-	 * 
+	 *
 	 * @param tableVerify
 	 */
 	public void logVerifySequenceTable(String[][] tableVerify, boolean test) {
 
-		if (tableVerify == null)
+		if (tableVerify == null) {
 			return;
-		if (!test)
+		}
+		if (!test) {
 			IJ.showMessage("Problemi con le immagini, vedere il log");
+		}
 
 		// TableUtils.dumpTable(tableVerify, "tableVerify");
 		String codice2 = "";
 		String coil2 = "";
 		boolean stamp = false;
-		if (!test)
+		if (!test) {
 			IJ.log("---------------------------------------------");
+		}
 		for (int i1 = 0; i1 < tableVerify.length; i1++) {
 			String codice1 = TableVerify.getCode(tableVerify, i1);
 			String coil1 = TableVerify.getCoil(tableVerify, i1);
 			int numero = Integer.parseInt(TableVerify.getImaFound(tableVerify, i1));
 			if ((!codice1.equals(codice2)) || (!coil1.equals(coil2))) {
 				stamp = true;
-				if (!test)
+				if (!test) {
 					IJ.log("per il codice " + codice1 + " e la bobina " + coil1 + " sono necessarie "
 							+ TableVerify.getImaRequired(tableVerify, i1) + " immagini, trovate " + numero);
+				}
 
 				codice2 = codice1;
 				coil2 = coil1;
 				if ((i1 + numero) <= tableVerify.length) {
 					for (int i2 = i1; i2 < i1 + numero; i2++) {
 
-						if (!test)
+						if (!test) {
 							IJ.log(TableVerify.getPath(tableVerify, i2) + " ser:"
 									+ TableVerify.getSerie(tableVerify, i2) + " acq:"
 									+ TableVerify.getAcq(tableVerify, i2) + " ima:"
 									+ TableVerify.getIma(tableVerify, i2) + " coil:"
 									+ TableVerify.getCoil(tableVerify, i2));
+						}
 					}
 				}
 			}
 			if (stamp) {
-				if (!test)
+				if (!test) {
 					IJ.log("---------------------------------------------");
+				}
 				stamp = false;
 			}
 		}
-		if (!test)
+		if (!test) {
 			MyLog.waitHere("Problemi con le immagini, vedere il log");
+		}
 
 	}
 
 	/**
 	 * Effettua il riordino della tabella dati estraendo il risultato in base
 	 * all'ordine di codici.txt
-	 * 
+	 *
 	 * @param tableSequenze tabella da riordinare
 	 * @return tabella riordinata
 	 */
@@ -1592,19 +1627,19 @@ public class Sequenze_ implements PlugIn {
 		// ora effettuo l'estrazione dei codici dalla tabella, secondo
 		// l'ordine di codici.txt
 		int count = -1;
-		for (int i1 = 0; i1 < tableCodici.length; i1++) {
-			for (int i2 = 0; i2 < tableSequenze.length; i2++) {
-				if (tableSequenze[i2][TableSequence.CODE] == null)
+		for (String[] element : tableCodici) {
+			for (String[] element2 : tableSequenze) {
+				if (element2[TableSequence.CODE] == null) {
 					IJ.log("reorderSequenceTable.NULL");
-				else if (compareAcqReq(tableSequenze[i2][TableSequence.CODE], tableCodici[i1][TableCode.CODE],
-						tableSequenze[i2][TableSequence.COIL], tableCodici[i1][TableCode.COIL])
-						|| compareAcqReq2(tableSequenze[i2][TableSequence.CODE], tableCodici[i1][TableCode.CODE],
-								tableSequenze[i2][TableSequence.COIL], tableCodici[i1][TableCode.COIL])) {
+				} else if (compareAcqReq(element2[TableSequence.CODE], element[TableCode.CODE],
+						element2[TableSequence.COIL], element[TableCode.COIL])
+						|| compareAcqReq2(element2[TableSequence.CODE], element[TableCode.CODE],
+								element2[TableSequence.COIL], element[TableCode.COIL])) {
 					count++;
 					ArrayList<String> row = new ArrayList<String>();
 					row.add("" + count);
 					for (int i3 = 1; i3 < tableSequenze[0].length; i3++) {
-						row.add(tableSequenze[i2][i3]);
+						row.add(element2[i3]);
 					}
 					matrixTableReordered.add(row);
 				}
@@ -1617,7 +1652,7 @@ public class Sequenze_ implements PlugIn {
 	/**
 	 * Effettua il riordino della tabella dati estraendo il risultato in base
 	 * all'ordine di codici.txt
-	 * 
+	 *
 	 * @param tableSequenze tabella da riordinare
 	 * @return tabella riordinata
 	 */
@@ -1640,19 +1675,19 @@ public class Sequenze_ implements PlugIn {
 		// ora effettuo l'estrazione dei codici dalla tabella, secondo
 		// l'ordine di codici.txt
 		int count = -1;
-		for (int i1 = 0; i1 < tableCodici.length; i1++) {
-			for (int i2 = 0; i2 < tableSequenze.length; i2++) {
-				if (tableSequenze[i2][TableSequence.CODE] == null)
+		for (String[] element : tableCodici) {
+			for (String[] element2 : tableSequenze) {
+				if (element2[TableSequence.CODE] == null) {
 					IJ.log("reorderSequenceTable.NULL");
-				else if (compareAcqReq(tableSequenze[i2][TableSequence.CODE], tableCodici[i1][TableCode.CODE],
-						tableSequenze[i2][TableSequence.COIL], tableCodici[i1][TableCode.COIL])
-						|| compareAcqReq2(tableSequenze[i2][TableSequence.CODE], tableCodici[i1][TableCode.CODE],
-								tableSequenze[i2][TableSequence.COIL], tableCodici[i1][TableCode.COIL])) {
+				} else if (compareAcqReq(element2[TableSequence.CODE], element[TableCode.CODE],
+						element2[TableSequence.COIL], element[TableCode.COIL])
+						|| compareAcqReq2(element2[TableSequence.CODE], element[TableCode.CODE],
+								element2[TableSequence.COIL], element[TableCode.COIL])) {
 					count++;
 					ArrayList<String> row = new ArrayList<String>();
 					row.add("" + count);
 					for (int i3 = 1; i3 < tableSequenze[0].length; i3++) {
-						row.add(tableSequenze[i2][i3]);
+						row.add(element2[i3]);
 					}
 					matrixTableReordered.add(row);
 				}
@@ -1664,31 +1699,33 @@ public class Sequenze_ implements PlugIn {
 
 	public boolean checkSequenceTable(String source) {
 		URL url1 = this.getClass().getResource("/" + source);
-		if (url1 != null)
+		if (url1 != null) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 
 	/**
 	 * Verifica l'esistenza di un file *.jar
-	 * 
+	 *
 	 * @param source
 	 * @return
 	 */
 	public boolean checkJar(String source) {
 		URL url1 = this.getClass().getResource("/" + source);
-		if (url1 != null)
+		if (url1 != null) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 
 	/***
 	 * Questo era un test per vedere se posso avere duefile di identico nome, uno
 	 * esterno ed uno interno al file jar (in modo da tenere l'interno come default
 	 * ed eventualmente l'esterno come risorsa modificabile dall'utente)
-	 * 
+	 *
 	 * @param source
 	 */
 
@@ -1736,8 +1773,9 @@ public class Sequenze_ implements PlugIn {
 			}
 //			if (codice.equals("T28_4"))
 //				MyLog.waitHere("codice 001=" + codice);
-			if (codice.length() < 4)
+			if (codice.length() < 4) {
 				continue;
+			}
 			int numero = treviglioCountImages(tableSequenze, codice);
 //			IJ.log("in treviglioDevelop codice= " + codice + " numero= " + numero);
 			treviglioTableSequence(tableSequenze, codice, numero);
@@ -1749,15 +1787,15 @@ public class Sequenze_ implements PlugIn {
 
 	/**
 	 * Conta le immagini con un determinato codice presenti nella tableSequenze
-	 * 
+	 *
 	 * @param tableSequenze
 	 * @param codice
 	 * @return
 	 */
 	public int treviglioCountImages(String[][] tableSequenze, String codice) {
 		int count = 0;
-		for (int i2 = 0; i2 < tableSequenze.length; i2++) {
-			if (tableSequenze[i2][TableSequence.CODE].equals(codice)) {
+		for (String[] element : tableSequenze) {
+			if (element[TableSequence.CODE].equals(codice)) {
 				count++;
 			}
 		}
@@ -1767,14 +1805,15 @@ public class Sequenze_ implements PlugIn {
 	/**
 	 * Modifica il campo IMA_PASS della tableSequenze per un determinato codice,
 	 * inserendovi il numero
-	 * 
+	 *
 	 * @param tableSequenze
 	 * @param codice
 	 * @param numero
 	 */
 	public void treviglioTableSequence(String[][] tableSequenze, String codice, int numero) {
-		if (tableSequenze == null)
+		if (tableSequenze == null) {
 			return;
+		}
 
 		// altero i dati in tableSequenceLoaded
 		for (int i2 = 0; i2 < tableSequenze.length; i2++) {
@@ -1789,15 +1828,16 @@ public class Sequenze_ implements PlugIn {
 	 * Modifica i campi IMA_PASS della tableCode per un determinato codice
 	 * inserendovi il numero. La stessa operazione avviene anche per il campo
 	 * IMA_TOTAL a patto che non si superi il maximum
-	 * 
+	 *
 	 * @param tableCode
 	 * @param codice
 	 * @param numero
 	 * @param maximum
 	 */
 	public void treviglioTableCode(String[][] tableCode, String codice, int numero, int maximum) {
-		if (tableCode == null)
+		if (tableCode == null) {
 			return;
+		}
 
 		// altero i dati in tableSequenceLoaded
 		for (int i2 = 0; i2 < tableCode.length; i2++) {

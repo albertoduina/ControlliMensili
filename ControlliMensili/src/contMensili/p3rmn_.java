@@ -1,5 +1,9 @@
 package contMensili;
 
+import java.awt.Color;
+import java.awt.Rectangle;
+import java.util.StringTokenizer;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
@@ -7,7 +11,6 @@ import ij.WindowManager;
 import ij.gui.NewImage;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
-import ij.gui.Roi;
 import ij.io.FileSaver;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
@@ -15,19 +18,14 @@ import ij.plugin.PlugIn;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 import ij.process.ShortProcessor;
-
-import java.awt.Color;
-import java.awt.Rectangle;
-import java.util.StringTokenizer;
-
 import utils.AboutBox;
 import utils.ButtonMessages;
 import utils.ImageUtils;
 import utils.InputOutput;
-import utils.MyLog;
-import utils.MyMsg;
 import utils.MyConst;
 import utils.MyFileLogger;
+import utils.MyLog;
+import utils.MyMsg;
 import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
@@ -56,11 +54,11 @@ import utils.UtilAyv;
 
 /**
  * Analizza UNIFORMITA', SNR, GHOSTS.
- * 
- * 
+ *
+ *
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
- * 
+ *
  */
 
 public class p3rmn_ implements PlugIn, Measurements {
@@ -75,17 +73,20 @@ public class p3rmn_ implements PlugIn, Measurements {
 	private static boolean debug = true;
 	private static boolean mylogger = true;
 
+	@Override
 	public void run(String args) {
 
 		UtilAyv.setMyPrecision();
 
 		// -----------------------------
-		if (IJ.versionLessThan("1.43k"))
+		if (IJ.versionLessThan("1.43k")) {
 			return;
+		}
 		// -----------------------------
 		Count c1 = new Count();
-		if (!c1.jarCount("iw2ayv_"))
+		if (!c1.jarCount("iw2ayv_")) {
 			return;
+		}
 		// -----------------------------
 		String className = this.getClass().getName();
 		String user1 = System.getProperty("user.name");
@@ -100,8 +101,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 		// -----------------------------
 		fileDir = Prefs.get("prefer.string1", "none");
 		// -----------------------------
-		if (mylogger)
+		if (mylogger) {
 			MyFileLogger.logger.info("p3rmn_>>> fileDir= " + fileDir);
+		}
 		// -----------------------------
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
@@ -114,7 +116,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Manual menu, invoked directly from the ImageJ plugins/ContMensili/p3rmn_
-	 * 
+	 *
 	 * @param preset
 	 * @param testDirectory
 	 * @return
@@ -143,11 +145,13 @@ public class p3rmn_ implements PlugIn, Measurements {
 				step = true;
 			case 5:
 				String path1 = UtilAyv.imageSelection("SELEZIONARE PRIMA IMMAGINE...");
-				if (path1 == null)
+				if (path1 == null) {
 					return 0;
+				}
 				String path2 = UtilAyv.imageSelection("SELEZIONARE SECONDA IMMAGINE...");
-				if (path2 == null)
+				if (path2 == null) {
 					return 0;
+				}
 				boolean autoCalled = false;
 				boolean verbose = true;
 				boolean test = false;
@@ -164,7 +168,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Auto menu invoked from Sequenze_
-	 * 
+	 *
 	 * @param autoArgs
 	 * @return
 	 */
@@ -261,13 +265,13 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * preparation routine for mainUnifor
-	 * 
+	 *
 	 * @param path1      first image
 	 * @param path2      second image
 	 * @param autoArgs   arguments passed from Sequenze_ or "0" in manual
 	 * @param autoCalled true if called from Sequenze
 	 * @param step       step-by-step demo and test mode
-	 * 
+	 *
 	 * @param verbose    additional informations on screen
 	 * @param test       test mode
 	 */
@@ -286,7 +290,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * main uniformity calculations
-	 * 
+	 *
 	 * @param path1      first image
 	 * @param path2      second image
 	 * @param roiData    geometric data for the ROI
@@ -342,8 +346,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 				imp1.getWindow().toFront();
 			}
 
-			if (!test)
+			if (!test) {
 				msgElabImaDiff(step);
+			}
 			int resp = 0;
 
 			if (!test) {
@@ -352,15 +357,16 @@ public class p3rmn_ implements PlugIn, Measurements {
 						"CONTINUA", "ANNULLA");
 			}
 
-			if (resp == 1)
+			if (resp == 1) {
 				return null;
+			}
 
 			// leggo dove hanno posizionato la ROI fantoccio sull'immagine attiva, questi
 			// sono i dati definitivi
 			ImagePlus impActive1 = WindowManager.getCurrentImage();
 			Rectangle boundingRectangle = impActive1.getRoi().getBounds();
 			writeStoredRoiData(boundingRectangle);
-			int diamRoi1x = (int) (boundingRectangle.width);
+			int diamRoi1x = (boundingRectangle.width);
 			int xRoi1x = boundingRectangle.x + ((boundingRectangle.width - diamRoi1x) / 2);
 			int yRoi1x = boundingRectangle.y + ((boundingRectangle.height - diamRoi1x) / 2);
 			// disegno la Roi definitiva fantoccio sui 3 overlay delle immagini
@@ -381,14 +387,15 @@ public class p3rmn_ implements PlugIn, Measurements {
 			// IJ.log("roi 80% prima del riposizionamento: xRoi2= "+xRoi2+"
 			// yRoi2= "+yRoi2+" diamRoi2= "+diamRoi2);
 
-			if (!test)
+			if (!test) {
 				msgRoi85percPositioning();
+			}
 
 			// leggo dove hanno posizionato la ROI 80% sull'immagine attiva, questi
 			// sono i dati definitivi
 			impActive1 = WindowManager.getCurrentImage();
 			Rectangle boundingRectangle2 = impActive1.getProcessor().getRoi();
-			diamRoi2 = (int) boundingRectangle2.width;
+			diamRoi2 = boundingRectangle2.width;
 			xRoi2 = boundingRectangle2.x + ((boundingRectangle2.width - diamRoi2) / 2);
 			yRoi2 = boundingRectangle2.y + ((boundingRectangle2.height - diamRoi2) / 2);
 			// disegno la Roi definitiva 80% sui 3 overlay delle immagini
@@ -403,8 +410,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 			ImageStatistics stat1 = imp1.getStatistics();
 			double mean1 = stat1.mean;
-			if (!test)
+			if (!test) {
 				msg85percData(step, mean1);
+			}
 
 			double uiPerc1 = uiPercCalculation(stat1.max, stat1.min);
 			double slicePosition = ReadDicom
@@ -418,17 +426,20 @@ public class p3rmn_ implements PlugIn, Measurements {
 //			impDiff.setRoi(new OvalRoi(xRoi2, yRoi2, diamRoi2, diamRoi2));
 
 			ImageStatistics statImaDiff = impDiff.getStatistics();
-			if (verbose)
+			if (verbose) {
 				impDiff.updateAndDraw();
+			}
 
 			double meanImaDiff = statImaDiff.mean;
 			double stdDevImaDiff = statImaDiff.stdDev;
-			if (!test)
+			if (!test) {
 				msgImaDiffData(step, meanImaDiff);
+			}
 			double noiseImaDiff = stdDevImaDiff / Math.sqrt(2);
 			double snRatio = Math.sqrt(2) * mean1 / stdDevImaDiff;
-			if (!test)
+			if (!test) {
 				msgSnRatio(step, uiPerc1, snRatio);
+			}
 
 			int xRoi5 = 1;
 			int yRoi5 = height / 2 - MyConst.P3_DIAM_ROI_GHOSTS / 2;
@@ -466,8 +477,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 			int xRoi9 = height - MyConst.P3_DIAM_ROI_BACKGROUND - 1;
 			int yRoi9 = width - MyConst.P3_DIAM_ROI_BACKGROUND - 1;
-			if (test)
+			if (test) {
 				xRoi9 = xRoi9 - 40;
+			}
 
 			// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -591,16 +603,18 @@ public class p3rmn_ implements PlugIn, Measurements {
 				rt.addValue(s2, classiSimulata[i1][1]);
 			}
 
-			if (verbose && !test)
+			if (verbose && !test) {
 				rt.show("Results");
+			}
 
 			if (autoCalled && !test) {
 				accetta = MyMsg.accettaMenu();
 			} else {
 				if (!test) {
 					accetta = MyMsg.msgStandalone();
-				} else
+				} else {
 					accetta = test;
+				}
 			}
 		} while (!accetta);
 
@@ -609,7 +623,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Read preferences from IJ_Prefs.txt
-	 * 
+	 *
 	 * @param width  image width
 	 * @param height image height
 	 * @param limit  border limit for object placement on image
@@ -620,19 +634,22 @@ public class p3rmn_ implements PlugIn, Measurements {
 		int diam = ReadDicom.readInt(Prefs.get("prefer.p3rmnDiamFantoc", Integer.toString(width * 2 / 3)));
 		int xRoi1 = ReadDicom.readInt(Prefs.get("prefer.p3rmnXRoi1", Integer.toString(height / 2 - diam / 2)));
 		int yRoi1 = ReadDicom.readInt(Prefs.get("prefer.p3rmnYRoi1", Integer.toString(width / 2 - diam / 2)));
-		if (diam < limit)
+		if (diam < limit) {
 			diam = height * 2 / 3;
-		if (xRoi1 < limit)
+		}
+		if (xRoi1 < limit) {
 			xRoi1 = height / 2 - diam / 2;
-		if (yRoi1 < limit)
+		}
+		if (yRoi1 < limit) {
 			yRoi1 = width / 2 - diam / 2;
+		}
 		int[] defaults = { xRoi1, yRoi1, diam };
 		return defaults;
 	}
 
 	/**
 	 * Write preferences into IJ_Prefs.txt
-	 * 
+	 *
 	 * @param boundingRectangle
 	 */
 	public static void writeStoredRoiData(Rectangle boundingRectangle) {
@@ -644,7 +661,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Calculation of Integral Uniformity Percentual
-	 * 
+	 *
 	 * @param max max signal
 	 * @param min min signal
 	 * @return
@@ -658,7 +675,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Ghost percentual calculation
-	 * 
+	 *
 	 * @param mediaGhost1 mean signal of ghost roi
 	 * @param meanBkg     mean signal of background roi
 	 * @param meanImage   mean signal on image roi
@@ -671,7 +688,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Test images extraction on a temporary directory, from test2.jar
-	 * 
+	 *
 	 * @return path of temporarary directory
 	 */
 	private String findTestImages() {
@@ -686,7 +703,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Simulated 5 classes image
-	 * 
+	 *
 	 * @param xRoi    x roi coordinate
 	 * @param yRoi    y roi coordinate
 	 * @param diamRoi roi diameter
@@ -725,14 +742,14 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 		String simName = filename + patName + codice + "sim.zip";
 
-		if (!test)
-
+		if (!test) {
 			new FileSaver(impSimulata).saveAsZip(simName);
+		}
 		return classiSimulata;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param imp1
 	 * @return
 	 */
@@ -767,7 +784,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param sqX
 	 * @param sqY
 	 * @param sqR
@@ -804,16 +821,17 @@ public class p3rmn_ implements PlugIn, Measurements {
 			for (int x = 0; x < width; x++) {
 				posizioneArrayImmagine = y * width + x;
 				pixSorgente = pixels1[posizioneArrayImmagine];
-				if (pixSorgente > plus20)
+				if (pixSorgente > plus20) {
 					pixSimulata = MyConst.LEVEL_5;
-				else if (pixSorgente > plus10)
+				} else if (pixSorgente > plus10) {
 					pixSimulata = MyConst.LEVEL_4;
-				else if (pixSorgente > minus10)
+				} else if (pixSorgente > minus10) {
 					pixSimulata = MyConst.LEVEL_3;
-				else if (pixSorgente > minus20)
+				} else if (pixSorgente > minus20) {
 					pixSimulata = MyConst.LEVEL_2;
-				else
+				} else {
 					pixSimulata = MyConst.LEVEL_1;
+				}
 				pixelsSimulata[posizioneArrayImmagine] = pixSimulata;
 			}
 		}
@@ -823,7 +841,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Ghost roi creation and calculation
-	 * 
+	 *
 	 * @param xRoi  x roi coordinate
 	 * @param yRoi  y roi coordinate
 	 * @param imp   image
@@ -839,17 +857,21 @@ public class p3rmn_ implements PlugIn, Measurements {
 			imp.setRoi(new OvalRoi(xRoi, yRoi, MyConst.P3_DIAM_ROI_GHOSTS, MyConst.P3_DIAM_ROI_GHOSTS));
 			imp.getRoi().setStrokeWidth(1.1);
 
-			if (imp.isVisible())
+			if (imp.isVisible()) {
 				imp.getWindow().toFront();
-			if (!test)
+			}
+			if (!test) {
 				msgGhostRoi(count);
+			}
 			stat = imp.getStatistics();
-			if (stat.mean == 0)
+			if (stat.mean == 0) {
 				redo = true;
-			else
+			} else {
 				redo = false;
-			if (redo)
+			}
+			if (redo) {
 				msgMoveGhostRoi();
+			}
 			msgSignalGhostRoi(step, stat.mean);
 		} while (redo);
 		return stat;
@@ -857,7 +879,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Siemens test image expected results
-	 * 
+	 *
 	 * @return
 	 */
 	double[] referenceSiemens() {
@@ -881,7 +903,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Ge test image expected results
-	 * 
+	 *
 	 * @return
 	 */
 	double[] referenceGe() {
@@ -926,10 +948,11 @@ public class p3rmn_ implements PlugIn, Measurements {
 				double[] vetResults = UtilAyv.vectorizeResults(rt1);
 
 				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P3_vetName);
-				if (ok)
+				if (ok) {
 					MyMsg.msgTestPassed();
-				else
+				} else {
 					MyMsg.msgTestFault();
+				}
 				UtilAyv.afterWork();
 				break;
 			}
@@ -948,10 +971,11 @@ public class p3rmn_ implements PlugIn, Measurements {
 				ResultsTable rt1 = mainUnifor(path1, path2, roiData, autoArgs, autoCalled, step, verbose, test);
 				double[] vetResults = UtilAyv.vectorizeResults(rt1);
 				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P3_vetName);
-				if (ok)
+				if (ok) {
 					MyMsg.msgTestPassed();
-				else
+				} else {
 					MyMsg.msgTestFault();
+				}
 				UtilAyv.afterWork();
 				break;
 			}
@@ -994,12 +1018,14 @@ public class p3rmn_ implements PlugIn, Measurements {
 	public static void mySetRoi(ImagePlus imp1, int xroi, int yroi, int droi, Overlay over, Color color) {
 
 		imp1.setRoi(new OvalRoi(xroi, yroi, droi, droi));
-		if (imp1.isVisible())
+		if (imp1.isVisible()) {
 			imp1.getWindow().toFront();
+		}
 		imp1.getRoi().setStrokeWidth(1.1);
 
-		if (color != null)
+		if (color != null) {
 			imp1.getRoi().setStrokeColor(color);
+		}
 		if (over != null) {
 			over.addElement(imp1.getRoi());
 		}
@@ -1015,31 +1041,36 @@ public class p3rmn_ implements PlugIn, Measurements {
 	}
 
 	private static void msg85percData(boolean step, double mean1) {
-		if (step)
+		if (step) {
 			ButtonMessages.ModelessMsg("media roi 85%=" + mean1, "CONTINUA");
+		}
 	}
 
 	private static void msgElabImaDiff(boolean step) {
-		if (step)
+		if (step) {
 			ButtonMessages.ModelessMsg(
 					"Elaborata immagine differenza                                                                                        <11>",
 					"CONTINUA");
+		}
 	}
 
 	private static void msgImaDiffData(boolean step, double meanImaDiff) {
-		if (step)
+		if (step) {
 			ButtonMessages.ModelessMsg(" mediaImaDiff=" + meanImaDiff + "  ", "CONTINUA", "CHIUDI");
+		}
 	}
 
 	private static void msgImaSimulata(boolean step) {
-		if (step)
+		if (step) {
 			ButtonMessages.ModelessMsg("Immagine Simulata", "CONTINUA");
+		}
 	}
 
 	private static void msgSnRatio(boolean step, double uiPerc1, double snRatio) {
-		if (step)
+		if (step) {
 			ButtonMessages.ModelessMsg("Uniformita' integrale=" + uiPerc1 + "  Rapporto segnale/rumore sn2=" + snRatio,
 					"CONTINUA");
+		}
 	}
 
 	private static void msgGhostRoi(int count) {
@@ -1047,8 +1078,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 	}
 
 	public static void msgSignalGhostRoi(boolean step, double mean) {
-		if (step)
+		if (step) {
 			ButtonMessages.ModelessMsg("Segnale medio =" + mean, "CONTINUA");
+		}
 	}
 
 	private static void msgMoveGhostRoi() {

@@ -54,10 +54,10 @@ import utils.UtilAyv;
 
 /**
  * Analizza UNIFORMITA' QUADRATA, SNR, GHOSTS.
- * 
- * 
+ *
+ *
  * @author Alberto Duina
- * 
+ *
  */
 
 public class p13rmn_ implements PlugIn, Measurements {
@@ -72,12 +72,14 @@ public class p13rmn_ implements PlugIn, Measurements {
 	private static boolean debug = true;
 	private static boolean mylogger = true;
 
+	@Override
 	public void run(String args) {
 
 		UtilAyv.setMyPrecision();
 
-		if (IJ.versionLessThan("1.43k"))
+		if (IJ.versionLessThan("1.43k")) {
 			return;
+		}
 
 		// ---------------------------------------------------------------------------
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
@@ -105,8 +107,9 @@ public class p13rmn_ implements PlugIn, Measurements {
 //		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 
 		fileDir = Prefs.get("prefer.string1", "none");
-		if (mylogger)
+		if (mylogger) {
 			MyFileLogger.logger.info("p13rmn_>>> fileDir= " + fileDir);
+		}
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
 			manualMenu(0, "");
@@ -118,7 +121,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Manual menu, invoked directly from the ImageJ plugins/ContMensili/p3rmn_
-	 * 
+	 *
 	 * @param preset
 	 * @param testDirectory
 	 * @return
@@ -147,11 +150,13 @@ public class p13rmn_ implements PlugIn, Measurements {
 				step = true;
 			case 5:
 				String path1 = UtilAyv.imageSelection("SELEZIONARE PRIMA IMMAGINE...");
-				if (path1 == null)
+				if (path1 == null) {
 					return 0;
+				}
 				String path2 = UtilAyv.imageSelection("SELEZIONARE SECONDA IMMAGINE...");
-				if (path2 == null)
+				if (path2 == null) {
 					return 0;
+				}
 				boolean autoCalled = false;
 				boolean verbose = true;
 				boolean test = false;
@@ -168,7 +173,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Auto menu invoked from Sequenze_
-	 * 
+	 *
 	 * @param autoArgs
 	 * @return
 	 */
@@ -256,7 +261,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * preparation routine for mainUnifor
-	 * 
+	 *
 	 * @param path1
 	 *            first image
 	 * @param path2
@@ -267,7 +272,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 	 *            true if called from Sequenze
 	 * @param step
 	 *            step-by-step demo and test mode
-	 * 
+	 *
 	 * @param verbose
 	 *            additional informations on screen
 	 * @param test
@@ -288,7 +293,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * main uniformity calculations
-	 * 
+	 *
 	 * @param path1
 	 *            first image
 	 * @param path2
@@ -338,48 +343,56 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 			imp1.setRoi(xRoi1, yRoi1, latoRoi1, latoRoi1);
 
-			if (verbose)
+			if (verbose) {
 				imp1.getWindow().toFront();
+			}
 
-			if (!test)
+			if (!test) {
 				msgMainRoiPositioning();
+			}
 			Rectangle boundingRectangle = imp1.getProcessor().getRoi();
 			writeStoredRoiData(boundingRectangle);
 
-			int latoRoi2 = (int) (boundingRectangle.width);
+			int latoRoi2 = (boundingRectangle.width);
 			int xRoi2 = boundingRectangle.x + ((boundingRectangle.width - latoRoi2) / 2);
 			int yRoi2 = boundingRectangle.y + ((boundingRectangle.height - latoRoi2) / 2);
 
 			ImageStatistics stat1 = imp1.getStatistics();
 			double mean1 = stat1.mean;
-			if (!test)
+			if (!test) {
 				msgRoiData(step, mean1);
+			}
 
 			double uiPerc1 = uiPercCalculation(stat1.max, stat1.min);
 
 			int[] pixels1 = pixVectorize(imp1);
-			
+
 			double naad1 = naadCalculation(pixels1);
 
 			ImagePlus impDiff = UtilAyv.genImaDifference(imp1, imp2);
-			if (verbose)
+			if (verbose) {
 				UtilAyv.showImageMaximized(impDiff);
-			if (!test)
+			}
+			if (!test) {
 				msgElabImaDiff(step);
+			}
 			impDiff.setRoi(xRoi2, yRoi2, latoRoi2, latoRoi2);
 
 			ImageStatistics statImaDiff = impDiff.getStatistics();
-			if (verbose)
+			if (verbose) {
 				impDiff.updateAndDraw();
+			}
 
 			double meanImaDiff = statImaDiff.mean;
 			double stdDevImaDiff = statImaDiff.stdDev;
-			if (!test)
+			if (!test) {
 				msgImaDiffData(step, meanImaDiff);
+			}
 			double noiseImaDiff = stdDevImaDiff / Math.sqrt(2);
 			double snRatio = Math.sqrt(2) * mean1 / stdDevImaDiff;
-			if (!test)
+			if (!test) {
 				msgSnRatio(step, uiPerc1, snRatio);
+			}
 
 			// TODO da provare
 			IJ.setMinAndMax(imp1, 10, 30);
@@ -387,8 +400,9 @@ public class p13rmn_ implements PlugIn, Measurements {
 			//
 			int xRoi9 = height - MyConst.P13_LATO_ROI_BACKGROUND - 1;
 			int yRoi9 = width - MyConst.P13_LATO_ROI_BACKGROUND - 1;
-			if (test)
+			if (test) {
 				xRoi9 = xRoi9 - 40;
+			}
 
 			ImageStatistics statBkg = ImageUtils.backCalc(xRoi9, yRoi9, MyConst.P13_LATO_ROI_BACKGROUND, imp1, step,
 					false, test);
@@ -419,7 +433,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 			rt.showRowNumbers(true);
-			
+
 			rt.addValue(t1, "Segnale");
 			rt.addValue(s2, mean1);
 			rt.addValue(s3, stat1.roiX);
@@ -511,16 +525,18 @@ public class p13rmn_ implements PlugIn, Measurements {
 				rt.addValue(s2, classiSimulata[i1][1]);
 			}
 
-			if (verbose && !test)
+			if (verbose && !test) {
 				rt.show("Results");
+			}
 
 			if (autoCalled && !test) {
 				accetta = MyMsg.accettaMenu();
 			} else {
 				if (!test) {
 					accetta = MyMsg.msgStandalone();
-				} else
+				} else {
 					accetta = test;
+				}
 			}
 		} while (!accetta);
 
@@ -529,7 +545,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Read preferences from IJ_Prefs.txt
-	 * 
+	 *
 	 * @param width
 	 *            image width
 	 * @param height
@@ -549,7 +565,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Write preferences into IJ_Prefs.txt
-	 * 
+	 *
 	 * @param boundingRectangle
 	 */
 	public static void writeStoredRoiData(Rectangle boundingRectangle) {
@@ -561,7 +577,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Calculation of Integral Uniformity Percentual
-	 * 
+	 *
 	 * @param max
 	 *            max signal
 	 * @param min
@@ -577,7 +593,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Ghost percentual calculation
-	 * 
+	 *
 	 * @param mediaGhost1
 	 *            mean signal of ghost roi
 	 * @param meanBkg
@@ -593,7 +609,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Test images extraction on a temporary directory, from test2.jar
-	 * 
+	 *
 	 * @return path of temporarary directory
 	 */
 	private String findTestImages() {
@@ -608,7 +624,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Simulated 5 classes image
-	 * 
+	 *
 	 * @param xRoi
 	 *            x roi coordinate
 	 * @param yRoi
@@ -645,14 +661,14 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 		String simName = filename + patName + codice + "sim.zip";
 
-		if (!test)
-
+		if (!test) {
 			new FileSaver(impSimulata).saveAsZip(simName);
+		}
 		return classiSimulata;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param imp1
 	 * @return
 	 */
@@ -687,7 +703,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param sqX
 	 * @param sqY
 	 * @param sqR
@@ -724,16 +740,17 @@ public class p13rmn_ implements PlugIn, Measurements {
 			for (int x = 0; x < width; x++) {
 				posizioneArrayImmagine = y * width + x;
 				pixSorgente = pixels1[posizioneArrayImmagine];
-				if (pixSorgente > plus20)
+				if (pixSorgente > plus20) {
 					pixSimulata = MyConst.LEVEL_5;
-				else if (pixSorgente > plus10)
+				} else if (pixSorgente > plus10) {
 					pixSimulata = MyConst.LEVEL_4;
-				else if (pixSorgente > minus10)
+				} else if (pixSorgente > minus10) {
 					pixSimulata = MyConst.LEVEL_3;
-				else if (pixSorgente > minus20)
+				} else if (pixSorgente > minus20) {
 					pixSimulata = MyConst.LEVEL_2;
-				else
+				} else {
 					pixSimulata = MyConst.LEVEL_1;
+				}
 				pixelsSimulata[posizioneArrayImmagine] = pixSimulata;
 			}
 		}
@@ -743,7 +760,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Siemens test image expected results
-	 * 
+	 *
 	 * @return
 	 */
 	double[] referenceSiemens() {
@@ -767,7 +784,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Ge test image expected results
-	 * 
+	 *
 	 * @return
 	 */
 	double[] referenceGe() {
@@ -812,10 +829,11 @@ public class p13rmn_ implements PlugIn, Measurements {
 				double[] vetResults = UtilAyv.vectorizeResults(rt1);
 
 				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P3_vetName);
-				if (ok)
+				if (ok) {
 					MyMsg.msgTestPassed();
-				else
+				} else {
 					MyMsg.msgTestFault();
+				}
 				UtilAyv.afterWork();
 				break;
 			}
@@ -834,10 +852,11 @@ public class p13rmn_ implements PlugIn, Measurements {
 				ResultsTable rt1 = mainUnifor(path1, path2, roiData, autoArgs, autoCalled, step, verbose, test);
 				double[] vetResults = UtilAyv.vectorizeResults(rt1);
 				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P3_vetName);
-				if (ok)
+				if (ok) {
 					MyMsg.msgTestPassed();
-				else
+				} else {
 					MyMsg.msgTestFault();
+				}
 				UtilAyv.afterWork();
 				break;
 			}
@@ -882,37 +901,42 @@ public class p13rmn_ implements PlugIn, Measurements {
 	}
 
 	private static void msgRoiData(boolean step, double mean1) {
-		if (step)
+		if (step) {
 			ButtonMessages.ModelessMsg("media roi=" + mean1, "CONTINUA");
+		}
 	}
 
 	private static void msgElabImaDiff(boolean step) {
-		if (step)
+		if (step) {
 			ButtonMessages.ModelessMsg(
 					"Elaborata immagine differenza                                                                                        <11>",
 					"CONTINUA");
+		}
 	}
 
 	private static void msgImaDiffData(boolean step, double meanImaDiff) {
-		if (step)
+		if (step) {
 			ButtonMessages.ModelessMsg(" mediaImaDiff=" + meanImaDiff + "  ", "CONTINUA", "CHIUDI");
+		}
 	}
 
 	private static void msgImaSimulata(boolean step) {
-		if (step)
+		if (step) {
 			ButtonMessages.ModelessMsg("Immagine Simulata", "CONTINUA");
+		}
 	}
 
 	private static void msgSnRatio(boolean step, double uiPerc1, double snRatio) {
-		if (step)
+		if (step) {
 			ButtonMessages.ModelessMsg("Uniformita' integrale=" + uiPerc1 + "  Rapporto segnale/rumore sn2=" + snRatio,
 					"CONTINUA");
+		}
 	}
 
 	/**
 	 * 13/11/2016 Nuovo algoritmo per uniformita' per immagini con grappa (prosit!) datomi da
 	 * Lorella CHIAMASI NAAD
-	 * 
+	 *
 	 * @param pixListSignal
 	 * @return
 	 */
@@ -923,8 +947,8 @@ public class p13rmn_ implements PlugIn, Measurements {
 		// MyLog.waitHere("mean1= "+mean1);
 		double val = 0;
 		double sum1 = 0;
-		for (int i1 = 0; i1 < pixListSignal.length; i1++) {
-			val = Math.abs(pixListSignal[i1] - mean1);
+		for (int element : pixListSignal) {
+			val = Math.abs(element - mean1);
 			sum1 = sum1 + val;
 		}
 		// MyLog.waitHere("sum1= "+sum1);
@@ -960,15 +984,17 @@ public class p13rmn_ implements PlugIn, Measurements {
 //		}
 //		return pixels;
 //	}
-	
+
 	public static int[] pixVectorize(ImagePlus imp1) {
 
-		
+
 		ArrayList<Integer> pixList1 = new ArrayList<Integer>();
 		Calibration cal1 = imp1.getCalibration();
 
 		Roi roi1 = imp1.getRoi();
-		if (roi1!=null && !roi1.isArea()) roi1 = null;
+		if (roi1!=null && !roi1.isArea()) {
+			roi1 = null;
+		}
 		ImageProcessor ip1 = imp1.getProcessor();
 		ImageProcessor mask1 = roi1!=null?roi1.getMask():null;
 		Rectangle r1 = roi1!=null?roi1.getBounds():new Rectangle(0,0,ip1.getWidth(),ip1.getHeight());

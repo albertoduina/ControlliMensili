@@ -1,10 +1,15 @@
 package contMensili;
 
-import ij.plugin.PlugIn;
-import ij.*;
-import ij.process.*;
-import ij.gui.GenericDialog;
 import java.util.Arrays;
+
+import ij.IJ;
+import ij.ImagePlus;
+import ij.Prefs;
+import ij.Undo;
+import ij.gui.GenericDialog;
+import ij.plugin.PlugIn;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
 
 /**
  * <p>
@@ -12,27 +17,27 @@ import java.util.Arrays;
  * detection algorithm in Java, available at:
  * </p>
  * http://www.tomgibara.com/computer-vision/canny-edge-detector
- * 
+ *
  * <p>
  * <em>This software has been released into the public domain.
  * <strong>Please read the notes in this source file for additional information.
  * </strong></em>
  * </p>
- * 
+ *
  * <p>
  * This class provides a configurable implementation of the Canny edge detection
  * algorithm. This classic algorithm has a number of shortcomings, but remains
  * an effective tool in many scenarios. <em>This class is designed
  * for single threaded use only.</em>
  * </p>
- * 
+ *
  * <p>
  * For a more complete understanding of this edge detector's parameters consult
  * an explanation of the algorithm.
  * </p>
- * 
+ *
  * @author Tom Gibara
- * 
+ *
  */
 
 public class MyCannyEdgeDetector implements PlugIn {
@@ -68,21 +73,24 @@ public class MyCannyEdgeDetector implements PlugIn {
 	private float[] xGradient;
 	private float[] yGradient;
 
+	@Override
 	public void run(String arg) {
 		sourceImage = IJ.getImage();
 		if (sourceImage.getStackSize() > 1) {
 			IJ.error("This plugin does not work with stacks");
 			return;
 		}
-		if (!showDialog())
+		if (!showDialog()) {
 			return;
+		}
 		Undo.setup(Undo.TYPE_CONVERSION, sourceImage);
 		process();
 		ImageProcessor ip = new FloatProcessor(sourceImage.getWidth(),
 				sourceImage.getHeight(), data);
 		ip = ip.convertToByte(false);
-		if (!Prefs.blackBackground)
+		if (!Prefs.blackBackground) {
 			ip.invertLut();
+		}
 		sourceImage.setProcessor(ip);
 	}
 
@@ -93,8 +101,8 @@ public class MyCannyEdgeDetector implements PlugIn {
 //			return null;
 //		}
 //
-//		
-//		
+//
+//
 //		return null;
 //	}
 
@@ -120,17 +128,21 @@ public class MyCannyEdgeDetector implements PlugIn {
 		// gd.addNumericField("Gaussian Kernel width:", gaussianKernelWidth, 0);
 		gd.addCheckbox("Normalize contrast ", contrastNormalized);
 		gd.showDialog();
-		if (gd.wasCanceled())
+		if (gd.wasCanceled()) {
 			return false;
+		}
 		gaussianKernelRadius = (float) gd.getNextNumber();
-		if (gaussianKernelRadius < 0.1f)
+		if (gaussianKernelRadius < 0.1f) {
 			gaussianKernelRadius = 0.1f;
+		}
 		lowThreshold = (float) gd.getNextNumber();
-		if (lowThreshold < 0.1f)
+		if (lowThreshold < 0.1f) {
 			lowThreshold = 0.1f;
+		}
 		highThreshold = (float) gd.getNextNumber();
-		if (highThreshold < 0.1f)
+		if (highThreshold < 0.1f) {
 			highThreshold = 0.1f;
+		}
 		// gaussianKernelWidth = (int)gd.getNextNumber();
 		contrastNormalized = gd.getNextBoolean();
 		if (!IJ.isMacro()) {
@@ -146,13 +158,14 @@ public class MyCannyEdgeDetector implements PlugIn {
 	 * must be determined experimentally for each application. It is nonsensical
 	 * (though not prohibited) for this value to exceed the high threshold
 	 * value.
-	 * 
+	 *
 	 * @param threshold
 	 *            a low hysteresis threshold
 	 */
 	public void setLowThreshold(float threshold) {
-		if (threshold < 0)
+		if (threshold < 0) {
 			throw new IllegalArgumentException();
+		}
 		lowThreshold = threshold;
 	}
 
@@ -161,13 +174,14 @@ public class MyCannyEdgeDetector implements PlugIn {
 	 * parameter must be determined experimentally for each application. It is
 	 * nonsensical (though not prohibited) for this value to be less than the
 	 * low threshold value.
-	 * 
+	 *
 	 * @param threshold
 	 *            a high hysteresis threshold
 	 */
 	public void setHighThreshold(float threshold) {
-		if (threshold < 0)
+		if (threshold < 0) {
 			throw new IllegalArgumentException();
+		}
 		highThreshold = threshold;
 	}
 
@@ -175,32 +189,34 @@ public class MyCannyEdgeDetector implements PlugIn {
 	 * The number of pixels across which the Gaussian kernel is applied. This
 	 * implementation will reduce the radius if the contribution of pixel values
 	 * is deemed negligable, so this is actually a maximum radius.
-	 * 
+	 *
 	 * @param gaussianKernelWidth
 	 *            a radius for the convolution operation in pixels, at least 2.
 	 */
 	public void setGaussianKernelWidth(int gaussianKernelWidth) {
-		if (gaussianKernelWidth < 2)
+		if (gaussianKernelWidth < 2) {
 			throw new IllegalArgumentException();
+		}
 		this.gaussianKernelWidth = gaussianKernelWidth;
 	}
 
 	/**
 	 * Sets the radius of the Gaussian convolution kernel used to smooth the
 	 * source image prior to gradient calculation.
-	 * 
+	 *
 	 * @param gaussianKernelRadius
 	 *            a Gaussian kernel radius in pixels, must exceed 0.1f.
 	 */
 	public void setGaussianKernelRadius(float gaussianKernelRadius) {
-		if (gaussianKernelRadius < 0.1f)
+		if (gaussianKernelRadius < 0.1f) {
 			throw new IllegalArgumentException();
+		}
 		this.gaussianKernelRadius = gaussianKernelRadius;
 	}
 
 	/**
 	 * Sets whether the contrast is normalized
-	 * 
+	 *
 	 * @param contrastNormalized
 	 *            true if the contrast should be normalized, false otherwise
 	 */
@@ -214,8 +230,9 @@ public class MyCannyEdgeDetector implements PlugIn {
 		picsize = width * height;
 		initArrays();
 		readLuminance();
-		if (contrastNormalized)
+		if (contrastNormalized) {
 			normalizeContrast();
+		}
 		computeGradients(gaussianKernelRadius, gaussianKernelWidth);
 		int low = Math.round(lowThreshold * MAGNITUDE_SCALE);
 		int high = Math.round(highThreshold * MAGNITUDE_SCALE);
@@ -257,8 +274,9 @@ public class MyCannyEdgeDetector implements PlugIn {
 		int kwidth;
 		for (kwidth = 0; kwidth < kernelWidth; kwidth++) {
 			float g1 = gaussian(kwidth, kernelRadius);
-			if (g1 <= GAUSSIAN_CUT_OFF && kwidth >= 2)
+			if (g1 <= GAUSSIAN_CUT_OFF && kwidth >= 2) {
 				break;
+			}
 			float g2 = gaussian(kwidth - 0.5f, kernelRadius);
 			float g3 = gaussian(kwidth + 0.5f, kernelRadius);
 			kernel[kwidth] = (g1 + g2 + g3) / 3f
@@ -298,9 +316,10 @@ public class MyCannyEdgeDetector implements PlugIn {
 			for (int y = initY; y < maxY; y += width) {
 				float sum = 0f;
 				int index = x + y;
-				for (int i = 1; i < kwidth; i++)
+				for (int i = 1; i < kwidth; i++) {
 					sum += diffKernel[i]
 							* (yConv[index - i] - yConv[index + i]);
+				}
 
 				xGradient[index] = sum;
 			}
@@ -360,7 +379,7 @@ public class MyCannyEdgeDetector implements PlugIn {
 				 * need to compare the gradient magnitude to that in the
 				 * direction of the gradient; only if the value is a local
 				 * maximum do we consider the point as an edge candidate.
-				 * 
+				 *
 				 * We need to break the comparison into a number of different
 				 * cases depending on the gradient direction so that the
 				 * appropriate values can be used. To avoid computing the
@@ -373,14 +392,14 @@ public class MyCannyEdgeDetector implements PlugIn {
 				 * geometry required to accurately interpolate the magnitude of
 				 * gradient function at those points has an identical geometry
 				 * (upto right-angled-rotation/reflection).
-				 * 
+				 *
 				 * When comparing the central gradient to the two interpolated
 				 * values, we avoid performing any divisions by multiplying both
 				 * sides of each inequality by the greater of the two partial
 				 * derivatives. The common comparand is stored in a temporary
 				 * variable (3) and reused in the mirror case (4).
 				 */
-				if (xGrad * yGrad <= (float) 0 /* (1) */
+				if (xGrad * yGrad <= 0 /* (1) */
 				? Math.abs(xGrad) >= Math.abs(yGrad) /* (2) */
 				? (tmp = Math.abs(xGrad * gradMag)) >= Math.abs(yGrad * neMag
 						- (xGrad + yGrad) * eMag) /* (3) */
@@ -477,8 +496,9 @@ public class MyCannyEdgeDetector implements PlugIn {
 	private void readLuminance() {
 		ImageProcessor ip = sourceImage.getProcessor();
 		ip = ip.convertToByte(true);
-		for (int i = 0; i < ip.getPixelCount(); i++)
+		for (int i = 0; i < ip.getPixelCount(); i++) {
 			data[i] = ip.get(i);
+		}
 	}
 
 	private void normalizeContrast() {

@@ -5,18 +5,12 @@ import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.ImageWindow;
 import ij.gui.Line;
-import ij.gui.PointRoi;
 import ij.gui.Roi;
 import ij.gui.WaitForUserDialog;
-import ij.io.Opener;
 import ij.measure.Measurements;
 import ij.plugin.PlugIn;
-
-import java.awt.Color;
-
 import utils.InputOutput;
 import utils.MyConst;
-import utils.MyLine;
 import utils.MyLog;
 import utils.ReadDicom;
 import utils.UtilAyv;
@@ -24,12 +18,13 @@ import utils.UtilAyv;
 /**
  * Questo plugin serve a testare eventuali problemi, prima di segnalarli a Wayne
  * Rasband od altri.
- * 
+ *
  * @author alberto
- * 
+ *
  */
 public class demo_ implements PlugIn, Measurements {
 
+	@Override
 	public void run(String args) {
 
 		String home1 = findTestImages();
@@ -54,12 +49,12 @@ public class demo_ implements PlugIn, Measurements {
 		int yStartReflineScreen = (int) (yStartRefline / dimPix);
 		int xEndReflineScreen = (int) (xEndRefline / dimPix);
 		int yEndReflineScreen = (int) (yEndRefline / dimPix);
-		
+
 		xStartReflineScreen= limiter(imp1.getWidth(),xStartReflineScreen );
 		xEndReflineScreen= limiter(imp1.getWidth(),xEndReflineScreen );
 		yStartReflineScreen= limiter(imp1.getHeight(),yStartReflineScreen );
 		yEndReflineScreen= limiter(imp1.getHeight(),yEndReflineScreen );
-		
+
 
 
 		imp1.setRoi(new Line(xStartReflineScreen, yStartReflineScreen, xEndReflineScreen, yEndReflineScreen));
@@ -81,17 +76,19 @@ public class demo_ implements PlugIn, Measurements {
 	}
 
 	public static int limiter(int limit, int val) {
-		
-		if (val<1) 
-		val=1;
-		if (val>limit-1)
+
+		if (val<1) {
+			val=1;
+		}
+		if (val>limit-1) {
 			val=limit-1;
+		}
 		return val;
 	}
 
 	/**
 	 * genera una directory temporanea e vi estrae le immagini di test da test2.jar
-	 * 
+	 *
 	 * @return home1 path della directory temporanea con le immagini di test
 	 */
 	private String findTestImages() {

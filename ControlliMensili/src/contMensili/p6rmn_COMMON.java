@@ -13,16 +13,15 @@ import ij.io.FileSaver;
 import ij.util.Tools;
 import utils.InputOutput;
 import utils.MyConst;
-import utils.MyLog;
 import utils.ProfileUtils;
 import utils.ReadDicom;
 import utils.TableSequence;
 import utils.UtilAyv;
 
 /***************************************************************
- * 
+ *
  * CONTIENE LE PARTI COMUNI INDISPENSABILI ALLE ALTRE VERSIONI
- * 
+ *
  **************************************************************/
 public class p6rmn_COMMON {
 
@@ -69,27 +68,24 @@ public class p6rmn_COMMON {
 	 * valori assurdi, crea un area al di fuori della quale il valore memorizzato e'
 	 * quello di default, inoltre non permette che il segmento sia piu' corto di 10
 	 * pixel
-	 * 
+	 *
 	 * @param vetLine coordinate linea [ xStart, yStart, xEnd, yEnd ]
 	 * @param matrix  matrice immagine
 	 * @return true se interdetta memorizzazione
 	 */
 	public static boolean interdiction_COMMON(double[] vetLine, int matrix) {
 
-		if (vetLine[0] < 10)
+		if ((vetLine[0] < 10) || (vetLine[0] > (matrix - 10)) || (vetLine[2] < 10) || (vetLine[2] > (matrix - 10))) {
 			return true;
-		if (vetLine[0] > (matrix - 10))
-			return true;
-		if (vetLine[2] < 10)
-			return true;
-		if (vetLine[2] > (matrix - 10))
-			return true;
+		}
 		double len = Math.sqrt(Math.pow(vetLine[0] - vetLine[2], 2) + Math.pow(vetLine[1] - vetLine[3], 2));
-		if (len < 10)
+		if (len < 10) {
 			return true;
+		}
 		// se viene ribaltato il segmento interviene
-		if (vetLine[1] > vetLine[3])
+		if (vetLine[1] > vetLine[3]) {
 			return true;
+		}
 
 		return false;
 	}
@@ -109,13 +105,14 @@ public class p6rmn_COMMON {
 		String newName = spydir + "\\" + name + "@" + IJ.pad(contaxx, 3) + ".jpg";
 		FileSaver fs = new FileSaver(impS3);
 		// FileSaver.setJpegQuality(100);
-		if (thisSPY)
+		if (thisSPY) {
 			fs.saveAsJpeg(newName);
+		}
 	}
 
 	/**
 	 * Inverte il segnale del profilo
-	 * 
+	 *
 	 * @param profile1
 	 * @return
 	 */
@@ -136,7 +133,7 @@ public class p6rmn_COMMON {
 
 	/**
 	 * Trasforma il profilo Y aggiungendo i valori X
-	 * 
+	 *
 	 * @param profi1
 	 * @return
 	 */
@@ -144,8 +141,8 @@ public class p6rmn_COMMON {
 
 		double[][] out1 = new double[profi1.length][2];
 		for (int i1 = 0; i1 < profi1.length; i1++) {
-			out1[i1][0] = (double) i1;
-			out1[i1][1] = (double) profi1[i1];
+			out1[i1][0] = i1;
+			out1[i1][1] = profi1[i1];
 		}
 		return out1;
 	}
@@ -161,7 +158,7 @@ public class p6rmn_COMMON {
 
 //	/**
 //	 * assegna un profilo su cui effettuare i calcoli
-//	 * 
+//	 *
 //	 * @param imp1 immagine su cui effettuare il profilo
 //	 * @param x1   coordinata x start profilo
 //	 * @param y1   coordinata y start profilo
@@ -181,7 +178,7 @@ public class p6rmn_COMMON {
 
 	/**
 	 * display del profilo fit con linea a meta' altezza
-	 * 
+	 *
 	 * @param bslab    true=slab false=cuneo
 	 * @param bLabelSx true=label a sx nel plot, false=label a dx
 	 * @param sTitolo  titolo del grafico
@@ -209,8 +206,9 @@ public class p6rmn_COMMON {
 
 		int len1 = profile1.length;
 		double[] xcoord1 = new double[len1];
-		for (int j = 0; j < len1; j++)
+		for (int j = 0; j < len1; j++) {
 			xcoord1[j] = j;
+		}
 
 		Plot plot = new Plot(sTitolo, "pixel", "valore", Plot.AUTO_POSITION);
 		plot.setColor(Color.black);
@@ -238,10 +236,11 @@ public class p6rmn_COMMON {
 		plot.addPoints(pointX, pointY, Plot.LINE);
 
 		plot.setColor(Color.black);
-		if (bLabelSx)
+		if (bLabelSx) {
 			labPos = 0.10;
-		else
+		} else {
 			labPos = 0.60;
+		}
 		if (bFw) {
 			plot.addLabel(labPos, 0.75, "peak / 2 =   " + IJ.d2s(half, 2));
 			plot.addLabel(labPos, 0.80, "fwhm  [pixels]  =  " + IJ.d2s(fwhm[0], 2));
@@ -256,7 +255,7 @@ public class p6rmn_COMMON {
 
 //	/**
 //	 * un semplicissimo ma funzionale smoothing
-//	 * 
+//	 *
 //	 * @param profile1 array su cui eseguire lo smoothing
 //	 */
 //	public void smooth(double[] profile1) {
@@ -269,22 +268,23 @@ public class p6rmn_COMMON {
 
 	/**
 	 * SMOOTH
-	 * 
+	 *
 	 * @param profile1
 	 */
 
 	/**
 	 * un semplicissimo ma funzionale smoothing
-	 * 
+	 *
 	 * @param profile1 array su cui eseguire lo smoothing
 	 */
 	public static void smooth2_COMMON(double profile1[]) {
 
 		IJ.log("prima " + profile1[0] + " " + profile1[1] + " " + profile1[2] + " " + profile1[3] + " " + profile1[4]);
 		int len = profile1.length;
-		for (int i1 = 2; i1 < len - 2; i1++)
+		for (int i1 = 2; i1 < len - 2; i1++) {
 			profile1[i1] = (profile1[i1 - 2] + profile1[i1 - 1] + profile1[i1] + profile1[i1 + 1] + profile1[i1 + 2])
 					/ 5.0;
+		}
 		profile1[0] = profile1[3];
 		profile1[1] = profile1[4];
 		profile1[len - 1] = profile1[len - 5];
@@ -296,10 +296,11 @@ public class p6rmn_COMMON {
 	public static boolean myDoubleCompare_COMMON(double uno, double due, double tolleranza) {
 
 		double diff = Math.abs(uno - due);
-		if (diff <= tolleranza)
+		if (diff <= tolleranza) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 
 	public static double[] spessStrato_AAPM100_COMMON(double a2, double b2, double spessTeor, double dimPix) {
@@ -327,10 +328,10 @@ public class p6rmn_COMMON {
 	 * AAPM 100. In un primo momento pareva dare risultati fasulli, poi ho capito
 	 * che l'angolo a chi fanno riferimento non e'quello del materiale del wedge ma
 	 * quello posto tra le due superfici inclinate, wedge o slab che siano
-	 * 
+	 *
 	 * ATTENZIONE, QUESTO E'NEL FILE COMMON PERCHE' USATO SIA DA OLD CHE IMPROVED
 	 * CHE FITTER
-	 * 
+	 *
 	 * @param a2
 	 * @param b2
 	 * @param dimPix
@@ -398,7 +399,7 @@ public class p6rmn_COMMON {
 	/**
 	 * analisi di un profilo normale con ricerca punti sopra e sotto meta' altezza
 	 * verificato risultato identico ad ORIGINALE
-	 * 
+	 *
 	 * @param profile1 profilo da analizzare
 	 * @param bSlab    true=slab false=cuneo
 	 * @return isd[0] punto profilo sotto half a sx
@@ -424,10 +425,11 @@ public class p6rmn_COMMON {
 
 		double[] a = Tools.getMinMax(profile1);
 		double min1 = a[0];
-		if (bSlab)
+		if (bSlab) {
 			max1 = a[1];
-		else
+		} else {
 			max1 = 0;
+		}
 
 		// calcolo meta' altezza
 		double half = (max1 - min1) / 2 + min1;
@@ -470,10 +472,10 @@ public class p6rmn_COMMON {
 	 * analisi di un profilo normale con ricerca punti sopra e sotto meta' altezza
 	 * questa versione modificata effettua la ricerca partendo dal picco invece che
 	 * dalle estremita'.
-	 * 
+	 *
 	 * A RIPOSO DA'LO STESSO RISULTATO DI ORIGINAL VENGONO RESTITUITE LE COORDINATE
 	 * X DEI PUNTI
-	 * 
+	 *
 	 * @param profile1 profilo da analizzare
 	 * @param bSlab    true=slab false=cuneo
 	 * @return isd[0] punto profilo sotto half a sx
@@ -499,10 +501,11 @@ public class p6rmn_COMMON {
 
 		double[] a = Tools.getMinMax(profile1);
 		double minY = a[0];
-		if (bSlab)
+		if (bSlab) {
 			maxY = a[1];
-		else
+		} else {
 			maxY = 0;
+		}
 
 		// calcolo meta' altezza
 		double half = (maxY - minY) / 2 + minY;
@@ -510,7 +513,7 @@ public class p6rmn_COMMON {
 		double minX = 9999;
 		for (int i1 = 0; i1 < len1; i1++) {
 			if (profile1[i1] == minY) {
-				minX = (double) i1;
+				minX = i1;
 				break;
 			}
 		}

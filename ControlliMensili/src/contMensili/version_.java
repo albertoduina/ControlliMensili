@@ -1,9 +1,8 @@
 package contMensili;
 
-import utils.AboutBox;
-import utils.MyLog;
 import ij.IJ;
 import ij.plugin.PlugIn;
+import utils.AboutBox;
 
 /*
  * Copyright (C) 2007 Alberto Duina, SPEDALI CIVILI DI BRESCIA, Brescia ITALY
@@ -26,15 +25,16 @@ import ij.plugin.PlugIn;
 /**
  * Il Plugin version- restituisce i numeri di versione impostati per i file
  * sorgente
- * 
+ *
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
- * 
+ *
  */
 public class version_ implements PlugIn {
 	public static String VERSION = "Stampa lista";
 
 	// static Dialog mioDialogo;
+	@Override
 	public void run(String args) {
 
 		//

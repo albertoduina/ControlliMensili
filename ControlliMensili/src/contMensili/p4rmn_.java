@@ -1,30 +1,27 @@
 package contMensili;
 
+import java.awt.Color;
+import java.util.StringTokenizer;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
 import ij.gui.ImageWindow;
 import ij.gui.Line;
 import ij.gui.OvalRoi;
-import ij.gui.Overlay;
 import ij.gui.Roi;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.ContrastEnhancer;
 import ij.plugin.PlugIn;
-import ij.plugin.filter.Analyzer;
 import ij.plugin.frame.RoiManager;
-
-import java.awt.Color;
-import java.util.StringTokenizer;
-
 import utils.AboutBox;
 import utils.ButtonMessages;
 import utils.CustomCanvasGeneric;
 import utils.InputOutput;
-import utils.MyMsg;
 import utils.MyConst;
 import utils.MyLog;
+import utils.MyMsg;
 import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
@@ -55,13 +52,13 @@ import utils.UtilAyv;
  * Analizza la MTF, in base al posizionamento di un segmento vengono inserite
  * nel RoiManager Roi posizionate su tutte le line pairs e su acqua e plexiglas.
  * Su queste Roi vengono eseguiti i calcoli.
- * 
+ *
  * Per salvare i dati in formato xls necessita di Excel_Writer.jar nella
  * directory plugins
- * 
+ *
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
- * 
+ *
  */
 
 public class p4rmn_ implements PlugIn, Measurements {
@@ -96,11 +93,13 @@ public class p4rmn_ implements PlugIn, Measurements {
 	 */
 	public boolean bstep = false;
 
+	@Override
 	public void run(String args) {
 		UtilAyv.setMyPrecision();
 
-		if (IJ.versionLessThan("1.43k"))
+		if (IJ.versionLessThan("1.43k")) {
 			return;
+		}
 
 		//
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
@@ -136,7 +135,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * genera una directory temporanea e vi estrae le immagini di test da test2.jar
-	 * 
+	 *
 	 * @return home1 path della directory temporanea con le immagini di test
 	 */
 	private String findTestImages() {
@@ -176,8 +175,9 @@ public class p4rmn_ implements PlugIn, Measurements {
 				boolean autoCalled = true;
 				boolean step = true;
 				String path1 = UtilAyv.imageSelection("SELEZIONARE IMMAGINE...");
-				if (path1 == null)
+				if (path1 == null) {
 					return 0;
+				}
 
 				prepMTF(path1, "", autoCalled, step, verbose, test);
 				retry = true;
@@ -192,7 +192,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Auto menu invoked from Sequenze_
-	 * 
+	 *
 	 * @param autoArgs
 	 * @return
 	 */
@@ -289,10 +289,11 @@ public class p4rmn_ implements PlugIn, Measurements {
 		do {
 			ImagePlus imp1 = null;
 
-			if (verbose)
+			if (verbose) {
 				imp1 = UtilAyv.openImageMaximized(path1);
-			else
+			} else {
 				imp1 = UtilAyv.openImageNoDisplay(path1, verbose);
+			}
 
 			// l'immagine deve esere visualizzata perch� uso RoiManager
 			if (imp1 == null) {
@@ -349,13 +350,15 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 			int resp = 0;
 
-			if (verbose)
+			if (verbose) {
 				resp = ButtonMessages.ModelessMsg(
 						"Far coincidere il segmento  con il lato esterno sx delle linee 2 mm e premere CONTINUA, "
 								+ "altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive",
 						"CONTINUA", "ANNULA");
-			if (resp == 1)
+			}
+			if (resp == 1) {
 				return null;
+			}
 
 			//
 			// Leggo la posizione finale del segmento
@@ -463,8 +466,9 @@ public class p4rmn_ implements PlugIn, Measurements {
 			// imp1.setOverlay(over1);
 
 			RoiManager rm1 = RoiManager.getInstance();
-			if (rm1 == null)
+			if (rm1 == null) {
 				rm1 = new RoiManager();
+			}
 			imp1.setRoi(new OvalRoi(xRoi2mm, yRoi2mm, dRoi2mm, dRoi2mm));
 			rm1.addRoi(imp1.getRoi());
 			// over1.addElement(imp1.getRoi());
@@ -488,11 +492,13 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 			// over1.addElement(imp1.getRoi());
 
-			if (verbose)
+			if (verbose) {
 				rm1.runCommand(imp1, "Combine");
+			}
 
-			if (verbose)
+			if (verbose) {
 				msgRefinePositioning();
+			}
 
 			rm1.runCommand(imp1, "Measure");
 
@@ -549,7 +555,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 			// put values in ResultsTable
 			// rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
-			
+
 			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);    ////// SIMPLE
 
 			rt.showRowNumbers(true);
@@ -621,16 +627,18 @@ public class p4rmn_ implements PlugIn, Measurements {
 			rt.addValue(t1, "Visual");
 			rt.addValue(s2, visualResolution);
 
-			if (verbose && !test)
+			if (verbose && !test) {
 				rt.show("Results");
+			}
 
 			if (autoCalled && !test) {
 				accetta = MyMsg.accettaMenu();
 			} else {
 				if (!test) {
 					accetta = MyMsg.msgStandalone();
-				} else
+				} else {
 					imp1.close();
+				}
 				accetta = test;
 			}
 		} while (!accetta);
@@ -699,7 +707,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Siemens test image expected results
-	 * 
+	 *
 	 * @return
 	 */
 	double[] referenceSiemens() {
@@ -714,7 +722,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * Ge test image expected results
-	 * 
+	 *
 	 * @return
 	 */
 	double[] referenceGe() {
@@ -757,10 +765,11 @@ public class p4rmn_ implements PlugIn, Measurements {
 				vetResults[4] = vetOutput[5];
 
 				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P4_vetName);
-				if (ok)
+				if (ok) {
 					MyMsg.msgTestPassed();
-				else
+				} else {
 					MyMsg.msgTestFault();
+				}
 				UtilAyv.afterWork();
 				break;
 			}
@@ -787,10 +796,11 @@ public class p4rmn_ implements PlugIn, Measurements {
 				vetResults[4] = vetOutput[5];
 
 				boolean ok = UtilAyv.verifyResults1(vetResults, vetReference, MyConst.P4_vetName);
-				if (ok)
+				if (ok) {
 					MyMsg.msgTestPassed();
-				else
+				} else {
 					MyMsg.msgTestFault();
+				}
 				UtilAyv.afterWork();
 				break;
 			}

@@ -2,13 +2,7 @@ package contMensili;
 
 import java.awt.Color;
 import java.awt.Rectangle;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.StringTokenizer;
 
 import ij.IJ;
@@ -104,13 +98,15 @@ public class p14rmn_ implements PlugIn {
 	private static int timeout = 0;
 	public static final boolean forcesilent = false;
 
+	@Override
 	public void run(String args) {
 
 		UtilAyv.setMyPrecision();
 
 		Count c1 = new Count();
-		if (!c1.jarCount("iw2ayv_"))
+		if (!c1.jarCount("iw2ayv_")) {
 			return;
+		}
 
 		String className = this.getClass().getName();
 		String user1 = System.getProperty("user.name");
@@ -125,8 +121,9 @@ public class p14rmn_ implements PlugIn {
 //		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 		fileDir = Prefs.get("prefer.string1", "none");
 
-		if (IJ.versionLessThan("1.43k"))
+		if (IJ.versionLessThan("1.43k")) {
 			return;
+		}
 
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
@@ -139,7 +136,7 @@ public class p14rmn_ implements PlugIn {
 
 	/**
 	 * Menu funzionamento manuale (chiamato dal menu di ImageJ)
-	 * 
+	 *
 	 * @param preset        da utilizzare per eventuali test
 	 * @param testDirectory da utilizzare per eventuali test
 	 * @return
@@ -169,11 +166,13 @@ public class p14rmn_ implements PlugIn {
 			case 4:
 				mode = 3;
 			case 5:
-				if (mode == 0)
+				if (mode == 0) {
 					mode = 2;
+				}
 				String path1 = UtilAyv.imageSelection("SELEZIONARE IMMAGINE...");
-				if (path1 == null)
+				if (path1 == null) {
 					return 0;
+				}
 				mainMTF(path1, "0", "", mode, 0, "", null, null);
 				UtilAyv.afterWork();
 				retry = true;
@@ -221,7 +220,7 @@ public class p14rmn_ implements PlugIn {
 				mode = 1;
 				mainMTF(path1, autoArgs, info10, mode, timeout, passo, vetRiga, iw2ayvTable);
 				UtilAyv.afterWork();
-			} else
+			} else {
 				do {
 					int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
 							TableSequence.getCode(iw2ayvTable, vetRiga[0]),
@@ -248,6 +247,7 @@ public class p14rmn_ implements PlugIn {
 						break;
 					}
 				} while (retry);
+			}
 			new AboutBox().close();
 			UtilAyv.afterWork();
 		}
@@ -268,8 +268,9 @@ public class p14rmn_ implements PlugIn {
 		boolean fast = false;
 		boolean silent = false;
 
-		if (forcesilent)
+		if (forcesilent) {
 			mode = 0;
+		}
 
 		switch (mode) {
 		case 0:
@@ -308,9 +309,11 @@ public class p14rmn_ implements PlugIn {
 		String title2 = imp2.getTitle();
 		ImagePlus imp1 = removeCalibration(imp2);
 		if (verbose)
+		 {
 			UtilAyv.showImageMaximized(imp1);
 		// int lato = 140;
 		// manualSearchPosition(imp1, lato);
+		}
 
 		// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 		TableCode tc1 = new TableCode();
@@ -331,8 +334,9 @@ public class p14rmn_ implements PlugIn {
 		// MyLog.waitHere("p14");
 		p14rmn_ p14 = new p14rmn_();
 		Roi roi4 = p14.positionSearch(imp1, minSizeInPixel, maxSizeInPixel, minCirc, maxCirc, step, fast);
-		if (roi4 == null)
+		if (roi4 == null) {
 			return;
+		}
 		Rectangle r1 = roi4.getBounds();
 		imp1.setRoi(r1);
 		level = 3;
@@ -403,8 +407,9 @@ public class p14rmn_ implements PlugIn {
 		imp2.setRoi(0, 0, width, height2);
 		roi2 = imp2.getRoi();
 		stat2 = imp2.getStatistics();
-		if (roi2 == null)
+		if (roi2 == null) {
 			MyLog.waitHere("roi2==null");
+		}
 
 		roi2.setStrokeColor(Color.red);
 		over2.add(roi2);
@@ -532,15 +537,15 @@ public class p14rmn_ implements PlugIn {
 				rt1.addValue(s3, i1 * (1.0 / MTFVector.length));
 				rt1.addValue(s4, MTFVector[i1]);
 				if (i1 < LSFVector.length) {
-					rt1.addValue(s5, (double) i1);
+					rt1.addValue(s5, i1);
 					rt1.addValue(s6, LSFVector[i1]);
 				}
 				if (i1 < ESFVector.length) {
-					rt1.addValue(s7, (double) i1);
+					rt1.addValue(s7, i1);
 					rt1.addValue(s8, ESFVector[i1]);
 				}
 				if (i1 < SPPVector.length) {
-					rt1.addValue(s9, (double) i1);
+					rt1.addValue(s9, i1);
 					rt1.addValue(s10, SPPVector[i1]);
 				}
 				rt1.addValue(s11, stat2.roiX);
@@ -573,10 +578,10 @@ public class p14rmn_ implements PlugIn {
 
 	/***
 	 * Mitja: The grey values of the line selections are tipped in a Array
-	 * 
+	 *
 	 * Inserisce i valori dei pixel (presi come successione di linee all'interno
 	 * della selezione) in un Array, NON effettua il sovracampionamento?
-	 * 
+	 *
 	 * @param title
 	 * @param imp1
 	 * @param roi1
@@ -624,17 +629,17 @@ public class p14rmn_ implements PlugIn {
 			}
 		}
 
-		for (int i1 = 0; i1 < ESFArray.length; i1++) {
+		for (double[] element : ESFArray) {
 			String aux1 = "";
 			for (int i2 = 0; i2 < ESFArray[0].length; i2++) {
-				aux1 = aux1 + "\t" + (int) ESFArray[i1][i2];
+				aux1 = aux1 + "\t" + (int) element[i2];
 			}
 			MyLog.appendLog(postmortem, aux1);
 		}
-		for (int i1 = 0; i1 < ESFArray.length; i1++) {
+		for (double[] element : ESFArray) {
 			String aux1 = "";
 			for (int i2 = 0; i2 < ESFArray[0].length; i2++) {
-				aux1 = aux1 + "\t" + (int) ESFArray[i1][i2];
+				aux1 = aux1 + "\t" + (int) element[i2];
 			}
 			MyLog.appendLog3(pathLog + "ESF.txt", aux1);
 		}
@@ -643,7 +648,7 @@ public class p14rmn_ implements PlugIn {
 
 	/***
 	 * Genera i valori della derivata prima
-	 * 
+	 *
 	 * @param title
 	 * @param ESFArray
 	 */
@@ -665,26 +670,28 @@ public class p14rmn_ implements PlugIn {
 			}
 		}
 
-		for (int i1 = 0; i1 < LSFArray.length; i1++) {
+		for (double[] element : LSFArray) {
 			String aux1 = "";
 			for (int i2 = 0; i2 < LSFArray[0].length; i2++) {
-				aux1 = aux1 + " " + (int) LSFArray[i1][i2];
+				aux1 = aux1 + " " + (int) element[i2];
 			}
 			MyLog.appendLog(postmortem, aux1);
 		}
 
 		String aux2 = "";
-		for (int i1 = 0; i1 < LSFArray.length; i1++) {
+		for (double[] element : LSFArray) {
 			String aux1 = "";
 
 			for (int i2 = 0; i2 < LSFArray[0].length; i2++) {
-				aux2 = "" + (int) LSFArray[i1][i2];
-				if ((int) LSFArray[i1][i2] < 100)
+				aux2 = "" + (int) element[i2];
+				if ((int) element[i2] < 100) {
 					aux2 = aux2 + " ";
-				if (i2 > 0)
+				}
+				if (i2 > 0) {
 					aux1 = aux1 + "\t" + aux2;
-				else
+				} else {
 					aux1 = aux1 + aux2;
+				}
 			}
 			MyLog.appendLog3(pathLog + "LSF.txt", aux1);
 		}
@@ -694,7 +701,7 @@ public class p14rmn_ implements PlugIn {
 	/***
 	 * Allinea l'Array utilizzando la posizione del massimo in LSF, preleva mezzo
 	 * size a sinistra e mezzo a destra
-	 * 
+	 *
 	 * @param Array
 	 * @return
 	 */
@@ -734,7 +741,7 @@ public class p14rmn_ implements PlugIn {
 	/***
 	 * Allinea l'Array utilizzando la posizione del massimo in LSF, preleva mezzo
 	 * size a sinistra e mezzo a destra, gestisce anche le linee non allineabili
-	 * 
+	 *
 	 * @param Array
 	 * @return
 	 */
@@ -807,10 +814,10 @@ public class p14rmn_ implements PlugIn {
 		}
 
 		MyLog.appendLog(postmortem, "------ alignArray allineato -----");
-		for (int i3 = 0; i3 < Array.length; i3++) {
+		for (double[] element : Array) {
 			String aux1 = "";
 			for (int i2 = 0; i2 < Array[0].length; i2++) {
-				aux1 = aux1 + "\t" + (int) Array[i3][i2];
+				aux1 = aux1 + "\t" + (int) element[i2];
 			}
 			MyLog.appendLog(postmortem, aux1);
 		}
@@ -819,9 +826,9 @@ public class p14rmn_ implements PlugIn {
 	}
 
 	/***
-	 * 
+	 *
 	 * Mitja: Calculate maximum value and find 32 positions to align
-	 * 
+	 *
 	 * Calcolo della posizione del massimo in LSFArray, per ogni linea di pixels
 	 * dell'area selezionatavengono calcolati: la posizione del max (posMax) sulla
 	 * linea, il valore del massimo sulla linea, le posizioni inizio e fine di un
@@ -852,7 +859,7 @@ public class p14rmn_ implements PlugIn {
 			// Starting and ending position to align maximum values
 			PosMax[i1][2] = PosMax[i1][0] - halfSize;
 			PosMax[i1][3] = PosMax[i1][0] + halfSize;
-			MyLog.appendLog(postmortem, "ZZZZ PosMax k: " + (int) i1 + "\t[0]:" + (int) PosMax[i1][0] + "\t\t[1]:"
+			MyLog.appendLog(postmortem, "ZZZZ PosMax k: " + i1 + "\t[0]:" + (int) PosMax[i1][0] + "\t\t[1]:"
 					+ (int) PosMax[i1][1] + "\t\t[2]:" + (int) PosMax[i1][2] + "\t\t[3]:" + (int) PosMax[i1][3]);
 		}
 		return PosMax;
@@ -1068,9 +1075,10 @@ public class p14rmn_ implements PlugIn {
 	public double findMaxSPP(double[] Vector) {
 		double max = 0;
 		double value;
-		for (int i = 0; i < Vector.length; i++) {
-			if (Vector[i] > max)
-				max = Vector[i];
+		for (double element : Vector) {
+			if (element > max) {
+				max = element;
+			}
 		}
 		return max;
 	}
@@ -1086,6 +1094,7 @@ public class p14rmn_ implements PlugIn {
 		}
 
 		// return a string representation of the invoking object
+		@Override
 		public String toString() {
 			return re + " + " + im + "i";
 		}
@@ -1134,14 +1143,17 @@ public class p14rmn_ implements PlugIn {
 		}
 
 		// radix 2 Cooley-Tukey FFT
-		if (N % 2 != 0)
+		if (N % 2 != 0) {
 			throw new RuntimeException("N is not a power of 2");
+		}
 		Complex[] even = new Complex[N / 2];
 		Complex[] odd = new Complex[N / 2];
-		for (int k = 0; k < N / 2; k++)
+		for (int k = 0; k < N / 2; k++) {
 			even[k] = x[2 * k];
-		for (int k = 0; k < N / 2; k++)
+		}
+		for (int k = 0; k < N / 2; k++) {
 			odd[k] = x[2 * k + 1];
+		}
 
 		Complex[] q = fft(even);
 		Complex[] r = fft(odd);
@@ -1170,9 +1182,10 @@ public class p14rmn_ implements PlugIn {
 
 		int options = ParticleAnalyzer.SHOW_OUTLINES + ParticleAnalyzer.ADD_TO_MANAGER;
 		boolean excludeEdges = true;
-		if (excludeEdges)
+		if (excludeEdges) {
 			options = ParticleAnalyzer.SHOW_OUTLINES + ParticleAnalyzer.ADD_TO_MANAGER
 					+ ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES;
+		}
 
 		int measurements = 0;
 
@@ -1197,8 +1210,9 @@ public class p14rmn_ implements PlugIn {
 
 		imp2.setRoi(roi0);
 		imp2.updateAndDraw();
-		if (step)
+		if (step) {
 			MyLog.waitHere("particle analyzer");
+		}
 
 		Rectangle rect = roi0.getBounds();
 		int rx = rect.x;
@@ -1210,8 +1224,9 @@ public class p14rmn_ implements PlugIn {
 			imp2.getRoi().setStrokeColor(Color.red);
 			over2.addElement(imp2.getRoi());
 		}
-		if (step)
+		if (step) {
 			MyLog.waitHere("bounding rectangle");
+		}
 
 		// imp2.setRoi(new Line(rx, ry, rx, ry + h));
 		imp2.setRoi(new Line(rx + w - 1, ry + h, rx + w - 1, ry));
@@ -1222,10 +1237,11 @@ public class p14rmn_ implements PlugIn {
 		double find1y = 0;
 		for (int i1 = 0; i1 < aaa[0].length; i1++) {
 			boolean aux1 = false;
-			if (i1 < aaa[0].length - 1)
+			if (i1 < aaa[0].length - 1) {
 				aux1 = (int) aaa[2][i1] == 0 && aaa[2][i1 + 1] > 0;
-			else
+			} else {
 				aux1 = (int) aaa[2][i1] == 0;
+			}
 
 			if (aux1 && search) {
 				search = false;
@@ -1250,10 +1266,11 @@ public class p14rmn_ implements PlugIn {
 
 		for (int i1 = 0; i1 < bbb[0].length; i1++) {
 			boolean aux2 = false;
-			if (i1 < bbb[0].length - 1)
+			if (i1 < bbb[0].length - 1) {
 				aux2 = (int) bbb[2][i1] == 0 && bbb[2][i1 + 1] > 0;
-			else
+			} else {
 				aux2 = (int) bbb[2][i1] == 0;
+			}
 
 			if (aux2 && search) {
 				search = false;
@@ -1269,8 +1286,9 @@ public class p14rmn_ implements PlugIn {
 			roi1.setStrokeColor(Color.green);
 			over2.addElement(imp2.getRoi());
 		}
-		if (step)
+		if (step) {
 			MyLog.waitHere("vertici");
+		}
 
 		double find4x = find2x;
 		double find4y = 4;
@@ -1295,8 +1313,9 @@ public class p14rmn_ implements PlugIn {
 			roi1.setStrokeColor(Color.red);
 			over2.addElement(imp2.getRoi());
 		}
-		if (step)
+		if (step) {
 			MyLog.waitHere("centro roi MTF");
+		}
 		int lato = (int) (Math.abs(find1y - find2y));
 
 		boolean trovato = false;
@@ -1307,10 +1326,11 @@ public class p14rmn_ implements PlugIn {
 			int ysotto = (int) (find3y + lato / 2);
 			double val1 = imp2.getPixel(xsopra, ysopra)[0];
 			double val2 = imp2.getPixel(xsotto, ysotto)[0];
-			if (val1 > 0 || val2 > 0)
+			if (val1 > 0 || val2 > 0) {
 				lato = lato - 1;
-			else
+			} else {
 				trovato = true;
+			}
 		} while (!trovato);
 
 		int xsel = (int) find3x - lato / 2;
@@ -1320,8 +1340,9 @@ public class p14rmn_ implements PlugIn {
 		roi1 = imp2.getRoi();
 		roi1.setStrokeColor(Color.green);
 		over2.addElement(imp2.getRoi());
-		if (step)
+		if (step) {
 			MyLog.waitHere("roi MTF");
+		}
 		IJ.wait(timeout);
 		return roi1;
 	}
@@ -1407,10 +1428,11 @@ public class p14rmn_ implements PlugIn {
 		byte[] sourcePixels = (byte[]) ip2.getPixels();
 		double[] bwValues = new double[sourcePixels.length];
 		for (int i = 0; i < sourcePixels.length; i++) {
-			if (sourcePixels[i] == 0)
+			if (sourcePixels[i] == 0) {
 				bwValues[i] = 0;
-			else
+			} else {
 				bwValues[i] = 255.0;
+			}
 		}
 		ArrayList<Double> xVal = new ArrayList<Double>();
 		ArrayList<Double> yVal = new ArrayList<Double>();
@@ -1426,7 +1448,7 @@ public class p14rmn_ implements PlugIn {
 				}
 			}
 			if (max != 0.) {
-				xVal.add((double) x);
+				xVal.add(x);
 				yVal.add((double) i1);
 			}
 		}

@@ -1,26 +1,24 @@
 package contMensili;
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.Prefs;
-import ij.gui.ImageWindow;
-import ij.gui.OvalRoi;
-import ij.measure.Measurements;
-import ij.measure.ResultsTable;
-import ij.plugin.ContrastEnhancer;
-import ij.plugin.PlugIn;
-
 import java.awt.Color;
 import java.awt.Polygon;
 import java.util.StringTokenizer;
 
+import ij.IJ;
+import ij.ImagePlus;
+import ij.Prefs;
+import ij.gui.ImageWindow;
+import ij.measure.Measurements;
+import ij.measure.ResultsTable;
+import ij.plugin.ContrastEnhancer;
+import ij.plugin.PlugIn;
 import utils.AboutBox;
 import utils.ButtonMessages;
 import utils.CustomCanvasGeneric;
 import utils.InputOutput;
+import utils.MyConst;
 import utils.MyLog;
 import utils.MyMsg;
-import utils.MyConst;
 import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
@@ -49,13 +47,13 @@ import utils.UtilAyv;
 
 /**
  * Calcolo Distorsione Geometrica Percentuale
- * 
+ *
  * Per salvare i dati in formato xls necessita di Excel_Writer.jar nella
  * directory plugins
- * 
+ *
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
- * 
+ *
  */
 
 public class p8rmn_ implements PlugIn, Measurements {
@@ -77,12 +75,14 @@ public class p8rmn_ implements PlugIn, Measurements {
 	 * tabella coi dati di ayv.txt (generati da Sequenze)
 	 */
 
+	@Override
 	public void run(String args) {
 
 		UtilAyv.setMyPrecision();
 
-		if (IJ.versionLessThan("1.43k"))
+		if (IJ.versionLessThan("1.43k")) {
 			return;
+		}
 
 		//
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
@@ -149,8 +149,9 @@ public class p8rmn_ implements PlugIn, Measurements {
 			case 5:
 				boolean test = false;
 				String path1 = UtilAyv.imageSelection("SELEZIONARE IMMAGINE...");
-				if (path1 == null)
+				if (path1 == null) {
 					return 5;
+				}
 				mainDgp(path1, riga1, autoCalled, step, test);
 				UtilAyv.afterWork();
 
@@ -270,8 +271,9 @@ public class p8rmn_ implements PlugIn, Measurements {
 					"\nSe l'immagine non fosse accettabile premere <ANNULLA> per passare alle successive",
 					"FINE POSIZIONAMENTO");
 
-			if (poli1 == null)
+			if (poli1 == null) {
 				return null;
+			}
 
 //			{
 //				TableCode tc11 = new TableCode();
@@ -384,8 +386,9 @@ public class p8rmn_ implements PlugIn, Measurements {
 			} else {
 				if (!test) {
 					accetta = MyMsg.msgStandalone();
-				} else
+				} else {
 					accetta = test;
+				}
 			}
 
 			// if (autoCalled) {
@@ -510,10 +513,11 @@ public class p8rmn_ implements PlugIn, Measurements {
 			}
 		}
 		if (verbose) {
-			if (testok == true)
+			if (testok) {
 				ButtonMessages.ModelessMsg("Fine SelfTest TUTTO OK  <42>", "CONTINUA");
-			else
+			} else {
 				ButtonMessages.ModelessMsg("Fine SelfTest CON ERRORI  <43>", "CONTINUA");
+			}
 		}
 		return testok;
 	}
@@ -579,8 +583,9 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 		Polygon poli1 = UtilAyv.clickSimulation(imp1, vetX, vetY);
 		int num = howmanyPoints(poli1);
-		if (num != 4)
+		if (num != 4) {
 			return false;
+		}
 		double[] vetResults = mainCalculation(poli1, dimPixel);
 
 		boolean ok = verifyResults(vetResults, vetReference, verbose);
@@ -629,7 +634,7 @@ public class p8rmn_ implements PlugIn, Measurements {
 
 	/**
 	 * extract the test images from test2.jar in a temporary directory
-	 * 
+	 *
 	 * @return home1 path of temporary directory
 	 */
 	private String findTestImages() {
