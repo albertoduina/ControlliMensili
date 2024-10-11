@@ -47,101 +47,119 @@ public class p16rmn_Test {
 	}
 
 	@Test
+	public final void testParanoias() {
+		double in1;
+		double out1;
+		double out2;
+		
+		
+
+		
+		in1 = 0.003471280;
+		out2 = 5.663231976;
+		out1 = Math.log(in1);
+
+		MyLog.waitHere("in1= " + in1 + " out1= " + out1 + " out2 OLD= " + out2);
+
+	}
+
+	@Test
 	public final void testRegressor() {
-		
-		ArrayList<Double> arrMeanNorm= new ArrayList<Double>();
-		ArrayList<Double> arrBvalue= new ArrayList<Double>();
-		ArrayList<String> arrGradient=new ArrayList<String>();
-		
 
-		
-		arrMeanNorm.add(1.);
+		ArrayList<Double> arrMeanNorm = new ArrayList<Double>();
+		ArrayList<Double> arrBvalue = new ArrayList<Double>();
+		ArrayList<String> arrGradient = new ArrayList<String>();
+
+		arrMeanNorm.add(1.000000);
 		arrBvalue.add(0.);
 		arrGradient.add("x");
-		
-		arrMeanNorm.add(1.);
+
+		arrMeanNorm.add(1.000000);
 		arrBvalue.add(0.);
 		arrGradient.add("y");
-		
-		arrMeanNorm.add(1.);
+
+		arrMeanNorm.add(1.000000);
 		arrBvalue.add(0.);
 		arrGradient.add("z");
 
-		// 1	0	0
-		arrMeanNorm.add(0.350359);
+		// 1 0 0
+		arrMeanNorm.add(0.362910177);
 		arrBvalue.add(500.);
 		arrGradient.add("x");
-		
-		arrMeanNorm.add(0.356755);
+
+		arrMeanNorm.add(0.365000509);
 		arrBvalue.add(500.);
 		arrGradient.add("y");
-		
-		arrMeanNorm.add(0.355772);
+
+		arrMeanNorm.add(0.365424684);
 		arrBvalue.add(500.);
 		arrGradient.add("z");
-		
-		arrMeanNorm.add(0.122974);
+
+		arrMeanNorm.add(0.130788286);
 		arrBvalue.add(1000.);
 		arrGradient.add("x");
-		
-		arrMeanNorm.add(0.127115);
+
+		arrMeanNorm.add(0.132087957);
 		arrBvalue.add(1000.);
 		arrGradient.add("y");
-		
-		arrMeanNorm.add(0.125856);
+
+		arrMeanNorm.add(0.132834504);
 		arrBvalue.add(1000.);
 		arrGradient.add("z");
-		
-		arrMeanNorm.add(0.042999);
+
+		arrMeanNorm.add(0.046794937);
 		arrBvalue.add(1500.);
 		arrGradient.add("x");
 
-		arrMeanNorm.add(0.044948);
+		arrMeanNorm.add(0.047405748);
 		arrBvalue.add(1500.);
 		arrGradient.add("y");
 
-		arrMeanNorm.add(0.044197);
+		arrMeanNorm.add(0.048013166);
 		arrBvalue.add(1500.);
 		arrGradient.add("z");
 
-		arrMeanNorm.add(0.014957);
+		arrMeanNorm.add(0.016804099);
 		arrBvalue.add(2000.);
 		arrGradient.add("x");
 
-		arrMeanNorm.add(0.015697);
+		arrMeanNorm.add(0.016804099);
 		arrBvalue.add(2000.);
 		arrGradient.add("y");
 
-		arrMeanNorm.add(0.015366);
+		arrMeanNorm.add(0.017078964);
 		arrBvalue.add(2000.);
 		arrGradient.add("z");
 
-		arrMeanNorm.add(0.005434);
+		arrMeanNorm.add(0.006576402);
 		arrBvalue.add(2500.);
 		arrGradient.add("x");
 
-		arrMeanNorm.add(0.005811);
+		arrMeanNorm.add(0.006349045);
 		arrBvalue.add(2500.);
 		arrGradient.add("y");
 
-		arrMeanNorm.add(0.005952);
+		arrMeanNorm.add(0.006562829);
 		arrBvalue.add(2500.);
 		arrGradient.add("z");
 
-		arrMeanNorm.add(0.003401);
+		arrMeanNorm.add(0.003522346);
 		arrBvalue.add(3000.);
 		arrGradient.add("x");
 
-		arrMeanNorm.add(0.003193);
+		arrMeanNorm.add(0.003671655);
 		arrBvalue.add(3000.);
 		arrGradient.add("y");
 
-		arrMeanNorm.add(0.003263);
+		arrMeanNorm.add(0.003681835);
 		arrBvalue.add(3000.);
 		arrGradient.add("z");
 
-		double[] out2= p16rmn_.regressor(arrMeanNorm, arrBvalue,
-				arrGradient);
+		double[] out2 = p16rmn_.regressor(arrMeanNorm, arrBvalue, arrGradient);
+
+		MyLog.logVector(out2, "out2");
+
+		MyLog.waitHere("out2[0]= " + out2[0] + " out2[1]= " + out2[1]);
 
 	}
 

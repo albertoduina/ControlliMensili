@@ -213,7 +213,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 	 * @return
 	 */
 	public int autoMenu(String autoArgs) {
-		MyLog.appendLog(fileDir + "MyLog.txt", "p6 riceve " + autoArgs);
+		MyLog.appendLog(fileDir + "MyLog.txt", "p6rmn_FITTER riceve " + autoArgs);
 
 		// the autoArgs are passed from Sequenze_
 		// possibilities:

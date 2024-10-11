@@ -752,12 +752,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			int xRoi2 = (int) out2[3];
 			int yRoi2 = (int) out2[4];
-			int diamRoi2 = (int) out2[5];
+			int radRoi2 = (int) out2[5];
 			// ---------------------------------
 			// Visualizzo sull'immagine il posizionamento che verra' utilizzato
 			// MROI in verde
 			// ---------------------------------
-			imp1.setRoi(new OvalRoi(xRoi2 - diamRoi2 / 2, yRoi2 - diamRoi2 / 2, diamRoi2, diamRoi2));
+			imp1.setRoi(new OvalRoi(xRoi2 - radRoi2 / 2, yRoi2 - radRoi2 / 2, radRoi2, radRoi2));
 			imp1.getRoi().setStrokeColor(Color.green);
 			over1.addElement(imp1.getRoi());
 			// MyLog.waitHere("MROI verde");
@@ -801,7 +801,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			if (verbose) {
 				MyLog.waitHere(listaMessaggi(41), debug, timeout);
 			}
-			impDiff.setRoi(new OvalRoi(xRoi2 - diamRoi2 / 2, yRoi2 - diamRoi2 / 2, diamRoi2, diamRoi2));
+			impDiff.setRoi(new OvalRoi(xRoi2 - radRoi2 / 2, yRoi2 - radRoi2 / 2, radRoi2, radRoi2));
 
 			ImageStatistics statImaDiff = impDiff.getStatistics();
 

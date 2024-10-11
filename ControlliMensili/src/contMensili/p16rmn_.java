@@ -15,11 +15,13 @@ import ij.gui.NewImage;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
 import ij.gui.Plot;
+import ij.gui.Roi;
 import ij.io.FileSaver;
 import ij.measure.CurveFitter;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
+import ij.plugin.filter.Analyzer;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 import ij.process.ShortProcessor;
@@ -83,7 +85,9 @@ public class p16rmn_ implements PlugIn, Measurements {
 	@Override
 	public void run(String args) {
 
-		UtilAyv.setMyPrecision();
+		// UtilAyv.setMyPrecision(); // VAI A VEDERE CHE MI HA FATTO SCLERARE PER NULLA
+		// !!!!
+		Analyzer.setPrecision(9);
 
 		// -----------------------------
 		if (IJ.versionLessThan("1.43k")) {
@@ -195,6 +199,9 @@ public class p16rmn_ implements PlugIn, Measurements {
 		int nTokens = new StringTokenizer(autoArgs, "#").countTokens();
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
 
+		// i numeri di tokens che possiamo ricevere
+		// 31
+
 //		if ((nTokens != 31) && (nTokens != 19)) {
 //
 //			// NUMERI DI IMMAGINI CHE SI POSSONO RICEVERE: UNA, NESSUNA, CENTOMILA!
@@ -253,7 +260,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 
 		} while (retry);
 		new AboutBox().close();
-		UtilAyv.afterWork();
+		// UtilAyv.afterWork();
 		return 0;
 	}
 
@@ -273,250 +280,417 @@ public class p16rmn_ implements PlugIn, Measurements {
 			boolean verbose, boolean test) {
 
 		boolean accetta = false;
+		boolean valid2 = true;
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		Overlay over1 = new Overlay();
-		Overlay over2 = new Overlay();
-		Overlay over3 = new Overlay();
 		String path1 = path[0];
 		int count = 0;
+		boolean reference = false;
 
 		//
-		// carico il precedente posizionamento, memorizzato nelle preferenze
+		// ATTENZIO' ATTENZIO' ATTENZIO'
+		// i pacchetti di immagini che ricevo sono solo quelli "ASSIALI", gli altri li
+		// faccio cancellare a manina, pero' ricevo 31 immagini, di cui 1 non ha
+		// direzione e le restanti 30 hanno direzione r,p,s quindi devo distinguere da
+		// me le immagini delle diverse direzioni (RICORDA non credere mai ai
+		// canti delle sirene di Ulisse)
 		//
-		double prefx1 = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_xroi", "" + (96 / 2 - 5)));
-		double prefy1 = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_yroi", "" + (96 / 2 - 5)));
-		double prefr1 = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_droi", "" + 10));
-		// che stranezza per la lettura del boolean serve il punto BOH????
-		String prefdir1 = Prefs.getString(".prefer.p16rmn_predir", "Z");
-		boolean prefvalid1 = Prefs.getBoolean(".prefer.p16rmn_valid", false);
-		// MyLog.waitHere("preferences= " + prefx1 + " " + prefy1 + " " + prefr1 + "
-		// valid= " + valid);
-		boolean valid2 = false;
 
-		do {
+		//
+		// recupero delle preferenze posizionamento ROI 0,X,Y,Z
 
-			ImagePlus impStack = stackBuilder(path, true);
-			int frames = path.length;
+		double preferencesX = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiX", "30"));
+		double preferencesY = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiY", "30"));
+		double preferencesD = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiD", "30"));
 
-			impStack.setSliceWithoutUpdate(1);
+//		MyLog.waitHere("READ preferences X,Y,R= " + preferencesX + " ; " + preferencesY + " ; " + preferencesD);
 
-			String name1 = ReadDicom.readDicomParameter(impStack, MyConst.DICOM_SERIES_DESCRIPTION);
-			String dir = name1.substring(4, 5);
+		double xRoi0 = 9999;
+		double yRoi0 = 9999;
+		double xRoi2 = 9999;
+		double yRoi2 = 9999;
+		double rRoi2 = 10; // raggio = 10, diametro = 20
+		double dRoi2 = rRoi2 * 2; // 10 * dimPixel; // raggio = 10, diametro = 20
+
+		//
+		ArrayList<String> subPathX = new ArrayList<String>();
+		ArrayList<String> subPathY = new ArrayList<String>();
+		ArrayList<String> subPathZ = new ArrayList<String>();
+		// ArrayList<String> subPathW = new ArrayList<String>();
+		String[] pathBB = null;
+
+		ImagePlus imp00 = UtilAyv.openImageNoDisplay(path[0], true);
+		//
+		// inizio subito a scrivere Results
+		//
+		TableCode tc11 = new TableCode();
+		String[][] tabCodici = tc11.loadMultipleTable("codici", ".csv");
+
+		// imp0 = MyStackUtils.imageFromStack(impStack, 1);
+
+		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp00, tabCodici, VERSION, autoCalled);
+		rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+		rt.showRowNumbers(true);
+		String t1 = "TESTO";
+		String s2 = "VALORE";
+		String s3 = "roi_x";
+		String s4 = "roi_y";
+		String s5 = "roi_b";
+		String s6 = "roi_h";
+
+		//
+		// in questo plugin si applica la "teoria della mucca", ovvero: se do da
+		// mangiare alla mucca un certo numero di balle di fieno, poi, dal lato opposto
+		// della mucca esce il medesimo numero .... e dicono che porti fortuna se lo
+		// calpesti .....
+		//
+
+		for (int i1 = 0; i1 < path.length; i1++) {
 			//
-			// resetto il valid se mi cambia la direzione. Inoltre valid viene resettato
-			// dando new a sequenze
+			// a seconda della direzione da elaborare seleziono il path delle immagini ed
+			// il preposizionamento della ROI
 			//
-			if (dir.equals(prefdir1) && prefvalid1 && !dir.equals("_"))
-				valid2 = true;
-			else
-				valid2 = false;
+			ImagePlus imp0 = UtilAyv.openImageNoDisplay(path[i1], true);
+			String sName = ReadDicom.readDicomParameter(imp0, MyConst.DICOM_SEQUENCE_NAME);
+			int len = sName.length();
+			String last = sName.substring(len - 1, len); // leggo ultima lettera del DICOM_SEQUENCE_NAME
 
-			// MyLog.waitHere("dir= " + dir + " predir1= " + predir1 + " valid1= " + valid1
-			// + " valid2= " + valid2);
+			switch (last) {
+			case "0":
+				subPathX.add(path[i1]);
+				subPathY.add(path[i1]);
+				subPathZ.add(path[i1]);
+				// subPathW.add(path[i1]);
+				break;
+			case "p":
+				// IJ.log("sono nel caso P_X");
+				subPathX.add(path[i1]);
+				break;
+			case "r":
+				// IJ.log("sono nel caso R_Y");
+				subPathY.add(path[i1]);
+				break;
+			case "s":
+				// IJ.log("sono nel caso S_Z");
+				subPathZ.add(path[i1]);
+				break;
+			default:
+				MyLog.waitHere("BELIN BELANDI!");
 
-			if (valid2) {
-				UtilAyv.openImageNoDisplay(path1, true);
-			} else {
-				UtilAyv.showImageMaximized(impStack);
 			}
 
-			// ========================================================
-			// QUI INIZIO AD ESEGUIRE LE STESSE COSE DELLA MACRO
-			// ========================================================
+		}
+		String[] pathX = ArrayUtils.arrayListToArrayString(subPathX);
+		String[] pathY = ArrayUtils.arrayListToArrayString(subPathY);
+		String[] pathZ = ArrayUtils.arrayListToArrayString(subPathZ);
+		// String[] pathW = ArrayUtils.arrayListToArrayString(subPathW);
 
-			// copio i dati iniziali ROI fantoccio da quelli memorizzati dell'ultima
-			// misura
-			// comunque Lorella conferma:
-			// "Stessa ROI per tutte le immagini, se sono nella stessa direzione (ass, cor,
-			// sag)"
+		// String munk = null;
+		double xRoi1 = 999.9;
+		double yRoi1 = 999.9;
+		double meanBase = 0;
+		double rRoi1 = 0;
+		double rRoi0 = 0;
 
-			int diamRoi1 = (int) prefr1;
-			int xRoi1 = (int) prefx1;
-			int yRoi1 = (int) prefy1;
-			mySetRoi(impStack, xRoi1, yRoi1, diamRoi1, null, Color.green);
+		for (int z1 = 0; z1 < 3; z1++) {
+			switch (z1) {
+			case 0:
+				IJ.log("direzione X");
+				rt.incrementCounter();
+				rt.addValue(t1, "<---- direzione  X ---->");
+				// munk = "2/4";
+				pathBB = pathX;
+				xRoi0 = preferencesX;
+				yRoi0 = preferencesY;
+				rRoi0 = preferencesD;
+				reference = false;
+				break;
+			case 1:
+				IJ.log("direzione Y");
+				rt.incrementCounter();
+				rt.addValue(t1, "<---- direzione  Y ---->");
+				// munk = "3/4";
+				pathBB = pathY;
+				xRoi0 = preferencesX;
+				yRoi0 = preferencesY;
+				rRoi0 = preferencesD;
+				reference = false;
+				break;
+			case 2:
+				IJ.log("direzione Z");
+				rt.incrementCounter();
+				rt.addValue(t1, "<---- direzione  Z ---->");
+				// munk = "4/4";
+				pathBB = pathZ;
+				xRoi0 = preferencesX;
+				yRoi0 = preferencesY;
+				rRoi0 = preferencesD;
+				reference = false;
+				break;
+			}
+			//
+			// start del loop di elaborazione
+			//
+			do {
 
-			if (!valid2) {
+				ImagePlus impStack = stackBuilder2(pathBB, true);
+				int frames = pathBB.length;
 
-				int resp = 0;
+				impStack.setSliceWithoutUpdate(1);
 
-				if (!test) {
-					resp = ButtonMessages.ModelessMsg(
-							"Posizionare ROI diamFantoccio e premere CONTINUA,  altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive",
-							"CONTINUA", "ANNULLA");
+				String name1 = ReadDicom.readDicomParameter(impStack, MyConst.DICOM_SERIES_DESCRIPTION);
+
+				double dimPixel = ReadDicom.readDouble(ReadDicom
+						.readSubstring(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_PIXEL_SPACING), 1));
+
+				String dir = name1.substring(4, 5);
+
+				// ========================================================
+				// predispongo la ROI con diametro fantoccio, in base ad essa viene poi
+				// posizionata la roi diametro 20 per i calcoli
+				// ========================================================
+
+				ImagePlus imp0 = MyStackUtils.imageFromStack(impStack, 1);
+				UtilAyv.showImageMaximized(imp0);
+
+				// questa e' la roi verde esterna
+				mySetRoi(imp0, xRoi0, yRoi0, rRoi0, null, Color.green);
+
+				if (valid2) {
+
+					int resp = 0;
+
+					if (!test) {
+						resp = ButtonMessages.ModelessMsg(
+								" Posizionare ROI diamFantoccio e premere CONTINUA,  altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive",
+								"CONTINUA", "ANNULLA");
+					}
+
+					if (resp == 1) {
+						return null;
+					}
+
+					// dati posizionamento Roi1
+//					ImagePlus impActive1 = WindowManager.getCurrentImage();
+					Rectangle boundingRectangle1 = imp0.getRoi().getBounds();
+					double dRoi1 = boundingRectangle1.width;
+					rRoi1 = dRoi1 / 2;
+					xRoi1 = boundingRectangle1.x;
+					yRoi1 = boundingRectangle1.y;
+
+					// ho impostato la Roi0 e modificata con Roi1, disegno la Roi2 in rosso solo a
+					// scopo diagnostico
+					// MyLog.waitHere("xRoi1= " + xRoi1 + " yRoi1= " + yRoi1 + " rRoi1= " + rRoi1);
+					xRoi2 = xRoi1 + rRoi1 - rRoi2;
+					yRoi2 = yRoi1 + rRoi1 - rRoi2;
+					mySetRoi(imp0, xRoi2, yRoi2, rRoi2 * 2, null, Color.red);
+
+					// DEVO DECIDERE COME SCRIVERE LE PREFERENZE NEL FILE
+
+//					IJ.wait(100);
+
+//					double preferencesX = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiX", "50"));
+//					double preferencesY = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiY", "50"));
+//					double preferencesR = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiR", "70/2"));
+//					MyLog.waitHere("WRITE preferences X,Y,R= " + xRoi1 + " ; " + yRoi1 + " ; " + rRoi1 * 2);
+
+					Prefs.set("prefer.p16rmn_roiX", Double.toString(xRoi1));
+					Prefs.set("prefer.p16rmn_roiY", Double.toString(yRoi1));
+					Prefs.set("prefer.p16rmn_roiD", Double.toString(rRoi1 * 2));
+//					// ELIMINATO VALID XCHE IMMAGINI IN 3 DIREZIONI
+//
+//					Prefs.set("prefer.p16rmn_predir", dir);
+//					Prefs.set("prefer.p16rmn_valid", true);
+//
 				}
 
-				if (resp == 1) {
-					return null;
-				}
+				// leggo dove hanno posizionato la ROI fantoccio sull'immagine attiva, questi
+				// sono i dati definitivi
 
-				ImagePlus impActive1 = WindowManager.getCurrentImage();
-				Rectangle boundingRectangle2 = impActive1.getRoi().getBounds();
-				int diamRoi2 = boundingRectangle2.width;
-				int xRoi2 = boundingRectangle2.x;
-				int yRoi2 = boundingRectangle2.y;
-
-				Prefs.set("prefer.p16rmn_xroi", Integer.toString(xRoi2));
-				Prefs.set("prefer.p16rmn_yroi", Integer.toString(yRoi2));
-				Prefs.set("prefer.p16rmn_droi", Integer.toString(diamRoi2));
-				// ELIMINATO VALID XCHE IMMAGINI IN 3 DIREZIONI
-
-				Prefs.set("prefer.p16rmn_predir", dir);
-				Prefs.set("prefer.p16rmn_valid", true);
-
-			}
-
-			// leggo dove hanno posizionato la ROI fantoccio sull'immagine attiva, questi
-			// sono i dati definitivi
-
-			//
-			// li devo memorizzare in ImageJ, in modo che le immagini successive abbiano
-			// questa posizione, senza piu'chiederla (che palle se continua a chiedertela)
-			//
-
-			// MyLog.waitHere("" + count++ + " analizzo= " + impStack.getTitle());
-
-			TableCode tc11 = new TableCode();
-			String[][] tabCodici = tc11.loadMultipleTable("codici", ".csv");
-
-			ImagePlus imp0 = MyStackUtils.imageFromStack(impStack, 1);
-
-			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp0, tabCodici, VERSION, autoCalled);
-			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
-			rt.showRowNumbers(true);
-			String t1 = "TESTO";
-			String s2 = "VALORE";
-			String s3 = "roi_x";
-			String s4 = "roi_y";
-			String s5 = "roi_b";
-			String s6 = "roi_h";
-
-			ImageStatistics stat1 = imp0.getStatistics();
-			double area1 = stat1.area;
-			double mean1 = stat1.mean;
-			double[] out2 = null;
-
-			// effettua i calcoli per ogni IMMAGINE
-			impStack.setSliceWithoutUpdate(1);
-			double meanBase = stat1.mean;
-
-			// lo stackBuilder ha messo l'header di ogni immagine, posso ora andare ad
-			// interrogarle
-
-			ArrayList<Double> arrArea = new ArrayList<Double>();
-			ArrayList<Double> arrMeanRow = new ArrayList<Double>();
-			ArrayList<Double> arrMeanNorm = new ArrayList<Double>();
-			ArrayList<Double> arrBvalue = new ArrayList<Double>();
-			ArrayList<String> arrGradient = new ArrayList<String>();
-
-			int len1 = 0;
-
-			for (int i1 = 0; i1 < frames; i1++) {
-				int slice = i1 + 1;
-				ImagePlus imp1 = MyStackUtils.imageFromStack(impStack, slice);
-				ImageStatistics stat2 = imp1.getStatistics();
-				double area = stat2.area;
-				double meanRow = stat2.mean;
-				double meanNorm = meanRow / meanBase;
-
-				double Bvalue = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_B_VALUE));
-				String sName = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SEQUENCE_NAME);
-				int len = sName.length();
-
-				// appoggio i dati riordinati in alcuni array
-
-				arrArea.add(area);
-				arrMeanRow.add(meanRow);
-				arrMeanNorm.add(meanNorm);
-				arrBvalue.add(Bvalue);
-
-			}
-
-			len1 = arrMeanNorm.size();
-			if (len1 > 2) {
-				out2 = regressor(arrMeanNorm, arrBvalue, arrGradient);
-			}
-
-			//
-			// ho terminato l'eleborazione, ora posso stampare i dati nella ResultsTable
-			//
-
-			for (int i1 = 0; i1 < arrArea.size(); i1++) {
 				//
-				rt.addValue(t1, "Area");
-				rt.addValue(s2, arrArea.get(i1));
-				rt.addValue(s3, stat1.roiX);
-				rt.addValue(s4, stat1.roiY);
-				rt.addValue(s5, stat1.roiWidth);
-				rt.addValue(s6, stat1.roiHeight);
+				// li devo memorizzare in ImageJ, in modo che le immagini successive abbiano
+				// questa posizione, senza piu'chiederla (che palle se continua a chiedertela)
+				//
 
-				rt.incrementCounter();
-				rt.addValue(t1, "Mean");
-				rt.addValue(s2, arrMeanRow.get(i1));
-				rt.addValue(s3, stat1.roiX);
-				rt.addValue(s4, stat1.roiY);
-				rt.addValue(s5, stat1.roiWidth);
-				rt.addValue(s6, stat1.roiHeight);
+				// MyLog.waitHere("" + count++ + " analizzo= " + impStack.getTitle());
 
-				rt.incrementCounter();
-				rt.addValue(t1, "MeanNorm");
-				rt.addValue(s2, arrMeanNorm.get(i1));
-				rt.addValue(s3, stat1.roiX);
-				rt.addValue(s4, stat1.roiY);
-				rt.addValue(s5, stat1.roiWidth);
-				rt.addValue(s6, stat1.roiHeight);
+//				ImageStatistics stat1 = imp0.getStatistics();
+//				double area1 = stat1.area;
+//				double mean1 = stat1.mean;
+//				double[] out2 = null;
 
-				rt.incrementCounter();
-				rt.addValue(t1, "Bvalue");
-				rt.addValue(s2, arrBvalue.get(i1));
-				rt.addValue(s3, stat1.roiX);
-				rt.addValue(s4, stat1.roiY);
-				rt.addValue(s5, stat1.roiWidth);
-				rt.addValue(s6, stat1.roiHeight);
+				ImageStatistics stat1 = null;
+				double area1 = 0;
+				double mean1 = 0;
+				double[] out2 = null;
 
-			}
+				// effettua i calcoli per ogni IMMAGINE
+				impStack.setSliceWithoutUpdate(1);
 
-			if (len1 > 2) {
+				// lo stackBuilder ha messo l'header di ogni immagine, posso ora andare ad
+				// interrogarle
 
-				rt.incrementCounter();
-				rt.addValue(t1, "coeffAngolare ");
-				rt.addValue(s2, out2[0]);
-				rt.addValue(s3, stat1.roiX);
-				rt.addValue(s4, stat1.roiY);
-				rt.addValue(s5, stat1.roiWidth);
-				rt.addValue(s6, stat1.roiHeight);
+				ArrayList<Double> arrArea = new ArrayList<Double>();
+				ArrayList<Double> arrMeanRow = new ArrayList<Double>();
+				ArrayList<Double> arrMeanNorm = new ArrayList<Double>();
+				ArrayList<Double> arrBvalue = new ArrayList<Double>();
+				ArrayList<String> arrGradient = new ArrayList<String>();
+				ArrayList<Double> arrLogMeanNorm = new ArrayList<Double>();
+				ArrayList<Double> arrADCb = new ArrayList<Double>();
+				ArrayList<Double> arrADCbT0 = new ArrayList<Double>();
+				ArrayList<Double> arrScartoPercADC = new ArrayList<Double>();
 
-				rt.incrementCounter();
-				rt.addValue(t1, "intercetta");
-				rt.addValue(s2, out2[1]);
-				rt.addValue(s3, stat1.roiX);
-				rt.addValue(s4, stat1.roiY);
-				rt.addValue(s5, stat1.roiWidth);
-				rt.addValue(s6, stat1.roiHeight);
-			}
-			// }
+				int len1 = 0;
 
-			// MyConst.CODE_FILE, MyConst.TOKENS4);
+				// in base ai dati posizionamento Roi1 vado a calcolare i dati posizionamento
+				// Roi2 (che ha diametro diverso)
 
-			// put values in ResultsTable
+				xRoi2 = xRoi1 + rRoi1 - rRoi2;
+				yRoi2 = yRoi1 + rRoi1 - rRoi2;
 
-			// MyLog.logVector(info1, "info1");
-			// MyLog.waitHere();
+				for (int i1 = 0; i1 < frames; i1++) {
+					int slice = i1 + 1;
+					ImagePlus imp1 = MyStackUtils.imageFromStack(impStack, slice);
+					mySetRoi(imp1, xRoi2, yRoi2, rRoi2 * 2, null, Color.red);
+					stat1 = imp1.getStatistics();
+					double area = stat1.area * dimPixel * dimPixel; // l'area che ottengo e'in pixel, per ottenere mmq
+																	// devo moltiplicare per dimPixel al quadrato
+					// MyLog.waitHere("area[mmq]= " + area * dimPixel * dimPixel);
+					double meanRow = stat1.mean;
+					if (i1 == 0) // la prima immagine ha B=0 e fornisce la base
+						meanBase = stat1.mean;
 
-			if (verbose && !test && !valid2) {
-				rt.show("Results");
-			}
+					double Bvalue = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_B_VALUE));
+					String sName = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SEQUENCE_NAME);
+					int len = sName.length();
 
-			if ((autoCalled && !test && !valid2)) {
-				accetta = MyMsg.accettaMenu();
-			} else {
-				if (!test && !valid2) {
-					accetta = MyMsg.msgStandalone();
-				} else {
-					accetta = test || valid2;
+					double meanNorm1 = meanRow / meanBase;
+					int precision = 9;
+
+					///
+					// poiche' in ResultsTable i valori sono arrotondati massimo a 9 digits succede
+					/// che il log, invece viene calcolato sui 18 e rotti digits. Questo comporta
+					/// che poi trovo differenze tra un calcolo di controllo fatto in excel o con la
+					/// calcolatrice, rispetto al log calcolato da ImageJ. Se invece tronco prima di
+					/// calcolare il log non ho questi problemi.
+					///
+
+					double meanNorm = truncate(meanNorm1, precision);
+
+					double logMeanNorm = -Math.log(meanNorm);
+
+//					if (Bvalue > 2500)
+//						MyLog.waitHere("meanRow= "+meanRow+" meanNorm= " + meanNorm + " logMeanNorm= " + logMeanNorm);
+
+					// appoggio i dati riordinati in alcuni array
+
+					arrArea.add(area);
+					arrMeanRow.add(meanRow);
+					arrMeanNorm.add(meanNorm);
+					arrLogMeanNorm.add(logMeanNorm);
+					arrADCb.add(logMeanNorm / Bvalue);
+					// arrADCb.add(logMeanNorm/Bvalue-(CoeffT*deltaT));
+
+					arrBvalue.add(Bvalue);
+
 				}
-			}
-		} while (!accetta);
+
+				len1 = arrMeanNorm.size();
+				if (len1 > 2) {
+					out2 = regressor(arrMeanNorm, arrBvalue, arrGradient);
+				}
+
+				//
+				// ho terminato l'eleborazione, ora posso stampare i dati nella ResultsTable
+				//
+
+				for (int i1 = 0; i1 < arrArea.size(); i1++) {
+
+					rt.incrementCounter();
+					rt.addValue(t1, "Bvalue");
+					rt.addValue(s2, arrBvalue.get(i1));
+					rt.addValue(s3, stat1.roiX);
+					rt.addValue(s4, stat1.roiY);
+					rt.addValue(s5, stat1.roiWidth);
+					rt.addValue(s6, stat1.roiHeight);
+
+					rt.incrementCounter();
+					rt.addValue(t1, "Area");
+					rt.addValue(s2, arrArea.get(i1));
+					rt.addValue(s3, stat1.roiX);
+					rt.addValue(s4, stat1.roiY);
+					rt.addValue(s5, stat1.roiWidth);
+					rt.addValue(s6, stat1.roiHeight);
+
+					rt.incrementCounter();
+					rt.addValue(t1, "Mean");
+					rt.addValue(s2, arrMeanRow.get(i1));
+					rt.addValue(s3, stat1.roiX);
+					rt.addValue(s4, stat1.roiY);
+					rt.addValue(s5, stat1.roiWidth);
+					rt.addValue(s6, stat1.roiHeight);
+
+					rt.incrementCounter();
+					rt.addValue(t1, "MeanNorm");
+					rt.addValue(s2, arrMeanNorm.get(i1));
+					rt.addValue(s3, stat1.roiX);
+					rt.addValue(s4, stat1.roiY);
+					rt.addValue(s5, stat1.roiWidth);
+					rt.addValue(s6, stat1.roiHeight);
+
+					rt.incrementCounter();
+					rt.addValue(t1, "logMeanNorm");
+					rt.addValue(s2, arrLogMeanNorm.get(i1));
+					rt.addValue(s3, stat1.roiX);
+					rt.addValue(s4, stat1.roiY);
+					rt.addValue(s5, stat1.roiWidth);
+					rt.addValue(s6, stat1.roiHeight);
+
+				}
+
+				if (len1 > 2) {
+
+					rt.incrementCounter();
+					rt.addValue(t1, "coeffAngolare ");
+					rt.addValue(s2, out2[0]);
+					rt.addValue(s3, stat1.roiX);
+					rt.addValue(s4, stat1.roiY);
+					rt.addValue(s5, stat1.roiWidth);
+					rt.addValue(s6, stat1.roiHeight);
+
+					rt.incrementCounter();
+					rt.addValue(t1, "intercetta");
+					rt.addValue(s2, out2[1]);
+					rt.addValue(s3, stat1.roiX);
+					rt.addValue(s4, stat1.roiY);
+					rt.addValue(s5, stat1.roiWidth);
+					rt.addValue(s6, stat1.roiHeight);
+				}
+				// }
+
+				// MyConst.CODE_FILE, MyConst.TOKENS4);
+
+				// put values in ResultsTable
+
+				// MyLog.logVector(info1, "info1");
+				// MyLog.waitHere();
+
+				if (verbose && !test && !valid2) {
+					rt.show("Results");
+				}
+
+				if ((autoCalled && !test && !valid2)) {
+					accetta = MyMsg.accettaMenu();
+				} else {
+					if (!test && !valid2) {
+						accetta = MyMsg.msgStandalone();
+					} else {
+						accetta = test || valid2;
+					}
+				}
+			} while (!accetta);
+		}
 
 		return rt;
 	}
@@ -528,6 +702,24 @@ public class p16rmn_ implements PlugIn, Measurements {
 			imp1.getWindow().toFront();
 		}
 		imp1.getRoi().setStrokeWidth(1.1);
+
+		if (color != null) {
+			imp1.getRoi().setStrokeColor(color);
+		}
+		if (over != null) {
+			over.addElement(imp1.getRoi());
+		}
+
+	}
+
+	public static void mySetRoi(ImagePlus imp1, double xroi, double yroi, double droi, Overlay over, Color color) {
+
+		imp1.setRoi(new OvalRoi(xroi, yroi, droi, droi));
+		if (imp1.isVisible()) {
+			imp1.getWindow().toFront();
+		}
+		// imp1.getRoi().setStrokeWidth(1.1);
+		imp1.getRoi().setStrokeWidth(0.5);
 
 		if (color != null) {
 			imp1.getRoi().setStrokeColor(color);
@@ -556,7 +748,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 	 * @param path vettore contenente il path delle immagini
 	 * @return ImagePlus contenente lo stack generato
 	 */
-	public static ImagePlus stackBuilder(String[] path, boolean verbose) {
+	public static ImagePlus stackBuilder2(String[] path, boolean verbose) {
 
 		if ((path == null) || (path.length == 0)) {
 			if (verbose) {
@@ -568,15 +760,19 @@ public class p16rmn_ implements PlugIn, Measurements {
 		int rows = imp0.getHeight();
 		int columns = imp0.getWidth();
 		ImageStack newStack = new ImageStack(rows, columns);
-		String[] slicePos2 = new String[path.length];
+		String[] sequence = new String[path.length];
 
+		// originariamente lo StackBuilder ordinava le immagini secondo la posizione,
+		// qui le ordina secondo il TAG DICOM_SEQUENCE_NAME = "0018,0024"
 		for (int w1 = 0; w1 < path.length; w1++) {
 			imp0 = UtilAyv.openImageNoDisplay(path[w1], true);
-			String dicomPosition = ReadDicom.readDicomParameter(imp0, MyConst.DICOM_IMAGE_POSITION);
-			slicePos2[w1] = ReadDicom.readSubstring(dicomPosition, 3);
+			// String dicomPosition = ReadDicom.readDicomParameter(imp0,
+			// MyConst.DICOM_IMAGE_POSITION);
+			String dicomSequenceName = ReadDicom.readDicomParameter(imp0, MyConst.DICOM_SEQUENCE_NAME);
+			sequence[w1] = ReadDicom.readSubstring(dicomSequenceName, 3);
 		}
 
-		String[] pathSortato = bubbleSortPath(path, slicePos2);
+		String[] pathSortato = bubbleSortPathSequence(path, sequence);
 
 		for (int w1 = 0; w1 < pathSortato.length; w1++) {
 			ImagePlus imp1 = UtilAyv.openImageNoDisplay(path[w1], true);
@@ -608,14 +804,16 @@ public class p16rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 *
+	 * forse qui il sort non viene sfruttato, vedo che sono gia'in ordine i dati
+	 * ricevutio da sequenze
+	 * 
 	 * @param path
-	 * @param slicePosition
+	 * @param sequence
 	 * @return
 	 */
-	public static String[] bubbleSortPath(String[] path, String[] slicePosition) {
+	public static String[] bubbleSortPathSequence(String[] path, String[] sequence) {
 
-		if ((path == null) || (slicePosition == null) || !(path.length == slicePosition.length)) {
+		if ((path == null) || (sequence == null) || !(path.length == sequence.length)) {
 			return null;
 		}
 		if (path.length < 2) {
@@ -629,12 +827,12 @@ public class p16rmn_ implements PlugIn, Measurements {
 
 		for (int i1 = 0; i1 < path.length; i1++) {
 			for (int i2 = 0; i2 < path.length - 1 - i1; i2++) {
-				double position1 = ReadDicom.readDouble(slicePosition[i2]);
-				double position2 = ReadDicom.readDouble(slicePosition[i2 + 1]);
-				if (position1 > position2) {
-					String positionSwap = slicePosition[i2];
-					slicePosition[i2] = slicePosition[i2 + 1];
-					slicePosition[i2 + 1] = positionSwap;
+				double seq1 = ReadDicom.readDouble(sequence[i2]);
+				double seq2 = ReadDicom.readDouble(sequence[i2 + 1]);
+				if (seq1 < seq2) {
+					String positionSwap = sequence[i2];
+					sequence[i2] = sequence[i2 + 1];
+					sequence[i2 + 1] = positionSwap;
 					String pathSwap = sortedPath[i2];
 					sortedPath[i2] = sortedPath[i2 + 1];
 					sortedPath[i2 + 1] = pathSwap;
@@ -711,11 +909,9 @@ public class p16rmn_ implements PlugIn, Measurements {
 		double[] vetLogMeanNorm = new double[vetMeanNorm.length];
 		for (int i1 = 0; i1 < vetMeanNorm.length; i1++) {
 			vetLogMeanNorm[i1] = -Math.log(vetMeanNorm[i1]);
-
+			IJ.log("i1= " + i1 + " bval= " + bval[i1] + " logMeanNorm= " + vetLogMeanNorm[i1]);
 		}
 
-//		MyLog.logVector(bval, "bval");
-//		MyLog.logVector(vetLogMeanNorm, "vetLogMeanNorm");
 //		MyLog.waitHere();
 		//
 		// dopo avere fatto il logaritmo dei valori, applico la regressione lineare
@@ -727,7 +923,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 		String resultString1 = curveFitter1.getResultString();
 //		IJ.log(resultString1);
 		double[] params1 = curveFitter1.getParams();
-//		MyLog.logVector(params1, "params1");
+		MyLog.logVector(params1, "params1");
 //		IJ.log("risultato in excel 0.001963601       0.110669528");
 
 //		String titolo = "";
@@ -746,6 +942,16 @@ public class p16rmn_ implements PlugIn, Measurements {
 		out1[1] = params1[0];
 
 		return out1;
+	}
+
+	public static double truncate(double number, int precision) {
+		double prec = Math.pow(10, precision);
+		int integerPart = (int) number;
+		double fractionalPart = number - integerPart;
+		fractionalPart *= prec;
+		int fractPart = (int) fractionalPart;
+		fractionalPart = (double) (integerPart) + (double) (fractPart) / prec;
+		return fractionalPart;
 	}
 
 }

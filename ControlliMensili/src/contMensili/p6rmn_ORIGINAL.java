@@ -81,7 +81,7 @@ import utils.UtilAyv;
 public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 
 	static final int ABORT = 1;
-	public static final boolean SPY = true; // attiva diagnostica e salvataggio immagini e log
+	public static final boolean SPY = false; // attiva diagnostica e salvataggio immagini e log
 
 	public static String VERSION = "SPESSORE FETTA";
 
@@ -195,7 +195,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 	 * @return
 	 */
 	public int autoMenu(String autoArgs) {
-		MyLog.appendLog(fileDir + "MyLog.txt", "p6 riceve " + autoArgs);
+		MyLog.appendLog(fileDir + "MyLog.txt", "p6rmn_ORIGINAL riceve " + autoArgs);
 
 		// the autoArgs are passed from Sequenze_
 		// possibilities:
@@ -587,19 +587,19 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 				.readDouble(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_SPACING_BETWEEN_SLICES));
 		// IJ.log("spacing= " + spacing);
 
-		IJ.log("==================================================================");
-		IJ.log("======================= p6rmn_ORIGINAL ===========================");
-		IJ.log("==================================================================");
-		IJ.log("Results FWHM");
+//		IJ.log("==================================================================");
+//		IJ.log("======================= p6rmn_ORIGINAL ===========================");
+//		IJ.log("==================================================================");
+//		IJ.log("Results FWHM");
 
 		for (int w1 = 0; w1 < nFrames; w1++) {
 
-			IJ.log("Dati ottenuti per slice " + (w1 + 1) + " / " + nFrames);
-			IJ.log("==================================================================");
-
-			IJ.log("SPESSORE TEORICO= " + String.format("%.4f", thick) + " [mm]   SPACING TEORICO= "
-					+ String.format("%.4f", spacing) + " [mm] ");
-			IJ.log("==================================================================");
+//			IJ.log("Dati ottenuti per slice " + (w1 + 1) + " / " + nFrames);
+//			IJ.log("==================================================================");
+//
+//			IJ.log("SPESSORE TEORICO= " + String.format("%.4f", thick) + " [mm]   SPACING TEORICO= "
+//					+ String.format("%.4f", spacing) + " [mm] ");
+//			IJ.log("==================================================================");
 
 			ImagePlus imp3 = MyStackUtils.imageFromStack(impStack, w1 + 1);
 
@@ -651,8 +651,8 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 			fwhmSlice1[w1] = dsd1[0];
 			peakPositionSlice1[w1] = dsd1[1];
 
-			IJ.log("FWHM PRIMA SLAB= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd1[0], dimPixel))
-					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd1[1]));
+//			IJ.log("FWHM PRIMA SLAB= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd1[0], dimPixel))
+//					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd1[1]));
 
 			if (imp3.isVisible()) {
 				imp3.getWindow().toFront();
@@ -684,21 +684,21 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 			fwhmSlice2[w1] = dsd2[0];
 			peakPositionSlice2[w1] = dsd2[1];
 
-			IJ.log("FWHM SECONDA SLAB= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd2[0], dimPixel))
-					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd2[1]));
-
-			IJ.log("==================================================================");
+//			IJ.log("FWHM SECONDA SLAB= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd2[0], dimPixel))
+//					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd2[1]));
+//
+//			IJ.log("==================================================================");
 
 			if (imp3.isVisible()) {
 				imp3.getWindow().toFront();
 			}
 			double[] mmSpessCor1 = spessStrato(dsd1[0], dsd2[0], thick, dimPixel);
 
-			IJ.log("FWHM CORRETTO OLD SLAB= " + String.format("%.4f", mmSpessCor1[0]) + " [mm]");
+//			IJ.log("FWHM CORRETTO OLD SLAB= " + String.format("%.4f", mmSpessCor1[0]) + " [mm]");
 
 			double[] sliceAapm100 = p6rmn_COMMON.spessStrato_AAPM100_COMMON(dsd1[0], dsd2[0], thick, dimPixel);
-			IJ.log("FWHM CORRETTO AAPM100 SLAB= " + String.format("%.4f", sliceAapm100[0]) + " [mm]");
-			IJ.log("==================================================================");
+//			IJ.log("FWHM CORRETTO AAPM100 SLAB= " + String.format("%.4f", sliceAapm100[0]) + " [mm]");
+//			IJ.log("==================================================================");
 
 			mmVetS1CorSlab[w1] = mmSpessCor1[0];
 			mmVetS2CorSlab[w1] = mmSpessCor1[1];
@@ -732,8 +732,8 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 
 			fwhmCuneo3[w1] = dsd3[0];
 			peakPositionCuneo3[w1] = dsd3[1];
-			IJ.log("FWHM PRIMO CUNEO= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd3[0], dimPixel))
-					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd3[1]));
+//			IJ.log("FWHM PRIMO CUNEO= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd3[0], dimPixel))
+//					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd3[1]));
 
 			if (imp3.isVisible()) {
 				imp3.getWindow().toFront();
@@ -763,9 +763,9 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 			double[] dsd4 = analProf_ORIGINAL(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step,
 					putLabelSx, dimPixel);
 			fwhmCuneo4[w1] = dsd4[0];
-			IJ.log("FWHM SECONDO CUNEO= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd4[0], dimPixel))
-					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd4[1]));
-			IJ.log("==================================================================");
+//			IJ.log("FWHM SECONDO CUNEO= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd4[0], dimPixel))
+//					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd4[1]));
+//			IJ.log("==================================================================");
 
 			peakPositionCuneo4[w1] = dsd4[1];
 
@@ -774,11 +774,11 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 			}
 			double[] mixSpessCor2 = spessStrato(dsd3[0], dsd4[0], thick, dimPixel);
 
-			IJ.log("FWHM CORRETTO OLD CUNEI= " + String.format("%.4f", mixSpessCor2[0]) + " [mm]");
+//			IJ.log("FWHM CORRETTO OLD CUNEI= " + String.format("%.4f", mixSpessCor2[0]) + " [mm]");
 
 			double[] cuneoAapm100 = p6rmn_COMMON.spessStrato_AAPM100_COMMON(dsd3[0], dsd4[0], thick, dimPixel);
-			IJ.log("FWHM CORRETTO AAPM100 CUNEI= " + String.format("%.4f", cuneoAapm100[0]) + " [mm]");
-			IJ.log("==================================================================");
+//			IJ.log("FWHM CORRETTO AAPM100 CUNEI= " + String.format("%.4f", cuneoAapm100[0]) + " [mm]");
+//			IJ.log("==================================================================");
 
 			pixVetS1CorCuneo[w1] = mixSpessCor2[0];
 			pixVetS2CorCuneo[w1] = mixSpessCor2[1];

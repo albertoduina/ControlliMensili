@@ -86,7 +86,7 @@ public class Sequenze_ implements PlugIn {
 	// public static String testP6_2 = "contMensili.p6rmn_IMPROVED";
 	// public static String testP6_3 = "contMensili.p6rmn_FITTER";
 	public static int testP6 = 2; /// <<< SELEZIONA QUI
-	public static String choice = "";
+//	public static String choice = "";
 
 	@Override
 	public void run(String arg) {
@@ -168,7 +168,7 @@ public class Sequenze_ implements PlugIn {
 		boolean superficiali = false;
 		boolean aux2 = false;
 		boolean aux3 = false;
-		choice = Prefs.get("prefer.choice", "none");
+		// choice = Prefs.get("prefer.choice", "none");
 
 		// String[] items = { "p6rmn_ORIGINAL", "p6rmn_IMPROVED", "p6rmn_FITTER" };
 
@@ -197,7 +197,7 @@ public class Sequenze_ implements PlugIn {
 		} else {
 			Prefs.set("prefer.fast", "false");
 		}
-		Prefs.set("prefer.choice", choice);
+		// Prefs.set("prefer.choice", choice);
 
 //		IJ.log("CHOICE= " + choice);
 
@@ -409,6 +409,8 @@ public class Sequenze_ implements PlugIn {
 			// --------------------------------------------------------------------------------------------
 			// motore di chiamata dei plugins
 			// --------------------------------------------------------------------------------------------
+			// IJ.log(MyLog.qui() + " avvio >>> callPluginsFromSequenceTable");
+
 			callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false, superficiali, p10p11p12, tw);
 			// --------------------------------------------------------------------------------------------
 
@@ -949,8 +951,12 @@ public class Sequenze_ implements PlugIn {
 		// codice
 		// ##########--OBSOLETO-OBSOLETO--OBSOLETO--################
 
+		// IJ.log(MyLog.qui() + " INTERNO >>> callPluginsFromSequenceTable");
+
+		// IJ.log("MyLog.qui() callPluginsFromSequenceTable riceve tableCode5.length= " + tableCode5.length);
+
 		if (tableSequenze5 == null) {
-			IJ.log("callPluginsFromSequenceTable riceve NULL : Nessuna immagine da analizzare");
+			IJ.log("callPluginsFromSequenceTable riceve tableSequenze5 == NULL : Nessuna immagine da analizzare");
 			return null;
 		}
 		// MyLog.logMatrix(tableSequenze5, "tableSequenze5");
@@ -960,13 +966,14 @@ public class Sequenze_ implements PlugIn {
 		int count = 0;
 		List<String> vetPlugin = new ArrayList<String>();
 		List<String> vetArgomento = new ArrayList<String>();
-		// IJ.log("lunghezza= "+tableSequenze5.length);
+		// IJ.log("lunghezza= " + tableSequenze5.length);
 		// MyLog.logMatrix(tableSequenze5, "tableSequenze5");
 		// MyLog.logMatrix(tableCode5, "tableCode5");
 		while (j1 < tableSequenze5.length) {
-			// MyLog.waitHere("j1= "+j1);
+			// MyLog.waitHere("j1= " + j1 + " >>> " + TableSequence.getDone(tableSequenze5, j1));
 			if (TableSequence.getDone(tableSequenze5, j1).equals("0")) {
 				String plugin = pluginToBeCalledWithCoil(j1, tableSequenze5, tableCode5);
+				// MyLog.waitHere("plugin= " + plugin);
 				// qui altero il plugin per poter chiamare, durante i tests le
 				// vecchie versioni, senza dover modificare i sorgenti
 				if (plugin == null) {
@@ -994,7 +1001,9 @@ public class Sequenze_ implements PlugIn {
 						plugin = "contMensili.p7rmn_";
 					}
 					if (plugin.equals("contMensili.p16rmn_")) {
-						plugin = "contMensili.p6rmn_ORIGINAL";
+
+						MyLog.waitHere("MA COSA STRACACCHIO HO COMBINATO ???");
+						// plugin = "contMensili.p6rmn_ORIGINAL";
 					}
 				}
 
@@ -1003,9 +1012,10 @@ public class Sequenze_ implements PlugIn {
 //				IJ.log(MyLog.qui() + " SELEZIONE con testP6= " + testP6 + "plugin= " + plugin);
 //				MyLog.waitHere();
 
-				if (plugin.equals("contMensili.p6rmn_")) {
-					plugin = "contMensili." + choice;
-				}
+//				if (plugin.equals("contMensili.p6rmn_")) {
+//					MyLog.waitHere("CHOICE ????");
+//					plugin = "contMensili." + choice;
+//				}
 
 				String argomento = argumentForPluginToBeCalled(j1, tableSequenze5);
 				boolean jump = false;
