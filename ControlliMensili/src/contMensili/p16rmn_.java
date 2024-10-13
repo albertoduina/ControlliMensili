@@ -217,11 +217,13 @@ public class p16rmn_ implements PlugIn, Measurements {
 		boolean retry = false;
 		boolean step = false;
 		ResultsTable rt = null;
-		boolean valid = Prefs.getBoolean(".prefer.p16rmn_valid", false);
+		boolean valid1 = Prefs.getBoolean(".prefer.p16rmn_valid", false);
+		// MyLog.waitHere("valid= " + valid1);
+
 		int userSelection1 = 0;
 
 		do {
-			if (valid) {
+			if (valid1) {
 				userSelection1 = 4;
 				// se ho gia'posizionato la ROI la utilizzo anche per tutte le immagini
 				// successive del paccotto (paccotto=pacchetto multiplo)
@@ -280,7 +282,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 			boolean verbose, boolean test) {
 
 		boolean accetta = false;
-		boolean valid2 = true;
+		boolean valid2 = false;
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		Overlay over1 = new Overlay();
@@ -303,8 +305,10 @@ public class p16rmn_ implements PlugIn, Measurements {
 		double preferencesX = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiX", "30"));
 		double preferencesY = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiY", "30"));
 		double preferencesD = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiD", "30"));
+		valid2 = Prefs.getBoolean(".prefer.p16rmn_valid", false);
 
-//		MyLog.waitHere("READ preferences X,Y,R= " + preferencesX + " ; " + preferencesY + " ; " + preferencesD);
+//		MyLog.waitHere(
+//				"READ preferences X,Y,R= " + preferencesX + " ; " + preferencesY + " ; " + preferencesD + ";" + valid2);
 
 		double xRoi0 = 9999;
 		double yRoi0 = 9999;
@@ -394,12 +398,11 @@ public class p16rmn_ implements PlugIn, Measurements {
 		double rRoi0 = 0;
 
 		for (int z1 = 0; z1 < 3; z1++) {
+
 			switch (z1) {
 			case 0:
-				IJ.log("direzione X");
 				rt.incrementCounter();
 				rt.addValue(t1, "<---- direzione  X ---->");
-				// munk = "2/4";
 				pathBB = pathX;
 				xRoi0 = preferencesX;
 				yRoi0 = preferencesY;
@@ -407,10 +410,8 @@ public class p16rmn_ implements PlugIn, Measurements {
 				reference = false;
 				break;
 			case 1:
-				IJ.log("direzione Y");
 				rt.incrementCounter();
 				rt.addValue(t1, "<---- direzione  Y ---->");
-				// munk = "3/4";
 				pathBB = pathY;
 				xRoi0 = preferencesX;
 				yRoi0 = preferencesY;
@@ -418,10 +419,8 @@ public class p16rmn_ implements PlugIn, Measurements {
 				reference = false;
 				break;
 			case 2:
-				IJ.log("direzione Z");
 				rt.incrementCounter();
 				rt.addValue(t1, "<---- direzione  Z ---->");
-				// munk = "4/4";
 				pathBB = pathZ;
 				xRoi0 = preferencesX;
 				yRoi0 = preferencesY;
@@ -457,20 +456,23 @@ public class p16rmn_ implements PlugIn, Measurements {
 				// questa e' la roi verde esterna
 				mySetRoi(imp0, xRoi0, yRoi0, rRoi0, null, Color.green);
 
-				if (valid2) {
+				if (!valid2) {
+
+					// MyLog.waitHere("valid= " + valid2);
 
 					int resp = 0;
 
-					if (!test) {
-						resp = ButtonMessages.ModelessMsg(
-								" Posizionare ROI diamFantoccio e premere CONTINUA,  altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive",
-								"CONTINUA", "ANNULLA");
-					}
+					// if (!test) {
+					resp = ButtonMessages.ModelessMsg(
+							" Posizionare ROI diamFantoccio e premere CONTINUA,  altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive",
+							"CONTINUA", "ANNULLA");
+					// }
 
 					if (resp == 1) {
 						return null;
 					}
-
+					valid2=true;
+					
 					// dati posizionamento Roi1
 //					ImagePlus impActive1 = WindowManager.getCurrentImage();
 					Rectangle boundingRectangle1 = imp0.getRoi().getBounds();
@@ -498,10 +500,10 @@ public class p16rmn_ implements PlugIn, Measurements {
 					Prefs.set("prefer.p16rmn_roiX", Double.toString(xRoi1));
 					Prefs.set("prefer.p16rmn_roiY", Double.toString(yRoi1));
 					Prefs.set("prefer.p16rmn_roiD", Double.toString(rRoi1 * 2));
-//					// ELIMINATO VALID XCHE IMMAGINI IN 3 DIREZIONI
+					Prefs.set("prefer.p16rmn_valid", valid2);
+
 //
 //					Prefs.set("prefer.p16rmn_predir", dir);
-//					Prefs.set("prefer.p16rmn_valid", true);
 //
 				}
 
