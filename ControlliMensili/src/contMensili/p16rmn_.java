@@ -471,8 +471,8 @@ public class p16rmn_ implements PlugIn, Measurements {
 					if (resp == 1) {
 						return null;
 					}
-					valid2=true;
-					
+					valid2 = true;
+
 					// dati posizionamento Roi1
 //					ImagePlus impActive1 = WindowManager.getCurrentImage();
 					Rectangle boundingRectangle1 = imp0.getRoi().getBounds();
@@ -507,8 +507,13 @@ public class p16rmn_ implements PlugIn, Measurements {
 //
 				}
 
-				// leggo dove hanno posizionato la ROI fantoccio sull'immagine attiva, questi
+				// leggo sull'immagine attiva, questi
 				// sono i dati definitivi
+				// leggo i dati delle preferenze
+
+				double prefX = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiX", "30"));
+				double prefY = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiY", "30"));
+				double prefD = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiD", "30"));
 
 				//
 				// li devo memorizzare in ImageJ, in modo che le immagini successive abbiano
@@ -548,23 +553,34 @@ public class p16rmn_ implements PlugIn, Measurements {
 				// in base ai dati posizionamento Roi1 vado a calcolare i dati posizionamento
 				// Roi2 (che ha diametro diverso)
 
-				xRoi2 = xRoi1 + rRoi1 - rRoi2;
-				yRoi2 = yRoi1 + rRoi1 - rRoi2;
+//				xRoi2 = xRoi1 + rRoi1 - rRoi2;
+//				yRoi2 = yRoi1 + rRoi1 - rRoi2;
+				xRoi2 = prefX + prefD - rRoi2;
+				yRoi2 = prefY + prefD - rRoi2;
 
 				for (int i1 = 0; i1 < frames; i1++) {
 					int slice = i1 + 1;
+
+
 					ImagePlus imp1 = MyStackUtils.imageFromStack(impStack, slice);
+
+					// imp1.setRoi(new OvalRoi(xRoi2, yRoi2, rRoi2 * 2, rRoi2 * 2));
+
+
 					mySetRoi(imp1, xRoi2, yRoi2, rRoi2 * 2, null, Color.red);
 					stat1 = imp1.getStatistics();
 					double area = stat1.area * dimPixel * dimPixel; // l'area che ottengo e'in pixel, per ottenere mmq
 																	// devo moltiplicare per dimPixel al quadrato
 					// MyLog.waitHere("area[mmq]= " + area * dimPixel * dimPixel);
 					double meanRow = stat1.mean;
+
 					if (i1 == 0) // la prima immagine ha B=0 e fornisce la base
 						meanBase = stat1.mean;
 
 					double Bvalue = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_B_VALUE));
+					// if (Bvalue==0) MyLog.waitHere("Bvalue==0");
 					String sName = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SEQUENCE_NAME);
+//					IJ.log(""+i1+" sName= "+sName);
 					int len = sName.length();
 
 					double meanNorm1 = meanRow / meanBase;
@@ -578,14 +594,39 @@ public class p16rmn_ implements PlugIn, Measurements {
 					/// calcolare il log non ho questi problemi.
 					///
 
+//					if (meanNorm1 == 0)
+//						MyLog.waitHere("area= " + area + "\nmeanRow= " + meanRow + "\nBvalue= " + Bvalue
+//								+ "\nmeanNorm1 " + meanNorm1);
+
 					double meanNorm = truncate(meanNorm1, precision);
+//					if (meanNorm == 0)
+//						MyLog.waitHere("meanNorm1= " + meanNorm1 + "\nprecision= " + precision);
 
 					double logMeanNorm = -Math.log(meanNorm);
+//					if (logMeanNorm == 0)
+//						MyLog.waitHere("area= " + area + "\nmeanRow= " + meanRow + "\nBvalue= " + Bvalue
+//								+ "\nmeanNorm1= " + meanNorm1 + "\nprecision= " + precision + "\nlogMeanNorm= "
+//								+ logMeanNorm + "\nmeanNorm= " + meanNorm);
 
 //					if (Bvalue > 2500)
 //						MyLog.waitHere("meanRow= "+meanRow+" meanNorm= " + meanNorm + " logMeanNorm= " + logMeanNorm);
 
 					// appoggio i dati riordinati in alcuni array
+
+//					if (area == 0)
+//						MyLog.waitHere("area == 0");
+//					if (meanRow == 0)
+//						MyLog.waitHere("meanRow == 0");
+//					if (meanNorm == 0)
+//						MyLog.waitHere("meanNorm == 0");
+//					if (logMeanNorm == 0)
+//						MyLog.waitHere("logMeanNorm == 0");
+//					if ((logMeanNorm / Bvalue) == 0)
+//						MyLog.waitHere("(logMeanNorm / Bvalue) == 0");
+//					if (Bvalue == 0)
+//						MyLog.waitHere("ATTENZIONE trovato Bvalue == 0 (TAG 0019,100C");
+//					IJ.log("slice= " + slice + " xRoi2= " + xRoi2 + " yRoi2= " + yRoi2 + " rRoi2= " + rRoi2 + " area= "
+//							+ area + " meanRow= " + meanRow + " meanNorm= " + meanRow + " Bvalue= " + Bvalue);
 
 					arrArea.add(area);
 					arrMeanRow.add(meanRow);
@@ -855,52 +896,6 @@ public class p16rmn_ implements PlugIn, Measurements {
 	public static double[] regressor(ArrayList<Double> arrMeanNorm, ArrayList<Double> arrBvalue,
 			ArrayList<String> arrGradient) {
 
-//		ArrayList<Double> norMeanX = new ArrayList<Double>();
-//		ArrayList<Double> norMeanY = new ArrayList<Double>();
-//		ArrayList<Double> norMeanZ = new ArrayList<Double>();
-//		ArrayList<Double> Bvalue = new ArrayList<Double>();
-		int count = 0;
-
-//		//
-//		// suddivisione dei valori di input a seconda della direzione del gradiente
-//		//
-//		for (int i1 = 0; i1 < arrMeanNorm.size(); i1++) {
-//
-//			String gradient = arrGradient.get(i1);
-//			double val1 = arrMeanNorm.get(i1);
-//			double val2 = arrBvalue.get(i1);
-//			int val3 = (int) val2;
-//			int val4 = 0;
-//
-//			switch (gradient) {
-//			case "x":
-//				norMeanX.add(val1);
-//				val4 = val3;
-//				count++;
-//				break;
-//			case "y":
-//				norMeanY.add(val1);
-//				if (val4 == val3)
-//					count++;
-//				break;
-//			case "z":
-//				norMeanZ.add(val1);
-//				if (val4 == val3)
-//					count++;
-//				// scrivo il Bvalue una volta su 3
-//				Bvalue.add(val2);
-//				count = 0;
-//				// }
-//				break;
-//			default:
-//			}
-//
-//		}
-
-//		MyLog.logArrayList(Bvalue, "Bvalue");
-//		MyLog.logArrayList(norMeanX, "norMeanX");
-//		MyLog.logArrayList(norMeanY, "norMeanY");
-//		MyLog.logArrayList(norMeanZ, "norMeanZ");
 
 		//
 		// calcolo il Log dei valori normalizzati
@@ -911,10 +906,8 @@ public class p16rmn_ implements PlugIn, Measurements {
 		double[] vetLogMeanNorm = new double[vetMeanNorm.length];
 		for (int i1 = 0; i1 < vetMeanNorm.length; i1++) {
 			vetLogMeanNorm[i1] = -Math.log(vetMeanNorm[i1]);
-			IJ.log("i1= " + i1 + " bval= " + bval[i1] + " logMeanNorm= " + vetLogMeanNorm[i1]);
 		}
 
-//		MyLog.waitHere();
 		//
 		// dopo avere fatto il logaritmo dei valori, applico la regressione lineare
 		// utilizzando quella fornita da ImageJ nel CurveFitter
@@ -923,15 +916,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 		CurveFitter curveFitter1 = new CurveFitter(bval, vetLogMeanNorm);
 		curveFitter1.doFit(CurveFitter.STRAIGHT_LINE);
 		String resultString1 = curveFitter1.getResultString();
-//		IJ.log(resultString1);
 		double[] params1 = curveFitter1.getParams();
-		MyLog.logVector(params1, "params1");
-//		IJ.log("risultato in excel 0.001963601       0.110669528");
-
-//		String titolo = "";
-//		Plot plot10 = curveFitter1.getPlot();
-//		plot10.setColor(Color.RED);
-//		plot10.show();
 
 		//
 		// preparo i risultati per l'esportazione, visto che ho un esempio fatto in

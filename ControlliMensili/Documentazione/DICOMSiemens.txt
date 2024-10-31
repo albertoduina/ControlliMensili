@@ -1,12 +1,12 @@
-In ImageJ versione 1.41b è stato introdotto un vocabolario Dicom esteso a 2652 tags, 
-anzichè dell'originale di soli 680 tags. 
-Improvvisamente le immagini Avanto e Body Tim non erano più leggibili 
-(in realtà erano leggibili quelle di 2 anni prima, 
+In ImageJ versione 1.41b e' stato introdotto un vocabolario Dicom esteso a 2652 tags, 
+anziche' dell'originale di soli 680 tags. 
+Improvvisamente le immagini Avanto e Body Tim non erano piu' leggibili 
+(in realta' erano leggibili quelle di 2 anni prima, 
 di una release precedente alla introduzione degli zip reports.
-Poichè non riuscivo a capire la causa ho interpellato Wayne Rasband che mi ha comunicato quanto segue:
+Poiche' non riuscivo a capire la causa ho interpellato Wayne Rasband che mi ha comunicato quanto segue:
 nei tag privati delle immagini il campo FD, che convenzionalmente dovrebbe essere di 8 byte 
-(come definito nello standard DICOM part 5 page 26), è di solo 3 byte, 
+(come definito nello standard DICOM part 5 page 26), e' di solo 3 byte, 
 pertanto i programmi che tentano di decodificare le immagini assumendo che il campo FD sia di 8 bytes 
 vanno in errore. 
-ImageJ è stato modificato in modo da accettare anche i 3 bytes che vengono letti ma non utilizzati 
-nè decodificati.
+ImageJ  stato modificato in modo da accettare anche i 3 bytes che vengono letti ma non utilizzati 
+ne' decodificati.
