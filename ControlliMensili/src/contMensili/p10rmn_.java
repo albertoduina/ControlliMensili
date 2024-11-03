@@ -122,7 +122,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 
 //		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
-
+// ====
 		fileDir = Prefs.get("prefer.string1", "none");
 
 		if (IJ.versionLessThan("1.43k")) {
