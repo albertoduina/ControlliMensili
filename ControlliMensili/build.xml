@@ -1,6 +1,9 @@
-<!-- Ant makefile for ControlliMensili -->
+<?xml-model href="utf-8"?>
 <project name="ContMensili" default="main">
-
+	<echo>==== ContMensili BUILD =====</echo>
+	
+	
+	<!-- Ant makefile for ControlliMensili -->
 
 	<!-- Definizioni property -->
 	<property environment="env" />
@@ -34,11 +37,6 @@
 	<property name="pathImageJ" location="${work}/imagej/ij.jar" />
 	<echo message="pathImageJ= ${pathImageJ}" />
 
-
-	<!--property name="pathExcelWriter" location="lib/Excel_Writer.jar" /-->
-	<!--echo message="pathExcelWriter= ${pathExcelWriter}" /-->
-
-	<property name="lib" location="lib" />
 	<property name="dist" location="dist" />
 	<property name="data" location="data" />
 	<property name="test" location="test/contMensili" />
@@ -52,31 +50,19 @@
 	<property name="pathIW2AYV" refid="pathIW2AYVxx" />
 	<echo message="pathIW2AYV= ${pathIW2AYV}" />
 
-
-
-	<!--property name="pathIW2AYV" location="${work}\iw2ayv\iw2ayv\dist\iw2ayv*.jar" />
-	<echo message="pathIW2AYV= ${pathIW2AYV}" /-->
-
 	<property name="baseIw2ayv" location="${work}\iw2ayv\iw2ayv" />
 	<echo message="baseIw2ayv= ${baseIw2ayv}" />
 
-
-
 	<property name="eclipse-home" value="${basedir}\..\.." />
 	<echo message="eclipse-home= ${eclipse-home}" />
-	
+
 	<tstamp>
-	    <format property="time.stamp" pattern="yyyyMMMdd_HHmm"/>
+		<format property="time.stamp" pattern="yyyyMMMdd_HHmm" />
 	</tstamp>
-	<echo message="tstamp= ${time.stamp}" />		
-
-
+	<echo message="tstamp= ${time.stamp}" />
 
 	<!-- ##############			MAIN ROUTINE 		############## -->
-	<target name="main" depends="init, libraries, compile, move1,  jar, zipp, wipe, zipp2, move2, cond_INS, cond_OLD, cond_WIN7, cond_FIJI" />
-	<!--target name="main" depends="init, libraries, compile, move1, jar, zipp, wipe, move2, zipp2, installXp, installOthers" /-->
-	<!--target name="main" depends="init, libraries, compile, move1, jar, zipp, wipe, move2, zipp2, installXp, installOthers" /-->
-
+	<target name="main" depends="init, compile, move1,  jar, zipp, zipp2, move2, cond_INS, cond_OLD, cond_WIN7, cond_FIJI" />
 
 	<!-- INITIALIZE buildnumber, delete and recreate empy directory -->
 	<target name="init" description="initialize">
@@ -106,18 +92,9 @@
 
 	</target>
 
-	<!-- LIBRARIES copy the external libraries -->
-	<target name="libraries" description="copy the external libraries">
-		<echo message="Copio le librerie necessarie" />
-		<!--copy file="${pathExcelWriter}" todir="${dist}" /-->
-		<copy todir="${dist}">
-			<fileset dir="${lib}" includes="*.jar" />
-		</copy>
-	</target>
-
 
 	<!-- COMPILE java classes -->
-	<target name="compile" description="Compile everything.">
+	<target name="compile" description="Compila tutto">
 		<echo message="Eseguo COMPILE" />
 		<!-- Build everything; add debug="on" to debug -->
 		<!--javac srcdir="${source}" destdir="${output}" optimize="on" target="1.5" encoding="iso8859-1" debug="on" classpath="${pathImageJ};${pathJfreechart};${pathJcommon}" /-->
@@ -126,20 +103,24 @@
 	</target>
 
 
-	<!-- MOVE1 move the sources into output -->
-	<target name="move1" description="Move the sources.">
+	<!-- MOVE1 copia nella cartella build tutto, salvo i .csv (solo limiti.csv) -->
+	<target name="move1" description="Copia nella cartella build">
+		<!--echo message="eseguo move1 copiando da dir="." /-->
+		<!--sleep seconds="5" /-->
 		<copy verbose="true" todir="${output}">
-			<fileset dir="." includes=" *.txt , *.pdf, *.rtf, *.number, *.jpg, *.xml, *.config, *.csv" />
+			<fileset dir="." includes=" *.txt , *.pdf, *.rtf, *.number, *.jpg, *.xml, *.config, limiti.csv" />
 		</copy>
 	</target>
 
 
-	<!-- MOVE1 move the csv into dist -->
-	<target name="move2" description="Move the csv.">
+	<!-- MOVE2 copy the csv from out to dist -->
+	<!-- copia i .csv dal mio ImageJ -->
+	<target name="move2" description="Copia i CSV dall'esterno">
 		<copy verbose="true" todir="${dist}">
-			<fileset dir="." includes=" *.csv" />
+			<fileset dir="${productDirWIN7}/ContMensili" includes=" *.csv" />
 		</copy>
 	</target>
+
 
 
 	<!-- Create MANIFEST and JARS application  -->
@@ -168,11 +149,11 @@
 
 
 	<!-- ZIP sources and data  -->
-	<target name="zipp" description="Zip source and test files.">
+	<target name="zipp" description="Zip sorgenti e test">
 		<zip destfile="${output}/ContMensSource_b${build.number}.zip">
 			<zipfileset dir="${source}" prefix="ControlliMensili/src/contMensili" />
 			<zipfileset dir="${test}" prefix="ControlliMensili/test/contMensili" />
-			<zipfileset dir="${data}" prefix="ControlliMensili/data" />
+			<!--zipfileset dir="${data}" prefix="ControlliMensili/data" /-->
 			<zipfileset dir="${baseIw2ayv}/src" prefix="iw2ayv/src/utils" />
 			<zipfileset dir="${baseIw2ayv}/test" prefix="iw2ayv/test/utils" />
 			<zipfileset dir="${baseIw2ayv}/data" prefix="iw2ayv/data" />
@@ -180,12 +161,12 @@
 	</target>
 
 	<!--WIPE Delete the build intermedie files  -->
-	<target name="wipe" description="Delete the build intermedie files.">
-		<!-- non cancellare i *.txt, servono -->
-		<!-- delete failonerror="false" verbose="true">
+	<!--target name="wipe" description="Cancella i file intermedi di build"-->
+	<!-- non cancellare i *.txt, servono -->
+	<!-- delete failonerror="false" verbose="true">
 			<fileset dir="${output}" includes="*.txt , *.java, *.rtf, *.number, *.class; *.jpg; *.pdf" />
 		</delete -->
-	</target>
+	<!--/target-->
 
 	<!--WIPE2 Delete the jar files into production  -->
 	<target name="wipe2" description="Delete the production *.jar files.">
@@ -198,10 +179,10 @@
 	<target name="zipp2" description="Zip executable files">
 		<echo message="Eseguo ZIPP2" />
 		<zip destfile="${output}/ContMensili_b${build.number}.zip">
-			<fileset dir="${lib}">
-				<include name="test2.jar" />
-				<!--include name="Excel_Writer.jar" /-->
-			</fileset>
+			<!--fileset dir="${lib}"-->
+			<!--include name="test2.jar" /-->
+			<!--include name="Excel_Writer.jar" /-->
+			<!--/fileset-->
 			<fileset dir="${output}">
 				<include name="ContMens_b${build.number}.jar" />
 			</fileset>
@@ -251,30 +232,30 @@
 				<include name="*.jar" />
 			</fileset>
 		</delete-->
-		
+
 		<delete failonerror="false" verbose="true">
 			<fileset dir="${productDirWIN7}/ContMensili">
-					<include name="*.jar" />
+				<include name="*.jar" />
 			</fileset>
 		</delete>
-		
-		
-		
-		
+
+
+
+
 		<copy todir="${productDirWIN7}/ContMensili">
 			<fileset dir="${dist}" includes="*.jar" />
 			<!--fileset dir="${dist}" includes="*.csv" /-->
 			<fileset dir="${output}" includes="*.jar" />
 		</copy>
 	</target>
-			
+
 	<target name="cond_FIJI" depends="init" if="win7">
 		<echo message="Eseguo cond_FIJI" />
 		<!--delete dir="${productDirFIJI}/ContMensili" /-->
 		<!--mkdir dir="${productDirFIJI}/ContMensili" /-->
 		<delete failonerror="false" verbose="true">
 			<fileset dir="${output}">
-					<include name="*.jar" />
+				<include name="*.jar" />
 			</fileset>
 		</delete>
 
@@ -284,6 +265,30 @@
 			<fileset dir="${output}" includes="*.jar" />
 		</copy>
 	</target>
+
+	<!--target name="zipdistribution" description=" Zip file per commit su Github">
+		<echo message="CREAZIONE ZIPFILE (senza data nel nome) PER GITHUB" />
+
+		<zip destfile="${distribuzione}/ControlliMensiliPlugins.zip">
+			<fileset dir="${dist}">
+				<include name="${output}/ContMens_${time.stamp}.jar" />
+				<include name="*.jar" />
+				<include name="*.csv" />
+				<include name="${pathIW2AYV}"/>
+			</fileset>
+		</zip>
+	</target-->
+
+	<!-- NOVEMBRE 2024 SPOSTATO IN release.xml-->
+	<!--target name="zipdistribution" description="NUOVO Zip file per commit su Github">
+		<echo message="CREAZIONE ZIPFILE (senza data nel nome) PER GITHUB" />
+
+		<zip destfile="${distribuzione}/ControlliMensiliPlugins.zip">
+			<fileset dir="${dist}">
+			</fileset>
+		</zip>
+	</target-->
+
 
 
 
