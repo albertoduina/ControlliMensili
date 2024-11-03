@@ -1,10 +1,7 @@
 <?xml-model href="utf-8"?>
 <project name="ContMensili" default="main">
 	<echo>==== ContMensili BUILD =====</echo>
-	
-	
 	<!-- Ant makefile for ControlliMensili -->
-
 	<!-- Definizioni property -->
 	<property environment="env" />
 
