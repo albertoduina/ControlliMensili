@@ -1,10 +1,7 @@
 package contMensili;
 
 import java.awt.Frame;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,7 +63,7 @@ import utils.UtilAyv;
  *         Sanitaria
  *
  */
-public class Sequenze_ implements PlugIn {
+public class Sequenze_OLD implements PlugIn {
 	private final static int ABORT = 1;
 
 	public static String VERSION = "Programma gestione automatica";
@@ -89,7 +86,7 @@ public class Sequenze_ implements PlugIn {
 	// public static String testP6_2 = "contMensili.p6rmn_IMPROVED";
 	// public static String testP6_3 = "contMensili.p6rmn_FITTER";
 	public static int testP6 = 2; /// <<< SELEZIONA QUI
-//	public static String choice = "";
+	public static String choice = "";
 
 	@Override
 	public void run(String arg) {
@@ -151,7 +148,7 @@ public class Sequenze_ implements PlugIn {
 		if (debugTables) {
 			IJ.log("\\Clear");
 			MyLog.logMatrix(tableCode, "tableCode");
-			MyLog.waitHere("salvare il log come 1_tableCodeLoaded");
+			MyLog.waitHere("salvare il log come tableCodeLoaded");
 		}
 
 //		String[][] tableExpand = TableExpand.loadTable(MyConst.EXPAND_FILE);
@@ -171,7 +168,7 @@ public class Sequenze_ implements PlugIn {
 		boolean superficiali = false;
 		boolean aux2 = false;
 		boolean aux3 = false;
-		// choice = Prefs.get("prefer.choice", "none");
+		choice = Prefs.get("prefer.choice", "none");
 
 		// String[] items = { "p6rmn_ORIGINAL", "p6rmn_IMPROVED", "p6rmn_FITTER" };
 
@@ -200,7 +197,7 @@ public class Sequenze_ implements PlugIn {
 		} else {
 			Prefs.set("prefer.fast", "false");
 		}
-		// Prefs.set("prefer.choice", choice);
+		Prefs.set("prefer.choice", choice);
 
 //		IJ.log("CHOICE= " + choice);
 
@@ -299,8 +296,6 @@ public class Sequenze_ implements PlugIn {
 
 				Prefs.set("prefer.p6rmnSTART", true);
 				// MyLog.waitHere("metto valid a false");
-				// azzeramento del valid relativo a p16rmn, in modo che per la prossima immagine
-				// di diffusine si debba effettuare il posizionamento della ROI
 				Prefs.set("prefer.p16rmn_valid", false);
 
 				List<File> result = getFileListing(new File(startingDir));
@@ -308,13 +303,8 @@ public class Sequenze_ implements PlugIn {
 					MyLog.here("getFileListing.result==null");
 				}
 				String[] list = new String[result.size()];
-				String aux1 = "";
 				int j1 = 0;
 				for (File file : result) {
-					// 2025 feb 06
-					aux1 = file.getPath();
-					if (aux1.contains("#"))
-						MyLog.waitHere("MA ALLORA SEI BASTARDOOOOO IL # NON VA USATO NEL PATH E BASTA !!!");
 					list[j1++] = file.getPath();
 				}
 
@@ -322,7 +312,7 @@ public class Sequenze_ implements PlugIn {
 				if (debugTables) {
 					IJ.log("\\Clear");
 					MyLog.logMatrix(tableSequenceLoaded, "tableSequenceLoaded");
-					MyLog.waitHere("salvare il log come 2_tableSequenceLoaded");
+					MyLog.waitHere("salvare il log come TableSequenceLoaded");
 				}
 
 				if (tableSequenceLoaded == null) {
@@ -339,10 +329,10 @@ public class Sequenze_ implements PlugIn {
 				if (debugTables) {
 					IJ.log("\\Clear");
 					MyLog.logMatrix(tableSequenceLoaded, "tableSequenceTreviglio");
-					MyLog.waitHere("salvare il log come 3_tableSequenceTreviglio");
+					MyLog.waitHere("salvare il log come TableSequenceTreviglio");
 					IJ.log("\\Clear");
 					MyLog.logMatrix(tableCode, "tableCodeTreviglio");
-					MyLog.waitHere("salvare il log come 4_tableCodeTreviglio");
+					MyLog.waitHere("salvare il log come TableCodeTreviglio");
 				}
 
 				// String[][] tableSequenceTreviglio =
@@ -356,35 +346,22 @@ public class Sequenze_ implements PlugIn {
 				String[][] tableSequenceSorted1 = TableSorter.minsort(tableSequenceLoaded, TableSequence.POSIZ);
 				if (debugTables) {
 					IJ.log("\\Clear");
-					MyLog.logMatrix(tableSequenceSorted1, "tableSequenceSorted1_POSITION");
-					MyLog.waitHere("salvare il log come 5_tableSequenceSorted1_POSITION");
+					MyLog.logMatrix(tableSequenceSorted1, "tableSequenceSorted1");
+					MyLog.waitHere("salvare il log come TableSequenceSorted1");
 				}
 
 				String[][] tableSequenceSorted2 = TableSorter.minsort(tableSequenceSorted1, TableSequence.TIME);
 				if (debugTables) {
 					IJ.log("\\Clear");
-					MyLog.logMatrix(tableSequenceSorted2, "tableSequenceSorted2_TIME");
-					MyLog.waitHere("salvare il log come 6_tableSequenceSorted2_TIME");
+					MyLog.logMatrix(tableSequenceSorted2, "tableSequenceSorted2");
+					MyLog.waitHere("salvare il log come TableSequenceSorted2");
 				}
 
-				// ===== tentativo 2025 ======
-
-				String[][] tableSequenceSorted3 = TableSorter.minsort(tableSequenceSorted2, TableSequence.ECHO);
+				String[][] tableSequenceReordered = reorderSequenceTable(tableSequenceSorted2, tableCode);
 				if (debugTables) {
 					IJ.log("\\Clear");
-					MyLog.logMatrix(tableSequenceSorted2, "tableSequenceSorted3_ECHO");
-					MyLog.waitHere("salvare il log come 6a_tableSequenceSorted3_ECHO");
-				}
-
-				// ===== tentativo 2025 ======
-
-				// ===== disattivo modifica x ulteriori test
-
-				String[][] tableSequenceReordered = reorderSequenceTable(tableSequenceSorted3, tableCode);
-				if (debugTables) {
-					IJ.log("\\Clear");
-					MyLog.logMatrix(tableSequenceReordered, "tableSequenceReordered_CODE");
-					MyLog.waitHere("salvare il log come 7_tableSequenceReordered_CODE");
+					MyLog.logMatrix(tableSequenceReordered, "tableSequenceReordered");
+					MyLog.waitHere("salvare il log come TableSequenceReordered");
 				}
 
 				String[][] listProblems = verifySequenceTable(tableSequenceReordered, tableCode);
@@ -402,14 +379,11 @@ public class Sequenze_ implements PlugIn {
 				if (debugTables) {
 					IJ.log("\\Clear");
 					MyLog.logMatrix(tableSequenceModified1, "tableSequenceModified1");
-					MyLog.waitHere("salvare il log come 8_tableSequenceModified1");
+					MyLog.waitHere("salvare il log come tableSequenceModified1");
 				}
-				// ===============================================================
+
 				// NOTA BENE: lasciare test a false, altrimenti non vengono piu'
 				// stampati gli errori e si hanno problemi in elaborazione!!!
-				// ATTENZIONE CADUTA PORCONI COME SE PIOVESSE
-				// ================================================================
-
 				boolean test = false;
 				logVerifySequenceTable(listProblems, test);
 
@@ -421,29 +395,20 @@ public class Sequenze_ implements PlugIn {
 			}
 
 			String[][] tableSequenceReloaded = new TableSequence().loadTable(startingDir + MyConst.SEQUENZE_FILE);
-
-			// MyLog.logMatrix(tableSequenceReloaded, "tableSequenceReloaded");
-			// MyLog.waitHere();
-
 			if (debugTables) {
 				IJ.log("\\Clear");
 				MyLog.logMatrix(tableSequenceReloaded, "tableSequenceReloaded");
-				MyLog.waitHere("salvare il log come 9_tableSequenceReloaded");
-				// OCCHIO CHE IL 9_tableSequenceReloaded non ha i dati ma solo intestazione
+				MyLog.waitHere("salvare il log come tableSequenceReloaded");
 			}
 
-			// ======================================================================================
 			// ECCO COME RINCOGLIONIRSI E PERDERE UN ORA, IL PLUGIN VIENE LANCIATO IN
 			// AUTOMATICO DA QUI, BISOGNA FARE QUI EVENTUALI MAGHEGGI SUI NOMI DURATE I TEST
 
 			// --------------------------------------------------------------------------------------------
 			// motore di chiamata dei plugins
 			// --------------------------------------------------------------------------------------------
-			// IJ.log(MyLog.qui() + " avvio >>> callPluginsFromSequenceTable");
-
 			callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false, superficiali, p10p11p12, tw);
 			// --------------------------------------------------------------------------------------------
-			// ======================================================================================
 
 		}
 		long endTime = System.currentTimeMillis();
@@ -600,40 +565,34 @@ public class Sequenze_ implements PlugIn {
 				// String coil = ReadDicom.getFirstCoil(imp1);
 				String coil = ReadDicom.getAllCoils(imp1);
 
-				String bbb = ReadDicom.piedeDiPorco(path1, "2100,4F10");
-
-				if (coil.equals("MISSING") || coil == ("") || coil == null) {
-					coil = bbb;
+				if (coil.equals("MISSING")) {
+					coil = new UtilAyv().kludge(pathList[i1]);
 				}
 
-				if (coil.length() > 1) {
+				// ###########################################################################
+				// 16/02/2024 modifiche per la SOLA (romanesco)
 
-					// ###########################################################################
-					// 16/02/2024 modifiche per la SOLA (romanesco)
+				String firstLetterOfCoil = coil.substring(0, 1);
 
-					String firstLetterOfCoil = coil.substring(0, 1);
+				// MyLog.waitHere("codice= "+codice);
 
-					// MyLog.waitHere("codice= "+codice);
+				// ===============================================================================
 
-					// ===============================================================================
-
-					if ((codice.equalsIgnoreCase("BL2F_") && firstLetterOfCoil.equalsIgnoreCase("R"))) {
-						// MyLog.waitHere("BL2F XXX");
-						coil = "XXX";
-					}
-					if ((codice.equalsIgnoreCase("BR2F_") && firstLetterOfCoil.equalsIgnoreCase("L"))) {
-						// MyLog.waitHere("BR2F XXX");
-						coil = "XXX";
-					}
-					if ((codice.equalsIgnoreCase("BL2S_") && firstLetterOfCoil.equalsIgnoreCase("R"))) {
-						// MyLog.waitHere("BL2F XXX");
-						coil = "XXX";
-					}
-					if ((codice.equalsIgnoreCase("BR2S_") && firstLetterOfCoil.equalsIgnoreCase("L"))) {
-						// MyLog.waitHere("BR2F XXX");
-						coil = "XXX";
-					}
-
+				if ((codice.equalsIgnoreCase("BL2F_") && firstLetterOfCoil.equalsIgnoreCase("R"))) {
+					// MyLog.waitHere("BL2F XXX");
+					coil = "XXX";
+				}
+				if ((codice.equalsIgnoreCase("BR2F_") && firstLetterOfCoil.equalsIgnoreCase("L"))) {
+					// MyLog.waitHere("BR2F XXX");
+					coil = "XXX";
+				}
+				if ((codice.equalsIgnoreCase("BL2S_") && firstLetterOfCoil.equalsIgnoreCase("R"))) {
+					// MyLog.waitHere("BL2F XXX");
+					coil = "XXX";
+				}
+				if ((codice.equalsIgnoreCase("BR2S_") && firstLetterOfCoil.equalsIgnoreCase("L"))) {
+					// MyLog.waitHere("BR2F XXX");
+					coil = "XXX";
 				}
 
 				// --------------------------------------------------------------------------------------------
@@ -646,18 +605,6 @@ public class Sequenze_ implements PlugIn {
 				coil = coil.replace("PL2;PR2", "PL2+PR2");
 				coil = coil.replace("PL3;PR3", "PL3+PR3");
 				coil = coil.replace("PL4;PR4", "PL4+PR4");
-
-				// ===============================================================================
-				// altro tentativo del 2025, per dividere le bobine spurie dalla prima
-				// BO1,2 > BO1 e BO2,3 > BO2
-				String[] auxx = null;
-				if (coil.contains("BO") && coil.contains(",")) {
-					auxx = coil.split(",");
-					coil = auxx[0];
-				}
-				// BLAHBLAHBLAH verificare che non crei problemi con altre macchine ed altre
-				// acquisizioni
-				// ===============================================================================
 
 				// ###########################################################################
 
@@ -690,8 +637,8 @@ public class Sequenze_ implements PlugIn {
 				for (int j1 = 0; j1 < tableCode2.length; j1++) {
 
 					if (codice.equals(tableCode2[j1][TableCode.CODE])) {
-						// IJ.log("tableCode2[j1][TableCode.COIL]= " + tableCode2[j1][TableCode.COIL] +
-						// "___coil= "
+						// IJ.log("tableCode2[j1][TableCode.COIL]= " +
+						// tableCode2[j1][TableCode.COIL] + "___coil= "
 						// + coil);
 
 						if ((tableCode2[j1][TableCode.COIL].equals("x"))
@@ -722,7 +669,6 @@ public class Sequenze_ implements PlugIn {
 						}
 					}
 				}
-
 				if (trovato) {
 					// if (questo)
 					// MyLog.waitHere("leggo questo");
@@ -846,11 +792,11 @@ public class Sequenze_ implements PlugIn {
 				trovato = true;
 			}
 		}
-		if (allCoils.length > 1) {
-			// MyLog.logVector(allCoils, "allCoils");
-			// IJ.log(coil + " " + trovato);
-			// MyLog.waitHere();
-		}
+//		if (allCoils.length > 1) {
+//		MyLog.logVector(allCoils, "allCoils");
+//		IJ.log(coil + " " + trovato);
+//		MyLog.waitHere();
+//		}
 		return trovato;
 	}
 
@@ -971,7 +917,7 @@ public class Sequenze_ implements PlugIn {
 		// ROW = 0, PATH = 1, CODE = 2, COIL = 3, IMA_PASS = 4, SERIE = 5,
 		// ACQ = 6, IMA = 7, TIME = 8, ECHO = 9, DONE = 10, COLUMNS = 11
 		// facendo riferimento a questi valori si ha il vantaggio che sono
-		// definiti in un unico punto. Per la struttura della TableCode e' stata
+		// definiti in un unico punto. Per la struttura della TableCode � stata
 		// creata la classe TableCode che si occupa di tutto e in cui vengono
 		// definiti:
 		// CODE = 0, IMA_PASS = 1, IMA_TOTAL = 2, COIL = 3, PLUGIN = 4.
@@ -992,7 +938,7 @@ public class Sequenze_ implements PlugIn {
 		// OBSOLETO tableSequenze[n][8] = acqTime
 		// OBSOLETO tableSequenze[n][9] = echoTime
 		// OBSOLETO tableSequenze[n][10] = fatto, default 0
-		// OBSOLETO La struttura di TableCode e' invece quella del file
+		// OBSOLETO La struttura di TableCode � invece quella del file
 		// OBSOLETO codici.txt:
 		// OBSOLETO tableCode [n][0] = codice
 		// OBSOLETO tableCode [n][1] = numero immagini da passare al plugin
@@ -1001,13 +947,8 @@ public class Sequenze_ implements PlugIn {
 		// codice
 		// ##########--OBSOLETO-OBSOLETO--OBSOLETO--################
 
-		// IJ.log(MyLog.qui() + " INTERNO >>> callPluginsFromSequenceTable");
-
-		// IJ.log("MyLog.qui() callPluginsFromSequenceTable riceve tableCode5.length= "
-		// + tableCode5.length);
-
 		if (tableSequenze5 == null) {
-			IJ.log("callPluginsFromSequenceTable riceve tableSequenze5 == NULL : Nessuna immagine da analizzare");
+			IJ.log("callPluginsFromSequenceTable riceve NULL : Nessuna immagine da analizzare");
 			return null;
 		}
 		// MyLog.logMatrix(tableSequenze5, "tableSequenze5");
@@ -1017,21 +958,13 @@ public class Sequenze_ implements PlugIn {
 		int count = 0;
 		List<String> vetPlugin = new ArrayList<String>();
 		List<String> vetArgomento = new ArrayList<String>();
-
-		// IJ.log("lunghezza= " + tableSequenze5.length);
+		// IJ.log("lunghezza= "+tableSequenze5.length);
 		// MyLog.logMatrix(tableSequenze5, "tableSequenze5");
 		// MyLog.logMatrix(tableCode5, "tableCode5");
-
-		//// 2025 feb 06 ==== ORRORE ===== MI SBAGLIA A LEGGERE DONE, MA CHE SIAMO
-		//// IMPAZZITI ????
-		// LA CAUSA ERA L'UTILIZZO DI # NEL NOME CARTELLA. LO UTILIZZIAMO PER LE
-		//// SEPARAZIONI E LO SPLIT IN IW2AYV
 		while (j1 < tableSequenze5.length) {
-			// MyLog.waitHere("j1= " + j1 + " >>> " + TableSequence.getDone(tableSequenze5,
-			// j1));
+			// MyLog.waitHere("j1= "+j1);
 			if (TableSequence.getDone(tableSequenze5, j1).equals("0")) {
 				String plugin = pluginToBeCalledWithCoil(j1, tableSequenze5, tableCode5);
-				// MyLog.waitHere("plugin= " + plugin);
 				// qui altero il plugin per poter chiamare, durante i tests le
 				// vecchie versioni, senza dover modificare i sorgenti
 				if (plugin == null) {
@@ -1059,9 +992,7 @@ public class Sequenze_ implements PlugIn {
 						plugin = "contMensili.p7rmn_";
 					}
 					if (plugin.equals("contMensili.p16rmn_")) {
-
-						MyLog.waitHere("MA COSA STRACACCHIO HO COMBINATO ???");
-						// plugin = "contMensili.p6rmn_ORIGINAL";
+						plugin = "contMensili.p6rmn_ORIGINAL";
 					}
 				}
 
@@ -1070,10 +1001,9 @@ public class Sequenze_ implements PlugIn {
 //				IJ.log(MyLog.qui() + " SELEZIONE con testP6= " + testP6 + "plugin= " + plugin);
 //				MyLog.waitHere();
 
-//				if (plugin.equals("contMensili.p6rmn_")) {
-//					MyLog.waitHere("CHOICE ????");
-//					plugin = "contMensili." + choice;
-//				}
+				if (plugin.equals("contMensili.p6rmn_")) {
+					plugin = "contMensili." + choice;
+				}
 
 				String argomento = argumentForPluginToBeCalled(j1, tableSequenze5);
 				boolean jump = false;
@@ -1572,11 +1502,11 @@ public class Sequenze_ implements PlugIn {
 		} else {
 			res1 = false;
 		}
-		if (codeImaAcq.equals(codeImaReq)) {
-//		 MyLog.logVector(allCoils, "allCoils");
-//		 MyLog.waitHere(codeImaAcq + " " + codeImaReq + " " + coilImaAcq
-//		 + " " + coilImaReq + " risultato res1= " + res1);
-		}
+		// if (codeImaAcq.equals(codeImaReq)) {
+		// MyLog.logVector(allCoils, "allCoils");
+		// MyLog.waitHere(codeImaAcq + " " + codeImaReq + " " + coilImaAcq
+		// + " " + coilImaReq + " risultato res1= " + res1);
+		// }
 
 		return res1;
 	}

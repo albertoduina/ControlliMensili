@@ -283,7 +283,10 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
-
+	
+		
+				
+				
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 
 		do {
@@ -306,35 +309,57 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 			double dimPixel = ReadDicom.readDouble(
 					ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
+			
+			int rows = ReadDicom.readInt(
+					ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_ROWS), 1));
+
 
 			int width = imp1.getWidth();
 			int height = imp1.getHeight();
-			// double wid = imp1.getWidth();
 
 			double xStartRefline = vetPreferences[0];
 			double yStartRefline = vetPreferences[1];
 			double xEndRefline = vetPreferences[2];
 			double yEndRefline = vetPreferences[3];
+			double len1 = 0.0;
+			
 
-			// IJ.log("readPreferences " + xStartRefline + ", " + yStartRefline
-			// + ", " + xEndRefline + ", " + yEndRefline);
+			// IJ.log("readPreferences " + xStartRefline + ", " + yStartRefline + ", " + xEndRefline + ", " + yEndRefline);
 
-			if (!test) {
-				if (((Math.abs(xStartRefline - xEndRefline) < 5) && (Math.abs(yStartRefline - yEndRefline) < 5))
-						|| ((Math.abs(xStartRefline - xEndRefline) > width)
-								&& (Math.abs(yStartRefline - yEndRefline) > height))) {
+			if (true) {
+
+				len1 = Math
+						.sqrt(Math.pow((xStartRefline - xEndRefline), 2) + Math.pow((yStartRefline - yEndRefline), 2));
+
+				
+				boolean over1= len1<5;
+				boolean over2= xStartRefline < 0;
+				boolean over3= xEndRefline < 0;
+				boolean over4= xStartRefline > width;
+				boolean over5= xEndRefline > width;
+				boolean over6= yStartRefline < 0;
+				boolean over7= yEndRefline < 0;
+				boolean over8= yStartRefline > height;
+				boolean over9= yEndRefline > height;
+				
+				
+				
+				if (over1 || over2 || over3 || over4
+						|| over5 || over6 || over7 || over8
+						|| over9) {
+					xStartRefline = width / 4;
+					yStartRefline = height / 4;
+					xEndRefline = width * 3 / 4;
+					yEndRefline = height * 3 / 4;
 					IJ.log("p4rmn_ INTERVENUTO OVERRIDE");
-					xStartRefline = 20.;
-					yStartRefline = 25.;
-					xEndRefline = 100.;
-					yEndRefline = 120.;
+
 				}
 			}
 
-			double xStartRefline2 = xStartRefline / dimPixel;
-			double yStartRefline2 = yStartRefline / dimPixel;
-			double xEndRefline2 = xEndRefline / dimPixel;
-			double yEndRefline2 = yEndRefline / dimPixel;
+			double xStartRefline2 = xStartRefline;
+			double yStartRefline2 = yStartRefline;
+			double xEndRefline2 = xEndRefline;
+			double yEndRefline2 = yEndRefline ;
 
 			int xStartReflineScreen;
 			int yStartReflineScreen;
@@ -372,10 +397,10 @@ public class p4rmn_ implements PlugIn, Measurements {
 			int yEndReflineUser = l1.y2;
 
 			double[] data1 = new double[4];
-			data1[0] = xStartReflineUser * dimPixel;
-			data1[1] = yStartReflineUser * dimPixel;
-			data1[2] = xEndReflineUser * dimPixel;
-			data1[3] = yEndReflineUser * dimPixel;
+			data1[0] = xStartReflineUser;
+			data1[1] = yStartReflineUser;
+			data1[2] = xEndReflineUser;
+			data1[3] = yEndReflineUser;
 
 			// IJ.log("savePreferences " + data1[0] + ", " + data1[1] + ", "
 			// + data1[2] + ", " + data1[3]);
@@ -556,7 +581,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 			// put values in ResultsTable
 			// rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
 
-			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);    ////// SIMPLE
+			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1); ////// SIMPLE
 
 			rt.showRowNumbers(true);
 
@@ -626,6 +651,10 @@ public class p4rmn_ implements PlugIn, Measurements {
 			rt.incrementCounter();
 			rt.addValue(t1, "Visual");
 			rt.addValue(s2, visualResolution);
+			
+			rt.incrementCounter();
+			rt.addValue(t1, "Matrix");
+			rt.addValue(s2, rows);
 
 			if (verbose && !test) {
 				rt.show("Results");
