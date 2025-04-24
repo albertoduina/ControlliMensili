@@ -22,7 +22,16 @@ Mi sono accorto da tempo che in github ho un sacco di vecchi file inutili, che s
 Ho pero' visto che basta elencare i file che non si vogliono piu' seguire in .gitignore
 La procedura sarebbe la seguente:
 in questo portatile vado a fare un commit
-vediamo
+Per togliere le cose sia da github che da unstaged changes ho fatto:
+selezionato su unstaged con dx / replace with HEAD revision
+me li fa riapparire in Package Explorer, anche se in precedenza erano stati cancellati.
+Ora in Package Explorer DX: Team / Advanced / Untrack
+Poi cancello dal Package Explorer con Delete
+Infine faccio Commit And Push
+
+DOVREI AVERE ABBASTANZA RIPULITO, SALVO CHE HO MOLTE UNSTAGED CHANGES
+
+
 
 
 
