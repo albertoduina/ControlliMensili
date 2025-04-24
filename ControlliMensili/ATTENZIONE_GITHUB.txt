@@ -1,4 +1,33 @@
-dapprima ho creato un account su github
+RIORDINO DEI PROGETTI NEL PC E IN GITHUB
+
+24/04/2025
+PULIZIA BUILD
+
+Ispirandomi ai build di Emanulele Balduzzi ho ripulito e commentato il build di ContMensili
+ho fatto anche prove generandone uno nuovo sul PC fisso.
+Realmente sarebbe piu'facile mettere tutto in git ed ospitare tutto in una cartella
+C:/Users/Alberto/git/
+questo sarebbe il nuovo repository e tutto partirebbe da li', senza avere piu'i differenti workspaces
+quindi la nuova struttura potrebbe essere
+git
+/imagej
+/controlliMensili
+/iw2ayv
+/dicomSotrer
+/spy
+
+24/04/2025
+PULIZIA PROGETTO SU GITHUB
+Mi sono accorto da tempo che in github ho un sacco di vecchi file inutili, che se cancello riappaiono dalla gitHistory
+Ho pero' visto che basta elencare i file che non si vogliono piu' seguire in .gitignore
+La procedura sarebbe la seguente:
+in questo portatile vado a fare un commit
+vediamo
+
+
+
+
+
 
 
 --------------------------------------------------------
