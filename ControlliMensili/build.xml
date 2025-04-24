@@ -1,141 +1,126 @@
 <?xml-model href="utf-8"?>
+
+
 <project name="ContMensili" default="main">
 	<echo>==== ContMensili BUILD =====</echo>
 	<!-- Ant makefile for ControlliMensili -->
-	<!-- Definizioni property -->
-	<property environment="env" />
+	
+	<!-- 
+	ATTENZIONE, per inesperienza, nel repository avevo ripetuto 2 volte il >
+	< nome delle cartelle: /iw2ayv/iw2ayv/ e /contMensili/contMensili/ 
+	-->
+	
+    <!-- Percorso base in cui installare il plugin, da aggiornare in caso di spostamenti-->
+    <property name="imagej.plugins.base" location="C:/Programmi2/ImageJ/plugins" />
+	<property name="FIJI.plugins.base" location="C:/Programmi2/FIJI/fiji-win64/Fiji.app/plugins" />
 
-	<property name="disk" value="${env.SystemDrive}" />
+	<property name="imagej.plugins.dir" location="${imagej.plugins.base}/${ant.project.name}" />
+	<property name="FIJI.plugins.dir" location="${FIJI.plugins.base}/${ant.project.name}" />
 
-	<echo message="basedir= ${basedir}" />
-	<echo message="ant.file= ${ant.file}" />
-
-	<property name="work" value="${basedir}\..\.." />
-	<echo message="work= ${work}" />
-	<echo message="work= $" />
-
-
-	<property name="productDir" location="${disk}/Programmi/ImageJ/Plugins/ContMensili2" />
-	<property name="productDir1" location="${disk}/Programmi/ImageJ/Plugins/ContMensili2" />
-	<property name="productDir2" location="${disk}/Programmi2/ImageJ/Plugins/ContMensili2" />
-	<property name="productDir3" location="${disk}/Programmi2/FIJI/fiji-win64/Fiji.app/Plugins/ContMensili2" />
-
-
-	<property name="pluginsDir" location="${disk}/Repository/git/imagej/plugins/ContMensili2" />
-	<echo message="pluginsDir= ${pluginsDir}" />
-
-	<property name="output" location="build" />
-	<echo message="output= ${output}" />
-
-	<property name="source" location="src/contMensili" />
-	<echo message="source= ${source}" />
-
-
-	<property name="pathImageJ" location="${work}/imagej/ij.jar" />
-	<echo message="pathImageJ= ${pathImageJ}" />
-
-	<property name="dist" location="dist" />
-	<property name="data" location="data" />
-	<property name="test" location="test/contMensili" />
-
-	<!-- in questo modo posso utilizzare le wildcards per il nome del file-->
+	<!-- ====== Percorsi principali del progetto, tutti localizzati automaticamente con basedir ===== -->
+	<property name="source"         location="${basedir}/src/${ant.project.name}" />
+	<property name="output"         location="${basedir}/build" />
+	<property name="dist"  			location="${basedir}/dist" />
+	<property name="data" 			location="${basedir}/data" />
+	<property name="test"           location="${basedir}/test/contMensili" />
+	<!-- ====== Path ij.jar e iw2ayv.jar VERIFICARE ed AGGIORNARE, solo se necessario === -->	
+	<property name="repo" 	location="${basedir}/../.." />
+	<property name="pathImageJ" 	location="${repo}/imagej/ij.jar" />
+	<property name="baseIw2ayv" 	location="${repo}/iw2ayv/iw2ayv" />
+	
+	<!-- nome del file con wildcards-->
 	<path id="pathIW2AYVxx">
-		<fileset dir="${work}\iw2ayv\iw2ayv\dist\">
+		<fileset dir="${repo}/iw2ayv/iw2ayv/dist/">
 			<include name="iw2ayv*.jar" />
 		</fileset>
 	</path>
 	<property name="pathIW2AYV" refid="pathIW2AYVxx" />
-	<echo message="pathIW2AYV= ${pathIW2AYV}" />
-
-	<property name="baseIw2ayv" location="${work}\iw2ayv\iw2ayv" />
+	
+	<!-- ===== stampa dei valori property ===== -->	
+	<echo message="project name= ${ant.project.name}" />
+	<echo message="basedir= ${basedir}" />
+	<echo message="ant.file= ${ant.file}" />
+	<echo message="source= ${source}" />
+	<echo message="output= ${output}" />
+	<echo message="dist= ${dist}" />
+	<echo message="data= ${data}" />
+	<echo message="test= ${test}" />
+	<echo message="repo= ${repo}" />
+	<echo message="pathImageJ= ${pathImageJ}" />
 	<echo message="baseIw2ayv= ${baseIw2ayv}" />
+	<echo message="pathIW2AYV= ${pathIW2AYV}" />
+	<!-- =============================================" -->
 
-	<property name="eclipse-home" value="${basedir}\..\.." />
-	<echo message="eclipse-home= ${eclipse-home}" />
-
+	 <!-- Marca temporale per versionamento -->
 	<tstamp>
 		<format property="time.stamp" pattern="yyyyMMMdd_HHmm" />
 	</tstamp>
 	<echo message="tstamp= ${time.stamp}" />
 
-	<!-- ##############			MAIN ROUTINE 		############## -->
-	<target name="main" depends="init, compile, move1,  jar, zipp, zipp2, move2, cond_INS, cond_OLD, cond_WIN7, cond_FIJI" />
+	<!-- 1) == MAIN ROUTINE, ESEGUE TUTTI I PASSAGGI == -->
+	<target name="main" 
+		depends="init, 
+		compile, 
+		move1,  
+		jar, 
+		zipp, 
+		zipp2, 
+		move2, 
+		cond_WIN7, 
+		cond_FIJI" />
 
-	<!-- INITIALIZE buildnumber, delete and recreate empy directory -->
+	<!-- 2) inizializzazione cartelle -->
 	<target name="init" description="initialize">
-		<echo message="Eseguo INIT" />
+		<echo message=">>> Eseguo init" />
 		<buildnumber />
 		<tstamp />
 		<delete dir="${output}" />
 		<mkdir dir="${output}" />
 		<delete dir="${dist}" />
 		<mkdir dir="${dist}" />
-
-		<property name="productDirINSIDE" location="${work}\imagej\Plugins" />
-		<available file="${productDirINSIDE}" type="dir" property="ins" />
-		<echo message="ins=${ins}" />
-
-		<property name="productDirOLD" location="${disk}/Programmi\ImageJ\Plugins" />
-		<available file="${productDirOLD}" type="dir" property="old" />
-		<echo message="oldS=${old}" />
-
-		<property name="productDirWIN7" location="${disk}/Programmi2\ImageJ\plugins" />
-		<available file="${productDirWIN7}" type="dir" property="win7" />
-		<echo message="win7=${win7}" />
-
-		<property name="productDirFIJI" location="${disk}/Programmi2\FIJI\fiji-win64\Fiji.app\plugins" />
-		<available file="${productDirFIJI}" type="dir" property="win7" />
-		<echo message="FIJI=${win7}" />
-
 	</target>
 
-
-	<!-- COMPILE java classes -->
+	 <!-- 3) Compilazione delle classi Java -->
 	<target name="compile" description="Compila tutto">
-		<echo message="Eseguo COMPILE" />
-		<!-- Build everything; add debug="on" to debug -->
-		<!--javac srcdir="${source}" destdir="${output}" optimize="on" target="1.5" encoding="iso8859-1" debug="on" classpath="${pathImageJ};${pathJfreechart};${pathJcommon}" /-->
-		<!--javac srcdir="${source}" destdir="${output}" optimize="on" target="1.8" source="1.8" encoding="iso8859-1" debug="on" classpath="${pathImageJ};${pathIW2AYV}" /-->
-		<javac srcdir="${source}" destdir="${output}" optimize="on" release="8" includeantruntime="false" encoding="iso8859-1" debug="on" classpath="${pathImageJ};${pathIW2AYV}" />
+		<echo message=">>> Eseguo compile" />
+		<javac 		srcdir="${source}" 
+					destdir="${output}" 
+        			target="1.8"
+         			source="1.8"
+					optimize="on" 
+					includeantruntime="false" 
+					encoding="iso8859-1" 
+					debug="on" classpath="${pathImageJ};${pathIW2AYV}" />
 	</target>
 
-
-	<!-- MOVE1 copia nella cartella build tutto, salvo i .csv (solo limiti.csv) -->
+	<!-- 4) MOVE1 copia nella cartella build tutto, salvo i .csv (solo limiti.csv) -->
 	<target name="move1" description="Copia nella cartella build">
-		<!--echo message="eseguo move1 copiando da dir="." /-->
-		<!--sleep seconds="5" /-->
+		<echo message=">>> eseguo move1" />
 		<copy verbose="true" todir="${output}">
 			<fileset dir="." includes=" *.txt , *.pdf, *.rtf, *.number, *.jpg, *.xml, *.config, limiti.csv" />
 		</copy>
 	</target>
 
-
-	<!-- MOVE2 copy the csv from out to dist -->
-	<!-- copia i .csv dal mio ImageJ -->
+	<!-- 5) MOVE2 recupera i .csv dall'ImageJ di lavoro -->
 	<target name="move2" description="Copia i CSV dall'esterno">
+		<echo message=">>> eseguo move2" />
 		<copy verbose="true" todir="${dist}">
-			<fileset dir="${productDirWIN7}/ContMensili" includes=" *.csv" />
+			<fileset dir="${imagej.plugins.dir}" includes=" *.csv" />
 		</copy>
 	</target>
 
-
-
-	<!-- Create MANIFEST and JARS application  -->
+    <!-- 6) Creazione del JAR (con Manifest personalizzato) -->
 	<target name="jar" description="JARs the Task">
 		<echo message="Eseguo CREA JAR" />
 		<delete file="MANIFEST.MF" />
 		<property name="version.num" value="2.00" />
 		<manifest file="MANIFEST.MF">
-			<!--attribute name="Built-By" value="${user.name}" /-->
 			<attribute name="Built-By" value="AlbertoDuina" />
 			<attribute name="Built-Date" value="${TODAY}" />
 			<attribute name="Main-Class" value="contMensili.Sequenze_" />
-			<!--attribute name="Implementation-Version" value="${version.num}-b${build.number}" /-->
-			<!-- attribute name="Implementation-Version" value="b${build.number}" /-->
 			<attribute name="Implementation-Version" value="${time.stamp}" />
 		</manifest>
 		<jar destfile="${output}/ContMens_${time.stamp}.jar" manifest="MANIFEST.MF">
-			<!--jar destfile="${output}/ContMens_b${build.number}.jar" manifest="MANIFEST.MF"-->
 			<fileset dir="${output}" />
 		</jar>
 		<delete dir="${output}/contMensili" />
@@ -144,42 +129,31 @@
 		</copy>
 	</target>
 
-
-	<!-- ZIP sources and data  -->
+	<!-- 7)  ZIPP Zippa sorgenti e dati  -->
 	<target name="zipp" description="Zip sorgenti e test">
+		<echo message=">>> Eseguo zipp" />
+		<echo message="destfile= ${output}/ContMensSource_b${build.number}.zip" />
 		<zip destfile="${output}/ContMensSource_b${build.number}.zip">
 			<zipfileset dir="${source}" prefix="ControlliMensili/src/contMensili" />
 			<zipfileset dir="${test}" prefix="ControlliMensili/test/contMensili" />
-			<!--zipfileset dir="${data}" prefix="ControlliMensili/data" /-->
-			<zipfileset dir="${baseIw2ayv}/src" prefix="iw2ayv/src/utils" />
-			<zipfileset dir="${baseIw2ayv}/test" prefix="iw2ayv/test/utils" />
-			<zipfileset dir="${baseIw2ayv}/data" prefix="iw2ayv/data" />
+			<zipfileset dir="${baseIw2ayv}/src" prefix="iw2ayv/iw2ayv/src/utils" />
+			<zipfileset dir="${baseIw2ayv}/test" prefix="iw2ayv/iw2ayv/test/utils" />
+			<zipfileset dir="${baseIw2ayv}/data" prefix="iw2ayv/iw2ayv/data" />
 		</zip>
 	</target>
 
-	<!--WIPE Delete the build intermedie files  -->
-	<!--target name="wipe" description="Cancella i file intermedi di build"-->
-	<!-- non cancellare i *.txt, servono -->
-	<!-- delete failonerror="false" verbose="true">
-			<fileset dir="${output}" includes="*.txt , *.java, *.rtf, *.number, *.class; *.jpg; *.pdf" />
-		</delete -->
-	<!--/target-->
-
-	<!--WIPE2 Delete the jar files into production  -->
+	<!-- 8) WIPE2 Delete the jar files into production  -->
 	<target name="wipe2" description="Delete the production *.jar files.">
+		<echo message=">>> Eseguo WIPE2" />
 		<delete failonerror="false" verbose="true">
 			<fileset dir="${output}" includes="*.jar" />
 		</delete>
 	</target>
 
-
+	<!-- 9) ZIPP2 Zippa gli eseguibili  -->
 	<target name="zipp2" description="Zip executable files">
-		<echo message="Eseguo ZIPP2" />
+		<echo message=">>> Eseguo zipp2" />
 		<zip destfile="${output}/ContMensili_b${build.number}.zip">
-			<!--fileset dir="${lib}"-->
-			<!--include name="test2.jar" /-->
-			<!--include name="Excel_Writer.jar" /-->
-			<!--/fileset-->
 			<fileset dir="${output}">
 				<include name="ContMens_b${build.number}.jar" />
 			</fileset>
@@ -189,92 +163,36 @@
 		</zip>
 	</target>
 
-
-	<target name="cond_INS" depends="init" if="ins">
-		<echo message="Eseguo cond_INS" />
-		<!--delete dir="${productDirINSIDE}/ContMensili" /-->
-		<!--mkdir dir="${productDirINSIDE}/ContMensili" /-->
-		<delete failonerror="false" verbose="true">
-			<fileset dir="${output}">
-				<include name="*.jar" />
-			</fileset>
-		</delete>
-		<copy todir="${productDirINSIDE}/ContMensili">
-			<fileset dir="${dist}" includes="*.jar" />
-			<fileset dir="${output}" includes="*.jar" />
-		</copy>
-	</target>
-
-	<target name="cond_OLD" depends="init" if="old">
-		<echo message="Eseguo cond_OLD" />
-		<!--delete dir="${productDirOLD}/ContMensili" /-->
-		<!--mkdir dir="${productDirOLD}/ContMensili" /-->
-		<delete failonerror="false" verbose="true">
-			<fileset dir="${output}">
-				<include name="*.jar" />
-			</fileset>
-		</delete>
-		<copy todir="${productDirOLD}/ContMensili">
-			<fileset dir="${dist}" includes="*.jar" />
-			<!--fileset dir="${dist}" includes="*.csv" /-->
-			<fileset dir="${output}" includes="*.jar" />
-		</copy>
-	</target>
-	<target name="cond_WIN7" depends="init" if="win7">
+    <!-- 10) Installazione del plugin dentro ImageJ di lavoro -->
+	<target name="cond_WIN7" depends="init">
 		<echo message="Eseguo cond_WIN7" />
-		<!--delete dir="${productDirWIN7}/ContMensili" /-->
-		<!--mkdir dir="${productDirWIN7}/ContMensili" /-->
-		<!--delete failonerror="true" verbose="true">
-			<fileset dir="${productDirWIN7}/ContMensili">
-				<include name="*.jar" />
-			</fileset>
-		</delete-->
-
+		
 		<delete failonerror="false" verbose="true">
-			<fileset dir="${productDirWIN7}/ContMensili">
+			<fileset dir="${imagej.plugins.dir}">
 				<include name="*.jar" />
 			</fileset>
 		</delete>
 
-
-
-
-		<copy todir="${productDirWIN7}/ContMensili">
+		<copy todir="${imagej.plugins.dir}">
 			<fileset dir="${dist}" includes="*.jar" />
-			<!--fileset dir="${dist}" includes="*.csv" /-->
 			<fileset dir="${output}" includes="*.jar" />
 		</copy>
 	</target>
 
-	<target name="cond_FIJI" depends="init" if="win7">
-		<echo message="Eseguo cond_FIJI" />
-		<!--delete dir="${productDirFIJI}/ContMensili" /-->
-		<!--mkdir dir="${productDirFIJI}/ContMensili" /-->
+	<!-- 11) Installazione del plugin dentro FIJI di lavoro -->
+	<target name="cond_FIJI">
+		<echo message=">>> Eseguo cond_FIJI" />
+
 		<delete failonerror="false" verbose="true">
-			<fileset dir="${output}">
+			<fileset dir="${FIJI.plugins.dir}">
 				<include name="*.jar" />
 			</fileset>
 		</delete>
 
-		<copy todir="${productDirFIJI}/ContMensili">
+		<copy todir="${FIJI.plugins.dir}">
 			<fileset dir="${dist}" includes="*.jar" />
-			<!--fileset dir="${dist}" includes="*.csv" /-->
-			<fileset dir="${output}" includes="*.jar" />
 		</copy>
 	</target>
-
-	<!--target name="zipdistribution" description=" Zip file per commit su Github">
-		<echo message="CREAZIONE ZIPFILE (senza data nel nome) PER GITHUB" />
-
-		<zip destfile="${distribuzione}/ControlliMensiliPlugins.zip">
-			<fileset dir="${dist}">
-				<include name="${output}/ContMens_${time.stamp}.jar" />
-				<include name="*.jar" />
-				<include name="*.csv" />
-				<include name="${pathIW2AYV}"/>
-			</fileset>
-		</zip>
-	</target-->
 
 	<!-- NOVEMBRE 2024 SPOSTATO IN release.xml-->
 	<!--target name="zipdistribution" description="NUOVO Zip file per commit su Github">
@@ -285,9 +203,6 @@
 			</fileset>
 		</zip>
 	</target-->
-
-
-
 
 </project>
 

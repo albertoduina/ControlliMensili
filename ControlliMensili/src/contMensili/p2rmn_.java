@@ -476,11 +476,16 @@ public class p2rmn_ implements PlugIn, Measurements {
 				return;
 			}
 			ImagePlus imp8 = new ImagePlus("newStack", newStack);
-			if (imp8 == null)
-			 {
+			if (imp8 == null) {
 				return;
 //			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(vetPath1[0], imp8, tabCodici, VERSION, autoCalled);
 			}
+
+			// --------- verifica tempi di eco dello stack ---------------
+			//			double[] vetEco = getTRVals(newStack, "0018,0081");
+			//			MyLog.logVector(vetEco,"vetEco");
+			//			MyLog.waitHere();
+			// -----------------------------------------------------------
 
 			info1 = ReportStandardInfo.getSimpleStandardInfo(vetPath1[0], imp8, tabCodici, VERSION, autoCalled);
 			info11 = ReportStandardInfo.getSimpleStandardInfo(vetPath1[0], imp8, tabCodici, VERSION, autoCalled);
@@ -695,8 +700,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 					if (gelNumber > 1) {
 						rt.incrementCounter();
 					}
-					if (gelNumber == 12)
-					 {
+					if (gelNumber == 12) {
 						gelNumber = 14; // al posto 12 abbiamo il gel 14
 					}
 
