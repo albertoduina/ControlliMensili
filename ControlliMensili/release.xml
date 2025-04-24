@@ -3,6 +3,69 @@
 	<echo message="---- RELEASE DI CONTMENSILI  (FUNZIONANTE!) ----" />
 	<echo message="---- basato cartelle rel e release (per GitHub) ---" />
 
+
+	<!-- Percorso base in cui installare il plugin, da aggiornare in caso di spostamenti-->
+	<property name="imagej.plugins.base" location="C:/Programmi2/ImageJ/plugins" />
+	<property name="FIJI.plugins.base" location="C:/Programmi2/FIJI/fiji-win64/Fiji.app/plugins" />
+
+	<property name="imagej.plugins.dir" location="${imagej.plugins.base}/${ant.project.name}" />
+	<property name="FIJI.plugins.dir" location="${FIJI.plugins.base}/${ant.project.name}" />
+
+	<!-- ====== Percorsi principali del progetto, tutti localizzati automaticamente con basedir ===== -->
+	<property name="source" location="${basedir}/src/${ant.project.name}" />
+	<property name="output" location="${basedir}/build" />
+	<property name="dist" location="${basedir}/dist" />
+	<property name="data" location="${basedir}/data" />
+	<property name="test" location="${basedir}/test/contMensili" />
+	<!-- NOVEMBRE 2024 -->
+	<property name="rel" location="${basedir}/rel" />
+	<property name="relSrc" location="${basedir}/rel/src" />
+	<property name="relPlugins" location="${basedir}/rel/plugins" />
+	<property name="release" location="${basedir}/release" />
+
+	<!-- ====== Path ij.jar e iw2ayv.jar VERIFICARE ed AGGIORNARE, solo se necessario === -->
+	<property name="repo" location="${basedir}/../.." />
+	<property name="pathImageJ" location="${repo}/imagej/ij.jar" />
+	<property name="baseIw2ayv" location="${repo}/iw2ayv/iw2ayv" />
+
+	<!-- nome del file con wildcards-->
+	<path id="pathIW2AYVxx">
+		<fileset dir="${repo}/iw2ayv/iw2ayv/dist/">
+			<include name="iw2ayv*.jar" />
+		</fileset>
+	</path>
+	<property name="pathIW2AYV" refid="pathIW2AYVxx" />
+
+	<!-- ===== stampa dei valori property ===== -->
+	<echo message="project name= ${ant.project.name}" />
+	<echo message="basedir= ${basedir}" />
+	<echo message="ant.file= ${ant.file}" />
+	<echo message="source= ${source}" />
+	<echo message="output= ${output}" />
+	<echo message="dist= ${dist}" />
+	<echo message="data= ${data}" />
+	<echo message="test= ${test}" />
+	<echo message="repo= ${repo}" />
+	<echo message="pathImageJ= ${pathImageJ}" />
+	<echo message="baseIw2ayv= ${baseIw2ayv}" />
+	<echo message="pathIW2AYV= ${pathIW2AYV}" />
+	<echo message="rel =${rel}" />
+	<echo message="relSrc=${relSrc}" />
+	<echo message="relPlugins=${relPlugins}" />
+	<echo message="release=${release}" />
+
+	<!-- =============================================" -->
+
+	<!-- Marca temporale per versionamento -->
+	<tstamp>
+		<format property="time.stamp" pattern="yyyyMMMdd_HHmm" />
+	</tstamp>
+	<echo message="tstamp= ${time.stamp}" />
+
+
+
+
+
 	<!-- Definizioni property -->
 	<property environment="env" />
 
@@ -71,7 +134,7 @@
 
 
 	<!-- ##############			MAIN ROUTINE 		############## -->
-	<target name="release" depends= "init, zip1, zip2, zip3" />
+	<target name="release" depends="init, zip1, zip2, zip3" />
 
 
 	<!-- NOVEMBRE 2024 -->
@@ -87,7 +150,7 @@
 		<mkdir dir="${relPlugins}" />
 		<mkdir dir="${release}" />
 	</target>
-	
+
 
 	<!-- Create MANIFEST and JARS application  -->
 	<target name="jar" description="JARs the Task">
@@ -126,8 +189,8 @@
 			<zipfileset dir="${baseIw2ayv}/data" prefix="iw2ayv/data" />
 		</zip>
 	</target>
-	
-	
+
+
 	<!-- NOVEMBRE 2024 -->
 	<!-- ZIP esterno con nome fisso per GITHUB  -->
 	<target name="zip2" description="Zip wrapper per GITHUB">
@@ -149,13 +212,13 @@
 		</zip>
 	</target>
 
-	
+
 	<target name="zipp2" description="Zip executable files">
 		<echo message="Eseguo ZIPP2" />
 		<zip destfile="${output}/ContMensili_b${build.number}.zip">
 			<!--fileset dir="${lib}"-->
-				<!--include name="test2.jar" /-->
-				<!--include name="Excel_Writer.jar" /-->
+			<!--include name="test2.jar" /-->
+			<!--include name="Excel_Writer.jar" /-->
 			<!--/fileset-->
 			<fileset dir="${output}">
 				<include name="ContMens_b${build.number}.jar" />
@@ -166,13 +229,13 @@
 		</zip>
 	</target>
 
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 
 	<!--WIPE Delete the build intermedie files  -->
 	<target name="wipe" description="Delete the build intermedie files.">

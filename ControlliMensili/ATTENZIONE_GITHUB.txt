@@ -1,6 +1,16 @@
 RIORDINO DEI PROGETTI NEL PC E IN GITHUB
 
 24/04/2025
+RELEASE
+
+Il rincoglionimento galoppa: non mi ricordavo piu' di avere iniziato il release.xml
+Ora mi sembra di capire che gia'funzionasse, ma sicuramente va portato "allo stato dell'arte"
+
+
+
+
+
+24/04/2025
 PULIZIA BUILD
 
 Ispirandomi ai build di Emanulele Balduzzi ho ripulito e commentato il build di ContMensili
@@ -30,6 +40,9 @@ Poi cancello dal Package Explorer con Delete
 Infine faccio Commit And Push
 
 DOVREI AVERE ABBASTANZA RIPULITO, SALVO CHE HO MOLTE UNSTAGED CHANGES
+
+
+
 
 
 
@@ -76,3 +89,4 @@ in cui sono stati copiati i dati inseriti, possiamo premere FORCE UPDATE
 MA NON E'FINITA, DI SEGUITO BISOGNERA' FARE UN MERGE PER ACCETTARE 
 LE MODIFICE IMPORTATE DA GITHUB
 ------------------------------------------------------------
+
