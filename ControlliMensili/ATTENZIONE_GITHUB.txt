@@ -6,6 +6,13 @@ RELEASE
 Il rincoglionimento galoppa: non mi ricordavo piu' di avere iniziato il release.xml
 Ora mi sembra di capire che gia'funzionasse, ma sicuramente va portato "allo stato dell'arte"
 
+Data una ripulita e sistemata a release.xml
+Non ricordo, pero' come andasse usato al momento di fare un commit su github
+
+TROVATO FORSE
+La cartella relesae (al contrario della cartella rel) è in INDEX quindi viene messa su github. I suoi file zip NON hanno il marker di data (rimane all'interno dei dati zippati)
+In questo modo DOVREBBE venire trasferito senza rompere gli ioni!
+
 
 
 
