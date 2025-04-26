@@ -58,56 +58,31 @@
 	<echo message="tstamp= ${time.stamp}" />
 
 	<!-- ##############			MAIN ROUTINE 		############## -->
-	<target name="release" 
-		depends="init, 
-		zip1, 
-		zip2, 
+	<target name="release" depends="init1,
+		zip1,
+		zip2,
 		zip3" />
 
 
 	<!-- NOVEMBRE 2024 -->
 	<!-- INITIALIZE buildnumber, delete and recreate empy directory -->
-	<target name="init" description="rigenerazione cartelle vuote">
-		<echo message="Eseguo RELEASE-INIT" />
+	<target name="init1" description="rigenerazione cartelle vuote">
+		<echo message="Eseguo release.init1" />
 		<!-- NOVEMBRE 2024 -->
 		<!-- rigenerazione cartelle vuote -->
 		<delete dir="${rel}" />
 		<delete dir="${release}" />
 		<mkdir dir="${rel}" />
-		<mkdir dir="${relSrc}" />
-		<mkdir dir="${relPlugins}" />
 		<mkdir dir="${release}" />
 	</target>
 
-	<!-- Create MANIFEST and JARS application  -->
-	<target name="jar" description="JARs the Task">
-		<echo message="Eseguo CREA JAR" />
-		<delete file="MANIFEST.MF" />
-		<property name="version.num" value="2.00" />
-		<manifest file="MANIFEST.MF">
-			<!--attribute name="Built-By" value="${user.name}" /-->
-			<attribute name="Built-By" value="AlbertoDuina" />
-			<attribute name="Built-Date" value="${TODAY}" />
-			<attribute name="Main-Class" value="contMensili.Sequenze_" />
-			<!--attribute name="Implementation-Version" value="${version.num}-b${build.number}" /-->
-			<!-- attribute name="Implementation-Version" value="b${build.number}" /-->
-			<attribute name="Implementation-Version" value="${time.stamp}" />
-		</manifest>
-		<jar destfile="${output}/ContMens_${time.stamp}.jar" manifest="MANIFEST.MF">
-			<!--jar destfile="${output}/ContMens_b${build.number}.jar" manifest="MANIFEST.MF"-->
-			<fileset dir="${output}" />
-		</jar>
-		<delete dir="${output}/contMensili" />
-		<copy todir="${dist}">
-			<fileset dir="${output}" includes="*.jar" />
-		</copy>
-	</target>
 
 
 	<!-- APRILE 2025 -->
 	<!-- ZIP tutti i sorgenti con timestamp  -->
 	<target name="zip1" description="Zip completo sorgenti con timestamp">
-		<zip destfile="${relSrc}/ContMensSource_b${time.stamp}.zip">
+		<echo message="Eseguo release.zip1" />
+		<zip destfile="${rel}/ContMensSource_b${time.stamp}.zip">
 			<zipfileset dir="${source}" prefix="ControlliMensili/src/contMensili" />
 			<zipfileset dir="${test}" prefix="ControlliMensili/test/contMensili" />
 			<zipfileset dir="${data}" prefix="ControlliMensili/data" />
@@ -121,14 +96,16 @@
 	<!-- APRILE 2025-->
 	<!-- ZIP esterno con nome fisso per GITHUB  -->
 	<target name="zip2" description="Zip wrapper per GITHUB">
+		<echo message="Eseguo release.zip2" />
 		<zip destfile="${release}/ContMensiliSource.zip">
-			<zipfileset dir="${relSrc}" prefix="" />
+			<zipfileset dir="${rel}" prefix="" />
 		</zip>
 	</target>
 
 	<!-- APRILE 2025 -->
 	<!-- ZIP plugins  -->
 	<target name="zip3" description="Zip plugins.">
+		<echo message="Eseguo release.zip3" />
 		<zip destfile="${release}/ContMensiliPlugins.zip">
 			<zipfileset dir="${dist}" prefix="" />
 			<zipfileset dir="${distIw2ayv}" prefix="" />
