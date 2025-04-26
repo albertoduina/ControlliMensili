@@ -1,6 +1,15 @@
 RIORDINO DEI PROGETTI NEL PC E IN GITHUB
 
 26/04/2025
+Testato release.xml
+Permette, dopo di aver fatto build sia di iw2ayv che di contMensili, di creare in contMensili dei file zip di release. 
+Una volta fatto il commit di contMensili, questi due file zippati, uno coi sorgenti ed uno con tutto cio'che serve agli 
+eseguibili, finiscono in gitHub
+
+
+
+
+26/04/2025
 COME IMPORTARE I PROGETTI imagej ED iw2ayv 
 Abbiamo la necessita' di importare i progetti imagej ed iw2ayv nei vari workspaces, in modo che possano essere visti 
 i sorgenti.

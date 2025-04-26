@@ -69,7 +69,8 @@
 		zipp2, 
 		move2, 
 		cond_WIN7, 
-		cond_FIJI" />
+		cond_FIJI,
+		release" />
 
 	<!-- 2) inizializzazione cartelle -->
 	<target name="init" description="initialize">
@@ -191,10 +192,13 @@
 			</fileset>
 		</delete>
 
-		<copy todir="${FIJI.plugins.dir}">
+	<copy todir="${FIJI.plugins.dir}">
 			<fileset dir="${dist}" includes="*.jar" />
 		</copy>
 	</target>
+	
+	 <import file="release.xml" as="release" />
+
 
 	<!-- NOVEMBRE 2024 SPOSTATO IN release.xml-->
 	<!--target name="zipdistribution" description="NUOVO Zip file per commit su Github">
@@ -205,6 +209,9 @@
 			</fileset>
 		</zip>
 	</target-->
+	
+	
+
 
 </project>
 

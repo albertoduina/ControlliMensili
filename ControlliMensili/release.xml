@@ -2,7 +2,8 @@
 <project name="ContMensili" default="release">
 	<echo message="---- RELEASE DI CONTMENSILI  (FUNZIONANTE!) ----" />
 	<echo message="---- basato cartelle rel e release (per GitHub) ---" />
-
+	<echo message="---- andrebbe utilizzato prima di fare il commit ---" />
+	<echo message="---- su github di ControlliMensili ---" />
 
 	<!-- Percorso base in cui installare il plugin, da aggiornare in caso di spostamenti-->
 	<property name="imagej.plugins.base" location="C:/Programmi2/ImageJ/plugins" />
@@ -56,7 +57,6 @@
 	</tstamp>
 	<echo message="tstamp= ${time.stamp}" />
 
-
 	<!-- ##############			MAIN ROUTINE 		############## -->
 	<target name="release" 
 		depends="init, 
@@ -78,7 +78,6 @@
 		<mkdir dir="${relPlugins}" />
 		<mkdir dir="${release}" />
 	</target>
-
 
 	<!-- Create MANIFEST and JARS application  -->
 	<target name="jar" description="JARs the Task">
