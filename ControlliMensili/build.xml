@@ -25,12 +25,14 @@
 	<property name="test"           location="${basedir}/test/contMensili" />
 	<!-- ====== Path ij.jar e iw2ayv.jar VERIFICARE ed AGGIORNARE, solo se necessario === -->	
 	<property name="repo" 	location="${basedir}/../.." />
-	<property name="pathImageJ" 	location="${repo}/imagej/ij.jar" />
+	<!-- C:\Users\Alberto\Repository\Workspace\workspaceBase\imagej\ij.jar -->
+	<property name="pathImageJ" 	location="${repo}\..\Workspace\workspaceBase\imagej\ij.jar" />
 	<property name="baseIw2ayv" 	location="${repo}/iw2ayv/iw2ayv" />
 	
 	<!-- nome del file con wildcards-->
 	<path id="pathIW2AYVxx">
 		<fileset dir="${repo}/iw2ayv/iw2ayv/dist/">
+			<!-- C:\Users\alberto\Repository\git\Iw2ayv\Iw2ayv\dist\iw2ayv_2025apr25_2309.jar -->
 			<include name="iw2ayv*.jar" />
 		</fileset>
 	</path>
@@ -88,7 +90,7 @@
         			target="1.8"
          			source="1.8"
 					optimize="on" 
-					includeantruntime="false" 
+					includeantruntime="yes" 
 					encoding="iso8859-1" 
 					debug="on" classpath="${pathImageJ};${pathIW2AYV}" />
 	</target>

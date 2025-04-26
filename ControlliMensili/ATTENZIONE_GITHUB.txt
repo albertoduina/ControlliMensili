@@ -1,5 +1,31 @@
 RIORDINO DEI PROGETTI NEL PC E IN GITHUB
 
+26/04/2025
+COME IMPORTARE I PROGETTI imagej ED iw2ayv 
+Abbiamo la necessita' di importare i progetti imagej ed iw2ayv nei vari workspaces, in modo che possano essere visti 
+i sorgenti.
+Ci si posiziona sul Package Explorer, DX, import e poi, per iw2ayv git, mentre per imagej import form Existing Projects 
+into Workspace. Si va a selezionare il progetto originale, CONTROLLARE che per sbaglio non si abbia la spunta su 
+Copy Projects into Workspace, poiche' in questo caso verrebbe importato tutto creando un INUTILE e DANNOSO duplicato
+
+
+25/04/2025
+Installata la Eclipse 2025-06 (una 2025-03 con aggiornamenti)
+Attenzione che, per non avere segnalazioni di errori inesistenti bisognerebbe aggiornare il JDK
+da scaricare dal sito adoptium.net
+Si tratta del JDK EclipseAdoptium (Temurin). Effettuando l'installazione viene automaticamente messo nel path di 
+win11 come java e diventa il Workspace default JRE (jdk-21-0.7.6-hotspot). Con questo tutto PARE funzionare bene.
+INOLTRE BISOGNA aggiornare il compilatore, si va su windows/preferences/java/compiler e lo si imposta a 21 (3 volte) 
+per tutti i workspaces che si sono creati!
+
+
+25/04/2025
+Fatta modifica a release.xml per avere il timestamp al posto del numero di build non utilizzato
+ATTENZIONE: ho scoperto che venive utilizzato un limiti.csv messo nei dati di test di Eclipse.
+Spostato il limiti.csv in nella cartella Plugins/ContMensili/.
+Bisogna ricordarsi di mandarlo a Lorella!
+
+
 24/04/2025
 RELEASE
 
@@ -10,8 +36,11 @@ Data una ripulita e sistemata a release.xml
 Non ricordo, pero' come andasse usato al momento di fare un commit su github
 
 TROVATO FORSE
-La cartella relesae (al contrario della cartella rel) è in INDEX quindi viene messa su github. I suoi file zip NON hanno il marker di data (rimane all'interno dei dati zippati)
-In questo modo DOVREBBE venire trasferito senza rompere gli ioni!
+La cartella release (al contrario della cartella rel) è in INDEX quindi viene messa su github. I suoi file zip NON 
+hanno il marker di data (rimane all'interno dei dati zippati). In questo modo DOVREBBE venire trasferito senza rompere 
+gli ioni!
+
+BISOGNA far girare release.xml per fare aggiornare i due file zippati contenuti.
 
 
 

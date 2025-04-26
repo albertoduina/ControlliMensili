@@ -134,8 +134,12 @@
 
 
 	<!-- ##############			MAIN ROUTINE 		############## -->
-	<target name="release" depends="init, zip1, zip2, zip3" />
-
+	<target name="release" 
+		depends="init, 
+		zip1, 
+		zip2, 
+		zip3" 
+	/>
 
 	<!-- NOVEMBRE 2024 -->
 	<!-- INITIALIZE buildnumber, delete and recreate empy directory -->
@@ -180,7 +184,7 @@
 	<!-- NOVEMBRE 2024 -->
 	<!-- ZIP sorgenti con numero build  -->
 	<target name="zip1" description="Zip completo sorgenti con numero verione">
-		<zip destfile="${relSrc}/ContMensSource_b${build.number}.zip">
+		<zip destfile="${relSrc}/ContMensSource_b${time.stamp}.zip">
 			<zipfileset dir="${source}" prefix="ControlliMensili/src/contMensili" />
 			<zipfileset dir="${test}" prefix="ControlliMensili/test/contMensili" />
 			<zipfileset dir="${data}" prefix="ControlliMensili/data" />
