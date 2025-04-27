@@ -8,6 +8,7 @@
 	<!-- 
 	ATTENZIONE, per inesperienza, nel repository avevo ripetuto 2 volte il >
 	< nome delle cartelle: /iw2ayv/iw2ayv/ e /contMensili/contMensili/ 
+	==== CI TOCCA TENERLO NEI SECOLI DEI SECOLI ====
 	-->
 	
     <!-- Percorso base in cui installare il plugin, da aggiornare in caso di spostamenti-->
@@ -198,20 +199,6 @@
 	</target>
 	
 	 <import file="release.xml" as="release" />
-
-
-	<!-- NOVEMBRE 2024 SPOSTATO IN release.xml-->
-	<!--target name="zipdistribution" description="NUOVO Zip file per commit su Github">
-		<echo message="CREAZIONE ZIPFILE (senza data nel nome) PER GITHUB" />
-
-		<zip destfile="${distribuzione}/ControlliMensiliPlugins.zip">
-			<fileset dir="${dist}">
-			</fileset>
-		</zip>
-	</target-->
-	
-	
-
 
 </project>
 
