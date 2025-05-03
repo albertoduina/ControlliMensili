@@ -1,10 +1,7 @@
 package contMensili;
 
 import java.awt.Frame;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,7 +74,6 @@ public class Sequenze_ implements PlugIn {
 	// ABILITA E DISABILITA LE STAMPE DI DEBUG
 	// METTERE debugTables A FALSE PER NON AVERE LE STAMPE
 	// ----------------------------------------------------------
-	//
 	public boolean debugTables = false;
 	public static boolean forcesilent = false;
 
@@ -105,14 +101,10 @@ public class Sequenze_ implements PlugIn {
 		}
 		if (!UtilAyv.jarCount("iw2ayv_")) {
 			return;
-			// ============================================================================================
-			// EQUIVALENZE DURANTE I TEST
 		}
 
-		// ==============================================================================================
-
 		UtilAyv.setMyPrecision();
-		// MyFileLogger.logger.info("<-- INIZIO Sequenze -->");
+
 		TextWindow tw = new TextWindow("Sequenze", "<-- INIZIO Sequenze -->", 300, 200);
 		Frame lw = WindowManager.getFrame("Sequenze");
 		if (lw == null) {
@@ -127,16 +119,14 @@ public class Sequenze_ implements PlugIn {
 
 		boolean startingDirExist = new File(startingDir).exists();
 
-		// String[][] tableCode = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
-
 		/// --------------------------------------------------------------------------------------------
 		/// ATTENZIONE L'ATTUALE VERSIONE DI SEQUENZE SUPPORTA UN UNICO FILE CON I
-		/// CODICI, ESSO SI CHIAMA ATTUALMENTE CODICI090218.CSV E DELLA SUA MANUTENZIONE
-		/// NON SI OCCUPA PIU'IL PROGRAMMATORE, MA GLI UTILIZZATORI, CHE SI OCCUPERANNO
+		/// CODICI, ESSO SI CHIAMA ATTUALMENTE CODICI090218.CSV ED E'POSTO NELLA
+		/// CARTELLA DEL FILE JAR. DELLA SUA MANUTENZIONE NON SI OCCUPA PIU'IL
+		/// PROGRAMMATORE, MA GLI UTILIZZATORI, CHE SI OCCUPERANNO
 		/// DEL SUO AGGIORNAMENTO E DELL'INTERSCAMBIO DELLA VERSIONE AGGIORNATA. QUESTO
 		/// PERCHE'MI E'STATO CHIESTO DI RENDERE IL FILE CON I CODICI LIBERAMENTE
 		/// ACCESSIBILE, QUINDI DA GENNAIO 2018 NON E' PIU' NELLE MIE DISPONIBILITA'
-		/// (QUINDI LO POSSONO MODIFICARE TUTTI, INCLUSI D&P (DOGS & PIGS))
 		/// --------------------------------------------------------------------------------------------
 
 		TableCode tc1 = new TableCode();
@@ -167,13 +157,8 @@ public class Sequenze_ implements PlugIn {
 		boolean self1 = false;
 		boolean p10p11p12 = false;
 		boolean fast = false;
-		// boolean batch = false;
 		boolean superficiali = false;
 		boolean aux2 = false;
-		boolean aux3 = false;
-		// choice = Prefs.get("prefer.choice", "none");
-
-		// String[] items = { "p6rmn_ORIGINAL", "p6rmn_IMPROVED", "p6rmn_FITTER" };
 
 		List<String> arrayStartingDir = new ArrayList<String>();
 
@@ -200,9 +185,6 @@ public class Sequenze_ implements PlugIn {
 		} else {
 			Prefs.set("prefer.fast", "false");
 		}
-		// Prefs.set("prefer.choice", choice);
-
-//		IJ.log("CHOICE= " + choice);
 
 		if (self1) {
 			if (!new InputOutput().checkJar(MyConst.TEST_FILE)) {
@@ -211,10 +193,11 @@ public class Sequenze_ implements PlugIn {
 			}
 
 			// --------------------------------------------------------------------------------------------
+			// Eseguito solo durante il selfTest
+			// --------------------------------------------------------------------------------------------
 			IJ.runPlugIn("contMensili.p3rmn_", "-1");
 			IJ.runPlugIn("contMensili.p4rmn_", "-1");
 			IJ.runPlugIn("contMensili.p5rmn_", "-1");
-//			IJ.runPlugIn("contMensili.p6rmn_ORIGINAL", "-1");
 			IJ.runPlugIn("contMensili.p6rmn_ORIGINAL", "-1");
 			IJ.runPlugIn("contMensili.p7rmn_", "-1");
 			IJ.runPlugIn("contMensili.p8rmn_", "-1");
@@ -236,7 +219,7 @@ public class Sequenze_ implements PlugIn {
 		if (nuovo2 || !startingDirExist) {
 			nuovo1 = true;
 			aux2 = true;
-			aux3 = true;
+			// aux3 = true;
 			DirectoryChooser.setDefaultDirectory(startingDir);
 			DirectoryChooser od1 = new DirectoryChooser("Selezionare la cartella: ");
 			startingDir = od1.getDirectory();
@@ -303,6 +286,11 @@ public class Sequenze_ implements PlugIn {
 				// di diffusine si debba effettuare il posizionamento della ROI
 				Prefs.set("prefer.p16rmn_valid", false);
 
+				// ------------------------------------------------------------------------------
+				// Esamina ricorsivamente cartelle e sottocartelle, creando la lista dei file
+				// trovati
+				// ------------------------------------------------------------------------------
+
 				List<File> result = getFileListing(new File(startingDir));
 				if (result == null) {
 					MyLog.here("getFileListing.result==null");
@@ -318,6 +306,11 @@ public class Sequenze_ implements PlugIn {
 					list[j1++] = file.getPath();
 				}
 
+				// ------------------------------------------------------------------------------
+				// Esamina la lista dei file trovati, inserendo in tabella quelli che hanno i
+				// codici uguali al file codiciXX.csv
+				// ------------------------------------------------------------------------------
+
 				String[][] tableSequenceLoaded = generateSequenceTable(list, tableCode, tableExpand);
 				if (debugTables) {
 					IJ.log("\\Clear");
@@ -330,9 +323,9 @@ public class Sequenze_ implements PlugIn {
 					return;
 				}
 
-				// =============================================================
-				// NUOVA CAZZATA INEDITA
-				// =============================================================
+				// ------------------------------------------------------------------------------
+				// Adattamento codici Treviglio
+				// ------------------------------------------------------------------------------
 
 				treviglioDevelop(tableSequenceLoaded, tableCode);
 
@@ -345,55 +338,56 @@ public class Sequenze_ implements PlugIn {
 					MyLog.waitHere("salvare il log come 4_tableCodeTreviglio");
 				}
 
-				// String[][] tableSequenceTreviglio =
-				// treviglioSequenceTable(tableSequenceLoaded, tableExpand);
 				// --------------------------------------------------------------------------------------------
-				// eseguo un sort in base a POSIZ, TIME, poi riordino in base a tableCode infine
-				// verifico che siano presenti i giusti numeri di immagini. Per ultimo
-				// modifierSmart si occupa delle acquisizioni con più fette
+				// Eseguo una serie di sort successivi
 				// --------------------------------------------------------------------------------------------
-
+				// Sort in base a POSIZIONE
+				// --------------------------------------------------------------------------------------------
 				String[][] tableSequenceSorted1 = TableSorter.minsort(tableSequenceLoaded, TableSequence.POSIZ);
 				if (debugTables) {
 					IJ.log("\\Clear");
 					MyLog.logMatrix(tableSequenceSorted1, "tableSequenceSorted1_POSITION");
 					MyLog.waitHere("salvare il log come 5_tableSequenceSorted1_POSITION");
 				}
-
+				// --------------------------------------------------------------------------------------------
+				// Sort in base a TIME
+				// --------------------------------------------------------------------------------------------
 				String[][] tableSequenceSorted2 = TableSorter.minsort(tableSequenceSorted1, TableSequence.TIME);
 				if (debugTables) {
 					IJ.log("\\Clear");
 					MyLog.logMatrix(tableSequenceSorted2, "tableSequenceSorted2_TIME");
 					MyLog.waitHere("salvare il log come 6_tableSequenceSorted2_TIME");
 				}
-
-				// ===== tentativo 2025 ======
-
+				// --------------------------------------------------------------------------------------------
+				// Sort in base a ECHO (aggiunta 2025)
+				// --------------------------------------------------------------------------------------------
 				String[][] tableSequenceSorted3 = TableSorter.minsort(tableSequenceSorted2, TableSequence.ECHO);
 				if (debugTables) {
 					IJ.log("\\Clear");
 					MyLog.logMatrix(tableSequenceSorted2, "tableSequenceSorted3_ECHO");
 					MyLog.waitHere("salvare il log come 6a_tableSequenceSorted3_ECHO");
 				}
-
-				// ===== tentativo 2025 ======
-
-				// ===== disattivo modifica x ulteriori test
-
+				// --------------------------------------------------------------------------------------------
+				// Riordino tabella in base a codiciXX.csv
+				// --------------------------------------------------------------------------------------------
 				String[][] tableSequenceReordered = reorderSequenceTable(tableSequenceSorted3, tableCode);
 				if (debugTables) {
 					IJ.log("\\Clear");
 					MyLog.logMatrix(tableSequenceReordered, "tableSequenceReordered_CODE");
 					MyLog.waitHere("salvare il log come 7_tableSequenceReordered_CODE");
 				}
-
+				// --------------------------------------------------------------------------------------------
+				// Verifica numero immagini in base a codiciXX.csv
+				// --------------------------------------------------------------------------------------------
 				String[][] listProblems = verifySequenceTable(tableSequenceReordered, tableCode);
 				if (debugTables) {
 					IJ.log("\\Clear");
 					MyLog.logMatrix(listProblems, "listProblems");
 					MyLog.waitHere("salvare il log come ListProblems");
 				}
-
+				// --------------------------------------------------------------------------------------------
+				// Riordino delle immagini con fette multiple in base alla posizione fetta
+				// --------------------------------------------------------------------------------------------
 				String[] myCode1 = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_", "YL2S_", "YR2F_", "YR2S_", "JUS1A",
 						"JUSAA", "KUS1A", "KUSAA", "PUSAA", "PUS1A" };
 
@@ -404,11 +398,18 @@ public class Sequenze_ implements PlugIn {
 					MyLog.logMatrix(tableSequenceModified1, "tableSequenceModified1");
 					MyLog.waitHere("salvare il log come 8_tableSequenceModified1");
 				}
-				// ===============================================================
+
+				// --------------------------------------------------------------------------------------------
+				// Log delle immagini problematiche (numero immagini non corrisponde a
+				// codiciXX.csv.
+				// --------------------------------------------------------------------------------------------
 				// NOTA BENE: lasciare test a false, altrimenti non vengono piu'
 				// stampati gli errori e si hanno problemi in elaborazione!!!
 				// ATTENZIONE CADUTA PORCONI COME SE PIOVESSE
-				// ================================================================
+				// --------------------------------------------------------------------------------------------
+				// OVVIAMENTE DOVREBBE ESSERE CHI HA ACQUISITO LE IMMAGINI A CANDCELLARE QUELLE
+				// ACQUISITE DUE O PIU'VOLTE E POI RIAVVIARE SEQUENZE
+				// --------------------------------------------------------------------------------------------
 
 				boolean test = false;
 				logVerifySequenceTable(listProblems, test);
@@ -421,6 +422,8 @@ public class Sequenze_ implements PlugIn {
 			}
 
 			String[][] tableSequenceReloaded = new TableSequence().loadTable(startingDir + MyConst.SEQUENZE_FILE);
+			// tw.append("da elaborare "+ tableSequenceReloaded.length);
+			// tw.append("<-- FINE Sequenze -->");
 
 			// MyLog.logMatrix(tableSequenceReloaded, "tableSequenceReloaded");
 			// MyLog.waitHere();
@@ -432,17 +435,15 @@ public class Sequenze_ implements PlugIn {
 				// OCCHIO CHE IL 9_tableSequenceReloaded non ha i dati ma solo intestazione
 			}
 
-			// ======================================================================================
-			// ECCO COME RINCOGLIONIRSI E PERDERE UN ORA, IL PLUGIN VIENE LANCIATO IN
-			// AUTOMATICO DA QUI, BISOGNA FARE QUI EVENTUALI MAGHEGGI SUI NOMI DURATE I TEST
-
-			// --------------------------------------------------------------------------------------------
-			// motore di chiamata dei plugins
-			// --------------------------------------------------------------------------------------------
 			// IJ.log(MyLog.qui() + " avvio >>> callPluginsFromSequenceTable");
-
+			// ======================================================================================
+			// ======================================================================================
+			// ======================================================================================
+			// MOTORE DI CHIAMATA DEI PLUGINS IN FUNZIONAMENTO NORMALE
+			// ======================================================================================
 			callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false, superficiali, p10p11p12, tw);
-			// --------------------------------------------------------------------------------------------
+			// ======================================================================================
+			// ======================================================================================
 			// ======================================================================================
 
 		}

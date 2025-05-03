@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.10.15
 Created-By: 21.0.7+6-LTS (Eclipse Adoptium)
 Built-By: AlbertoDuina
-Built-Date: April 27 2025
+Built-Date: May 3 2025
 Main-Class: contMensili.Sequenze_
-Implementation-Version: 2025apr27_2257
+Implementation-Version: 2025mag03_2247
 
