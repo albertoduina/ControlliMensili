@@ -1,5 +1,10 @@
 package contMensili;
 
+/***
+ * PLUGIN NON UTILIZZATO, COMUNQUE NON FUNZIONAVA
+ */
+
+
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.ArrayList;

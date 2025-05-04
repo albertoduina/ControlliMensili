@@ -1,7 +1,8 @@
 package contMensili;
 
 /***
-*
+* PLUGIN NON UTILIZZATO, COMUNQUE NON FUNZIONAVA
+* 
 * Copied from https://github.com/oskrebkova/mtf_analyzer
 *
 * Authors: Olga Skrebkova   (not sure, lack author informations)

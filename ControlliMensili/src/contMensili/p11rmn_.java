@@ -15,7 +15,6 @@ import ij.gui.Line;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
 import ij.gui.Plot;
-import ij.gui.PlotWindow;
 import ij.gui.Roi;
 import ij.io.FileSaver;
 import ij.measure.Measurements;
@@ -40,7 +39,6 @@ import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
-import utils.TableExpand;
 import utils.TableSequence;
 import utils.UtilAyv;
 
@@ -112,16 +110,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 			return;
 		}
 
-		// VERSION = className + "_build_"
-		// + ReadVersion.readVersionInfoInManifest("contMensili")
-		// + "_iw2ayv_build_"
-		// + ReadVersion.readVersionInfoInManifest("utils");
 
-//		String className = this.getClass().getName();
 		String user1 = System.getProperty("user.name");
 		TableCode tc1 = new TableCode();
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
-		TableExpand tc2 = new TableExpand();
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
 
 		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
@@ -149,7 +141,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 	public int manualMenu(int preset, String testDirectory) {
 		boolean retry = false;
-		boolean step = false;
 		int timeout = 0;
 		int mode = 0;
 		do {
@@ -393,14 +384,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 * @param timeout
 	 * @return
 	 */
-	@SuppressWarnings("deprecation")
+	// @SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String path1, String path2, int direzione, double profond, String info10,
 			int mode, int timeout) {
 		boolean accetta = false;
 		boolean manualRequired2 = false;
 		ResultsTable rt = null;
-		boolean fast2 = false;
-
 		boolean autoCalled = false;
 		boolean step = false;
 		boolean verbose = false;
@@ -452,14 +441,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 			if (imp11 == null) {
 				MyLog.waitHere("Non trovato il file " + path1);
 			}
-
-			fast2 = fast && !manualRequired2;
-
 			double out2[] = positionSearch(imp11, autoCalled, direzione, profond, info10, mode, timeout);
-
 			imp11.close();
-
-
 
 			if (out2 == null) {
 				manualRequired2 = true;
@@ -704,7 +687,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 				int area11x11 = MyConst.P11_NEA_11X11_PIXEL * MyConst.P11_NEA_11X11_PIXEL;
 				int enlarge = 0;
 				int pixx = 0;
-				int loop = 0;
 				boolean alreadyWarned = false;
 
 				do {
@@ -764,31 +746,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 							imp1.setRoi(xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA, sqNEA);
 							imp1.getRoi().setStrokeColor(Color.red);
 							imp1.getRoi().setStrokeWidth(1.1);
-//							MyLog.waitHere(info10 + "\nimp1= " + imp1.getTitle() + "\nimp2= " + imp2.getTitle()
-//									+ "\n \nRichiesto riposizionamento della ROI indicata in rosso,\nORA e' possibile spostarla, oppure lasciarla dove si trova.\nPOI premere OK");
-
-							int ko1 = 0;
-
-//							 ko1 = MyLog.waitHereModeless(info10 + "\nimp1= " + imp1.getTitle() + "\nimp2= "
-//									+ imp2.getTitle()
-//									+ "\n \nRichiesto riposizionamento della ROI indicata in rosso,\nORA e' possibile spostarla, oppure lasciarla dove si trova."
-//									+ "POI premere  OK, altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive");
-
-//							int resp = ButtonMessages.ModelessMsg((info10 + "\nimp1= " + imp1.getTitle() + "\nimp2= "
-//									+ imp2.getTitle() + "\n \nRichiesto riposizionamento della ROI indicata in rosso,"
-//									+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova.\n"
-//									+ "POI premere  OK, altrimenti, se l'immagine NON E'ACCETTABILE premere <ANNULLA>"
-//									+ " per passare alle successive"), "OK", "<ANNULLA>");
 
 							boolean resp = MyLog.waitHereModeless("<<  SELEZIONE MANUALE ATTIVA >>\n \nimmagine= " + imp11.getTitle()
 							+ "\n\nRichiesto riposizionamento della ROI quadrata indicata in rosso, dentro al fantoccio\n"
 									+"\nORA e' possibile spostarla, oppure lasciarla dove si trova."
 									+ "\n--- POI premere OK ---"
 									+ "\nAltrimenti, se l'immagine NON FOSSE UTILIZZABILE premere <ANNULLA> per passare alle successive\n \n");
-
-
-
-
 
 							if (resp) {
 //								MyLog.waitHere("premuto annulla");
@@ -833,8 +796,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 					if (step && pixx >= area11x11) {
 						msgSqr2OK(pixx);
 					}
-
-					loop++;
 
 				} while (pixx < area11x11);
 
@@ -894,12 +855,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				simpath = fileDir + "SIMULATE";
 				File newdir3 = new File(simpath);
-				boolean ok3 = false;
 				boolean ok4 = false;
 				if (newdir3.exists()) {
-//					ok3 = InputOutput.deleteDir(newdir3);
-//					if (!ok3)
-//						MyLog.waitHere("errore cancellazione directory " + newdir3);
 				} else {
 					ok4 = InputOutput.createDir(newdir3);
 					if (!ok4) {
@@ -964,7 +921,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 				rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 				rt.showRowNumbers(true);
 
-				int col = 2;
 				String t1 = "TESTO";
 				String s2 = "VALORE";
 				String s3 = "roi_x";
@@ -1536,7 +1492,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 		for (int j = 0; j < len1; j++) {
 			xcoord1[j] = j;
 		}
-		Plot plot = new Plot("Plot profilo penetrazione", "pixel", "valore", xcoord1, profile1);
+		// Plot plot = new Plot("Plot profilo penetrazione", "pixel", "valore", xcoord1, profile1);
+		Plot plot = new Plot("Plot profilo penetrazione", "pixel", "valore");
+		plot.add ("", xcoord1);
+		plot.add ("", profile1);
 		if (bslab) {
 			plot.setLimits(0, len1, min, max);
 		} else {
@@ -1548,12 +1507,12 @@ public class p11rmn_ implements PlugIn, Measurements {
 		xVectPointsX[1] = vetUpDwPoints[2];
 		yVectPointsX[0] = profile1[vetUpDwPoints[0]];
 		yVectPointsX[1] = profile1[vetUpDwPoints[2]];
-		plot.addPoints(xVectPointsX, yVectPointsX, PlotWindow.X);
+		plot.addPoints(xVectPointsX, yVectPointsX, Plot.X);
 		xVectPointsO[0] = vetUpDwPoints[1];
 		xVectPointsO[1] = vetUpDwPoints[3];
 		yVectPointsO[0] = profile1[vetUpDwPoints[1]];
 		yVectPointsO[1] = profile1[vetUpDwPoints[3]];
-		plot.addPoints(xVectPointsO, yVectPointsO, PlotWindow.CIRCLE);
+		plot.addPoints(xVectPointsO, yVectPointsO, Plot.CIRCLE);
 		plot.changeFont(new Font("Helvetica", Font.PLAIN, 10));
 
 		// interpolazione lineare sinistra
@@ -1599,7 +1558,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		xVetLineHalf[1] = len1;
 		yVetLineHalf[0] = half;
 		yVetLineHalf[1] = half;
-		plot.addPoints(xVetLineHalf, yVetLineHalf, PlotWindow.LINE);
+		plot.addPoints(xVetLineHalf, yVetLineHalf, Plot.LINE);
 		plot.setColor(color1);
 		plot.show();
 
@@ -1649,11 +1608,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		ButtonMessages.ModelessMsg("displayNEA", "CONTINUA");
 	}
 
-	private static int menuPositionMroi() {
-		int userSelection1 = ButtonMessages.ModelessMsg(
-				"Posizionare la MROI sull'area della bobina" + "  e premere Accetta", "ACCETTA", "RIDISEGNA");
-		return userSelection1;
-	}
 
 	/***
 	 * Legge la direzione preimpostata nel file di configurazione (codici)
@@ -1738,7 +1692,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		}
 
 		int direzione = 0;
-		int who1 = 0;
 		boolean manualRequired = false;
 
 		double dimPixel = ReadDicom.readDouble(
@@ -1777,7 +1730,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 			// direzioneTabella direzione= " + direzione
 			// + " direzioneTabella= " + direzioneTabella);
 			manualRequired = true;
-			who1 = 1;
 			direzione = direzioneTabella;
 
 		}
@@ -1806,19 +1758,14 @@ public class p11rmn_ implements PlugIn, Measurements {
 			MyLog.waitHere("Maximum position", debug, timeout);
 		}
 
-		// IJ.log("width= " + width + " height= " + height);
-
 		double startX = Double.NaN;
 		double startY = Double.NaN;
 		double endX = Double.NaN;
 		double endY = Double.NaN;
-
-		String strDirez = "";
 		double ax = Double.NaN;
 		double ay = Double.NaN;
+		String strDirez = "";
 
-		// MyLog.waitHere("direzione= " + direzione);
-		// vup = 1 vdw = 2 hsx = 3 hdx = 4
 		switch (direzione) {
 		case 1:
 			strDirez = " verticale a salire";
@@ -1826,10 +1773,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 			endX = width;
 			startY = out1[1] - profond / dimPixel;
 			if (startY < 0) {
-				// MyLog.waitHere("Imposto manualRequired"); // commentato per
-				// bottiglia verticale
-				// manualRequired = true;
-				who1 = 3;
 				startY = startY + height;
 			}
 			endY = startY;
@@ -1842,7 +1785,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 			if (startY > height) {
 				MyLog.waitHere("Imposto manualRequired");
 				manualRequired = true;
-				who1 = 4;
 				startY = startY - height;
 			}
 			endY = startY;
@@ -1853,7 +1795,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 			if (startX < 0) {
 				MyLog.waitHere("Imposto manualRequired");
 				manualRequired = true;
-				who1 = 5;
 				startX = startX + width;
 			}
 
@@ -1867,7 +1808,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 			if (startX > width) {
 				MyLog.waitHere("Imposto manualRequired");
 				manualRequired = true;
-				who1 = 6;
 				startX = startX - width;
 			}
 			endX = startX;
@@ -1877,9 +1817,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		case 0:
 			MyLog.waitHere("Caso impossibile, la direzione 0 e' gestita in precedenza");
 		}
-
-		// MyLog.waitHere("startX= " + startX + " startY= " + startY + " endX= "
-		// + endX + " endY= " + endY);
 
 		if (direzione == 0) {
 			ax = width / 2;
@@ -1917,9 +1854,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 				Plot plot1 = MyPlot.basePlot(profi1, "PROFILO SEGNALE LUNGO LINEA VERDE", Color.blue);
 				plot1.draw();
 				plot1.setColor(Color.red);
-				plot1.addPoints(xPoints, yPoints, PlotWindow.CIRCLE);
+				plot1.addPoints(xPoints, yPoints, Plot.CIRCLE);
 				plot1.draw();
-				plot1.addPoints(xCenter, yCenter, PlotWindow.BOX);
+				plot1.addPoints(xCenter, yCenter, Plot.BOX);
 				plot1.show();
 				MyLog.waitHere(listaMessaggi(2), debug, timeout);
 			}
@@ -1947,8 +1884,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		if (manualRequired) {
 			imp11.deleteRoi();
 			over11.clear();
-			// UtilAyv.showImageMaximized(imp11);
-
 			overlayGrid(imp11, MyConst.P11_GRID_NUMBER, true);
 			imp11.setOverlay(over11);
 			imp11.setRoi(new Line(0, (int) ay, imp11.getWidth(), (int) ay));
@@ -1979,8 +1914,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 					+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova.\nPOI premere OK");
 
 			manualRequired = false;
-			who1 = 0;
-
 		}
 
 		Rectangle boundRec3 = imp11.getProcessor().getRoi();
@@ -2142,8 +2075,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		}
 
 		meanx[3] = mean4;
-		// MyLog.logVector(meanx, "meanx prima di sort");
-
 		Arrays.sort(meanx);
 
 		// regola: mean[2] deve essere almeno > 4*mean[1], questo evita i casi

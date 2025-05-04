@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.io.File;
 import java.util.StringTokenizer;
 
@@ -18,7 +17,6 @@ import ij.gui.NewImage;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
 import ij.gui.Plot;
-import ij.gui.PlotWindow;
 import ij.gui.PointRoi;
 import ij.gui.Roi;
 import ij.gui.TextRoi;
@@ -100,16 +98,11 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 	private static final boolean debug = true;
 
-	// private static boolean junitTest = false;
 	private static int timeout = 0;
 	public static boolean forcesilent = false;
 	public static final boolean blackbox = false;
-//	public static String blackpath = "";
-//	public static String blackname = "";
-//	public static String blacklog = "";
 	private static String fileDir = "";
 	public static String simpath = "";
-//	public static String simname = "";
 	public static boolean abort = false;
 
 	@Override
@@ -327,7 +320,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 //		simname = f2.getName();
 		simpath = fileDir + "SIMULATE";
 		File newdir3 = new File(simpath);
-		boolean ok3 = false;
+		// boolean ok3 = false;
 		boolean ok4 = false;
 		if (newdir3.exists()) {
 //			ok3 = InputOutput.deleteDir(newdir3);
@@ -344,7 +337,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		boolean step = true;
 		boolean retry = false;
-		ResultsTable rt1 = null;
+		// ResultsTable rt1 = null;
 
 		if (fast) {
 			retry = false;
@@ -454,7 +447,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 	 * @param fast       flag true se in modo batch
 	 * @return
 	 */
-	@SuppressWarnings("deprecation")
+	// @SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String path1, String path2, String autoArgs, String info10,
 			boolean autoCalled, boolean step, boolean verbose, boolean test, boolean fast, boolean silent,
 			int timeout) {
@@ -465,7 +458,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 			silent = true;
 		}
 
-		Toolkit tk = Toolkit.getDefaultToolkit();
+		// Toolkit tk = Toolkit.getDefaultToolkit();
 		ImageWindow iw1 = null;
 		ResultsTable rt = null;
 
@@ -473,7 +466,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		// double angle = Double.NaN;
 		boolean abort = false;
 		// lettura dei limiti da file esterno
-		boolean absolute = false;
+		// boolean absolute = false;
 		// String[][] limiti = new InputOutput().readFile6LIKE("LIMITI.csv",
 		// absolute);
 
@@ -497,9 +490,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 		double maxGhostPerc = +20;
 		double minUiPerc = +5;
 		double maxUiPerc = +100;
-		double minFitError = +0;
+		// double minFitError = +0;
 		double maxFitError = +20;
-		double minBubbleGapLimit = 0;
+		// double minBubbleGapLimit = 0;
 		double maxBubbleGapLimit = 2;
 
 		// ================================================================
@@ -512,8 +505,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 			minSnRatio = vetMinimi[2];
 			minGhostPerc = vetMinimi[3];
 			minUiPerc = vetMinimi[4];
-			minFitError = vetMinimi[5];
-			minBubbleGapLimit = vetMinimi[6];
+			// minFitError = vetMinimi[5];
+			// minBubbleGapLimit = vetMinimi[6];
 		}
 		if (vetMaximi == null) {
 			MyLog.waitHere(listaMessaggi(65), debug, timeout);
@@ -1521,9 +1514,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 			plot2.draw();
 			plot2.setColor(Color.red);
 			if (vertical) {
-				plot2.addPoints(yPoints, zPoints, PlotWindow.CIRCLE);
+				plot2.addPoints(yPoints, zPoints, Plot.CIRCLE);
 			} else {
-				plot2.addPoints(xPoints, zPoints, PlotWindow.CIRCLE);
+				plot2.addPoints(xPoints, zPoints, Plot.CIRCLE);
 			}
 			plot2.show();
 
@@ -1602,7 +1595,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int yCenterCircle = 0;
 		// int xCenterCircleMan = 0;
 		// int yCenterCircleMan = 0;
-		int diamCircleMan = 0;
+		// int diamCircleMan = 0;
 		// int xCenterCircleMan80 = 0;
 		// int yCenterCircleMan80 = 0;
 		// int diamCircleMan80 = 0;
@@ -1632,10 +1625,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 			diamRoiMan = aux1;
 		}
 
-		ImageWindow iw11 = null;
-		ImageWindow iw12 = null;
+		//ImageWindow iw11 = null;
+		// ImageWindow iw12 = null;
 		if (demo) {
-			iw11 = imp11.getWindow();
+			//iw11 = imp11.getWindow();
 		}
 
 		Overlay over12 = new Overlay();
@@ -1660,7 +1653,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (demo) {
 			UtilAyv.showImageMaximized(imp12);
 			MyLog.waitHere(listaMessaggi(1), debug, timeout1);
-			iw12 = imp12.getWindow();
+		//	iw12 = imp12.getWindow();
 		}
 
 		// double[][] peaks1 = new double[4][1];
@@ -1745,7 +1738,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		// int[] yPoints3 = null;
 		boolean vertical = false;
 		boolean valido = true;
-		String motivo = "";
+		// String motivo = "";
 		for (int i1 = 0; i1 < 8; i1++) {
 
 			// IJ.log("------------> i1= " + i1);
@@ -1866,7 +1859,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 		if (xPoints3.length < 3 || test) {
 			UtilAyv.showImageMaximized(imp11);
-			motivo = "Non si riescono a determinare le coordinate di almeno 3 punti del cerchio";
 			// MyLog.waitHere("Non si riescono a determinare le coordinate di
 			// almeno 3 punti del cerchio"
 			// + "\nRichiesto ridimensionamennto e riposizionamento della ROI
@@ -1954,7 +1946,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				// // ce1.equalize(imp11.getProcessor());
 				// imp11.updateAndDraw();
 
-				motivo = "Distanza eccessiva tra i punti forniti ed il fit del cerchio ottenuto";
+				
 
 				// MyLog.waitHere("imp11= " + imp11.getTitle()
 				// + "\nDistanza eccessiva tra i punti forniti ed il fit del
@@ -2126,7 +2118,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 				if (dMin < maxBubbleGapLimit) {
 					manual = true;
-					motivo = "Spostamento automatico eccessivo per compensare la bolla d'aria presente nel fantoccio";
+					//motivo = "Spostamento automatico eccessivo per compensare la bolla d'aria presente nel fantoccio";
 					// -------------------------------------------------------------
 					// disegno il cerchio ed i punti, in modo da date un
 					// feedback
@@ -2592,14 +2584,14 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int yRoi0 = yCenterCircle - diamCircle / 2;
 		int diamRoi0 = diamCircle;
 
-		ImageWindow iw2 = null;
+		//ImageWindow iw2 = null;
 		// --iw2ayv
 		UtilAyv.showImageMaximized(imp2);
-		iw2 = imp2.getWindow();
+		//iw2 = imp2.getWindow();
 		// ---
 		if (demo) {
 			UtilAyv.showImageMaximized(imp2);
-			iw2 = imp2.getWindow();
+			//iw2 = imp2.getWindow();
 			// MyLog.waitHere(listaMessaggi(30), debug);
 		}
 
@@ -2836,26 +2828,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		return uiPerc;
 	}
 
-	/**
-	 * Ghost roi creation and calculation
-	 *
-	 * @param xRoi  x roi coordinate
-	 * @param yRoi  y roi coordinate
-	 * @param imp   image
-	 * @param count ghost number (for the message)
-	 * @param step  step mode
-	 * @return statistics
-	 */
-	private static ImageStatistics ghostRoi(int xRoi, int yRoi, ImagePlus imp, int count, boolean step, boolean test) {
-
-		ImageStatistics stat = null;
-		imp.setRoi(new OvalRoi(xRoi, yRoi, MyConst.P3_DIAM_ROI_GHOSTS, MyConst.P3_DIAM_ROI_GHOSTS));
-		if (imp.isVisible()) {
-			imp.getWindow().toFront();
-		}
-		stat = imp.getStatistics();
-		return stat;
-	}
 
 	/**
 	 * Ghost percentual calculation

@@ -66,6 +66,8 @@ import utils.UtilAyv;
  */
 
 /**
+ * PLUGIN NON UTILIZZATO, COMUNQUE NON FUNZIONAVA ACCETTABILMENTE
+ * 
  * Analizza il WARP , le rods vengono selezionate in automatico
  *
  *

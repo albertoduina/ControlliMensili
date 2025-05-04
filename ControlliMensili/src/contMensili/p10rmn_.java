@@ -16,7 +16,6 @@ import ij.gui.Line;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
 import ij.gui.Plot;
-import ij.gui.PlotWindow;
 import ij.gui.PointRoi;
 import ij.gui.Roi;
 import ij.io.FileSaver;
@@ -43,7 +42,6 @@ import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
-import utils.TableExpand;
 import utils.TableLimiti;
 import utils.TableSequence;
 import utils.UtilAyv;
@@ -88,14 +86,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 */
 	private static String fileDir = "";
 	public static String simpath = "";
-
 	private static String simulataName = "";
-
 	private static final boolean debug = true;
-
 	private static int timeout = 0;
 	public static final boolean forcesilent = false;
-
 	public static final boolean blackbox = false;
 	public static String blackpath = "";
 	public static String blackname = "";
@@ -110,25 +104,19 @@ public class p10rmn_ implements PlugIn, Measurements {
 		if (!c1.jarCount("iw2ayv_")) {
 			return;
 		}
-
 		String className = this.getClass().getName();
 		String user1 = System.getProperty("user.name");
 		TableCode tc1 = new TableCode();
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
-		TableExpand tc2 = new TableExpand();
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
 
 		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 
-//		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
-// ====
 		fileDir = Prefs.get("prefer.string1", "none");
-
 		if (IJ.versionLessThan("1.43k")) {
 			return;
 		}
-
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
 			manualMenu(0, "");
@@ -144,8 +132,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 *
 	 * FAST: IMMAGINE A DISPLAY, MOSTRATA SOLO POSIZIONE ROI IN OVERLAY, NESSUNA
 	 * INTERAZIONE CON L'UTENTE
-	 *
-	 *
+	 * 
 	 * FAST NON A BUON FINE: VIENE MOSTRATA L'IMMAGINE, SI CHIEDE IL POSIZIONAMENTO
 	 * DEL CERCHIO CHE IDENTIFICA LA POSIZIONE DEL FANTOCCIO, VIENE MOSTRATO
 	 * L'OVERLAY COMPLETO DELLA ROI QUADRATA E CHIESTA CONFERMA ALL'OPERATORE
@@ -187,8 +174,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	public int manualMenu(int preset, String testDirectory) {
 
 		boolean retry = false;
-		boolean step = false;
-		boolean fast = false;
+
 		String[] titolo = { "Controllo Uniformita'", "con save UNCOMBINED e ", "immagini circolari" };
 		int mode = 0;
 		do {
@@ -323,8 +309,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		blackname = f1.getName();
 		blackpath = blackpath + "\\" + blackname + "_BLACK";
 		File newdir = new File(blackpath);
-		// IJ.log("blackpath= " + blackpath);
-		// MyLog.appendLog2(blacklog, blackpath);
 
 		boolean ok1 = false;
 		if (newdir.exists()) {
@@ -343,7 +327,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		simpath = fileDir + "SIMULATE";
 		File newdir3 = new File(simpath);
-		boolean ok3 = false;
+//		boolean ok3 = false;
 		boolean ok4 = false;
 		if (newdir3.exists()) {
 //			ok3 = InputOutput.deleteDir(newdir3);
@@ -408,14 +392,13 @@ public class p10rmn_ implements PlugIn, Measurements {
 					mode = 3;
 				case 4: // AUTO (in realta' MANUAL)
 					retry = false;
-					if (mode == 0)
-					 {
+					if (mode == 0) {
 						mode = 2;
-					//
-					// boolean autoCalled = true;
-					// boolean verbose = true;
-					// boolean test = false;
-					// boolean silent = false;
+						//
+						// boolean autoCalled = true;
+						// boolean verbose = true;
+						// boolean test = false;
+						// boolean silent = false;
 					}
 
 					// double profond = Double.parseDouble(TableSequence
@@ -478,7 +461,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 * @param fast       flag true se in modo batch
 	 * @return
 	 */
-	@SuppressWarnings("deprecation")
 	public static ResultsTable mainUnifor(String path1, String path2, String autoArgs, double profond, String info10,
 			int mode, int timeout) {
 
@@ -529,7 +511,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		// boolean broken = false;
 		ResultsTable rt = null;
-		ResultsTable rt11 = null;
+//		ResultsTable rt11 = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 		double angle = Double.NaN;
 
@@ -590,7 +572,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			// ImageWindow iw11 = WindowManager.getCurrentWindow();
 			double out2[] = positionSearch(imp11, profond, info10, mode, timeout);
 
-
 			if (out2 == null) {
 
 				String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path1, imp11, tabCodici,
@@ -621,8 +602,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 			ImagePlus imp1 = null;
 			ImagePlus imp2 = null;
 			ImageWindow iw1 = null;
-			// MyLog.waitHere();
-			// if (verbose && !silent) {
 			if (!silent) {
 				imp1 = UtilAyv.openImageMaximized(path1);
 				iw1 = WindowManager.getCurrentWindow();
@@ -631,15 +610,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 				imp1 = UtilAyv.openImageNoDisplay(path1, true);
 				imp2 = UtilAyv.openImageNoDisplay(path2, true);
 			}
-			if (imp2 == null)
-			 {
+			if (imp2 == null) {
 				MyLog.waitHere("Non trovato il file " + path2);
-			// ImageWindow iw1=WindowManager.getCurrentWindow();
 			}
-
-			// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
-
-			//
 
 			if (blackbox) {
 				// ===================================================================================
@@ -1008,7 +981,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 						+ "trovare 121 pixel che superino il  test il programma \n"
 						+ "TERMINA PREMATURAMENTE,\n \n PREMERE OK";
 
-				if ((xCenterRoi + sqNEA - enlarge) >= width || (xCenterRoi - enlarge) <= 0 || (yCenterRoi + sqNEA - enlarge) >= height || (yCenterRoi - enlarge) <= 0) {
+				if ((xCenterRoi + sqNEA - enlarge) >= width || (xCenterRoi - enlarge) <= 0
+						|| (yCenterRoi + sqNEA - enlarge) >= height || (yCenterRoi - enlarge) <= 0) {
 					MyLog.waitHere(str32, debug, timeout);
 					// return null;
 					// broken = true;
@@ -1391,8 +1365,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		int mode;
 		if (verbose) {
 			mode = 10; // modalita' demo
-		}
-		else {
+		} else {
 			mode = 0; // modalita' silent
 		}
 
@@ -1693,10 +1666,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 					ok = true;
 				}
 				// modifica del 260216
-				if (paintPixels)
-				 {
+				if (paintPixels) {
 					setOverlayPixel(over1, imp1, x1, y1, Color.yellow, Color.red, ok);
-				// --------
+					// --------
 				}
 
 			}
@@ -1997,9 +1969,9 @@ public class p10rmn_ implements PlugIn, Measurements {
 			plot2.draw();
 			plot2.setColor(Color.red);
 			if (vertical) {
-				plot2.addPoints(yPoints, zPoints, PlotWindow.CIRCLE);
+				plot2.addPoints(yPoints, zPoints, Plot.CIRCLE);
 			} else {
-				plot2.addPoints(xPoints, zPoints, PlotWindow.CIRCLE);
+				plot2.addPoints(xPoints, zPoints, Plot.CIRCLE);
 			}
 			plot2.show();
 
@@ -2078,27 +2050,14 @@ public class p10rmn_ implements PlugIn, Measurements {
 		Color colore3 = Color.red;
 
 		if (mode == 10 || mode == 3)
-		 {
 			demo = true;
-		// boolean step = false;
-		// boolean verbose = false;
-		// boolean test = false;
-		// boolean fast = false;
-		//
-		}
 
 		// ================================================================================
 		// Inizio calcoli geometrici
 		// ================================================================================
 		//
 
-		// MyLog.waitHere("autoCalled= " + autoCalled + "\nstep= " + step
-		// + "\nverbose= " + verbose + "\ntest= " + test + "\nfast= "
-		// + fast);
-
 		boolean manual = false;
-		// boolean demo = verbose;
-		// boolean showProfiles = demo;
 		double ax = 0;
 		double ay = 0;
 		int xCenterCircle = 0;
@@ -2269,7 +2228,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 			valido = true;
 			String direction1 = ReadDicom.readDicomParameter(imp11, MyConst.DICOM_IMAGE_ORIENTATION);
-			String direction2 = "1\0\0\01\0";
+//			String direction2 = "1\0\0\01\0";
 
 			if (myPeaks != null) {
 				// MyLog.logMatrix(myPeaks, "myPeaks");
@@ -2305,11 +2264,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 							valido = false;
 							// MyLog.waitHere("linea orizzontale eliminato punto
 							// sx");
-						}
-						else {
+						} else {
 							;
-						// MyLog.waitHere("linea orizzontale mantenuto punto
-						// dx");
+							// MyLog.waitHere("linea orizzontale mantenuto punto
+							// dx");
 						}
 					}
 
@@ -2318,11 +2276,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 							valido = false;
 							// MyLog.waitHere("linea verticale eliminato punto
 							// sup");
-						}
-						else {
+						} else {
 							;
-						// MyLog.waitHere("linea orizzontale mantenuto punto
-						// inf");
+							// MyLog.waitHere("linea orizzontale mantenuto punto
+							// inf");
 						}
 					}
 
@@ -2455,9 +2412,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				sumError += Math.abs(vetDist[i1]);
 			}
 
-
-
-				if (sumError > maxFitError) {
+			if (sumError > maxFitError) {
 				// MyLog.waitHere("maxFitError");
 				// -------------------------------------------------------------
 				// disegno il cerchio ed i punti, in modo da date un feedback
@@ -2521,7 +2476,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			ko1 = MyLog.waitHereModeless("<<  SELEZIONE MANUALE ATTIVA >>\n \n" + "immagine= " + imp11.getTitle()
 					+ "\nNon si riescono a determinare le coordinate corrette del cerchio"
 					+ "\nRichiesto ridimensionamento e riposizionamento della ROI circolare indicata in rosso, attorno al fantoccio\n"
-					+"\nORA e' possibile modificarla, spostarla, oppure lasciarla dove si trova."
+					+ "\nORA e' possibile modificarla, spostarla, oppure lasciarla dove si trova."
 					+ "\n--- POI premere  OK ---"
 					+ "\nAltrimenti, se l'immagine NON FOSSE UTILIZZABILE premere <ANNULLA> per passare alle successive\n \n");
 
@@ -2797,112 +2752,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		return;
 	}
 
-	/***
-	 * Riceve una ImagePlus derivante da un CannyEdgeDetector con impostata una
-	 * Line, restituisce le coordinate dei 2 picchi
-	 *
-	 * @param imp1
-	 * @param dimPixel
-	 * @return
-	 */
-	public static double[][] cannyProfileAnalyzer(ImagePlus imp1, double dimPixel, String title, boolean showProfiles,
-			boolean demo, boolean debug) {
-
-		double[][] line1 = MyLine.decomposer(imp1);
-		int count1 = 0;
-		boolean ready1 = false;
-		double max1 = 0;
-		for (int i1 = 0; i1 < line1[0].length; i1++) {
-
-			if (line1[2][i1] > max1) {
-				max1 = line1[2][i1];
-				ready1 = true;
-			}
-			if ((line1[2][i1] == 0) && ready1) {
-				max1 = 0;
-				count1++;
-				ready1 = false;
-			}
-		}
-		// devo ora contare i pixel a 255 che ho trovato, ne accettero' solo 2,
-		if (count1 != 2) {
-			if (demo) {
-				MyLog.waitHere("" + title + " trovati un numero di punti diverso da 2, count= " + count1
-						+ " scartiamo questi risultati");
-			}
-			return null;
-		}
-
-		// peaks1 viene utilizzato in un altra routine, per cui gli elementi 0
-		// ed 1 sono utilizzati per altro, li lascio a 0
-		double[][] peaks1 = new double[4][count1];
-
-		int count2 = 0;
-		boolean ready2 = false;
-		double max2 = 0;
-		for (int i1 = 0; i1 < line1[0].length; i1++) {
-
-			if (line1[2][i1] > max2) {
-				peaks1[2][count2] = line1[0][i1];
-				peaks1[3][count2] = line1[1][i1];
-				max2 = line1[2][i1];
-				ready2 = true;
-			}
-			if ((line1[2][i1] == 0) && ready2) {
-				max2 = 0;
-				count2++;
-				ready2 = false;
-			}
-		}
-
-		// ----------------------------------------
-		// AGGIUNGO 1 AI PUNTI TROVATI
-		// ---------------------------------------
-
-		for (int i1 = 0; i1 < peaks1.length; i1++) {
-			for (int i2 = 0; i2 < peaks1[0].length; i2++) {
-				if (peaks1[i1][i2] > 0) {
-					peaks1[i1][i2] = peaks1[i1][i2] + 1;
-				}
-			}
-		}
-
-		if (showProfiles) {
-			double[] bx = new double[line1[2].length];
-			for (int i1 = 0; i1 < line1[2].length; i1++) {
-				bx[i1] = i1;
-			}
-
-			Plot plot4 = new Plot("Profile", "X Axis", "Y Axis", bx, line1[2]);
-			plot4.setLimits(0, bx.length + 10, 0, 300);
-			plot4.setSize(400, 200);
-			plot4.setColor(Color.red);
-			plot4.setLineWidth(2);
-			plot4.show();
-
-			if (demo) {
-				MyLog.waitHere(listaMessaggi(13), debug);
-			}
-
-			if (WindowManager.getFrame("Profile") != null) {
-				IJ.selectWindow("Profile");
-				IJ.run("Close");
-			}
-
-			// verifico di avere trovato un max di 2 picchi
-			if (peaks1[2].length > 2) {
-				MyLog.waitHere("Attenzione trovate troppe intersezioni col cerchio, cioe' " + peaks1[2].length
-						+ "  VERIFICARE");
-			}
-			if (peaks1[2].length < 2) {
-				MyLog.waitHere("Attenzione trovata una sola intersezione col cerchio, cioe' " + peaks1[2].length
-						+ "  VERIFICARE");
-			}
-
-			// MyLog.logMatrix(peaks1, "peaks1 " + title);
-		}
-		return peaks1;
-	}
 
 	/**
 	 * Write preferences into IJ_Prefs.txt
@@ -3025,7 +2874,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		lista[39] = "messaggio 39";
 		lista[40] = "ATTENZIONE, l'intervento manuale OBBLIGATORIO deve cambiare qualcosa, anche minima, \n"
 				+ "rispetto alla ROI proposta!!!";
-
 
 		// ---------+-----------------------------------------------------------+
 		lista[65] = "vetMinimi==null, verificare esistenza della riga P10MIN nel file limiti.csv";

@@ -10,7 +10,6 @@ import ij.Prefs;
 import ij.gui.NewImage;
 import ij.gui.Roi;
 import ij.io.FileSaver;
-import ij.measure.Calibration;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
@@ -30,7 +29,6 @@ import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
-import utils.TableExpand;
 import utils.TableSequence;
 import utils.UtilAyv;
 
@@ -98,7 +96,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 		String user1 = System.getProperty("user.name");
 		TableCode tc1 = new TableCode();
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
-		TableExpand tc2 = new TableExpand();
+	//	TableExpand tc2 = new TableExpand();
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
 
 		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
@@ -406,7 +404,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 			ImageStatistics statBkg = ImageUtils.backCalc(xRoi9, yRoi9, MyConst.P13_LATO_ROI_BACKGROUND, imp1, step,
 					false, test);
-			double meanBkg = statBkg.mean;
+		//	double meanBkg = statBkg.mean;
 
 			int[][] classiSimulata = generaSimulata(xRoi2, yRoi2, latoRoi2, imp1, fileDir, step, verbose, test);
 
@@ -989,7 +987,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 
 		ArrayList<Integer> pixList1 = new ArrayList<Integer>();
-		Calibration cal1 = imp1.getCalibration();
+		// Calibration cal1 = imp1.getCalibration();
 
 		Roi roi1 = imp1.getRoi();
 		if (roi1!=null && !roi1.isArea()) {
