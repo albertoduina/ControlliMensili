@@ -110,7 +110,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 			return;
 		}
 
-
 		String user1 = System.getProperty("user.name");
 		TableCode tc1 = new TableCode();
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
@@ -239,10 +238,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir + MyConst.SEQUENZE_FILE);
 
-		String path1 = "";
-		String path2 = "";
-		String path3 = "";
-		String path4 = "";
+		String path1 = ""; 	// prima acquisizione primo eco (commento 2025)
+		String path2 = ""; 	// seconda acquisizione primo eco (commento 2025)
+		String pat11 = ""; 	// prima acquisizione secondo eco (commento 2025)
+		String path21 = ""; 	// seconda acquisizione secondo eco (commento 2025)
 
 		if (nTokens == MyConst.TOKENS2) {
 			// UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
@@ -257,9 +256,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 			// UtilAyv.checkImages(vetRiga, iw2ayvTable, 3, debug);
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[2]);
-			path3 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
-			path4 = TableSequence.getPath(iw2ayvTable, vetRiga[3]);
-			UtilAyv.checkImages4(path1, path2, path3, path4, debug);
+			pat11 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
+			path21 = TableSequence.getPath(iw2ayvTable, vetRiga[3]);
+			UtilAyv.checkImages4(path1, path2, pat11, path21, debug);
 
 			MyLog.logDebug(vetRiga[0], "P11", fileDir);
 			MyLog.logDebug(vetRiga[2], "P11", fileDir);
@@ -281,15 +280,14 @@ public class p11rmn_ implements PlugIn, Measurements {
 		if (fast) {
 			retry = false;
 			mode = 1;
-			if (forcesilent)
-			 {
+			if (forcesilent) {
 				mode = 0;
-			// boolean autoCalled = true;
-			// TODO ripristinare verbose=false
-			// boolean verbose = false;
-			// boolean verbose = true;
-			// boolean test = false;
-			// boolean silent = false;
+				// boolean autoCalled = true;
+				// TODO ripristinare verbose=false
+				// boolean verbose = false;
+				// boolean verbose = true;
+				// boolean test = false;
+				// boolean silent = false;
 			}
 
 			String info11 = "code= " + TableSequence.getCode(iw2ayvTable, vetRiga[0]) + " coil= "
@@ -433,7 +431,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			ImagePlus imp11;
 			if ((fast && !manualRequired2) || silent) {
 				imp11 = UtilAyv.openImageNoDisplay(path1, true);
-			// imp11 = UtilAyv.openImageMaximized(path1);
+				// imp11 = UtilAyv.openImageMaximized(path1);
 			} else {
 				imp11 = UtilAyv.openImageMaximized(path1);
 			}
@@ -459,6 +457,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 					imp2 = UtilAyv.openImageNoDisplay(path2, true);
 				}
 
+				//==============================================
+				// String sta1= imp1.getStatistics().toString();
+				// String sta2= imp2.getStatistics().toString();
+				// test del 160525 poi disattivato
+				// MyLog.waitHere("sta1= "+sta1+"\nsta2= "+sta2);
+				//==============================================
+				
+				
+				
+				
 				Overlay over2 = new Overlay();
 				imp1.setOverlay(over2);
 
@@ -636,6 +644,9 @@ public class p11rmn_ implements PlugIn, Measurements {
 				ImageStatistics statImaDiff = imaDiff.getStatistics();
 				imaDiff.updateAndDraw();
 
+				// String ciprovo = statImaDiff.toString();
+				// MyLog.waitHere("ciprovo= " + ciprovo);
+
 				if (imaDiff.isVisible()) {
 					imaDiff.getWindow().toFront();
 				}
@@ -747,9 +758,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 							imp1.getRoi().setStrokeColor(Color.red);
 							imp1.getRoi().setStrokeWidth(1.1);
 
-							boolean resp = MyLog.waitHereModeless("<<  SELEZIONE MANUALE ATTIVA >>\n \nimmagine= " + imp11.getTitle()
-							+ "\n\nRichiesto riposizionamento della ROI quadrata indicata in rosso, dentro al fantoccio\n"
-									+"\nORA e' possibile spostarla, oppure lasciarla dove si trova."
+							boolean resp = MyLog.waitHereModeless("<<  SELEZIONE MANUALE ATTIVA >>\n \nimmagine= "
+									+ imp11.getTitle()
+									+ "\n\nRichiesto riposizionamento della ROI quadrata indicata in rosso, dentro al fantoccio\n"
+									+ "\nORA e' possibile spostarla, oppure lasciarla dove si trova."
 									+ "\n--- POI premere OK ---"
 									+ "\nAltrimenti, se l'immagine NON FOSSE UTILIZZABILE premere <ANNULLA> per passare alle successive\n \n");
 
@@ -789,7 +801,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 					// esca
 					// dall'immagine
 
-					if ((xCenterRoi + sqNEA - enlarge) >= width || (xCenterRoi - enlarge) <= 0 || (yCenterRoi + sqNEA - enlarge) >= height || (yCenterRoi - enlarge) <= 0) {
+					if ((xCenterRoi + sqNEA - enlarge) >= width || (xCenterRoi - enlarge) <= 0
+							|| (yCenterRoi + sqNEA - enlarge) >= height || (yCenterRoi - enlarge) <= 0) {
 						msgNot121();
 						return null;
 					}
@@ -806,19 +819,18 @@ public class p11rmn_ implements PlugIn, Measurements {
 				imp1.updateAndDraw();
 				// MyLog.waitHere();
 
-				if (imp1.isVisible())
-				 {
+				if (imp1.isVisible()) {
 					ImageUtils.imageToFront(imp1);
-				//
-				// calcolo SD su imaDiff quando i corrispondenti pixel
-				// di imp1 passano il test
-				//
+					//
+					// calcolo SD su imaDiff quando i corrispondenti pixel
+					// di imp1 passano il test
+					//
 				}
 
 				double[] out1 = devStandardNema(imp1, imaDiff, xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA,
 						checkPixels, true, imp1.getOverlay());
 				if (step) {
-					msgDisplayMean4(out1[0], out1[1]);
+				msgDisplayMean4(out1[0], out1[1]);
 				}
 
 				//
@@ -1151,8 +1163,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		int mode;
 		if (verbose) {
 			mode = 10; // modalita' demo
-		}
-		else {
+		} else {
 			mode = 0; // modalita' silent
 		}
 
@@ -1187,8 +1198,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		int mode;
 		if (verbose) {
 			mode = 10; // modalita' demo
-		}
-		else {
+		} else {
 			mode = 0; // modalita' silent
 		}
 
@@ -1342,18 +1352,19 @@ public class p11rmn_ implements PlugIn, Measurements {
 					sumValues += value4;
 					sumSquare += value4 * value4;
 					// modifica del 200117
-					if (paintPixels)
-					 {
+					if (paintPixels) {
 						setOverlayPixel(over1, imp1, x1, y1, Color.yellow, Color.red, ok);
-					// --------
+						// --------
 					}
 
 				}
 			}
 		}
+		// MyLog.waitHere("sumValues= " + sumValues + " pixelCount= " + pixelCount);
 		results[0] = sumValues / pixelCount;
 		double sd1 = calculateStdDev4(pixelCount, sumValues, sumSquare);
 		results[1] = sd1;
+		// MyLog.waitHere("results[0]= " + results[0] + " results[1]= " + results[1]);
 		return (results);
 	}
 
@@ -1406,8 +1417,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double[] outFwhm;
 		vetHalfPoint = MyFwhm.halfPointSearch(profi1);
 		outFwhm = MyFwhm.calcFwhm(vetHalfPoint, profi1, dimPixel, "FWHM", false);
-		if (step)
-		 {
+		if (step) {
 			createPlotP11(profi1, true, true); // plot della fwhm
 		}
 		if (step) {
@@ -1492,10 +1502,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 		for (int j = 0; j < len1; j++) {
 			xcoord1[j] = j;
 		}
-		// Plot plot = new Plot("Plot profilo penetrazione", "pixel", "valore", xcoord1, profile1);
+		// Plot plot = new Plot("Plot profilo penetrazione", "pixel", "valore", xcoord1,
+		// profile1);
 		Plot plot = new Plot("Plot profilo penetrazione", "pixel", "valore");
-		plot.add ("", xcoord1);
-		plot.add ("", profile1);
+		plot.add("", xcoord1);
+		plot.add("", profile1);
 		if (bslab) {
 			plot.setLimits(0, len1, min, max);
 		} else {
@@ -1608,7 +1619,6 @@ public class p11rmn_ implements PlugIn, Measurements {
 		ButtonMessages.ModelessMsg("displayNEA", "CONTINUA");
 	}
 
-
 	/***
 	 * Legge la direzione preimpostata nel file di configurazione (codici)
 	 *
@@ -1703,8 +1713,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		imp11.updateAndDraw();
 
 		if (verbose) {
-			imp11.setTitle(
-					"DIMENSIONI RETICOLO= " + (dimPixel * height / MyConst.P11_GRID_NUMBER) + " mm");
+			imp11.setTitle("DIMENSIONI RETICOLO= " + (dimPixel * height / MyConst.P11_GRID_NUMBER) + " mm");
 		}
 
 		Overlay over11 = new Overlay();

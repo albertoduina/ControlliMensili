@@ -361,16 +361,16 @@ public class Sequenze_ implements PlugIn {
 				// --------------------------------------------------------------------------------------------
 				// Sort in base a ECHO (aggiunta 2025)
 				// --------------------------------------------------------------------------------------------
-				String[][] tableSequenceSorted3 = TableSorter.minsort(tableSequenceSorted2, TableSequence.ECHO);
-				if (debugTables) {
-					IJ.log("\\Clear");
-					MyLog.logMatrix(tableSequenceSorted2, "tableSequenceSorted3_ECHO");
-					MyLog.waitHere("salvare il log come 6a_tableSequenceSorted3_ECHO");
-				}
+//				String[][] tableSequenceSorted3 = TableSorter.minsort(tableSequenceSorted2, TableSequence.ECHO);
+//				if (debugTables) {
+//					IJ.log("\\Clear");
+//					MyLog.logMatrix(tableSequenceSorted2, "tableSequenceSorted3_ECHO");
+//					MyLog.waitHere("salvare il log come 6a_tableSequenceSorted3_ECHO");
+//				}
 				// --------------------------------------------------------------------------------------------
 				// Riordino tabella in base a codiciXX.csv
 				// --------------------------------------------------------------------------------------------
-				String[][] tableSequenceReordered = reorderSequenceTable(tableSequenceSorted3, tableCode);
+				String[][] tableSequenceReordered = reorderSequenceTable(tableSequenceSorted2, tableCode);
 				if (debugTables) {
 					IJ.log("\\Clear");
 					MyLog.logMatrix(tableSequenceReordered, "tableSequenceReordered_CODE");
