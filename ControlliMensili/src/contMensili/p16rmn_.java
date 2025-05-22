@@ -2,7 +2,11 @@ package contMensili;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -10,13 +14,8 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Prefs;
-import ij.WindowManager;
-import ij.gui.NewImage;
 import ij.gui.OvalRoi;
 import ij.gui.Overlay;
-import ij.gui.Plot;
-import ij.gui.Roi;
-import ij.io.FileSaver;
 import ij.measure.CurveFitter;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
@@ -24,17 +23,13 @@ import ij.plugin.PlugIn;
 import ij.plugin.filter.Analyzer;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
-import ij.process.ShortProcessor;
 import utils.AboutBox;
 import utils.ArrayUtils;
 import utils.ButtonMessages;
-import utils.ImageUtils;
-import utils.InputOutput;
 import utils.MyConst;
 import utils.MyFileLogger;
 import utils.MyLog;
 import utils.MyMsg;
-import utils.MyStackUtils;
 import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
@@ -44,7 +39,7 @@ import utils.TableSequence;
 import utils.UtilAyv;
 
 /*
- * Copyright (C) 2007 Alberto Duina, SPEDALI CIVILI DI BRESCIA, Brescia ITALY
+ * Copyright (C) 2025 Alberto Duina, SPEDALI CIVILI DI BRESCIA, Brescia ITALY
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -68,6 +63,26 @@ import utils.UtilAyv;
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
  *         Sanitaria
  *
+ *
+ *         Tag utilizzati nel plugin (ricevuti da Lorella) Gradiente 0019,100C
+ *         Direzioni 0019,100E Questi TAG possono venire letti direttamente in
+ *         esadecimale. Da quanto appare la direzione e' scritta come una terna
+ *         di valori Double a 64 bit. I valori solitamente presenti sono -1/0/0
+ *         oppure 0/-1/0 oppure 0/0/1 ma mi e' anche capitato di trovare *
+ *         ATTENZIONE: TESTATO E VERIFICATO I VALORI - DI SOLITO HO TERNE DI
+ *         -1/0/0 OPPURE 0/-1/0 OPPURE 0/0/1 MA HO ANCHE TROVATO
+ *         -1/-3.9999996e-004/0 QUINDI PUO' SUCCEDERE DI TROVARE VALORI ALLA
+ *         CAXXXO
+ * 
+ *         una alternativa meno complicata potrebbe essere, come avevo fatto, di
+ *         usare l'ultima lettera della 0018,0024 che si chiama sequenceName
+ * 
+ *
+ *
+ *
+ *
+ *
+ * 
  */
 
 public class p16rmn_ implements PlugIn, Measurements {
@@ -81,6 +96,12 @@ public class p16rmn_ implements PlugIn, Measurements {
 	private static String fileDir = "";
 	private static boolean debug = true;
 	private static boolean mylogger = true;
+
+	public static String[] scarletta = { "DWL_A", "DWH1A", "DWH2A", "DWH3A", "DWH4A", "DWH5A" };
+	public static int[] icarletta = { 10, 6, 6, 6, 6, 6 };
+	public static String lastOld = "";
+	public static double coeffAngolareDUMMY=0.002222;
+	public static double intercettaDUMMY=-0.001111;
 
 	@Override
 	public void run(String args) {
@@ -285,10 +306,10 @@ public class p16rmn_ implements PlugIn, Measurements {
 		boolean valid2 = false;
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
-		Overlay over1 = new Overlay();
+//		Overlay over1 = new Overlay();
 		String path1 = path[0];
-		int count = 0;
-		boolean reference = false;
+//		int count = 0;
+//		boolean reference = false;
 
 		//
 		// ATTENZIO' ATTENZIO' ATTENZIO'
@@ -302,10 +323,12 @@ public class p16rmn_ implements PlugIn, Measurements {
 		//
 		// recupero delle preferenze posizionamento ROI 0,X,Y,Z
 
-		double preferencesX = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiX", "30"));
-		double preferencesY = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiY", "30"));
-		double preferencesD = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiD", "30"));
+		double prefX = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiX", "30"));
+		double prefY = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiY", "30"));
+		double prefD = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiD", "30"));
 		valid2 = Prefs.getBoolean(".prefer.p16rmn_valid", false);
+
+		IJ.log(">>>> RESTART lettura iniziale preferenze " + prefX + " " + prefY + " " + prefD);
 
 //		MyLog.waitHere(
 //				"READ preferences X,Y,R= " + preferencesX + " ; " + preferencesY + " ; " + preferencesD + ";" + valid2);
@@ -321,6 +344,9 @@ public class p16rmn_ implements PlugIn, Measurements {
 		ArrayList<String> subPathX = new ArrayList<String>();
 		ArrayList<String> subPathY = new ArrayList<String>();
 		ArrayList<String> subPathZ = new ArrayList<String>();
+		ArrayList<String> subDirectionX = new ArrayList<String>();
+		ArrayList<String> subDirectionY = new ArrayList<String>();
+		ArrayList<String> subDirectionZ = new ArrayList<String>();
 		// ArrayList<String> subPathW = new ArrayList<String>();
 		String[] pathBB = null;
 
@@ -359,6 +385,10 @@ public class p16rmn_ implements PlugIn, Measurements {
 			String sName = ReadDicom.readDicomParameter(imp0, MyConst.DICOM_SEQUENCE_NAME);
 			int len = sName.length();
 			String last = sName.substring(len - 1, len); // leggo ultima lettera del DICOM_SEQUENCE_NAME
+
+			// MyLog.waitHere("ultimaLettera= " + last + " JJJJ= " + JJJJ);
+
+			///// durante la prima stesura
 
 			switch (last) {
 			case "0":
@@ -404,28 +434,28 @@ public class p16rmn_ implements PlugIn, Measurements {
 				rt.incrementCounter();
 				rt.addValue(t1, "<---- direzione  X ---->");
 				pathBB = pathX;
-				xRoi0 = preferencesX;
-				yRoi0 = preferencesY;
-				rRoi0 = preferencesD;
-				reference = false;
+				xRoi0 = prefX;
+				yRoi0 = prefY;
+				rRoi0 = prefD;
+//				reference = false;
 				break;
 			case 1:
 				rt.incrementCounter();
 				rt.addValue(t1, "<---- direzione  Y ---->");
 				pathBB = pathY;
-				xRoi0 = preferencesX;
-				yRoi0 = preferencesY;
-				rRoi0 = preferencesD;
-				reference = false;
+				xRoi0 = prefX;
+				yRoi0 = prefY;
+				rRoi0 = prefD;
+//				reference = false;
 				break;
 			case 2:
 				rt.incrementCounter();
 				rt.addValue(t1, "<---- direzione  Z ---->");
 				pathBB = pathZ;
-				xRoi0 = preferencesX;
-				yRoi0 = preferencesY;
-				rRoi0 = preferencesD;
-				reference = false;
+				xRoi0 = prefX;
+				yRoi0 = prefY;
+				rRoi0 = prefD;
+//				reference = false;
 				break;
 			}
 			//
@@ -444,21 +474,27 @@ public class p16rmn_ implements PlugIn, Measurements {
 						.readSubstring(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_PIXEL_SPACING), 1));
 
 				String dir = name1.substring(4, 5);
+				String last = dir.substring(dir.length() - 1);
+				boolean chgDir = !last.equals(lastOld);
+				lastOld = last;
+				// MyLog.waitHere("name1= " + name1 + " dir= " + dir + " chgDir= " + chgDir);
 
 				// ========================================================
 				// predispongo la ROI con diametro fantoccio, in base ad essa viene poi
 				// posizionata la roi diametro 20 per i calcoli
 				// ========================================================
+//				WindowManager.closeAllWindows();
 
-				ImagePlus imp0 = MyStackUtils.imageFromStack(impStack, 1);
+				ImagePlus imp0 = myImageFromStack(impStack, 1);
 				UtilAyv.showImageMaximized(imp0);
 
 				// questa e' la roi verde esterna
 				mySetRoi(imp0, xRoi0, yRoi0, rRoi0, null, Color.green);
 
-				if (!valid2) {
+				IJ.log("UNO_ROI VERDE_xRoi0= " + xRoi0 + " " + yRoi0 + " " + rRoi0);
 
-					// MyLog.waitHere("valid= " + valid2);
+				if (!valid2 || chgDir) {
+					IJ.log(">>>> CAMBIO POSIZIONAMENTO ROI VERDE");
 
 					int resp = 0;
 
@@ -483,54 +519,60 @@ public class p16rmn_ implements PlugIn, Measurements {
 
 					// ho impostato la Roi0 e modificata con Roi1, disegno la Roi2 in rosso solo a
 					// scopo diagnostico
-					// MyLog.waitHere("xRoi1= " + xRoi1 + " yRoi1= " + yRoi1 + " rRoi1= " + rRoi1);
-					xRoi2 = xRoi1 + rRoi1 - rRoi2;
-					yRoi2 = yRoi1 + rRoi1 - rRoi2;
-					mySetRoi(imp0, xRoi2, yRoi2, rRoi2 * 2, null, Color.red);
+					IJ.log(">>>> LEGGO NUOVO POSIZIONAMENTO ROI VERDE_xRoi1= " + xRoi1 + " yRoi1= " + yRoi1 + " rRoi1= "
+							+ rRoi1 * 2);
 
 					// DEVO DECIDERE COME SCRIVERE LE PREFERENZE NEL FILE
 
-//					IJ.wait(100);
+					IJ.log(">>>> TRE salvo preferenze_xRoi1= " + xRoi1 + " roiY= " + yRoi1 + " roiD= " + rRoi1 * 2);
 
-//					double preferencesX = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiX", "50"));
-//					double preferencesY = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiY", "50"));
-//					double preferencesR = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiR", "70/2"));
-//					MyLog.waitHere("WRITE preferences X,Y,R= " + xRoi1 + " ; " + yRoi1 + " ; " + rRoi1 * 2);
 
 					Prefs.set("prefer.p16rmn_roiX", Double.toString(xRoi1));
 					Prefs.set("prefer.p16rmn_roiY", Double.toString(yRoi1));
 					Prefs.set("prefer.p16rmn_roiD", Double.toString(rRoi1 * 2));
 					Prefs.set("prefer.p16rmn_valid", valid2);
 
-//
-//					Prefs.set("prefer.p16rmn_predir", dir);
-//
+					IJ.wait(20);
+
+					/// EFFETTUO LA RILETTURA, per verifica
+					prefX = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiX", "30"));
+					prefY = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiY", "30"));
+					prefD = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiD", "30"));
+
+					if (!(prefX == xRoi1) && (prefY == yRoi1) && (prefD == rRoi1 * 2))
+						MyLog.waitHere("errore salvataggio dati xRoi1");
+
 				}
 
 				// leggo sull'immagine attiva, questi
 				// sono i dati definitivi
 				// leggo i dati delle preferenze
 
-				double prefX = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiX", "30"));
-				double prefY = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiY", "30"));
-				double prefD = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiD", "30"));
+				prefX = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiX", "30"));
+				prefY = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiY", "30"));
+				prefD = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiD", "30"));
+				IJ.log(">>>> QUATTRO rileggo preferenze roiX= " + prefX + " roiY= " + prefY + " roiD= " + prefD);
+
+				xRoi0 = prefX;
+				yRoi0 = prefY;
+				rRoi0 = prefD;
+
+				xRoi2 = xRoi0 + rRoi0 / 2 - rRoi2;
+				yRoi2 = yRoi0 + rRoi0 / 2 - rRoi2;
+				mySetRoi(imp0, xRoi2, yRoi2, rRoi2 * 2, null, Color.red);
+				IJ.log(">>>> CINQUE calcolo coordinate ROI ROSSA xRoi2= " + xRoi2 + " " + yRoi2 + " " + rRoi2 * 2);
 
 				//
 				// li devo memorizzare in ImageJ, in modo che le immagini successive abbiano
 				// questa posizione, senza piu'chiederla (che palle se continua a chiedertela)
 				//
 
-				// MyLog.waitHere("" + count++ + " analizzo= " + impStack.getTitle());
-
-//				ImageStatistics stat1 = imp0.getStatistics();
-//				double area1 = stat1.area;
-//				double mean1 = stat1.mean;
-//				double[] out2 = null;
 
 				ImageStatistics stat1 = null;
 				double area1 = 0;
 				double mean1 = 0;
 				double[] out2 = null;
+				String verifica= "";
 
 				// effettua i calcoli per ogni IMMAGINE
 				impStack.setSliceWithoutUpdate(1);
@@ -555,19 +597,32 @@ public class p16rmn_ implements PlugIn, Measurements {
 
 //				xRoi2 = xRoi1 + rRoi1 - rRoi2;
 //				yRoi2 = yRoi1 + rRoi1 - rRoi2;
-				xRoi2 = prefX + prefD - rRoi2;
-				yRoi2 = prefY + prefD - rRoi2;
+//				xRoi2 = prefX + prefD - rRoi2;
+//				yRoi2 = prefY + prefD - rRoi2;
+
+//				MyLog.waitHere();
 
 				for (int i1 = 0; i1 < frames; i1++) {
 					int slice = i1 + 1;
+					IJ.runMacro("close(\"\\\\Others\");");
 
+					ImagePlus imp1 = myImageFromStack(impStack, slice);
+					// UtilAyv.showImageMaximized(imp1);
 
-					ImagePlus imp1 = MyStackUtils.imageFromStack(impStack, slice);
+					String title = imp1.getTitle();
+
+					verifica += "# slice " + slice + "" + title + " ";
+
+					// String sticazzi = imp1.getTitle();
+					// MyLog.waitHere("sticazzi= " + sticazzi);
 
 					// imp1.setRoi(new OvalRoi(xRoi2, yRoi2, rRoi2 * 2, rRoi2 * 2));
-
+					IJ.log("SEI analizzo slice " + slice + " dati " + title + " ROI ROSSA xRoi2= " + xRoi2 + " " + yRoi2
+							+ " " + rRoi2 * 2);
 
 					mySetRoi(imp1, xRoi2, yRoi2, rRoi2 * 2, null, Color.red);
+					// IJ.wait(20);
+
 					stat1 = imp1.getStatistics();
 					double area = stat1.area * dimPixel * dimPixel; // l'area che ottengo e'in pixel, per ottenere mmq
 																	// devo moltiplicare per dimPixel al quadrato
@@ -638,6 +693,13 @@ public class p16rmn_ implements PlugIn, Measurements {
 					arrBvalue.add(Bvalue);
 
 				}
+				// WindowManager.closeAllWindows();
+
+//				while (WindowManager.getWindowCount() > 0) {
+//					IJ.wait(100);
+//					IJ.run("Close");
+//					IJ.wait(100);
+//				}
 
 				len1 = arrMeanNorm.size();
 				if (len1 > 2) {
@@ -697,6 +759,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 					rt.incrementCounter();
 					rt.addValue(t1, "coeffAngolare ");
 					rt.addValue(s2, out2[0]);
+//					rt.addValue(s2, coeffAngolareDUMMY);	
 					rt.addValue(s3, stat1.roiX);
 					rt.addValue(s4, stat1.roiY);
 					rt.addValue(s5, stat1.roiWidth);
@@ -705,11 +768,26 @@ public class p16rmn_ implements PlugIn, Measurements {
 					rt.incrementCounter();
 					rt.addValue(t1, "intercetta");
 					rt.addValue(s2, out2[1]);
+//					rt.addValue(s2, intercettaDUMMY);					
 					rt.addValue(s3, stat1.roiX);
 					rt.addValue(s4, stat1.roiY);
 					rt.addValue(s5, stat1.roiWidth);
 					rt.addValue(s6, stat1.roiHeight);
+
+					rt.incrementCounter();
+					rt.addValue(t1, "verifica");
+					rt.addValue(s2, verifica);
+					rt.addValue(s3, 0);
+					rt.addValue(s4, 0);
+					rt.addValue(s5, 0);
+					rt.addValue(s6, 0);
+
 				}
+
+				/// la seguente macro scritta in questo modo chiude tutte le finestre, eccetto
+				/// l'attuale E FUNZIONA'
+				IJ.runMacro("close(\"\\\\Others\");");
+//				WindowManager.closeAllWindows();
 				// }
 
 				// MyConst.CODE_FILE, MyConst.TOKENS4);
@@ -818,24 +896,36 @@ public class p16rmn_ implements PlugIn, Measurements {
 		String[] pathSortato = bubbleSortPathSequence(path, sequence);
 
 		for (int w1 = 0; w1 < pathSortato.length; w1++) {
+			// ImagePlus imp1 = UtilAyv.openImageNormal(path[w1]);
 			ImagePlus imp1 = UtilAyv.openImageNoDisplay(path[w1], true);
+
+			String AAA = piedeDiPorcoNormal(path[w1], "0019,100C");
+			String BBB = piedeDiPorcoDouble(path[w1], "0019,100E");
+			// IJ.log("AAA= " + AAA + " BBB= " + BBB);
+
 			ImageProcessor ip1 = imp1.getProcessor();
 			if (w1 == 0) {
 				newStack.update(ip1);
 			}
-			String sliceInfo1 = imp1.getTitle();
+			///// ============ 21/05/2025 ============================
+			///// sto pensando di incollare i parametri 0019,100C e 0019,100E mascherandoli
+			///// nel titolo, in questo modo tutto viene sortato assieme all'immagine'
+			//// =====================================================
+			String sliceInfo1 = "# gradiente " + AAA + " direzioni " + BBB + " #";
+			// IJ.log("sliceInfo1= " + sliceInfo1);
+			// String sliceInfo1 = imp1.getTitle();
 			String sliceInfo2 = (String) imp1.getProperty("Info");
 			// aggiungo i dati header alle singole immagini dello stack
 			if (sliceInfo2 != null) {
 				sliceInfo1 += "\n" + sliceInfo2;
 			}
+
 			newStack.addSlice(sliceInfo1, ip1);
 		}
 		// 180419 aggiunto eventuale codice del nome immagine anche allo stack
 		File f = new File(path[0]);
 		String nome1 = f.getName();
 		String nome2 = nome1.substring(0, 5);
-		// MyLog.waitHere("nome2= "+nome2);
 		ImagePlus newImpStack = new ImagePlus(nome2 + "_newSTACK", newStack);
 		if (pathSortato.length == 1) {
 			String sliceInfo3 = imp0.getTitle();
@@ -896,7 +986,6 @@ public class p16rmn_ implements PlugIn, Measurements {
 	public static double[] regressor(ArrayList<Double> arrMeanNorm, ArrayList<Double> arrBvalue,
 			ArrayList<String> arrGradient) {
 
-
 		//
 		// calcolo il Log dei valori normalizzati
 		//
@@ -939,6 +1028,246 @@ public class p16rmn_ implements PlugIn, Measurements {
 		int fractPart = (int) fractionalPart;
 		fractionalPart = (double) (integerPart) + (double) (fractPart) / prec;
 		return fractionalPart;
+	}
+
+	/***
+	 * Questo workaround deriva da ReadAscconv e va utilizzato per leggere parametri
+	 * dell'header ignorati da ImageJ, solitamente legati all'incauto passaggio
+	 * delle immagini attraverso i PACS. (CAPRE, CAPRE, CAPRE ....)
+	 * 
+	 * @param path1
+	 * @param ricerca
+	 * @return
+	 */
+
+	public static String piedeDiPorcoNormal(String fileName1, String tag1) {
+
+		int len1;
+		String out1 = "";
+		String reversed1 = new StringBuilder(8).append(tag1, 2, 4).append(tag1, 0, 2).append(tag1, 7, 9)
+				.append(tag1, 5, 7).toString();
+		byte[] x1 = hexStringToByteArray(reversed1);
+		StringBuilder sb1 = new StringBuilder();
+		for (byte b : x1) {
+			sb1.append(String.format("%02X ", b));
+		}
+		// MyLog.waitHere("ricerco tag1= " + tag1 + " hex= " + sb1);
+
+		String tag2 = "7FE0,0010"; // Pixel Data Start (Fine Header)
+		String reversed2 = new StringBuilder(8).append(tag2, 2, 4).append(tag2, 0, 2).append(tag2, 7, 9)
+				.append(tag2, 5, 7).toString();
+		byte[] x2 = hexStringToByteArray(reversed2);
+
+		try {
+			BufferedInputStream f1 = new BufferedInputStream(new FileInputStream(fileName1));
+			len1 = f1.available();
+			byte[] buffer1 = new byte[len1];
+			f1.read(buffer1, 0, len1); // get copy of entire file as byte[]
+			f1.close();
+
+			int offset1 = localizeHexWord(buffer1, x2, buffer1.length);
+			// IJ.log("hex fine header= " + sb1 + " offset1= " + offset1);
+			int offset2 = localizeHexWord(buffer1, x1, offset1);
+			short len2 = Short.parseShort(byte2hex(buffer1[offset2 + 4]), 16);
+			offset2 = offset2 + 8;
+			byte[] buffer2 = new byte[len2];
+			for (int i1 = 0; i1 < len2; i1++) {
+				buffer2[i1] = buffer1[offset2 + i1];
+			}
+
+			// double
+			// val2=ByteBuffer.wrap(buffer2).order(ByteOrder.LITTLE_ENDIAN).getDouble());
+
+			out1 = new String(buffer2);
+
+			// MyLog.waitHere("output >>> " + out1);
+
+		} catch (Exception e) {
+			IJ.showMessage("piedeDiPorco>>> ", "Exception " + "\n \n\"" + e.getMessage() + "\"");
+		}
+		return out1;
+	}
+
+	/***
+	 * Legge parametri dall'header DICOM senza utilizzare ImageJ. In questa versione
+	 * i dati vengono letti in forma di una terna DoublePrecision 64 bit,
+	 * all'interno di una stringa. NOTA BENE: il tag va fornito come definito da
+	 * NEMA, ad esempio "0019,100E", poi, internamente ed automagicamente vengono
+	 * effettuate le opportune inversioni dei byte, poichè il TAG visto in un editor
+	 * HEX diventa: 19000E10
+	 * 
+	 * ATTENZIONE: TESTATO E VERIFICATO I VALORI - DI SOLITO HO TERNE DI -1/0/0
+	 * OPPURE 0/-1/0 OPPURE 0/0/1 MA HO ANCHE TROVATO -1/-3.9999996e-004/0 QUINDI SO
+	 * CHE PUO' SUCCEDERE DI TROVARE VALORI ALLA CAXXXO
+	 * 
+	 * @param path1
+	 * @param tag1
+	 * @return
+	 */
+
+	public static String piedeDiPorcoDouble(String path1, String tag1) {
+		int len1;
+
+		String reversed1 = new StringBuilder(8).append(tag1, 2, 4).append(tag1, 0, 2).append(tag1, 7, 9)
+				.append(tag1, 5, 7).toString();
+		byte[] x1 = hexStringToByteArray(reversed1);
+		StringBuilder sb1 = new StringBuilder();
+		for (byte b : x1) {
+			sb1.append(String.format("%02X ", b));
+		}
+		// MyLog.waitHere("ricerco tag1= " + tag1 + " hex= " + sb1);
+
+		String tag2 = "7FE0,0010"; // Pixel Data Start (Fine Header)
+		String reversed2 = new StringBuilder(8).append(tag2, 2, 4).append(tag2, 0, 2).append(tag2, 7, 9)
+				.append(tag2, 5, 7).toString();
+		byte[] x2 = hexStringToByteArray(reversed2);
+
+		String out1 = "";
+		byte[] bufferA = new byte[8];
+		byte[] bufferB = new byte[8];
+		byte[] bufferC = new byte[8];
+
+//		ByteBuffer.wrap(bufferB).putDouble(641.5);
+
+		try {
+			BufferedInputStream f1 = new BufferedInputStream(new FileInputStream(path1));
+			len1 = f1.available();
+			byte[] buffer1 = new byte[len1];
+			f1.read(buffer1, 0, len1); // get copy of entire file as byte[]
+			f1.close();
+
+			int offset1 = localizeHexWord(buffer1, x2, buffer1.length);
+			// IJ.log("hex fine header= " + sb1 + " offset1= " + offset1);
+			int offset2 = localizeHexWord(buffer1, x1, offset1);
+			// IJ.log("tag offset2= " + offset2);
+			short len2 = Short.parseShort(byte2hex(buffer1[offset2 + 4]), 16);
+			// IJ.log("len2= " + len2);
+			offset2 = offset2 + 8;
+
+			if (len2 != 24) {
+				return "MISS";
+			} else {
+				int i2 = 0;
+				for (int i1 = 0; i1 < 8; i1++) {
+					bufferA[i2++] = buffer1[offset2 + i1];
+				}
+				i2 = 0;
+				for (int i1 = 8; i1 < 16; i1++) {
+					bufferB[i2++] = buffer1[offset2 + i1];
+				}
+				i2 = 0;
+				for (int i1 = 16; i1 < 24; i1++) {
+					bufferC[i2++] = buffer1[offset2 + i1];
+				}
+			}
+
+			double valA = ByteBuffer.wrap(bufferA).order(ByteOrder.LITTLE_ENDIAN).getDouble();
+			double valB = ByteBuffer.wrap(bufferB).order(ByteOrder.LITTLE_ENDIAN).getDouble();
+			double valC = ByteBuffer.wrap(bufferC).order(ByteOrder.LITTLE_ENDIAN).getDouble();
+
+//			MyLog.waitHere("valA= " + valA + " valB= " + valB + " valC= " + valC);
+
+			// assumo di avere una terna di valori double precision 64 bit, quindi preparo
+			// tre buffers (per ora non faccio loops)
+
+			out1 = valA + "/" + valB + "/" + valC;
+			// IJ.log("output >>> " + out1);
+		} catch (Exception e) {
+			IJ.showMessage("piedeDiPorcoDouble>>> ", "Exception DOUBLEPORKFEET" + "\n \n\"" + e.getMessage() + "\"");
+		}
+		return out1;
+	}
+
+	/***
+	 * conversione da string hexto byte array s1 deve essere di lunghezza pari
+	 * 
+	 * @param s1
+	 * @return
+	 */
+	public static byte[] hexStringToByteArray(String s2) {
+		String s1 = s2.replace(",", "");
+		int len = s1.length();
+		byte[] data = new byte[len / 2];
+		for (int i1 = 0; i1 < len; i1 += 2) {
+			data[i1 / 2] = (byte) ((Character.digit(s1.charAt(i1), 16) << 4) + Character.digit(s1.charAt(i1 + 1), 16));
+		}
+		return data;
+
+	}
+
+	public static int localizeHexWord(byte[] bImage, byte[] what, int limit) {
+		int conta = 0;
+		int locazione = 0;
+
+//		 IJ.log("what =" + byte2hex(what[0]) + byte2hex(what[1])
+//		 + byte2hex(what[2]) + byte2hex(what[3]));
+
+		for (int i1 = 0; i1 < limit - 4; i1++) {
+
+			if (bImage[i1 + 0] == what[0] && bImage[i1 + 1] == what[1] && bImage[i1 + 2] == what[2]
+					&& bImage[i1 + 3] == what[3]) {
+				locazione = i1;
+				conta++;
+//				 IJ.log("conta=" + conta + " locazione=" + locazione);
+				break;
+			}
+		}
+
+		if (conta > 0) {
+			return locazione;
+		} else {
+			return -1; // non trovato
+		}
+	}
+
+	public static String byte2hex(byte by) {
+		char[] hexDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+		char[] buf2 = new char[2];
+		buf2[1] = hexDigits[by & 0xf];
+		by >>>= 4;
+		buf2[0] = hexDigits[by & 0xf];
+		return new String(buf2);
+	} // end byte2hex
+
+	/**
+	 * estrae una singola slice da uno stack. Estrae anche i dati header
+	 * 
+	 * @param stack stack contenente le slices
+	 * @param slice numero della slice da estrarre, deve partire da 1, non e'
+	 *              ammesso lo 0
+	 * @return ImagePlus della slice estratta
+	 */
+	public static ImagePlus myImageFromStack(ImagePlus stack, int slice) {
+
+		if (stack == null) {
+			IJ.log("imageFromStack.stack== null");
+			return null;
+		}
+		// IJ.log("stack bitDepth= "+stack.getBitDepth());
+		ImageStack imaStack = stack.getImageStack();
+		if (imaStack == null) {
+			IJ.log("imageFromStack.imaStack== null");
+			return null;
+		}
+		if (slice == 0) {
+			IJ.log("imageFromStack.requested slice 0!");
+			return null;
+
+		}
+		if (slice > stack.getStackSize()) {
+			IJ.log("imageFromStack.requested slice > slices!");
+			return null;
+		}
+
+		ImageProcessor ipStack = imaStack.getProcessor(slice);
+
+		// String titolo = "** " + slice + " **";
+		String titolo = imaStack.getShortSliceLabel(slice);
+		String sliceInfo1 = imaStack.getSliceLabel(slice);
+
+		ImagePlus imp = new ImagePlus(titolo, ipStack);
+		imp.setProperty("Info", sliceInfo1);
+		return imp;
 	}
 
 }

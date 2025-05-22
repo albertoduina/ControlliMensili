@@ -238,10 +238,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir + MyConst.SEQUENZE_FILE);
 
-		String path1 = ""; 	// prima acquisizione primo eco (commento 2025)
-		String path2 = ""; 	// seconda acquisizione primo eco (commento 2025)
-		String pat11 = ""; 	// prima acquisizione secondo eco (commento 2025)
-		String path21 = ""; 	// seconda acquisizione secondo eco (commento 2025)
+		String path1 = ""; // prima acquisizione primo eco (commento 2025)
+		String path2 = ""; // seconda acquisizione primo eco (commento 2025)
+		String pat11 = ""; // prima acquisizione secondo eco (commento 2025)
+		String path21 = ""; // seconda acquisizione secondo eco (commento 2025)
 
 		if (nTokens == MyConst.TOKENS2) {
 			// UtilAyv.checkImages(vetRiga, iw2ayvTable, 2, debug);
@@ -457,16 +457,13 @@ public class p11rmn_ implements PlugIn, Measurements {
 					imp2 = UtilAyv.openImageNoDisplay(path2, true);
 				}
 
-				//==============================================
+				// ==============================================
 				// String sta1= imp1.getStatistics().toString();
 				// String sta2= imp2.getStatistics().toString();
 				// test del 160525 poi disattivato
 				// MyLog.waitHere("sta1= "+sta1+"\nsta2= "+sta2);
-				//==============================================
-				
-				
-				
-				
+				// ==============================================
+
 				Overlay over2 = new Overlay();
 				imp1.setOverlay(over2);
 
@@ -625,6 +622,19 @@ public class p11rmn_ implements PlugIn, Measurements {
 				//
 				// disegno MROI su imaDiff
 				//
+
+				// 160525 Mi accerto che i due tempi di eco siano uguali
+
+				String eco1 = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_ECHO_TIME,
+						MyConst.DICOM_EFFECTIVE_ECHO_TIME);
+				String eco2 = ReadDicom.readDicomParameter(imp2, MyConst.DICOM_ECHO_TIME,
+						MyConst.DICOM_EFFECTIVE_ECHO_TIME);
+				if ((eco1.compareTo(eco2)) == 0) {
+
+				} else {
+					MyLog.waitHere(">>>>> ATTENZIONE SI STA FACENDO IMMAGINE DIFFERENZA CON ECHI DIVERSI <<<<<<");
+				}
+
 				ImagePlus imaDiff = UtilAyv.genImaDifference(imp1, imp2);
 				// ImagePlus imaDiff = UtilAyv.diffIma(imp1, imp2);
 				if (!silent || (verbose && !fast)) {
@@ -830,7 +840,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				double[] out1 = devStandardNema(imp1, imaDiff, xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA,
 						checkPixels, true, imp1.getOverlay());
 				if (step) {
-				msgDisplayMean4(out1[0], out1[1]);
+					msgDisplayMean4(out1[0], out1[1]);
 				}
 
 				//

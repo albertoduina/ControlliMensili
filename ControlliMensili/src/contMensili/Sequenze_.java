@@ -283,7 +283,7 @@ public class Sequenze_ implements PlugIn {
 				Prefs.set("prefer.p6rmnSTART", true);
 				// MyLog.waitHere("metto valid a false");
 				// azzeramento del valid relativo a p16rmn, in modo che per la prossima immagine
-				// di diffusine si debba effettuare il posizionamento della ROI
+				// di diffusione si debba effettuare il posizionamento della ROI
 				Prefs.set("prefer.p16rmn_valid", false);
 
 				// ------------------------------------------------------------------------------
@@ -359,7 +359,7 @@ public class Sequenze_ implements PlugIn {
 					MyLog.waitHere("salvare il log come 6_tableSequenceSorted2_TIME");
 				}
 				// --------------------------------------------------------------------------------------------
-				// Sort in base a ECHO (aggiunta 2025)
+				// Sort in base a ECHO (aggiunta 2025 ERRATA !!!!!!!!!)
 				// --------------------------------------------------------------------------------------------
 //				String[][] tableSequenceSorted3 = TableSorter.minsort(tableSequenceSorted2, TableSequence.ECHO);
 //				if (debugTables) {
@@ -575,6 +575,9 @@ public class Sequenze_ implements PlugIn {
 				String codice = "-----";
 				String subCodice = "-----";
 				String blob1 = "DelRe";
+				String blob2 = "DWL";
+				String blob3 = "DWH";
+
 				if (fileName.length() >= 5) {
 					subCodice = fileName.substring(0, 5).trim();
 				}
@@ -592,6 +595,13 @@ public class Sequenze_ implements PlugIn {
 							int len1 = seriesDescription.length();
 							codice = seriesDescription.substring(len1 - 5, len1);
 						}
+						// A CAUSA DELLA DIFFUSIONE E DEI SUOI CAZZILLI sono stati aggiunti dei
+						// controlli sulla series description che, nel caso della diffusione DEVE essere
+						// ESCLUSIVAMENTE di 5 LETTERINE (littorine per i nostralgici) (20/05/2025)
+						if ((seriesDescription.substring(0, 3).trim().equalsIgnoreCase(blob2)
+								|| seriesDescription.substring(0, 3).trim().equalsIgnoreCase(blob3))
+										&& seriesDescription.length() > 5)
+							codice="KILL_";
 					}
 				}
 
