@@ -343,14 +343,14 @@ public class Sequenze_OLD implements PlugIn {
 				// modifierSmart si occupa delle acquisizioni con più fette
 				// --------------------------------------------------------------------------------------------
 
-				String[][] tableSequenceSorted1 = TableSorter.minsort(tableSequenceLoaded, TableSequence.POSIZ);
+				String[][] tableSequenceSorted1 = TableSorter.minsortDouble(tableSequenceLoaded, TableSequence.POSIZ,"");
 				if (debugTables) {
 					IJ.log("\\Clear");
 					MyLog.logMatrix(tableSequenceSorted1, "tableSequenceSorted1");
 					MyLog.waitHere("salvare il log come TableSequenceSorted1");
 				}
 
-				String[][] tableSequenceSorted2 = TableSorter.minsort(tableSequenceSorted1, TableSequence.TIME);
+				String[][] tableSequenceSorted2 = TableSorter.minsortDouble(tableSequenceSorted1, TableSequence.TIME,"");
 				if (debugTables) {
 					IJ.log("\\Clear");
 					MyLog.logMatrix(tableSequenceSorted2, "tableSequenceSorted2");
@@ -742,7 +742,7 @@ public class Sequenze_OLD implements PlugIn {
 
 		// a questo punto non mi resta che creare la tabella e riversarvi i dati degli
 		// ArrayList
-		String[][] tableVuota = TableSequence.createEmptyTable(count3, TableSequence.COLUMNS);
+		String[][] tableVuota = TableSequence.createEmptyTable(count3, TableSequence.columns0);
 
 		String[][] tablePass1 = TableSequence.writeColumn(tableVuota, ArrayUtils.arrayListToArrayString(vetConta),
 				TableSequence.ROW);
@@ -759,7 +759,7 @@ public class Sequenze_OLD implements PlugIn {
 		String[][] tablePass17 = TableSequence.writeColumn(tablePass6,
 				ArrayUtils.arrayListToArrayString(vetImaIncrement), TableSequence.IMA_INCREMENT);
 		String[][] tablePass18 = TableSequence.writeColumn(tablePass17, ArrayUtils.arrayListToArrayString(vetSpare_1),
-				TableSequence.SPARE_1);
+				TableSequence.MULTIPLI);
 		String[][] tablePass19 = TableSequence.writeColumn(tablePass18, ArrayUtils.arrayListToArrayString(vetSpare_2),
 				TableSequence.SPARE_2);
 		String[][] tablePass20 = TableSequence.writeColumn(tablePass19, ArrayUtils.arrayListToArrayString(vetSpare_3),
@@ -1353,9 +1353,9 @@ public class Sequenze_OLD implements PlugIn {
 						vetImaRichieste.add("" + numeroImaRichieste);
 						vetImaTrovate.add("" + numeroImaAcquisite);
 						vetPathImaAcquisite.add(TableSequence.getPath(tableSequenze6, j3));
-						vetSerieImaAcquisite.add(TableSequence.getNumSerie(tableSequenze6, j3));
-						vetAcqImaAcquisite.add(TableSequence.getNumAcq(tableSequenze6, j3));
-						vetImaImaAcquisite.add(TableSequence.getNumIma(tableSequenze6, j3));
+						vetSerieImaAcquisite.add(TableSequence.getSerie(tableSequenze6, j3));
+						vetAcqImaAcquisite.add(TableSequence.getAcq(tableSequenze6, j3));
+						vetImaImaAcquisite.add(TableSequence.getIma(tableSequenze6, j3));
 						vetCoil.add(TableSequence.getCoil(tableSequenze6, j3));
 					}
 				}
@@ -1447,9 +1447,9 @@ public class Sequenze_OLD implements PlugIn {
 						vetImaRichieste.add("" + numeroImaRichieste);
 						vetImaTrovate.add("" + numeroImaAcquisite);
 						vetPathImaAcquisite.add(TableSequence.getPath(tableSequenze6, j3));
-						vetSerieImaAcquisite.add(TableSequence.getNumSerie(tableSequenze6, j3));
-						vetAcqImaAcquisite.add(TableSequence.getNumAcq(tableSequenze6, j3));
-						vetImaImaAcquisite.add(TableSequence.getNumIma(tableSequenze6, j3));
+						vetSerieImaAcquisite.add(TableSequence.getSerie(tableSequenze6, j3));
+						vetAcqImaAcquisite.add(TableSequence.getAcq(tableSequenze6, j3));
+						vetImaImaAcquisite.add(TableSequence.getIma(tableSequenze6, j3));
 						vetCoil.add(TableSequence.getCoil(tableSequenze6, j3));
 					}
 				}

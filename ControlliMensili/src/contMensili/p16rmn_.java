@@ -34,7 +34,6 @@ import utils.MyVersionUtils;
 import utils.ReadDicom;
 import utils.ReportStandardInfo;
 import utils.TableCode;
-import utils.TableExpand;
 import utils.TableSequence;
 import utils.UtilAyv;
 
@@ -64,44 +63,35 @@ import utils.UtilAyv;
  *         Sanitaria
  *
  *         Tag utilizzati nel plugin (ricevuti da Lorella) Gradiente 0019,100C
- *         Direzioni 0019,100E Questi TAG possono venire letti direttamente in
- *         esadecimale. Da quanto appare la direzione e' scritta come una terna
- *         di valori Double a 64 bit. I valori solitamente presenti sono -1/0/0
- *         oppure 0/-1/0 oppure 0/0/1 ma mi e' anche capitato di trovare *
- *         ATTENZIONE: TESTATO E VERIFICATO I VALORI - DI SOLITO HO TERNE DI
- *         -1/0/0 OPPURE 0/-1/0 OPPURE 0/0/1 MA HO ANCHE TROVATO
- *         -1/-3.9999996e-004/0 QUINDI PUO' SUCCEDERE DI TROVARE VALORI ALLA
- *         CAXXXO una alternativa meno complicata potrebbe essere, come avevo
- *         fatto, di usare l'ultima lettera della 0018,0024 che si chiama
- *         sequenceName
+ *         Direzioni 0019,100E. Proprio il TAG 0019,100E non e' una String.
+ *         Pertanto i due tag vanno letti direttamente in esadecimale. Da quanto
+ *         appare la direzione e' scritta come una terna di valori Double a 64
+ *         bit. I valori solitamente presenti sono -1/0/0 oppure 0/-1/0 oppure
+ *         0/0/1 ma mi e' anche capitato di trovare -1/-3.9999996e-004/0 QUINDI
+ *         PUO' SUCCEDERE DI TROVARE STRANI VALORI MOLTO PICCOLI, anziche'zero.
+ *         Una alternativa meno complicata potrebbe essere, come fatto in
+ *         origina, di usare l'ultima lettera della 0018,0024 che si chiama
+ *         sequenceName ed assume i valori r,p,s a seconda della direzione.
+ *         Metto comunque i due tag nel titolo della slice, in modo che la
+ *         seguano durante il sort e possano essere recuperati e stampati nei
+ *         results, come documentazione addizionale.
  */
 
 public class p16rmn_ implements PlugIn, Measurements {
 
 	private static final int ABORT = 1;
-
 	public static String VERSION = "DIFFUSIONE";
-
 	private static String TYPE = " >> MISURA DIFFUSIONE_____________";
-
 	private static String fileDir = "";
-	private static boolean debug = true;
+	// private static boolean debug = true;
 	private static boolean mylogger = true;
+	private static String lastOld = "";
+	private static boolean logCOMMENTI = false;
 
-	public static String[] scarletta = { "DWL_A", "DWH1A", "DWH2A", "DWH3A", "DWH4A", "DWH5A" };
-	public static int[] icarletta = { 10, 6, 6, 6, 6, 6 };
-	public static String lastOld = "";
-	public static double coeffAngolareDUMMY = 0.002222;
-	public static double intercettaDUMMY = -0.001111;
-	public static boolean logCOMMENTI = false;
-
-	@Override
+	// @Override
 	public void run(String args) {
 
-		// UtilAyv.setMyPrecision(); // VAI A VEDERE CHE MI HA FATTO SCLERARE PER NULLA
-		// !!!!
 		Analyzer.setPrecision(9);
-
 		// -----------------------------
 		if (IJ.versionLessThan("1.43k")) {
 			return;
@@ -154,8 +144,6 @@ public class p16rmn_ implements PlugIn, Measurements {
 				retry = false;
 				return 0;
 			case 2:
-				// new AboutBox().about("Controllo Uniformita'",
-				// this.getClass());
 				new AboutBox().about("MISURA DIFFUSIONE", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
@@ -219,7 +207,6 @@ public class p16rmn_ implements PlugIn, Measurements {
 				// se ho gia'posizionato la ROI la utilizzo anche per tutte le immagini
 				// successive del paccotto (paccotto=pacchetto multiplo)
 			} else {
-				// int userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE);
 				userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE,
 						TableSequence.getCode(iw2ayvTable, vetRiga[0]), TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
 						vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
@@ -230,8 +217,6 @@ public class p16rmn_ implements PlugIn, Measurements {
 				new AboutBox().close();
 				return 0;
 			case 2:
-				// new AboutBox().about("Controllo Uniformita'",
-				// this.getClass());
 				new AboutBox().about("Misura DIFFUSIONE", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
@@ -241,10 +226,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 				boolean verbose = true;
 				boolean test = false;
 				boolean autoCalled = true;
-				// MyLog.waitHere("eseguo mainDiffusion");
-
 				rt = mainDiffusion(path, autoArgs, autoCalled, step, verbose, test);
-
 				rt.showRowNumbers(true);
 				UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
 				retry = false;
@@ -260,13 +242,13 @@ public class p16rmn_ implements PlugIn, Measurements {
 	/***
 	 * Main diffusion
 	 * 
-	 * @param path
-	 * @param autoArgs
-	 * @param autoCalled
-	 * @param step
-	 * @param verbose
-	 * @param test
-	 * @return
+	 * @param path       array path immagini
+	 * @param autoArgs   argomenti ricevuti da sequenze
+	 * @param autoCalled true se il pliugin e'chiamato da sequenze
+	 * @param step       dummy
+	 * @param verbose    stampe estese
+	 * @param test       dummy
+	 * @return ResultsTable coi risultati
 	 */
 	// @SuppressWarnings("deprecation")
 	public static ResultsTable mainDiffusion(String[] path, String autoArgs, boolean autoCalled, boolean step,
@@ -276,30 +258,23 @@ public class p16rmn_ implements PlugIn, Measurements {
 		boolean valid2 = false;
 		ResultsTable rt = null;
 		UtilAyv.setMeasure(MEAN + STD_DEV);
-//		Overlay over1 = new Overlay();
 		String path1 = path[0];
-//		int count = 0;
-//		boolean reference = false;
-
 		//
 		// ATTENZIO' ATTENZIO' ATTENZIO'
-		// i pacchetti di immagini che ricevo sono solo quelli "ASSIALI", gli altri li
-		// faccio cancellare a manina, pero' ricevo 31 immagini, di cui 1 non ha
-		// direzione e le restanti 30 hanno direzione r,p,s quindi devo distinguere da
-		// me le immagini delle diverse direzioni (RICORDA non credere mai ai
-		// canti delle sirene di Ulisse)
-		//
-
+		// analizzo tutte le immagini che ricevo. La prima non ha direzione e le
+		// restanti hanno direzione r,p,s quindi devo distinguere da me le immagini
+		// delle diverse direzioni
 		//
 		// recupero delle preferenze posizionamento ROI 0,X,Y,Z
-
+		//
 		double prefX = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiX", "30"));
 		double prefY = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiY", "30"));
 		double prefD = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiD", "30"));
 		valid2 = Prefs.getBoolean(".prefer.p16rmn_valid", false);
-
-		if (logCOMMENTI) IJ.log(">>>> RESTART lettura iniziale preferenze " + prefX + " " + prefY + " " + prefD);
-
+		//
+		if (logCOMMENTI)
+			IJ.log(">>>> RESTART lettura iniziale preferenze " + prefX + " " + prefY + " " + prefD);
+		//
 		double xRoi0 = 9999;
 		double yRoi0 = 9999;
 		double xRoi2 = 9999;
@@ -310,14 +285,13 @@ public class p16rmn_ implements PlugIn, Measurements {
 		ArrayList<String> subPathY = new ArrayList<String>();
 		ArrayList<String> subPathZ = new ArrayList<String>();
 		String[] pathBB = null;
-
+		//
 		ImagePlus imp00 = UtilAyv.openImageNoDisplay(path[0], true);
 		//
 		// inizio subito a scrivere Results
 		//
 		TableCode tc11 = new TableCode();
 		String[][] tabCodici = tc11.loadMultipleTable("codici", ".csv");
-
 		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp00, tabCodici, VERSION, autoCalled);
 		rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 		rt.showRowNumbers(true);
@@ -369,15 +343,15 @@ public class p16rmn_ implements PlugIn, Measurements {
 		String[] pathX = ArrayUtils.arrayListToArrayString(subPathX);
 		String[] pathY = ArrayUtils.arrayListToArrayString(subPathY);
 		String[] pathZ = ArrayUtils.arrayListToArrayString(subPathZ);
-
+		//
 		double xRoi1 = 999.9;
 		double yRoi1 = 999.9;
 		double meanBase = 0;
 		double rRoi1 = 0;
 		double rRoi0 = 0;
-
+		//
 		for (int z1 = 0; z1 < 3; z1++) {
-
+			//
 			switch (z1) {
 			case 0:
 				rt.incrementCounter();
@@ -408,7 +382,6 @@ public class p16rmn_ implements PlugIn, Measurements {
 			// start del loop di elaborazione
 			//
 			do {
-
 				ImagePlus impStack = stackBuilder2(pathBB, true);
 				int frames = pathBB.length;
 
@@ -438,9 +411,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 				if (!valid2 || chgDir) {
 					if (logCOMMENTI)
 						IJ.log(">>>> CAMBIO POSIZIONAMENTO ROI VERDE");
-
 					int resp = 0;
-
 					// if (!test) {
 					resp = ButtonMessages.ModelessMsg(
 							" Posizionare ROI diamFantoccio e premere CONTINUA,  altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA per passare alle successive",
@@ -458,18 +429,16 @@ public class p16rmn_ implements PlugIn, Measurements {
 					rRoi1 = dRoi1 / 2;
 					xRoi1 = boundingRectangle1.x;
 					yRoi1 = boundingRectangle1.y;
-
+					//
 					// ho impostato la Roi0 e modificata con Roi1, disegno la Roi2 in rosso solo a
 					// scopo diagnostico
 					if (logCOMMENTI)
 						IJ.log(">>>> LEGGO NUOVO POSIZIONAMENTO ROI VERDE_xRoi1= " + xRoi1 + " yRoi1= " + yRoi1
 								+ " rRoi1= " + rRoi1 * 2);
-
-					// DEVO DECIDERE COME SCRIVERE LE PREFERENZE NEL FILE
-
+					//
 					if (logCOMMENTI)
 						IJ.log(">>>> TRE salvo preferenze_xRoi1= " + xRoi1 + " roiY= " + yRoi1 + " roiD= " + rRoi1 * 2);
-
+					//
 					Prefs.set("prefer.p16rmn_roiX", Double.toString(xRoi1));
 					Prefs.set("prefer.p16rmn_roiY", Double.toString(yRoi1));
 					Prefs.set("prefer.p16rmn_roiD", Double.toString(rRoi1 * 2));
@@ -479,24 +448,23 @@ public class p16rmn_ implements PlugIn, Measurements {
 					prefX = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiX", "30"));
 					prefY = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiY", "30"));
 					prefD = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiD", "30"));
-
+					//
 					if (!(prefX == xRoi1) && (prefY == yRoi1) && (prefD == rRoi1 * 2))
 						MyLog.waitHere("errore salvataggio dati xRoi1");
-
 				}
-
+				//
 				prefX = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiX", "30"));
 				prefY = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiY", "30"));
 				prefD = ReadDicom.readDouble(Prefs.get("prefer.p16rmn_roiD", "30"));
 				if (logCOMMENTI)
 					IJ.log(">>>> QUATTRO rileggo preferenze roiX= " + prefX + " roiY= " + prefY + " roiD= " + prefD);
-
+				//
 				xRoi0 = prefX;
 				yRoi0 = prefY;
 				rRoi0 = prefD;
-
 				xRoi2 = xRoi0 + rRoi0 / 2 - rRoi2;
 				yRoi2 = yRoi0 + rRoi0 / 2 - rRoi2;
+				//
 				mySetRoi(imp0, xRoi2, yRoi2, rRoi2 * 2, null, Color.red);
 				if (logCOMMENTI)
 					IJ.log(">>>> CINQUE calcolo coordinate ROI ROSSA xRoi2= " + xRoi2 + " " + yRoi2 + " " + rRoi2 * 2);
@@ -507,13 +475,10 @@ public class p16rmn_ implements PlugIn, Measurements {
 				ImageStatistics stat1 = null;
 				double[] out2 = null;
 				String verifica = "";
-
 				// effettua i calcoli per ogni IMMAGINE
 				impStack.setSliceWithoutUpdate(1);
-
 				// lo stackBuilder ha messo l'header di ogni immagine, posso ora andare ad
 				// interrogarle
-
 				ArrayList<Double> arrArea = new ArrayList<Double>();
 				ArrayList<Double> arrMeanRow = new ArrayList<Double>();
 				ArrayList<Double> arrMeanNorm = new ArrayList<Double>();
@@ -529,6 +494,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 
 				for (int i1 = 0; i1 < frames; i1++) {
 					int slice = i1 + 1;
+					// la seguente macro chiude tutte le immagini non in primo piano
 					IJ.runMacro("close(\"\\\\Others\");");
 
 					ImagePlus imp1 = myImageFromStack(impStack, slice);
@@ -561,9 +527,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 					///
 					double meanNorm = truncate(meanNorm1, precision);
 					double logMeanNorm = -Math.log(meanNorm);
-
 					// appoggio i dati riordinati in alcuni array
-
 					arrArea.add(area);
 					arrMeanRow.add(meanRow);
 					arrMeanNorm.add(meanNorm);
@@ -582,7 +546,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 				//
 
 				for (int i1 = 0; i1 < arrArea.size(); i1++) {
-
+					//
 					rt.incrementCounter();
 					rt.addValue(t1, "Bvalue");
 					rt.addValue(s2, arrBvalue.get(i1));
@@ -590,7 +554,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 					rt.addValue(s4, stat1.roiY);
 					rt.addValue(s5, stat1.roiWidth);
 					rt.addValue(s6, stat1.roiHeight);
-
+					//
 					rt.incrementCounter();
 					rt.addValue(t1, "Area");
 					rt.addValue(s2, arrArea.get(i1));
@@ -598,7 +562,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 					rt.addValue(s4, stat1.roiY);
 					rt.addValue(s5, stat1.roiWidth);
 					rt.addValue(s6, stat1.roiHeight);
-
+					//
 					rt.incrementCounter();
 					rt.addValue(t1, "Mean");
 					rt.addValue(s2, arrMeanRow.get(i1));
@@ -606,7 +570,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 					rt.addValue(s4, stat1.roiY);
 					rt.addValue(s5, stat1.roiWidth);
 					rt.addValue(s6, stat1.roiHeight);
-
+					//
 					rt.incrementCounter();
 					rt.addValue(t1, "MeanNorm");
 					rt.addValue(s2, arrMeanNorm.get(i1));
@@ -614,7 +578,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 					rt.addValue(s4, stat1.roiY);
 					rt.addValue(s5, stat1.roiWidth);
 					rt.addValue(s6, stat1.roiHeight);
-
+					//
 					rt.incrementCounter();
 					rt.addValue(t1, "logMeanNorm");
 					rt.addValue(s2, arrLogMeanNorm.get(i1));
@@ -633,7 +597,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 					rt.addValue(s4, stat1.roiY);
 					rt.addValue(s5, stat1.roiWidth);
 					rt.addValue(s6, stat1.roiHeight);
-
+					//
 					rt.incrementCounter();
 					rt.addValue(t1, "intercetta");
 					rt.addValue(s2, out2[1]);
@@ -641,7 +605,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 					rt.addValue(s4, stat1.roiY);
 					rt.addValue(s5, stat1.roiWidth);
 					rt.addValue(s6, stat1.roiHeight);
-
+					//
 					rt.incrementCounter();
 					rt.addValue(t1, "verifica");
 					rt.addValue(s2, verifica);
@@ -674,30 +638,22 @@ public class p16rmn_ implements PlugIn, Measurements {
 		return rt;
 	}
 
-	public static void mySetRoi(ImagePlus imp1, int xroi, int yroi, int droi, Overlay over, Color color) {
-
-		imp1.setRoi(new OvalRoi(xroi, yroi, droi, droi));
-		if (imp1.isVisible()) {
-			imp1.getWindow().toFront();
-		}
-		imp1.getRoi().setStrokeWidth(1.1);
-
-		if (color != null) {
-			imp1.getRoi().setStrokeColor(color);
-		}
-		if (over != null) {
-			over.addElement(imp1.getRoi());
-		}
-
-	}
-
+	/**
+	 * Impostazione di una ROI
+	 * 
+	 * @param imp1  ImagePlus
+	 * @param xroi  coordinataX angolo superiore sx ROI
+	 * @param yroi  coordinataY angolo superiore sx ROI
+	 * @param droi  diametro ROI
+	 * @param over  overlay assegnato alla ImagePlus (può essere null)
+	 * @param color colore con cui mostrare la ROI
+	 */
 	public static void mySetRoi(ImagePlus imp1, double xroi, double yroi, double droi, Overlay over, Color color) {
 
 		imp1.setRoi(new OvalRoi(xroi, yroi, droi, droi));
 		if (imp1.isVisible()) {
 			imp1.getWindow().toFront();
 		}
-		// imp1.getRoi().setStrokeWidth(1.1);
 		imp1.getRoi().setStrokeWidth(0.5);
 
 		if (color != null) {
@@ -709,7 +665,15 @@ public class p16rmn_ implements PlugIn, Measurements {
 
 	}
 
+	/**
+	 * Legge il path dalla stringa argomenti, passato da sequenze durante la
+	 * chiamata del plugin
+	 * 
+	 * @param autoArgs
+	 * @return
+	 */
 	public String[] loadPath(String autoArgs) {
+
 		String fileDir = Prefs.get("prefer.string1", "./test2/");
 		String[][] iw2ayvTable = new TableSequence().loadTable(fileDir + MyConst.SEQUENZE_FILE);
 		int[] vetRiga = UtilAyv.decodeTokens(autoArgs);
@@ -765,10 +729,10 @@ public class p16rmn_ implements PlugIn, Measurements {
 			if (w1 == 0) {
 				newStack.update(ip1);
 			}
-			///// ============ 21/05/2025 ============================
-			///// maschero nel titolo i parametri 0019,100C e 0019,100E, in questo modo
+			///// ====================== 21/05/2025 ====================================
+			///// inserisco nel titolo i parametri 0019,100C e 0019,100E, in questo modo
 			///// il tutto viene sortato assieme all'immagine'
-			//// =====================================================
+			//// =======================================================================
 			String sliceInfo1 = "# gradiente " + AAA + " direzioni " + BBB + " #";
 			String sliceInfo2 = (String) imp1.getProperty("Info");
 			// aggiungo i dati header alle singole immagini dello stack
@@ -793,11 +757,10 @@ public class p16rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
-	 * forse qui il sort non viene sfruttato, vedo che sono gia'in ordine i dati
-	 * ricevutio da sequenze
+	 * Effettua il sort dei path basandoci sui nomi sequenza
 	 * 
-	 * @param path
-	 * @param sequence
+	 * @param path     vettore contenente il path delle immagini
+	 * @param sequence vettore contenente i nomi sequenza
 	 * @return
 	 */
 	public static String[] bubbleSortPathSequence(String[] path, String[] sequence) {
@@ -809,7 +772,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 			return path;
 		}
 		//
-		// bubblesort
+		// bubblesort start
 		//
 		String[] sortedPath = new String[path.length];
 		sortedPath = path;
@@ -833,6 +796,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 	}
 
 	/**
+	 * Effettua la regressione lineare, restituisce i parametri slope ed intercetta
 	 *
 	 * @param path
 	 * @param slicePosition
@@ -860,15 +824,12 @@ public class p16rmn_ implements PlugIn, Measurements {
 		//
 		CurveFitter curveFitter1 = new CurveFitter(bval, vetLogMeanNorm);
 		curveFitter1.doFit(CurveFitter.STRAIGHT_LINE);
-		// String resultString1 = curveFitter1.getResultString();
 		double[] params1 = curveFitter1.getParams();
-
 		//
 		// preparo i risultati per l'esportazione, visto che ho un esempio fatto in
 		// excel, da buon ignorante, esporto i paramentri del fit con lo stesso ordine
 		// (invertiti rispetto ad ImageJ
 		//
-
 		double[] out1 = new double[2];
 		out1[0] = params1[1];
 		out1[1] = params1[0];
@@ -877,6 +838,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 	}
 
 	public static double truncate(double number, int precision) {
+
 		double prec = Math.pow(10, precision);
 		int integerPart = (int) number;
 		double fractionalPart = number - integerPart;
@@ -908,7 +870,6 @@ public class p16rmn_ implements PlugIn, Measurements {
 			sb1.append(String.format("%02X ", b));
 		}
 		// MyLog.waitHere("ricerco tag1= " + tag1 + " hex= " + sb1);
-
 		String tag2 = "7FE0,0010"; // Pixel Data Start (Fine Header)
 		String reversed2 = new StringBuilder(8).append(tag2, 2, 4).append(tag2, 0, 2).append(tag2, 7, 9)
 				.append(tag2, 5, 7).toString();
@@ -920,7 +881,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 			byte[] buffer1 = new byte[len1];
 			f1.read(buffer1, 0, len1); // get copy of entire file as byte[]
 			f1.close();
-
+			//
 			int offset1 = localizeHexWord(buffer1, x2, buffer1.length);
 			// IJ.log("hex fine header= " + sb1 + " offset1= " + offset1);
 			int offset2 = localizeHexWord(buffer1, x1, offset1);
@@ -945,12 +906,12 @@ public class p16rmn_ implements PlugIn, Measurements {
 	}
 
 	/***
-	 * Legge parametri dall'header DICOM senza utilizzare ImageJ. In questa versione
-	 * i dati vengono letti in forma di una terna DoublePrecision 64 bit,
-	 * all'interno di una stringa. NOTA BENE: il tag va fornito come definito da
-	 * NEMA, ad esempio "0019,100E", poi, internamente ed automagicamente vengono
-	 * effettuate le opportune inversioni dei byte, poichè il TAG visto in un editor
-	 * HEX diventa: 19000E10
+	 * Legge parametri dall'header DICOM in esadecimale. In questa versione i dati
+	 * vengono letti in forma di una terna DoublePrecision 64 bit, all'interno di
+	 * una stringa. NOTA BENE: il tag va fornito come definito da NEMA, ad esempio
+	 * "0019,100E", poi, internamente ed automagicamente vengono effettuate le
+	 * opportune inversioni dei byte, poichè il TAG visto in un editor HEX diventa:
+	 * 19000E10
 	 * 
 	 * ATTENZIONE: TESTATO E VERIFICATO I VALORI - DI SOLITO HO TERNE DI -1/0/0
 	 * OPPURE 0/-1/0 OPPURE 0/0/1 MA HO ANCHE TROVATO -1/-3.9999996e-004/0 QUINDI SO
@@ -962,8 +923,8 @@ public class p16rmn_ implements PlugIn, Measurements {
 	 */
 
 	public static String piedeDiPorcoDouble(String path1, String tag1) {
-		int len1;
 
+		int len1;
 		String reversed1 = new StringBuilder(8).append(tag1, 2, 4).append(tag1, 0, 2).append(tag1, 7, 9)
 				.append(tag1, 5, 7).toString();
 		byte[] x1 = hexStringToByteArray(reversed1);
@@ -1035,12 +996,13 @@ public class p16rmn_ implements PlugIn, Measurements {
 	}
 
 	/***
-	 * conversione da string hexto byte array s1 deve essere di lunghezza pari
+	 * conversione da string hex in byte array s1 deve essere di lunghezza pari
 	 * 
 	 * @param s1
 	 * @return
 	 */
 	public static byte[] hexStringToByteArray(String s2) {
+
 		String s1 = s2.replace(",", "");
 		int len = s1.length();
 		byte[] data = new byte[len / 2];
@@ -1048,27 +1010,30 @@ public class p16rmn_ implements PlugIn, Measurements {
 			data[i1 / 2] = (byte) ((Character.digit(s1.charAt(i1), 16) << 4) + Character.digit(s1.charAt(i1 + 1), 16));
 		}
 		return data;
-
 	}
 
+	/**
+	 * Localizzazione di una sequenza di byte, all'interno di un buffer
+	 * 
+	 * @param bImage buffer di input contenente l'intera immagine in forma di byte
+	 *               array
+	 * @param what   word da cercare in forma di byte array
+	 * @param limit  limite a cui fermare la ricerca (in modo da non dover cercare
+	 *               nell'intero buffer)
+	 * @return locazione della word da cercare
+	 */
 	public static int localizeHexWord(byte[] bImage, byte[] what, int limit) {
+
 		int conta = 0;
 		int locazione = 0;
-
-//		 IJ.log("what =" + byte2hex(what[0]) + byte2hex(what[1])
-//		 + byte2hex(what[2]) + byte2hex(what[3]));
-
 		for (int i1 = 0; i1 < limit - 4; i1++) {
-
 			if (bImage[i1 + 0] == what[0] && bImage[i1 + 1] == what[1] && bImage[i1 + 2] == what[2]
 					&& bImage[i1 + 3] == what[3]) {
 				locazione = i1;
 				conta++;
-//				 IJ.log("conta=" + conta + " locazione=" + locazione);
 				break;
 			}
 		}
-
 		if (conta > 0) {
 			return locazione;
 		} else {
@@ -1076,17 +1041,25 @@ public class p16rmn_ implements PlugIn, Measurements {
 		}
 	}
 
+	/**
+	 * Trasforma i byte in stringa esadecimale
+	 * 
+	 * @param by byte da trasformare
+	 * @return stringa esadecimale
+	 */
 	public static String byte2hex(byte by) {
+
 		char[] hexDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 		char[] buf2 = new char[2];
 		buf2[1] = hexDigits[by & 0xf];
 		by >>>= 4;
 		buf2[0] = hexDigits[by & 0xf];
 		return new String(buf2);
-	} // end byte2hex
+	}
 
 	/**
-	 * estrae una singola slice da uno stack. Estrae anche i dati header
+	 * estrae una singola slice da uno stack. Estrae anche i dati header, compreso
+	 * il titolo
 	 * 
 	 * @param stack stack contenente le slices
 	 * @param slice numero della slice da estrarre, deve partire da 1, non e'
@@ -1108,19 +1081,14 @@ public class p16rmn_ implements PlugIn, Measurements {
 		if (slice == 0) {
 			IJ.log("imageFromStack.requested slice 0!");
 			return null;
-
 		}
 		if (slice > stack.getStackSize()) {
 			IJ.log("imageFromStack.requested slice > slices!");
 			return null;
 		}
-
 		ImageProcessor ipStack = imaStack.getProcessor(slice);
-
-		// String titolo = "** " + slice + " **";
 		String titolo = imaStack.getShortSliceLabel(slice);
 		String sliceInfo1 = imaStack.getSliceLabel(slice);
-
 		ImagePlus imp = new ImagePlus(titolo, ipStack);
 		imp.setProperty("Info", sliceInfo1);
 		return imp;

@@ -5,7 +5,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -30,6 +32,14 @@ import utils.TableSorter;
 import utils.TableUtils;
 import utils.TableVerify;
 import utils.UtilAyv;
+import utils.XTable;
+import utils.XTableAcqComparator;
+import utils.XTableChainedComparator;
+import utils.XTableCodeComparator;
+import utils.XTableCoilComparator;
+import utils.XTableEchoComparator;
+import utils.XTableImaComparator;
+import utils.XTablePosComparator;
 
 /*
  * Copyright (C) 2007 Alberto Duina, SPEDALI CIVILI DI BRESCIA, Brescia ITALY
@@ -74,7 +84,7 @@ public class Sequenze_ implements PlugIn {
 	// ABILITA E DISABILITA LE STAMPE DI DEBUG
 	// METTERE debugTables A FALSE PER NON AVERE LE STAMPE
 	// ----------------------------------------------------------
-	public boolean debugTables = false;
+	public boolean debugTables = true;
 	public static boolean forcesilent = false;
 
 	public static boolean blackbox = false;
@@ -136,12 +146,6 @@ public class Sequenze_ implements PlugIn {
 		boolean flag = tc2.ricercaDoppioni(tableCode);
 		if (flag) {
 			MyLog.waitHere("E VUALA': doppione rilevato in codici.csv");
-		}
-
-		if (debugTables) {
-			IJ.log("\\Clear");
-			MyLog.logMatrix(tableCode, "tableCode");
-			MyLog.waitHere("salvare il log come 1_tableCodeLoaded");
 		}
 
 //		String[][] tableExpand = TableExpand.loadTable(MyConst.EXPAND_FILE);
@@ -261,6 +265,10 @@ public class Sequenze_ implements PlugIn {
 				nuovo1 = true;
 			}
 
+			int c1 = 0;
+			// String format= String.format("%0%d",3);
+			String aux1 = "";
+
 			if (nuovo1) {
 				//
 				// se e' stato selezionato un nuovo set di misure cancello sia
@@ -278,6 +286,20 @@ public class Sequenze_ implements PlugIn {
 				if (fz.exists()) {
 					fz.delete();
 				}
+				File folder = new File(startingDir);
+				if (debugTables)
+					for (File f1 : folder.listFiles()) {
+						if (f1.getName().endsWith(".csv"))
+							f1.delete();
+					}
+
+				if (debugTables) {
+					IJ.log("\\Clear");
+					MyLog.logMatrix(tableCode, "tableCode");
+					aux1 = String.format("%3d", c1++);
+					MyLog.saveLog(startingDir + "/" + aux1 + "_tableCodeLoaded.csv");
+				}
+
 				MyLog.initLog(startingDir + "MyLog.txt");
 
 				Prefs.set("prefer.p6rmnSTART", true);
@@ -296,12 +318,12 @@ public class Sequenze_ implements PlugIn {
 					MyLog.here("getFileListing.result==null");
 				}
 				String[] list = new String[result.size()];
-				String aux1 = "";
+				String aux10 = "";
 				int j1 = 0;
 				for (File file : result) {
 					// 2025 feb 06
-					aux1 = file.getPath();
-					if (aux1.contains("#"))
+					aux10 = file.getPath();
+					if (aux10.contains("#"))
 						MyLog.waitHere("MA ALLORA SEI BASTARDOOOOO IL # NON VA USATO NEL PATH E BASTA !!!");
 					list[j1++] = file.getPath();
 				}
@@ -309,13 +331,15 @@ public class Sequenze_ implements PlugIn {
 				// ------------------------------------------------------------------------------
 				// Esamina la lista dei file trovati, inserendo in tabella quelli che hanno i
 				// codici uguali al file codiciXX.csv
-				// ------------------------------------------------------------------------------
+				// -----------------------------------------------------------------------------
+				// MyLog.waitHere();
 
 				String[][] tableSequenceLoaded = generateSequenceTable(list, tableCode, tableExpand);
 				if (debugTables) {
 					IJ.log("\\Clear");
-					MyLog.logMatrix(tableSequenceLoaded, "tableSequenceLoaded");
-					MyLog.waitHere("salvare il log come 2_tableSequenceLoaded");
+					MyLog.logMatrixTable(tableSequenceLoaded, "tableSequenceLoaded");
+					aux1 = String.format("%3d", c1++);
+					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceLoaded.csv");
 				}
 
 				if (tableSequenceLoaded == null) {
@@ -323,80 +347,195 @@ public class Sequenze_ implements PlugIn {
 					return;
 				}
 
+//				MyLog.waitHere("TABLESEQUENCE [ " + tableSequenceLoaded.length + " ] x [ "
+//						+ tableSequenceLoaded[0].length + " ]");
+
 				// ------------------------------------------------------------------------------
 				// Adattamento codici Treviglio
 				// ------------------------------------------------------------------------------
 
 				treviglioDevelop(tableSequenceLoaded, tableCode);
 
-				if (debugTables) {
-					IJ.log("\\Clear");
-					MyLog.logMatrix(tableSequenceLoaded, "tableSequenceTreviglio");
-					MyLog.waitHere("salvare il log come 3_tableSequenceTreviglio");
-					IJ.log("\\Clear");
-					MyLog.logMatrix(tableCode, "tableCodeTreviglio");
-					MyLog.waitHere("salvare il log come 4_tableCodeTreviglio");
-				}
-
-				// --------------------------------------------------------------------------------------------
-				// Eseguo una serie di sort successivi
-				// --------------------------------------------------------------------------------------------
-				// Sort in base a POSIZIONE
-				// --------------------------------------------------------------------------------------------
-				String[][] tableSequenceSorted1 = TableSorter.minsort(tableSequenceLoaded, TableSequence.POSIZ);
-				if (debugTables) {
-					IJ.log("\\Clear");
-					MyLog.logMatrix(tableSequenceSorted1, "tableSequenceSorted1_POSITION");
-					MyLog.waitHere("salvare il log come 5_tableSequenceSorted1_POSITION");
-				}
-				// --------------------------------------------------------------------------------------------
-				// Sort in base a TIME
-				// --------------------------------------------------------------------------------------------
-				String[][] tableSequenceSorted2 = TableSorter.minsort(tableSequenceSorted1, TableSequence.TIME);
-				if (debugTables) {
-					IJ.log("\\Clear");
-					MyLog.logMatrix(tableSequenceSorted2, "tableSequenceSorted2_TIME");
-					MyLog.waitHere("salvare il log come 6_tableSequenceSorted2_TIME");
-				}
-				// --------------------------------------------------------------------------------------------
-				// Sort in base a ECHO (aggiunta 2025 ERRATA !!!!!!!!!)
-				// --------------------------------------------------------------------------------------------
-//				String[][] tableSequenceSorted3 = TableSorter.minsort(tableSequenceSorted2, TableSequence.ECHO);
 //				if (debugTables) {
 //					IJ.log("\\Clear");
-//					MyLog.logMatrix(tableSequenceSorted2, "tableSequenceSorted3_ECHO");
-//					MyLog.waitHere("salvare il log come 6a_tableSequenceSorted3_ECHO");
+//					MyLog.logMatrixTable(tableSequenceLoaded, "tableSequenceTreviglio");
+//					aux1 = String.format("%3d", c1++);
+//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceTreviglio.csv");
+//					IJ.log("\\Clear");
+//					MyLog.logMatrixTable(tableCode, "tableCodeTreviglio");
+//					aux1 = String.format("%3d", c1++);
+//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableCodeTreviglio.csv");
 //				}
+
+				// --------------------------------------------------------------------------------------------
+				// Eseguo una serie di sort successivi per tentare di avere un ordinamento
+				// multiplo
+				// --------------------------------------------------------------------------------------------
 				// --------------------------------------------------------------------------------------------
 				// Riordino tabella in base a codiciXX.csv
 				// --------------------------------------------------------------------------------------------
-				String[][] tableSequenceReordered = reorderSequenceTable(tableSequenceSorted2, tableCode);
-				if (debugTables) {
-					IJ.log("\\Clear");
-					MyLog.logMatrix(tableSequenceReordered, "tableSequenceReordered_CODE");
-					MyLog.waitHere("salvare il log come 7_tableSequenceReordered_CODE");
-				}
-				// --------------------------------------------------------------------------------------------
-				// Verifica numero immagini in base a codiciXX.csv
-				// --------------------------------------------------------------------------------------------
-				String[][] listProblems = verifySequenceTable(tableSequenceReordered, tableCode);
-				if (debugTables) {
-					IJ.log("\\Clear");
-					MyLog.logMatrix(listProblems, "listProblems");
-					MyLog.waitHere("salvare il log come ListProblems");
-				}
-				// --------------------------------------------------------------------------------------------
-				// Riordino delle immagini con fette multiple in base alla posizione fetta
-				// --------------------------------------------------------------------------------------------
-				String[] myCode1 = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_", "YL2S_", "YR2F_", "YR2S_", "JUS1A",
-						"JUSAA", "KUS1A", "KUSAA", "PUSAA", "PUS1A" };
 
-				String[][] tableSequenceModified1 = TableSorter.tableModifierSmart(tableSequenceReordered, myCode1);
+				String[][] tableSequenceSorted1 = tableSequenceLoaded;
+				if (debugTables) {
+					IJ.log("\\Clear");
+					aux1 = String.format("%3d", c1++);
+					MyLog.logMatrixTable(tableSequenceSorted1, aux1 + "_tableSequenceSorted_INPUT");
+					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_INPUT.csv");
+				}
+
+//				MyLog.waitHere(
+//						"PRIMA [ " + tableSequenceSorted1.length + " ] x [ " + tableSequenceSorted1[0].length + " ]");
+
+				// --------------------------------------------------------------------------------------------
+				// Sort in base a CODE
+				// --------------------------------------------------------------------------------------------
+
+//				String[][] tableSequenceSorted2 = TableSorter.minsortString(tableSequenceSorted1, TableSequence.CODE,
+//						"TableSequence.CODE");
+//				if (debugTables) {
+//					IJ.log("\\Clear");
+//					aux1 = String.format("%3d", c1++);
+//					MyLog.logMatrixTable(tableSequenceSorted2, aux1 + "_tableSequenceSorted_CODE");
+//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_CODE.csv");
+//				}
+
+				// =================================================================================
+				// =================================================================================
+				// =================================================================================
+				// TESTIAMO IL SORT MULTIPLO == APPARE CORRETTO 31/05/2025 A PATTO DI AVERE UN
+				// SET GIUSTO
+				// =================================================================================
+				// =================================================================================
+				// =================================================================================
+				List<XTable> xtable2 = tableToXTable(tableSequenceSorted1);
+				Collections.sort(xtable2,
+						new XTableChainedComparator(new XTableCodeComparator(), new XTableCoilComparator(),
+								new XTablePosComparator(), new XTableAcqComparator(), new XTableImaComparator(),
+								new XTableEchoComparator()));
+
+				String[][] tableSequenceSorted6 = xtableToTable(xtable2);
+				// =================================================================================
+				// =================================================================================
+				// =================================================================================
+
+//				MyLog.waitHere(
+//						"DOPO [ " + tableSequenceSorted6.length + " ] x [ " + tableSequenceSorted6[0].length + " ]");
 
 				if (debugTables) {
 					IJ.log("\\Clear");
-					MyLog.logMatrix(tableSequenceModified1, "tableSequenceModified1");
-					MyLog.waitHere("salvare il log come 8_tableSequenceModified1");
+					aux1 = String.format("%3d", c1++);
+					MyLog.logMatrixTable(tableSequenceSorted6, aux1 + "_tableSequenceSorted_OUTPUT");
+					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_OUTPUT.csv");
+				}
+
+//				MyLog.logMatrixTable(tableSequenceSorted6, "tableSequenceLoaded6");
+//				MyLog.waitHere();
+
+				// =================================================================================
+				// =================================================================================
+				// =================================================================================
+				// =================================================================================
+				// =================================================================================
+				// =================================================================================
+
+				// --------------------------------------------------------------------------------------------
+				// Sort in base a CODE
+				// --------------------------------------------------------------------------------------------
+
+//				String[][] tableSequenceSorted2 = TableSorter.minsortString(tableSequenceSorted1, TableSequence.CODE,
+//						"TableSequence.CODE");
+//				if (debugTables) {
+//					IJ.log("\\Clear");
+//					aux1 = String.format("%3d", c1++);
+//					MyLog.logMatrixTable(tableSequenceSorted2, aux1 + "_tableSequenceSorted_CODE");
+//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_CODE.csv");
+//				}
+
+				// --------------------------------------------------------------------------------------------
+				// Sort in base a COIL
+				// --------------------------------------------------------------------------------------------
+//				String[][] tableSequenceSorted3 = TableSorter.minsortString(tableSequenceSorted2, TableSequence.COIL,
+//						"TableSequence.COIL");
+//				if (debugTables) {
+//					IJ.log("\\Clear");
+//					aux1 = String.format("%3d", c1++);
+//					MyLog.logMatrixTable(tableSequenceSorted3, aux1 + "_tableSequenceSorted_COIL");
+//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_COIL.csv");
+//				}
+
+				// --------------------------------------------------------------------------------------------
+				// Sort in base a ACQ
+				// --------------------------------------------------------------------------------------------
+//				String[][] tableSequenceSorted4 = TableSorter.minsortInteger(tableSequenceSorted3, TableSequence.ACQ,
+//						"TableSequence.ACQ");
+//				if (debugTables) {
+//					IJ.log("\\Clear");
+//					aux1 = String.format("%3d", c1++);
+//					MyLog.logMatrixTable(tableSequenceSorted4, aux1 + "_tableSequenceSorted_ACQ");
+//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_ACQ.csv");
+//				}
+
+				// --------------------------------------------------------------------------------------------
+				// Sort in base a IMA
+				// --------------------------------------------------------------------------------------------
+//				String[][] tableSequenceSorted5 = TableSorter.minsortInteger(tableSequenceSorted4, TableSequence.IMA,
+//						"TableSequence.IMA");
+//				if (debugTables) {
+//					IJ.log("\\Clear");
+//					aux1 = String.format("%3d", c1++);
+//					MyLog.logMatrixTable(tableSequenceSorted5, aux1 + "_tableSequenceSorted_IMA");
+//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_IMA.csv");
+//				}
+
+				// --------------------------------------------------------------------------------------------
+				// Sort in base a ECHO (aggiunta 2025 ERRATA !!!!!!!!!) MA ECCO FORSE FORSE NON
+				// SBAGLIA !!!
+				// --------------------------------------------------------------------------------------------
+//				String[][] tableSequenceSorted3 = TableSorter.minsortDouble(tableSequenceSorted2, TableSequence.ECHO, "TableSequence.ECHO");
+//				if (debugTables) {
+//					IJ.log("\\Clear");
+//					aux1 = String.format("%3d", c1++);
+//					MyLog.logMatrixTable(tableSequenceSorted3, aux1+"_tableSequenceSorted_ECHO");
+//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_ECHO.csv");
+//				}
+
+				// --------------------------------------------------------------------------------------------
+				// Sort in base a SERIE
+				// --------------------------------------------------------------------------------------------
+//				String[][] tableSequenceSorted4 = TableSorter.minsortInteger(tableSequenceSorted3, TableSequence.SERIE, "TableSequence.SERIE");
+//				if (debugTables) {
+//					IJ.log("\\Clear");
+//					aux1 = String.format("%3d", c1++);
+//					MyLog.logMatrixTable(tableSequenceSorted4, aux1+"_tableSequenceSorted_SERIE");
+//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_SERIE.csv");
+//				}
+
+				// --------------------------------------------------------------------------------------------
+				// sort in base a posizione
+				// --------------------------------------------------------------------------------------------
+//				String[] myCode1 = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_", "YL2S_", "YR2F_", "YR2S_", "JUS1A",
+//						"JUSAA", "KUS1A", "KUSAA", "PUSAA", "PUS1A" };
+//
+//				String[][] tableSequenceSorted16 = TableSorter.tableModifierSmart(tableSequenceSorted5, myCode1);
+//
+//				if (debugTables) {
+//					IJ.log("\\Clear");
+//					aux1 = String.format("%3d", c1++);
+//					MyLog.logMatrixTable(tableSequenceSorted16, aux1 + "_tableSequenceSorted_POSITION");
+//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_POSITION.csv");
+//				}
+
+				// --------------------------------------------------------------------------------------------
+				// Verifica coerenza numero immagini con quanto stabilito in codiciXX.csv
+				// --------------------------------------------------------------------------------------------
+				String[][] listProblems = verifySequenceTable(tableSequenceSorted6, tableCode);
+				if (debugTables) {
+					IJ.log("\\Clear");
+					aux1 = String.format("%3d", c1++);
+					MyLog.logMatrix(listProblems, aux1 + "_listProblems");
+					MyLog.saveLog(startingDir + "/" + aux1 + "_ListProblems.csv");
+
+//					MyLog.waitHere("salvare il log come ListProblems");
 				}
 
 				// --------------------------------------------------------------------------------------------
@@ -412,10 +551,13 @@ public class Sequenze_ implements PlugIn {
 				// --------------------------------------------------------------------------------------------
 
 				boolean test = false;
+
 				logVerifySequenceTable(listProblems, test);
 
+//				MyLog.waitHere("ATTENZIONE " + tableSequenceSorted6.length + " x " + tableSequenceSorted6[0].length);
+
 				boolean success = new TableSequence().writeTable(startingDir + MyConst.SEQUENZE_FILE,
-						tableSequenceModified1);
+						tableSequenceSorted6);
 				if (!success) {
 					IJ.log("Problemi creazione file iw2ayv.txt");
 				}
@@ -430,8 +572,10 @@ public class Sequenze_ implements PlugIn {
 
 			if (debugTables) {
 				IJ.log("\\Clear");
-				MyLog.logMatrix(tableSequenceReloaded, "tableSequenceReloaded");
-				MyLog.waitHere("salvare il log come 9_tableSequenceReloaded");
+				aux1 = String.format("%3d", c1++);
+				MyLog.logMatrixTable(tableSequenceReloaded, aux1 + "_tableSequenceReloaded");
+				MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceReloaded.csv");
+				// MyLog.waitHere("salvare il log come 9_tableSequenceReloaded");
 				// OCCHIO CHE IL 9_tableSequenceReloaded non ha i dati ma solo intestazione
 			}
 
@@ -513,7 +657,7 @@ public class Sequenze_ implements PlugIn {
 		List<String> vetImaDaPassare = new ArrayList<String>();
 		List<String> vetImaOrder = new ArrayList<String>();
 		List<String> vetImaIncrement = new ArrayList<String>();
-		List<String> vetSpare_1 = new ArrayList<String>();
+		List<String> vetMultipli = new ArrayList<String>();
 		List<String> vetSpare_2 = new ArrayList<String>();
 		List<String> vetSpare_3 = new ArrayList<String>();
 		List<String> vetSerie = new ArrayList<String>();
@@ -600,8 +744,8 @@ public class Sequenze_ implements PlugIn {
 						// ESCLUSIVAMENTE di 5 LETTERINE (littorine per i nostralgici) (20/05/2025)
 						if ((seriesDescription.substring(0, 3).trim().equalsIgnoreCase(blob2)
 								|| seriesDescription.substring(0, 3).trim().equalsIgnoreCase(blob3))
-										&& seriesDescription.length() > 5)
-							codice="KILL_";
+								&& seriesDescription.length() > 5)
+							codice = "KILL_";
 					}
 				}
 
@@ -651,12 +795,15 @@ public class Sequenze_ implements PlugIn {
 				// sostituisco il ; col simbolo +
 				// --------------------------------------------------------------------------------------------
 
-				coil = coil.replace("BAL;BAR;BCL;BCR", "BAL+BAR+BCL+BCR");
-				coil = coil.replace("BL;BR", "BL+BR");
-				coil = coil.replace("PL1;PR1", "PL1+PR1");
-				coil = coil.replace("PL2;PR2", "PL2+PR2");
-				coil = coil.replace("PL3;PR3", "PL3+PR3");
-				coil = coil.replace("PL4;PR4", "PL4+PR4");
+//				coil = coil.replace("BAL;BAR;BCL;BCR", "BAL+BAR+BCL+BCR");
+//				coil = coil.replace("BL;BR", "BL+BR");
+//				coil = coil.replace("PL1;PR1", "PL1+PR1");
+//				coil = coil.replace("PL2;PR2", "PL2+PR2");
+//				coil = coil.replace("PL3;PR3", "PL3+PR3");
+//				coil = coil.replace("PL4;PR4", "PL4+PR4");
+
+				// modifica 28/05/2025
+				coil = coil.replace(";", "+");
 
 				// ===============================================================================
 				// altro tentativo del 2025, per dividere le bobine spurie dalla prima
@@ -750,7 +897,7 @@ public class Sequenze_ implements PlugIn {
 					vetImaDaPassare.add(tableCode2[tableRow][TableCode.IMA_PASS]);
 					vetImaOrder.add(tableCode2[tableRow][TableCode.IMA_ORDER]);
 					vetImaIncrement.add(tableCode2[tableRow][TableCode.IMA_INCREMENT]);
-					vetSpare_1.add(tableCode2[tableRow][TableCode.SPARE_1]);
+					vetMultipli.add(tableCode2[tableRow][TableCode.SPARE_1]);
 					vetSpare_2.add(tableCode2[tableRow][TableCode.SPARE_2]);
 					vetSpare_3.add(tableCode2[tableRow][TableCode.SPARE_3]);
 					vetSerie.add(numSerie);
@@ -783,7 +930,7 @@ public class Sequenze_ implements PlugIn {
 							vetImaDaPassare.add(element[3]);
 							vetImaOrder.add(tableCode2[tableRow][TableCode.IMA_ORDER]);
 							vetImaIncrement.add(tableCode2[tableRow][TableCode.IMA_INCREMENT]);
-							vetSpare_1.add(tableCode2[tableRow][TableCode.SPARE_1]);
+							vetMultipli.add(tableCode2[tableRow][TableCode.SPARE_1]);
 							vetSpare_2.add(tableCode2[tableRow][TableCode.SPARE_2]);
 							vetSpare_3.add(tableCode2[tableRow][TableCode.SPARE_3]);
 							vetSerie.add(numSerie);
@@ -807,7 +954,7 @@ public class Sequenze_ implements PlugIn {
 
 		// a questo punto non mi resta che creare la tabella e riversarvi i dati degli
 		// ArrayList
-		String[][] tableVuota = TableSequence.createEmptyTable(count3, TableSequence.COLUMNS);
+		String[][] tableVuota = TableSequence.createEmptyTable(count3, TableSequence.columns0);
 
 		String[][] tablePass1 = TableSequence.writeColumn(tableVuota, ArrayUtils.arrayListToArrayString(vetConta),
 				TableSequence.ROW);
@@ -823,8 +970,8 @@ public class Sequenze_ implements PlugIn {
 				TableSequence.IMA_ORDER);
 		String[][] tablePass17 = TableSequence.writeColumn(tablePass6,
 				ArrayUtils.arrayListToArrayString(vetImaIncrement), TableSequence.IMA_INCREMENT);
-		String[][] tablePass18 = TableSequence.writeColumn(tablePass17, ArrayUtils.arrayListToArrayString(vetSpare_1),
-				TableSequence.SPARE_1);
+		String[][] tablePass18 = TableSequence.writeColumn(tablePass17, ArrayUtils.arrayListToArrayString(vetMultipli),
+				TableSequence.MULTIPLI);
 		String[][] tablePass19 = TableSequence.writeColumn(tablePass18, ArrayUtils.arrayListToArrayString(vetSpare_2),
 				TableSequence.SPARE_2);
 		String[][] tablePass20 = TableSequence.writeColumn(tablePass19, ArrayUtils.arrayListToArrayString(vetSpare_3),
@@ -848,6 +995,126 @@ public class Sequenze_ implements PlugIn {
 		String[][] tablePass14 = TableSequence.writeColumn(tablePass13, ArrayUtils.arrayListToArrayString(vetDone),
 				TableSequence.DONE);
 		return tablePass14;
+	}
+
+	/**
+	 * Trasforma una Table in una XTable
+	 * 
+	 * @param Table1
+	 * @return XTable
+	 */
+
+	public static List<XTable> tableToXTable(String[][] Table1) {
+
+		// MyLog.waitHere("length["+Table1.length+"] ["+Table1[0].length+"]");
+
+		int row3;
+		String path3;
+		String code3;
+		String coil3;
+		int ipass3;
+		int iord3;
+		int iinc3;
+		int mult3;
+		int sp23;
+		int sp33;
+		int ser3;
+		int acq3;
+		int ima3;
+		String acqtime3;
+		double echo3;
+		double pos3;
+		String dir3;
+		int prof3;
+		int done3;
+
+		// MyLog.waitHere("len= ["+Integer.valueOf(TableSequence.getLength(Table1))+ "]
+		// x ["+TableSequence.columns0+"]");
+
+		// IW2AYV DEVO GESTIRE I MISSING AL POSTO DI INTEGER E DOUBLE !!!!!
+
+		List<XTable> xtable1 = new ArrayList<XTable>();
+
+		for (int i1 = 0; i1 < Table1.length; i1++) {
+			row3 = readInt(TableSequence.getRow(Table1, i1));
+			path3 = TableSequence.getPath(Table1, i1);
+			code3 = TableSequence.getCode(Table1, i1);
+			coil3 = TableSequence.getCoil(Table1, i1);
+			ipass3 = readInt(TableSequence.getImaPass(Table1, i1));
+			iord3 = readInt(TableSequence.getImaGroup(Table1, i1));
+			iinc3 = readInt(TableSequence.getImaIncrement(Table1, i1));
+			mult3 = readInt(TableSequence.getMultipli(Table1, i1));
+			sp23 = readInt(TableSequence.getSpare2(Table1, i1));
+			sp33 = readInt(TableSequence.getSpare3(Table1, i1));
+			ser3 = readInt(TableSequence.getSerie(Table1, i1));
+			acq3 = readInt(TableSequence.getAcq(Table1, i1));
+			ima3 = readInt(TableSequence.getIma(Table1, i1));
+			acqtime3 = TableSequence.getAcqTime(Table1, i1);
+			echo3 = readDouble(TableSequence.getEcho(Table1, i1));
+			pos3 = readDouble(TableSequence.getPosiz(Table1, i1));
+			dir3 = TableSequence.getDirez(Table1, i1);
+			prof3 = readInt(TableSequence.getProfond(Table1, i1));
+			done3 = readInt(TableSequence.getDone(Table1, i1));
+
+			xtable1.add(new XTable(row3, path3, code3, coil3, ipass3, iord3, iinc3, mult3, sp23, sp33, ser3, acq3, ima3,
+					acqtime3, echo3, pos3, dir3, prof3, done3));
+		}
+
+		return xtable1;
+	}
+
+	public static int readInt(String s1) {
+		int x = 0;
+		try {
+			x = Integer.valueOf(s1);
+		} catch (Exception e) {
+			x = -9999;
+		}
+		return x;
+	}
+
+	public static double readDouble(String s1) {
+		double x = 0;
+		try {
+			x = Double.valueOf(s1);
+		} catch (Exception e) {
+			x = Double.NaN;
+		}
+		return x;
+	}
+
+	/**
+	 * Trasforma una Table in una XTable
+	 * 
+	 * @param Table1
+	 * @return XTable
+	 */
+
+	public static String[][] xtableToTable(List<XTable> xtable1) {
+
+//	 	String aa = xtable1.get(0).toString();
+		String[] bb = xtable1.get(0).toString().split("; ");
+//		MyLog.waitHere("length  bb= " + bb.length);
+
+		String[][] vetOut = new String[xtable1.size()][bb.length];
+		String[] cc;
+		int dd = 0;
+		for (XTable emp : xtable1) {
+			cc = emp.toString().split("; ");
+			for (int i1 = 1; i1 < cc.length; i1++) {
+				if (cc[i1].equals("NaN"))
+					cc[i1] = "MISSING";
+
+				vetOut[dd][i1] = cc[i1];
+			}
+			vetOut[dd][0] = "" + dd;
+			dd++;
+		}
+
+//		MyLog.logMatrix(vetOut, "vetOut");
+//		MyLog.waitHere();
+
+		return vetOut;
 	}
 
 	public static boolean coilPresent(String[] allCoils, String coil) {
@@ -1434,9 +1701,9 @@ public class Sequenze_ implements PlugIn {
 						vetImaRichieste.add("" + numeroImaRichieste);
 						vetImaTrovate.add("" + numeroImaAcquisite);
 						vetPathImaAcquisite.add(TableSequence.getPath(tableSequenze6, j3));
-						vetSerieImaAcquisite.add(TableSequence.getNumSerie(tableSequenze6, j3));
-						vetAcqImaAcquisite.add(TableSequence.getNumAcq(tableSequenze6, j3));
-						vetImaImaAcquisite.add(TableSequence.getNumIma(tableSequenze6, j3));
+						vetSerieImaAcquisite.add(TableSequence.getSerie(tableSequenze6, j3));
+						vetAcqImaAcquisite.add(TableSequence.getAcq(tableSequenze6, j3));
+						vetImaImaAcquisite.add(TableSequence.getIma(tableSequenze6, j3));
 						vetCoil.add(TableSequence.getCoil(tableSequenze6, j3));
 					}
 				}
@@ -1528,9 +1795,9 @@ public class Sequenze_ implements PlugIn {
 						vetImaRichieste.add("" + numeroImaRichieste);
 						vetImaTrovate.add("" + numeroImaAcquisite);
 						vetPathImaAcquisite.add(TableSequence.getPath(tableSequenze6, j3));
-						vetSerieImaAcquisite.add(TableSequence.getNumSerie(tableSequenze6, j3));
-						vetAcqImaAcquisite.add(TableSequence.getNumAcq(tableSequenze6, j3));
-						vetImaImaAcquisite.add(TableSequence.getNumIma(tableSequenze6, j3));
+						vetSerieImaAcquisite.add(TableSequence.getSerie(tableSequenze6, j3));
+						vetAcqImaAcquisite.add(TableSequence.getAcq(tableSequenze6, j3));
+						vetImaImaAcquisite.add(TableSequence.getIma(tableSequenze6, j3));
 						vetCoil.add(TableSequence.getCoil(tableSequenze6, j3));
 					}
 				}
