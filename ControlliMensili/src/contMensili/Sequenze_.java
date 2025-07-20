@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -28,7 +27,6 @@ import utils.ReadDicom;
 import utils.TableCode;
 import utils.TableExpand;
 import utils.TableSequence;
-import utils.TableSorter;
 import utils.TableUtils;
 import utils.TableVerify;
 import utils.UtilAyv;
@@ -84,8 +82,10 @@ public class Sequenze_ implements PlugIn {
 	// ABILITA E DISABILITA LE STAMPE DI DEBUG
 	// METTERE debugTables A FALSE PER NON AVERE LE STAMPE
 	// ----------------------------------------------------------
-	public boolean debugTables = true;
+	public boolean debugTables = false;
 	public static boolean forcesilent = false;
+	// basta che la bobina sia collegata, se le immagini fanno schifo non e' mio problema io le analizzo comunque .....
+	public static boolean bastacherespiri = true;
 
 	public static boolean blackbox = false;
 	public static String blackpath = "";
@@ -791,27 +791,17 @@ public class Sequenze_ implements PlugIn {
 
 				}
 
-				// --------------------------------------------------------------------------------------------
-				// sostituisco il ; col simbolo +
-				// --------------------------------------------------------------------------------------------
-
-//				coil = coil.replace("BAL;BAR;BCL;BCR", "BAL+BAR+BCL+BCR");
-//				coil = coil.replace("BL;BR", "BL+BR");
-//				coil = coil.replace("PL1;PR1", "PL1+PR1");
-//				coil = coil.replace("PL2;PR2", "PL2+PR2");
-//				coil = coil.replace("PL3;PR3", "PL3+PR3");
-//				coil = coil.replace("PL4;PR4", "PL4+PR4");
-
-				// modifica 28/05/2025
-				coil = coil.replace(";", "+");
-
-				// ===============================================================================
-				// altro tentativo del 2025, per dividere le bobine spurie dalla prima
-				// BO1,2 > BO1 e BO2,3 > BO2
-				String[] auxx = null;
-				if (coil.contains("BO") && coil.contains(",")) {
-					auxx = coil.split(",");
-					coil = auxx[0];
+				if (bastacherespiri) {
+					// modifica 28/05/2025
+					coil = coil.replace(";", "+");
+					// ===============================================================================
+					// altro tentativo del 2025, per dividere le bobine spurie dalla prima BO1,2 >
+					// BO1 e BO2,3 > BO2
+					String[] auxx = null;
+					if (coil.contains("BO")) {
+						auxx = coil.split("[,\\+]");
+						coil = auxx[0];					
+					}
 				}
 				// BLAHBLAHBLAH verificare che non crei problemi con altre macchine ed altre
 				// acquisizioni
@@ -822,6 +812,11 @@ public class Sequenze_ implements PlugIn {
 				// ===============================================================================
 
 				String[] allCoils = ReadDicom.parseString(coil);
+				
+				
+//				MyLog.logVector(allCoils,"allCoils");
+//				MyLog.waitHere("bastacherespiri coil= "+coil);
+				// coil rimane completa
 
 				String numSerie = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SERIES_NUMBER);
 				String numAcq = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_ACQUISITION_NUMBER);
@@ -1116,6 +1111,14 @@ public class Sequenze_ implements PlugIn {
 
 		return vetOut;
 	}
+
+	/***
+	 * Il nome della bobina, nel gruppo c'e', inzomma "BASTA CHE RESPIRI"
+	 * 
+	 * @param allCoils
+	 * @param coil
+	 * @return
+	 */
 
 	public static boolean coilPresent(String[] allCoils, String coil) {
 		boolean trovato = false;

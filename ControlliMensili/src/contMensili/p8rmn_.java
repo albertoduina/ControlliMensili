@@ -5,6 +5,7 @@ import java.awt.Polygon;
 import java.util.StringTokenizer;
 
 import ij.IJ;
+import ij.ImageJ;
 import ij.ImagePlus;
 import ij.Prefs;
 import ij.gui.ImageWindow;
@@ -101,8 +102,10 @@ public class p8rmn_ implements PlugIn, Measurements {
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
 		TableExpand tc2 = new TableExpand();
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
+		String java1 = "Java " + System.getProperty("java.version") + (IJ.is64Bit() ? " (64-bit)" : " (32-bit)");
+		String imagej1 = ":ImageJ " + ImageJ.VERSION + ImageJ.BUILD;
 
-		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+		VERSION = user1 + ":" + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 
 //		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
@@ -267,8 +270,8 @@ public class p8rmn_ implements PlugIn, Measurements {
 					ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
 
 			Polygon poli1 = UtilAyv.selectionPointsClick(imp1,
-					"Cliccare nell'ordine sui 4 angoli del quadrato, poi premere FINE POSIZIONAMENTO." +
-					"\nSe l'immagine non fosse accettabile premere <ANNULLA> per passare alle successive",
+					"Cliccare nell'ordine sui 4 angoli del quadrato, poi premere FINE POSIZIONAMENTO."
+							+ "\nSe l'immagine non fosse accettabile premere <ANNULLA> per passare alle successive",
 					"FINE POSIZIONAMENTO");
 
 			if (poli1 == null) {

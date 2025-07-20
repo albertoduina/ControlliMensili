@@ -5,6 +5,7 @@ import java.awt.Rectangle;
 import java.util.StringTokenizer;
 
 import ij.IJ;
+import ij.ImageJ;
 import ij.ImagePlus;
 import ij.Prefs;
 import ij.WindowManager;
@@ -96,7 +97,9 @@ public class p3rmn_ implements PlugIn, Measurements {
 		TableExpand tc2 = new TableExpand();
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
 		// -----------------------------
-		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+		String java1 = "Java " + System.getProperty("java.version") + (IJ.is64Bit() ? " (64-bit)" : " (32-bit)");
+		String imagej1 = ":ImageJ " + ImageJ.VERSION + ImageJ.BUILD;
+		VERSION = user1 + ":" + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 		// -----------------------------
 		fileDir = Prefs.get("prefer.string1", "none");
@@ -249,7 +252,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 					ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, verbose);
 					TableCode tc1 = new TableCode();
 					String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
-					String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path1, imp11, tabCodici, VERSION, autoCalled);
+					String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path1, imp11, tabCodici, VERSION,
+							autoCalled);
 					rt = ReportStandardInfo.abortResultTable_P3(info11);
 				}
 				rt.showRowNumbers(true);

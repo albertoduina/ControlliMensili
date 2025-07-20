@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.StringTokenizer;
 
 import ij.IJ;
+import ij.ImageJ;
 import ij.ImagePlus;
 import ij.Prefs;
 import ij.gui.ImageWindow;
@@ -118,8 +119,10 @@ public class p4rmn_ implements PlugIn, Measurements {
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
 		TableExpand tc2 = new TableExpand();
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
+		String java1 = "Java " + System.getProperty("java.version") + (IJ.is64Bit() ? " (64-bit)" : " (32-bit)");
+		String imagej1 = ":ImageJ " + ImageJ.VERSION + ImageJ.BUILD;
 
-		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+		VERSION = user1 + ":" + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 
 //		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
@@ -283,10 +286,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 		boolean accetta = false;
 		ResultsTable rt = null;
-	
-		
-				
-				
+
 		UtilAyv.setMeasure(MEAN + STD_DEV);
 
 		do {
@@ -309,10 +309,9 @@ public class p4rmn_ implements PlugIn, Measurements {
 
 			double dimPixel = ReadDicom.readDouble(
 					ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
-			
-			int rows = ReadDicom.readInt(
-					ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_ROWS), 1));
 
+			int rows = ReadDicom
+					.readInt(ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_ROWS), 1));
 
 			int width = imp1.getWidth();
 			int height = imp1.getHeight();
@@ -322,31 +321,26 @@ public class p4rmn_ implements PlugIn, Measurements {
 			double xEndRefline = vetPreferences[2];
 			double yEndRefline = vetPreferences[3];
 			double len1 = 0.0;
-			
 
-			// IJ.log("readPreferences " + xStartRefline + ", " + yStartRefline + ", " + xEndRefline + ", " + yEndRefline);
+			// IJ.log("readPreferences " + xStartRefline + ", " + yStartRefline + ", " +
+			// xEndRefline + ", " + yEndRefline);
 
 			if (true) {
 
 				len1 = Math
 						.sqrt(Math.pow((xStartRefline - xEndRefline), 2) + Math.pow((yStartRefline - yEndRefline), 2));
 
-				
-				boolean over1= len1<5;
-				boolean over2= xStartRefline < 0;
-				boolean over3= xEndRefline < 0;
-				boolean over4= xStartRefline > width;
-				boolean over5= xEndRefline > width;
-				boolean over6= yStartRefline < 0;
-				boolean over7= yEndRefline < 0;
-				boolean over8= yStartRefline > height;
-				boolean over9= yEndRefline > height;
-				
-				
-				
-				if (over1 || over2 || over3 || over4
-						|| over5 || over6 || over7 || over8
-						|| over9) {
+				boolean over1 = len1 < 5;
+				boolean over2 = xStartRefline < 0;
+				boolean over3 = xEndRefline < 0;
+				boolean over4 = xStartRefline > width;
+				boolean over5 = xEndRefline > width;
+				boolean over6 = yStartRefline < 0;
+				boolean over7 = yEndRefline < 0;
+				boolean over8 = yStartRefline > height;
+				boolean over9 = yEndRefline > height;
+
+				if (over1 || over2 || over3 || over4 || over5 || over6 || over7 || over8 || over9) {
 					xStartRefline = width / 4;
 					yStartRefline = height / 4;
 					xEndRefline = width * 3 / 4;
@@ -359,7 +353,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 			double xStartRefline2 = xStartRefline;
 			double yStartRefline2 = yStartRefline;
 			double xEndRefline2 = xEndRefline;
-			double yEndRefline2 = yEndRefline ;
+			double yEndRefline2 = yEndRefline;
 
 			int xStartReflineScreen;
 			int yStartReflineScreen;
@@ -651,7 +645,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 			rt.incrementCounter();
 			rt.addValue(t1, "Visual");
 			rt.addValue(s2, visualResolution);
-			
+
 			rt.incrementCounter();
 			rt.addValue(t1, "Matrix");
 			rt.addValue(s2, rows);

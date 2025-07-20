@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import ij.IJ;
+import ij.ImageJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Prefs;
@@ -134,8 +135,10 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
 		TableExpand tc2 = new TableExpand();
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
+		String java1 = "Java " + System.getProperty("java.version") + (IJ.is64Bit() ? " (64-bit)" : " (32-bit)");
+		String imagej1 = ":ImageJ " + ImageJ.VERSION + ImageJ.BUILD;
 
-		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+		VERSION = user1 + ":" + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 
 //		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
@@ -592,8 +595,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		vetRefPosition[3] = line1.y2;
 		lato = line1.getRawLength();
 
-		if (!test)
-		 {
+		if (!test) {
 			p6rmn_COMMON.saveReferences_COMMON(impStack);
 //		if (step)
 //			msgSquareCoordinates(vetRefPosition);
@@ -694,16 +696,15 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				fwhmSlice1[w1] = dsd1[0];
 				peakPositionSlice1[w1] = dsd1[1];
 
-				if (imp3.isVisible())
-				 {
+				if (imp3.isVisible()) {
 					imp3.getWindow().toFront();
-				//
-				// Second slab analysis
-				//
+					//
+					// Second slab analysis
+					//
 //				if (step)
 //					msgProfile();
-				// refPosition [startX = 13, startY=65, endX = 147, endY=65,
-				// radius=10]
+					// refPosition [startX = 13, startY=65, endX = 147, endY=65,
+					// radius=10]
 				}
 
 				ra1 = (int) (lato / 12.0);
@@ -774,16 +775,15 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				fwhmCuneo3[w1] = dsd3[0];
 				peakPositionCuneo3[w1] = dsd3[1];
 
-				if (imp3.isVisible())
-				 {
+				if (imp3.isVisible()) {
 					imp3.getWindow().toFront();
-				//
-				// Second wedge analysis
-				//
+					//
+					// Second wedge analysis
+					//
 //				if (step)
 //					msgProfile();
-				// refPosition [startX = 13, startY=133, endX = 147, endY=133,
-				// radius=10]
+					// refPosition [startX = 13, startY=133, endX = 147, endY=133,
+					// radius=10]
 				}
 
 				ra1 = (int) (lato / 12.0);
@@ -1489,7 +1489,6 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		// IJ.log(MyLog.qui() + " peak= " + peak);
 
 		double maxB2Y = mediabaseline;
-
 
 		puntiX2[0] = minB2X;
 		puntiX2[1] = minB2X;

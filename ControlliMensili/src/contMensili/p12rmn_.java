@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.StringTokenizer;
 
 import ij.IJ;
+import ij.ImageJ;
 import ij.ImagePlus;
 import ij.Prefs;
 import ij.WindowManager;
@@ -129,7 +130,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
 		// -----------------------------
-		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+		String java1 = "Java " + System.getProperty("java.version") + (IJ.is64Bit() ? " (64-bit)" : " (32-bit)");
+		String imagej1 = ":ImageJ " + ImageJ.VERSION + ImageJ.BUILD;
+		VERSION = user1 + ":" + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 		// -----------------------------
 		// directory dati, dove vengono memorizzati ayv.txt e Results1.xls
@@ -685,13 +688,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 				imp1 = UtilAyv.openImageMaximized(path1);
 				imp2 = UtilAyv.openImageNoDisplay(path2, true);
 			}
-			if (imp2 == null)
-			 {
+			if (imp2 == null) {
 				MyLog.waitHere("Non trovato il file " + path2);
-			// ============================================================================
-			// Fine calcoli geometrici
-			// Inizio calcoli Uniformita'
-			// ============================================================================
+				// ============================================================================
+				// Fine calcoli geometrici
+				// Inizio calcoli Uniformita'
+				// ============================================================================
 			}
 
 			// Recupero ora i dati di output da PositionSearch11
@@ -836,14 +838,13 @@ public class p12rmn_ implements PlugIn, Measurements {
 			}
 
 			iw1 = imp1.getWindow();
-			if (imp1.isVisible())
-			 {
+			if (imp1.isVisible()) {
 				ImageUtils.imageToFront(imp1);
-			//
-			// if (iw1 != null) {
-			// WindowManager.setCurrentWindow(iw1);
-			// WindowManager.setWindow(iw1);
-			// }
+				//
+				// if (iw1 != null) {
+				// WindowManager.setCurrentWindow(iw1);
+				// WindowManager.setWindow(iw1);
+				// }
 			}
 
 			// ---------------------------------
@@ -974,11 +975,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 			// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
 
-			if (verbose)
-			 {
+			if (verbose) {
 				MyLog.waitHere(listaMessaggi(45), debug, timeout);
-			// imp1.show();
-			// MyLog.waitHere("vedi imp1 and path1= " + path1);
+				// imp1.show();
+				// MyLog.waitHere("vedi imp1 and path1= " + path1);
 			}
 
 			if (iw1 != null) {
@@ -1625,10 +1625,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 			diamRoiMan = aux1;
 		}
 
-		//ImageWindow iw11 = null;
+		// ImageWindow iw11 = null;
 		// ImageWindow iw12 = null;
 		if (demo) {
-			//iw11 = imp11.getWindow();
+			// iw11 = imp11.getWindow();
 		}
 
 		Overlay over12 = new Overlay();
@@ -1653,7 +1653,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		if (demo) {
 			UtilAyv.showImageMaximized(imp12);
 			MyLog.waitHere(listaMessaggi(1), debug, timeout1);
-		//	iw12 = imp12.getWindow();
+			// iw12 = imp12.getWindow();
 		}
 
 		// double[][] peaks1 = new double[4][1];
@@ -1792,11 +1792,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 							valido = false;
 							// MyLog.waitHere("linea orizzontale eliminato punto
 							// sx");
-						}
-						else {
+						} else {
 							;
-						// MyLog.waitHere("linea orizzontale mantenuto punto
-						// dx");
+							// MyLog.waitHere("linea orizzontale mantenuto punto
+							// dx");
 						}
 					}
 
@@ -1806,11 +1805,10 @@ public class p12rmn_ implements PlugIn, Measurements {
 							valido = false;
 							// MyLog.waitHere("linea verticale eliminato punto
 							// sup");
-						}
-						else {
+						} else {
 							;
-						// MyLog.waitHere("linea verticale mantenuto punto
-						// inf");
+							// MyLog.waitHere("linea verticale mantenuto punto
+							// inf");
 						}
 					}
 
@@ -1945,8 +1943,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 				// ce1.stretchHistogram(imp11.getProcessor(), 0.9);
 				// // ce1.equalize(imp11.getProcessor());
 				// imp11.updateAndDraw();
-
-				
 
 				// MyLog.waitHere("imp11= " + imp11.getTitle()
 				// + "\nDistanza eccessiva tra i punti forniti ed il fit del
@@ -2118,7 +2114,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 
 				if (dMin < maxBubbleGapLimit) {
 					manual = true;
-					//motivo = "Spostamento automatico eccessivo per compensare la bolla d'aria presente nel fantoccio";
+					// motivo = "Spostamento automatico eccessivo per compensare la bolla d'aria
+					// presente nel fantoccio";
 					// -------------------------------------------------------------
 					// disegno il cerchio ed i punti, in modo da date un
 					// feedback
@@ -2196,15 +2193,12 @@ public class p12rmn_ implements PlugIn, Measurements {
 //					+ "\nPOI premere OK, altrimenti, se l'immagine NON E'ACCETTABILE premere ANNULLA"
 //					+ " per passare alle successive", "OK", "ANNULLA");
 
-
 			boolean resp = MyLog.waitHereModeless("<<  SELEZIONE MANUALE ATTIVA >>\n \nimmagine= " + imp11.getTitle()
-			+ "\nNon si riescono a determinare le coordinate corrette del cerchio"
-			+ "\nRichiesto ridimensionamento e riposizionamento della ROI circolare indicata in rosso, attorno al fantoccio\n"
-					+"\nORA e' possibile modificarla, spostarla, oppure lasciarla dove si trova."
+					+ "\nNon si riescono a determinare le coordinate corrette del cerchio"
+					+ "\nRichiesto ridimensionamento e riposizionamento della ROI circolare indicata in rosso, attorno al fantoccio\n"
+					+ "\nORA e' possibile modificarla, spostarla, oppure lasciarla dove si trova."
 					+ "\n--- POI premere OK ---"
 					+ "\nAltrimenti, se l'immagine NON FOSSE UTILIZZABILE premere <ANNULLA> per passare alle successive\n \n");
-
-
 
 			if (resp) {
 				abort = true;
@@ -2584,14 +2578,14 @@ public class p12rmn_ implements PlugIn, Measurements {
 		int yRoi0 = yCenterCircle - diamCircle / 2;
 		int diamRoi0 = diamCircle;
 
-		//ImageWindow iw2 = null;
+		// ImageWindow iw2 = null;
 		// --iw2ayv
 		UtilAyv.showImageMaximized(imp2);
-		//iw2 = imp2.getWindow();
+		// iw2 = imp2.getWindow();
 		// ---
 		if (demo) {
 			UtilAyv.showImageMaximized(imp2);
-			//iw2 = imp2.getWindow();
+			// iw2 = imp2.getWindow();
 			// MyLog.waitHere(listaMessaggi(30), debug);
 		}
 
@@ -2827,7 +2821,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		double uiPerc = (1 - (max - min) / (max + min)) * 100;
 		return uiPerc;
 	}
-
 
 	/**
 	 * Ghost percentual calculation

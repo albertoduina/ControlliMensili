@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import ij.IJ;
+import ij.ImageJ;
 import ij.ImagePlus;
 import ij.Prefs;
 import ij.WindowManager;
@@ -110,8 +111,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
 
-		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
-				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+		String java1 = "Java " + System.getProperty("java.version") + (IJ.is64Bit() ? " (64-bit)" : " (32-bit)");
+		String imagej1 = ":ImageJ " + ImageJ.VERSION + ImageJ.BUILD;
+		VERSION = user1 + ": " + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion()
+				+ ":iw2ayv_build_" + MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 
 		fileDir = Prefs.get("prefer.string1", "none");
 		if (IJ.versionLessThan("1.43k")) {
@@ -279,7 +282,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 			path1 = TableSequence.getPath(iw2ayvTable, vetRiga[0]);
 			path2 = TableSequence.getPath(iw2ayvTable, vetRiga[1]);
 			ok = UtilAyv.checkImages2(path1, path2, debug);
-			if (ok) {
+			if (!ok) {
 				MyLog.appendLog(fileDir + "MyLog.txt", "fallito checkImages2");
 			}
 
@@ -1184,10 +1187,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 				MyLog.appendLog2(blacklog, "=============================================================");
 			}
 
-			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici,
-					VERSION + "_P10__ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_"
-							+ MyVersionUtils.CURRENT_VERSION + "___",
-					autoCalled);
+			String pota1 = VERSION + "_P10__ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_"
+					+ MyVersionUtils.CURRENT_VERSION + "___";
+
+			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, pota1, autoCalled);
 			double slicePosition = ReadDicom
 					.readDouble(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SLICE_LOCATION));
 
@@ -2751,7 +2754,6 @@ public class p10rmn_ implements PlugIn, Measurements {
 		ip1.resetMinAndMax();
 		return;
 	}
-
 
 	/**
 	 * Write preferences into IJ_Prefs.txt

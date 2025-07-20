@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import ij.IJ;
+import ij.ImageJ;
 import ij.ImagePlus;
 import ij.Prefs;
 import ij.gui.ImageWindow;
@@ -95,6 +96,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 	private static Color color2 = Color.green;
 	private static final boolean debug = true;
 	public static boolean forcesilent = false;
+	public static boolean mytest = false;
 
 	// private boolean profiVert = false;
 
@@ -114,8 +116,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 		TableCode tc1 = new TableCode();
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
+		String java1 = "Java " + System.getProperty("java.version") + (IJ.is64Bit() ? " (64-bit)" : " (32-bit)");
+		String imagej1 = ":ImageJ " + ImageJ.VERSION + ImageJ.BUILD;
 
-		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+		VERSION = user1 + ":"  + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 
 		// VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" +
@@ -196,6 +200,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				// boolean fast = false;
 				// boolean silent = false;
+				// MODO MANUALE
 				ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond, "", mode, timeout);
 
 				if (rt1 == null) {
@@ -489,7 +494,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				// =================================================
 
-				if (verbose && !silent) {
+				if ((verbose && !silent) || mytest) {
 					imp1.setRoi(new OvalRoi(xMaximum - 4, yMaximum - 4, 8, 8));
 					ImageUtils.addOverlayRoi(imp1, Color.green, 0);
 					imp1.killRoi();
@@ -500,6 +505,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 					// ImageUtils.addOverlayRoi(imp1, Color.green, 0);
 					// imp1.killRoi();
 					// imp1.updateAndDraw();
+					if (mytest)
+						MyLog.waitHere();
 				}
 
 				//
@@ -540,7 +547,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				if (!silent) {
 					imp1.updateAndDraw();
 				}
-				if (step) {
+				if (step || mytest) {
 					MyLog.waitHere();
 				}
 
@@ -552,7 +559,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				imp1.setRoi(xCenterRoi - sq7 / 2, yCenterRoi - sq7 / 2, sq7, sq7);
 
-				if (!silent && !fast) {
+				if ((!silent && !fast) || mytest) {
 					// ------------------------
 					ImageUtils.addOverlayRoi(imp1, Color.red, 1.01);
 					imp1.getRoi().setName("MROI");
@@ -565,7 +572,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 				}
 
-				if (step) {
+				if (step || mytest) {
 					MyLog.waitHere("posizione MROI");
 				}
 
@@ -595,11 +602,13 @@ public class p11rmn_ implements PlugIn, Measurements {
 				ImageStatistics statBkg = ImageUtils.backCalc2((int) xFondo, (int) yFondo,
 						MyConst.P11_DIAM_ROI_BACKGROUND, imp1, step, false, test);
 
-				// MyLog.waitHere("Roi Fondo coordinate: x= " + xFondo + " y= "
-				// + yFondo + " statFondo.mean= " + statFondo.mean);
 
-				// over2.addElement(imp1.getRoi());
-				// over2.setStrokeColor(color2);
+				if (mytest) {
+					over2.addElement(imp1.getRoi());
+					over2.setStrokeColor(color2);
+					MyLog.waitHere("Roi Fondo coordinate: x= " + xFondo + " y= "
+					+ yFondo + " statFondo.mean= " + statBkg.mean);
+				}
 
 				//
 				// =============PROVVISORIO=====================================
@@ -661,7 +670,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					imaDiff.getWindow().toFront();
 				}
 
-				if (test) {
+				if (test||mytest) {
 					MyLog.waitHere("disegnata Mroi su immagine differenza", debug, timeout);
 				}
 
@@ -837,16 +846,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 					//
 				}
 
-				double[] out1 = devStandardNema(imp1, imaDiff, xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA,
+				double[] outDsNema = devStandardNema(imp1, imaDiff, xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA,
 						checkPixels, true, imp1.getOverlay());
 				if (step) {
-					msgDisplayMean4(out1[0], out1[1]);
+					msgDisplayMean4(outDsNema[0], outDsNema[1]);
 				}
 
 				//
 				// calcolo SNR finale
 				//
-				double snr = signal1 / (out1[1] / Math.sqrt(2));
+				double snr = signal1 / (outDsNema[1] / Math.sqrt(2));
 
 				// ************************ 140812*************
 
@@ -967,7 +976,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				// ERRATO, QUI BISOGNA STAMPARE OUT1[1] ANZICHE'
 				// STATFONDO.MEAN
 				// rt.addValue(2, statFondo.mean);
-				rt.addValue(s2, (out1[1] / Math.sqrt(2)));
+				rt.addValue(s2, (outDsNema[1] / Math.sqrt(2)));
 				// =================================================
 
 				int xRoi = (int) statBkg.roiX;
@@ -1648,6 +1657,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 			out = 3;
 		} else if (in1.compareToIgnoreCase("hdx") == 0) {
 			out = 4;
+		} else if (in1.compareToIgnoreCase("yyy") == 0) {
+			out = 5;
 		} else {
 			MyLog.waitHere("Errore nella direzione in " + MyConst.CODE_FILE + " valore " + in1 + " non previsto");
 			out = -1;
@@ -1737,6 +1748,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 		double xMaximum = out1[0];
 		double yMaximum = out1[1];
 
+//		MyLog.waitHere("TEST Maximum position Maximum= "+xMaximum+" ; "+yMaximum);
+
 //		if ((xMaximum1-xMaximum)>7 || (yMaximum1-yMaximum)>7){
 //			MyLog.waitHere("CACATA in arrivo!");
 //
@@ -1748,6 +1761,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			// MyLog.waitHere("Rilevata differenza tra directionFinder e
 			// direzioneTabella direzione= " + direzione
 			// + " direzioneTabella= " + direzioneTabella);
+			// MyLog.waitHere("forced manual!");
 			manualRequired = true;
 			direzione = direzioneTabella;
 
@@ -1769,6 +1783,10 @@ public class p11rmn_ implements PlugIn, Measurements {
 		over11.addElement(imp11.getRoi());
 		over11.setStrokeColor(color1);
 		imp11.updateAndDraw();
+
+		if (mytest)
+			MyLog.waitHere("TEST Maximum position", debug, timeout);
+
 		if (step) {
 			MyLog.waitHere("Maximum value= " + out1[2] + " find at x= " + xMaximum + " y= " + yMaximum, debug, timeout);
 		}
@@ -1846,7 +1864,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			over11.setStrokeColor(color1);
 			imp11.updateAndDraw();
 
-			if (step || test) {
+			if (step || test || mytest) {
 				MyLog.waitHere("Selezione automatica direzione = " + strDirez, debug, timeout);
 			}
 
