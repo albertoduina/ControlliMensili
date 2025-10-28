@@ -84,7 +84,8 @@ public class Sequenze_ implements PlugIn {
 	// ----------------------------------------------------------
 	public boolean debugTables = false;
 	public static boolean forcesilent = false;
-	// basta che la bobina sia collegata, se le immagini fanno schifo non e' mio problema io le analizzo comunque .....
+	// basta che la bobina sia collegata, se le immagini fanno schifo non e' mio
+	// problema io le analizzo comunque .....
 	public static boolean bastacherespiri = true;
 
 	public static boolean blackbox = false;
@@ -650,6 +651,8 @@ public class Sequenze_ implements PlugIn {
 
 	public String[][] generateSequenceTable(String[] pathList, String[][] tableCode2, String[][] tableExpand4) {
 
+		
+
 		List<String> vetConta = new ArrayList<String>();
 		List<String> vetPath = new ArrayList<String>();
 		List<String> vetCodice = new ArrayList<String>();
@@ -730,8 +733,11 @@ public class Sequenze_ implements PlugIn {
 					codice = subCodice;
 				} else {
 					String seriesDescription = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION);
+					int manufacturer = ReadDicom.whatManufacturer(imp1);
 					if (seriesDescription.length() >= 5) {
 						codice = seriesDescription.substring(0, 5).trim();
+						if (manufacturer == 5)
+							codice = codice.toLowerCase();
 						// la seguente modifica permette di leggere le ultime 5 lettere dei codici che
 						// iniziano con "DelRe", modifica per il CAE (11/08/2023)- non dovrebbe
 						// intervenire in nessun altro caso
@@ -791,8 +797,14 @@ public class Sequenze_ implements PlugIn {
 
 				}
 
+				
+				// MyLog.waitHere("001 coil= " + coil + " bbb= " + bbb);
+
 				if (bastacherespiri) {
 					// modifica 28/05/2025
+					// rimodifica 28/10/2025 per PeH, le BimbeDiSatana colpiscono ancora 
+					// ed ho PeH;PeN attivate assieme, proprio NON come previsto!
+					// MyLog.waitHere("002 coil= " + coil);
 					coil = coil.replace(";", "+");
 					// ===============================================================================
 					// altro tentativo del 2025, per dividere le bobine spurie dalla prima BO1,2 >
@@ -800,7 +812,11 @@ public class Sequenze_ implements PlugIn {
 					String[] auxx = null;
 					if (coil.contains("BO")) {
 						auxx = coil.split("[,\\+]");
-						coil = auxx[0];					
+						coil = auxx[0];
+					}
+					if (coil.contains("PeH")) {
+						auxx = coil.split("[,\\+]");
+						coil = auxx[0];
 					}
 				}
 				// BLAHBLAHBLAH verificare che non crei problemi con altre macchine ed altre
@@ -811,9 +827,10 @@ public class Sequenze_ implements PlugIn {
 
 				// ===============================================================================
 
+				/// MyLog.waitHere("MACHECOGLIONI= "+coil);
+
 				String[] allCoils = ReadDicom.parseString(coil);
-				
-				
+
 //				MyLog.logVector(allCoils,"allCoils");
 //				MyLog.waitHere("bastacherespiri coil= "+coil);
 				// coil rimane completa
@@ -1181,8 +1198,8 @@ public class Sequenze_ implements PlugIn {
 			out1[i1][1] = vetEcho.get(i1);
 			out1[i1][2] = vetNewCode.get(i1);
 			out1[i1][3] = vetImaPass.get(i1);
-			// IJ.log("-"+i1+"-HO EFFETTUATO oldCode=" + out1[i1][0] + " echo=" +
-			// out1[i1][1] + " newCode=" + out1[i1][2] + " ima=" + out1[i1][3]);
+//			 IJ.log("-"+i1+"-HO EFFETTUATO oldCode=" + out1[i1][0] + " echo=" +
+//			 out1[i1][1] + " newCode=" + out1[i1][2] + " ima=" + out1[i1][3]);
 		}
 
 		return out1;

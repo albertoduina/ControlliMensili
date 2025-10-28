@@ -440,7 +440,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 			strRiga3 = new TableSequence().loadTable(fileDir + SEQUENZE_FILE);
 			String codice = TableSequence.getCode(strRiga3, vetRiga[0]);
 			String cod = codice.substring(0, 2).trim();
-			if (cod.equals("T2")) {
+			if (cod.equals("T2")||cod.equals("t2")) {
 				typeT2 = true;
 			} else {
 				typeT2 = false;
@@ -1003,9 +1003,10 @@ public class p2rmn_ implements PlugIn, Measurements {
 						ButtonMessages.ModelessMsg("getTRVals error value >> " + value, "CONTINUA");
 					}
 				} else {
-					MyLog.waitHere("getTRVals error= " + attribute);
-					attribute = "MISSING";
-					ButtonMessages.ModelessMsg("getTRVals error attribute >> " + attribute + userinput, "CONTINUA");
+					/// 200725 questo va in errore a monty provo a toglierlo
+					//MyLog.waitHere("getTRVals error= " + attribute);
+					//attribute = "MISSING";
+					//ButtonMessages.ModelessMsg("getTRVals error attribute >> " + attribute + userinput, "CONTINUA");
 				}
 			} else {
 				MyLog.waitHere("getTRVals error= " + attribute);

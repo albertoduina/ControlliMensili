@@ -287,6 +287,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 			ab.close();
 
 			if (selftest) {
+				MyLog.waitHere("TEST");
 				if (io.checkJar(TEST_FILE)) {
 					userSelection2 = UtilAyv.siemensGe();
 					switch (userSelection2) {
@@ -461,6 +462,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 			MyLog.appendLog(fileDir + "MyLog.txt", "p9 TR= " + strTR1 + " [mSec]");
 			MyLog.appendLog(fileDir + "MyLog.txt", "p9 TE= " + strTE1 + " [mSec]");
 			MyLog.appendLog(fileDir + "MyLog.txt", "p9 TI= " + strTI1 + " [mSec]");
+	//		MyLog.waitHere("esamino immagine TR= "+strTR1+" TE= "+strTE1);
 
 			dimPixel = ReadDicom
 					.readDouble(ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, DICOM_PIXEL_SPACING), 2));
@@ -570,7 +572,10 @@ public class p9rmn_ implements PlugIn, Measurements {
 				MyLog.appendLog(fileDir + "MyLog.txt",
 						"p9 GEL " + i1 + " media= " + stat1.mean + " devstan= " + stat1.stdDev);
 
+//				IJ.log(
+//						"p9 GEL " + i1 + " media= " + stat1.mean + " devstan= " + stat1.stdDev);
 			}
+//			MyLog.waitHere();
 
 			// saveVetXUpperLeftCornerRoiGels = "";
 			// saveVetYUpperLeftCornerRoiGels = "";

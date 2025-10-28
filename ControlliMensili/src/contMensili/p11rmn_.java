@@ -64,6 +64,8 @@ import utils.UtilAyv;
 /**
  * Analizza in maniera automatica o semi-automatica UNIFORMITA', SNR, FWHM per
  * le bobine superficiali "piatte"
+ * 
+ * DIREZIONI nei codici= vup, vdw, hsx, hdx, yyy
  *
  *
  * @author Alberto Duina - SPEDALI CIVILI DI BRESCIA - Servizio di Fisica
@@ -119,7 +121,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		String java1 = "Java " + System.getProperty("java.version") + (IJ.is64Bit() ? " (64-bit)" : " (32-bit)");
 		String imagej1 = ":ImageJ " + ImageJ.VERSION + ImageJ.BUILD;
 
-		VERSION = user1 + ":"  + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+		VERSION = user1 + ":" + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 
 		// VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" +
@@ -602,12 +604,11 @@ public class p11rmn_ implements PlugIn, Measurements {
 				ImageStatistics statBkg = ImageUtils.backCalc2((int) xFondo, (int) yFondo,
 						MyConst.P11_DIAM_ROI_BACKGROUND, imp1, step, false, test);
 
-
 				if (mytest) {
 					over2.addElement(imp1.getRoi());
 					over2.setStrokeColor(color2);
-					MyLog.waitHere("Roi Fondo coordinate: x= " + xFondo + " y= "
-					+ yFondo + " statFondo.mean= " + statBkg.mean);
+					MyLog.waitHere("Roi Fondo coordinate: x= " + xFondo + " y= " + yFondo + " statFondo.mean= "
+							+ statBkg.mean);
 				}
 
 				//
@@ -670,7 +671,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					imaDiff.getWindow().toFront();
 				}
 
-				if (test||mytest) {
+				if (test || mytest) {
 					MyLog.waitHere("disegnata Mroi su immagine differenza", debug, timeout);
 				}
 
@@ -846,8 +847,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 					//
 				}
 
-				double[] outDsNema = devStandardNema(imp1, imaDiff, xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2, sqNEA,
-						checkPixels, true, imp1.getOverlay());
+				double[] outDsNema = devStandardNema(imp1, imaDiff, xCenterRoi - sqNEA / 2, yCenterRoi - sqNEA / 2,
+						sqNEA, checkPixels, true, imp1.getOverlay());
 				if (step) {
 					msgDisplayMean4(outDsNema[0], outDsNema[1]);
 				}
@@ -1646,18 +1647,31 @@ public class p11rmn_ implements PlugIn, Measurements {
 	 */
 	public static int decodeDirezione(String in1) {
 		int out = 0;
+		boolean debu = false;
 
 		if (in1.compareToIgnoreCase("x") == 0) {
+			if (debu)
+				MyLog.waitHere("p11 direzione tabella= 0 - x");
 			out = 0;
 		} else if (in1.compareToIgnoreCase("vup") == 0) {
+			if (debu)
+				MyLog.waitHere("p11 direzione tabella= 1 - vup");
 			out = 1;
 		} else if (in1.compareToIgnoreCase("vdw") == 0) {
+			if (debu)
+				MyLog.waitHere("p11 direzione tabella= 2 - vdw");
 			out = 2;
 		} else if (in1.compareToIgnoreCase("hsx") == 0) {
+			if (debu)
+				MyLog.waitHere("p11 direzione tabella= 3 - hsx");
 			out = 3;
 		} else if (in1.compareToIgnoreCase("hdx") == 0) {
+			if (debu)
+				MyLog.waitHere("p11 direzione tabella= 4 - hdx");
 			out = 4;
 		} else if (in1.compareToIgnoreCase("yyy") == 0) {
+			if (debu)
+				MyLog.waitHere("p11 direzione tabella= 5 - yyy");
 			out = 5;
 		} else {
 			MyLog.waitHere("Errore nella direzione in " + MyConst.CODE_FILE + " valore " + in1 + " non previsto");
@@ -1691,6 +1705,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 		boolean step = false;
 		boolean test = false;
 		boolean fast = false;
+		boolean debug1=false;
 
 		switch (mode) {
 		case 0:
@@ -1755,12 +1770,16 @@ public class p11rmn_ implements PlugIn, Measurements {
 //
 //		}
 
+//		String codice1 = ReadDicom.readDicomParameter(imp11, MyConst.DICOM_SERIES_DESCRIPTION);
+//		String codice2 = codice1.substring(0, 5).trim();
+//		String coil5 = ReadDicom.readDicomParameter(imp11, MyConst.DICOM_COIL4);
+//		MyLog.waitHere("codice= "+codice2+" coil5= "+coil5);
+
 		direzione = directionFinder(imp11, xMaximum, yMaximum, silent, timeout);
 
 		if (direzione != 0 && direzione != direzioneTabella) {
-			// MyLog.waitHere("Rilevata differenza tra directionFinder e
-			// direzioneTabella direzione= " + direzione
-			// + " direzioneTabella= " + direzioneTabella);
+//			MyLog.waitHere("Forced Manual DIFFERENZA direzioneCalcolata= " + direzione + " direzioneTabella= "
+//					+ direzioneTabella);
 			// MyLog.waitHere("forced manual!");
 			manualRequired = true;
 			direzione = direzioneTabella;
@@ -1774,8 +1793,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 			// piu' saggia di me
 			direzione = direzioneTabella;
 			// manualRequired = true;
-			// MyLog.waitHere("per direzione=0 adotto direzioneTabella= "
-			// + direzioneTabella);
+//			MyLog.waitHere("per direzione=0 adotto direzioneTabella= "
+//			 + direzioneTabella);
 		}
 
 		// if (fast && (step || test)) {
@@ -1820,7 +1839,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			endX = width;
 			startY = out1[1] + profond / dimPixel;
 			if (startY > height) {
-				MyLog.waitHere("Imposto manualRequired");
+				if (debug1) MyLog.waitHere("Imposto manualRequired");
 				manualRequired = true;
 				startY = startY - height;
 			}
@@ -1830,7 +1849,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			strDirez = " orizzontale a sinistra";
 			startX = out1[0] - profond / dimPixel;
 			if (startX < 0) {
-				MyLog.waitHere("Imposto manualRequired");
+				if (debug1) MyLog.waitHere("Imposto manualRequired");
 				manualRequired = true;
 				startX = startX + width;
 			}
@@ -1843,7 +1862,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			strDirez = " orizzontale a destra";
 			startX = out1[0] + profond / dimPixel;
 			if (startX > width) {
-				MyLog.waitHere("Imposto manualRequired");
+				if (debug1) MyLog.waitHere("Imposto manualRequired");
 				manualRequired = true;
 				startX = startX - width;
 			}
@@ -1865,7 +1884,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 			imp11.updateAndDraw();
 
 			if (step || test || mytest) {
-				MyLog.waitHere("Selezione automatica direzione = " + strDirez, debug, timeout);
+				if (debug1) MyLog.waitHere("Selezione automatica direzione = " + strDirez, debug, timeout);
 			}
 
 			double[] profi1 = ((Line) imp11.getRoi()).getPixels();

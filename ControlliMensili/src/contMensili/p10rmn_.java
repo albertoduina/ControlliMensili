@@ -366,6 +366,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 			ResultsTable rt = mainUnifor(path1, path2, autoArgs, profond, info10, mode, 0);
 			if (rt == null) {
 				MyLog.waitHere("ResultsTable == null");
+				MyLog.appendLog(fileDir + "MyLog.txt", "p10 ResultsTable == null");
+
 			}
 
 			UtilAyv.saveResults(vetRiga, fileDir, iw2ayvTable, rt);
@@ -989,7 +991,16 @@ public class p10rmn_ implements PlugIn, Measurements {
 					MyLog.waitHere(str32, debug, timeout);
 					// return null;
 					// broken = true;
-					return rt;
+//					rt = rtFarlocca(path1, imp1, tabCodici, autoCalled);
+					
+					String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici,
+							VERSION + "_P10__ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_"
+									+ MyVersionUtils.CURRENT_VERSION + "___",
+							autoCalled);
+
+					double slicePosition11 = ReadDicom
+							.readDouble(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SLICE_LOCATION));
+					return ReportStandardInfo.abortResultTable_P10(info11, slicePosition11);
 				}
 				if (step && pixx >= area11x11) {
 					MyLog.waitHere(listaMessaggi(22) + pixx, debug, timeout);
@@ -1191,6 +1202,10 @@ public class p10rmn_ implements PlugIn, Measurements {
 					+ MyVersionUtils.CURRENT_VERSION + "___";
 
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, pota1, autoCalled);
+//			MyLog.logVector(info1,"info1");
+//			MyLog.waitHere();
+			
+			
 			double slicePosition = ReadDicom
 					.readDouble(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SLICE_LOCATION));
 
@@ -1299,6 +1314,36 @@ public class p10rmn_ implements PlugIn, Measurements {
 		return rt;
 
 	}
+
+//	public static ResultsTable rtFarlocca(String path1, ImagePlus imp1, String[][] tabCodici, boolean autoCalled) {
+//		ResultsTable rt = null;
+//
+//		String pota1 = VERSION + "_P10__ContMensili_" + MyVersion.CURRENT_VERSION + "__iw2ayv_"
+//				+ MyVersionUtils.CURRENT_VERSION + "___";
+//		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, pota1, autoCalled);
+//
+//		double slicePosition = ReadDicom.readDouble(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SLICE_LOCATION));
+//		MyLog.waitHere("FARLOCCA slicePosition= " + slicePosition);
+//		String t1 = "TESTO";
+//		String s2 = "VALORE";
+//
+//		rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
+//		rt.showRowNumbers(true);
+//		for (int i1 = 0; i1 < 9; i1++) {
+//			rt.addValue(t1, "FALLITO");
+//			rt.incrementCounter();
+//		}
+//		rt.addValue(t1, "Pos");
+//		rt.addValue(s2, slicePosition);
+//
+//		for (int i1 = 0; i1 < 9; i1++) {
+//			rt.incrementCounter();
+//			rt.addValue(t1, "FALLITO");
+//		}
+//		rt.show("Results");
+//		MyLog.waitHere();
+//		return rt;
+//	}
 
 	/**
 	 * Self test execution menu

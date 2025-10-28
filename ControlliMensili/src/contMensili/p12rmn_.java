@@ -709,6 +709,9 @@ public class p12rmn_ implements PlugIn, Measurements {
 			TableCode tc1 = new TableCode();
 			String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
+//			MyLog.logVector(info1, "info1");
+//			MyLog.waitHere();
+			
 			// in previsione di un possibile abort della misura, memorizzo comunque nella
 			// ResultTable
 			// i dati standard dell'immagine + la posizione fetta
