@@ -126,6 +126,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 
 //		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		VERSION = this.getClass().getName(); /// ACCORCIATO PER CORSO
 
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
@@ -172,11 +173,13 @@ public class p4rmn_ implements PlugIn, Measurements {
 				break;
 			case 4:
 				// step = true;
+				VERSION = this.getClass().getName();
 			case 5:
 				boolean verbose = true;
 				boolean test = false;
 				boolean autoCalled = true;
 				boolean step = true;
+				VERSION = this.getClass().getName();
 				String path1 = UtilAyv.imageSelection("SELEZIONARE IMMAGINE...");
 				if (path1 == null) {
 					return 0;
@@ -246,6 +249,7 @@ public class p4rmn_ implements PlugIn, Measurements {
 				break;
 			case 3:
 				step = true;
+				VERSION = this.getClass().getName();
 			case 4:
 				boolean verbose = true;
 				boolean test = false;

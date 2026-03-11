@@ -115,6 +115,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		String imagej1 = ":ImageJ " + ImageJ.VERSION + ImageJ.BUILD;
 		VERSION = user1 + ": " + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion()
 				+ ":iw2ayv_build_" + MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+		VERSION = this.getClass().getName(); /// ACCORCIATO PER CORSO
 
 		fileDir = Prefs.get("prefer.string1", "none");
 		if (IJ.versionLessThan("1.43k")) {
@@ -218,6 +219,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 				if (path2 == null) {
 					return 0;
 				}
+				VERSION = this.getClass().getName();
 				// boolean autoCalled = false;
 				// boolean verbose = true;
 				// boolean test = false;
@@ -522,6 +524,8 @@ public class p10rmn_ implements PlugIn, Measurements {
 
 		TableCode tc1 = new TableCode();
 		String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
+//		MyLog.logMatrix(tabCodici, "tabCodici");
+//		MyLog.waitHere();
 
 		String[][] limiti = TableLimiti.loadTable(MyConst.LIMITS_FILE);
 

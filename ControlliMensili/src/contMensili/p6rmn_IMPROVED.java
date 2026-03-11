@@ -66,8 +66,15 @@ import utils.UtilAyv;
 /**
  * Analizza SPESSORE FETTA effettua 4 profili, non necessariamente orizzontali ,
  * mediati su 11 linee e su questi calcola FWHM e posizione del picco. Lavora
- * sia su singola immagine che su stack
- *
+ * sia su singola immagine che su stack. Tre modi di funzionamento:
+ * 
+ * IMPROVED = NUOVO se STEP mi fa intervento manuale su SLAB e WEDGE, se ho
+ * multi, allora ho il pulsante ESCI per abbreviare l'agonia del manuale.
+ * 
+ * IMPROVED = se NON STEP mi fa il manuale solo per le SLAB come attualmente
+ * 
+ * ORIGINAL = come funzionava prima in automatico per le multi, bisogna
+ * selezionare solo ELABORA/SALTA e poi pensa a tutto lui
  *
  * ____29jan07 v 3.00 i dati di output sugli spessori sono ora in mm (matr/fov)
  *
@@ -89,17 +96,16 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 	public static String spyname = "spyname";
 	public static String spylog = "";
 	public static String spyparent = "";
-//	public static String spyfirst = "";
-//	public static String spysecond = "";
-//	public static String spythird = "";
 	public static String spydir = "";
 	public static int contaxx = 1;
-
+	public static boolean stepout = false; /// permette di uscire da step multislice se ci stanchiamo
+	public static boolean multi = false; /// multislice
 	public static String VERSION = "SPESSORE FETTA";
 
-	private static String TYPE1 = " >> CONTROLLO THICKNESS______________";
+	private static String TYPE1 = " >> CONTROLLO THICKNESS__________________";
 
-	private static String TYPE2 = " >> CONTROLLO THICKNESS MULTISLICE___";
+	private static String TYPE2 = " >> CONTROLLO THICKNESS MULTISLICE_______";
+	private static String TYPE3 = " >> CONTROLLO THICKNESS MULTISLICE AUTO__";
 
 	private static String fileDir = "";
 
@@ -141,7 +147,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		VERSION = user1 + ":" + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 
-//		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		VERSION = this.getClass().getName(); /// ACCORCIATO PER CORSO
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -153,6 +159,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		}
 		return;
 	}
+	// 001 fino a qui uguale o compatibile con ORIGINAL
 
 	public int manualMenu(int preset, String testDirectory) {
 		boolean retry = false;
@@ -175,6 +182,9 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				break;
 			case 4:
 				step = true;
+				if (stepout)
+					step = false;
+				VERSION = this.getClass().getName();
 				retry = false;
 				// dont put break here!
 			case 5:
@@ -189,8 +199,15 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				double[] oldPosition = p6rmn_COMMON.readReferences_COMMON(imp0);
 				// new p6rmn_().wrapThickness(path, "0", oldPosition, autoCalled, step, verbose,
 				// test);
+				if (stepout) {
+					step = false;
+					new p6rmn_ORIGINAL().mainThickness_ORIGINAL(path, "0", oldPosition, autoCalled, step, verbose,
+							test);
+				}
 
-				new p6rmn_IMPROVED().mainThickness(path, "0", oldPosition, autoCalled, step, verbose, test);
+				// DOMANDAZZA: in manuale che facciamo partire in caso di multislice ????
+				// RISPOSTAZZA: FACCIAMOCI ODIARE DAGLI OPERATORI usiamo IMPROVED !!!!
+				new p6rmn_IMPROVED().mainThickness_IMPROVED(path, "0", oldPosition, autoCalled, step, verbose, test);
 				UtilAyv.afterWork();
 				retry = true;
 			}
@@ -199,6 +216,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		UtilAyv.afterWork();
 		return 0;
 	}
+
+	// 001 fino a qui simile o compatibile con ORIGINAL
 
 	/**
 	 * Auto menu invoked from Sequenze_
@@ -229,12 +248,12 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		int userSelection1 = 0;
 		do {
 			if (nTokens == 1) {
-				// userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE1);
+				multi = false;
 				userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE1,
 						TableSequence.getCode(iw2ayvTable, vetRiga[0]), TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
 						vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
 			} else {
-				// userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE2);
+				multi = true;
 				userSelection1 = UtilAyv.userSelectionAuto(VERSION, TYPE2,
 						TableSequence.getCode(iw2ayvTable, vetRiga[0]), TableSequence.getCoil(iw2ayvTable, vetRiga[0]),
 						vetRiga[0] + 1, TableSequence.getLength(iw2ayvTable));
@@ -246,12 +265,12 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				new AboutBox().close();
 				return 0;
 			case 2:
-				// new AboutBox().about("Controllo Thickness", this.getClass());
 				new AboutBox().about("Controllo Thickness", MyVersion.CURRENT_VERSION);
 				retry = true;
 				break;
 			case 3:
 				step = true;
+				stepout = false;
 				retry = false;
 				// dont put break here!
 			case 4:
@@ -264,11 +283,24 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				double[] vetRefPosition = p6rmn_COMMON.readReferences_COMMON(imp0);
 				ResultsTable rt = null;
 				boolean accetta = false;
+//				if (!step) {
+//					stepout = true;
+//				}
 
 				do {
-					rt = mainThickness(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
+					if (multi && !step) {
+						// qui entro per le multiple se non ho selezionato step
+						rt = mainThickness_ORIGINAL(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
+						// MULTIPLE viene eseguito e termina correttamente se non ho step
+						// SINGLE
+					} else {
+						// qui entro per le multiple se ho selezionato step
+						rt = mainThickness_IMPROVED(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
+						// MULTIPLE viene eseguito e termina correttamente se arrivo al termine (se do
+						// EXIT fallisce)
+
+					}
 					if (rt != null) {
-						// MyLog.here("verifyResultTable");
 						rt.show("Results");
 						if (autoCalled && !test) {
 							if (SPY) {
@@ -352,14 +384,13 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				String[] list = { "HT5A2_testP6" };
 				String[] path1 = new InputOutput().findListTestImages2(MyConst.TEST_FILE, list, MyConst.TEST_DIRECTORY);
 				double[] vetRefPosition = MyConst.P6_REFERENCE_LINE_GE;
-				// String[] path={"./Test2/BT2A_testP6"};
 				String autoArgs = "0";
 				boolean autoCalled = false;
 				boolean step = false;
 				boolean verbose = false;
 				boolean test = true;
-				ResultsTable rt = new p6rmn_IMPROVED().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step,
-						verbose, test);
+				ResultsTable rt = new p6rmn_IMPROVED().mainThickness_IMPROVED(path1, autoArgs, vetRefPosition,
+						autoCalled, step, verbose, test);
 				rt.show("Results");
 				MyLog.waitHere("verifica results table");
 				double[] vetResults = UtilAyv.vectorizeResults(rt);
@@ -385,8 +416,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				boolean verbose = false;
 				boolean test = true;
 
-				ResultsTable rt = new p6rmn_IMPROVED().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step,
-						verbose, test);
+				ResultsTable rt = new p6rmn_IMPROVED().mainThickness_IMPROVED(path1, autoArgs, vetRefPosition,
+						autoCalled, step, verbose, test);
 
 				double[] vetResults = UtilAyv.vectorizeResults(rt);
 				boolean ok = UtilAyv.verifyResults1(vetResults, referenceSiemens(), MyConst.P6_vetName);
@@ -419,8 +450,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		boolean verbose = false;
 		boolean test = true;
 
-		ResultsTable rt = new p6rmn_IMPROVED().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
-				test);
+		ResultsTable rt = new p6rmn_IMPROVED().mainThickness_IMPROVED(path1, autoArgs, vetRefPosition, autoCalled, step,
+				verbose, test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt);
 		boolean ok = UtilAyv.verifyResults1(vetResults, referenceSiemens(), MyConst.P6_vetName);
@@ -442,63 +473,9 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		return path;
 	}
 
-//	public double[] readReferences(ImagePlus imp1) {
-//		int rows = imp1.getHeight();
-//		float dimPixel = ReadDicom
-//				.readFloat(ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
-//
-//		double[] vetReference = new double[4];
-//		vetReference[0] = ReadDicom.readDouble(Prefs.get("prefer.p6rmnAx", "" + 50.0 / dimPixel));
-//		vetReference[1] = ReadDicom.readDouble(Prefs.get("prefer.p6rmnAy", "" + 60.0 / dimPixel));
-//		vetReference[2] = ReadDicom.readDouble(Prefs.get("prefer.p6rmnBx", "" + 50.0 / dimPixel));
-//		vetReference[3] = ReadDicom.readDouble(Prefs.get("prefer.p6rmnBy", "" + 215.0 / dimPixel));
-//		if (interdiction(vetReference, rows)) {
-//			vetReference[0] = 50.0 / dimPixel;
-//			vetReference[1] = 60.0 / dimPixel;
-//			vetReference[2] = 50.0 / dimPixel;
-//			vetReference[3] = 215.0 / dimPixel;
-//		}
-//		return vetReference;
-//	}
-
-//	public void saveReferences(ImagePlus imp1) {
-//		Line line1 = (Line) imp1.getRoi();
-//		Prefs.set("prefer.p6rmnAx", "" + line1.x1);
-//		Prefs.set("prefer.p6rmnAy", "" + line1.y1);
-//		Prefs.set("prefer.p6rmnBx", "" + line1.x2);
-//		Prefs.set("prefer.p6rmnBy", "" + line1.y2);
-//	}
-
-//	public ResultsTable wrapThickness(String[] path, String autoArgs, double[] vetRefPosition, boolean autoCalled,
-//			boolean step, boolean verbose, boolean test) {
-//		boolean accetta = false;
-//		ResultsTable rt = null;
-//
-//		do {
-//			rt = mainThickness(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
-//
-//			if (rt == null)
-//				return rt;
-//
-//			rt.show("Results");
-//
-//			if (autoCalled && !test) {
-//				accetta = MyMsg.accettaMenu();
-//			} else {
-//				if (!test) {
-//					accetta = MyMsg.msgStandalone();
-//				} else
-//					accetta = test;
-//			}
-//			// MyLog.here();
-//
-//		} while (!accetta);
-//		return rt;
-//	}
-
-	@SuppressWarnings("deprecation")
-	public ResultsTable mainThickness(String[] path, String autoArgs, double[] vetRefPosition, boolean autoCalled,
-			boolean step, boolean verbose, boolean test) {
+	// @SuppressWarnings("deprecation")
+	public ResultsTable mainThickness_IMPROVED(String[] path, String autoArgs, double[] vetRefPosition,
+			boolean autoCalled, boolean step, boolean verbose, boolean test) {
 
 		int nFrames = 0;
 		double vetProfile[] = { 0, 0, 0, 0 }; // [xStart,yStart,xEnd,yEnd]
@@ -515,8 +492,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		double[] fwhmCuneo4 = new double[len];
 		double[] peakPositionCuneo4 = new double[len];
 		int[] vetAccettab = new int[len];
-		double[] mmVetMedSlab = new double[len];
-		double[] mmVetMedCuneo = new double[len];
+//		double[] mmVetMedSlab = new double[len];
+//		double[] mmVetMedCuneo = new double[len];
 		double[] mmVetS1CorSlab = new double[len];
 		double[] mmVetS2CorSlab = new double[len];
 		double[] mmVetS1CorCuneo = new double[len];
@@ -526,8 +503,12 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		double[] mmVetAccurSpessSlab = new double[len];
 		double[] mmVetAccurSpessCuneo = new double[len];
 		ResultsTable rt = null;
-		ImagePlus imp13 = null;
+//		ImagePlus imp13 = null;
 //		ResultsTable rt11 = null;
+		// IJ.log(" mainThickness_IMPROVED");
+
+//		MyLog.waitHere("Eseguo IMPROVED autoCalled= " + autoCalled + " step= " + step + " verbose= " + verbose
+//				+ " test= " + test);
 
 //		IJ.log(MyLog.qui() + " ====================================================================");
 //		IJ.log(MyLog.qui() + " FORZO STEP SEMPRE ATTIVO perche' SONO STUFO DI DIMENTICARLO");
@@ -536,6 +517,11 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 
 		ImagePlus impStack = stackBuilder(path, true);
 		nFrames = path.length;
+		if (nFrames > 1)
+			multi = true;
+		else {
+			multi = false;
+		}
 
 		impStack.setSliceWithoutUpdate(1);
 
@@ -553,35 +539,15 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 //			MyLog.waitHere("userSelection= " + userSelection);
 		}
 		if (userSelection == 1) {
-
-//			TableCode tc11 = new TableCode();
-//			String[][] tabCodici11 = tc11.loadMultipleTable("codici", ".csv");
-//
-////			MyLog.waitHere("path1= "+path[0]);
-//			String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path[0], impStack, tabCodici11, VERSION,
-//					autoCalled);
-//
-//			for (int w1 = 0; w1 < nFrames; w1++) {
-//
-//				ImagePlus imp3 = MyStackUtils.imageFromStack(impStack, w1 + 1);
-//
-//				String pos2 = ReadDicom.readDicomParameter(imp3, MyConst.DICOM_IMAGE_POSITION);
-//				slicePos2[w1] = ReadDicom.readSubstring(pos2, 3);
-//			}
-
 			return null;
-
 		}
 
 		String thename = "";
 
 		if (SPY) {
-//			spyDirTree(path, step);
-
 			spydir = p6rmn_COMMON.spyDirTree_COMMON(path, step);
 			File f1 = new File(path[0]);
 			thename = f1.getName();
-
 		}
 
 		//
@@ -617,6 +583,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				.readDouble(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_SPACING_BETWEEN_SLICES));
 		// IJ.log("spacing= " + spacing);
 
+		// 002 fino a qui compatibile con ORIGINAL
+
 		int userSelection3 = 0;
 		boolean skip = false;
 		double[] dsd1 = null;
@@ -628,32 +596,53 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		double[] spessCor4 = null;
 		double[] spessCor5 = null;
 
-		double spessMed1 = 0;
-		double spessMed2 = 0;
-		double geomMed1 = 0;
-		double geomMed2 = 0;
+//		double spessMed1 = 0;
+//		double spessMed2 = 0;
+//		double geomMed1 = 0;
+//		double geomMed2 = 0;
 
 		for (int w1 = 0; w1 < nFrames; w1++) {
 
 			ImagePlus imp3 = MyStackUtils.imageFromStack(impStack, w1 + 1);
-
 			String pos2 = ReadDicom.readDicomParameter(imp3, MyConst.DICOM_IMAGE_POSITION);
 			// IJ.log("pos2= " + pos2);
 
 			slicePos2[w1] = ReadDicom.readSubstring(pos2, 3);
+			if (stepout) {
+				vetAccettab[w1] = 1;
+				continue;
+			}
 
 			if (verbose) {
 				UtilAyv.showImageMaximized(imp3);
 			}
-			if (nFrames > 1) {
+			if (nFrames > 1 && step) {
 				userSelection3 = msgAccept();
+				// IJ.log("premuto= " + userSelection3);
 				vetAccettab[w1] = userSelection3;
+			} else if (nFrames > 1) {
+				userSelection3 = msgAccept2();
+				if (stepout)
+					vetAccettab[w1] = 1;
+				else
+					vetAccettab[w1] = userSelection3;
+			}
+			if (userSelection3 == 3) {
+				/// step = false;
+				skip = true;
+				stepout = true;
+				continue;
 			}
 
 			if (userSelection3 == 1) {
 				skip = true; // 08jun24 skip permette di non esaminare inutilmente le immagini con SALTA
 			} else {
 				skip = false;
+			}
+
+			if (stepout) {
+				skip = true;
+				continue;
 			}
 
 			// Phantom positioning: the phantom MUST have the slabs in high
@@ -664,9 +653,6 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			// refPosition [startX = 13, startY=65, endX = 147, endY=65,
 			// radius=10]
 
-//			if (step && !skip)
-//				msgProfile();
-
 			int ra1 = (int) (lato / 12.0);
 			vetProfile[0] = lato / 13.0;
 			vetProfile[1] = lato / 5.0;
@@ -675,6 +661,10 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 
 			boolean isSlab = true;
 			boolean step2 = isSlab || step;
+//			if (stepout) {
+//				step = false;
+//				step2 = false;
+//			}
 			if (!step2 || skip) {
 				imp3.hide();
 			}
@@ -685,7 +675,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				imp3.getWindow().toFront();
 			}
 
-			if (skip) {
+			if (skip || stepout) {
 				// entro se selezionato SALTA e non faccio nulla (forse)
 			} else {
 				// entro solo se selezionato ESAMINA
@@ -695,6 +685,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 
 				fwhmSlice1[w1] = dsd1[0];
 				peakPositionSlice1[w1] = dsd1[1];
+				// IJ.log("fwhmSlice1[w1]= " + fwhmSlice1[w1]);
+				// IJ.log("peakPositionSlice1[w1]= " + peakPositionSlice1[w1]);
 
 				if (imp3.isVisible()) {
 					imp3.getWindow().toFront();
@@ -714,6 +706,10 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				vetProfile[3] = lato * 2.0 / 5.0;
 
 				isSlab = true;
+				if (stepout) {
+					step = false;
+					step2 = false;
+				}
 				step2 = isSlab || step;
 				if (!step2 || skip) {
 					imp3.hide();
@@ -728,6 +724,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 						"SECONDA SLAB");
 				fwhmSlice2[w1] = dsd2[0];
 				peakPositionSlice2[w1] = dsd2[1];
+				// IJ.log("fwhmSlice2[w1]= " + fwhmSlice2[w1]);
+				// IJ.log("peakPositionSlice2[w1]= " + peakPositionSlice2[w1]);
 
 				if (imp3.isVisible()) {
 					imp3.getWindow().toFront();
@@ -758,7 +756,15 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				vetProfile[3] = lato * 3.0 / 5.0;
 
 				isSlab = false;
+// iw2ayv
+//				if (stepout) {
+//					step = false;
+//					step2 = false;
+//				}
 				step2 = isSlab || step;
+
+//				MyLog.waitHere("PRIMO CUNEO step= " + step + " step2= " + step2 + " skip= " + skip);
+
 				if (!step2 || skip) {
 					imp3.hide();
 				}
@@ -774,6 +780,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 
 				fwhmCuneo3[w1] = dsd3[0];
 				peakPositionCuneo3[w1] = dsd3[1];
+				// IJ.log("fwhmCuneo3[w1]= " + fwhmCuneo3[w1]);
+				// IJ.log("peakPositionCuneo3[w1]= " + peakPositionCuneo3[w1]);
 
 				if (imp3.isVisible()) {
 					imp3.getWindow().toFront();
@@ -793,6 +801,10 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				vetProfile[3] = lato * 4.0 / 5.0;
 
 				isSlab = false;
+				if (stepout) {
+					step = false;
+					step2 = false;
+				}
 				step2 = isSlab || step;
 				if (!step2 || skip) {
 					imp3.hide();
@@ -807,6 +819,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 						"SECONDO CUNEO");
 				fwhmCuneo4[w1] = dsd4[0];
 				peakPositionCuneo4[w1] = dsd4[1];
+				// IJ.log("fwhmCuneo4[w1]= " + fwhmCuneo4[w1]);
+				// IJ.log("peakPositionCuneo4[w1]= " + peakPositionCuneo4[w1]);
 
 				if (imp3.isVisible()) {
 					imp3.getWindow().toFront();
@@ -819,17 +833,11 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				spessCor5 = spessStrato_CORRETTO_AAPM100(dsd3[0], dsd4[0], thick, dimPixel);
 
 				// ####################################################################################
-//				spessMed2 = (pix2mm(dsd3[0], dimPixel) + pix2mm(dsd4[0], dimPixel)) / 2;
-//
-//				geomMed2 = Math.sqrt((pix2mm(dsd3[0], dimPixel) * pix2mm(dsd4[0], dimPixel)));
 
-//				mmVetMedCuneo[w1] = geomMed2;
 				mmVetS1CorCuneo[w1] = spessCor5[0];
 				mmVetS2CorCuneo[w1] = spessCor5[1];
 				mmVetErrSpessCuneo[w1] = spessCor5[2];
 				mmVetAccurSpessCuneo[w1] = spessCor5[3];
-
-				// }
 
 				String fontStyle = "Arial";
 				Font defaultFont = FontUtil.getFont(fontStyle, Font.PLAIN, 13);
@@ -841,78 +849,546 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				// IJ.log("==================================================================");
 
 				NonBlockingGenericDialog resultsDialog = new NonBlockingGenericDialog("SV07 - Results FWHM");
-				// IJ.log("SV07 - Results FWHM");
 				resultsDialog.addMessage("Dati ottenuti per slice " + (w1 + 1) + " / " + nFrames, titleFont);
-				// IJ.log("Dati ottenuti per slice " + (w1 + 1) + " / " + nFrames);
 				resultsDialog.setFont(defaultFont);
 
 				resultsDialog.addMessage("==================================================================");
 				// IJ.log("==================================================================");
 				resultsDialog.addMessage("SPESSORE TEORICO= " + String.format("%.4f", thick)
 						+ " [mm]   SPACING TEORICO= " + String.format("%.4f", spacing) + " [mm] ");
-//				IJ.log("SPESSORE TEORICO= " + String.format("%.4f", thick) + " [mm]   SPACING TEORICO= "
-//						+ String.format("%.4f", spacing) + " [mm] ");
 				resultsDialog.addMessage("==================================================================");
-				// IJ.log("==================================================================");
 				resultsDialog.addMessage("FWHM PRIMA SLAB= " + String.format("%.4f", pix2mm(dsd1[0], dimPixel))
 						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd1[1]));
-//				IJ.log("FWHM PRIMA SLAB= " + String.format("%.4f", pix2mm(dsd1[0], dimPixel))
-//						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd1[1]));
 				resultsDialog.addMessage("FWHM SECONDA SLAB= " + String.format("%.4f", pix2mm(dsd2[0], dimPixel))
 						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd2[1]));
-//				IJ.log("FWHM SECONDA SLAB= " + String.format("%.4f", pix2mm(dsd2[0], dimPixel))
-//						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd2[1]));
 				resultsDialog.addMessage("==================================================================");
-//				IJ.log("==================================================================");
+				resultsDialog.addMessage("=== OLD ERA IL VECCHIO ALGORITMO SENZA POSIZIONAMENTO ROI MANUALE ===");
 				resultsDialog.addMessage("FWHM CORRETTO OLD SLAB= " + String.format("%.4f", spessCor1[0]) + " [mm]");
-//				IJ.log("FWHM CORRETTO OLD SLAB= " + String.format("%.4f", spessCor1[0]) + " [mm]");
 				resultsDialog
 						.addMessage("FWHM CORRETTO AAPM100 SLAB= " + String.format("%.4f", spessCor4[0]) + " [mm]");
-//				IJ.log("FWHM CORRETTO AAPM100 SLAB= " + String.format("%.4f", spessCor4[0]) + " [mm]");
 				resultsDialog.addMessage("==================================================================");
-//				IJ.log("==================================================================");
-//			resultsDialog.addMessage(
-//					"FWHM MEDIA ARITM SLAB= " + String.format("%.4f", spessMed1) + " [mm]   >>>>> MEGLIO  <<<<<");
-//			resultsDialog.addMessage(
-//					"FWHM MEDIA GEOM SLAB= " + String.format("%.4f", geomMed1) + " [mm]   >>>>> MEGLIO MEGLIO ! <<<<<");
-//			resultsDialog.addMessage("ERRORE SPERIMENTALE SLAB= " + String.format("%.4f", spessCor4[2]) + " [%] ");
-//			IJ.log("ERRORE SPERIMENTALE SLAB= " + String.format("%.4f", spessCor4[2]) + " [%] ");
-//			resultsDialog.addMessage("ACCURATEZZA SPESSORE SLAB= " + String.format("%.4f", spessCor4[3]) + " [%] ");
-//			IJ.log("ACCURATEZZA SPESSORE SLAB= " + String.format("%.4f", spessCor4[3]) + " [%] ");
-//			resultsDialog.addMessage("==================================================================");
-//			IJ.log("==================================================================");
 				resultsDialog.addMessage("FWHM PRIMO CUNEO= " + String.format("%.4f", pix2mm(dsd3[0], dimPixel))
 						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd3[1]));
-//				IJ.log("FWHM PRIMO CUNEO= " + String.format("%.4f", pix2mm(dsd3[0], dimPixel))
-//						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd3[1]));
 				resultsDialog.addMessage("FWHM SECONDO CUNEO= " + String.format("%.4f", pix2mm(dsd4[0], dimPixel))
 						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd4[1]));
-//				IJ.log("FWHM SECONDO CUNEO= " + String.format("%.4f", pix2mm(dsd4[0], dimPixel))
-//						+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd4[1]));
 				resultsDialog.addMessage("==================================================================");
-//				IJ.log("==================================================================");
+				resultsDialog.addMessage("=== OLD ERA IL VECCHIO ALGORITMO SENZA POSIZIONAMENTO ROI MANUALE ===");
 				resultsDialog.addMessage("FWHM CORRETTO OLD CUNEI= " + String.format("%.4f", spessCor2[0]) + " [mm]");
-//				IJ.log("FWHM CORRETTO OLD CUNEI= " + String.format("%.4f", spessCor2[0]) + " [mm]");
 				resultsDialog
 						.addMessage("FWHM CORRETTO AAPM100 CUNEI= " + String.format("%.4f", spessCor5[0]) + " [mm]");
-//				IJ.log("FWHM CORRETTO AAPM100 CUNEI= " + String.format("%.4f", spessCor5[0]) + " [mm]");
 				resultsDialog.addMessage("==================================================================");
-//				IJ.log("==================================================================");
-//			resultsDialog.addMessage(
-//					"FWHM MEDIA ARITM CUNEI= " + String.format("%.4f", spessMed2) + " [mm]   >>>>> MEGLIO  <<<<<");
-//			resultsDialog.addMessage("FWHM MEDIA GEOM CUNEI= " + String.format("%.4f", geomMed2)
-//					+ " [mm]   >>>>> MEGLIO MEGLIO ! <<<<<");
-//			resultsDialog.addMessage("ERRORE SPERIMENTALE CUNEI= " + String.format("%.4f", spessCor5[2]) + " [%] ");
-//			IJ.log("ERRORE SPERIMENTALE CUNEI= " + String.format("%.4f", spessCor5[2]) + " [%] ");
-//			resultsDialog.addMessage("ACCURATEZZA SPESSORE CUNEI= " + String.format("%.4f", spessCor5[3]) + " [%] ");
-//			IJ.log("ACCURATEZZA SPESSORE CUNEI= " + String.format("%.4f", spessCor5[3]) + " [%] ");
-//			resultsDialog.addMessage("==================================================================");
-//			IJ.log("==================================================================");
-
 				if (step) {
 					resultsDialog.showDialog();
 				}
 			}
+		}
+
+		// MyLog.waitHere("passaggio di scrittura");
+
+		//
+		// Salvataggio dei risultati nella results table
+		//
+
+		TableCode tc1 = new TableCode();
+		String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
+
+		String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path[0], impStack, tabCodici, VERSION, autoCalled);
+		rt = ReportStandardInfo.putSimpleStandardInfoRT(info1);
+		rt.showRowNumbers(true);
+
+		String t1 = "TESTO";
+		String s2 = "SLICE";
+		String s3 = "seg_ax";
+		String s4 = "seg_ay";
+		String s5 = "seg_bx";
+		String s6 = "seg_by";
+
+		rt.addValue(t1, " slicePos");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, UtilAyv.convertToDouble(slicePos2[j1]));
+		}
+		rt.addValue(s3, vetRefPosition[0]);
+		rt.addValue(s4, vetRefPosition[1]);
+		rt.addValue(s5, vetRefPosition[2]);
+		rt.addValue(s6, vetRefPosition[3]);
+
+//		for (int jj1 = 0; jj1 < nFrames; jj1++) {
+//			if (vetAccettab[jj1] != 2) {
+//
+//				// lascia a zero i valori ma tiene occupato il posto nel report
+//				MyLog.waitHere("skip "+jj1);
+//				
+//				rt.incrementCounter();
+//				rt.addValue(t1, "fwhm_slab1");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "peak_slab1");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "fwhm_slab2");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "peak_slab2");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "fwhm_cuneo3");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "peak_cuneo3");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "fwhm_cuneo4");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "peak_cuneo4");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "S1CorSlab");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "S2CorSlab");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "ErrSperSlab");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "AccurSpesSlab");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "S1CorCuneo");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "S2CorCuneo");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "ErrSperCuneo");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "AccurSpesCuneo");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "Accettab");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "DimPix");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "Thick");
+//				rt.incrementCounter();
+//				rt.addValue(t1, "Spacing");
+
+//			} else {
+
+				// MyLog.waitHere("scrive "+jj1);
+
+				rt.incrementCounter();
+				rt.addValue(t1, "fwhm_slab1");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, fwhmSlice1[j1]);
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "peak_slab1");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, peakPositionSlice1[j1]);
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "fwhm_slab2");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, fwhmSlice2[j1]);
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "peak_slab2");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, peakPositionSlice2[j1]);
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "fwhm_cuneo3");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, fwhmCuneo3[j1]);
+					// IJ.log("cuneo3 slice= " + j1 + " FWHM [mm]= " + fwhmCuneo3[j1] * dimPixel *
+					// Math.sin(Math.toRadians(11.3)));
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "peak_cuneo3");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, peakPositionCuneo3[j1]);
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "fwhm_cuneo4");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, fwhmCuneo4[j1]);
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "peak_cuneo4");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, peakPositionCuneo4[j1]);
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "S1CorSlab");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, mmVetS1CorSlab[j1]);
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "S2CorSlab");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, mmVetS2CorSlab[j1]);
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "ErrSperSlab");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, mmVetErrSpessSlab[j1]);
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "AccurSpesSlab");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, mmVetAccurSpessSlab[j1]);
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "S1CorCuneo");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, mmVetS1CorCuneo[j1]);
+				}
+				rt.incrementCounter();
+				rt.addValue(t1, "S2CorCuneo");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, mmVetS2CorCuneo[j1]);
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "ErrSperCuneo");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, mmVetErrSpessCuneo[j1]);
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "AccurSpesCuneo");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, mmVetAccurSpessCuneo[j1]);
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "Accettab");
+				for (int j1 = 0; j1 < nFrames; j1++) {
+					rt.addValue(s2 + j1, vetAccettab[j1]);
+				}
+
+				rt.incrementCounter();
+				rt.addValue(t1, "DimPix");
+				rt.addValue(s2 + 0, dimPixel);
+
+				rt.incrementCounter();
+				rt.addValue(t1, "Thick");
+				rt.addValue(s2 + 0, thick);
+
+				rt.incrementCounter();
+				rt.addValue(t1, "Spacing");
+				rt.addValue(s2 + 0, spacing);
+//			}
+//		}
+
+		return rt;
+
+	}
+
+	@SuppressWarnings("deprecation")
+	public ResultsTable mainThickness_ORIGINAL(String[] path, String autoArgs, double[] vetRefPosition,
+			boolean autoCalled, boolean step, boolean verbose, boolean test) {
+
+		int nFrames = 0;
+		double vetProfile[] = { 0, 0, 0, 0 }; // [xStart,yStart,xEnd,yEnd]
+		double lato = 0;
+
+		int len = path.length;
+		String[] slicePos2 = new String[len];
+		double[] fwhmSlice1 = new double[len];
+		double[] peakPositionSlice1 = new double[len];
+		double[] fwhmSlice2 = new double[len];
+		double[] peakPositionSlice2 = new double[len];
+		double[] fwhmCuneo3 = new double[len];
+		double[] peakPositionCuneo3 = new double[len];
+		double[] fwhmCuneo4 = new double[len];
+		double[] peakPositionCuneo4 = new double[len];
+		int[] vetAccettab = new int[len];
+		double[] mmVetS1CorSlab = new double[len];
+		double[] mmVetS2CorSlab = new double[len];
+		double[] pixVetS1CorCuneo = new double[len];
+		double[] pixVetS2CorCuneo = new double[len];
+		double[] mmVetErrSpessSlab = new double[len];
+		double[] mmVetErrSpessCuneo = new double[len];
+		double[] percVetAccurSpessSlab = new double[len];
+		double[] percVetAccurSpessCuneo = new double[len];
+		ResultsTable rt = null;
+		// IJ.log(" mainThickness_ORIGINAL");
+
+//		ResultsTable rt11 = null;
+
+//		MyLog.waitHere("Eseguo ORIGINAL autoCalled= " + autoCalled + " step= " + step + " verbose= " + verbose
+//				+ " test= " + test);
+
+		ImagePlus impStack = stackBuilder(path, true);
+		nFrames = path.length;
+
+		impStack.setSliceWithoutUpdate(1);
+
+		String thename = "";
+		if (SPY) {
+			spydir = p6rmn_COMMON.spyDirTree_COMMON(path, step);
+			File f1 = new File(path[0]);
+			thename = f1.getName();
+		}
+
+		if (verbose) {
+			UtilAyv.showImageMaximized(impStack);
+		}
+		float dimPixel = ReadDicom.readFloat(
+				ReadDicom.readSubstring(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_PIXEL_SPACING), 1));
+		impStack.setRoi(new Line((int) vetRefPosition[0], (int) vetRefPosition[1], (int) vetRefPosition[2],
+				(int) vetRefPosition[3]));
+		impStack.updateAndDraw();
+		int userSelection = 0;
+		if (!test) {
+			userSelection = msgSquare();
+//			MyLog.waitHere("userSelection= " + userSelection);
+		}
+		if (userSelection == 1) {
+
+//			TableCode tc11 = new TableCode();
+//			String[][] tabCodici11 = tc11.loadMultipleTable("codici", ".csv");
+//
+////			MyLog.waitHere("path1= "+path[0]);
+//			String[] info11 = ReportStandardInfo.getSimpleStandardInfo(path[0], impStack, tabCodici11, VERSION,
+//					autoCalled);
+//
+//			for (int w1 = 0; w1 < nFrames; w1++) {
+//
+//				ImagePlus imp3 = MyStackUtils.imageFromStack(impStack, w1 + 1);
+//
+//				String pos2 = ReadDicom.readDicomParameter(imp3, MyConst.DICOM_IMAGE_POSITION);
+//				slicePos2[w1] = ReadDicom.readSubstring(pos2, 3);
+//			}
+
+			return null;
+
+		}
+
+		//
+		// legge la posizione finale del segmento dopo il posizionamento
+		//
+		Roi roi = impStack.getRoi();
+		Line line1 = (Line) roi;
+		vetRefPosition[0] = line1.x1;
+		vetRefPosition[1] = line1.y1;
+		vetRefPosition[2] = line1.x2;
+		vetRefPosition[3] = line1.y2;
+		lato = line1.getRawLength();
+
+		if (!test) {
+//			saveReferences(impStack);
+		}
+		if (step) {
+			msgSquareCoordinates(vetRefPosition);
+		}
+
+		//
+		// elaborazione immagini dello stack
+		//
+
+		nFrames = impStack.getStackSize();
+
+		double thick = ReadDicom.readDouble(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_SLICE_THICKNESS));
+		// IJ.log("thick= " + thick);
+		double spacing = ReadDicom
+				.readDouble(ReadDicom.readDicomParameter(impStack, MyConst.DICOM_SPACING_BETWEEN_SLICES));
+		// IJ.log("spacing= " + spacing);
+
+//		IJ.log("==================================================================");
+//		IJ.log("======================= p6rmn_ORIGINAL ===========================");
+//		IJ.log("==================================================================");
+//		IJ.log("Results FWHM");
+
+		for (int w1 = 0; w1 < nFrames; w1++) {
+
+//			IJ.log("Dati ottenuti per slice " + (w1 + 1) + " / " + nFrames);
+//			IJ.log("==================================================================");
+//
+//			IJ.log("SPESSORE TEORICO= " + String.format("%.4f", thick) + " [mm]   SPACING TEORICO= "
+//					+ String.format("%.4f", spacing) + " [mm] ");
+//			IJ.log("==================================================================");
+
+			ImagePlus imp3 = MyStackUtils.imageFromStack(impStack, w1 + 1);
+
+			String pos2 = ReadDicom.readDicomParameter(imp3, MyConst.DICOM_IMAGE_POSITION);
+			// IJ.log("pos2= " + pos2);
+
+			slicePos2[w1] = ReadDicom.readSubstring(pos2, 3);
+
+			if (verbose) {
+				UtilAyv.showImageMaximized(imp3);
+			}
+			if (nFrames > 1) {
+				int userSelection3 = msgAccept();
+				vetAccettab[w1] = userSelection3;
+			}
+
+			if (!step) {
+				imp3.hide();
+				// Phantom positioning: the phantom MUST have the slabs in high
+				// position and the wedges in lower position
+				//
+				// First slab analysis
+				//
+				// refPosition [startX = 13, startY=65, endX = 147, endY=65,
+				// radius=10]
+			}
+
+			if (step) {
+				msgProfile();
+			}
+
+			int ra1 = (int) (lato / 12.0);
+			vetProfile[0] = lato / 13.0;
+			vetProfile[1] = lato / 5.0;
+			vetProfile[2] = lato - lato / 13.0;
+			vetProfile[3] = lato / 5.0;
+
+			boolean isSlab = true;
+			boolean invertErf = false;
+			boolean putLabelSx = false;
+			if (imp3.isVisible()) {
+				imp3.getWindow().toFront();
+			}
+
+			double[] dsd1 = analProf_ORIGINAL(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step,
+					putLabelSx, dimPixel);
+
+			fwhmSlice1[w1] = dsd1[0];
+			peakPositionSlice1[w1] = dsd1[1];
+
+//			IJ.log("FWHM PRIMA SLAB= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd1[0], dimPixel))
+//					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd1[1]));
+
+			if (imp3.isVisible()) {
+				imp3.getWindow().toFront();
+			}
+			//
+			// Second slab analysis
+			//
+			if (step) {
+				msgProfile();
+				// refPosition [startX = 13, startY=65, endX = 147, endY=65,
+				// radius=10]
+			}
+
+			ra1 = (int) (lato / 12.0);
+			vetProfile[0] = lato / 13.0;
+			vetProfile[1] = lato * 2.0 / 5.0;
+			vetProfile[2] = lato - lato / 13.0;
+			vetProfile[3] = lato * 2.0 / 5.0;
+
+			isSlab = true;
+			invertErf = false;
+			putLabelSx = true;
+			if (step) {
+				imp3.getWindow().toFront();
+			}
+			double[] dsd2 = analProf_ORIGINAL(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step,
+					putLabelSx, dimPixel);
+			fwhmSlice2[w1] = dsd2[0];
+			peakPositionSlice2[w1] = dsd2[1];
+
+//			IJ.log("FWHM SECONDA SLAB= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd2[0], dimPixel))
+//					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd2[1]));
+//
+//			IJ.log("==================================================================");
+
+			if (imp3.isVisible()) {
+				imp3.getWindow().toFront();
+			}
+			double[] mmSpessCor1 = spessStrato(dsd1[0], dsd2[0], thick, dimPixel);
+
+//			IJ.log("FWHM CORRETTO OLD SLAB= " + String.format("%.4f", mmSpessCor1[0]) + " [mm]");
+
+			double[] sliceAapm100 = p6rmn_COMMON.spessStrato_AAPM100_COMMON(dsd1[0], dsd2[0], thick, dimPixel);
+//			IJ.log("FWHM CORRETTO AAPM100 SLAB= " + String.format("%.4f", sliceAapm100[0]) + " [mm]");
+//			IJ.log("==================================================================");
+
+			mmVetS1CorSlab[w1] = mmSpessCor1[0];
+			mmVetS2CorSlab[w1] = mmSpessCor1[1];
+			mmVetErrSpessSlab[w1] = mmSpessCor1[2];
+			percVetAccurSpessSlab[w1] = mmSpessCor1[3];
+			//
+			// First wedge analysis
+			//
+			if (step) {
+				msgProfile();
+				// refPosition [startX = 13, startY=98, endX = 147, endY=98,
+				// radius=10]
+			}
+
+			ra1 = (int) (lato / 12.0);
+			vetProfile[0] = lato / 13.0;
+			vetProfile[1] = lato * 3.0 / 5.0;
+			vetProfile[2] = lato - lato / 13.0;
+			vetProfile[3] = lato * 3.0 / 5.0;
+
+			isSlab = true;
+			invertErf = true;
+			putLabelSx = false;
+			if (imp3.isVisible()) {
+				imp3.getWindow().toFront();
+			}
+
+			double[] dsd3 = analProf_ORIGINAL(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step,
+					putLabelSx, dimPixel);
+
+			fwhmCuneo3[w1] = dsd3[0];
+			peakPositionCuneo3[w1] = dsd3[1];
+//			IJ.log("FWHM PRIMO CUNEO= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd3[0], dimPixel))
+//					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd3[1]));
+
+			if (imp3.isVisible()) {
+				imp3.getWindow().toFront();
+			}
+			//
+			// Second wedge analysis
+			//
+			if (step) {
+				msgProfile();
+				// refPosition [startX = 13, startY=133, endX = 147, endY=133,
+				// radius=10]
+			}
+
+			ra1 = (int) (lato / 12.0);
+			vetProfile[0] = lato / 13.0;
+			vetProfile[1] = lato * 4.0 / 5.0;
+			vetProfile[2] = lato - lato / 13.0;
+			vetProfile[3] = lato * 4.0 / 5.0;
+
+			isSlab = true;
+			invertErf = false;
+			putLabelSx = true;
+			if (step) {
+				imp3.getWindow().toFront();
+			}
+			double[] dsd4 = analProf_ORIGINAL(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step,
+					putLabelSx, dimPixel);
+			fwhmCuneo4[w1] = dsd4[0];
+//			IJ.log("FWHM SECONDO CUNEO= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd4[0], dimPixel))
+//					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd4[1]));
+//			IJ.log("==================================================================");
+
+			peakPositionCuneo4[w1] = dsd4[1];
+
+			if (imp3.isVisible()) {
+				imp3.getWindow().toFront();
+			}
+			double[] mixSpessCor2 = spessStrato(dsd3[0], dsd4[0], thick, dimPixel);
+
+//			IJ.log("FWHM CORRETTO OLD CUNEI= " + String.format("%.4f", mixSpessCor2[0]) + " [mm]");
+
+			double[] cuneoAapm100 = p6rmn_COMMON.spessStrato_AAPM100_COMMON(dsd3[0], dsd4[0], thick, dimPixel);
+//			IJ.log("FWHM CORRETTO AAPM100 CUNEI= " + String.format("%.4f", cuneoAapm100[0]) + " [mm]");
+//			IJ.log("==================================================================");
+
+			pixVetS1CorCuneo[w1] = mixSpessCor2[0];
+			pixVetS2CorCuneo[w1] = mixSpessCor2[1];
+			mmVetErrSpessCuneo[w1] = mixSpessCor2[2];
+			percVetAccurSpessCuneo[w1] = mixSpessCor2[3];
+
 		}
 
 		//
@@ -938,6 +1414,14 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		String s5 = "seg_bx";
 		String s6 = "seg_by";
 
+		// rt.setHeading(++col, t1);
+		// for (int j1 = 0; j1 < nFrames; j1++)
+		// rt.setHeading(++col, "SLICE" + j1);
+		// rt.setHeading(++col, "seg_ax");
+		// rt.setHeading(++col, "seg_ay");
+		// rt.setHeading(++col, "seg_bx");
+		// rt.setHeading(++col, "seg_by");
+
 		rt.addValue(t1, " slicePos");
 		for (int j1 = 0; j1 < nFrames; j1++) {
 			rt.addValue(s2 + j1, UtilAyv.convertToDouble(slicePos2[j1]));
@@ -947,189 +1431,127 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		rt.addValue(s5, vetRefPosition[2]);
 		rt.addValue(s6, vetRefPosition[3]);
 
-		if (skip) {
-			// lascia a zero i valori ma tiene occupato il posto nel report
-			rt.incrementCounter();
-			rt.addValue(t1, "fwhm_slab1");
-			rt.incrementCounter();
-			rt.addValue(t1, "peak_slab1");
-			rt.incrementCounter();
-			rt.addValue(t1, "fwhm_slab2");
-			rt.incrementCounter();
-			rt.addValue(t1, "peak_slab2");
-			rt.incrementCounter();
-			rt.addValue(t1, "fwhm_cuneo3");
-			rt.incrementCounter();
-			rt.addValue(t1, "peak_cuneo3");
-			rt.incrementCounter();
-			rt.addValue(t1, "fwhm_cuneo4");
-			rt.incrementCounter();
-			rt.addValue(t1, "peak_cuneo4");
-			rt.incrementCounter();
-			rt.addValue(t1, "S1CorSlab");
-			rt.incrementCounter();
-			rt.addValue(t1, "S2CorSlab");
-			rt.incrementCounter();
-			rt.addValue(t1, "ErrSperSlab");
-			rt.incrementCounter();
-			rt.addValue(t1, "AccurSpesSlab");
-			rt.incrementCounter();
-			rt.addValue(t1, "S1CorCuneo");
-			rt.incrementCounter();
-			rt.addValue(t1, "S2CorCuneo");
-			rt.incrementCounter();
-			rt.addValue(t1, "ErrSperCuneo");
-			rt.incrementCounter();
-			rt.addValue(t1, "AccurSpesCuneo");
-			rt.incrementCounter();
-			rt.addValue(t1, "Accettab");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, vetAccettab[j1]);
-			}
-			rt.incrementCounter();
-			rt.addValue(t1, "DimPix");
-			rt.addValue(s2 + 0, dimPixel);
-			rt.incrementCounter();
-			rt.addValue(t1, "Thick");
-			rt.addValue(s2 + 0, thick);
-			rt.incrementCounter();
-			rt.addValue(t1, "Spacing");
-			rt.addValue(s2 + 0, spacing);
-
-		} else {
-
-			// rt.setHeading(++col, t1);
-			// for (int j1 = 0; j1 < nFrames; j1++)
-			// rt.setHeading(++col, "SLICE" + j1);
-			// rt.setHeading(++col, "seg_ax");
-			// rt.setHeading(++col, "seg_ay");
-			// rt.setHeading(++col, "seg_bx");
-			// rt.setHeading(++col, "seg_by");
-
-			rt.incrementCounter();
-			rt.addValue(t1, "fwhm_slab1");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, fwhmSlice1[j1]);
-				// IJ.log("slab1 slice= " + j1 + " FWHM [mm]= " + fwhmSlice1[j1] * dimPixel *
-				// Math.sin(Math.toRadians(11.3)));
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "peak_slab1");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, peakPositionSlice1[j1]);
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "fwhm_slab2");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, fwhmSlice2[j1]);
-				// IJ.log("slab2 slice= " + j1 + " FWHM [mm]= " + fwhmSlice2[j1] * dimPixel *
-				// Math.sin(Math.toRadians(11.3)));
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "peak_slab2");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, peakPositionSlice2[j1]);
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "fwhm_cuneo3");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, fwhmCuneo3[j1]);
-				// IJ.log("cuneo3 slice= " + j1 + " FWHM [mm]= " + fwhmCuneo3[j1] * dimPixel *
-				// Math.sin(Math.toRadians(11.3)));
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "peak_cuneo3");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, peakPositionCuneo3[j1]);
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "fwhm_cuneo4");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, fwhmCuneo4[j1]);
-				// IJ.log("cuneo4 slice= " + j1 + " FWHM [mm]= " + fwhmCuneo4[j1] * dimPixel *
-				// Math.sin(Math.toRadians(11.3)));
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "peak_cuneo4");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, peakPositionCuneo4[j1]);
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "S1CorSlab");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-//				rt.addValue(s2 + j1, mmVetS1CorSlab[j1]);
-				rt.addValue(s2 + j1, mmVetS1CorSlab[j1]);
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "S2CorSlab");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, mmVetS2CorSlab[j1]);
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "ErrSperSlab");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, mmVetErrSpessSlab[j1]);
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "AccurSpesSlab");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, mmVetAccurSpessSlab[j1]);
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "S1CorCuneo");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, mmVetS1CorCuneo[j1]);
-//				rt.addValue(s2 + j1, mmVetMedCuneo[j1]);
-			}
-			rt.incrementCounter();
-			rt.addValue(t1, "S2CorCuneo");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, mmVetS2CorCuneo[j1]);
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "ErrSperCuneo");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, mmVetErrSpessCuneo[j1]);
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "AccurSpesCuneo");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, mmVetAccurSpessCuneo[j1]);
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "Accettab");
-			for (int j1 = 0; j1 < nFrames; j1++) {
-				rt.addValue(s2 + j1, vetAccettab[j1]);
-			}
-
-			rt.incrementCounter();
-			rt.addValue(t1, "DimPix");
-			rt.addValue(s2 + 0, dimPixel);
-
-			rt.incrementCounter();
-			rt.addValue(t1, "Thick");
-			rt.addValue(s2 + 0, thick);
-
-			rt.incrementCounter();
-			rt.addValue(t1, "Spacing");
-			rt.addValue(s2 + 0, spacing);
+		rt.incrementCounter();
+		rt.addValue(t1, "fwhm_slab1");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, fwhmSlice1[j1]);
+			// IJ.log("slab1 slice= " + j1 + " FWHM [mm]= " + fwhmSlice1[j1] * dimPixel *
+			// Math.sin(Math.toRadians(11.3)));
 		}
 
+		rt.incrementCounter();
+		rt.addValue(t1, "peak_slab1");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, peakPositionSlice1[j1]);
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "fwhm_slab2");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, fwhmSlice2[j1]);
+			// IJ.log("slab2 slice= " + j1 + " FWHM [mm]= " + fwhmSlice2[j1] * dimPixel *
+			// Math.sin(Math.toRadians(11.3)));
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "peak_slab2");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, peakPositionSlice2[j1]);
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "fwhm_cuneo3");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, fwhmCuneo3[j1]);
+			// IJ.log("cuneo3 slice= " + j1 + " FWHM [mm]= " + fwhmCuneo3[j1] * dimPixel *
+			// Math.sin(Math.toRadians(11.3)));
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "peak_cuneo3");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, peakPositionCuneo3[j1]);
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "fwhm_cuneo4");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, fwhmCuneo4[j1]);
+			// IJ.log("cuneo4 slice= " + j1 + " FWHM [mm]= " + fwhmCuneo4[j1] * dimPixel *
+			// Math.sin(Math.toRadians(11.3)));
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "peak_cuneo4");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, peakPositionCuneo4[j1]);
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "S1CorSlab");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, mmVetS1CorSlab[j1]);
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "S2CorSlab");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, mmVetS2CorSlab[j1]);
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "ErrSperSlab");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, mmVetErrSpessSlab[j1]);
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "AccurSpesSlab");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, percVetAccurSpessSlab[j1]);
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "S1CorCuneo");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, pixVetS1CorCuneo[j1]);
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "S2CorCuneo");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, pixVetS2CorCuneo[j1]);
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "ErrSperCuneo");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, mmVetErrSpessCuneo[j1]);
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "AccurSpesCuneo");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, percVetAccurSpessCuneo[j1]);
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "Accettab");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, vetAccettab[j1]);
+		}
+
+		rt.incrementCounter();
+		rt.addValue(t1, "DimPix");
+		rt.addValue(s2 + 0, dimPixel);
+
+		rt.incrementCounter();
+		rt.addValue(t1, "Thick");
+		rt.addValue(s2 + 0, thick);
+
+		rt.incrementCounter();
+		rt.addValue(t1, "Spacing");
+		rt.addValue(s2 + 0, spacing);
 		return rt;
 	}
 
@@ -1249,6 +1671,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 	public double[] analProf_IMPROVED(ImagePlus imp1, double[] vetRefPosition, double[] vetProfile, int ra1,
 			boolean slab, boolean invert, boolean step, boolean bLabelSx, String titolo) {
 
+//		MyLog.waitHere("analyzeProfile_IMPROVED " + titolo);
+
 		/*
 		 * Aggiornamento del 29 gennaio 2007 analProf da' in uscita i valori in
 		 * millimetri, anziche' in pixel
@@ -1258,9 +1682,6 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			return null;
 		}
 		Line.setWidth(1);
-
-		// IJ.log(MyLog.qui() + " method= " + MyLog.method());
-		// IJ.log(MyLog.qui() + " slab= " + slab);
 
 		double dimPixel = ReadDicom
 				.readFloat(ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
@@ -1309,6 +1730,9 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			}
 		}
 
+//		plottazzo(profiM1, "profiM1", Color.red);
+//		MyLog.waitHere();
+
 		peak1 = minB1X + c3x;
 
 		// ora in base alla wideline, preposiziono le ROI su cui calcolare la baseline
@@ -1321,57 +1745,84 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		int d2x = d3x - ra1; // ============= MODIFICA 040924 ==================
 		int d2y = d3y - mra;
 
-		double mediabaseline = 0;
+		double baselineInterpolata = 0;
 
-		double[] puntiXX1 = null;
-		double[] puntiYY1 = null;
-		double[] puntiXX2 = null;
-		double[] puntiYY2 = null;
+		double[] gialloXX1 = null;
+		double[] gialloYY1 = null;
+		double[] gialloXX2 = null;
+		double[] gialloYY2 = null;
+		double[] magentaXX1 = null;
+		double[] magentaYY1 = null;
+		double[] magentaXX2 = null;
+		double[] magentaYY2 = null;
+
 		ImageStatistics statC = null;
 		ImageStatistics statD = null;
-		boolean mosso = false;
 		int ra11 = 0;
 		int xRoi1 = 0;
 		int yRoi1 = 0;
+		double puntoX1 = 0;
+		double puntoY1 = 0;
+		double puntoX2 = 0;
+		double puntoY2 = 0;
+		boolean ripeti1 = false;
+		boolean mosso1 = false;
+		boolean mosso2 = false;
 
-		if (slab) {
+		// attivo la selezione delle due roi in tutti i casi sia automatico che step
+
+		if (slab || step) {
 
 			do {
-				imp1.killRoi();
-				// prima roi per baseline correction
-				imp1.setRoi(new OvalRoi(c2x, c2y, ra1, ra1));
-				imp1.getRoi().setStrokeColor(Color.RED);
+				mosso1 = false;
+				mosso2 = false;
+				do {
+					ripeti1 = false;
+					imp1.killRoi();
+					// prima roi per baseline correction
+					imp1.setRoi(new OvalRoi(c2x, c2y, ra1, ra1));
+					imp1.getRoi().setStrokeColor(Color.RED);
 
-				imp1.updateAndDraw();
-				if (step) {
-					ButtonMessages.ModelessMsg(">> ROI MODIFICABILE <<, quando pronti premere CONTINUA   <51>",
-							"CONTINUA");
-				}
+					imp1.updateAndDraw();
+					if (step) {
+						ButtonMessages.ModelessMsg(">> ROI MODIFICABILE <<, quando pronti premere CONTINUA   <512>",
+								"CONTINUA");
+					}
 
-				// acquisisco le nuove coordinate della ROI dove e come la hanno messa
-				Rectangle boundingRectangle1 = imp1.getRoi().getBounds();
-				ra11 = boundingRectangle1.width;
-				xRoi1 = boundingRectangle1.x;
-				yRoi1 = boundingRectangle1.y;
+					// acquisisco le nuove coordinate della ROI dove e come la hanno messa
+					Rectangle boundingRectangle1 = imp1.getRoi().getBounds();
+					ra11 = boundingRectangle1.width;
+					xRoi1 = boundingRectangle1.x;
+					yRoi1 = boundingRectangle1.y;
+					if ((xRoi1 != c2x) || (yRoi1 != c2y))
+						mosso2 = true;
 
-				if ((ra11 == ra1) && (xRoi1 == c2x) && (yRoi1 == c2y)) {
+					if (ra11 != ra1) {
+						c2x = xRoi1;
+						c2y = yRoi1;
+						ripeti1 = true;
+					}
+				} while (ripeti1);
+
+				if (!stepout && !mosso2) {
 					MyLog.waitHere("PER PROSEGUIRE DEVI MUOVERE\nLA ROI DALLA POSIZIONE INIZIALE");
-					mosso = false;
+					mosso1 = false;
 				} else {
-					mosso = true;
+					mosso1 = true;
 				}
 
-			} while (!mosso);
+			} while (!mosso1);
 
 			// qui potrei anche rilevare le coordinate della ROI ed utilizzarle per marcarle
 			// sul profile plot
 
-			// acquisisco le statistiche
-			statC = imp1.getStatistics();
 			// disegno la ROI sull'overlay, verificando in questo modo la correttezza dei
 			// miei calcoli
 
 			mySetRoi(imp1, xRoi1, yRoi1, ra11, Color.green);
+			// acquisisco le statistiche
+			statC = imp1.getStatistics();
+
 			// IJ.log(MyLog.qui() + " method= " + MyLog.method());
 
 			// MyLog.waitHere("peak1= " + peak1 + " xRoi1= " + xRoi1);
@@ -1389,29 +1840,52 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			imp1.getRoi().setStrokeColor(Color.RED);
 			imp1.updateAndDraw();
 			if (step) {
-				ButtonMessages.ModelessMsg(">> ROI MODIFICABILE <<, quando pronti premere CONTINUA   <51>", "CONTINUA");
+				ButtonMessages.ModelessMsg(">> ROI MODIFICABILE <<, quando pronti premere CONTINUA   <513>",
+						"CONTINUA");
 			}
 
 			Rectangle boundingRectangle2 = imp1.getRoi().getBounds();
 			int ra12 = boundingRectangle2.width;
-			int xRoi2x = boundingRectangle2.x;
-			int yRoi2x = boundingRectangle2.y;
-			puntiXX1 = new double[ra11];
-			puntiYY1 = new double[ra11];
-			puntiXX2 = new double[ra12];
-			puntiYY2 = new double[ra12];
-			for (int i1 = 0; i1 < ra11; i1++) {
-				puntiXX1[i1] = (double) xRoi1 + (double) i1 - c3x;
-			}
-			for (int i1 = 0; i1 < ra12; i1++) {
-				puntiXX2[i1] = (double) xRoi2x + i1 - c3x;
-			}
-
+			int xRoi2 = boundingRectangle2.x;
+			int yRoi2 = boundingRectangle2.y;
+			mySetRoi(imp1, xRoi2, yRoi2, ra12, Color.green);
+			// acquisisco le statistiche
 			statD = imp1.getStatistics();
 
-			mySetRoi(imp1, xRoi2x, yRoi2x, ra12, Color.green);
+			gialloXX1 = new double[ra11];
+			gialloYY1 = new double[ra11];
+			gialloXX2 = new double[ra12];
+			gialloYY2 = new double[ra12];
+			magentaXX1 = new double[ra12];
+			magentaYY1 = new double[ra12];
+			magentaXX2 = new double[ra12];
+			magentaYY2 = new double[ra12];
+			for (int i1 = 0; i1 < ra11; i1++) {
+				gialloXX1[i1] = (double) xRoi1 + (double) i1 - c3x;
+				magentaXX1[i1] = (double) xRoi1 + (double) i1 - c3x;
+			}
+			for (int i1 = 0; i1 < ra12; i1++) {
+				gialloXX2[i1] = (double) xRoi2 + i1 - c3x;
+				magentaXX2[i1] = (double) xRoi2 + i1 - c3x;
+			}
 
-			mediabaseline = (statC.mean + statD.mean) / 2;
+			puntoX1 = xRoi1 + (ra12 / 2) - c3x;
+			puntoY1 = statC.mean;
+			puntoX2 = xRoi2 + (ra12 / 2) - c3x;
+			puntoY2 = statD.mean;
+
+			// queste sotto sono le coordinate sul grafico
+			if (SPY)
+				IJ.log(MyLog.qui() + "\n---ROI---\npuntoX1= " + puntoX1 + "\npuntoY1= " + puntoY1 + "\npuntoX2= "
+						+ puntoX2 + "\npuntoY2= " + puntoY2);
+
+			// le coordinate saranno
+			// Xsinistra>>> aux1-c3x
+			// Ysinistra>>> statC.mean
+			// Xdestra>>> aux3-c3x
+			// Ydestra= statD.mean
+
+//			baselineInterpolata = (statC.mean + statD.mean) / 2;
 		}
 		imp1.killRoi();
 		// linea calcolo segnale mediato
@@ -1425,17 +1899,25 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 
 		double FWHMpix = 9999;
 		double FWHMmm = 9999;
-		double peak = 9999;
+		double xPeak = 9999;
+		double yPeak = 9999;
+		double medAAA = 0;
+		double medBBB = 0;
 
 		if (slab) {
+			// ESEGUITO DURANTE ANALISI SLAB
+			if (SPY)
+				IJ.log(MyLog.qui() + "\n=====" + titolo + "=======");
 
-			for (int i1 = 0; i1 < puntiXX1.length; i1++) {
+			for (int i1 = 0; i1 < gialloXX1.length; i1++) {
 //				puntiYY1[i1] = profiM1[(int) puntiXX1[i1]];
-				puntiYY1[i1] = statC.mean;
+				gialloYY1[i1] = statC.mean;
+				magentaYY1[i1] = 5000;
 			}
-			for (int i1 = 0; i1 < puntiXX2.length; i1++) {
+			for (int i1 = 0; i1 < gialloXX2.length; i1++) {
 //				puntiYY2[i1] = profiM1[(int) puntiXX2[i1]];
-				puntiYY2[i1] = statD.mean;
+				gialloYY2[i1] = statD.mean;
+				magentaYY2[i1] = 5000;
 			}
 
 			// NOTARE CHE analPlot1_IMPROVED non viene utilizzato, tale eleborazione viene
@@ -1443,14 +1925,64 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			// isd3 = analPlot1_IMPROVED(profiM1, slab);
 			// outFwhm = calcFwhm_IMPROVED(isd3, profiB1, slab, dimPixel);
 			myOut = profiM1;
+
+			// plottazzo(profiM1, "profiM1 dopo", Color.green);
+
 		} else {
+			// ESEGUITO DURANTE ANALISI WEDGE (CUNEO)
+			if (SPY)
+				IJ.log(MyLog.qui() + "\n=====" + titolo + "=======");
+
 			double[] profiE2 = createErf_IMPROVED(profiM1, invert); // profilo con ERF
-			// NOTARE CHE analPlot1_IMPROVED non viene utilizzato, tale eleborazione viene
-			// eseguita di seguito, partendo dal picco e non dalle due estremita'
-			// isd3 = analPlot1_IMPROVED(profiE2, slab);
-			// outFwhm = calcFwhm_IMPROVED(isd3, profiE2, slab, dimPixel);
+
+			if (step) {
+
+				//
+				// nel caso del cuneo dobbiamo tenere conto che non lavoriamo sulla immagine ma
+				// sul grafico della ERF
+				// pertanto non posso usare le statistiche fornite da ImageJ, ma devo calcolarmi
+				// la media
+				//
+				for (int i1 = 0; i1 < gialloXX1.length; i1++) {
+					medAAA = medAAA + profiE2[(int) gialloXX1[i1]];
+				}
+				medAAA = medAAA / gialloXX1.length;
+
+				for (int i1 = 0; i1 < gialloXX1.length; i1++) {
+					gialloYY1[i1] = medAAA;
+					magentaYY1[i1] = -5000;
+				}
+
+				for (int i1 = 0; i1 < gialloXX2.length; i1++) {
+					medBBB = medBBB + profiE2[(int) gialloXX2[i1]];
+				}
+				medBBB = medBBB / gialloXX2.length;
+
+				puntoY1 = medAAA;
+				puntoY2 = medBBB;
+
+				//// SBAGLIATO QUESTA E'SOLO LA MEDIA
+
+				for (int i1 = 0; i1 < gialloXX2.length; i1++) {
+//				puntiYY2[i1] = profiM1[(int) puntiXX2[i1]];
+					gialloYY2[i1] = medBBB;
+					magentaYY2[i1] = -5000;
+
+				}
+
+				// NOTARE CHE analPlot1_IMPROVED non viene utilizzato, tale eleborazione viene
+				// eseguita di seguito, partendo dal picco e non dalle due estremita'
+				// isd3 = analPlot1_IMPROVED(profiE2, slab);
+				// outFwhm = calcFwhm_IMPROVED(isd3, profiE2, slab, dimPixel);
+
+				if (SPY)
+					IJ.log(MyLog.qui() + "\nmedAAA= " + medAAA + "\nmedBBB= " + medBBB);
+			}
 			myOut = profiE2;
 		}
+
+//		
+//		MyLog.waitHere();
 
 //		// Plot plot1 = new Plot("plot mediato + baseline + FWHM", "pixel", "valore");
 //		Plot plot10 = new Plot(titolo, "pixel", "valore");
@@ -1475,7 +2007,9 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 
 		double[] a = Tools.getMinMax(myOut);
 		double minB2Y = a[0];
-		// IJ.log(MyLog.qui() + " minimo= " + minB1Y);
+		yPeak = minB2Y;
+		if (SPY)
+			IJ.log(MyLog.qui() + "\nyPeak= minimo= " + minB2Y);
 		double minB2X = 9999;
 		for (int i1 = 0; i1 < myOut.length; i1++) {
 			if (myOut[i1] == minB2Y) {
@@ -1485,19 +2019,37 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 
 		}
 
-		peak = minB2X;
-		// IJ.log(MyLog.qui() + " peak= " + peak);
+		xPeak = minB2X;
+		if (SPY)
+			IJ.log(MyLog.qui() + "\nxPeak= " + xPeak);
 
-		double maxB2Y = mediabaseline;
+		double maxB2X = minB2X;
+		if (step)
+			/// calcolo effettivo interpolazione
+			baselineInterpolata = puntoY1 + (maxB2X - puntoX1) * (puntoY2 - puntoY1) / (puntoX2 - puntoX1);
+		else {
+			/// semplice media
+			baselineInterpolata = (medAAA + medBBB) / 2;
+		}
+		double maxB2Y = baselineInterpolata;
+		if (SPY)
+			IJ.log(MyLog.qui() + "\nINTERPOLAZIONE puntoX= " + maxB2X + "\nINTERPOLAZIONE puntoY= " + maxB2Y);
 
 		puntiX2[0] = minB2X;
 		puntiX2[1] = minB2X;
 		puntiY2[0] = minB2Y;
 		puntiY2[1] = maxB2Y;
 
+		// MyLog.waitHere("minB2X= " + minB2X + "\nminB2Y= " + minB2Y + "\nmaxB2X= " +
+		// maxB2X + "\nmaxB2Y= " + maxB2Y);
+
 		// double half = Math.abs((puntiY2[1] - puntiY2[0]) / 2) + puntiY2[0];
 		double half = Math.abs((puntiY2[1] - puntiY2[0]) / 2) + puntiY2[0];
-		// IJ.log(MyLog.qui() + " half== " + half);
+//		double half = ((puntiY2[1] - puntiY2[0]) / 2) + puntiY2[0];
+		if (SPY)
+			IJ.log(MyLog.qui() + "\nxpeak= " + xPeak + "\nypeak= " + yPeak + "\nhalf= " + half);
+		// MyLog.waitHere("xpeak= " + peak + "\nypeak= " + minB2Y + "\nhalf== " + half);
+
 		// IJ.log(MyLog.qui() + " puntiY2[0] minB1Y= " + puntiY2[0] + "\npuntiY2[1]
 		// maxB2= " + puntiY2[1] + "\nhalf= + half);
 
@@ -1523,7 +2075,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			}
 		}
 
-		// IJ.log(MyLog.qui() + "SINISTRA== " + sotto1);
+		if (SPY)
+			IJ.log(MyLog.qui() + "\nSINISTRA== " + sotto1);
 
 		double sotto1X = sotto1;
 		double sotto1Y = myOut[sotto1];
@@ -1540,6 +2093,9 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		double m1 = (sotto1Y - sopra1Y) / (sotto1X - sopra1X);
 
 		double interp1X = (half - sotto1Y) / m1 + sotto1X;
+		if (SPY)
+			IJ.log(MyLog.qui() + "\nSINISTRA\nsotto1X= " + sotto1X + "\nsopra1X= " + sopra1X + "\ninterp1X= "
+					+ interp1X);
 
 		puntiX4[0] = interp1X;
 		puntiY4[0] = interp1Y;
@@ -1569,6 +2125,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		double interp2Y = half;
 		double m2 = (sotto2Y - sopra2Y) / (sotto2X - sopra2X);
 		double interp2X = (half - sotto2Y) / m2 + sotto2X;
+		if (SPY)
+			IJ.log(MyLog.qui() + "\nDESTRA\nsotto2X= " + sotto2X + "\nsopra2X= " + sopra2X + "\ninterp2X= " + interp2X);
 
 		puntiX4[1] = interp2X;
 		puntiY4[1] = interp2Y;
@@ -1603,9 +2161,14 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			plot1.addPoints(puntiX2, puntiY2, Plot.X);
 			plot1.setLineWidth(1);
 
+			plot1.setColor(Color.CYAN);
+			plot1.add("filled", magentaXX1, magentaYY1);
+			plot1.add("filled", magentaXX2, magentaYY2);
+
 			plot1.setColor(Color.YELLOW);
-			plot1.add("filled", puntiXX1, puntiYY1);
-			plot1.add("filled", puntiXX2, puntiYY2);
+			plot1.add("filled", gialloXX1, gialloYY1);
+			plot1.add("filled", gialloXX2, gialloYY2);
+
 			// ==================================================
 			// ripeto profilo altrimenti il giallo lo copre
 			plot1.setColor(Color.RED);
@@ -1620,8 +2183,9 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			plot1.setColor(Color.BLACK);
 			double labPosX = 0.75;
 			double labPosY = 0.60;
-			plot1.addLabel(labPosX, labPosY += 0.05, "baseline = " + IJ.d2s(mediabaseline, 2));
-			plot1.addLabel(labPosX, labPosY += 0.05, "peak = " + IJ.d2s(minB1Y, 2));
+			plot1.addLabel(labPosX, labPosY += 0.05, "baseline = " + IJ.d2s(baselineInterpolata, 2));
+			plot1.addLabel(labPosX, labPosY += 0.05, "xPeak = " + IJ.d2s(xPeak, 2));
+			plot1.addLabel(labPosX, labPosY += 0.05, "yPeak = " + IJ.d2s(yPeak, 2));
 			plot1.addLabel(labPosX, labPosY += 0.05, "half line = " + IJ.d2s(half, 2));
 			plot1.addLabel(labPosX, labPosY += 0.05, "SX interp = " + IJ.d2s(interp1X, 2));
 			plot1.addLabel(labPosX, labPosY += 0.05, "DX interp = " + IJ.d2s(interp2X, 2));
@@ -1641,11 +2205,71 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			}
 			Line.setWidth(1);
 
+		} else {
+			if (step) {
+
+				Plot plot1 = new Plot(titolo, "pixel", "valore");
+
+				plot1.setColor(Color.RED);
+
+				double[] profi1X = ProfileUtils.autoprofile(myOut.length);
+				plot1.addPoints(profi1X, myOut, Plot.LINE);
+
+				plot1.setLineWidth(8);
+				plot1.setColor(Color.GREEN);
+				plot1.addPoints(puntiX2, puntiY2, Plot.X);
+				plot1.setLineWidth(1);
+
+				plot1.setColor(Color.CYAN);
+				plot1.add("filled", magentaXX1, magentaYY1);
+				plot1.add("filled", magentaXX2, magentaYY2);
+
+				plot1.setColor(Color.YELLOW);
+				plot1.add("filled", gialloXX1, gialloYY1);
+				plot1.add("filled", gialloXX2, gialloYY2);
+
+				// ==================================================
+				// ripeto profilo altrimenti il giallo lo copre
+				plot1.setColor(Color.RED);
+				plot1.addPoints(profi1X, myOut, Plot.LINE);
+
+				plot1.setColor(Color.GREEN);
+				plot1.addPoints(puntiX5, puntiY5, Plot.LINE);
+
+				plot1.setColor(Color.BLUE);
+				plot1.addPoints(puntiX4, puntiY4, Plot.CIRCLE);
+
+				plot1.setColor(Color.BLACK);
+				double labPosX = 0.75;
+				double labPosY = 0.60;
+				plot1.addLabel(labPosX, labPosY += 0.05, "baseline = " + IJ.d2s(baselineInterpolata, 2));
+				plot1.addLabel(labPosX, labPosY += 0.05, "xPeak = " + IJ.d2s(xPeak, 2));
+				plot1.addLabel(labPosX, labPosY += 0.05, "yPeak = " + IJ.d2s(yPeak, 2));
+				plot1.addLabel(labPosX, labPosY += 0.05, "half line = " + IJ.d2s(half, 2));
+				plot1.addLabel(labPosX, labPosY += 0.05, "SX interp = " + IJ.d2s(interp1X, 2));
+				plot1.addLabel(labPosX, labPosY += 0.05, "DX interp = " + IJ.d2s(interp2X, 2));
+				plot1.addLabel(labPosX, labPosY += 0.05, "FWHM [pix] = " + IJ.d2s(FWHMpix, 2));
+				plot1.addLabel(labPosX, labPosY += 0.05, "FWHM [mm] = " + IJ.d2s(FWHMmm, 2));
+
+				// mezza altezza
+
+				ImagePlus imp3 = plot1.show().getPlot().getImagePlus();
+
+				if (SPY) {
+					spyname = titolo;
+					p6rmn_COMMON.saveDebugImage_COMMON(imp3, spydir, spyname, contaxx++, SPY);
+				}
+			}
+			if (step) {
+				ButtonMessages.ModelessMsg("PLOT " + titolo + "  <52>", "CONTINUA");
+			}
+			Line.setWidth(1);
+
 		}
 
 		Line.setWidth(1);
 
-		double[] outFwhm = { FWHMpix, peak };
+		double[] outFwhm = { FWHMpix, xPeak };
 
 		return (outFwhm);
 	}
@@ -2280,8 +2904,13 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				+ "   bx = " + vetReference[2] + "  by = " + vetReference[3], "CONTINUA");
 	}
 
-	public static int msgAccept() {
+	public static int msgAccept2() {
 		int userSelection = ButtonMessages.ModelessMsg("Accettabilita' immagine   <08>", "ELABORA", "SALTA");
+		return userSelection;
+	}
+
+	public static int msgAccept() {
+		int userSelection = ButtonMessages.ModelessMsg("Accettabilita' immagine   <08>", "ESCI", "ELABORA", "SALTA");
 		return userSelection;
 	}
 
@@ -2385,5 +3014,528 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 //		}
 //
 //	}
+
+	public static void plottazzo2(double[] profile, String titolo, Color color1) {
+
+		/// ======================================================
+		Plot plot10 = new Plot(titolo, "pixel", "valore");
+		plot10.setColor(color1);
+		double[] profi10X = ProfileUtils.autoprofile(profile.length);
+		plot10.addPoints(profi10X, profile, Plot.LINE);
+		plot10.show();
+		/// ======================================================
+		return;
+	}
+
+	/**
+	 * analisi di un profilo
+	 *
+	 * @param imp1           Immagine da analizzare
+	 * @param vetRefPosition Coordinate riferimento posizionato dall'operatore [
+	 *                       xStart, yStart, xEnd, yEnd ]
+	 * @param vetProfile     Coordinate profilo (da rototraslare)[ xStart, yStart,
+	 *                       xEnd, yEnd ]
+	 * @param ra1            Diametro della Roi per calcolo baseline correction
+	 * @param slab           Flag true=slab, false=cuneo
+	 * @param invert         Flag true=erf invertita false=erf diritta
+	 * @param step           Flag true=messaggi on, false=messaggi off
+	 * @param bLabelSx       Flag true= label a sx, false=label a dx
+	 * @return outFwhm[0]=FWHM (mm)
+	 * @return outFwhm[1]=peak position (mm)
+	 */
+
+	public double[] analProf_ORIGINAL(ImagePlus imp1, double[] vetRefPosition, double[] vetProfile, int ra1,
+			boolean slab, boolean invert, boolean step, boolean bLabelSx, double dimPixel) {
+
+		/*
+		 * Aggiornamento del 29 gennaio 2007 analProf da' in uscita i valori in
+		 * millimetri, anziche' in pixel
+		 */
+
+		if (imp1 == null) {
+			return null;
+		}
+
+		int mra = ra1 / 2;
+		double[] msd1; // vettore output rototrasl coordinate
+		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[0] - mra, vetProfile[1] - mra, false);
+		int c2x = (int) msd1[0]; // coord rototrasl centro roi sx
+		int c2y = (int) msd1[1]; // coord rototrasl centro roi sx
+
+		// nota tecnica: quando si definisce una ROI con setRoi (ovale o
+		// rettangolare che sia) passiamo a ImageJ le coordinate dell'angolo in
+		// alto a Sx del BoundingRectangle per cui dobbiamo sempre includere nei
+		// calcoli il raggio Roi
+
+		// prima roi per baseline correction
+		imp1.setRoi(new OvalRoi(c2x, c2y, ra1, ra1));
+		imp1.updateAndDraw();
+		ImageStatistics statC = imp1.getStatistics();
+		if (step) {
+			imp1.updateAndDraw();
+			ButtonMessages.ModelessMsg(
+					"primo centro c2x=" + c2x + " c2y=" + c2y + " ra1=" + ra1 + "  media=" + statC.mean + "   <51>",
+					"CONTINUA");
+		}
+
+		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[2] - mra, vetProfile[3] - mra, false);
+		int d2x = (int) msd1[0];
+		int d2y = (int) msd1[1];
+
+		// seconda roi per baseline correction
+		imp1.setRoi(new OvalRoi(d2x, d2y, ra1, ra1));
+		ImageStatistics statD = imp1.getStatistics();
+		if (step) {
+			imp1.updateAndDraw();
+			ButtonMessages.ModelessMsg(
+					"secondo centro d2x=" + d2x + " d2y=" + d2y + " ra1=" + ra1 + "  media=" + statD.mean + "   <52>",
+					"CONTINUA");
+		}
+		// inizio wideline
+		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[0], vetProfile[1], false);
+		c2x = (int) msd1[0];
+		c2y = (int) msd1[1];
+		// fine wideline
+		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[2], vetProfile[3], false);
+		d2x = (int) msd1[0];
+		d2y = (int) msd1[1];
+
+		// linea calcolo segnale mediato
+		Line.setWidth(11);
+		double[] profiM1 = getLinePixels_ORIGINAL(imp1, c2x, c2y, d2x, d2y);
+
+		if (step) {
+			imp1.updateAndDraw();
+			msgWideline();
+			createPlot2_ORIGINAL(profiM1, dimPixel, true, bLabelSx, "Profilo mediato", false);
+			msgSlab();
+		}
+
+		double[] profiB1 = baselineCorrection_ORIGINAL(profiM1, statC.mean, statD.mean);
+
+		if (step) {
+			MyLog.waitHere("aaa");
+			createPlot2_ORIGINAL(profiB1, dimPixel, true, bLabelSx, "Profilo mediato + baseline correction", true);
+			msgBaseline();
+		}
+		int isd3[];
+		double[] outFwhm;
+		if (slab) {
+			isd3 = analPlot1_ORIGINAL(profiB1, slab);
+			outFwhm = calcFwhm_ORIGINAL(isd3, profiB1, slab, dimPixel);
+			if (step) {
+				MyLog.waitHere("bbb");
+				createPlot2_ORIGINAL(profiB1, dimPixel, slab, bLabelSx, "plot mediato + baseline + FWHM", true);
+				msgFwhm();
+			}
+			Line.setWidth(1);
+			return (outFwhm);
+		} else {
+			double[] profiE1 = createErf_ORIGINAL(profiB1, invert); // profilo con ERF
+
+			isd3 = analPlot1_ORIGINAL(profiE1, slab);
+
+			outFwhm = calcFwhm_ORIGINAL(isd3, profiE1, slab, dimPixel);
+
+			if (step) {
+				MyLog.waitHere("ccc");
+				createPlot2_ORIGINAL(profiE1, dimPixel, slab, bLabelSx, "plot ERF con smooth 3x3 e FWHM", true);
+				msgErf();
+			}
+			Line.setWidth(1);
+			return (outFwhm);
+		}
+	}
+
+	/**
+	 * calcolo FWHM del profilo assegnato
+	 *
+	 * @param isd     coordinate sul profilo sopra e sotto met� altezza
+	 * @param profile profilo da analizzare
+	 * @param bslab   true se slab, false se cuneo
+	 * @return out[0] fwhm calcolata (mm)
+	 * @return out[1] peak position (mm)
+	 */
+	public double[] calcFwhm_ORIGINAL(int[] isd, double[] profile, boolean bslab, double dimPixel) {
+
+		double peak = 0;
+		double[] a = Tools.getMinMax(profile);
+		double min1 = a[0];
+		double max1 = 0;
+		if (bslab) {
+			max1 = a[1];
+		} else {
+			max1 = 0;
+		}
+		// interpolazione lineare sinistra
+		double px0 = isd[0];
+		double px1 = isd[1];
+		double py0 = profile[isd[0]];
+		double py1 = profile[isd[1]];
+		double py2 = (max1 - min1) / 2.0 + min1;
+		double px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+		double sx = px2;
+		// interpolazione lineare destra
+		px0 = isd[2];
+		px1 = isd[3];
+		py0 = profile[isd[2]];
+		py1 = profile[isd[3]];
+		py2 = (max1 - min1) / 2.0 + min1;
+		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+		double dx = px2;
+		double fwhm = (dx - sx) * dimPixel;
+
+		for (int i1 = 0; i1 < profile.length; i1++) {
+			if (profile[i1] == min1) {
+				peak = i1 * dimPixel;
+			}
+		}
+		double[] out = { fwhm, peak };
+		return (out);
+	} // calcFwhm
+
+	/**
+	 * assegna un profilo su cui effettuare i calcoli
+	 *
+	 * @param imp1 immagine su cui effettuare il profilo
+	 * @param x1   coordinata x start profilo
+	 * @param y1   coordinata y start profilo
+	 * @param x2   coordinata x end profilo
+	 * @param y2   coordinata y end profilo
+	 * @return profilo wideline
+	 */
+	public double[] getLinePixels_ORIGINAL(ImagePlus imp1, int x1, int y1, int x2, int y2) {
+		imp1.setRoi(new Line(x1, y1, x2, y2));
+		imp1.updateAndDraw();
+		Roi roi1 = imp1.getRoi();
+		double[] profiM1 = ((Line) roi1).getPixels();
+		return profiM1;
+	}
+
+	/**
+	 * calcolo baseline correction del profilo assegnato
+	 *
+	 * @param profile1 profilo da correggere
+	 * @param media1   media sul fondo a sx
+	 * @param media2   media sul fondo a dx
+	 * @return profilo corretto
+	 */
+	public double[] baselineCorrection_ORIGINAL(double[] profile1, double media1, double media2) {
+
+		int len1 = profile1.length;
+		double diff1;
+		double profile2[];
+		profile2 = new double[len1];
+		diff1 = (media1 - media2) / len1;
+		for (int i1 = 0; i1 < len1; i1++) {
+			profile2[i1] = profile1[i1] + diff1 * i1;
+		}
+		return profile2;
+	} // baselineCorrection
+
+	/**
+	 * calcolo ERF
+	 *
+	 * @param profile1 profilo da elaborare
+	 * @param invert   true se da invertire
+	 * @return profilo con ERF
+	 */
+	public double[] createErf_ORIGINAL(double[] profile1, boolean invert) {
+
+		// non utilizza altre routine
+
+		int len1 = profile1.length;
+		//
+		// eseguo tre smooth 07-02-05, questo ci permette di ottenere risultati
+		// affidabili non falsati da spikes
+		//
+		for (int j = 1; j < len1 - 1; j++) {
+			profile1[j] = (profile1[j - 1] + profile1[j] + profile1[j + 1]) / 3;
+		}
+		for (int j = 1; j < len1 - 1; j++) {
+			profile1[j] = (profile1[j - 1] + profile1[j] + profile1[j + 1]) / 3;
+		}
+		for (int j = 1; j < len1 - 1; j++) {
+			profile1[j] = (profile1[j - 1] + profile1[j] + profile1[j + 1]) / 3;
+		}
+		for (int j = 1; j < len1 - 1; j++) {
+			profile1[j] = (profile1[j - 1] + profile1[j] + profile1[j + 1]) / 3;
+		}
+
+		double[] erf = new double[len1];
+		// if (invert) {
+		for (int j = 0; j < profile1.length - 1; j++) {
+			erf[j] = (profile1[j] - profile1[j + 1]) * (-1);
+		}
+		// } else {
+		// for (int j = profile1.length - 1; j >= 0; j--)
+		// erf[j] = (profile1[j] - profile1[j - 1]) * (-1);
+		// }
+		erf[len1 - 1] = erf[len1 - 2];
+
+		// Anziche' utilizzare algoritmi di ricerca dei picchi, cerco il minimo
+		// ed il massimo. Il valore assoluto piu' grande corrispondera' all'angolo
+		// a 90 che non ci interessa. A questo punto posso portare a zero tutti
+		// i valori del medesimo segno. Restera' cosi' solo il
+		// picco meno alto, corrispondente all'erf della rampa del cuneo.
+
+		double[] minMax = Tools.getMinMax(erf);
+		double min = minMax[0];
+		double max = minMax[1];
+
+		if (Math.abs(min) > Math.abs(max) && min < 0) {
+			// se il minimo e' di valore assoluto piu' grande, allora porto a 0
+			// tutti i valori minori di 0
+			for (int i1 = 0; i1 < erf.length; i1++) {
+				if (erf[i1] < 0) {
+					erf[i1] = 0;
+				}
+			}
+			// e poi cambio il tutto di segno, poiche' voglio il picco verso il
+			// basso
+			for (int i1 = 0; i1 < erf.length; i1++) {
+				erf[i1] *= -1;
+			}
+
+		} else if (Math.abs(min) < Math.abs(max) && max > 0) {
+			// se il massimo e' di valore assoluto piu' grande, allora porto a 0
+			// tutti i valori maggiori di 0
+			for (int i1 = 0; i1 < erf.length; i1++) {
+				if (erf[i1] > 0) {
+					erf[i1] = 0;
+				}
+			}
+
+		} else {
+			MyLog.waitHere("QUESTA E'UNA STRANA ERF");
+		}
+
+		return (erf);
+	} // createErf
+
+	/**
+	 * display di un profilo con linea a met� altezza
+	 *
+	 * @param profile1 profilo in ingresso
+	 * @param bslab    true=slab false=cuneo
+	 * @param bLabelSx true=label a sx nel plot, false=label a dx
+	 * @param sTitolo  titolo del grafico
+	 * @param bFw      true=scritte x FWHM
+	 */
+	public void createPlot2_ORIGINAL(double[] profile1, double dimPixel, boolean bslab, boolean bLabelSx,
+			String sTitolo, boolean bFw) {
+		int isd2[];
+		double ddd[];
+		double eee[];
+		double fff[];
+		double ggg[];
+		double labPos;
+
+		isd2 = analPlot1_ORIGINAL(profile1, bslab);
+
+		double[] a = Tools.getMinMax(profile1);
+		double min1 = a[0];
+		double max1 = 0;
+		if (bslab) {
+			max1 = a[1];
+		} else {
+			max1 = 0;
+		}
+
+		double half = (max1 - min1) / 2 + min1;
+
+		ddd = new double[2];
+		eee = new double[2];
+		fff = new double[2];
+		ggg = new double[2];
+		int len1 = profile1.length;
+		double[] xcoord1 = new double[len1];
+		for (int j = 0; j < len1; j++) {
+			xcoord1[j] = j;
+		}
+		Plot plot = new Plot(sTitolo, "pixel", "valore");
+		plot.setColor(Color.red);
+		plot.addPoints(xcoord1, profile1, Plot.LINE);
+		if (bslab) {
+			plot.setLimits(0, len1, min1, max1);
+		} else {
+			plot.setLimits(0, len1, min1, 30);
+		}
+		plot.setLineWidth(1);
+		plot.setColor(Color.blue);
+		ddd[0] = isd2[0];
+		ddd[1] = isd2[2];
+		eee[0] = profile1[isd2[0]];
+		eee[1] = profile1[isd2[2]];
+		plot.addPoints(ddd, eee, PlotWindow.X);
+		ddd[0] = isd2[1];
+		ddd[1] = isd2[3];
+		eee[0] = profile1[isd2[1]];
+		eee[1] = profile1[isd2[3]];
+		plot.addPoints(ddd, eee, Plot.CIRCLE);
+		plot.changeFont(new Font("Helvetica", Font.PLAIN, 10));
+		// interpolazione lineare sinistra
+		double px0 = isd2[0];
+		double px1 = isd2[1];
+		double px2 = 0;
+		double py0 = profile1[isd2[0]];
+		double py1 = profile1[isd2[1]];
+		double py2 = 0;
+		py2 = half;
+		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+		double sx = px2;
+		// interpolazione lineare destra
+		px0 = isd2[2];
+		px1 = isd2[3];
+		py0 = profile1[isd2[2]];
+		py1 = profile1[isd2[3]];
+		py2 = half;
+		px2 = px0 + (px1 - px0) / (py1 - py0) * (py2 - py0);
+		double dx = px2;
+		double fwhm = (dx - sx) * dimPixel;
+		if (bLabelSx) {
+			labPos = 0.10;
+		} else {
+			labPos = 0.60;
+		}
+		if (bFw) {
+			plot.addLabel(labPos, 0.45, "peak / 2=   " + IJ.d2s(max1 / 2, 2));
+			plot.addLabel(labPos, 0.50, "down sx " + isd2[0] + "  =   " + IJ.d2s(profile1[isd2[0]], 2));
+			plot.addLabel(labPos, 0.55, "down dx " + isd2[2] + "  =   " + IJ.d2s(profile1[isd2[2]], 2));
+			plot.addLabel(labPos, 0.60, "up      sx " + isd2[1] + "  =   " + IJ.d2s(profile1[isd2[1]], 2));
+			plot.addLabel(labPos, 0.65, "up      dx " + isd2[3] + "  =   " + IJ.d2s(profile1[isd2[3]], 2));
+			plot.addLabel(labPos, 0.70, "sx interp       =  " + IJ.d2s(sx, 2));
+			plot.addLabel(labPos, 0.75, "dx interp       =  " + IJ.d2s(dx, 2));
+			plot.addLabel(labPos, 0.80, "fwhm            =  " + IJ.d2s(fwhm, 2));
+			plot.setColor(Color.green);
+		}
+		fff[0] = 0;
+		fff[1] = len1;
+		ggg[0] = half;
+		ggg[1] = half;
+		plot.addPoints(fff, ggg, Plot.LINE);
+		plot.setColor(Color.red);
+		plot.show();
+
+		plot.draw();
+
+	}
+
+	/**
+	 * analisi di un profilo normale con ricerca punti sopra e sotto meta' altezza
+	 *
+	 * @param profile1 profilo da analizzare
+	 * @param bSlab    true=slab false=cuneo
+	 * @return isd[0] punto profilo sotto half a sx
+	 * @return isd[1] punto profilo sopra half a sx
+	 * @return isd[2] punto profilo sotto half a dx
+	 * @return isd[3] punto profilo sopra half a dx
+	 */
+	public int[] analPlot1_ORIGINAL(double profile1[], boolean bSlab) {
+
+		int sopra1 = 0;
+		int sotto1 = 0;
+		int sopra2 = 0;
+		int sotto2 = 0;
+		double max1 = 0;
+		int i1;
+		int[] isd;
+		isd = new int[4];
+		isd[0] = 0;
+		isd[1] = 0;
+		isd[2] = 0;
+		isd[3] = 0;
+		int len1 = profile1.length;
+
+		double[] a = Tools.getMinMax(profile1);
+		double min1 = a[0];
+		if (bSlab) {
+			max1 = a[1];
+		} else {
+			max1 = 0;
+		}
+
+		// calcolo meta' altezza
+		double half = (max1 - min1) / 2 + min1;
+		// ricerca valore < half partendo da SX
+		for (i1 = 0; i1 < len1 - 1; i1++) {
+			if (profile1[i1] < half) {
+				sotto1 = i1;
+				break;
+			}
+		}
+		// torno indietro e cerco il primo valore > half
+		for (i1 = sotto1; i1 > 0; i1--) {
+			if (profile1[i1] > half) {
+				sopra1 = i1;
+				break;
+			}
+		}
+		// ricerca valore < half partendo da DX
+		for (i1 = len1 - 1; i1 > 0; i1--) {
+			if (profile1[i1] < half) {
+				sotto2 = i1;
+				break;
+			}
+		}
+		// torno indietro e cerco il primo valore > half
+		for (i1 = sotto2; i1 < len1 - 1; i1++) {
+			if (profile1[i1] > half) {
+				sopra2 = i1;
+				break;
+			}
+		}
+		isd[0] = sotto1;
+		isd[1] = sopra1;
+		isd[2] = sotto2;
+		isd[3] = sopra2;
+		return isd;
+	} // analPlot1
+
+	/**
+	 * calcolo spessore di strato effettivo, apportando le correzioni per
+	 * inclinazione e tilt (cio' che veniva effettuato dal foglio Excel)
+	 *
+	 * QUESTA E'LA VECCHHIA VERSIONE
+	 *
+	 * @param pixR1
+	 * @param pixR2
+	 * @param mmSteor spessore teorico
+	 * @return spessore dello strato
+	 */
+	public static double[] spessStrato(double pixR1, double pixR2, double mmSteor, double dimPix) {
+
+//		IJ.log("==============================================================");
+//		IJ.log("spessStrato pixR1= " + pixR1 + " pixR2= " + pixR2 + " dimPix= " + dimPix);
+
+		double angolo = 11.3;
+		double pixS1 = pixR1 * Math.tan(Math.toRadians(angolo));
+		double pixS2 = pixR2 * Math.tan(Math.toRadians(angolo));
+		double Sen22 = Math.sin(Math.toRadians(angolo * 2));
+		double aux1 = -(pixS1 - pixS2) / (pixS1 + pixS2);
+		double aux4 = Math.asin(Sen22 * aux1);
+		double tilt1Ramp = Math.toDegrees(0.5 * aux4);
+		double aux2 = Math.tan(Math.toRadians(angolo - tilt1Ramp));
+		double aux3 = Math.tan(Math.toRadians(angolo + tilt1Ramp));
+		double pixS1Cor = aux3 * pixR1;
+		double pixS2Cor = aux2 * pixR2;
+		double percAccurSpess = 100.0 * (pixS1Cor - mmSteor) / mmSteor;
+		double mmErroreR1 = dimPix * aux3;
+		double mmErroreR2 = dimPix * aux2;
+		double mmErroreTot = Math.sqrt(mmErroreR1 * mmErroreR1 + mmErroreR2 * mmErroreR2);
+		double mmErroreSper = 100.0 * mmErroreTot / mmSteor;
+
+//		IJ.log("spessStrato pixS1Cor= " + pixS1Cor + " pixS2Cor= " + pixS2Cor + "\nmmErroreSper= " + mmErroreSper
+//				+ " percAccurSpess= " + percAccurSpess);
+//		IJ.log("==============================================================");
+
+		double[] spessArray = new double[4];
+		spessArray[0] = pixS1Cor;
+		spessArray[1] = pixS2Cor;
+		spessArray[2] = mmErroreSper;
+		spessArray[3] = percAccurSpess;
+
+		return spessArray;
+	}
 
 }

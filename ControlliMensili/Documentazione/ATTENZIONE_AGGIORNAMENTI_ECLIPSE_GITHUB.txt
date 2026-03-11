@@ -1,0 +1,137 @@
+RIORDINO DEI PROGETTI NEL PC E IN GITHUB
+
+26/04/2025
+Testato release.xml
+Permette, dopo di aver fatto build sia di iw2ayv che di contMensili, di creare in contMensili dei file zip di release. 
+Una volta fatto il commit di contMensili, questi due file zippati, uno coi sorgenti ed uno con tutto cio'che serve agli 
+eseguibili, finiscono in gitHub
+
+
+
+
+26/04/2025
+COME IMPORTARE I PROGETTI imagej ED iw2ayv 
+Abbiamo la necessita' di importare i progetti imagej ed iw2ayv nei vari workspaces, in modo che possano essere visti 
+i sorgenti.
+Ci si posiziona sul Package Explorer, DX, import e poi, per iw2ayv git, mentre per imagej import form Existing Projects 
+into Workspace. Si va a selezionare il progetto originale, CONTROLLARE che per sbaglio non si abbia la spunta su 
+Copy Projects into Workspace, poiche' in questo caso verrebbe importato tutto creando un INUTILE e DANNOSO duplicato
+
+
+25/04/2025
+Installata la Eclipse 2025-06 (una 2025-03 con aggiornamenti)
+Attenzione che, per non avere segnalazioni di errori inesistenti bisognerebbe aggiornare il JDK
+da scaricare dal sito adoptium.net
+Si tratta del JDK EclipseAdoptium (Temurin). Effettuando l'installazione viene automaticamente messo nel path di 
+win11 come java e diventa il Workspace default JRE (jdk-21-0.7.6-hotspot). Con questo tutto PARE funzionare bene.
+INOLTRE BISOGNA aggiornare il compilatore, si va su windows/preferences/java/compiler e lo si imposta a 21 (3 volte) 
+per tutti i workspaces che si sono creati!
+
+
+25/04/2025
+Fatta modifica a release.xml per avere il timestamp al posto del numero di build non utilizzato
+ATTENZIONE: ho scoperto che venive utilizzato un limiti.csv messo nei dati di test di Eclipse.
+Spostato il limiti.csv in nella cartella Plugins/ContMensili/.
+Bisogna ricordarsi di mandarlo a Lorella!
+
+
+24/04/2025
+RELEASE
+
+Il rincoglionimento galoppa: non mi ricordavo piu' di avere iniziato il release.xml
+Ora mi sembra di capire che gia'funzionasse, ma sicuramente va portato "allo stato dell'arte"
+
+Data una ripulita e sistemata a release.xml
+Non ricordo, pero' come andasse usato al momento di fare un commit su github
+
+TROVATO FORSE
+La cartella release (al contrario della cartella rel) è in INDEX quindi viene messa su github. I suoi file zip NON 
+hanno il marker di data (rimane all'interno dei dati zippati). In questo modo DOVREBBE venire trasferito senza rompere 
+gli ioni!
+
+BISOGNA far girare release.xml per fare aggiornare i due file zippati contenuti.
+
+
+
+
+
+24/04/2025
+PULIZIA BUILD
+
+Ispirandomi ai build di Emanulele Balduzzi ho ripulito e commentato il build di ContMensili
+ho fatto anche prove generandone uno nuovo sul PC fisso.
+Realmente sarebbe piu'facile mettere tutto in git ed ospitare tutto in una cartella
+C:/Users/Alberto/git/
+questo sarebbe il nuovo repository e tutto partirebbe da li', senza avere piu'i differenti workspaces
+quindi la nuova struttura potrebbe essere
+git
+/imagej
+/controlliMensili
+/iw2ayv
+/dicomSotrer
+/spy
+
+24/04/2025
+PULIZIA PROGETTO SU GITHUB
+Mi sono accorto da tempo che in github ho un sacco di vecchi file inutili, che se cancello riappaiono dalla gitHistory
+Ho pero' visto che basta elencare i file che non si vogliono piu' seguire in .gitignore
+La procedura sarebbe la seguente:
+in questo portatile vado a fare un commit
+Per togliere le cose sia da github che da unstaged changes ho fatto:
+selezionato su unstaged con dx / replace with HEAD revision
+me li fa riapparire in Package Explorer, anche se in precedenza erano stati cancellati.
+Ora in Package Explorer DX: Team / Advanced / Untrack
+Poi cancello dal Package Explorer con Delete
+Infine faccio Commit And Push
+
+DOVREI AVERE ABBASTANZA RIPULITO, SALVO CHE HO MOLTE UNSTAGED CHANGES
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------
+CARICAMENTO DEL REPOSITORY LOCALE (COMPLETO) SU GITHUB
+--------------------------------------------------------
+1) Creazione su github di un repository con il medesimo nome
+2) Team / Remote /Push 
+Si apre una finestra di dialogo "PUSH TO ANOTHER REPOSITORY"
+URL: https://github.com/albertoduina/ControlliMensili.git
+Authentication:
+User: albertoduina
+Password: laMia, gne gne gne!!!
+StoreInSecureStore check
+---------------------------------------------------------
+SE VA TUTTO BENE SIATTENDE CHE IL CARICAMENTO VADA A BUON FINE
+-----------------
+ALTRIMENTI
+-----------------
+HO AVUTO IL MESSAGGIO NOT AUTHORIZED
+MA ANCHE UN .............
+IN QUESTO CASO SI DEVE SELEZIONARE UN FORCE PUSH
+------------------------------------------------------------
+------------------------------------------------------------
+SUPPONIAMO ORA CHE QUALCHE SIMPATICO OMETTO A 12 TENTACOLI
+FACCIA DELLE MODIFICHE SU GITHUB, LE DEVO ORA SCARICARE NEL 
+MIO REPOSITORY LOCALE
+------------------------------------------------------------ 
+1) Team/Remote/Fetch
+Si apre una finestra di dialogo "FETCH FROM ANOTHER REPOSITORY"
+URL: https://github.com/albertoduina/ControlliMensili.git
+Si apre una ulteriore finestra di dialogo "FETCH REF SPECIFICATIONS"
+SourceRef:  refs/heads/master
+Destination ref: refs/remote/choose_remote_name/master
+Poi si preme Add Spec e, volendo nella finestra sottostante, 
+in cui sono stati copiati i dati inseriti, possiamo premere FORCE UPDATE
+------------------------------------------------------------ 
+MA NON E'FINITA, DI SEGUITO BISOGNERA' FARE UN MERGE PER ACCETTARE 
+LE MODIFICE IMPORTATE DA GITHUB
+------------------------------------------------------------
+

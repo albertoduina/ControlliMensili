@@ -119,6 +119,7 @@ public class p7rmn_ implements PlugIn, Measurements {
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 
 //		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		VERSION = this.getClass().getName(); /// ACCORCIATO PER CORSO
 
 		fileDir = Prefs.get("prefer.string1", "none");
 
@@ -153,6 +154,7 @@ public class p7rmn_ implements PlugIn, Measurements {
 				break;
 			case 4:
 				step = true;
+				VERSION = this.getClass().getName();
 			case 5:
 				String path1 = UtilAyv.imageSelection("SELEZIONARE IMMAGINE...");
 				if (path1 == null) {
@@ -161,6 +163,7 @@ public class p7rmn_ implements PlugIn, Measurements {
 				boolean autoCalled = false;
 				boolean verbose = true;
 				boolean test = false;
+				VERSION = this.getClass().getName();
 				mainWarp(path1, riga1, autoCalled, step, verbose, test);
 				UtilAyv.afterWork();
 				retry = false;

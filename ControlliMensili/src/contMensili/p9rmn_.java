@@ -277,6 +277,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 					break;
 				case 4:
 					bstep = true;
+					VERSION = this.getClass().getName();
 					retry = false;
 					break;
 				case 5:
@@ -429,6 +430,7 @@ public class p9rmn_ implements PlugIn, Measurements {
 
 			VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 					+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+			VERSION = this.getClass().getName(); /// ACCORCIATO PER CORSO
 
 			info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
 

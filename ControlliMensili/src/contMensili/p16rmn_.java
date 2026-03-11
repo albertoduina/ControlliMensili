@@ -111,6 +111,7 @@ public class p16rmn_ implements PlugIn, Measurements {
 		// -----------------------------
 		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+		VERSION = this.getClass().getName(); /// ACCORCIATO PER CORSO
 		// -----------------------------
 		fileDir = Prefs.get("prefer.string1", "none");
 		// -----------------------------

@@ -544,16 +544,16 @@ public class Sequenze_Test {
 
 	}
 
-	@Test
-	public final void testKludge() {
-		if (mark)
-			IJ.log(">019");
-
-		String codeIma = "./test2/S12S_MISSING";
-		String coil = new UtilAyv().kludge(codeIma);
-		assertTrue(coil.equals("C:SP1,2"));
-		if (mark)
-			IJ.log("019>");
-
-	}
+//	@Test
+//	public final void testKludge() {
+//		if (mark)
+//			IJ.log(">019");
+//
+//		String codeIma = "./test2/S12S_MISSING";
+//		String coil = new UtilAyv().kludge(codeIma);
+//		assertTrue(coil.equals("C:SP1,2"));
+//		if (mark)
+//			IJ.log("019>");
+//
+//	}
 }

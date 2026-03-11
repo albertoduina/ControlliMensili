@@ -127,6 +127,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 
 		VERSION = user1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+		VERSION = this.getClass().getName(); /// ACCORCIATO PER CORSO
 
 //		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 
@@ -162,6 +163,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 				break;
 			case 4:
 				step = true;
+				VERSION = this.getClass().getName();
 				retry = false;
 				// dont put break here!
 			case 5:
@@ -177,7 +179,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 				// new p6rmn_().wrapThickness(path, "0", oldPosition, autoCalled, step, verbose,
 				// test);
 
-				new p6rmn_ORIGINAL().mainThickness(path, "0", oldPosition, autoCalled, step, verbose, test);
+				new p6rmn_ORIGINAL().mainThickness_ORIGINAL(path, "0", oldPosition, autoCalled, step, verbose, test);
 				UtilAyv.afterWork();
 				retry = true;
 
@@ -240,6 +242,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 				break;
 			case 3:
 				step = true;
+				VERSION = this.getClass().getName();
 				retry = false;
 				// dont put break here!
 			case 4:
@@ -254,7 +257,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 				boolean accetta = false;
 
 				do {
-					rt = mainThickness(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
+					rt = mainThickness_ORIGINAL(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
 					if (rt != null) {
 						// MyLog.here("verifyResultTable");
 						rt.show("Results");
@@ -342,7 +345,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 				boolean step = false;
 				boolean verbose = false;
 				boolean test = true;
-				ResultsTable rt = new p6rmn_ORIGINAL().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step,
+				ResultsTable rt = new p6rmn_ORIGINAL().mainThickness_ORIGINAL(path1, autoArgs, vetRefPosition, autoCalled, step,
 						verbose, test);
 				rt.show("Results");
 				MyLog.waitHere("verifica results table");
@@ -369,7 +372,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 				boolean verbose = false;
 				boolean test = true;
 
-				ResultsTable rt = new p6rmn_ORIGINAL().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step,
+				ResultsTable rt = new p6rmn_ORIGINAL().mainThickness_ORIGINAL(path1, autoArgs, vetRefPosition, autoCalled, step,
 						verbose, test);
 
 				double[] vetResults = UtilAyv.vectorizeResults(rt);
@@ -404,7 +407,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 		boolean verbose = false;
 		boolean test = true;
 
-		ResultsTable rt = new p6rmn_ORIGINAL().mainThickness(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
+		ResultsTable rt = new p6rmn_ORIGINAL().mainThickness_ORIGINAL(path1, autoArgs, vetRefPosition, autoCalled, step, verbose,
 				test);
 
 		double[] vetResults = UtilAyv.vectorizeResults(rt);
@@ -482,7 +485,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 //	}
 
 	@SuppressWarnings("deprecation")
-	public ResultsTable mainThickness(String[] path, String autoArgs, double[] vetRefPosition, boolean autoCalled,
+	public ResultsTable mainThickness_ORIGINAL(String[] path, String autoArgs, double[] vetRefPosition, boolean autoCalled,
 			boolean step, boolean verbose, boolean test) {
 
 		int nFrames = 0;
@@ -720,7 +723,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 			vetProfile[2] = lato - lato / 13.0;
 			vetProfile[3] = lato * 3.0 / 5.0;
 
-			isSlab = false;
+			isSlab = true;
 			invertErf = true;
 			putLabelSx = false;
 			if (imp3.isVisible()) {
@@ -754,7 +757,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 			vetProfile[2] = lato - lato / 13.0;
 			vetProfile[3] = lato * 4.0 / 5.0;
 
-			isSlab = false;
+			isSlab = true;
 			invertErf = false;
 			putLabelSx = true;
 			if (step) {
@@ -1135,6 +1138,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 		double[] profiB1 = baselineCorrection_ORIGINAL(profiM1, statC.mean, statD.mean);
 
 		if (step) {
+			MyLog.waitHere("aaa");
 			createPlot2_ORIGINAL(profiB1, dimPixel, true, bLabelSx, "Profilo mediato + baseline correction", true);
 			msgBaseline();
 		}
@@ -1144,6 +1148,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 			isd3 = analPlot1_ORIGINAL(profiB1, slab);
 			outFwhm = calcFwhm_ORIGINAL(isd3, profiB1, slab, dimPixel);
 			if (step) {
+				MyLog.waitHere("bbb");
 				createPlot2_ORIGINAL(profiB1, dimPixel, slab, bLabelSx, "plot mediato + baseline + FWHM", true);
 				msgFwhm();
 			}
@@ -1157,6 +1162,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 			outFwhm = calcFwhm_ORIGINAL(isd3, profiE1, slab, dimPixel);
 
 			if (step) {
+				MyLog.waitHere("ccc");
 				createPlot2_ORIGINAL(profiE1, dimPixel, slab, bLabelSx, "plot ERF con smooth 3x3 e FWHM", true);
 				msgErf();
 			}

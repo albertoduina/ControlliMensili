@@ -123,6 +123,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 
 		VERSION = user1 + ":" + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+		VERSION = this.getClass().getName(); /// ACCORCIATO PER CORSO
 
 		// VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" +
 		// MyVersionUtils.getVersion();
@@ -173,6 +174,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				break;
 			case 4:
 				mode = 3;
+				VERSION = this.getClass().getName();
 				// step = true;
 			case 5:
 				if (mode == 0) {
@@ -192,6 +194,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 				if (path3 == null) {
 					return 0;
 				}
+				VERSION = this.getClass().getName();
 
 				int direzione = 1;
 				// boolean autoCalled = false;

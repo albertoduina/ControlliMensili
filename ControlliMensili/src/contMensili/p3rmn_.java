@@ -101,6 +101,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 		String imagej1 = ":ImageJ " + ImageJ.VERSION + ImageJ.BUILD;
 		VERSION = user1 + ":" + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+		VERSION = this.getClass().getName(); /// ACCORCIATO PER CORSO
+
 		// -----------------------------
 		fileDir = Prefs.get("prefer.string1", "none");
 		// -----------------------------
@@ -146,6 +148,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 				break;
 			case 4:
 				step = true;
+				VERSION = this.getClass().getName();
 			case 5:
 				String path1 = UtilAyv.imageSelection("SELEZIONARE PRIMA IMMAGINE...");
 				if (path1 == null) {
@@ -243,6 +246,7 @@ public class p3rmn_ implements PlugIn, Measurements {
 				break;
 			case 3:
 				step = true;
+				VERSION = this.getClass().getName();
 			case 4:
 				boolean verbose = true;
 				boolean test = false;

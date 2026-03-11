@@ -134,6 +134,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 		String imagej1 = ":ImageJ " + ImageJ.VERSION + ImageJ.BUILD;
 		VERSION = user1 + ":" + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+		VERSION = this.getClass().getName(); /// ACCORCIATO PER CORSO
 		// -----------------------------
 		// directory dati, dove vengono memorizzati ayv.txt e Results1.xls
 		fileDir = Prefs.get("prefer.string1", "none");
@@ -181,6 +182,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				break;
 			case 4:
 				step = true;
+				VERSION = this.getClass().getName();
 				demo = true;
 			case 5:
 				String path1 = UtilAyv.imageSelection("SELEZIONARE PRIMA IMMAGINE...");
@@ -194,6 +196,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 				boolean autoCalled = false;
 				boolean test = false;
 				boolean silent = false;
+				VERSION = this.getClass().getName();
 				mainUnifor(path1, path2, "0", "", autoCalled, step, demo, test, fast, silent, timeout);
 
 				UtilAyv.afterWork();

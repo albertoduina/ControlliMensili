@@ -104,6 +104,7 @@ public class p13rmn_ implements PlugIn, Measurements {
 
 		VERSION = user1 + ":" + java1 + imagej1 + ":"+ className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+		VERSION = this.getClass().getName(); /// ACCORCIATO PER CORSO
 
 //		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
 

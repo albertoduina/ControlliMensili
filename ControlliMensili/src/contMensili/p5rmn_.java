@@ -108,6 +108,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 		VERSION = user1 + ":" + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+		VERSION = this.getClass().getName(); /// ACCORCIATO PER CORSO
 
 		// VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" +
 		// MyVersionUtils.getVersion();
@@ -152,6 +153,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 				break;
 			case 4:
 				step = true;
+				VERSION = this.getClass().getName();
 			case 5:
 				String[] path = new String[3];
 				path[0] = UtilAyv.imageSelection("SELEZIONARE PRIMA ACQUISIZIONE PRIMO ECO...");
@@ -172,6 +174,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 				boolean autoCalled = false;
 				boolean verbose = true;
 				boolean test = false;
+				VERSION = this.getClass().getName();
 				int sqX = 0;
 				int sqY = 0;
 				// ResultsTable rt1 = mainUnifor(path, sqX, sqY, "0",

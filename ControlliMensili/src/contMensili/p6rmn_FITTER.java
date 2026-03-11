@@ -181,6 +181,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 				break;
 			case 4:
 				step = true;
+				VERSION = this.getClass().getName();
 				retry = false;
 				// dont put break here!
 			case 5:
@@ -258,6 +259,7 @@ public class p6rmn_FITTER implements PlugIn, Measurements {
 				break;
 			case 3:
 				step = true;
+				VERSION = this.getClass().getName();
 				retry = false;
 				// dont put break here!
 			case 4:

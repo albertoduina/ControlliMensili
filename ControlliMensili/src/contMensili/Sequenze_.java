@@ -86,7 +86,7 @@ public class Sequenze_ implements PlugIn {
 	public static boolean forcesilent = false;
 	// basta che la bobina sia collegata, se le immagini fanno schifo non e' mio
 	// problema io le analizzo comunque .....
-	public static boolean bastacherespiri = true;
+	// public static boolean bimbedisatana = false;
 
 	public static boolean blackbox = false;
 	public static String blackpath = "";
@@ -125,6 +125,9 @@ public class Sequenze_ implements PlugIn {
 
 		String startingDir = Prefs.get(MyConst.PREFERENCES_1, MyConst.DEFAULT_PATH);
 		// IJ.log("Sequenze_>>> startingDir letta= " + startingDir);
+
+		if (debugTables)
+			MyLog.waitHere("ATTENZIONE debugtables=true");
 
 		UtilAyv.logResizer();
 
@@ -580,6 +583,9 @@ public class Sequenze_ implements PlugIn {
 				// OCCHIO CHE IL 9_tableSequenceReloaded non ha i dati ma solo intestazione
 			}
 
+			/// 301025 cerco di ricreare il frame se si chiudesse
+			///
+
 			// IJ.log(MyLog.qui() + " avvio >>> callPluginsFromSequenceTable");
 			// ======================================================================================
 			// ======================================================================================
@@ -651,8 +657,6 @@ public class Sequenze_ implements PlugIn {
 
 	public String[][] generateSequenceTable(String[] pathList, String[][] tableCode2, String[][] tableExpand4) {
 
-		
-
 		List<String> vetConta = new ArrayList<String>();
 		List<String> vetPath = new ArrayList<String>();
 		List<String> vetCodice = new ArrayList<String>();
@@ -672,6 +676,7 @@ public class Sequenze_ implements PlugIn {
 		List<String> vetDone = new ArrayList<String>();
 		List<String> vetDirez = new ArrayList<String>();
 		List<String> vetProfond = new ArrayList<String>();
+		List<String> vetBuilder = new ArrayList<String>();
 
 		if (pathList == null) {
 			IJ.log("loadList2.pathList = null");
@@ -683,6 +688,7 @@ public class Sequenze_ implements PlugIn {
 		}
 
 		int count3 = 0;
+		int manufacturer = 0;
 		for (int i1 = 0; i1 < pathList.length; i1++) {
 
 			String aux1 = "generateSequenceTable " + i1 + " / " + pathList.length;
@@ -733,7 +739,7 @@ public class Sequenze_ implements PlugIn {
 					codice = subCodice;
 				} else {
 					String seriesDescription = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION);
-					int manufacturer = ReadDicom.whatManufacturer(imp1);
+					manufacturer = ReadDicom.whatManufacturer(imp1);
 					if (seriesDescription.length() >= 5) {
 						codice = seriesDescription.substring(0, 5).trim();
 						if (manufacturer == 5)
@@ -759,20 +765,26 @@ public class Sequenze_ implements PlugIn {
 //					IJ.log("DICOM_ENHANCED");
 
 				// String coil = ReadDicom.getFirstCoil(imp1);
-				String coil = ReadDicom.getAllCoils(imp1);
-
+				String allcoils = ReadDicom.getAllCoils(imp1);
+//				IJ.log("001 ALLcoils= " + allcoils);
+//				MyLog.waitHere("ALLcoils= " + allcoils);
 				String bbb = ReadDicom.piedeDiPorco(path1, "2100,4F10");
 
-				if (coil.equals("MISSING") || coil == ("") || coil == null) {
-					coil = bbb;
+				if (allcoils.equals("MISSING") || allcoils == ("") || allcoils == null) {
+					allcoils = bbb;
 				}
 
-				if (coil.length() > 1) {
+				// in questa posizione la stringa allcoils contiene qualsiasi bobina attivata
+				// per qualsiasi costruttore
+
+				if (allcoils.length() > 1) {
 
 					// ###########################################################################
-					// 16/02/2024 modifiche per la SOLA (romanesco)
+					// 16/02/2024 modifiche per la SOLA (romanesco) in questo caso andiamo a CASSARE
+					// il nome bobina dalle immagini che non dobbiamo analizzare perce'create dalle
+					// bimbedisatana
 
-					String firstLetterOfCoil = coil.substring(0, 1);
+					String firstLetterOfCoil = allcoils.substring(0, 1);
 
 					// MyLog.waitHere("codice= "+codice);
 
@@ -780,45 +792,58 @@ public class Sequenze_ implements PlugIn {
 
 					if ((codice.equalsIgnoreCase("BL2F_") && firstLetterOfCoil.equalsIgnoreCase("R"))) {
 						// MyLog.waitHere("BL2F XXX");
-						coil = "XXX";
+						allcoils = "XXX";
 					}
 					if ((codice.equalsIgnoreCase("BR2F_") && firstLetterOfCoil.equalsIgnoreCase("L"))) {
 						// MyLog.waitHere("BR2F XXX");
-						coil = "XXX";
+						allcoils = "XXX";
 					}
 					if ((codice.equalsIgnoreCase("BL2S_") && firstLetterOfCoil.equalsIgnoreCase("R"))) {
 						// MyLog.waitHere("BL2F XXX");
-						coil = "XXX";
+						allcoils = "XXX";
 					}
 					if ((codice.equalsIgnoreCase("BR2S_") && firstLetterOfCoil.equalsIgnoreCase("L"))) {
 						// MyLog.waitHere("BR2F XXX");
-						coil = "XXX";
+						allcoils = "XXX";
 					}
 
 				}
 
-				
-				// MyLog.waitHere("001 coil= " + coil + " bbb= " + bbb);
+//				MyLog.waitHere("001 coil= " + allcoils + " bbb= " + bbb);
 
-				if (bastacherespiri) {
-					// modifica 28/05/2025
-					// rimodifica 28/10/2025 per PeH, le BimbeDiSatana colpiscono ancora 
-					// ed ho PeH;PeN attivate assieme, proprio NON come previsto!
-					// MyLog.waitHere("002 coil= " + coil);
-					coil = coil.replace(";", "+");
-					// ===============================================================================
-					// altro tentativo del 2025, per dividere le bobine spurie dalla prima BO1,2 >
-					// BO1 e BO2,3 > BO2
-					String[] auxx = null;
-					if (coil.contains("BO")) {
-						auxx = coil.split("[,\\+]");
-						coil = auxx[0];
-					}
-					if (coil.contains("PeH")) {
-						auxx = coil.split("[,\\+]");
-						coil = auxx[0];
-					}
-				}
+//				if (bimbedisatana) {
+//					// modifica 28/05/2025
+//					// rimodifica 28/10/2025 per PeH, le BimbeDiSatana colpiscono ancora
+//					// ed ho PeH;PeN attivate assieme, proprio NON come previsto!
+//					// MyLog.waitHere("002 coil= " + coil);
+//
+//					/// MODIFICA 29/10/2025 "LAST DITCH" dopo di che chiamiamo un ESORCISTA !!!
+//					String[] auxx = null;
+//					String coil7 = allcoils;
+//
+//					// naturalmente una macchina che si mette di traverso la troviamo sempre, la
+//					// Union ha il ; come codice utilizzato in tabella gels e codici
+//					if (!(manufacturer == 1))
+//						allcoils = allcoils.replace(';', '+');
+//					if (allcoils.contains(";") && manufacturer == 1) {
+//						auxx = allcoils.split(";");
+//						allcoils = auxx[0];
+//					}
+//
+////					MyLog.waitHere("coil prima= " + coil7 + " dopo= " + coil + " manufacturer= " + manufacturer);
+//
+////					// ===============================================================================
+////					// altro tentativo del 2025, per dividere le bobine spurie dalla prima BO1,2 >
+////					// BO1 e BO2,3 > BO2
+////					if (coil.contains("BO")) {
+////						auxx = coil.split("[,\\+]");
+////						coil = auxx[0];
+////					}
+////					if (coil.contains("PeH")) {
+////						auxx = coil.split("[,\\+]");
+////						coil = auxx[0];
+////					}
+//				}
 				// BLAHBLAHBLAH verificare che non crei problemi con altre macchine ed altre
 				// acquisizioni
 				// ===============================================================================
@@ -827,12 +852,19 @@ public class Sequenze_ implements PlugIn {
 
 				// ===============================================================================
 
-				/// MyLog.waitHere("MACHECOGLIONI= "+coil);
+				// ------------------------------------------------
+				// separo le bobine col ; solo per Siemens, altrimenti sostituisco il ; con +
+				// ------------------------------------------------
+				String[] allCoils2;
+				if (manufacturer == 1) {
+					allCoils2 = ReadDicom.parseString(allcoils);
+				} else {
+					allCoils2 = new String[1];
+					allcoils = allcoils.replace(';', '+');
+					allCoils2[0] = allcoils;
+				}
+				// MyLog.waitHere("aaaa allcoils= "+allcoils);
 
-				String[] allCoils = ReadDicom.parseString(coil);
-
-//				MyLog.logVector(allCoils,"allCoils");
-//				MyLog.waitHere("bastacherespiri coil= "+coil);
 				// coil rimane completa
 
 				String numSerie = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SERIES_NUMBER);
@@ -866,8 +898,8 @@ public class Sequenze_ implements PlugIn {
 
 						if ((tableCode2[j1][TableCode.COIL].equals("x"))
 								|| (tableCode2[j1][TableCode.COIL].equals("xxx"))
-								|| (tableCode2[j1][TableCode.COIL].equals(coil))
-								|| coilPresent(allCoils, tableCode2[j1][TableCode.COIL])) {
+								|| (tableCode2[j1][TableCode.COIL].equals(allcoils))
+								|| coilPresent(allCoils2, tableCode2[j1][TableCode.COIL])) {
 
 							//
 							// E' QUI'LA FESTA ? cerrtoo
@@ -905,7 +937,7 @@ public class Sequenze_ implements PlugIn {
 					vetPath.add(path1);
 					vetCodice.add(codice);
 					// if (questo) MyLog.waitHere(""+count3+" coil= "+coil);
-					vetCoil.add(coil);
+					vetCoil.add(allcoils);
 					vetImaDaPassare.add(tableCode2[tableRow][TableCode.IMA_PASS]);
 					vetImaOrder.add(tableCode2[tableRow][TableCode.IMA_ORDER]);
 					vetImaIncrement.add(tableCode2[tableRow][TableCode.IMA_INCREMENT]);
@@ -938,7 +970,7 @@ public class Sequenze_ implements PlugIn {
 							vetPath.add(path1);
 //							IJ.log("espando con " + espansione[i2][2] + " " + espansione[i2][3]);
 							vetCodice.add(element[2]);
-							vetCoil.add(coil);
+							vetCoil.add(allcoils);
 							vetImaDaPassare.add(element[3]);
 							vetImaOrder.add(tableCode2[tableRow][TableCode.IMA_ORDER]);
 							vetImaIncrement.add(tableCode2[tableRow][TableCode.IMA_INCREMENT]);
@@ -1139,15 +1171,20 @@ public class Sequenze_ implements PlugIn {
 
 	public static boolean coilPresent(String[] allCoils, String coil) {
 		boolean trovato = false;
+
+//		MyLog.logVector(allCoils, "allCoils");
+//		IJ.log("coil= " + coil);
+//		 MyLog.waitHere("coilPresent input");
+
 		for (String coil2 : allCoils) {
 			if (coil2.equals(coil)) {
 				trovato = true;
 			}
 		}
 		if (allCoils.length > 1) {
-			// MyLog.logVector(allCoils, "allCoils");
-			// IJ.log(coil + " " + trovato);
-			// MyLog.waitHere();
+//			 MyLog.logVector(allCoils, "allCoils");
+//			 IJ.log(coil + " " + trovato);
+////			 MyLog.waitHere("coilPresent OUTPUT");
 		}
 		return trovato;
 	}
@@ -1361,6 +1398,13 @@ public class Sequenze_ implements PlugIn {
 						MyLog.waitHere("MA COSA STRACACCHIO HO COMBINATO ???");
 						// plugin = "contMensili.p6rmn_ORIGINAL";
 					}
+				}
+
+				TextWindow lw = (TextWindow) WindowManager.getFrame("Sequenze");
+				if (lw == null) {
+					tw = new TextWindow("Sequenze", "<-- INIZIO Sequenze -->", 300, 200);
+					lw = (TextWindow) WindowManager.getFrame("Sequenze");
+					lw.setLocation(10, 10);
 				}
 
 				// usato durante i test 2024_04_20
@@ -1853,6 +1897,7 @@ public class Sequenze_ implements PlugIn {
 	 */
 	public boolean compareAcqReq(String codeImaAcq, String codeImaReq, String coilImaAcq, String coilImaReq) {
 
+		// MyLog.waitHere("compareAcqReq= ");
 		boolean res1;
 		String[] allCoils = ReadDicom.parseString(coilImaAcq);
 
@@ -1882,6 +1927,7 @@ public class Sequenze_ implements PlugIn {
 	public boolean compareAcqReq2(String codeImaAcq, String codeImaReq, String coilImaAcq, String coilImaReq) {
 
 		boolean res1;
+		MyLog.waitHere("compareAcqReq2= ");
 
 		if (codeImaAcq.equals(codeImaReq)) {
 			if (coilImaReq.equals("xxx") || coilImaReq.equals("XXX")) {

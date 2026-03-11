@@ -112,6 +112,7 @@ public class p19rmn_ implements PlugIn, Measurements {
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
 
 //		VERSION = className + "_build_" + MyVersion.getVersion() + "_iw2ayv_build_" + MyVersionUtils.getVersion();
+		VERSION = this.getClass().getName(); /// ACCORCIATO PER CORSO
 
 		fileDir = Prefs.get("prefer.string1", "none");
 		if (mylogger) {

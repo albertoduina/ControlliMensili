@@ -238,10 +238,16 @@ public class p2rmn_ implements PlugIn, Measurements {
 		String iw2ayv1 = tc1.nameTable("codici", "csv");
 		String iw2ayv2 = tc1.nameTable("expand", "csv");
 		// -----------------------------
-		String java1 = "Java " + System.getProperty("java.version") + (IJ.is64Bit() ? " (64-bit)" : " (32-bit)");
-		String imagej1 = ":ImageJ " + ImageJ.VERSION + ImageJ.BUILD;
-		VERSION = user1 + ":" + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+		String java1 = "J" + System.getProperty("java.version") + (IJ.is64Bit() ? " (64-bit)" : " (32-bit)");
+//		String java1 = "Java " + System.getProperty("java.version") + (IJ.is64Bit() ? " (64-bit)" : " (32-bit)");
+		String imagej1 = ":I " + ImageJ.VERSION + ImageJ.BUILD;
+//		VERSION = user1 + ":" + java1 + imagej1 + ":" + className + "build_" + MyVersion.getVersion() + ":iw2ayv_build_"
+//				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+		VERSION = user1 + ":" + java1 + imagej1 + ":" + className + "B_" + MyVersion.getVersion() + ":"
 				+ MyVersionUtils.getVersion() + ":" + iw2ayv1 + ":" + iw2ayv2;
+		
+		VERSION = this.getClass().getName(); /// ACCORCIATO PER CORSO
+
 		// -----------------------------
 		// directory dati, dove vengono memorizzati ayv.txt e Results1.xls
 		String fileDir = Prefs.get("prefer.string1", "none");
@@ -289,6 +295,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 					break;
 				case 4:
 					bstep = true;
+					VERSION = this.getClass().getName();
 					retry = false;
 					break;
 				case 5:
@@ -397,6 +404,7 @@ public class p2rmn_ implements PlugIn, Measurements {
 					break;
 				case 3:
 					bstep = true;
+					VERSION = this.getClass().getName();
 					retry = false;
 					break;
 				case 4:
