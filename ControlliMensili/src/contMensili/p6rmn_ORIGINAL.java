@@ -1097,6 +1097,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 		ImageStatistics statC = imp1.getStatistics();
 		if (step) {
 			imp1.updateAndDraw();
+			MyLog.waitHere("POSIZIONAMENTO_SU_GRAFICO");
 			ButtonMessages.ModelessMsg(
 					"primo centro c2x=" + c2x + " c2y=" + c2y + " ra1=" + ra1 + "  media=" + statC.mean + "   <51>",
 					"CONTINUA");

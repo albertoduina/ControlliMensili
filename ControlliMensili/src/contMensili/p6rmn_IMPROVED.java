@@ -109,6 +109,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 
 	private static String fileDir = "";
 
+	private static Color oldcolor;
 	// ---------------------------"01234567890123456789012345678901234567890"
 
 	@Override
@@ -124,6 +125,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		if (IJ.versionLessThan("1.43k")) {
 			return;
 		}
+		oldcolor = Line.getColor();
 		//
 		// nota bene: le seguenti istruzioni devono essere all'inizio, in questo
 		// modo il messaggio viene emesso, altrimenti si ha una eccezione
@@ -201,8 +203,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				// test);
 				if (stepout) {
 					step = false;
-					new p6rmn_ORIGINAL().mainThickness_ORIGINAL(path, "0", oldPosition, autoCalled, step, verbose,
-							test);
+					mainThickness_ORIGINAL(path, "0", oldPosition, autoCalled, step, verbose, test);
 				}
 
 				// DOMANDAZZA: in manuale che facciamo partire in caso di multislice ????
@@ -290,12 +291,14 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 				do {
 					if (multi && !step) {
 						// qui entro per le multiple se non ho selezionato step
-						rt = mainThickness_ORIGINAL(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
+						rt = new p6rmn_IMPROVED().mainThickness_ORIGINAL(path, autoArgs, vetRefPosition, autoCalled,
+								step, verbose, test);
 						// MULTIPLE viene eseguito e termina correttamente se non ho step
 						// SINGLE
 					} else {
 						// qui entro per le multiple se ho selezionato step
-						rt = mainThickness_IMPROVED(path, autoArgs, vetRefPosition, autoCalled, step, verbose, test);
+						rt = new p6rmn_IMPROVED().mainThickness_IMPROVED(path, autoArgs, vetRefPosition, autoCalled,
+								step, verbose, test);
 						// MULTIPLE viene eseguito e termina correttamente se arrivo al termine (se do
 						// EXIT fallisce)
 
@@ -555,6 +558,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		//
 		Roi roi = impStack.getRoi();
 		Line line1 = (Line) roi;
+		// oldcolor=line1.getStrokeColor();
 		vetRefPosition[0] = line1.x1;
 		vetRefPosition[1] = line1.y1;
 		vetRefPosition[2] = line1.x2;
@@ -961,125 +965,125 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 
 //			} else {
 
-				// MyLog.waitHere("scrive "+jj1);
+		// MyLog.waitHere("scrive "+jj1);
 
-				rt.incrementCounter();
-				rt.addValue(t1, "fwhm_slab1");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, fwhmSlice1[j1]);
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "fwhm_slab1");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, fwhmSlice1[j1]);
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "peak_slab1");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, peakPositionSlice1[j1]);
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "peak_slab1");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, peakPositionSlice1[j1]);
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "fwhm_slab2");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, fwhmSlice2[j1]);
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "fwhm_slab2");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, fwhmSlice2[j1]);
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "peak_slab2");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, peakPositionSlice2[j1]);
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "peak_slab2");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, peakPositionSlice2[j1]);
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "fwhm_cuneo3");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, fwhmCuneo3[j1]);
-					// IJ.log("cuneo3 slice= " + j1 + " FWHM [mm]= " + fwhmCuneo3[j1] * dimPixel *
-					// Math.sin(Math.toRadians(11.3)));
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "fwhm_cuneo3");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, fwhmCuneo3[j1]);
+			// IJ.log("cuneo3 slice= " + j1 + " FWHM [mm]= " + fwhmCuneo3[j1] * dimPixel *
+			// Math.sin(Math.toRadians(11.3)));
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "peak_cuneo3");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, peakPositionCuneo3[j1]);
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "peak_cuneo3");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, peakPositionCuneo3[j1]);
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "fwhm_cuneo4");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, fwhmCuneo4[j1]);
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "fwhm_cuneo4");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, fwhmCuneo4[j1]);
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "peak_cuneo4");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, peakPositionCuneo4[j1]);
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "peak_cuneo4");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, peakPositionCuneo4[j1]);
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "S1CorSlab");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, mmVetS1CorSlab[j1]);
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "S1CorSlab");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, mmVetS1CorSlab[j1]);
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "S2CorSlab");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, mmVetS2CorSlab[j1]);
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "S2CorSlab");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, mmVetS2CorSlab[j1]);
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "ErrSperSlab");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, mmVetErrSpessSlab[j1]);
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "ErrSperSlab");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, mmVetErrSpessSlab[j1]);
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "AccurSpesSlab");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, mmVetAccurSpessSlab[j1]);
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "AccurSpesSlab");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, mmVetAccurSpessSlab[j1]);
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "S1CorCuneo");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, mmVetS1CorCuneo[j1]);
-				}
-				rt.incrementCounter();
-				rt.addValue(t1, "S2CorCuneo");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, mmVetS2CorCuneo[j1]);
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "S1CorCuneo");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, mmVetS1CorCuneo[j1]);
+		}
+		rt.incrementCounter();
+		rt.addValue(t1, "S2CorCuneo");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, mmVetS2CorCuneo[j1]);
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "ErrSperCuneo");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, mmVetErrSpessCuneo[j1]);
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "ErrSperCuneo");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, mmVetErrSpessCuneo[j1]);
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "AccurSpesCuneo");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, mmVetAccurSpessCuneo[j1]);
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "AccurSpesCuneo");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, mmVetAccurSpessCuneo[j1]);
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "Accettab");
-				for (int j1 = 0; j1 < nFrames; j1++) {
-					rt.addValue(s2 + j1, vetAccettab[j1]);
-				}
+		rt.incrementCounter();
+		rt.addValue(t1, "Accettab");
+		for (int j1 = 0; j1 < nFrames; j1++) {
+			rt.addValue(s2 + j1, vetAccettab[j1]);
+		}
 
-				rt.incrementCounter();
-				rt.addValue(t1, "DimPix");
-				rt.addValue(s2 + 0, dimPixel);
+		rt.incrementCounter();
+		rt.addValue(t1, "DimPix");
+		rt.addValue(s2 + 0, dimPixel);
 
-				rt.incrementCounter();
-				rt.addValue(t1, "Thick");
-				rt.addValue(s2 + 0, thick);
+		rt.incrementCounter();
+		rt.addValue(t1, "Thick");
+		rt.addValue(s2 + 0, thick);
 
-				rt.incrementCounter();
-				rt.addValue(t1, "Spacing");
-				rt.addValue(s2 + 0, spacing);
+		rt.incrementCounter();
+		rt.addValue(t1, "Spacing");
+		rt.addValue(s2 + 0, spacing);
 //			}
 //		}
-
+		Line.setColor(oldcolor);
 		return rt;
 
 	}
@@ -1170,6 +1174,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		//
 		Roi roi = impStack.getRoi();
 		Line line1 = (Line) roi;
+		Line.setColor(oldcolor);
 		vetRefPosition[0] = line1.x1;
 		vetRefPosition[1] = line1.y1;
 		vetRefPosition[2] = line1.x2;
@@ -1682,6 +1687,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			return null;
 		}
 		Line.setWidth(1);
+		double[] outFwhm = new double[2];
 
 		double dimPixel = ReadDicom
 				.readFloat(ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PIXEL_SPACING), 1));
@@ -1711,6 +1717,9 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		c3y = line1.y1;
 		d3x = line1.x2;
 		d3y = line1.y2;
+
+		// MyLog.waitHere("<A51>");
+
 		double peak1 = 9999;
 
 		over1.addElement(imp1.getRoi());
@@ -1768,132 +1777,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		boolean ripeti1 = false;
 		boolean mosso1 = false;
 		boolean mosso2 = false;
-
-		// attivo la selezione delle due roi in tutti i casi sia automatico che step
-
-		if (slab || step) {
-
-			do {
-				mosso1 = false;
-				mosso2 = false;
-				do {
-					ripeti1 = false;
-					imp1.killRoi();
-					// prima roi per baseline correction
-					imp1.setRoi(new OvalRoi(c2x, c2y, ra1, ra1));
-					imp1.getRoi().setStrokeColor(Color.RED);
-
-					imp1.updateAndDraw();
-					if (step) {
-						ButtonMessages.ModelessMsg(">> ROI MODIFICABILE <<, quando pronti premere CONTINUA   <512>",
-								"CONTINUA");
-					}
-
-					// acquisisco le nuove coordinate della ROI dove e come la hanno messa
-					Rectangle boundingRectangle1 = imp1.getRoi().getBounds();
-					ra11 = boundingRectangle1.width;
-					xRoi1 = boundingRectangle1.x;
-					yRoi1 = boundingRectangle1.y;
-					if ((xRoi1 != c2x) || (yRoi1 != c2y))
-						mosso2 = true;
-
-					if (ra11 != ra1) {
-						c2x = xRoi1;
-						c2y = yRoi1;
-						ripeti1 = true;
-					}
-				} while (ripeti1);
-
-				if (!stepout && !mosso2) {
-					MyLog.waitHere("PER PROSEGUIRE DEVI MUOVERE\nLA ROI DALLA POSIZIONE INIZIALE");
-					mosso1 = false;
-				} else {
-					mosso1 = true;
-				}
-
-			} while (!mosso1);
-
-			// qui potrei anche rilevare le coordinate della ROI ed utilizzarle per marcarle
-			// sul profile plot
-
-			// disegno la ROI sull'overlay, verificando in questo modo la correttezza dei
-			// miei calcoli
-
-			mySetRoi(imp1, xRoi1, yRoi1, ra11, Color.green);
-			// acquisisco le statistiche
-			statC = imp1.getStatistics();
-
-			// IJ.log(MyLog.qui() + " method= " + MyLog.method());
-
-			// MyLog.waitHere("peak1= " + peak1 + " xRoi1= " + xRoi1);
-
-			// ------------------------------------------------------------------------------
-			// adesso che conosco la prima ROI cerco di farne il mirror, rispetto al peak
-			// MIRROR
-			// ------------------------------------------------------------------------------
-			int c = (int) peak1 + ((int) peak1 - xRoi1) - ra11 / 2;
-			if (c > d2x) {
-				c = d2x;
-			}
-			// seconda roi per baseline correction
-			imp1.setRoi(new OvalRoi(c, d2y, ra1, ra1));
-			imp1.getRoi().setStrokeColor(Color.RED);
-			imp1.updateAndDraw();
-			if (step) {
-				ButtonMessages.ModelessMsg(">> ROI MODIFICABILE <<, quando pronti premere CONTINUA   <513>",
-						"CONTINUA");
-			}
-
-			Rectangle boundingRectangle2 = imp1.getRoi().getBounds();
-			int ra12 = boundingRectangle2.width;
-			int xRoi2 = boundingRectangle2.x;
-			int yRoi2 = boundingRectangle2.y;
-			mySetRoi(imp1, xRoi2, yRoi2, ra12, Color.green);
-			// acquisisco le statistiche
-			statD = imp1.getStatistics();
-
-			gialloXX1 = new double[ra11];
-			gialloYY1 = new double[ra11];
-			gialloXX2 = new double[ra12];
-			gialloYY2 = new double[ra12];
-			magentaXX1 = new double[ra12];
-			magentaYY1 = new double[ra12];
-			magentaXX2 = new double[ra12];
-			magentaYY2 = new double[ra12];
-			for (int i1 = 0; i1 < ra11; i1++) {
-				gialloXX1[i1] = (double) xRoi1 + (double) i1 - c3x;
-				magentaXX1[i1] = (double) xRoi1 + (double) i1 - c3x;
-			}
-			for (int i1 = 0; i1 < ra12; i1++) {
-				gialloXX2[i1] = (double) xRoi2 + i1 - c3x;
-				magentaXX2[i1] = (double) xRoi2 + i1 - c3x;
-			}
-
-			puntoX1 = xRoi1 + (ra12 / 2) - c3x;
-			puntoY1 = statC.mean;
-			puntoX2 = xRoi2 + (ra12 / 2) - c3x;
-			puntoY2 = statD.mean;
-
-			// queste sotto sono le coordinate sul grafico
-			if (SPY)
-				IJ.log(MyLog.qui() + "\n---ROI---\npuntoX1= " + puntoX1 + "\npuntoY1= " + puntoY1 + "\npuntoX2= "
-						+ puntoX2 + "\npuntoY2= " + puntoY2);
-
-			// le coordinate saranno
-			// Xsinistra>>> aux1-c3x
-			// Ysinistra>>> statC.mean
-			// Xdestra>>> aux3-c3x
-			// Ydestra= statD.mean
-
-//			baselineInterpolata = (statC.mean + statD.mean) / 2;
-		}
-		imp1.killRoi();
-		// linea calcolo segnale mediato
-//		Line.setWidth(11);
-//		double[] profiM1 = p6rmn_COMMON.getLinePixels_COMMON(imp1, c3x, c3y, d3x, d3y);
-		// IJ.log(MyLog.qui() + " method= " + MyLog.method());
-
-		int isd3[];
+		int isd3[] = null;
 		// double[] outFwhm;
 		double[] myOut = null;
 
@@ -1904,82 +1788,206 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		double medAAA = 0;
 		double medBBB = 0;
 
-		if (slab) {
-			// ESEGUITO DURANTE ANALISI SLAB
-			if (SPY)
-				IJ.log(MyLog.qui() + "\n=====" + titolo + "=======");
+		// attivo la selezione delle due roi in tutti i casi sia automatico che step
 
-			for (int i1 = 0; i1 < gialloXX1.length; i1++) {
-//				puntiYY1[i1] = profiM1[(int) puntiXX1[i1]];
-				gialloYY1[i1] = statC.mean;
-				magentaYY1[i1] = 5000;
-			}
-			for (int i1 = 0; i1 < gialloXX2.length; i1++) {
-//				puntiYY2[i1] = profiM1[(int) puntiXX2[i1]];
-				gialloYY2[i1] = statD.mean;
-				magentaYY2[i1] = 5000;
-			}
+		if (slab || step) {
 
-			// NOTARE CHE analPlot1_IMPROVED non viene utilizzato, tale eleborazione viene
-			// eseguita di seguito, partendo dal picco e non dalle due estremita'
-			// isd3 = analPlot1_IMPROVED(profiM1, slab);
-			// outFwhm = calcFwhm_IMPROVED(isd3, profiB1, slab, dimPixel);
-			myOut = profiM1;
+//			do {
+//				mosso1 = false;
+//				mosso2 = false;
+//				do {
+//					ripeti1 = false;
+//					imp1.killRoi();
+//					// prima roi per baseline correction
+//					imp1.setRoi(new OvalRoi(c2x, c2y, ra1, ra1));
+//					imp1.getRoi().setStrokeColor(Color.RED);
+//
+//					imp1.updateAndDraw();
+//					if (step) {
+//						ButtonMessages.ModelessMsg(">> ROI MODIFICABILE <<, quando pronti premere CONTINUA   <512>",
+//								"CONTINUA");
+//					}
+//
+//					// acquisisco le nuove coordinate della ROI dove e come la hanno messa
+//					Rectangle boundingRectangle1 = imp1.getRoi().getBounds();
+//					ra11 = boundingRectangle1.width;
+//					xRoi1 = boundingRectangle1.x;
+//					yRoi1 = boundingRectangle1.y;
+//					if ((xRoi1 != c2x) || (yRoi1 != c2y))
+//						mosso2 = true;
+//
+//					if (ra11 != ra1) {
+//						c2x = xRoi1;
+//						c2y = yRoi1;
+//						ripeti1 = true;
+//					}
+//				} while (ripeti1);
+//
+//				if (!stepout && !mosso2) {
+//					MyLog.waitHere("PER PROSEGUIRE DEVI MUOVERE\nLA ROI DALLA POSIZIONE INIZIALE");
+//					mosso1 = false;
+//				} else {
+//					mosso1 = true;
+//				}
+//
+//			} while (!mosso1);
+//
+//			// qui potrei anche rilevare le coordinate della ROI ed utilizzarle per marcarle
+//			// sul profile plot
+//
+//			// disegno la ROI sull'overlay, verificando in questo modo la correttezza dei
+//			// miei calcoli
+//
+//			mySetRoiCircular(imp1, xRoi1, yRoi1, ra11, Color.green);
+//			// acquisisco le statistiche
+//			statC = imp1.getStatistics();
+//
+//			// IJ.log(MyLog.qui() + " method= " + MyLog.method());
+//
+//			// MyLog.waitHere("peak1= " + peak1 + " xRoi1= " + xRoi1);
+//
+//			// ------------------------------------------------------------------------------
+//			// adesso che conosco la prima ROI cerco di farne il mirror, rispetto al peak
+//			// MIRROR
+//			// ------------------------------------------------------------------------------
+//			int c = (int) peak1 + ((int) peak1 - xRoi1) - ra11 / 2;
+//			if (c > d2x) {
+//				c = d2x;
+//			}
+//			// seconda roi per baseline correction
+//			imp1.setRoi(new OvalRoi(c, d2y, ra1, ra1));
+//			imp1.getRoi().setStrokeColor(Color.RED);
+//			imp1.updateAndDraw();
+//			if (step) {
+//				ButtonMessages.ModelessMsg(">> ROI MODIFICABILE <<, quando pronti premere CONTINUA   <513>",
+//						"CONTINUA");
+//			}
+//
+//			Rectangle boundingRectangle2 = imp1.getRoi().getBounds();
+//			int ra12 = boundingRectangle2.width;
+//			int xRoi2 = boundingRectangle2.x;
+//			int yRoi2 = boundingRectangle2.y;
+//			mySetRoiCircular(imp1, xRoi2, yRoi2, ra12, Color.green);
+//			// acquisisco le statistiche
+//			statD = imp1.getStatistics();
+//
+//			gialloXX1 = new double[ra11];
+//			gialloYY1 = new double[ra11];
+//			gialloXX2 = new double[ra12];
+//			gialloYY2 = new double[ra12];
+//			magentaXX1 = new double[ra12];
+//			magentaYY1 = new double[ra12];
+//			magentaXX2 = new double[ra12];
+//			magentaYY2 = new double[ra12];
+//			for (int i1 = 0; i1 < ra11; i1++) {
+//				gialloXX1[i1] = (double) xRoi1 + (double) i1 - c3x;
+//				magentaXX1[i1] = (double) xRoi1 + (double) i1 - c3x;
+//			}
+//			for (int i1 = 0; i1 < ra12; i1++) {
+//				gialloXX2[i1] = (double) xRoi2 + i1 - c3x;
+//				magentaXX2[i1] = (double) xRoi2 + i1 - c3x;
+//			}
+//
+//			puntoX1 = xRoi1 + (ra12 / 2) - c3x;
+//			puntoY1 = statC.mean;
+//			puntoX2 = xRoi2 + (ra12 / 2) - c3x;
+//			puntoY2 = statD.mean;
+//
+//			// queste sotto sono le coordinate sul grafico
+//			if (SPY)
+//				IJ.log(MyLog.qui() + "\n---ROI---\npuntoX1= " + puntoX1 + "\npuntoY1= " + puntoY1 + "\npuntoX2= "
+//						+ puntoX2 + "\npuntoY2= " + puntoY2);
+//
+//			// le coordinate saranno
+//			// Xsinistra>>> aux1-c3x
+//			// Ysinistra>>> statC.mean
+//			// Xdestra>>> aux3-c3x
+//			// Ydestra= statD.mean
+//
+////			baselineInterpolata = (statC.mean + statD.mean) / 2;
+//		}
+			imp1.killRoi();
+			// linea calcolo segnale mediato
+//		Line.setWidth(11);
+//		double[] profiM1 = p6rmn_COMMON.getLinePixels_COMMON(imp1, c3x, c3y, d3x, d3y);
+			// IJ.log(MyLog.qui() + " method= " + MyLog.method());
 
-			// plottazzo(profiM1, "profiM1 dopo", Color.green);
+			if (slab) {
+				// ESEGUITO DURANTE ANALISI SLAB
+				if (SPY)
+					IJ.log(MyLog.qui() + "\n=====" + titolo + "=======");
 
-		} else {
-			// ESEGUITO DURANTE ANALISI WEDGE (CUNEO)
-			if (SPY)
-				IJ.log(MyLog.qui() + "\n=====" + titolo + "=======");
-
-			double[] profiE2 = createErf_IMPROVED(profiM1, invert); // profilo con ERF
-
-			if (step) {
-
-				//
-				// nel caso del cuneo dobbiamo tenere conto che non lavoriamo sulla immagine ma
-				// sul grafico della ERF
-				// pertanto non posso usare le statistiche fornite da ImageJ, ma devo calcolarmi
-				// la media
-				//
-				for (int i1 = 0; i1 < gialloXX1.length; i1++) {
-					medAAA = medAAA + profiE2[(int) gialloXX1[i1]];
-				}
-				medAAA = medAAA / gialloXX1.length;
-
-				for (int i1 = 0; i1 < gialloXX1.length; i1++) {
-					gialloYY1[i1] = medAAA;
-					magentaYY1[i1] = -5000;
-				}
-
-				for (int i1 = 0; i1 < gialloXX2.length; i1++) {
-					medBBB = medBBB + profiE2[(int) gialloXX2[i1]];
-				}
-				medBBB = medBBB / gialloXX2.length;
-
-				puntoY1 = medAAA;
-				puntoY2 = medBBB;
-
-				//// SBAGLIATO QUESTA E'SOLO LA MEDIA
-
-				for (int i1 = 0; i1 < gialloXX2.length; i1++) {
-//				puntiYY2[i1] = profiM1[(int) puntiXX2[i1]];
-					gialloYY2[i1] = medBBB;
-					magentaYY2[i1] = -5000;
-
-				}
+//				for (int i1 = 0; i1 < gialloXX1.length; i1++) {
+////				puntiYY1[i1] = profiM1[(int) puntiXX1[i1]];
+//					gialloYY1[i1] = statC.mean;
+//					magentaYY1[i1] = 5000;
+//				}
+//				for (int i1 = 0; i1 < gialloXX2.length; i1++) {
+////				puntiYY2[i1] = profiM1[(int) puntiXX2[i1]];
+//					gialloYY2[i1] = statD.mean;
+//					magentaYY2[i1] = 5000;
+//				}
 
 				// NOTARE CHE analPlot1_IMPROVED non viene utilizzato, tale eleborazione viene
 				// eseguita di seguito, partendo dal picco e non dalle due estremita'
-				// isd3 = analPlot1_IMPROVED(profiE2, slab);
-				// outFwhm = calcFwhm_IMPROVED(isd3, profiE2, slab, dimPixel);
+				// isd3 = analPlot1_IMPROVED(profiM1, slab);
+				// outFwhm = calcFwhm_IMPROVED(isd3, profiB1, slab, dimPixel);
+				myOut = profiM1;
 
+				// plottazzo(profiM1, "profiM1 dopo", Color.green);
+
+			} else {
+				// ESEGUITO DURANTE ANALISI WEDGE (CUNEO)
 				if (SPY)
-					IJ.log(MyLog.qui() + "\nmedAAA= " + medAAA + "\nmedBBB= " + medBBB);
+					IJ.log(MyLog.qui() + "\n=====" + titolo + "=======");
+
+				double[] profiE2 = createErf_IMPROVED(profiM1, invert); // profilo con ERF
+
+				if (step) {
+
+					//
+					// nel caso del cuneo dobbiamo tenere conto che non lavoriamo sulla immagine ma
+					// sul grafico della ERF
+					// pertanto non posso usare le statistiche fornite da ImageJ, ma devo calcolarmi
+					// la media
+					//
+//					for (int i1 = 0; i1 < gialloXX1.length; i1++) {
+//						medAAA = medAAA + profiE2[(int) gialloXX1[i1]];
+//					}
+//					medAAA = medAAA / gialloXX1.length;
+//
+//					for (int i1 = 0; i1 < gialloXX1.length; i1++) {
+//						gialloYY1[i1] = medAAA;
+//						magentaYY1[i1] = -5000;
+//					}
+//
+//					for (int i1 = 0; i1 < gialloXX2.length; i1++) {
+//						medBBB = medBBB + profiE2[(int) gialloXX2[i1]];
+//					}
+//					medBBB = medBBB / gialloXX2.length;
+//
+//					puntoY1 = medAAA;
+//					puntoY2 = medBBB;
+//
+//					//// SBAGLIATO QUESTA E'SOLO LA MEDIA
+//
+//					for (int i1 = 0; i1 < gialloXX2.length; i1++) {
+////				puntiYY2[i1] = profiM1[(int) puntiXX2[i1]];
+//						gialloYY2[i1] = medBBB;
+//						magentaYY2[i1] = -5000;
+//
+//					}
+//
+//					// NOTARE CHE analPlot1_IMPROVED non viene utilizzato, tale eleborazione viene
+//					// eseguita di seguito, partendo dal picco e non dalle due estremita'
+//					// isd3 = analPlot1_IMPROVED(profiE2, slab);
+//					// outFwhm = calcFwhm_IMPROVED(isd3, profiE2, slab, dimPixel);
+//
+//					if (SPY)
+//						IJ.log(MyLog.qui() + "\nmedAAA= " + medAAA + "\nmedBBB= " + medBBB);
+				}
+				myOut = profiE2;
 			}
-			myOut = profiE2;
-		}
 
 //		
 //		MyLog.waitHere();
@@ -1994,192 +2002,389 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 //
 //		plot10.show();
 
-		// if (step) {
+			// if (step) {
 
-		double[] puntiX2 = new double[2];
-		double[] puntiY2 = new double[2];
-		double[] puntiX3 = new double[4];
-		double[] puntiY3 = new double[4];
-		double[] puntiX4 = new double[2];
-		double[] puntiY4 = new double[2];
-		double[] puntiX5 = new double[2];
-		double[] puntiY5 = new double[2];
+			double[] puntiX2 = new double[2];
+			double[] puntiY2 = new double[2];
+			double[] puntiX3 = new double[4];
+			double[] puntiY3 = new double[4];
+			double[] puntiX4 = new double[2];
+			double[] puntiY4 = new double[2];
+			double[] puntiX5 = new double[2];
+			double[] puntiY5 = new double[2];
+			double[] puntoX6 = new double[1];
+			double[] puntoY6 = new double[1];
 
-		double[] a = Tools.getMinMax(myOut);
-		double minB2Y = a[0];
-		yPeak = minB2Y;
-		if (SPY)
-			IJ.log(MyLog.qui() + "\nyPeak= minimo= " + minB2Y);
-		double minB2X = 9999;
-		for (int i1 = 0; i1 < myOut.length; i1++) {
-			if (myOut[i1] == minB2Y) {
-				minB2X = i1;
-				break;
+			double[] a = Tools.getMinMax(myOut);
+			double minB2Y = a[0];
+			yPeak = minB2Y;
+			if (SPY)
+				IJ.log(MyLog.qui() + "\nyPeak= minimo= " + minB2Y);
+			double minB2X = 9999;
+			for (int i1 = 0; i1 < myOut.length; i1++) {
+				if (myOut[i1] == minB2Y) {
+					minB2X = i1;
+					break;
+				}
+
 			}
 
-		}
+			xPeak = minB2X;
+			if (SPY)
+				IJ.log(MyLog.qui() + "\nxPeak= " + xPeak);
+			puntoX6[0] = xPeak;
+			puntoY6[0] = yPeak;
 
-		xPeak = minB2X;
-		if (SPY)
-			IJ.log(MyLog.qui() + "\nxPeak= " + xPeak);
+			double pHeight = 0;
+			double pWidth = 0;
+			double half = 0;
+			double interp1X = 0;
+			double interp1Y = 0;
+			double interp2X = 0;
+			double interp2Y = 0;
+			double[] profi1X = null;
 
-		double maxB2X = minB2X;
-		if (step)
-			/// calcolo effettivo interpolazione
-			baselineInterpolata = puntoY1 + (maxB2X - puntoX1) * (puntoY2 - puntoY1) / (puntoX2 - puntoX1);
-		else {
-			/// semplice media
-			baselineInterpolata = (medAAA + medBBB) / 2;
-		}
-		double maxB2Y = baselineInterpolata;
-		if (SPY)
-			IJ.log(MyLog.qui() + "\nINTERPOLAZIONE puntoX= " + maxB2X + "\nINTERPOLAZIONE puntoY= " + maxB2Y);
+			Line line11 = null;
+			double c11x = 0;
+			double c11y = 0;
+			double d11x = 0;
+			double d11y = 0;
+			Line line12 = null;
+			double c12x = 0;
+			double c12y = 0;
+			double d12x = 0;
+			double d12y = 0;
+			Plot plot1 = null;
+			ImagePlus imp3=null;
+			Overlay over3=null;
 
-		puntiX2[0] = minB2X;
-		puntiX2[1] = minB2X;
-		puntiY2[0] = minB2Y;
-		puntiY2[1] = maxB2Y;
+			if (slab) {
+				// =================================================================
+				// =================================================================
+				// >>>> ELABORAZIONE DEL PROFILO EFFETTIVO SLAB
+				// =================================================================
+				// =================================================================
+				// Plot plot1 = new Plot("plot mediato + baseline + FWHM", "pixel", "valore");
+				// >>>> generazione del plot del profilo effettivo slab
 
-		// MyLog.waitHere("minB2X= " + minB2X + "\nminB2Y= " + minB2Y + "\nmaxB2X= " +
-		// maxB2X + "\nmaxB2Y= " + maxB2Y);
+				plot1 = new Plot(titolo, "pixel", "valore");
+				pHeight = (plot1.getDrawingFrame()).getHeight();
+				pWidth = (plot1.getDrawingFrame()).getWidth();
+				plot1.setColor(Color.RED);
+				// >>>> disegno profilo in rosso
+				profi1X = ProfileUtils.autoprofile(myOut.length);
+				plot1.addPoints(profi1X, myOut, Plot.LINE);
+				// >>>> marcatura del picco con X verde
+				plot1.setLineWidth(8);
+				plot1.setColor(Color.GREEN);
+				plot1.addPoints(puntoX6, puntoY6, Plot.X);
+				plot1.setLineWidth(1);
+				// >>>> mezza altezza
+				imp3 = plot1.show().getPlot().getImagePlus();
+				over3 = new Overlay(); // creo un overlay su cui disegnare le Roi impiegate
+				imp3.setOverlay(over3);
+				// >>>> linea spostabile rossa sinistra
+				Line.setWidth(46);
+				Line.setColor(Color.red);
+				Line line = new Line(0, 0, 0, 0);
+				line.setFillColor(Color.red);
+				double[] limits1 = plot1.getLimits();
+				double[] limits2 = { plot1.scaleXtoPxl(limits1[0]), plot1.scaleXtoPxl(limits1[1]),
+						plot1.scaleYtoPxl(limits1[2]), plot1.scaleYtoPxl(limits1[3]) };
+				imp3.setRoi(new Line(pWidth / 4, limits2[2], pWidth / 4, limits2[3]));
+				MyLog.waitHere("POSIZIONARE LINEA VERTICALE ROSSA A SINISTRA DEL PICCO");
+				Line.setColor(oldcolor);
+				// >>> acquisisco le nuove posizioni della wideline rossa
+				line11 = (Line) imp3.getRoi();
+				c11x = plot1.descaleX(line11.x1);
+				c11y = plot1.descaleY(line11.y1);
+				d11x = plot1.descaleX(line11.x2);
+				d11y = plot1.descaleY(line11.y2);
+				// >>>> fotografo la ROI nell'overlay e la rimuovo
+				over3.addElement(imp3.getRoi());
+				imp3.killRoi();
+				// Line.setWidth((int) Math.abs(11*width1));
+				Line.setColor(Color.green);
+				line.setFillColor(Color.green);
+				imp3.setRoi(new Line(pWidth / 1.1, limits2[2], pWidth / 1.1, limits2[3]));
+				MyLog.waitHere("POSIZIONARE LINEA VERTICALE VERDE A DESTRA DEL PICCO");
+				// >>> acquisisco le nuove posizioni della wideline verde
+				line12 = (Line) imp3.getRoi();
+				c12x = plot1.descaleX(line12.x1);
+				c12y = plot1.descaleY(line12.y1);
+				d12x = plot1.descaleX(line12.x2);
+				d12y = plot1.descaleY(line12.y2);
+//			IJ.log("rosso c11x= " + IJ.d2s(c11x, 2) + " c11y= " + IJ.d2s(c11y, 2) + " d11x= " + IJ.d2s(d11x, 2)
+//					+ " d11y= " + IJ.d2s(d11y, 2) + "\nverde c12x= " + IJ.d2s(c12x, 2) + " c12y= " + IJ.d2s(c12y, 2)
+//					+ " d12x= " + IJ.d2s(d12x, 2) + " d12y " + IJ.d2s(d12y, 2));
+				// >>>> fotografo la ROI nell'overlay e la rimuovo
+				over3.addElement(imp3.getRoi());
+				imp3.killRoi();
 
-		// double half = Math.abs((puntiY2[1] - puntiY2[0]) / 2) + puntiY2[0];
-		double half = Math.abs((puntiY2[1] - puntiY2[0]) / 2) + puntiY2[0];
-//		double half = ((puntiY2[1] - puntiY2[0]) / 2) + puntiY2[0];
-		if (SPY)
-			IJ.log(MyLog.qui() + "\nxpeak= " + xPeak + "\nypeak= " + yPeak + "\nhalf= " + half);
-		// MyLog.waitHere("xpeak= " + peak + "\nypeak= " + minB2Y + "\nhalf== " + half);
+				// ####################################################################
+				// ####################################################################
+				// ####################################################################
+			} else {
+				// =================================================================
+				// =================================================================
+				// >>>> ELABORAZIONE DEL PROFILO ERF DEL WEDGE
+				// =================================================================
+				// =================================================================
+				// Plot plot1 = new Plot("plot mediato + baseline + FWHM", "pixel", "valore");
+				// >>>> generazione del plot del profilo ERF wedge
+				// =================================================================
+				MyLog.waitHere("002");
 
-		// IJ.log(MyLog.qui() + " puntiY2[0] minB1Y= " + puntiY2[0] + "\npuntiY2[1]
-		// maxB2= " + puntiY2[1] + "\nhalf= + half);
+				if (step) {
 
-		int sotto1 = 9999;
-		int sopra1 = 9999;
-		int sotto2 = 9999;
-		int sopra2 = 9999;
-
-		// =========================================================================
-		// CORREZIONE AL PROBLEMA DEI NAN E DEI VALORI ESAGERATI,
-		// SOPRATTUTTO PER LE ERF. INVECE DI PARTIRE DAI DUE ESTREMI DEL PLOT E
-		// CERCARE VERSO L'INTERNO, PARTO DAL PICCO E CERCO VERSO L'ESTERNO
-		// SOSTITUISCE ANALPLOT1
-		// =========================================================================
-
-		// ========== SINISTRA =======
-		// ricerca valore < half partendo dal punto minimo
-		for (int i1 = (int) minB2X; i1 > 0; i1--) {
-			if (myOut[i1] > half) {
-				sotto1 = i1;
-				sopra1 = sotto1 + 1;
-				break;
+					plot1 = new Plot(titolo, "pixel", "valore");
+					pHeight = (plot1.getDrawingFrame()).getHeight();
+					pWidth = (plot1.getDrawingFrame()).getWidth();
+					plot1.setColor(Color.RED);
+					// >>>> disegno profilo in rosso
+					profi1X = ProfileUtils.autoprofile(myOut.length);
+					plot1.addPoints(profi1X, myOut, Plot.LINE);
+					// >>>> marcatura del picco con X verde
+					plot1.setLineWidth(8);
+					plot1.setColor(Color.GREEN);
+					plot1.addPoints(puntoX6, puntoY6, Plot.X);
+					plot1.setLineWidth(1);
+					// >>>> mezza altezza
+					imp3 = plot1.show().getPlot().getImagePlus();
+					over3 = new Overlay(); // creo un overlay su cui disegnare le Roi impiegate
+					imp3.setOverlay(over3);
+					// >>>> linea spostabile rossa sinistra
+					Line.setWidth(46);
+					Line.setColor(Color.red);
+					Line line = new Line(0, 0, 0, 0);
+					line.setFillColor(Color.red);
+					double[] limits1 = plot1.getLimits();
+					double[] limits2 = { plot1.scaleXtoPxl(limits1[0]), plot1.scaleXtoPxl(limits1[1]),
+							plot1.scaleYtoPxl(limits1[2]), plot1.scaleYtoPxl(limits1[3]) };
+					imp3.setRoi(new Line(pWidth / 4, limits2[2], pWidth / 4, limits2[3]));
+					MyLog.waitHere("POSIZIONARE LINEA VERTICALE ROSSA A SINISTRA DEL PICCO");
+					Line.setColor(oldcolor);
+					// >>> acquisisco le nuove posizioni della wideline rossa
+					line11 = (Line) imp3.getRoi();
+					c11x = plot1.descaleX(line11.x1);
+					c11y = plot1.descaleY(line11.y1);
+					d11x = plot1.descaleX(line11.x2);
+					d11y = plot1.descaleY(line11.y2);
+					// >>>> fotografo la ROI nell'overlay e la rimuovo
+					over3.addElement(imp3.getRoi());
+					imp3.killRoi();
+					// Line.setWidth((int) Math.abs(11*width1));
+					Line.setColor(Color.green);
+					line.setFillColor(Color.green);
+					imp3.setRoi(new Line(pWidth / 1.1, limits2[2], pWidth / 1.1, limits2[3]));
+					MyLog.waitHere("POSIZIONARE LINEA VERTICALE VERDE A DESTRA DEL PICCO");
+					line12 = (Line) imp3.getRoi();
+					c12x = plot1.descaleX(line12.x1);
+					c12y = plot1.descaleY(line12.y1);
+					d12x = plot1.descaleX(line12.x2);
+					d12y = plot1.descaleY(line12.y2);
+					// >>>> fotografo la ROI nell'overlay e la rimuovo
+					over3.addElement(imp3.getRoi());
+					imp3.killRoi();
+					MyLog.waitHere("003");
+				}
+				
+				
+				
 			}
-		}
+			// ####################################################################
+			// ###### ELABORAZIONE COMUNE DEI PLOT ################################
+			// ####################################################################
+			IJ.log("ENTRO IN ELABORAZIONE COMUNE");
 
-		if (SPY)
-			IJ.log(MyLog.qui() + "\nSINISTRA== " + sotto1);
+			double[] out1X = myMedia(profi1X, c11x, 11);
+			double[] out1Y = myMedia(myOut, c11x, 11);
+			MyLog.logVector(out1X, "out1X");
+			MyLog.logVector(out1Y, "out1Y");
+			MyLog.waitHere("002");
 
-		double sotto1X = sotto1;
-		double sotto1Y = myOut[sotto1];
-		double sopra1X = sopra1;
-		double sopra1Y = myOut[sopra1];
+			double med1X = ArrayUtils.vetMean(out1X);
+			double med1Y = ArrayUtils.vetMean(out1Y);
 
-		puntiX3[0] = sotto1X;
-		puntiY3[0] = sotto1Y;
-		puntiX3[1] = sopra1X;
-		puntiY3[1] = sopra1Y;
+			double[] amed1X = { med1X };
+			double[] amed1Y = { med1Y };
 
-		double interp1Y = half;
-
-		double m1 = (sotto1Y - sopra1Y) / (sotto1X - sopra1X);
-
-		double interp1X = (half - sotto1Y) / m1 + sotto1X;
-		if (SPY)
-			IJ.log(MyLog.qui() + "\nSINISTRA\nsotto1X= " + sotto1X + "\nsopra1X= " + sopra1X + "\ninterp1X= "
-					+ interp1X);
-
-		puntiX4[0] = interp1X;
-		puntiY4[0] = interp1Y;
-
-		// ========== DESTRA =======
-		// ricerca valore < half partendo dal punto minimo
-		for (int i1 = (int) minB2X; i1 < myOut.length; i1++) {
-			if (myOut[i1] > half) {
-				sotto2 = i1;
-				sopra2 = sotto2 - 1;
-				break;
-			}
-		}
-
-		// IJ.log(MyLog.qui() + "DESTRA== " + sotto2);
-
-		double sotto2X = sotto2;
-		double sotto2Y = myOut[sotto2];
-		double sopra2X = sopra2;
-		double sopra2Y = myOut[sopra2];
-
-		puntiX3[2] = sotto2X;
-		puntiY3[2] = sotto2Y;
-		puntiX3[3] = sopra2X;
-		puntiY3[3] = sopra2Y;
-
-		double interp2Y = half;
-		double m2 = (sotto2Y - sopra2Y) / (sotto2X - sopra2X);
-		double interp2X = (half - sotto2Y) / m2 + sotto2X;
-		if (SPY)
-			IJ.log(MyLog.qui() + "\nDESTRA\nsotto2X= " + sotto2X + "\nsopra2X= " + sopra2X + "\ninterp2X= " + interp2X);
-
-		puntiX4[1] = interp2X;
-		puntiY4[1] = interp2Y;
-		double angolo = 11.3;
-		FWHMpix = interp2X - interp1X;
-		FWHMmm = FWHMpix * dimPixel * Math.sin(Math.toRadians(angolo));
-
-		puntiX5[0] = 0;
-		puntiX5[1] = myOut.length;
-
-		puntiY5[0] = half;
-		puntiY5[1] = half;
-
-		// ================================================
-		// ================================================
-		// ============= MODIFICA 040924 ==================
-		// ================================================
-		// ================================================
-		if (slab) {
-			// ====================================================================
-
-			// Plot plot1 = new Plot("plot mediato + baseline + FWHM", "pixel", "valore");
-			Plot plot1 = new Plot(titolo, "pixel", "valore");
-
-			plot1.setColor(Color.RED);
-
-			double[] profi1X = ProfileUtils.autoprofile(myOut.length);
-			plot1.addPoints(profi1X, myOut, Plot.LINE);
-
+			plot1.setColor(Color.blue);
 			plot1.setLineWidth(8);
-			plot1.setColor(Color.GREEN);
-			plot1.addPoints(puntiX2, puntiY2, Plot.X);
-			plot1.setLineWidth(1);
+			plot1.addPoints(amed1X, amed1Y, Plot.CIRCLE);
 
-			plot1.setColor(Color.CYAN);
-			plot1.add("filled", magentaXX1, magentaYY1);
-			plot1.add("filled", magentaXX2, magentaYY2);
+			double[] out2X = myMedia(profi1X, c12x, 11);
+			double[] out2Y = myMedia(myOut, c12x, 11);
+			MyLog.logVector(out2X, "out2X");
+			MyLog.logVector(out2Y, "out2Y");
+			MyLog.waitHere("003");
 
-			plot1.setColor(Color.YELLOW);
-			plot1.add("filled", gialloXX1, gialloYY1);
-			plot1.add("filled", gialloXX2, gialloYY2);
+			double med2X = ArrayUtils.vetMean(out2X);
+			double med2Y = ArrayUtils.vetMean(out2Y);
 
-			// ==================================================
-			// ripeto profilo altrimenti il giallo lo copre
-			plot1.setColor(Color.RED);
-			plot1.addPoints(profi1X, myOut, Plot.LINE);
+			double[] amed2X = { med2X };
+			double[] amed2Y = { med2Y };
+			plot1.setColor(Color.blue);
+			plot1.addPoints(amed2X, amed2Y, Plot.CIRCLE);
+			IJ.log("med1X= " + med1X + " med1Y= " + med1Y + " med2X= " + med2X + " med2Y= " + med2Y);
+			// -----------------------------------------------------------------
+			// >>>> calcolo INTERPOLAZIONE LINEARE tra il punto medio linea rossa e il punto
+			// medio linea verde
+			double cy = med1Y + ((xPeak - med1X) * (med2Y - med1Y)) / (med2X - med1X);
+			double[] puntoX7 = { xPeak };
+			double[] puntoY7 = { cy };
 
+			baselineInterpolata = cy;
+			double maxB2X = minB2X;
+			double maxB2Y = baselineInterpolata;
+			if (SPY)
+				IJ.log(MyLog.qui() + "\nINTERPOLAZIONE puntoX= " + maxB2X + "\nINTERPOLAZIONE puntoY= " + maxB2Y);
+			// -----------------------------------------------------------------
+
+			// -----------------------------------------------------------------
+			// >>>> calcolo meta'altezza
+			puntiX2[0] = minB2X;
+			puntiX2[1] = minB2X;
+			puntiY2[0] = minB2Y;
+			puntiY2[1] = maxB2Y;
+			IJ.log("puntiX2[0]= " + puntiX2[0] + "\npuntiX2[1]= " + puntiX2[1] + "\npuntiY2[0]= " + puntiY2[0]
+					+ "\npuntiY2[1]= " + puntiY2[1]);
+			half = Math.abs((puntiY2[1] - puntiY2[0]) / 2) + puntiY2[0];
+			IJ.log("half= " + half + "\npuntiY2[1]= " + puntiX2[1] + "\npuntiY2[0]= " + puntiY2[0]);
+			MyLog.waitHere("005");
+
+			// =================================================================
+			// =================================================================
+			// =================================================================
+
+			int sotto1 = 9999;
+			int sopra1 = 9999;
+			int sotto2 = 9999;
+			int sopra2 = 9999;
+			// =========================================================================
+			// CORREZIONE AL PROBLEMA DEI NAN E DEI VALORI ESAGERATI,
+			// SOPRATTUTTO PER LE ERF. INVECE DI PARTIRE DAI DUE ESTREMI DEL PLOT E
+			// CERCARE VERSO L'INTERNO, PARTO DAL PICCO E CERCO VERSO L'ESTERNO
+			// SOSTITUISCE ANALPLOT1
+			// =========================================================================
+
+			// ========== SINISTRA =======
+			// ricerca valore < half partendo dal punto minimo
+			for (int i1 = (int) minB2X; i1 > 0; i1--) {
+				if (myOut[i1] > half) {
+					sotto1 = i1;
+					sopra1 = sotto1 + 1;
+					break;
+				}
+			}
+
+			if (SPY)
+				IJ.log(MyLog.qui() + "\nSINISTRA== " + sotto1);
+
+			double sotto1X = sotto1;
+			double sotto1Y = myOut[sotto1];
+			double sopra1X = sopra1;
+			double sopra1Y = myOut[sopra1];
+
+			puntiX3[0] = sotto1X;
+			puntiY3[0] = sotto1Y;
+			puntiX3[1] = sopra1X;
+			puntiY3[1] = sopra1Y;
+
+			interp1Y = half;
+
+			double m1 = (sotto1Y - sopra1Y) / (sotto1X - sopra1X);
+
+			interp1X = (half - sotto1Y) / m1 + sotto1X;
+			if (SPY)
+				IJ.log(MyLog.qui() + "\nSINISTRA\nsotto1X= " + sotto1X + "\nsopra1X= " + sopra1X + "\ninterp1X= "
+						+ interp1X);
+
+			puntiX4[0] = interp1X;
+			puntiY4[0] = interp1Y;
+
+			// ========== DESTRA =======
+			// ricerca valore < half partendo dal punto minimo
+			for (int i1 = (int) minB2X; i1 < myOut.length; i1++) {
+				if (myOut[i1] > half) {
+					sotto2 = i1;
+					sopra2 = sotto2 - 1;
+					break;
+				}
+			}
+
+			// IJ.log(MyLog.qui() + "DESTRA== " + sotto2);
+
+			double sotto2X = sotto2;
+			double sotto2Y = myOut[sotto2];
+			double sopra2X = sopra2;
+			double sopra2Y = myOut[sopra2];
+
+			puntiX3[2] = sotto2X;
+			puntiY3[2] = sotto2Y;
+			puntiX3[3] = sopra2X;
+			puntiY3[3] = sopra2Y;
+
+			interp2Y = half;
+			double m2 = (sotto2Y - sopra2Y) / (sotto2X - sopra2X);
+			interp2X = (half - sotto2Y) / m2 + sotto2X;
+			if (SPY)
+				IJ.log(MyLog.qui() + "\nDESTRA\nsotto2X= " + sotto2X + "\nsopra2X= " + sopra2X + "\ninterp2X= "
+						+ interp2X);
+
+			puntiX4[1] = interp2X;
+			puntiY4[1] = interp2Y;
+			double angolo = 11.3;
+			FWHMpix = interp2X - interp1X;
+			FWHMmm = FWHMpix * dimPixel * Math.sin(Math.toRadians(angolo));
+			puntiX5[0] = 0;
+			puntiX5[1] = myOut.length;
+			puntiY5[0] = half;
+			puntiY5[1] = half;
+			pHeight = 0;
+			pWidth = 0;
+			// =================================================================
 			plot1.setColor(Color.GREEN);
 			plot1.addPoints(puntiX5, puntiY5, Plot.LINE);
-
+			// =================================================================
+			Line.setWidth(1);
+		
+			
+			
+			
 			plot1.setColor(Color.BLUE);
 			plot1.addPoints(puntiX4, puntiY4, Plot.CIRCLE);
+			MyLog.waitHere();
+//			ImagePlus imp3 = plot1.show().getPlot().getImagePlus();
+//			Overlay over3 = new Overlay(); // creo un overlay su cui disegnare le Roi impiegate
+//			imp3.setOverlay(over3);
+			// imp3.setRoi(new Line(med1X, med1Y, med2X, med2Y));
+			imp3.setRoi(new Line(plot1.scaleXtoPxl(med1X), plot1.scaleYtoPxl(med1Y), plot1.scaleXtoPxl(med2X),
+					plot1.scaleYtoPxl(med2Y)));
+//			imp3.updateAndRepaintWindow();
+			
+			plot1.setLineWidth(8);
+			plot1.setColor(Color.RED);
+			plot1.addPoints(puntoX7, puntoY7, Plot.X);
+			plot1.setLineWidth(1);
+			// -----------------------------------------------------------------
 
+			// >>>> calcolo meta'altezza
+			puntiX2[0] = minB2X;
+			puntiX2[1] = minB2X;
+			puntiY2[0] = minB2Y;
+			puntiY2[1] = maxB2Y;
+			IJ.log("puntiX2[0]= " + puntiX2[0] + "\npuntiX2[1]= " + puntiX2[1] + "\npuntiY2[0]= " + puntiY2[0]
+					+ "\npuntiY2[1]= " + puntiY2[1]);
+			half = Math.abs((puntiY2[1] - puntiY2[0]) / 2) + puntiY2[0];
+			IJ.log("half= " + half + "\npuntiY2[1]= " + puntiX2[1] + "\npuntiY2[0]= " + puntiY2[0]);
+			MyLog.waitHere("005");
+
+			if (SPY)
+				IJ.log(MyLog.qui() + "\nxpeak= " + xPeak + "\nypeak= " + yPeak + "\nhalf= " + half);
+
+	
+			// >>>> LEGENDA
 			plot1.setColor(Color.BLACK);
 			double labPosX = 0.75;
 			double labPosY = 0.60;
@@ -2191,87 +2396,90 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			plot1.addLabel(labPosX, labPosY += 0.05, "DX interp = " + IJ.d2s(interp2X, 2));
 			plot1.addLabel(labPosX, labPosY += 0.05, "FWHM [pix] = " + IJ.d2s(FWHMpix, 2));
 			plot1.addLabel(labPosX, labPosY += 0.05, "FWHM [mm] = " + IJ.d2s(FWHMmm, 2));
+			plot1.updateImage();
 
-			// mezza altezza
-
-			ImagePlus imp3 = plot1.show().getPlot().getImagePlus();
+			MyLog.waitHere("ATTENDI");
 
 			if (SPY) {
 				spyname = titolo;
 				p6rmn_COMMON.saveDebugImage_COMMON(imp3, spydir, spyname, contaxx++, SPY);
 			}
 			if (step) {
-				ButtonMessages.ModelessMsg("PLOT " + titolo + "  <52>", "CONTINUA");
+				ButtonMessages.ModelessMsg("PLOT " + titolo + "  <52001>", "CONTINUA");
 			}
 			Line.setWidth(1);
 
-		} else {
-			if (step) {
+			// ####################################################################
+			// ####################################################################
+			// ####################################################################
+			// ####################################################################
+			// ####################################################################
+			// ####################################################################
 
-				Plot plot1 = new Plot(titolo, "pixel", "valore");
+			// Line.setWidth((int) Math.abs(11*width1));
+//				Line.setColor(Color.green);
+//					line.setFillColor(Color.green);
+//					ImagePlus imp3.setRoi(new Line(pWidth / 1.1, limits2[2], pWidth / 1.1, limits2[3]));
+//					double[] out1X = myMedia(profi1X, c11x, 11);
+//					double[] out1Y = myMedia(myOut, c11x, 11);
+//					MyLog.logVector(out1X, "out1X");
+//					MyLog.logVector(out1Y, "out1Y");
+//
+//
+//					MyLog.waitHere();
+//
+////					plot1.setColor(Color.CYAN);
+////					plot1.add("filled", magentaXX1, magentaYY1);
+////					plot1.add("filled", magentaXX2, magentaYY2);
+////
+////					plot1.setColor(Color.YELLOW);
+////					plot1.add("filled", gialloXX1, gialloYY1);
+////					plot1.add("filled", gialloXX2, gialloYY2);
+//
+//					// ==================================================
+//					// ripeto profilo altrimenti il giallo lo copre
+//					plot1.setColor(Color.RED);
+//					plot1.addPoints(profi1X, myOut, Plot.LINE);
+//
+//					plot1.setColor(Color.GREEN);
+//					plot1.addPoints(puntiX5, puntiY5, Plot.LINE);
+//
+//					plot1.setColor(Color.BLUE);
+//					plot1.addPoints(puntiX4, puntiY4, Plot.CIRCLE);
+//
+//					plot1.setColor(Color.BLACK);
+//					double labPosX = 0.75;
+//					double labPosY = 0.60;
+//					plot1.addLabel(labPosX, labPosY += 0.05, "baseline = " + IJ.d2s(baselineInterpolata, 2));
+//					plot1.addLabel(labPosX, labPosY += 0.05, "xPeak = " + IJ.d2s(xPeak, 2));
+//					plot1.addLabel(labPosX, labPosY += 0.05, "yPeak = " + IJ.d2s(yPeak, 2));
+//					plot1.addLabel(labPosX, labPosY += 0.05, "half line = " + IJ.d2s(half, 2));
+//					plot1.addLabel(labPosX, labPosY += 0.05, "SX interp = " + IJ.d2s(interp1X, 2));
+//					plot1.addLabel(labPosX, labPosY += 0.05, "DX interp = " + IJ.d2s(interp2X, 2));
+//					plot1.addLabel(labPosX, labPosY += 0.05, "FWHM [pix] = " + IJ.d2s(FWHMpix, 2));
+//					plot1.addLabel(labPosX, labPosY += 0.05, "FWHM [mm] = " + IJ.d2s(FWHMmm, 2));
 
-				plot1.setColor(Color.RED);
+			// mezza altezza
 
-				double[] profi1X = ProfileUtils.autoprofile(myOut.length);
-				plot1.addPoints(profi1X, myOut, Plot.LINE);
+			// ImagePlus imp3 = plot1.show().getPlot().getImagePlus();
 
-				plot1.setLineWidth(8);
-				plot1.setColor(Color.GREEN);
-				plot1.addPoints(puntiX2, puntiY2, Plot.X);
-				plot1.setLineWidth(1);
-
-				plot1.setColor(Color.CYAN);
-				plot1.add("filled", magentaXX1, magentaYY1);
-				plot1.add("filled", magentaXX2, magentaYY2);
-
-				plot1.setColor(Color.YELLOW);
-				plot1.add("filled", gialloXX1, gialloYY1);
-				plot1.add("filled", gialloXX2, gialloYY2);
-
-				// ==================================================
-				// ripeto profilo altrimenti il giallo lo copre
-				plot1.setColor(Color.RED);
-				plot1.addPoints(profi1X, myOut, Plot.LINE);
-
-				plot1.setColor(Color.GREEN);
-				plot1.addPoints(puntiX5, puntiY5, Plot.LINE);
-
-				plot1.setColor(Color.BLUE);
-				plot1.addPoints(puntiX4, puntiY4, Plot.CIRCLE);
-
-				plot1.setColor(Color.BLACK);
-				double labPosX = 0.75;
-				double labPosY = 0.60;
-				plot1.addLabel(labPosX, labPosY += 0.05, "baseline = " + IJ.d2s(baselineInterpolata, 2));
-				plot1.addLabel(labPosX, labPosY += 0.05, "xPeak = " + IJ.d2s(xPeak, 2));
-				plot1.addLabel(labPosX, labPosY += 0.05, "yPeak = " + IJ.d2s(yPeak, 2));
-				plot1.addLabel(labPosX, labPosY += 0.05, "half line = " + IJ.d2s(half, 2));
-				plot1.addLabel(labPosX, labPosY += 0.05, "SX interp = " + IJ.d2s(interp1X, 2));
-				plot1.addLabel(labPosX, labPosY += 0.05, "DX interp = " + IJ.d2s(interp2X, 2));
-				plot1.addLabel(labPosX, labPosY += 0.05, "FWHM [pix] = " + IJ.d2s(FWHMpix, 2));
-				plot1.addLabel(labPosX, labPosY += 0.05, "FWHM [mm] = " + IJ.d2s(FWHMmm, 2));
-
-				// mezza altezza
-
-				ImagePlus imp3 = plot1.show().getPlot().getImagePlus();
-
-				if (SPY) {
-					spyname = titolo;
-					p6rmn_COMMON.saveDebugImage_COMMON(imp3, spydir, spyname, contaxx++, SPY);
-				}
+			if (SPY) {
+				spyname = titolo;
+				p6rmn_COMMON.saveDebugImage_COMMON(imp3, spydir, spyname, contaxx++, SPY);
 			}
-			if (step) {
-				ButtonMessages.ModelessMsg("PLOT " + titolo + "  <52>", "CONTINUA");
-			}
-			Line.setWidth(1);
-
 		}
+		if (step) {
+			ButtonMessages.ModelessMsg("PLOT " + titolo + "  <52002>", "CONTINUA");
+		}
+		Line.setWidth(1);
 
 		Line.setWidth(1);
 
-		double[] outFwhm = { FWHMpix, xPeak };
+		outFwhm[0] = FWHMpix;
+		outFwhm[1] = xPeak;
 
 		return (outFwhm);
+
 	}
 
 	/**
@@ -2948,7 +3156,7 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 	 * @param over
 	 * @param color
 	 */
-	public static void mySetRoi(ImagePlus imp1, int xroi, int yroi, int droi, Color color) {
+	public static void mySetRoiCircular(ImagePlus imp1, int xroi, int yroi, int droi, Color color) {
 
 		Overlay over1 = imp1.getOverlay();
 		imp1.setRoi(new OvalRoi(xroi, yroi, droi, droi));
@@ -2959,6 +3167,26 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 
 		if (color != null) {
 			imp1.getRoi().setStrokeColor(color);
+		}
+		if (over1 != null) {
+			over1.addElement(imp1.getRoi());
+		}
+
+	}
+
+	public static void mySetRoiRectangular(ImagePlus imp1, int xroi, int yroi, int lroi, int hroi, Color color) {
+
+		Overlay over1 = imp1.getOverlay();
+		imp1.setRoi(xroi, yroi, lroi, hroi);
+		if (imp1.isVisible()) {
+			imp1.getWindow().toFront();
+		}
+		imp1.getRoi().setStrokeWidth(4.0);
+
+		if (color != null) {
+			imp1.getRoi().setStrokeColor(color);
+			imp1.getRoi().setFillColor(color);
+
 		}
 		if (over1 != null) {
 			over1.addElement(imp1.getRoi());
@@ -3087,9 +3315,8 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		ImageStatistics statD = imp1.getStatistics();
 		if (step) {
 			imp1.updateAndDraw();
-			ButtonMessages.ModelessMsg(
-					"secondo centro d2x=" + d2x + " d2y=" + d2y + " ra1=" + ra1 + "  media=" + statD.mean + "   <52>",
-					"CONTINUA");
+			ButtonMessages.ModelessMsg("secondo centro d2x=" + d2x + " d2y=" + d2y + " ra1=" + ra1 + "  media="
+					+ statD.mean + "   <52003>", "CONTINUA");
 		}
 		// inizio wideline
 		msd1 = UtilAyv.coord2D2(vetRefPosition, vetProfile[0], vetProfile[1], false);
@@ -3538,4 +3765,15 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 		return spessArray;
 	}
 
+	public static double[] myMedia(double[] profi1, double position, int bar) {
+
+		IJ.log("myMedia.position= " + position);
+
+		double[] vetRosso = new double[bar];
+		int r11 = (int) position;
+		for (int i1 = 0; i1 < bar; i1++) {
+			vetRosso[i1] = profi1[r11 - bar / 2 + i1];
+		}
+		return vetRosso;
+	}
 }
