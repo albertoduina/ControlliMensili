@@ -649,7 +649,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 			}
 
 			double[] dsd1 = analProf_ORIGINAL(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step,
-					putLabelSx, dimPixel);
+					putLabelSx, dimPixel, "PRIMA SLAB");
 
 			fwhmSlice1[w1] = dsd1[0];
 			peakPositionSlice1[w1] = dsd1[1];
@@ -683,7 +683,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 				imp3.getWindow().toFront();
 			}
 			double[] dsd2 = analProf_ORIGINAL(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step,
-					putLabelSx, dimPixel);
+					putLabelSx, dimPixel, "SECONDA SLAB");
 			fwhmSlice2[w1] = dsd2[0];
 			peakPositionSlice2[w1] = dsd2[1];
 
@@ -731,7 +731,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 			}
 
 			double[] dsd3 = analProf_ORIGINAL(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step,
-					putLabelSx, dimPixel);
+					putLabelSx, dimPixel, "PRIMO CUNEO");
 
 			fwhmCuneo3[w1] = dsd3[0];
 			peakPositionCuneo3[w1] = dsd3[1];
@@ -764,7 +764,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 				imp3.getWindow().toFront();
 			}
 			double[] dsd4 = analProf_ORIGINAL(imp3, vetRefPosition, vetProfile, ra1, isSlab, invertErf, step,
-					putLabelSx, dimPixel);
+					putLabelSx, dimPixel, "SECONDO CUNEO");
 			fwhmCuneo4[w1] = dsd4[0];
 //			IJ.log("FWHM SECONDO CUNEO= " + String.format("%.4f", p6rmn_COMMON.pix2mm_COMMON(dsd4[0], dimPixel))
 //					+ " [mm]   PEAK POSITION= " + String.format("%.4f", dsd4[1]));
@@ -1069,7 +1069,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 	 */
 
 	public double[] analProf_ORIGINAL(ImagePlus imp1, double[] vetRefPosition, double[] vetProfile, int ra1,
-			boolean slab, boolean invert, boolean step, boolean bLabelSx, double dimPixel) {
+			boolean slab, boolean invert, boolean step, boolean bLabelSx, double dimPixel, String titolo) {
 
 		/*
 		 * Aggiornamento del 29 gennaio 2007 analProf da' in uscita i valori in
@@ -1184,6 +1184,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 	public double[] calcFwhm_ORIGINAL(int[] isd, double[] profile, boolean bslab, double dimPixel) {
 
 		double peak = 0;
+		double peak2 = 0;
 		double[] a = Tools.getMinMax(profile);
 		double min1 = a[0];
 		double max1 = 0;
@@ -1212,6 +1213,7 @@ public class p6rmn_ORIGINAL implements PlugIn, Measurements {
 
 		for (int i1 = 0; i1 < profile.length; i1++) {
 			if (profile[i1] == min1) {
+				peak2 = i1;
 				peak = i1 * dimPixel;
 			}
 		}
