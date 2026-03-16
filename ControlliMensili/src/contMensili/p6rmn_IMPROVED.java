@@ -911,7 +911,6 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 					}
 					double[] mixSpessCor2 = spessStrato(dsd3[0], dsd4[0], thick, dimPixel);
 					double[] cuneoAapm100 = p6rmn_COMMON.spessStrato_AAPM100_COMMON(dsd3[0], dsd4[0], thick, dimPixel);
-
 				} // fine routine automatica
 			}
 		} // devo i risultati anche se zeri
@@ -1907,11 +1906,11 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			puntiX1[1] = med2X;
 			puntiY1[0] = med1Y;
 			puntiY1[1] = med2Y;
-			if (step) {
+			if ( true) {  // sempre attivo, ovviamente
 				plot1.setLineWidth(1);
 				plot1.setColor(Color.green);
 				plot1.addPoints(puntiX1, puntiY1, Plot.LINE);
-				MyLog.waitHere("STEP 002 DISPLAY LINEA INTERPOLATA VERDE");
+				if (step) MyLog.waitHere("STEP 002 DISPLAY LINEA INTERPOLATA VERDE");
 				over3.add(imp3.getRoi());
 				imp3.deleteRoi();
 				Line.setColor(oldLineColor);
@@ -1923,14 +1922,14 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 			double cy = med1Y + ((xPeak - med1X) * (med2Y - med1Y)) / (med2X - med1X);
 			double[] puntoX7 = { xPeak };
 			double[] puntoY7 = { cy };
-			if (step) {
+			if (true) { // sempre attivo, ovviamente
 				plot1.setLineWidth(8);
 				plot1.setColor(Color.RED);
 				plot1.addPoints(puntoX7, puntoY7, Plot.X);
 				plot1.setLineWidth(1);
 				over3.addElement(imp3.getRoi());
 				imp3.deleteRoi();
-				MyLog.waitHere("STEP 003 DISPLAY PUNTO BASELINE ROSSO");
+				if (step) MyLog.waitHere("STEP 003 DISPLAY PUNTO BASELINE ROSSO");
 			}
 			// ---------------------------------------------------------------------
 			// --- STEP 004 --- DISPLAY LINEA META' ALTEZZA
@@ -1959,11 +1958,11 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 //			pHeight = 0;
 			pWidth = 0;
 			// =================================================================
-			if (step) {
+			if (true) {  // sempre attivo, ovviamente
 				// Line.setColor(Color.green);
 				plot1.setColor(Color.green);
 				plot1.addPoints(puntiX5, puntiY5, Plot.LINE);
-				MyLog.waitHere("STEP 004 LINEA MEZZA ALTEZZA VERDE");
+				if (step) MyLog.waitHere("STEP 004 LINEA MEZZA ALTEZZA VERDE");
 			}
 			// ---------------------------------------------------------------------
 			// --- STEP 005 --- DISPLAY PUNTI BLU A META' ALTEZZA
@@ -2033,11 +2032,11 @@ public class p6rmn_IMPROVED implements PlugIn, Measurements {
 						+ interp2X);
 			puntiX4[1] = interp2X;
 			puntiY4[1] = interp2Y;
-			if (step) {
-				plot1.setLineWidth(4);
+			if (true) {
+				plot1.setLineWidth(4); 
 				plot1.setColor(Color.BLUE);
 				plot1.addPoints(puntiX4, puntiY4, Plot.CIRCLE);
-				MyLog.waitHere("STEP 005 LOCALIZZAZIONE PUNTI BLU FWHM MEZZA ALTEZZA");
+				if (step) MyLog.waitHere("STEP 005 LOCALIZZAZIONE PUNTI BLU FWHM MEZZA ALTEZZA");
 			}
 			// ==============================================
 			// CALCOLO DELLA EFFETTIVA FWHM IN PIXEL E MILLIMETRI
