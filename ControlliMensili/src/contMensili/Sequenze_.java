@@ -1734,8 +1734,8 @@ public class Sequenze_ implements PlugIn {
 				}
 				if (compareAcqReq(codiceImaAcquisite, codiceImaRichieste, codiceBobinaAcquisito,
 						codiceBobinaRichiesto)) {
-					// IJ.log("codiceAcquisito=" + codiceBobinaAcquisito
-					// + " codiceRichiesto=" + codiceBobinaRichiesto);
+//					 IJ.log("codiceAcquisito=" + codiceBobinaAcquisito
+//					 + " codiceRichiesto=" + codiceBobinaRichiesto);
 					numeroImaAcquisite++;
 
 				}
@@ -1773,6 +1773,7 @@ public class Sequenze_ implements PlugIn {
 				}
 			}
 		}
+		
 		// a questo punto non mi resta che creare la tabella e riversarvi i dati
 		// dagli ArrayList
 		if (vetCodice.size() > 0) {

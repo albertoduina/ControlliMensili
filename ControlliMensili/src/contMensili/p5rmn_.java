@@ -121,7 +121,9 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 		MyFileLogger.logger.info("p5rmn_>>> fileDir = " + fileDir);
 		MyFileLogger.logger.info("p5rmn_argomenti ricevuti: >" + args + "<");
-
+		
+//		IJ.log("p5rmn_>>> fileDir = " + fileDir);
+//		IJ.log("p5rmn_argomenti ricevuti: >" + args + "<");
 		int nTokens = new StringTokenizer(args, "#").countTokens();
 		if (nTokens == 0) {
 			manualMenu(0, "");
@@ -155,6 +157,7 @@ public class p5rmn_ implements PlugIn, Measurements {
 				step = true;
 				VERSION = this.getClass().getName();
 			case 5:
+				IJ.log(MyLog.qui()+" case5");
 				String[] path = new String[3];
 				path[0] = UtilAyv.imageSelection("SELEZIONARE PRIMA ACQUISIZIONE PRIMO ECO...");
 				if (path[0] == null) {
@@ -185,7 +188,6 @@ public class p5rmn_ implements PlugIn, Measurements {
 				}
 
 				rt1.show("Results");
-
 				retry = true;
 				UtilAyv.afterWork();
 				break;
@@ -721,6 +723,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 				rt.addValue(s2, classiSimulata[i1][1]);
 			}
 			if (verbose && !test) {
+				MyFileLogger.logger.info("visualizza Results");
+				IJ.log("visualizza Results");
 				rt.show("Results");
 			}
 
