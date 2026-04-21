@@ -104,6 +104,8 @@ public class p12rmn_ implements PlugIn, Measurements {
 	public static final boolean blackbox = false;
 	private static String fileDir = "";
 	public static String simpath = "";
+	private static String simulataName = "";
+
 	public static boolean abort = false;
 
 	@Override
@@ -973,10 +975,26 @@ public class p12rmn_ implements PlugIn, Measurements {
 				MyLog.waitHere(listaMessaggi(44), debug, timeout);
 			}
 
-			String name1 = simpath + "\\";
+			// Calcolo Simulata
+			
+			String patName = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PATIENT_NAME);
 
-			int[][] classiSimulata = generaSimulata(xCenter80 - diam80 / 2, yCenter80 - diam80 / 2, diam80, imp1, name1,
-					step, verbose, test);
+			String codice1 = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION);
+
+			String codice = UtilAyv.getFiveLetters(codice1);
+
+			String coil5 = ReadDicom.getAllCoils(imp1);
+			coil5=coil5.replace(':', '^');
+			simulataName = simpath + "\\" + patName + codice + "_"+ coil5 +"sim.zip";
+			int count1=0;
+			while (InputOutput.checkFile(simulataName)==true) {
+				count1++;
+				simulataName = simpath + "\\" + patName + codice + "("+count1+")"+ coil5 +"sim.zip";
+			}; 
+		
+			String aux1 = patName + codice;
+			int[][] classiSimulata = ImageUtils.generaSimulata5ClassiA(xCenter80 - diam80 / 2, yCenter80 - diam80 / 2, diam80, imp1, simulataName,
+					aux1, step, verbose, test);
 			imp1.deleteRoi();
 
 			// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
@@ -2207,6 +2225,7 @@ public class p12rmn_ implements PlugIn, Measurements {
 					+ "\nAltrimenti, se l'immagine NON FOSSE UTILIZZABILE premere <ANNULLA> per passare alle successive\n \n");
 
 			if (resp) {
+				MyLog.appendLog(fileDir + "MyLog.txt", "p10 ANNULLA");
 				abort = true;
 				return null;
 			}
@@ -2841,103 +2860,6 @@ public class p12rmn_ implements PlugIn, Measurements {
 		return ghostPerc;
 	}
 
-	/**
-	 * Simulated 5 classes image
-	 *
-	 * @param xRoi    x roi coordinate
-	 * @param yRoi    y roi coordinate
-	 * @param diamRoi roi diameter
-	 * @param imp     original image
-	 * @param step    step-by-step mode
-	 * @param test    autotest mode
-	 * @return pixel counts of classes of the simulated image
-	 */
-	private static int[][] generaSimulata(int xRoi, int yRoi, int diamRoi, ImagePlus imp, String filename, boolean step,
-			boolean verbose, boolean test) {
-
-		int xRoiSimulata = xRoi + (diamRoi - MyConst.P3_DIAM_FOR_450_PIXELS) / 2;
-		int yRoiSimulata = yRoi + (diamRoi - MyConst.P3_DIAM_FOR_450_PIXELS) / 2;
-		ImagePlus impSimulata = simulata5Classi(xRoiSimulata, yRoiSimulata, MyConst.P3_DIAM_FOR_450_PIXELS, imp);
-		if (verbose) {
-			UtilAyv.showImageMaximized(impSimulata);
-			ImageUtils.backgroundEnhancement(0, 0, 10, impSimulata);
-		}
-		impSimulata.updateAndDraw();
-		int[][] classiSimulata = numeroPixelsClassi(impSimulata);
-		String patName = ReadDicom.readDicomParameter(imp, MyConst.DICOM_PATIENT_NAME);
-
-		String codice1 = ReadDicom.readDicomParameter(imp, MyConst.DICOM_SERIES_DESCRIPTION);
-
-		String codice = UtilAyv.getFiveLetters(codice1);
-
-		String simName = filename + patName + codice + "sim.zip";
-
-		if (!test) {
-			// rinomino per evitare che si chiami "simulata.zip" per tutte le immagini
-			impSimulata.setTitle(patName + codice + "sim");
-			new FileSaver(impSimulata).saveAsZip(simName);
-//			MyLog.waitHere("simName= " + simName);
-		}
-
-		return classiSimulata;
-	}
-
-	/**
-	 *
-	 * @param sqX
-	 * @param sqY
-	 * @param sqR
-	 * @param imp1
-	 * @return
-	 */
-	public static ImagePlus simulata5Classi(int sqX, int sqY, int sqR, ImagePlus imp1) {
-
-		if (imp1 == null) {
-			IJ.error("Simula5Classi ricevuto null");
-			return (null);
-		}
-		int width = imp1.getWidth();
-		short[] pixels1 = UtilAyv.truePixels(imp1);
-
-		imp1.setRoi(new OvalRoi(sqX, sqY, sqR, sqR));
-		ImageStatistics stat1 = imp1.getStatistics();
-		imp1.deleteRoi();
-
-		double mean = stat1.mean;
-		double minus20 = mean * MyConst.MINUS_20_PERC;
-		double minus10 = mean * MyConst.MINUS_10_PERC;
-		double plus10 = mean * MyConst.PLUS_10_PERC;
-		double plus20 = mean * MyConst.PLUS_20_PERC;
-		// genero una immagine nera
-		ImagePlus impSimulata = NewImage.createShortImage("Simulata", width, width, 1, NewImage.FILL_BLACK);
-		ShortProcessor processorSimulata = (ShortProcessor) impSimulata.getProcessor();
-		short[] pixelsSimulata = (short[]) processorSimulata.getPixels();
-
-		short pixSorgente = 0;
-		short pixSimulata = 0;
-		int posizioneArrayImmagine = 0;
-
-		for (int y = 0; y < width; y++) {
-			for (int x = 0; x < width; x++) {
-				posizioneArrayImmagine = y * width + x;
-				pixSorgente = pixels1[posizioneArrayImmagine];
-				if (pixSorgente > plus20) {
-					pixSimulata = MyConst.LEVEL_5;
-				} else if (pixSorgente > plus10) {
-					pixSimulata = MyConst.LEVEL_4;
-				} else if (pixSorgente > minus10) {
-					pixSimulata = MyConst.LEVEL_3;
-				} else if (pixSorgente > minus20) {
-					pixSimulata = MyConst.LEVEL_2;
-				} else {
-					pixSimulata = MyConst.LEVEL_1;
-				}
-				pixelsSimulata[posizioneArrayImmagine] = pixSimulata;
-			}
-		}
-		processorSimulata.resetMinAndMax();
-		return impSimulata;
-	}
 
 	/**
 	 *

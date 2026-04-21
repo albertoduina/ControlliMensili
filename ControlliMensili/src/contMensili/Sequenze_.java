@@ -296,7 +296,12 @@ public class Sequenze_ implements PlugIn {
 						if (f1.getName().endsWith(".csv"))
 							f1.delete();
 					}
-
+				// modificato 200426
+				//cancellazione cartella SIMULATE
+				File folder1 = new File(startingDir+"/SIMULATE");
+				InputOutput.deleteDir(folder1);
+				
+			
 				if (debugTables) {
 					IJ.log("\\Clear");
 					MyLog.logMatrix(tableCode, "tableCode");

@@ -458,7 +458,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 	 *
 	 * @param path1      path prima immagine
 	 * @param path2      path seconda immagine
-	 * @param autoArgs   argomentoi ricevuti dalla chiamata
+	 * @param autoArgs   argomentoi ricevuti dalla chiamatak
 	 * @param profond    profondita' a cui porre la ROI
 	 * @param info10
 	 * @param autoCalled flag true se chiamato in automatico
@@ -1076,15 +1076,24 @@ public class p10rmn_ implements PlugIn, Measurements {
 			String codice1 = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION);
 
 			String codice = UtilAyv.getFiveLetters(codice1);
+			
+			// modificato 200426
+			String coil5 = ReadDicom.getAllCoils(imp1);
+			coil5=coil5.replace(':', '^');
+			simulataName = simpath + "\\" + patName + codice + "_"+ coil5 +"sim.zip";
+			int count1=0;
+			while (InputOutput.checkFile(simulataName)==true) {
+				count1++;
+				simulataName = simpath + "\\" + patName + codice + "("+count1+")"+ coil5 +"sim.zip";
+			}; 
+			MyLog.appendLog(fileDir + "MyLog.txt", "p10 SIMULATA= " + simulataName);
 
-//			String name1 = simpath + "\\";
-
-			simulataName = simpath + "\\" + patName + codice + "sim.zip";
+			
 			String aux1 = patName + codice;
 
 			// passo due volte step (al posto di verbose) per non vedere la
 			// simulata in fast
-			int[][] classiSimulata = ImageUtils.generaSimulata12classi(xCenterRoi, yCenterRoi, sq7, imp1, simulataName,
+			int[][] classiSimulata = ImageUtils.generaSimulata12classiA(xCenterRoi, yCenterRoi, sq7, imp1, simulataName,
 					aux1, mode, timeout);
 
 			//
@@ -2551,6 +2560,7 @@ public class p10rmn_ implements PlugIn, Measurements {
 		}
 
 		if (ko1) {
+			MyLog.appendLog(fileDir + "MyLog.txt", "p10 ANNULLA");
 			return null;
 		}
 

@@ -352,6 +352,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 					ResultsTable rt1 = mainUnifor(path1, path2, direzione, profond, "", mode, timeout);
 					if (rt1 == null) {
 						MyLog.waitHere("processo annulla");
+						MyLog.appendLog(fileDir + "MyLog.txt", "p11 ANNULLA");
 						ImagePlus imp11 = UtilAyv.openImageNoDisplay(path1, true);
 						TableCode tc1 = new TableCode();
 						String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
@@ -789,7 +790,7 @@ public class p11rmn_ implements PlugIn, Measurements {
 									+ "\nAltrimenti, se l'immagine NON FOSSE UTILIZZABILE premere <ANNULLA> per passare alle successive\n \n");
 
 							if (resp) {
-//								MyLog.waitHere("premuto annulla");
+								MyLog.appendLog(fileDir + "MyLog.txt", "p10 ANNULLA");
 								return null;
 							}
 
@@ -898,8 +899,18 @@ public class p11rmn_ implements PlugIn, Measurements {
 						MyLog.waitHere("errore creazione directory " + newdir3);
 					}
 				}
-
-				simulataName = simpath + "\\" + patName + codice + "sim.zip";
+				
+				
+				// modificato 200426
+				String coil5 = ReadDicom.getAllCoils(imp1);
+				coil5=coil5.replace(':', '^');
+				simulataName = simpath + "\\" + patName + codice + "_"+ coil5 +"sim.zip";
+				int count1=0;
+				while (InputOutput.checkFile(simulataName)==true) {
+					count1++;
+					simulataName = simpath + "\\" + patName + codice + "("+count1+")"+ coil5 +"sim.zip";
+				}; 
+				MyLog.appendLog(fileDir + "MyLog.txt", "p11 SIMULATA= " + simulataName);
 
 				boolean visualizza = ((verbose || test) && !fast);
 

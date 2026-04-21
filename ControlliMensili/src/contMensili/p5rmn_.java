@@ -590,6 +590,15 @@ public class p5rmn_ implements PlugIn, Measurements {
 
 			simulataName = simpath + "\\" + patName + codice + "sim.zip";
 
+			// modificato 200426		
+			int count1=0;
+			String simName = simpath+"\\" + patName + codice + "sim.zip";
+			while (InputOutput.checkFile(simName)==true) {
+				count1++;
+				simName = simpath+"\\" + patName + codice + "("+count1+")"+"sim.zip";
+			}; 
+
+			
 			// MyLog.waitHere(simulataName);
 			// int[][] classiSimulata = ImageUtils.generaSimulata12classi(sqX
 			// + gap, sqY + gap, MyConst.P5_MROI_7X7_PIXEL, imp1, step,

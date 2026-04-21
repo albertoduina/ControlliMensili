@@ -747,8 +747,14 @@ public class p3rmn_ implements PlugIn, Measurements {
 		// } else {
 		// codice = "____";
 		// }
-
+		
+		// modificato 200426		
+		int count1=0;
 		String simName = filename + patName + codice + "sim.zip";
+		while (InputOutput.checkFile(simName)==true) {
+			count1++;
+			simName = filename + patName + codice + "("+count1+")"+"sim.zip";
+		}; 
 
 		if (!test) {
 			new FileSaver(impSimulata).saveAsZip(simName);
