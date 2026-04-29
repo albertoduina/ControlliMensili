@@ -73,6 +73,8 @@ public class p3rmn_ implements PlugIn, Measurements {
 	private static String fileDir = "";
 	private static boolean debug = true;
 	private static boolean mylogger = true;
+	public static String simpath = "";
+	private static String simulataName = "";
 
 	@Override
 	public void run(String args) {
@@ -410,9 +412,6 @@ public class p3rmn_ implements PlugIn, Measurements {
 			mySetRoi(imp1, xRoi2, yRoi2, diamRoi2, over1, Color.red);
 			mySetRoi(imp2, xRoi2, yRoi2, diamRoi2, over2, Color.red);
 			mySetRoi(impDiff, xRoi2, yRoi2, diamRoi2, over3, Color.red);
-			imp1.deleteRoi();
-			imp2.deleteRoi();
-			impDiff.deleteRoi();
 			// IJ.log("roi 80% dopo il riposizionamento: xRoi2= "+xRoi2+" yRoi2=
 			// "+yRoi2+" diamRoi2= "+diamRoi2);
 
@@ -422,6 +421,11 @@ public class p3rmn_ implements PlugIn, Measurements {
 				msg85percData(step, mean1);
 			}
 
+			
+			imp1.deleteRoi();
+			imp2.deleteRoi();
+			impDiff.deleteRoi();
+			
 			double uiPerc1 = uiPercCalculation(stat1.max, stat1.min);
 			double slicePosition = ReadDicom
 					.readDouble(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SLICE_LOCATION));
@@ -502,21 +506,28 @@ public class p3rmn_ implements PlugIn, Measurements {
 			double ghostPerc3 = ghostPercCalculation(mediaGhost3, meanBkg, mean1);
 			double ghostPerc4 = ghostPercCalculation(mediaGhost4, meanBkg, mean1);
 
-			int[][] classiSimulata = generaSimulata(xRoi2, yRoi2, diamRoi2, imp1, fileDir, step, verbose, test);
+			String patName = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PATIENT_NAME);
 
-			// String[][] tabCodici = TableCode.loadMultipleTable(MyConst.CODE_GROUP);
+			String codice1 = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION);
+			String codice = UtilAyv.getFiveLetters(codice1);
+
+			String coil5 = ReadDicom.getAllCoils(imp1);
+			coil5 = coil5.replace(':', '^');
+			simulataName = simpath + "\\" + patName + codice + "_" + coil5 + "sim.zip";
+			int count1 = 0;
+			while (InputOutput.checkFile(simulataName) == true) {
+				count1++;
+				simulataName = simpath + "\\" + patName + codice + "(" + count1 + ")" + coil5 + "sim.zip";
+			}
+			;
+			String aux1 = patName + codice;
+			int[][] classiSimulata = ImageUtils.generaSimulata5ClassiA(xRoi2, yRoi2, diamRoi2, imp1, fileDir, aux1,
+					step, verbose, test);
+
 			TableCode tc1 = new TableCode();
 			String[][] tabCodici = tc1.loadMultipleTable("codici", ".csv");
 
-			// String[][] tabCodici = new InputOutput().readFile1(
-			// MyConst.CODE_FILE, MyConst.TOKENS4);
-
 			String[] info1 = ReportStandardInfo.getSimpleStandardInfo(path1, imp1, tabCodici, VERSION, autoCalled);
-
-			// put values in ResultsTable
-
-			// MyLog.logVector(info1, "info1");
-			// MyLog.waitHere();
 
 			rt = ReportStandardInfo.putSimpleStandardInfoRT_new(info1);
 			rt.showRowNumbers(true);
@@ -747,14 +758,15 @@ public class p3rmn_ implements PlugIn, Measurements {
 		// } else {
 		// codice = "____";
 		// }
-		
-		// modificato 200426		
-		int count1=0;
+
+		// modificato 200426
+		int count1 = 0;
 		String simName = filename + patName + codice + "sim.zip";
-		while (InputOutput.checkFile(simName)==true) {
+		while (InputOutput.checkFile(simName) == true) {
 			count1++;
-			simName = filename + patName + codice + "("+count1+")"+"sim.zip";
-		}; 
+			simName = filename + patName + codice + "(" + count1 + ")" + "sim.zip";
+		}
+		;
 
 		if (!test) {
 			new FileSaver(impSimulata).saveAsZip(simName);

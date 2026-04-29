@@ -613,8 +613,8 @@ public class p5rmn_ implements PlugIn, Measurements {
 				imp1.getWindow().toFront();
 			}
 			//
-			// 28feb05 qui d� la possibilit� di modificare la posizione su cui
-			// verr� calcolato l'FWHM
+			// 28feb05 qui do' la possibilita' di modificare la posizione su cui
+			// verra' calcolato l'FWHM
 			//
 			int xStartProfile = 0;
 			int yStartProfile = 0;

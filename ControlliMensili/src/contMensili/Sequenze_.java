@@ -92,11 +92,7 @@ public class Sequenze_ implements PlugIn {
 	public static String blackpath = "";
 	public static String blackname = "";
 	public static String blacklog = "";
-	// public static String testP6_1 = "contMensili.p6rmn_ORIGINAL";
-	// public static String testP6_2 = "contMensili.p6rmn_IMPROVED";
-	// public static String testP6_3 = "contMensili.p6rmn_FITTER";
 	public static int testP6 = 2; /// <<< SELEZIONA QUI
-//	public static String choice = "";
 
 	@Override
 	public void run(String arg) {
@@ -146,6 +142,8 @@ public class Sequenze_ implements PlugIn {
 		TableCode tc1 = new TableCode();
 		String[][] tableCode = tc1.loadMultipleTable("codici", ".csv");
 
+		String riga1 = "caricato tableCode [" + tableCode.length + "][" + tableCode[0].length + "]";
+
 		TableCode tc2 = new TableCode();
 		boolean flag = tc2.ricercaDoppioni(tableCode);
 		if (flag) {
@@ -187,7 +185,6 @@ public class Sequenze_ implements PlugIn {
 		p10p11p12 = gd.getNextBoolean();
 		fast = gd.getNextBoolean();
 		superficiali = gd.getNextBoolean();
-		// choice = gd.getNextChoice();
 		if (fast) {
 			Prefs.set("prefer.fast", "true");
 		} else {
@@ -242,6 +239,11 @@ public class Sequenze_ implements PlugIn {
 		}
 
 		long startTime = System.currentTimeMillis();
+
+		String logPath = startingDir + "//MyLog.txt";
+		MyLog.initLog(logPath);
+		MyLog.appendLog(logPath, riga1);
+
 		for (String element : arrayStartingDir) {
 			startingDir = element;
 
@@ -297,19 +299,16 @@ public class Sequenze_ implements PlugIn {
 							f1.delete();
 					}
 				// modificato 200426
-				//cancellazione cartella SIMULATE
-				File folder1 = new File(startingDir+"/SIMULATE");
+				// cancellazione cartella SIMULATE
+				File folder1 = new File(startingDir + "/SIMULATE");
 				InputOutput.deleteDir(folder1);
-				
-			
+
 				if (debugTables) {
 					IJ.log("\\Clear");
 					MyLog.logMatrix(tableCode, "tableCode");
 					aux1 = String.format("%3d", c1++);
 					MyLog.saveLog(startingDir + "/" + aux1 + "_tableCodeLoaded.csv");
 				}
-
-				MyLog.initLog(startingDir + "MyLog.txt");
 
 				Prefs.set("prefer.p6rmnSTART", true);
 				// MyLog.waitHere("metto valid a false");
@@ -326,6 +325,7 @@ public class Sequenze_ implements PlugIn {
 				if (result == null) {
 					MyLog.here("getFileListing.result==null");
 				}
+				MyLog.appendLog(logPath, "getFileListing trova [" + result.size() + "] files/cartelle");
 				String[] list = new String[result.size()];
 				String aux10 = "";
 				int j1 = 0;
@@ -341,7 +341,6 @@ public class Sequenze_ implements PlugIn {
 				// Esamina la lista dei file trovati, inserendo in tabella quelli che hanno i
 				// codici uguali al file codiciXX.csv
 				// -----------------------------------------------------------------------------
-				// MyLog.waitHere();
 
 				String[][] tableSequenceLoaded = generateSequenceTable(list, tableCode, tableExpand);
 				if (debugTables) {
@@ -350,31 +349,19 @@ public class Sequenze_ implements PlugIn {
 					aux1 = String.format("%3d", c1++);
 					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceLoaded.csv");
 				}
+				MyLog.appendLog(logPath, "tableSequenceLoaded= [" + tableSequenceLoaded.length + "]["
+						+ tableSequenceLoaded[0].length + "]");
 
 				if (tableSequenceLoaded == null) {
 					MyLog.waitHere("non sono state trovate immagini da analizzare");
 					return;
 				}
 
-//				MyLog.waitHere("TABLESEQUENCE [ " + tableSequenceLoaded.length + " ] x [ "
-//						+ tableSequenceLoaded[0].length + " ]");
-
 				// ------------------------------------------------------------------------------
 				// Adattamento codici Treviglio
 				// ------------------------------------------------------------------------------
 
 				treviglioDevelop(tableSequenceLoaded, tableCode);
-
-//				if (debugTables) {
-//					IJ.log("\\Clear");
-//					MyLog.logMatrixTable(tableSequenceLoaded, "tableSequenceTreviglio");
-//					aux1 = String.format("%3d", c1++);
-//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceTreviglio.csv");
-//					IJ.log("\\Clear");
-//					MyLog.logMatrixTable(tableCode, "tableCodeTreviglio");
-//					aux1 = String.format("%3d", c1++);
-//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableCodeTreviglio.csv");
-//				}
 
 				// --------------------------------------------------------------------------------------------
 				// Eseguo una serie di sort successivi per tentare di avere un ordinamento
@@ -391,22 +378,8 @@ public class Sequenze_ implements PlugIn {
 					MyLog.logMatrixTable(tableSequenceSorted1, aux1 + "_tableSequenceSorted_INPUT");
 					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_INPUT.csv");
 				}
-
-//				MyLog.waitHere(
-//						"PRIMA [ " + tableSequenceSorted1.length + " ] x [ " + tableSequenceSorted1[0].length + " ]");
-
-				// --------------------------------------------------------------------------------------------
-				// Sort in base a CODE
-				// --------------------------------------------------------------------------------------------
-
-//				String[][] tableSequenceSorted2 = TableSorter.minsortString(tableSequenceSorted1, TableSequence.CODE,
-//						"TableSequence.CODE");
-//				if (debugTables) {
-//					IJ.log("\\Clear");
-//					aux1 = String.format("%3d", c1++);
-//					MyLog.logMatrixTable(tableSequenceSorted2, aux1 + "_tableSequenceSorted_CODE");
-//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_CODE.csv");
-//				}
+				MyLog.appendLog(logPath, "tableSequenceSorted1= [" + tableSequenceSorted1.length + "]["
+						+ tableSequenceSorted1[0].length + "]");
 
 				// =================================================================================
 				// =================================================================================
@@ -416,6 +389,7 @@ public class Sequenze_ implements PlugIn {
 				// =================================================================================
 				// =================================================================================
 				// =================================================================================
+
 				List<XTable> xtable2 = tableToXTable(tableSequenceSorted1);
 				Collections.sort(xtable2,
 						new XTableChainedComparator(new XTableCodeComparator(), new XTableCoilComparator(),
@@ -423,6 +397,11 @@ public class Sequenze_ implements PlugIn {
 								new XTableEchoComparator()));
 
 				String[][] tableSequenceSorted6 = xtableToTable(xtable2);
+				MyLog.appendLog(logPath, "viene effettuato sulla tabella un sort multiplo secondo "
+						+ "i criteri: code, coil, position, acq, ima, echo");
+				MyLog.appendLog(logPath, "tableSequenceSorted6= [" + tableSequenceSorted6.length + "]["
+						+ tableSequenceSorted6[0].length + "]");
+
 				// =================================================================================
 				// =================================================================================
 				// =================================================================================
@@ -437,103 +416,6 @@ public class Sequenze_ implements PlugIn {
 					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_OUTPUT.csv");
 				}
 
-//				MyLog.logMatrixTable(tableSequenceSorted6, "tableSequenceLoaded6");
-//				MyLog.waitHere();
-
-				// =================================================================================
-				// =================================================================================
-				// =================================================================================
-				// =================================================================================
-				// =================================================================================
-				// =================================================================================
-
-				// --------------------------------------------------------------------------------------------
-				// Sort in base a CODE
-				// --------------------------------------------------------------------------------------------
-
-//				String[][] tableSequenceSorted2 = TableSorter.minsortString(tableSequenceSorted1, TableSequence.CODE,
-//						"TableSequence.CODE");
-//				if (debugTables) {
-//					IJ.log("\\Clear");
-//					aux1 = String.format("%3d", c1++);
-//					MyLog.logMatrixTable(tableSequenceSorted2, aux1 + "_tableSequenceSorted_CODE");
-//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_CODE.csv");
-//				}
-
-				// --------------------------------------------------------------------------------------------
-				// Sort in base a COIL
-				// --------------------------------------------------------------------------------------------
-//				String[][] tableSequenceSorted3 = TableSorter.minsortString(tableSequenceSorted2, TableSequence.COIL,
-//						"TableSequence.COIL");
-//				if (debugTables) {
-//					IJ.log("\\Clear");
-//					aux1 = String.format("%3d", c1++);
-//					MyLog.logMatrixTable(tableSequenceSorted3, aux1 + "_tableSequenceSorted_COIL");
-//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_COIL.csv");
-//				}
-
-				// --------------------------------------------------------------------------------------------
-				// Sort in base a ACQ
-				// --------------------------------------------------------------------------------------------
-//				String[][] tableSequenceSorted4 = TableSorter.minsortInteger(tableSequenceSorted3, TableSequence.ACQ,
-//						"TableSequence.ACQ");
-//				if (debugTables) {
-//					IJ.log("\\Clear");
-//					aux1 = String.format("%3d", c1++);
-//					MyLog.logMatrixTable(tableSequenceSorted4, aux1 + "_tableSequenceSorted_ACQ");
-//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_ACQ.csv");
-//				}
-
-				// --------------------------------------------------------------------------------------------
-				// Sort in base a IMA
-				// --------------------------------------------------------------------------------------------
-//				String[][] tableSequenceSorted5 = TableSorter.minsortInteger(tableSequenceSorted4, TableSequence.IMA,
-//						"TableSequence.IMA");
-//				if (debugTables) {
-//					IJ.log("\\Clear");
-//					aux1 = String.format("%3d", c1++);
-//					MyLog.logMatrixTable(tableSequenceSorted5, aux1 + "_tableSequenceSorted_IMA");
-//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_IMA.csv");
-//				}
-
-				// --------------------------------------------------------------------------------------------
-				// Sort in base a ECHO (aggiunta 2025 ERRATA !!!!!!!!!) MA ECCO FORSE FORSE NON
-				// SBAGLIA !!!
-				// --------------------------------------------------------------------------------------------
-//				String[][] tableSequenceSorted3 = TableSorter.minsortDouble(tableSequenceSorted2, TableSequence.ECHO, "TableSequence.ECHO");
-//				if (debugTables) {
-//					IJ.log("\\Clear");
-//					aux1 = String.format("%3d", c1++);
-//					MyLog.logMatrixTable(tableSequenceSorted3, aux1+"_tableSequenceSorted_ECHO");
-//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_ECHO.csv");
-//				}
-
-				// --------------------------------------------------------------------------------------------
-				// Sort in base a SERIE
-				// --------------------------------------------------------------------------------------------
-//				String[][] tableSequenceSorted4 = TableSorter.minsortInteger(tableSequenceSorted3, TableSequence.SERIE, "TableSequence.SERIE");
-//				if (debugTables) {
-//					IJ.log("\\Clear");
-//					aux1 = String.format("%3d", c1++);
-//					MyLog.logMatrixTable(tableSequenceSorted4, aux1+"_tableSequenceSorted_SERIE");
-//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_SERIE.csv");
-//				}
-
-				// --------------------------------------------------------------------------------------------
-				// sort in base a posizione
-				// --------------------------------------------------------------------------------------------
-//				String[] myCode1 = { "BL2F_", "BL2S_", "BR2F_", "BR2S_", "YL2F_", "YL2S_", "YR2F_", "YR2S_", "JUS1A",
-//						"JUSAA", "KUS1A", "KUSAA", "PUSAA", "PUS1A" };
-//
-//				String[][] tableSequenceSorted16 = TableSorter.tableModifierSmart(tableSequenceSorted5, myCode1);
-//
-//				if (debugTables) {
-//					IJ.log("\\Clear");
-//					aux1 = String.format("%3d", c1++);
-//					MyLog.logMatrixTable(tableSequenceSorted16, aux1 + "_tableSequenceSorted_POSITION");
-//					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceSorted_POSITION.csv");
-//				}
-
 				// --------------------------------------------------------------------------------------------
 				// Verifica coerenza numero immagini con quanto stabilito in codiciXX.csv
 				// --------------------------------------------------------------------------------------------
@@ -544,8 +426,14 @@ public class Sequenze_ implements PlugIn {
 					MyLog.logMatrix(listProblems, aux1 + "_listProblems");
 					MyLog.saveLog(startingDir + "/" + aux1 + "_ListProblems.csv");
 
-//					MyLog.waitHere("salvare il log come ListProblems");
 				}
+
+				if (listProblems != null) {
+					String aux100 = "listProblems= [" + listProblems.length + "][" + listProblems[0].length
+							+ "] lista eventuali difformita' sul numero di immagini per ogni codice";
+					MyLog.appendLog(logPath, aux100);
+				} else
+					MyLog.appendLog(logPath, "nessun listProblems");
 
 				// --------------------------------------------------------------------------------------------
 				// Log delle immagini problematiche (numero immagini non corrisponde a
@@ -563,60 +451,49 @@ public class Sequenze_ implements PlugIn {
 
 				logVerifySequenceTable(listProblems, test);
 
-//				MyLog.waitHere("ATTENZIONE " + tableSequenceSorted6.length + " x " + tableSequenceSorted6[0].length);
-
 				boolean success = new TableSequence().writeTable(startingDir + MyConst.SEQUENZE_FILE,
 						tableSequenceSorted6);
 				if (!success) {
 					IJ.log("Problemi creazione file iw2ayv.txt");
 				}
+				MyLog.appendLog(logPath,
+						"viene creato e salvato il file iw2ayv.txt che rappresenta la lista immagini da analizzare");
+
+				String[][] tableSequenceReloaded = new TableSequence().loadTable(startingDir + MyConst.SEQUENZE_FILE);
+				MyLog.appendLog(logPath,
+						"viene riletto il file iw2ayv.txt che rappresenta la lista immagini da analizzare");
+
+				if (debugTables) {
+					IJ.log("\\Clear");
+					aux1 = String.format("%3d", c1++);
+					MyLog.logMatrixTable(tableSequenceReloaded, aux1 + "_tableSequenceReloaded");
+					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceReloaded.csv");
+				}
+
+				// ======================================================================================
+				// ======================================================================================
+				// MOTORE DI CHIAMATA DEI PLUGINS IN FUNZIONAMENTO NORMALE
+				// ======================================================================================
+				callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false, superficiali, p10p11p12, tw);
+				// ======================================================================================
+				// ======================================================================================
+
 			}
+			long endTime = System.currentTimeMillis();
+			long total = (endTime - startTime) / 1000;
+			long minuti = total / 60;
+			long secondi = total - minuti * 60;
 
-			String[][] tableSequenceReloaded = new TableSequence().loadTable(startingDir + MyConst.SEQUENZE_FILE);
-			// tw.append("da elaborare "+ tableSequenceReloaded.length);
-			// tw.append("<-- FINE Sequenze -->");
+			IJ.beep();
+			IJ.wait(100);
+			IJ.beep();
+			IJ.wait(100);
+			IJ.beep();
+			IJ.wait(100);
+			IJ.beep();
 
-			// MyLog.logMatrix(tableSequenceReloaded, "tableSequenceReloaded");
-			// MyLog.waitHere();
-
-			if (debugTables) {
-				IJ.log("\\Clear");
-				aux1 = String.format("%3d", c1++);
-				MyLog.logMatrixTable(tableSequenceReloaded, aux1 + "_tableSequenceReloaded");
-				MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceReloaded.csv");
-				// MyLog.waitHere("salvare il log come 9_tableSequenceReloaded");
-				// OCCHIO CHE IL 9_tableSequenceReloaded non ha i dati ma solo intestazione
-			}
-
-			/// 301025 cerco di ricreare il frame se si chiudesse
-			///
-
-			// IJ.log(MyLog.qui() + " avvio >>> callPluginsFromSequenceTable");
-			// ======================================================================================
-			// ======================================================================================
-			// ======================================================================================
-			// MOTORE DI CHIAMATA DEI PLUGINS IN FUNZIONAMENTO NORMALE
-			// ======================================================================================
-			callPluginsFromSequenceTable(tableSequenceReloaded, tableCode, false, superficiali, p10p11p12, tw);
-			// ======================================================================================
-			// ======================================================================================
-			// ======================================================================================
-
+			MyLog.waitHere("FINE LAVORO " + minuti + " minuti " + secondi + " secondi");
 		}
-		long endTime = System.currentTimeMillis();
-		long total = (endTime - startTime) / 1000;
-		long minuti = total / 60;
-		long secondi = total - minuti * 60;
-
-		IJ.beep();
-		IJ.wait(100);
-		IJ.beep();
-		IJ.wait(100);
-		IJ.beep();
-		IJ.wait(100);
-		IJ.beep();
-
-		MyLog.waitHere("FINE LAVORO " + minuti + " minuti " + secondi + " secondi");
 	}
 
 	/**
@@ -1778,7 +1655,7 @@ public class Sequenze_ implements PlugIn {
 				}
 			}
 		}
-		
+
 		// a questo punto non mi resta che creare la tabella e riversarvi i dati
 		// dagli ArrayList
 		if (vetCodice.size() > 0) {
