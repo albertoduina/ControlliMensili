@@ -93,6 +93,7 @@ public class Sequenze_ implements PlugIn {
 	public static String blackname = "";
 	public static String blacklog = "";
 	public static int testP6 = 2; /// <<< SELEZIONA QUI
+	public static String logPath2 = "";
 
 	@Override
 	public void run(String arg) {
@@ -243,6 +244,11 @@ public class Sequenze_ implements PlugIn {
 		String logPath = startingDir + "//MyLog.txt";
 		MyLog.initLog(logPath);
 		MyLog.appendLog(logPath, riga1);
+
+		if (debugTables) {
+			logPath2 = startingDir + "//MyOtherLog.txt";
+			MyLog.initLog(logPath2);
+		}
 
 		for (String element : arrayStartingDir) {
 			startingDir = element;
@@ -425,15 +431,18 @@ public class Sequenze_ implements PlugIn {
 					aux1 = String.format("%3d", c1++);
 					MyLog.logMatrix(listProblems, aux1 + "_listProblems");
 					MyLog.saveLog(startingDir + "/" + aux1 + "_ListProblems.csv");
-
 				}
 
 				if (listProblems != null) {
 					String aux100 = "listProblems= [" + listProblems.length + "][" + listProblems[0].length
 							+ "] lista eventuali difformita' sul numero di immagini per ogni codice";
 					MyLog.appendLog(logPath, aux100);
+//					MyLog.appendLog(logPath2, aux100);
+//					MyLog.logMatrix(logPath2, listProblems, "listProblems");
 				} else
 					MyLog.appendLog(logPath, "nessun listProblems");
+
+				// MyLog.waitHere("pre stampa");
 
 				// --------------------------------------------------------------------------------------------
 				// Log delle immagini problematiche (numero immagini non corrisponde a
@@ -448,8 +457,7 @@ public class Sequenze_ implements PlugIn {
 				// --------------------------------------------------------------------------------------------
 
 				boolean test = false;
-
-				logVerifySequenceTable(listProblems, test);
+				stampaLogVerifySequenceTable(listProblems, test);
 
 				boolean success = new TableSequence().writeTable(startingDir + MyConst.SEQUENZE_FILE,
 						tableSequenceSorted6);
@@ -462,6 +470,13 @@ public class Sequenze_ implements PlugIn {
 				String[][] tableSequenceReloaded = new TableSequence().loadTable(startingDir + MyConst.SEQUENZE_FILE);
 				MyLog.appendLog(logPath,
 						"viene riletto il file iw2ayv.txt che rappresenta la lista immagini da analizzare");
+
+				if (debugTables) {
+					IJ.log("\\Clear");
+					aux1 = String.format("%3d", c1++);
+					MyLog.logMatrixTable(tableSequenceReloaded, aux1 + "_tableSequenceReloaded");
+					MyLog.saveLog(startingDir + "/" + aux1 + "_tableSequenceReloaded.csv");
+				}
 
 				if (debugTables) {
 					IJ.log("\\Clear");
@@ -1582,7 +1597,12 @@ public class Sequenze_ implements PlugIn {
 		List<String> vetAcqImaAcquisite = new ArrayList<String>();
 		List<String> vetImaImaAcquisite = new ArrayList<String>();
 		String codiceBobinaAcquisito = "";
+		String codiceImaRichieste = "";
+		String codiceImaAcquisite = "";
+		String codiceBobinaRichiesto = "";
+
 		// boolean trigger = true;
+//		int discrepanza = 0;
 
 		for (int j1 = 0; j1 < tableCode6.length; j1++) {
 			int numeroImaAcquisite = 0;
@@ -1592,21 +1612,21 @@ public class Sequenze_ implements PlugIn {
 			} else {
 				// MyLog.waitHere("errore formato a j1= " + j1);
 			}
-			String codiceImaRichieste = TableCode.getCode(tableCode6, j1);
+			codiceImaRichieste = TableCode.getCode(tableCode6, j1);
 			if (codiceImaRichieste == null) {
 				break;
 			}
 			if (numeroImaRichieste == 0) {
 				continue;
 			}
-			String codiceBobinaRichiesto = TableCode.getCoil(tableCode6, j1);
+			codiceBobinaRichiesto = TableCode.getCoil(tableCode6, j1);
 			// IJ.log("codiceBobinaRichiesto= "+codiceBobinaRichiesto);
 			// codiceBobinaRichiesto = codiceBobinaRichiesto.replaceAll("�",
 			// ";");
 			// IJ.log("codiceBobinaRichiesto= "+codiceBobinaRichiesto);
 			for (int j2 = 0; j2 < tableSequenze6.length; j2++) {
 				new TableSequence();
-				String codiceImaAcquisite = TableSequence.getCode(tableSequenze6, j2);
+				codiceImaAcquisite = TableSequence.getCode(tableSequenze6, j2);
 				codiceBobinaAcquisito = TableSequence.getCoil(tableSequenze6, j2).replace(';', '+');
 				// if (trigger)
 				// IJ.log("codiceBobinaAcquisito= " + codiceBobinaAcquisito);
@@ -1616,8 +1636,6 @@ public class Sequenze_ implements PlugIn {
 				}
 				if (compareAcqReq(codiceImaAcquisite, codiceImaRichieste, codiceBobinaAcquisito,
 						codiceBobinaRichiesto)) {
-//					 IJ.log("codiceAcquisito=" + codiceBobinaAcquisito
-//					 + " codiceRichiesto=" + codiceBobinaRichiesto);
 					numeroImaAcquisite++;
 
 				}
@@ -1626,6 +1644,7 @@ public class Sequenze_ implements PlugIn {
 			// trigger = false;
 			if ((numeroImaAcquisite > 0) && (numeroImaAcquisite != numeroImaRichieste)) {
 				for (int j3 = 0; j3 < tableSequenze6.length; j3++) {
+
 					new TableSequence();
 					String codiceImaAcquisite2 = TableSequence.getCode(tableSequenze6, j3);
 					codiceBobinaAcquisito = TableSequence.getCoil(tableSequenze6, j3).replace(';', '+');
@@ -1639,10 +1658,19 @@ public class Sequenze_ implements PlugIn {
 					if ((codiceBobinaRichiesto.equals(codiceBobinaAcquisito))
 							|| (codiceBobinaRichiesto.equals("xxx"))) {
 						codiceBobinaOK = true;
+
 					}
 
 					if (codiceImaAcquisite2.equals(codiceImaRichieste) && (codiceBobinaOK)) {
+//						discrepanza++;
 						numeroImaAcquisite2++;
+//						IJ.log("numeroImaAcquisite2= " + numeroImaAcquisite2);
+//						IJ.log("codiceImaAcquisite= " + codiceImaAcquisite + " codiceImaRichieste= "
+//								+ codiceImaRichieste +
+//
+//								" codiceBobinaAcquisito= " + codiceBobinaAcquisito + " codiceBobinaRichiesto= "
+//								+ codiceBobinaRichiesto);
+
 						vetCodice.add(codiceImaRichieste);
 						vetImaRichieste.add("" + numeroImaRichieste);
 						vetImaTrovate.add("" + numeroImaAcquisite);
@@ -1651,6 +1679,9 @@ public class Sequenze_ implements PlugIn {
 						vetAcqImaAcquisite.add(TableSequence.getAcq(tableSequenze6, j3));
 						vetImaImaAcquisite.add(TableSequence.getIma(tableSequenze6, j3));
 						vetCoil.add(TableSequence.getCoil(tableSequenze6, j3));
+//						IJ.log("DISCREPANZA= " + discrepanza + " vetCodice.size()= " + vetCodice.size());
+//						IJ.log("AGGIUNTOcodice= " + codiceImaRichieste + " coil= "
+//								+ TableSequence.getCoil(tableSequenze6, j3));
 					}
 				}
 			}
@@ -1800,8 +1831,8 @@ public class Sequenze_ implements PlugIn {
 		}
 		if (codeImaAcq.equals(codeImaReq)) {
 //		 MyLog.logVector(allCoils, "allCoils");
-//		 MyLog.waitHere(codeImaAcq + " " + codeImaReq + " " + coilImaAcq
-//		 + " " + coilImaReq + " risultato res1= " + res1);
+//			MyLog.waitHere("codiceAcquisito= " + codeImaAcq + "\ncodiceRichiesto= " + codeImaReq + "\ncoilAcquisita= "
+//					+ coilImaAcq + "\ncoilRichiesta= " + coilImaReq + "\nrisultato res1= " + res1);
 		}
 
 		return res1;
@@ -1826,11 +1857,11 @@ public class Sequenze_ implements PlugIn {
 		} else {
 			res1 = false;
 		}
-		// if (codeImaAcq.equals(codeImaReq)) {
-		// MyLog.logVector(allCoils, "allCoils");
-		// MyLog.waitHere(codeImaAcq + " " + codeImaReq + " " + coilImaAcq
-		// + " " + coilImaReq + " risultato res1= " + res1);
-		// }
+		if (codeImaAcq.equals(codeImaReq)) {
+//			 MyLog.logVector(allCoils, "allCoils");
+			MyLog.waitHere("codiceAcquisito= " + codeImaAcq + "\ncodiceRichiesto= " + codeImaReq + "\ncoilAcquisita= "
+					+ coilImaAcq + "\ncoilRichiesta= " + coilImaReq + "\nrisultato res1= " + res1);
+		}
 
 		return res1;
 	}
@@ -1841,30 +1872,43 @@ public class Sequenze_ implements PlugIn {
 	 *
 	 * @param tableVerify
 	 */
-	public void logVerifySequenceTable(String[][] tableVerify, boolean test) {
+	public void stampaLogVerifySequenceTable(String[][] tableVerify, boolean test) {
+		test = false;
 
 		if (tableVerify == null) {
 			return;
 		}
 		if (!test) {
-			IJ.showMessage("Problemi con le immagini, vedere il log");
+			// IJ.showMessage("Problemi con le immagini, vedere il log che sara' lungo= " +
+			// tableVerify.length);
+			IJ.log("Problemi con le immagini, vedere il log che sara' lungo= " + tableVerify.length);
 		}
 
 		// TableUtils.dumpTable(tableVerify, "tableVerify");
+
 		String codice2 = "";
 		String coil2 = "";
 		boolean stamp = false;
 		if (!test) {
-			IJ.log("---------------------------------------------");
+			IJ.log("----------------------------------------------");
 		}
+
 		for (int i1 = 0; i1 < tableVerify.length; i1++) {
 			String codice1 = TableVerify.getCode(tableVerify, i1);
 			String coil1 = TableVerify.getCoil(tableVerify, i1);
 			int numero = Integer.parseInt(TableVerify.getImaFound(tableVerify, i1));
+			// IJ.log("0000 numero= "+numero+ " oooo");
+			// problema saltato fuori con le B.D.S. :
+			// se mi acquisiscono DUE immagini HWSA ma utilizzano bobine DIFFERENTI, allora
+			// la stampa
+			// lista due volte non vale la pena di tribularci, ci ho gia'perso due giorni,
+			// MAPPORCA####@@@@@######
 			if ((!codice1.equals(codice2)) || (!coil1.equals(coil2))) {
+				// IJ.log("i1= " + i1 + " |codice1= " + codice1 + " codice2= " + codice2 + "| coil1= " + coil1 + " coil2= "
+				//		+ coil2);
 				stamp = true;
 				if (!test) {
-					IJ.log("per il codice " + codice1 + " e la bobina " + coil1 + " sono necessarie "
+					IJ.log("stampa= " + i1 + " per il codice " + codice1 + " e la bobina " + coil1 + " sono necessarie "
 							+ TableVerify.getImaRequired(tableVerify, i1) + " immagini, trovate " + numero);
 				}
 
@@ -1885,14 +1929,17 @@ public class Sequenze_ implements PlugIn {
 			}
 			if (stamp) {
 				if (!test) {
-					IJ.log("---------------------------------------------");
+					IJ.log("----------------------------------------------");
 				}
 				stamp = false;
 			}
 		}
 		if (!test) {
 			MyLog.waitHere("Problemi con le immagini, vedere il log");
+			if (debugTables)
+				MyLog.saveLog(logPath2);
 		}
+		MyLog.waitHere();
 
 	}
 

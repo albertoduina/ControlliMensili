@@ -879,6 +879,8 @@ public class p11rmn_ implements PlugIn, Measurements {
 				//
 
 				String patName = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_PATIENT_NAME);
+				patName = patName.replace(":", ""); //121026 filtro sicurezza
+				patName = patName.replace(".", ""); //121026 filtro sicurezza
 
 				String codice1 = ReadDicom.readDicomParameter(imp1, MyConst.DICOM_SERIES_DESCRIPTION);
 
@@ -905,12 +907,17 @@ public class p11rmn_ implements PlugIn, Measurements {
 				String coil5 = ReadDicom.getAllCoils(imp1);
 				coil5=coil5.replace(':', '^');
 				simulataName = simpath + "\\" + patName + codice + "_"+ coil5 +"sim.zip";
+//				MyLog.waitHere("P11_patName= "+patName+"\ncodice= "+codice+" coil5= "+coil5);
+//				MyLog.waitHere("P11_simulataName= "+simulataName);
+
+				MyLog.appendLog(fileDir + "MyLog.txt", "p11 SIMULATA= " + simulataName);
+				
+				
 				int count1=0;
 				while (InputOutput.checkFile(simulataName)==true) {
 					count1++;
 					simulataName = simpath + "\\" + patName + codice + "("+count1+")"+ coil5 +"sim.zip";
 				}; 
-				MyLog.appendLog(fileDir + "MyLog.txt", "p11 SIMULATA= " + simulataName);
 
 				boolean visualizza = ((verbose || test) && !fast);
 

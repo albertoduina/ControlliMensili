@@ -372,14 +372,42 @@ public class p7rmn_ implements PlugIn, Measurements {
 		double by = rec2.getY();
 		double bw = rec2.getWidth() / imp1.getWidth();
 		CustomCanvasGeneric ccg1 = new CustomCanvasGeneric(imp1);
-		double[] cx1 = { 245, 105, 245, 380, 175, 310, 75, 160, 335, 425, 175, 310, 105, 245, 380, 245 };
-		double[] cy1 = { 40, 95, 130, 95, 160, 160, 230, 230, 230, 230, 305, 305, 370, 330, 370, 430 };
-		double[] cx2 = { 250, 270, 250, 230 };
-		double[] cy2 = { 240, 260, 280, 260 };
+		
+		double[] cxx1 = null;
+		double[] cyy1 = null;
+		double[] cxx2 = null;
+		double[] cyy2 = null;
+
+
+		int rows = ReadDicom
+				.readInt(ReadDicom.readSubstring(ReadDicom.readDicomParameter(imp1, MyConst.DICOM_ROWS), 1));
+		
+		if (rows == 512) {
+			// si era detto che la matrice era 512
+			double[] cx1 = { 245, 105, 245, 380, 175, 310, 75, 160, 335, 425, 175, 310, 105, 245, 380, 245 };
+			double[] cy1 = { 40, 95, 130, 95, 160, 160, 230, 230, 230, 230, 305, 305, 370, 330, 370, 430 };
+			double[] cx2 = { 250, 270, 250, 230 };
+			double[] cy2 = { 240, 260, 280, 260 };
+			cxx1=cx1;
+			cyy1=cy1;
+			cxx2=cx2;
+			cyy2=cy2;
+		} else {
+			// poi .....
+			double[] cx3 = { 122, 52, 122, 190, 87, 155, 37, 80, 167, 212, 87, 155, 52, 122, 190, 122 };
+			double[] cy3 = { 20, 47, 65, 47, 80, 80, 115, 115, 115, 115, 152, 152, 184, 165, 185, 210 };
+			double[] cx4 = { 125, 135, 125, 115 };
+			double[] cy4 = { 120, 130, 140, 130 };
+			cxx1=cx3;
+			cyy1=cy3;
+			cxx2=cx4;
+			cyy2=cy4;
+		}
+		
 		ccg1.setOffset(bx, by, bw);
-		ccg1.setPosition1(cx1, cy1);
+		ccg1.setPosition1(cxx1, cyy1);
 		ccg1.setColor1(Color.red);
-		ccg1.setPosition2(cx2, cy2);
+		ccg1.setPosition2(cxx2, cyy2);
 		ccg1.setColor2(Color.green);
 		if (verbose) {
 			ImageWindow iw1 = new ImageWindow(imp1, ccg1);
@@ -482,7 +510,7 @@ public class p7rmn_ implements PlugIn, Measurements {
 
 	private static void msgRedo(int nPunti) {
 		IJ.showMessage("--- A T T E N Z I O N E ---",
-				"Sono stati selezionati solo " + nPunti + " anzich� 36  punti,\n--- R I F A R E ---");
+				"Sono stati selezionati solo " + nPunti + " anziche' 36  punti,\n--- R I F A R E ---");
 	}
 
 }

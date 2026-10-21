@@ -55,7 +55,7 @@ public class Sequenze_Test {
 		// generazione di una directory vuota
 		// NB: per generare qualcosa nella /bin noi dobbiamo lavorare sulla
 		// ./data
-		String dir2Test = "C://Dati/vuota/";
+		String dir2Test = "D://Dati/vuota/";
 		if (InputOutput.checkDir(dir2Test)) {
 			boolean success3 = InputOutput.deleteDir(new File(dir2Test));
 			assertTrue("fallita cancellazione directory", success3);
@@ -101,19 +101,20 @@ public class Sequenze_Test {
 		// assertTrue("fallita cancellazione directory", success1);
 		// }
 	}
-
+	
 	@Test
 	public final void testLogVerifySequenceTableLONG() {
 
 		if (mark)
 			IJ.log(">002");
 
-		String[][] expectTable = InputOutput.readStringMatrixFromFile("./data/vet18.txt");
+		String[][] expectTable = InputOutput.readStringMatrixFromFile("./data/vet24.txt");
 
-		// TableUtils.dumpTable(expectTable, "expectTable");
+		//  TableUtils.dumpTable(expectTable, "expectTable");
+		// MyLog.waitHere();
 
 		boolean test = true;
-		new Sequenze_().logVerifySequenceTable(expectTable, test);
+		new Sequenze_().stampaLogVerifySequenceTable(expectTable, test);
 
 		// EXPECTED OUTPUT in the Log file:
 		// Problemi con le immagini, vedere il log
@@ -123,8 +124,12 @@ public class Sequenze_Test {
 		// ---------------------------------------------
 		if (mark)
 			IJ.log("002>");
+		
+		MyLog.waitHere();
 
 	}
+
+
 
 	@Test
 	public final void testLogVerifyList2() {
@@ -133,7 +138,7 @@ public class Sequenze_Test {
 
 		String[][] expectTable = { { "BUSS_", "2", "1", "/test3/BUSS_05testP6", "29", "1", "5", "BC" } };
 
-		new Sequenze_().logVerifySequenceTable(expectTable, true);
+		new Sequenze_().stampaLogVerifySequenceTable(expectTable, true);
 
 		// EXPECTED OUTPUT in the Log file:
 		// Problemi con le immagini, vedere il log
@@ -151,7 +156,7 @@ public class Sequenze_Test {
 		if (mark)
 			IJ.log(">004");
 
-		String startingDir = "C://Dati/vuota/";
+		String startingDir = "D://Dati/vuota/";
 		List<File> listona = new Sequenze_().getFileListing(new File(startingDir));
 		for (File file : listona) {
 			System.out.println(file);
@@ -185,10 +190,10 @@ public class Sequenze_Test {
 	// strList1[j1++] = file.getPath();
 	// }
 	//
-	// // il problema � che quando utilizzo generateSequenceTable il path
-	// // indicato per le immagini di test � assoluto. Ci� � usato solo per
-	// // questo test in junit ma cozza con la portabilit� (per esempip col
-	// // calcolatore di casa), pertanto la tabella di uscita andr� trasformata
+	// // il problema e' che quando utilizzo generateSequenceTable il path
+	// // indicato per le immagini di test e' assoluto. Cio' e' usato solo per
+	// // questo test in junit ma cozza con la portabilita' (per esempip col
+	// // calcolatore di casa), pertanto la tabella di uscita andra' trasformata
 	// // con il path relativo, in modo che sia portatile
 	//
 	// String[][] res1 = new Sequenze_().generateSequenceTable(strList1,
